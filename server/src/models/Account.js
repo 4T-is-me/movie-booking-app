@@ -19,4 +19,4 @@ const accountSchema = new mongoose.Schema({
 //tắt tính năng tự động thêm trường vào document
 // collection: 'ACCOUNT' để chỉ định tên collection trong MongoDB là ACCOUNT 
 
-export const Account = mongoose.model('ACCOUNT', accountSchema);
+export const account = mongoose.model('ACCOUNT', accountSchema);

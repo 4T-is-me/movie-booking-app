@@ -6,4 +6,4 @@ const ticketSchema = new mongoose.Schema({
     TICKET_TYPE: { type: Number, required: true }
 }, { versionKey: false, collection: 'TICKET' });
 
-export const Ticket = mongoose.model('TICKET', ticketSchema);
+export const ticket = mongoose.model('TICKET', ticketSchema);

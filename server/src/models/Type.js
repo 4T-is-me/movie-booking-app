@@ -5,4 +5,4 @@ const typeSchema = new mongoose.Schema({
     TYPE_NAME: { type: String, required: true }
 }, { versionKey: false, collection: 'TYPE' });
 
-export const Type = mongoose.model('TYPE', typeSchema);
+export const type = mongoose.model('TYPE', typeSchema);

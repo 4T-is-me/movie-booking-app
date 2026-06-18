@@ -5,4 +5,4 @@ const movieScheduleSchema = new mongoose.Schema({
     MOVIE_ID: { type: String, ref: 'MOVIE', required: true }
     }, { versionKey: false, collection: 'MOVIE_SCHEDULE' }
 );
-export const MovieSchedule = mongoose.model('MOVIE_SCHEDULE', movieScheduleSchema);
+export const movieSchedule = mongoose.model('MOVIE_SCHEDULE', movieScheduleSchema);

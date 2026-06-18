@@ -6,4 +6,4 @@ const movieTypeSchema = new mongoose.Schema({
     }, { versionKey: false, collection: 'MOVIE_TYPE' }
 );
 
-export const MovieType = mongoose.model('MOVIE_TYPE', movieTypeSchema);
+export const movieType = mongoose.model('MOVIE_TYPE', movieTypeSchema);
