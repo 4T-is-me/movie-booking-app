@@ -3,13 +3,12 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import dotenv from 'dotenv';
+import { env } from './src/config/environment.js';
+import connectDB from './src/config/mongoDB.js';
 
-// Khởi tạo dotenv để đọc file .env
-dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = env.PORT || 5000;
 
 app.use(helmet());
 app.use(morgan('dev'));
@@ -21,6 +20,11 @@ app.get('/api/movies', (req, res) => {
     res.json({ message: "API danh sách phim chạy bằng chuẩn ES Modules cực mượt!" });
 });
 
-app.listen(PORT, () => {
+const startServer = async () => {
+    await connectDB();
+    app.listen(PORT, () => {
     console.log(`🚀 Server ES Modules đang chạy tại: http://localhost:${PORT}`);
-});
+    }); 
+}
+
+startServer();  
