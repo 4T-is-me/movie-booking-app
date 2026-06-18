@@ -1,8 +1,0 @@
-{
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
-  }
-}
-//khi lưu file sẽ tự động format code theo quy tắc của Prettier và sửa lỗi ESLint nếu có.
