@@ -11,4 +11,4 @@ const scheduleSeatSchema = new mongoose.Schema({
     SEAT_TYPE: { type: Number, required: true }
     }, { versionKey: false, collection: 'SCHEDULE_SEAT' }
 );
-export const ScheduleSeat = mongoose.model('SCHEDULE_SEAT', scheduleSeatSchema);
+export const scheduleSeat = mongoose.model('SCHEDULE_SEAT', scheduleSeatSchema);

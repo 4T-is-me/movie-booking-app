@@ -10,4 +10,4 @@ const promotionSchema = new mongoose.Schema({
     TITLE: { type: String, required: true }
 }, { versionKey: false, collection: 'PROMOTION' });
 
-export const Promotion = mongoose.model('PROMOTION', promotionSchema);
+export const promotion = mongoose.model('PROMOTION', promotionSchema);

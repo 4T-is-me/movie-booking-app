@@ -5,4 +5,4 @@ const employeeSchema = new mongoose.Schema({
     ACCOUNT_ID: { type: String, ref: 'ACCOUNT', required: true, unique: true }
 }, { versionKey: false, collection: 'EMPLOYEE' });
 
-export const Employee = mongoose.model('EMPLOYEE', employeeSchema);
+export const employee = mongoose.model('EMPLOYEE', employeeSchema);

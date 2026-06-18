@@ -14,4 +14,4 @@ const invoiceSchema = new mongoose.Schema({
     SEAT: { type: String, required: true }
 }, { versionKey: false, collection: 'INVOICE' });
 
-export const Invoice = mongoose.model('INVOICE', invoiceSchema);
+export const invoice = mongoose.model('INVOICE', invoiceSchema);

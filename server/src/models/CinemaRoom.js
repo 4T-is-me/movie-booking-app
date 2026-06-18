@@ -6,4 +6,4 @@ const cinemaRoomSchema = new mongoose.Schema({
     SEAT_CAPACITY: { type: Number, required: true }
     }, { versionKey: false, collection: 'CINEMA_ROOM' });
 
-export const CinemaRoom = mongoose.model('CINEMA_ROOM', cinemaRoomSchema);
+export const cinemaRoom = mongoose.model('CINEMA_ROOM', cinemaRoomSchema);

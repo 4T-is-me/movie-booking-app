@@ -7,4 +7,4 @@ const memberSchema = new mongoose.Schema({
     }, { versionKey: false, collection: 'MEMBER' }
 );
 
-export const Member = mongoose.model('MEMBER', memberSchema);
+export const member = mongoose.model('MEMBER', memberSchema);
