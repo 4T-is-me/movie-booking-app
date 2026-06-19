@@ -1,0 +1,47 @@
+import { StatusCodes } from 'http-status-codes'
+import { accountService } from '../services/accountService.js'
+
+const register = async (req, res, next) => {
+    try {
+        const createAccount = await accountService.register(req.body)
+        res.status(StatusCodes.CREATED).json(createAccount)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const login = async (req, res, next) => {
+    try {
+        const account = await accountService.login(req.body)
+        res.status(StatusCodes.OK).json(account)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const getProfile = async (req, res, next) => {
+    try {
+        const accountId = req.user.sub
+        const account = await accountService.getProfile(accountId)
+        res.status(StatusCodes.OK).json(account)
+    } catch (error) {
+        next(error)
+    }
+}
+
+const updateProfile = async (req, res, next) => {
+    try {
+        const accountId = req.user.sub
+        const account = await accountService.updateProfile(accountId, req.body)
+        res.status(StatusCodes.OK).json(account)
+    } catch (error) {
+        next(error)
+    }
+}
+
+export const accountController = {
+    register,
+    login,
+    getProfile,
+    updateProfile
+}
