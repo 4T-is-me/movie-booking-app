@@ -6,4 +6,4 @@ const showDatesSchema = new mongoose.Schema({
     DATE_NAME: { type: String }
 }, { versionKey: false, collection: 'SHOW_DATES' });
 
-export const showDates = mongoose.model('SHOW_DATES', showDatesSchema);
+export const ShowDates = mongoose.model('SHOW_DATES', showDatesSchema);

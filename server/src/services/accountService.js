@@ -11,15 +11,12 @@ const register = async (reqBody) => {
         throw new ApiError(StatusCodes.CONFLICT, 'Email or username already exists')
     }
 
-    const salt = await bcryptjs.genSalt(10)
-    const passwordHash = await bcryptjs.hash(reqBody.password, salt)
+    const passwordHash = await bcryptjs.hash(reqBody.password, 10)
 
     const newAccount = new Account({
         username: reqBody.username,
         email: reqBody.email,
         passwordHash: passwordHash,
-        passwordSalt: salt,
-        refreshToken: null,
         fullName: reqBody.fullName,
         gender: reqBody.gender,
         dateOfBirth: reqBody.dateOfBirth,
@@ -27,7 +24,7 @@ const register = async (reqBody) => {
         identityCard: reqBody.identityCard,
         address: reqBody.address,
         image: reqBody.image,
-        roleId: reqBody.roleId,
+        roleId: '6a34f14e2f45bb09dc2d5c19', // Default Role: Employee
         status: 1,
         registerDate: new Date()
     })
@@ -43,7 +40,7 @@ const register = async (reqBody) => {
 
     const safeAccount = savedAccount.toObject()
     delete safeAccount.passwordHash
-    delete safeAccount.passwordSalt
+    if (safeAccount.passwordSalt) delete safeAccount.passwordSalt
 
     return safeAccount
 }
@@ -54,13 +51,13 @@ const login = async (reqBody) => {
         throw new ApiError(StatusCodes.UNAUTHORIZED, 'Email or password is incorrect')
     }
 
-    const isMatch = bcryptjs.compareSync(reqBody.password, account.passwordHash)
-    if (!isMatch) {
-        throw new ApiError(StatusCodes.UNAUTHORIZED, 'Email or password is incorrect')
-    }
-
     if (account.status === 0) {
         throw new ApiError(StatusCodes.FORBIDDEN, 'Account has been locked!')
+    }
+
+    const isMatch = await bcryptjs.compare(reqBody.password, account.passwordHash)
+    if (!isMatch) {
+        throw new ApiError(StatusCodes.UNAUTHORIZED, 'Email or password is incorrect')
     }
 
     const payload = {
@@ -77,7 +74,7 @@ const login = async (reqBody) => {
 
     const safeAccount = account.toObject()
     delete safeAccount.passwordHash
-    delete safeAccount.passwordSalt
+    if (safeAccount.passwordSalt) delete safeAccount.passwordSalt
 
     return {
         account: safeAccount,
@@ -87,25 +84,32 @@ const login = async (reqBody) => {
 }
 
 const getProfile = async (accountId) => {
-    const account = await Account.findById(accountId)
+    const account = await Account.findById(accountId).select('-passwordHash -passwordSalt -refreshToken')
     if (!account) {
         throw new ApiError(StatusCodes.NOT_FOUND, 'Account not found')
     }
-    const safeAccount = account.toObject()
-    delete safeAccount.passwordHash
-    delete safeAccount.passwordSalt
-    return safeAccount
+    return account
 }
 
 const updateProfile = async (accountId, reqBody) => {
-    const account = await Account.findByIdAndUpdate(accountId, reqBody, { new: true })
+    const allowedUpdates = [
+        'fullName', 'gender', 'dateOfBirth', 
+        'phoneNumber', 'identityCard', 'address', 'image'
+    ]
+    
+    const updateData = {}
+    Object.keys(reqBody).forEach(key => {
+        if (allowedUpdates.includes(key)) {
+            updateData[key] = reqBody[key]
+        }
+    })
+
+    const account = await Account.findByIdAndUpdate(accountId, updateData, { new: true }).select('-passwordHash -passwordSalt -refreshToken')
+    
     if (!account) {
         throw new ApiError(StatusCodes.NOT_FOUND, 'Account not found')
     }
-    const safeAccount = account.toObject()
-    delete safeAccount.passwordHash
-    delete safeAccount.passwordSalt
-    return safeAccount
+    return account
 }
 
 export const accountService = {

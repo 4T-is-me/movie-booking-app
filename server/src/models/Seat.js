@@ -9,4 +9,4 @@ const seatSchema = new mongoose.Schema({
     SEAT_TYPE: { type: Number, required: true }
 }, { versionKey: false, collection: 'SEAT' });
 
-export const seat = mongoose.model('SEAT', seatSchema);
+export const Seat = mongoose.model('SEAT', seatSchema);

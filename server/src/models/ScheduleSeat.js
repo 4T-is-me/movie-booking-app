@@ -9,6 +9,6 @@ const scheduleSeatSchema = new mongoose.Schema({
     SEAT_ROW: { type: Number, required: true },
     SEAT_STATUS: { type: Number, required: true },
     SEAT_TYPE: { type: Number, required: true }
-    }, { versionKey: false, collection: 'SCHEDULE_SEAT' }
+}, { versionKey: false, collection: 'SCHEDULE_SEAT' }
 );
-export const scheduleSeat = mongoose.model('SCHEDULE_SEAT', scheduleSeatSchema);
+export const ScheduleSeat = mongoose.model('SCHEDULE_SEAT', scheduleSeatSchema);
