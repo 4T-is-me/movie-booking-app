@@ -5,4 +5,4 @@ const scheduleSchema = new mongoose.Schema({
     SCHEDULE_TIME: { type: String, required: true },
 }, { versionKey: false, collection: 'SCHEDULE' });
 
-export const schedule = mongoose.model('SCHEDULE', scheduleSchema);
+export const Schedule = mongoose.model('SCHEDULE', scheduleSchema);

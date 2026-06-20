@@ -7,7 +7,7 @@ import { env } from './src/config/environment.js';
 import connectDB from './src/config/mongoDB.js';
 import movieRoutes from './src/routes/movieRoutes.js';
 import showtimeRoutes from './src/routes/showtimeRoutes.js';
-
+import { accountRoute } from './src/routes/accountRoute.js';
 
 const app = express();
 const PORT = env.PORT || 5000;
@@ -25,6 +25,8 @@ app.get('/api/movies', (req, res) => {
 // Routes
 app.use('/api/movies', movieRoutes);
 app.use('/api/showtimes', showtimeRoutes);
+app.use('/api/auth', accountRoute.authRouter);
+app.use('/api/accounts', accountRoute.accountRouter);
 
 const startServer = async () => {
     await connectDB();
