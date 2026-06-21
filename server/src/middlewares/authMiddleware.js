@@ -33,12 +33,12 @@ const isAuthorized = async (req, res, next) => {
 
 const authorizeRoles = (...allowedRoles) => {
     return (req, res, next) => {
-        // req.user được gán từ hàm isAuthorized ở trên
-        const userRole = req.user.roleId;
+        // req.user được gán từ hàm isAuthorized ở trên, bây giờ chứa role theo format mới từ payload ({ accountId, role, username })
+        const userRole = req.user.role;
 
         // Kiểm tra xem role của user có nằm trong danh sách được phép không
-        if (!allowedRoles.includes(userRole)) {
-            return next(new ApiError(StatusCodes.FORBIDDEN, 'Bạn không có quyền truy cập tài nguyên này!'));
+        if (!userRole || !allowedRoles.includes(userRole)) {
+            return next(new ApiError(StatusCodes.FORBIDDEN, 'Access Denied: You do not have permission to access this resource!'));
         }
 
         next();

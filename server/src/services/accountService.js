@@ -46,7 +46,7 @@ const register = async (reqBody) => {
 }
 
 const login = async (reqBody) => {
-    const account = await Account.findOne({ email: reqBody.email })
+    const account = await Account.findOne({ email: reqBody.email }).populate('roleId')
     if (!account) {
         throw new ApiError(StatusCodes.UNAUTHORIZED, 'Email or password is incorrect')
     }
@@ -61,9 +61,9 @@ const login = async (reqBody) => {
     }
 
     const payload = {
-        sub: account._id.toString(),
-        email: account.email,
-        roleId: account.roleId
+        accountId: account._id.toString(),
+        username: account.username,
+        role: account.roleId ? account.roleId.name : 'Customer'
     }
 
     const accessToken = jwtProvider.generateAccessToken(payload)

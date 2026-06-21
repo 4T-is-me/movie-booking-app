@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.example.movie_booking_app"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.movie_booking_app"
