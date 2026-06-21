@@ -13,8 +13,7 @@ const register = async (req, res, next) => {
         phoneNumber: Joi.string().pattern(/^0\d{9}$/).required().trim().strict(),
         identityCard: Joi.string().required().length(12).pattern(/^[0-9]+$/).trim().strict(),
         address: Joi.string().trim().strict(),
-        image: Joi.string().trim().strict(),
-        roleId: Joi.string().required().trim().strict()
+        image: Joi.string().trim().strict()
     })
 
     try {

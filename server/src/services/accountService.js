@@ -24,7 +24,7 @@ const register = async (reqBody) => {
         identityCard: reqBody.identityCard,
         address: reqBody.address,
         image: reqBody.image,
-        roleId: '6a34f14e2f45bb09dc2d5c19', // Default Role: Employee
+        roleId: '6a34f14e2f45bb09dc2d5c1a', // Default Role: Customer
         status: 1,
         registerDate: new Date()
     })
@@ -93,10 +93,10 @@ const getProfile = async (accountId) => {
 
 const updateProfile = async (accountId, reqBody) => {
     const allowedUpdates = [
-        'fullName', 'gender', 'dateOfBirth', 
+        'fullName', 'gender', 'dateOfBirth',
         'phoneNumber', 'identityCard', 'address', 'image'
     ]
-    
+
     const updateData = {}
     Object.keys(reqBody).forEach(key => {
         if (allowedUpdates.includes(key)) {
@@ -105,7 +105,7 @@ const updateProfile = async (accountId, reqBody) => {
     })
 
     const account = await Account.findByIdAndUpdate(accountId, updateData, { new: true }).select('-passwordHash -passwordSalt -refreshToken')
-    
+
     if (!account) {
         throw new ApiError(StatusCodes.NOT_FOUND, 'Account not found')
     }
