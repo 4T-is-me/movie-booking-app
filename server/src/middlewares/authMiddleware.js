@@ -31,6 +31,21 @@ const isAuthorized = async (req, res, next) => {
     }
 }
 
+const authorizeRoles = (...allowedRoles) => {
+    return (req, res, next) => {
+        // req.user được gán từ hàm isAuthorized ở trên
+        const userRole = req.user.roleId;
+
+        // Kiểm tra xem role của user có nằm trong danh sách được phép không
+        if (!allowedRoles.includes(userRole)) {
+            return next(new ApiError(StatusCodes.FORBIDDEN, 'Bạn không có quyền truy cập tài nguyên này!'));
+        }
+
+        next();
+    };
+};
+
 export const authMiddleware = {
-    isAuthorized
+    isAuthorized,
+    authorizeRoles
 }

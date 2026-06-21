@@ -26,13 +26,13 @@ app.get('/api/movies', (req, res) => {
 app.use('/api/movies', movieRoutes);
 app.use('/api/showtimes', showtimeRoutes);
 app.use('/api/auth', accountRoute.authRouter);
-app.use('/api/accounts', accountRoute.accountRouter);
+app.use('/api/user', accountRoute.accountRouter);
 
 const startServer = async () => {
     await connectDB();
     app.listen(PORT, () => {
-    console.log(`🚀 Server ES Modules đang chạy tại: http://localhost:${PORT}`);
-    }); 
+        console.log(`🚀 Server ES Modules đang chạy tại: http://localhost:${PORT}`);
+    });
 }
 
 startServer();  
