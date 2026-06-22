@@ -9,17 +9,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.ActivityProfileBinding
-import com.example.movie_booking_app.viewmodel.ProfileViewModel
+import com.example.movie_booking_app.viewmodel.profileViewModel
 import kotlinx.coroutines.launch
 
 /**
  * Activity representing the User Profile Screen.
  */
-class ProfileActivity : AppCompatActivity() {
+class profileActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityProfileBinding
-    private val viewModel: ProfileViewModel by lazy {
-        ViewModelProvider(this)[ProfileViewModel::class.java]
+    private val viewModel: profileViewModel by lazy {
+        ViewModelProvider(this)[profileViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,7 +103,7 @@ class ProfileActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.error.collect { errorMsg ->
                     errorMsg?.let {
-                        Toast.makeText(this@ProfileActivity, it, Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@profileActivity, it, Toast.LENGTH_LONG).show()
                     }
                 }
             }
