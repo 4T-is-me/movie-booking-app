@@ -5,22 +5,47 @@ import { MovieSchedule } from '../models/movieScheduleModel.js';
 import { Schedule } from '../models/scheduleModel.js';
 
 // GET /api/movies
-// Hỗ trợ lọc theo trạng thái (now_showing / coming_soon) và phân trang
-export const getMovies = async ({ status, page = 1, limit = 10 }) => {
+// Hỗ trợ lọc theo trạng thái (now_showing / coming_soon), tìm kiếm tên (q) và phân trang
+export const getMovies = async ({ status, page = 1, limit = 10, q }) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const query = {};
+    const conditions = [];
+
+    // Lọc theo trạng thái chiếu:
+    //   now_showing  → FROM_DATE (releaseDate) <= today <= TO_DATE (endDate)
+    //   coming_soon  → FROM_DATE (releaseDate) > today  ≡  FROM_DATE >= tomorrow
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
     if (status === 'now_showing') {
-        query.FROM_DATE = { $lte: today };
-        query.TO_DATE = { $gte: today };
+        // FROM_DATE <= today  AND  TO_DATE >= today
+        conditions.push({
+            FROM_DATE: { $lte: today },
+            TO_DATE:   { $gte: today }
+        });
     } else if (status === 'coming_soon') {
-        query.FROM_DATE = { $gt: today };
+        // FROM_DATE > today  ≡  FROM_DATE >= tomorrow (tránh edge case timestamp)
+        conditions.push({ FROM_DATE: { $gte: tomorrow } });
     }
+
+    // Tìm kiếm tương đối theo tên tiếng Việt hoặc tiếng Anh
+    if (q && q.trim() !== '') {
+        const regex = new RegExp(q.trim(), 'i');
+        conditions.push({
+            $or: [
+                { MOVIE_NAME_VN: { $regex: regex } },
+                { MOVIE_NAME_ENGLISH: { $regex: regex } }
+            ]
+        });
+    }
+
+    const query = conditions.length > 0 ? { $and: conditions } : {};
 
     const skip = (Number(page) - 1) * Number(limit);
     const total = await Movie.countDocuments(query);
     const movies = await Movie.find(query)
+        .sort({ FROM_DATE: 1 })
         .skip(skip)
         .limit(Number(limit))
         .lean();

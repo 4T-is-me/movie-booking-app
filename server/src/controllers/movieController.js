@@ -5,11 +5,11 @@ import {
     getMovieShowtimes
 } from '../services/movieService.js';
 
-// GET /api/movies
+// GET /api/movies - Lấy danh sách phim (lọc status, tìm kiếm q, phân trang page/limit)
 export const handleGetMovies = async (req, res) => {
     try {
-        const { status, page, limit } = req.query;
-        const result = await getMovies({ status, page, limit });
+        const { status, page, limit, q } = req.query;
+        const result = await getMovies({ status, page, limit, q });
         return res.status(200).json(result);
     } catch (error) {
         console.error('handleGetMovies error:', error);

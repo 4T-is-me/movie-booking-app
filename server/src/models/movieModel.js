@@ -17,5 +17,7 @@ const movieSchema = new mongoose.Schema({
     SMALL_IMAGE: { type: String }
 }, { versionKey: false, collection: 'MOVIE' });
 
+// Index tối ưu truy vấn lọc phim theo ngày chiếu (FROM_DATE, TO_DATE)
+movieSchema.index({ FROM_DATE: 1, TO_DATE: 1 });
 
 export const Movie = mongoose.model('MOVIE', movieSchema);
