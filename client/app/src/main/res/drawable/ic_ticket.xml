@@ -1,0 +1,10 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24.0"
+    android:viewportHeight="24.0">
+    <!-- Ticket outline icon with side curves/notches -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M22,10V6c0,-1.1 -0.9,-2 -2,-2H4c-1.1,0 -2,0.9 -2,2v4c1.1,0 2,0.9 2,2s-0.9,2 -2,2v4c0,1.1 0.9,2 2,2h16c1.1,0 2,-0.9 2,-2v-4c-1.1,0 -2,-0.9 -2,-2s0.9,-2 2,-2zm-2,1.54c-1.64,0.36 -2.85,1.82 -2.85,3.46c0,1.64 1.21,3.1 2.85,3.46v0.54H4v-0.54c1.64,-0.36 2.85,-1.82 2.85,-3.46c0,-1.64 -1.21,-3.1 -2.85,-3.46V10.46c1.64,-0.36 2.85,-1.82 2.85,-3.46V6.46h12v0.54c-1.64,0.36 -2.85,1.82 -2.85,3.46c0,1.64 1.21,3.1 2.85,3.46v1.08z"/>
+</vector>
