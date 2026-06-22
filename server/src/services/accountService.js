@@ -4,6 +4,7 @@ import { Account } from '../models/accountModel.js'
 import { member as Member } from '../models/memberModel.js'
 import { jwtProvider } from '../utils/jwtProvider.js'
 import bcryptjs from 'bcryptjs'
+import '../models/rolesModel.js'
 
 const register = async (reqBody) => {
     const existedUser = await Account.findOne({ $or: [{ email: reqBody.email }, { username: reqBody.username }] })
@@ -23,8 +24,8 @@ const register = async (reqBody) => {
         phoneNumber: reqBody.phoneNumber,
         identityCard: reqBody.identityCard,
         address: reqBody.address,
-        image: reqBody.image,
-        roleId: '6a34f14e2f45bb09dc2d5c1a', // Default Role: Customer
+        image: null,
+        roleId: '6a38d663cf6b5ffdb33166f5', // Default Role: Member
         status: 1,
         registerDate: new Date()
     })
