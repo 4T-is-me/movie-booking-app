@@ -1,8 +1,8 @@
-import { Movie } from '../models/Movie.js';
-import { MovieDate } from '../models/MovieDate.js';
-import { ShowDates } from '../models/ShowDates.js';
-import { MovieSchedule } from '../models/MovieSchedule.js';
-import { Schedule } from '../models/Schedule.js';
+import { Movie } from '../models/movieModel.js';
+import { MovieDate } from '../models/movieDateModel.js';
+import { ShowDates } from '../models/showDatesModel.js';
+import { MovieSchedule } from '../models/movieScheduleModel.js';
+import { Schedule } from '../models/scheduleModel.js';
 
 // GET /api/movies
 // Hỗ trợ lọc theo trạng thái (now_showing / coming_soon) và phân trang
