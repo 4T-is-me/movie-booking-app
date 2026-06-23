@@ -1,0 +1,24 @@
+import mongoose from 'mongoose';
+
+const movieSchema = new mongoose.Schema({
+    movieName: { type: String, required: true, trim: true },
+    duration: { type: Number, required: true }, // Thời lượng (phút)
+    releaseDate: { type: Date, required: true }, // Ngày công chiếu
+    movieGenre: { type: [String], required: true }, // Mảng các thể loại phim
+    language: { type: String, required: true },
+    censorship: { type: String, required: true }, // Độ tuổi (ví dụ: 13T)
+    description: { type: String }, // Mô tả nội dung phim
+    director: { type: [String], required: true }, // Mảng tên các đạo diễn
+    actors: { type: [String], required: true }, // Mảng tên các diễn viên
+    country: { type: String, required: true },
+    status: { type: String, default: 'coming_soon' }, // Trạng thái phim (ended, showing,...)
+    poster: { type: String }, // Link ảnh poster phim
+    rating: { type: Number, default: 0 },
+    totalReviews: { type: Number, default: 0 }
+}, {
+    versionKey: false,
+    collection: 'movies', // Khớp với tên collection trong lỗi cũ của bạn
+    timestamps: true // Tự động quản lý createdAt và updatedAt dưới dạng ISODate
+});
+
+export const Movie = mongoose.model('Movie', movieSchema);

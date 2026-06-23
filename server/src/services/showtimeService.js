@@ -1,8 +1,8 @@
-import { ScheduleSeat } from '../models/ScheduleSeat.js';
-import { Seat } from '../models/Seat.js';
-import { CinemaRoom } from '../models/CinemaRoom.js';
-import { MovieSchedule } from '../models/MovieSchedule.js';
-import { Schedule } from '../models/Schedule.js';
+import { ScheduleSeat } from '../models/scheduleSeatModel.js';
+import { Seat } from '../models/seatModel.js';
+import { CinemaRoom } from '../models/cinemaRoomModel.js';
+import { MovieSchedule } from '../models/movieScheduleModel.js';
+import { Schedule } from '../models/scheduleModel.js';
 
 /**
  * GET /api/showtimes/:id/seats
@@ -56,7 +56,7 @@ export const getShowtimeSeats = async (scheduleId) => {
         seat_status: ss.SEAT_STATUS,    // 0 = trống, 1 = đã bán, 2 = đang chọn
         seat_status_label: ss.SEAT_STATUS === 1 ? 'Đã bán'
             : ss.SEAT_STATUS === 2 ? 'Đang chọn'
-            : 'Trống'
+                : 'Trống'
     }));
 
     // Sắp xếp ghế theo hàng rồi theo cột

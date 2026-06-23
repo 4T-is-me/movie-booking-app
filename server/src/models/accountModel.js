@@ -19,9 +19,7 @@ const accountSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    passwordSalt: {
-        type: String
-    },
+
     refreshToken: {
         type: String
     },

@@ -1,9 +1,10 @@
 import { StatusCodes } from 'http-status-codes'
 import ApiError from '../utils/ApiError.js'
 import { Account } from '../models/accountModel.js'
-import { member as Member } from '../models/Member.js'
+import { member as Member } from '../models/memberModel.js'
 import { jwtProvider } from '../utils/jwtProvider.js'
 import bcryptjs from 'bcryptjs'
+import '../models/rolesModel.js'
 
 const register = async (reqBody) => {
     const existedUser = await Account.findOne({ $or: [{ email: reqBody.email }, { username: reqBody.username }] })
@@ -23,8 +24,8 @@ const register = async (reqBody) => {
         phoneNumber: reqBody.phoneNumber,
         identityCard: reqBody.identityCard,
         address: reqBody.address,
-        image: reqBody.image,
-        roleId: '6a34f14e2f45bb09dc2d5c1a', // Default Role: Customer
+        image: null,
+        roleId: '6a38d663cf6b5ffdb33166f5', // Default Role: Member
         status: 1,
         registerDate: new Date()
     })
@@ -46,7 +47,7 @@ const register = async (reqBody) => {
 }
 
 const login = async (reqBody) => {
-    const account = await Account.findOne({ email: reqBody.email })
+    const account = await Account.findOne({ email: reqBody.email }).populate('roleId')
     if (!account) {
         throw new ApiError(StatusCodes.UNAUTHORIZED, 'Email or password is incorrect')
     }
@@ -61,9 +62,9 @@ const login = async (reqBody) => {
     }
 
     const payload = {
-        sub: account._id.toString(),
-        email: account.email,
-        roleId: account.roleId
+        accountId: account._id.toString(),
+        username: account.username,
+        role: account.roleId ? account.roleId.name : 'Customer'
     }
 
     const accessToken = jwtProvider.generateAccessToken(payload)
