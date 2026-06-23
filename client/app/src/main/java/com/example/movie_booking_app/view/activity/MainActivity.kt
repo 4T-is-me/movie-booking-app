@@ -7,7 +7,7 @@ import androidx.activity.ComponentActivity
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        startActivity(Intent(this, profileActivity::class.java))
+        startActivity(Intent(this, selectSeatActivity::class.java))
         finish()
     }
 }
