@@ -9,12 +9,8 @@ import com.example.movie_booking_app.R
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        startActivity(Intent(this, selectSeatActivity::class.java))
+        finish()
 
-        val btnLogin = findViewById<Button>(R.id.btnLogin)
-        btnLogin.setOnClickListener {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-        }
     }
 }
