@@ -1,12 +1,15 @@
 import mongoose from 'mongoose';
 
 const seatSchema = new mongoose.Schema({
-    SEAT_ID: { type: Number, required: true, unique: true },
-    CINEMA_ROOM_ID: { type: Number, ref: 'CINEMA_ROOM', required: true },
-    SEAT_COLUMN: { type: String, required: true },
-    SEAT_ROW: { type: Number, required: true },
-    SEAT_STATUS: { type: Number, required: true },
-    SEAT_TYPE: { type: Number, required: true }
-}, { versionKey: false, collection: 'SEAT' });
+    roomId: { type: mongoose.Schema.Types.ObjectId,  ref: "CinemaRoom",required: true },
+    seatName:{type: String, required: true},
+    price:{type: Number, required: true},
+    row: {type: String, required: true},
+    col: {type: String, required: true},
+    status: {type: String, default: 1, default: 'available'}, // 'available', 'hold', 'booked', 'unavailable'
+    seatType: { type: String ,default: 1, default: 'Regular'}, // 'Regular', 'VIP', 'Couple'
+}, { versionKey: false, collection: 'seats' });
 
-export const Seat = mongoose.model('SEAT', seatSchema);
+// Không cho trùng ghế trong cùng 1 phòng
+seatSchema.index({roomId: 1, seatName: 1}, {unique: true});
+export const Seat = mongoose.model('Seat', seatSchema);

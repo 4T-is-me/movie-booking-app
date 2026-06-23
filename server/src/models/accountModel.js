@@ -59,7 +59,7 @@ const accountSchema = new mongoose.Schema({
     // 3. Nhóm quản lý hệ thống (Cuối ảnh)
     roleId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'roles',
+        ref: 'Role',
         required: true
     },
     status: {
@@ -75,4 +75,4 @@ const accountSchema = new mongoose.Schema({
     collection: 'accounts'
 });
 
-export const Account = mongoose.model('ACCOUNT', accountSchema);
+export const Account = mongoose.model('Account', accountSchema);
