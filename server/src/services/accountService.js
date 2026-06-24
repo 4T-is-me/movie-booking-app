@@ -33,10 +33,21 @@ const register = async (reqBody) => {
     const savedAccount = await newAccount.save()
 
     const newMember = new Member({
-        MEMBER_ID: `MEM${Date.now()}`,
-        SCORE: 0,
-        ACCOUNT_ID: savedAccount._id
-    })
+    accountId: savedAccount._id,
+
+    fullName: reqBody.fullName,
+    gender: reqBody.gender,
+    dateOfBirth: reqBody.dateOfBirth,
+    phoneNumber: reqBody.phoneNumber,
+    identityCard: reqBody.identityCard,
+
+    address: reqBody.address,
+    image: null,
+
+    rewardPoints: 0,
+    membershipRank: 'bronze',
+    totalSpent: 0
+})
     await newMember.save()
 
     const safeAccount = savedAccount.toObject()
