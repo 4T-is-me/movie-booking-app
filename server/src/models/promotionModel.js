@@ -9,4 +9,4 @@ const promotionSchema = new mongoose.Schema({
     endTime: {type: Date, required: true}
 }, { timestamps: true, versionKey: false, collection: 'promotions' });
 
-export const promotion = mongoose.model('Promotions', promotionSchema);
+export const Promotion = mongoose.model('Promotions', promotionSchema);

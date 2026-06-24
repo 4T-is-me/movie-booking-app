@@ -10,4 +10,4 @@ const showtimeSchema = new mongoose.Schema({
     endTime: {type: Date, required: true}
 }, { timestamps: true, versionKey: false, collection: 'showtimes' });
 
-export const Schedule = mongoose.model('Showtime', scheduleSchema);
+export const Showtime = mongoose.model('Showtime', showtimeSchema);
