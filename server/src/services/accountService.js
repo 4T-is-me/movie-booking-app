@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes'
 import ApiError from '../utils/ApiError.js'
 import { Account } from '../models/accountModel.js'
-import { member as Member } from '../models/memberModel.js'
+import { Member } from '../models/memberModel.js'
 import { jwtProvider } from '../utils/jwtProvider.js'
 import bcryptjs from 'bcryptjs'
 import '../models/rolesModel.js'

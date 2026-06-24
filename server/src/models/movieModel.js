@@ -14,7 +14,8 @@ const movieSchema = new mongoose.Schema({
     status: { type: String, default: 'coming_soon' }, // Trạng thái phim (ended, showing,...)
     poster: { type: String }, // Link ảnh poster phim
     rating: { type: Number, default: 0 },
-    totalReviews: { type: Number, default: 0 }
+    totalReviews: { type: Number, default: 0 },
+    totalStarts: { type: Number, default: 0 }
 }, {
     versionKey: false,
     collection: 'movies', // Khớp với tên collection trong lỗi cũ của bạn
