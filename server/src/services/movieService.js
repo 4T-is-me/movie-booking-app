@@ -9,33 +9,28 @@ export const getMovies = async ({ status, page = 1, limit = 10, q }) => {
 
     const conditions = [];
 
-    // Lọc theo trạng thái chiếu:
-    //   now_showing  → FROM_DATE (releaseDate) <= today <= TO_DATE (endDate)
-    //   coming_soon  → FROM_DATE (releaseDate) > today  ≡  FROM_DATE >= tomorrow
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-
+    // Lọc theo trạng thái chiếu dựa trên releaseDate / endDate / status:
+    //   now_showing  → releaseDate <= today AND (endDate >= today OR endDate null)
+    //   coming_soon  → status === 'coming_soon' (chưa xác định endDate)
     if (status === 'now_showing') {
-
-        // FROM_DATE <= today  AND  TO_DATE >= today
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
         conditions.push({
-            FROM_DATE: { $lte: today },
-            TO_DATE:   { $gte: today }
+            releaseDate: { $lte: today },
+            $or: [
+                { endDate: { $gte: today } },
+                { endDate: null },
+                { endDate: { $exists: false } }
+            ]
         });
     } else if (status === 'coming_soon') {
-        // FROM_DATE > today  ≡  FROM_DATE >= tomorrow (tránh edge case timestamp)
-        conditions.push({ FROM_DATE: { $gte: tomorrow } });
-
+        conditions.push({ status: 'coming_soon' });
     }
 
-    // Tìm kiếm tương đối theo tên tiếng Việt hoặc tiếng Anh
+    // Tìm kiếm theo tên phim (movieName)
     if (q && q.trim() !== '') {
-        const regex = new RegExp(q.trim(), 'i');
         conditions.push({
-            $or: [
-                { MOVIE_NAME_VN: { $regex: regex } },
-                { MOVIE_NAME_ENGLISH: { $regex: regex } }
-            ]
+            movieName: { $regex: q.trim(), $options: 'i' }
         });
     }
 
@@ -44,7 +39,7 @@ export const getMovies = async ({ status, page = 1, limit = 10, q }) => {
     const skip = (Number(page) - 1) * Number(limit);
     const total = await Movie.countDocuments(query);
     const movies = await Movie.find(query)
-        .sort({ FROM_DATE: 1 })
+        .sort({ releaseDate: 1 })
         .skip(skip)
         .limit(Number(limit))
         .lean();
@@ -58,8 +53,9 @@ export const getMovies = async ({ status, page = 1, limit = 10, q }) => {
     };
 };
 
+
 // GET /api/movies/search?q=...
-// Tìm kiếm tương đối theo tên tiếng Việt hoặc tiếng Anh (dùng $regex string + $options 'i'), có phân trang
+// Tìm kiếm theo movieName (dùng $regex + $options 'i'), có phân trang
 export const searchMovies = async ({ q, page = 1, limit = 10 }) => {
     if (!q || q.trim() === '') {
         return {
@@ -74,20 +70,16 @@ export const searchMovies = async ({ q, page = 1, limit = 10 }) => {
 
     const keyword = q.trim();
     const searchQuery = {
-        $or: [
-            { MOVIE_NAME_VN:      { $regex: keyword, $options: 'i' } },
-            { MOVIE_NAME_ENGLISH: { $regex: keyword, $options: 'i' } }
-        ]
+        movieName: { $regex: keyword, $options: 'i' }
     };
 
     const skip  = (Number(page) - 1) * Number(limit);
     const total = await Movie.countDocuments(searchQuery);
     const movies = await Movie.find(searchQuery)
-        .sort({ MOVIE_NAME_VN: 1 })
+        .sort({ movieName: 1 })
         .skip(skip)
         .limit(Number(limit))
         .lean();
-
 
     if (movies.length === 0) {
         return {
