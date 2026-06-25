@@ -4,7 +4,10 @@ import ApiError from '../utils/ApiError.js';
 
 const handleHoldSeats = async (req, res, next) => {
     try {
-        const { showtimeId, seatIds } = req.body;
+
+        const showtimeId = req.params.id
+
+        const {  seatIds } = req.body;
         const result = await bookingService.handleHoldSeats({
             accountId: req.user?.accountId,
             showtimeId,
@@ -54,10 +57,29 @@ const handleGetScoreHistory = async (req, res, next) => {
         next(error)
     }
 }
+const handleReleaseBooking = async (req, res, next) => {
+    try {
+        const showtimeId = req.params.id;
+        const accountId = req.user?.accountId;
 
+        if (!accountId) {
+            throw new ApiError(StatusCodes.UNAUTHORIZED, "Account not found in token");
+        }
+
+        const result = await bookingService.handleReleaseBooking({
+            accountId,
+            showtimeId
+        });
+
+        return res.status(StatusCodes.OK).json({ success: true, data: result });
+    } catch (error) {
+        next(error);
+    }
+}
 export const bookingController = { 
     handleHoldSeats,
     handleConfirmBooking,
     handleGetHistory,
-    handleGetScoreHistory
+    handleGetScoreHistory,
+    handleReleaseBooking
 }

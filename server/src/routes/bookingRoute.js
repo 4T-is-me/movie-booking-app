@@ -4,8 +4,6 @@ import { authMiddleware } from '../middlewares/authMiddleware.js'
 
 const bookingRouter = express.Router()
 
-// POST /api/bookings/hold-seats --chọn và giữ ghế
-bookingRouter.post('/hold-seats', authMiddleware.isAuthorized, bookingController.handleHoldSeats)
 // POST /api/bookings/confirm --check seats valid + total price + check and deduct points
 bookingRouter.post('/confirm', authMiddleware.isAuthorized, bookingController.handleConfirmBooking)
 // GET /api/bookings/history --get history

@@ -1,5 +1,3 @@
-
-
 import { ScheduleSeat } from "../models/scheduleSeatModel.js";
 import { Booking } from "../models/bookingModel.js";
 import { constants } from "../utils/constants.js";
@@ -20,37 +18,35 @@ const handleHoldSeats = async ({ accountId, showtimeId, seatIds }) => {
     const expiredTime = new Date(Date.now() + 10 * 60 * 1000);// expire in 10 minutes
     const now = new Date();
     const updatedSeats = [];
+    
     for (const seatId of seatIds) {
+      let seat = await ScheduleSeat.findOne({ showtimeId, seatId }).session(session);
 
-      // handle the case where two people hold the same seat
-      const seat = await ScheduleSeat.findOneAndUpdate(
-        {
-          showtimeId: showtimeId,
-          seatId: seatId,
-          $or: [
-            { status: constants.SEAT_STATUS.AVAILABLE }, // status = AVAILABLE
-            {
-              status: constants.SEAT_STATUS.HOLD, // status = HOLD(not yet expired)
-              holdExpiresAt: { $lte: now },
-            },
-          ],
-        },
-        {
-          $set: {
-            status: constants.SEAT_STATUS.HOLD,
-            accountId: accountId,
-            holdExpiresAt: expiredTime,
-          },
-        },
-        {
-          new: true, session
-        },
-      ).lean();
-      console.log(seat);
-      if (!seat) { 
-        throw new Error(`Seat ${seatId} is unavailable`);
+      if (seat) {
+        if (seat.status === "booked") {
+          throw new Error(`Seat ${seatId} is already booked`);
+        }
+        if (seat.status === "holding" && seat.holdExpiresAt > now && seat.accountId.toString() !== accountId.toString()) {
+          throw new Error(`Seat ${seatId} is currently held by someone else`);
+        }
+        
+        // Cập nhật seat
+        seat.status = "holding";
+        seat.accountId = accountId;
+        seat.holdExpiresAt = expiredTime;
+        await seat.save({ session });
+      } else {
+        // Tạo mới seat
+        seat = new ScheduleSeat({
+          showtimeId,
+          seatId,
+          accountId,
+          status: "holding",
+          holdExpiresAt: expiredTime
+        });
+        await seat.save({ session });
       }
-      updatedSeats.push(seat);
+      updatedSeats.push(seat.toObject ? seat.toObject() : seat);
     }
 
     await session.commitTransaction(); 
@@ -90,9 +86,9 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, pointUsed 
     const seats = await ScheduleSeat.find({
       showtimeId: showtimeId,
       seatId: { $in: seatIds },
-      status: constants.SEAT_STATUS.HOLD,
+      status: "holding",
       accountId: accountId,
-      holdExpiresAt: { $gte: new Date() },
+holdExpiresAt: { $gte: new Date() },
     })
       .populate("seatId")
       .session(session);
@@ -117,10 +113,10 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, pointUsed 
     ); //price combo
     const subTotal = ticketPrice + comboPrice; // vé + combo
 
-    //Promotion (khuyến mãi => nếu có)
+    //Promotion(if any)
     let promotionDiscount = 0;
     let promotion = null;
-    // check promotion(nếu có id khuyến mãi)
+    // check promotion
     if (promotionId) {
       promotion = await Promotion.findById(promotionId).session(session);
       // validate promotion
@@ -176,20 +172,19 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, pointUsed 
       {
         showtimeId: showtimeId,
         seatId: { $in: seatIds },
-        status: constants.SEAT_STATUS.HOLD,
+        status: "holding",
         accountId: accountId,
         holdExpiresAt: { $gte: new Date() },
       },
       {
         $set: {
-          status: constants.SEAT_STATUS.SOLD,
+          status: "booked",
           holdExpiresAt: null,
         },
       },
       { session },
     );
-
-    // create score history
+// create score history
     await ScoreHistory.create(
       [
         {
@@ -246,9 +241,24 @@ const handleGetScoreHistory = async (accountId) => {
   return await ScoreHistory.find({memberId: member._id}).sort({createdAt: -1}).populate("bookingId");
 };
 
+// release seats currently held by the authenticated account for a showtime
+const handleReleaseBooking = async ({ accountId, showtimeId }) => {
+  const result = await ScheduleSeat.deleteMany({ 
+    showtimeId,
+    accountId,
+    status: "holding",
+  });
+
+  return {
+    showtimeId,
+    releasedCount: result.deletedCount,
+  };
+};
+
 export const bookingService = {
   handleHoldSeats,
   handleConfirmBooking,
   handleGetHistory,
   handleGetScoreHistory,
+  handleReleaseBooking,
 };
