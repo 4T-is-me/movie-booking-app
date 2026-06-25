@@ -1,11 +1,5 @@
 import { Movie } from '../models/movieModel.js';
-import { MovieDate } from '../models/movieDateModel.js';
-import { ShowDates } from '../models/showDatesModel.js';
-import { MovieSchedule } from '../models/movieScheduleModel.js';
-import { Schedule } from '../models/scheduleModel.js';
-import { ScheduleSeat } from '../models/scheduleSeatModel.js';
-import { Seat } from '../models/seatModel.js';
-import { CinemaRoom } from '../models/cinemaRoomModel.js';
+
 
 // GET /api/movies
 // Hỗ trợ lọc theo trạng thái (now_showing / coming_soon), tìm kiếm tên (q) và phân trang
@@ -22,6 +16,7 @@ export const getMovies = async ({ status, page = 1, limit = 10, q }) => {
     tomorrow.setDate(tomorrow.getDate() + 1);
 
     if (status === 'now_showing') {
+
         // FROM_DATE <= today  AND  TO_DATE >= today
         conditions.push({
             FROM_DATE: { $lte: today },
@@ -30,6 +25,7 @@ export const getMovies = async ({ status, page = 1, limit = 10, q }) => {
     } else if (status === 'coming_soon') {
         // FROM_DATE > today  ≡  FROM_DATE >= tomorrow (tránh edge case timestamp)
         conditions.push({ FROM_DATE: { $gte: tomorrow } });
+
     }
 
     // Tìm kiếm tương đối theo tên tiếng Việt hoặc tiếng Anh
@@ -92,6 +88,7 @@ export const searchMovies = async ({ q, page = 1, limit = 10 }) => {
         .limit(Number(limit))
         .lean();
 
+
     if (movies.length === 0) {
         return {
             page: Number(page),
@@ -115,8 +112,7 @@ export const searchMovies = async ({ q, page = 1, limit = 10 }) => {
 // GET /api/movies/:id
 // Lấy thông tin chi tiết một bộ phim
 export const getMovieById = async (id) => {
-    const movie = await Movie.findOne({ MOVIE_ID: id }).lean();
-    return movie;
+    return await Movie.findById(id).lean();
 };
 
 // GET /api/movies/:id/showtimes?date=YYYY-MM-DD
@@ -132,11 +128,12 @@ export const getMovieShowtimes = async (movieId, date) => {
 
     // 2. Lọc ngày chiếu theo date (nếu có)
     const showDateQuery = { SHOW_DATE_ID: { $in: showDateIds } };
+
     if (date) {
         const target = new Date(date);
         const nextDay = new Date(date);
         nextDay.setDate(nextDay.getDate() + 1);
-        showDateQuery.SHOW_DATE = { $gte: target, $lt: nextDay };
+        query.showDate  = { $gte: target, $lt: nextDay };
     }
     const showDates = await ShowDates.find(showDateQuery).sort({ SHOW_DATE: 1 }).lean();
     if (showDates.length === 0) return null;

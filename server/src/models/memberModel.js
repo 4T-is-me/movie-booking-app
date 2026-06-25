@@ -1,10 +1,18 @@
 import mongoose from 'mongoose';
 
 const memberSchema = new mongoose.Schema({
-    MEMBER_ID: { type: String, required: true, unique: true },
-    SCORE: { type: Number, default: 0 },
-    ACCOUNT_ID: { type: String, ref: 'ACCOUNT', required: true, unique: true }
-    }, { versionKey: false, collection: 'MEMBER' }
+    accountId: { type: mongoose.Schema.Types.ObjectId, ref: "Account", unique: true, required: true},
+    fullName: { type: String, required: true },
+    gender: { type: String, required: true },
+    dateOfBirth: { type: Date, required: true },
+    phoneNumber: { type: String, required: true },
+    identityCard: { type: String, required: true, unique: true },
+    address: { type: String },
+    image: { type: String },
+    rewardPoints: { type: Number, default: 0 },
+    membershipRank: { type: String, default: 'bronze' }, // bronze, silver, gold
+    totalSpent: { type: Number, default: 0 }
+    }, { versionKey: false, collection: 'members' }
 );
 
-export const member = mongoose.model('MEMBER', memberSchema);
+export const Member = mongoose.model('Member', memberSchema);
