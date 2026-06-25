@@ -47,13 +47,18 @@ export const handleGetMovieById = async (req, res) => {
 };
 
 // GET /api/movies/:id/showtimes?date=YYYY-MM-DD
+// Trả về danh sách suất chiếu của ngày đó kèm cinemaRoomName
 export const handleGetMovieShowtimes = async (req, res) => {
     try {
         const { id } = req.params;
         const { date } = req.query;
         const result = await getMovieShowtimes(id, date);
         if (!result) {
-            return res.status(404).json({ message: 'Không tìm thấy ngày chiếu cho phim này.' });
+            return res.status(404).json({
+                message: 'No showtimes found for this movie on the given date.',
+                movieId: id,
+                date: date || null
+            });
         }
         return res.status(StatusCodes.OK).json({ data: result });
     } catch (error) {
