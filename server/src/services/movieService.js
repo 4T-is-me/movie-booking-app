@@ -1,6 +1,7 @@
 import { Movie } from '../models/movieModel.js';
-
-
+import { Showtime } from '../models/showTimeModel.js';
+import {Cinema } from '../models/cinemaModel.js';  
+import {CinemaRoom } from '../models/cinemaRoomModel.js';
 // GET /api/movies
 // Hỗ trợ lọc theo trạng thái (now_showing / coming_soon), tìm kiếm tên (q) và phân trang
 export const getMovies = async ({ status, page = 1, limit = 10, q }) => {
@@ -135,51 +136,17 @@ export const getMovieShowtimes = async (movieId, date) => {
     if (movieSchedules.length === 0) return null;
     const scheduleIds = movieSchedules.map(ms => ms.SCHEDULE_ID);
 
-    // 4. Load Schedule và ScheduleSeat song song (tránh N+1)
-    const [schedules, scheduleSeats] = await Promise.all([
-        Schedule.find({ SCHEDULE_ID: { $in: scheduleIds } })
-            .sort({ SCHEDULE_TIME: 1 })
-            .lean(),
-        ScheduleSeat.find({ MOVIE_ID: movieId, SCHEDULE_ID: { $in: scheduleIds } })
-            .lean()
-    ]);
-
-    // 5. Resolve CINEMA_ROOM qua SEAT (tránh N+1)
-    //    Mỗi SCHEDULE_SEAT có SEAT_ID → SEAT.CINEMA_ROOM_ID → CINEMA_ROOM
-    const seatIds = [...new Set(scheduleSeats.map(ss => ss.SEAT_ID))];
-    const seats = await Seat.find({ SEAT_ID: { $in: seatIds } }).lean();
-    const seatMap = Object.fromEntries(seats.map(s => [s.SEAT_ID, s]));
-
-    const roomIds = [...new Set(seats.map(s => s.CINEMA_ROOM_ID))];
-    const rooms = await CinemaRoom.find({ CINEMA_ROOM_ID: { $in: roomIds } }).lean();
-    const roomMap = Object.fromEntries(rooms.map(r => [r.CINEMA_ROOM_ID, r]));
-
-    // 6. Map scheduleId → cinemaRoomName (dùng bản ghi ScheduleSeat đầu tiên của schedule)
-    const scheduleCinemaRoom = {};
-    for (const ss of scheduleSeats) {
-        if (scheduleCinemaRoom[ss.SCHEDULE_ID]) continue; // chỉ cần 1 bản ghi
-        const seat = seatMap[ss.SEAT_ID];
-        if (!seat) continue;
-        const room = roomMap[seat.CINEMA_ROOM_ID];
-        if (room) {
-            scheduleCinemaRoom[ss.SCHEDULE_ID] = {
-                cinema_room_id: room.CINEMA_ROOM_ID,
-                cinema_room_name: room.CINEMA_ROOM_NAME
-            };
-        }
-    }
-
-    // 7. Ghép kết quả theo từng ngày chiếu
-    const result = showDates.map(sd => ({
-        show_date_id: sd.SHOW_DATE_ID,
-        show_date: sd.SHOW_DATE,
-        date_name: sd.DATE_NAME,
-        showtimes: schedules.map(s => ({
-            schedule_id: s.SCHEDULE_ID,
-            schedule_time: s.SCHEDULE_TIME,
-            cinema_room: scheduleCinemaRoom[s.SCHEDULE_ID] || null
-        }))
-    }));
+    // Với mỗi ngày chiếu, lấy danh sách giờ chiếu qua MovieSchedule -> Schedule
+    const result = showtimes.map((showtime) => ({
+            showtimeId:showtime._id,
+            showDate: showtime.showDate,
+            showTime: showtime.showTime,
+            startTime: showtime.startTime,
+            endTime: showtime.endTime,
+            cinema: showtime.cinemaId?.cinemaName,
+            room: showtime.roomId?.roomName
+        })
+    );
 
     return result;
 };
