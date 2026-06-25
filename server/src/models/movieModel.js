@@ -22,4 +22,7 @@ const movieSchema = new mongoose.Schema({
     timestamps: true // Tự động quản lý createdAt và updatedAt dưới dạng ISODate
 });
 
+// Index tối ưu truy vấn lọc phim theo ngày chiếu (FROM_DATE, TO_DATE)
+movieSchema.index({ FROM_DATE: 1, TO_DATE: 1 });
+
 export const Movie = mongoose.model('Movie', movieSchema);
