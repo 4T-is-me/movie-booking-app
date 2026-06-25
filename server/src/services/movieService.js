@@ -1,5 +1,7 @@
 import { Movie } from '../models/movieModel.js';
-
+import { Showtime } from '../models/showTimeModel.js';
+import {Cinema } from '../models/cinemaModel.js';  
+import {CinemaRoom } from '../models/cinemaRoomModel.js';
 // GET /api/movies
 // Hỗ trợ lọc theo trạng thái (now_showing / coming_soon) và phân trang
 export const getMovies = async ({ status, page = 1, limit = 10 }) => {
@@ -75,7 +77,7 @@ export const getMovieShowtimes = async (movieId, date) => {
     const showtimes  = await Showtime.find(query).populate("cinemaId").populate("roomId").sort({startTime: 1}).lean();
 
     // Với mỗi ngày chiếu, lấy danh sách giờ chiếu qua MovieSchedule -> Schedule
-    const result = showtimes.map(async (showtime) => ({
+    const result = showtimes.map((showtime) => ({
             showtimeId:showtime._id,
             showDate: showtime.showDate,
             showTime: showtime.showTime,
