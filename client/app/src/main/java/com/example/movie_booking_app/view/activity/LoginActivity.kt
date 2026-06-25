@@ -56,10 +56,22 @@ class LoginActivity : AppCompatActivity() {
                     withContext(Dispatchers.Main) {
                         btnLogin.isEnabled = true
                         if (response.isSuccessful && response.body() != null) {
+                            val body = response.body()
+                            val token = body?.accessToken
+                            if (token != null) {
+                                val dbUsername = body?.account?.username ?: username
+                                val sharedPref = getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+                                with(sharedPref.edit()) {
+                                    putString("auth_token", token)
+                                    putString("username", dbUsername)
+                                    apply()
+                                }
+                            }
                             Toast.makeText(this@LoginActivity, "Login successful", Toast.LENGTH_SHORT).show()
                             finish()
                         } else {
-                            Toast.makeText(this@LoginActivity, "Login failed", Toast.LENGTH_SHORT).show()
+                            val errorMsg = response.errorBody()?.string() ?: "Unknown error"
+                            Toast.makeText(this@LoginActivity, "Login failed: $errorMsg", Toast.LENGTH_LONG).show()
                         }
                     }
                 } catch (e: Exception) {

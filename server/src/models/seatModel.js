@@ -6,7 +6,7 @@ const seatSchema = new mongoose.Schema({
     price:{type: Number, required: true},
     row: {type: String, required: true},
     col: {type: String, required: true},
-    status: {type: String, default: 1, default: 'available'}, // 'available', 'hold', 'booked', 'unavailable'
+    status: {type: String, default: 1, default: 'active'}, // 'active', 'inactive'
     seatType: { type: String ,default: 1, default: 'Regular'}, // 'Regular', 'VIP', 'Couple'
 }, { versionKey: false, collection: 'seats' });
 

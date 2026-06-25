@@ -88,5 +88,38 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val url = java.net.URL("https://res.cloudinary.com/dhc4obnog/image/upload/v1782362361/icon_rmgstg.png")
+                val connection = url.openConnection() as java.net.HttpURLConnection
+                connection.setRequestProperty("User-Agent", "Mozilla/5.0")
+                connection.connect()
+                val bitmap = android.graphics.BitmapFactory.decodeStream(connection.inputStream)
+                withContext(Dispatchers.Main) {
+                    binding.ivWelcomeLogo.setImageBitmap(bitmap)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val sharedPref = getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+        val token = sharedPref.getString("auth_token", null)
+        val username = sharedPref.getString("username", "User")
+        if (token != null) {
+            binding.btnLogin.visibility = android.view.View.GONE
+            binding.tvHi.visibility = android.view.View.VISIBLE
+            binding.tvWelcomeBack.visibility = android.view.View.VISIBLE
+            binding.cvWelcomeLogo.visibility = android.view.View.GONE
+            binding.tvHi.text = "Hi, $username \uD83D\uDC4B"
+        } else {
+            binding.btnLogin.visibility = android.view.View.VISIBLE
+            binding.tvHi.visibility = android.view.View.INVISIBLE
+            binding.tvWelcomeBack.visibility = android.view.View.INVISIBLE
+            binding.cvWelcomeLogo.visibility = android.view.View.VISIBLE
+        }
     }
 }
