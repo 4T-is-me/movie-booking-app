@@ -1,8 +1,8 @@
 import { ScheduleSeat } from '../models/scheduleSeatModel.js';
 import { Seat } from '../models/seatModel.js';
 import { CinemaRoom } from '../models/cinemaRoomModel.js';
-import { MovieSchedule } from '../models/movieScheduleModel.js';
-import { Schedule } from '../models/scheduleModel.js';
+
+
 
 /**
  * GET /api/showtimes/:id/seats

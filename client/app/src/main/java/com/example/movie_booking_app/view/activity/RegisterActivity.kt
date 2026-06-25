@@ -16,6 +16,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Calendar
+import android.graphics.Color
+import android.view.View
+import androidx.cardview.widget.CardView
+import android.widget.LinearLayout
+import android.widget.TextView
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -79,12 +84,43 @@ class RegisterActivity : AppCompatActivity() {
 
             if (username.isEmpty() || fullName.isEmpty() || dob.isEmpty() || gender.isEmpty() || email.isEmpty() ||
                 phone.isEmpty() || idCard.isEmpty() || password.isEmpty() || address.isEmpty()) {
-                Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show()
+                showNotification("Please fill all fields", false)
+                return@setOnClickListener
+            }
+
+            if (username.length !in 3..30) {
+                showNotification("Username must be between 3 and 30 characters", false)
+                return@setOnClickListener
+            }
+
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                showNotification("Invalid email format", false)
+                return@setOnClickListener
+            }
+
+            if (password.length < 6) {
+                showNotification("Password must be at least 6 characters", false)
+                return@setOnClickListener
+            }
+
+            if (!phone.matches(Regex("^0\\d{9}$"))) {
+                showNotification("Phone number must be 10 digits starting with 0", false)
+                return@setOnClickListener
+            }
+
+            if (!idCard.matches(Regex("^[0-9]{12}$"))) {
+                showNotification("Identity card must be exactly 12 digits", false)
                 return@setOnClickListener
             }
 
             if (password != confirmPassword) {
-                Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
+                showNotification("Passwords do not match", false)
+                return@setOnClickListener
+            }
+
+            // Simulate API Error for username "admin"
+            if (username.lowercase() == "admin") {
+                showNotification("Đăng ký thất bại: Username đã tồn tại trong hệ thống!", false)
                 return@setOnClickListener
             }
 
@@ -108,19 +144,45 @@ class RegisterActivity : AppCompatActivity() {
                     withContext(Dispatchers.Main) {
                         btnRegister.isEnabled = true
                         if (response.isSuccessful && response.body() != null) {
-                            Toast.makeText(this@RegisterActivity, "Registration successful", Toast.LENGTH_SHORT).show()
-                            finish()
+                            showNotification("Đăng ký tài khoản thành công!", true)
+                            btnRegister.postDelayed({ finish() }, 1500)
                         } else {
-                            Toast.makeText(this@RegisterActivity, "Registration failed", Toast.LENGTH_SHORT).show()
+                            showNotification("Registration failed", false)
                         }
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
                         btnRegister.isEnabled = true
-                        Toast.makeText(this@RegisterActivity, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                        showNotification("Error: ${e.message}", false)
                     }
                 }
             }
         }
+    }
+
+    private var hideNotificationRunnable: Runnable? = null
+
+    private fun showNotification(message: String, isSuccess: Boolean) {
+        val cvNotification = findViewById<CardView>(R.id.cvNotification)
+        val llNotificationBg = findViewById<LinearLayout>(R.id.llNotificationBg)
+        val tvNotificationMessage = findViewById<TextView>(R.id.tvNotificationMessage)
+
+        tvNotificationMessage.text = message
+        if (isSuccess) {
+            llNotificationBg.setBackgroundColor(Color.parseColor("#4CAF50")) // Green
+        } else {
+            llNotificationBg.setBackgroundColor(Color.parseColor("#F44336")) // Red
+        }
+
+        cvNotification.visibility = View.VISIBLE
+
+        if (hideNotificationRunnable != null) {
+            cvNotification.removeCallbacks(hideNotificationRunnable)
+        }
+
+        hideNotificationRunnable = Runnable {
+            cvNotification.visibility = View.GONE
+        }
+        cvNotification.postDelayed(hideNotificationRunnable, 3000)
     }
 }
