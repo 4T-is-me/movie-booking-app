@@ -4,18 +4,11 @@ import { ScheduleSeat } from "../models/scheduleSeatModel.js";
  const startSeatCleanupJob  = async () => {
   const now = new Date();
 
-  await ScheduleSeat.updateMany(
+  await ScheduleSeat.deleteMany(
     {
       holdExpiresAt: { $lt: now },
-      status: constants.SEAT_STATUS.HOLD,
-    },
-    {
-      $set: {
-        status: constants.SEAT_STATUS.AVAILABLE,
-        accountId: null,
-        holdExpiresAt: null,
-      },
-    },
+      status: "holding",
+    }
   );
 };
 cron.schedule("*/30 * * * * *", startSeatCleanupJob);

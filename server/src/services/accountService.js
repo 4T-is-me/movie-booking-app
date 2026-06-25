@@ -30,7 +30,7 @@ const register = async (reqBody) => {
 
     const savedAccount = await newAccount.save()
 
-<<<<<<< server/src/services/accountService.js
+
     try {
         const newMember = new Member({
             accountId: savedAccount._id,
