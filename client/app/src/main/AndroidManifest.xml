@@ -4,6 +4,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".MyApplication"
         android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -38,6 +39,11 @@
             
         <activity
             android:name=".view.activity.RegisterActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Moviebookingapp" />
+
+        <activity
+            android:name=".view.activity.selectSeatActivity"
             android:exported="true"
             android:theme="@style/Theme.Moviebookingapp" />
     </application>

@@ -1,5 +1,4 @@
 import { Movie } from '../models/movieModel.js';
-import { Showtime } from '../models/showtimeModel.js';
 
 // GET /api/movies
 // Hỗ trợ lọc theo trạng thái (now_showing / coming_soon) và phân trang

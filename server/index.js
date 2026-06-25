@@ -19,10 +19,6 @@ app.use(morgan('dev'));
 app.use(cors());
 app.use(express.json());
 
-// API mẫu viết bằng ES6
-app.get('/api/movies', (req, res) => {
-    res.json({ message: "API danh sách phim chạy bằng chuẩn ES Modules cực mượt!" });
-});
 
 // Routes
 app.use('/api/movies', movieRoutes);
