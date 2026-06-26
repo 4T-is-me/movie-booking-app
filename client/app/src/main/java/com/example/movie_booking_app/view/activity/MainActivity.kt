@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.nav_profile -> {
                     startActivity(Intent(this, profileActivity::class.java))
-                    true
+                    false
                 }
                 else -> false
             }
@@ -107,6 +107,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        binding.bottomNav.selectedItemId = R.id.nav_home
         val sharedPref = getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
         val token = sharedPref.getString("auth_token", null)
         val username = sharedPref.getString("username", "User")
