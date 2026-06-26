@@ -1,26 +1,26 @@
 package com.example.movie_booking_app.data.api
 
-import com.example.movie_booking_app.utils.Constants
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-/**
- * Singleton Retrofit Client as requested by BE team.
- */
 object RetrofitClient {
-    
-    private val retrofit: Retrofit by lazy {
+    // 10.0.2.2 is the special alias to your host loopback interface (localhost) for Android emulator
+    // Note for LDPlayer: If 10.0.2.2 doesn't work, change this to your PC's current IPv4 address (run ipconfig to check).
+    private const val BASE_URL = "http://192.168.10.47:5000/"
+
+
+    val instance: Retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl(Constants.BASE_URL)
+            .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 
-    val movieApi: MovieApi by lazy {
-        retrofit.create(MovieApi::class.java)
-    }
-    
     val authApi: AuthApi by lazy {
-        retrofit.create(AuthApi::class.java)
+        instance.create(AuthApi::class.java)
+    }
+
+    val movieApi: MovieApi by lazy {
+        instance.create(MovieApi::class.java)
     }
 }

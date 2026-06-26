@@ -18,6 +18,7 @@
     <string name="nav_profile">Profile</string>
     <string name="page_in_progress">This page is in progress...</string>
     <string name="login_btn">Login</string>
+    <string name="login">Login</string>
     <string name="login_placeholder_title">Login Screen Placeholder</string>
     <string name="auth_team_msg">This feature is being developed by the Auth team.</string>
 
@@ -29,11 +30,12 @@
     <string name="change_password">Change password</string>
     <string name="list_title">List</string>
 
-    <!-- Imported from develop (Auth Team) -->
+    <!-- Auth Team Strings -->
     <string name="login_subtitle">Login to continue booking movies</string>
     <string name="username_label">User name / Email / Phone</string>
     <string name="username_hint">Enter your user name or email</string>
     <string name="password_label">Password</string>
+    <string name="remember_me">Remember me</string>
     <string name="forgot_password">Forgot password?</string>
     <string name="password_hint">Enter your password</string>
     <string name="or_continue_with">Or continue with</string>

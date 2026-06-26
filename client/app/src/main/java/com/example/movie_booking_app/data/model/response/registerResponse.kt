@@ -1,6 +1,6 @@
 package com.example.movie_booking_app.data.model.response
 
-data class RegisterResponse(
+data class registerResponse(
     val username: String,
     val email: String,
     val fullName: String?,

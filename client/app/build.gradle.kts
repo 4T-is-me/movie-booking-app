@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
 }
@@ -15,6 +16,7 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -43,17 +45,21 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.cardview)
-    implementation(libs.androidx.constraintlayout)
 
     // Core
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.activity.ktx)
-    implementation(libs.androidx.fragment.ktx)
-    implementation(libs.androidx.gridlayout)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
+
+    // UI XML
+    implementation(libs.androidx.fragment)
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.viewpager2)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.cardview)
+    implementation(libs.androidx.gridlayout)
+    implementation(libs.material)
 
     // Network
     implementation(libs.retrofit)
@@ -63,25 +69,18 @@ dependencies {
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
 
-    // UI Components
-    implementation(libs.androidx.recyclerview)
-    implementation(libs.androidx.viewpager2)
-    implementation(libs.material)
-    implementation(libs.shimmer)
-
-    // Image Loading - Glide (Preserved Feature)
-    implementation(libs.glide)
-    ksp(libs.glide.compiler)
-
-    // Image Loading - Coil (Aligned with group)
+    // Image Loading
+    implementation(libs.coil)
     implementation(libs.coil.network.okhttp)
 
-    // Test
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-
-    // Hilt (Integrated Infrastructure)
+    // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
+
+    // Unit Test
+    testImplementation(libs.junit)
+
+    // Android Test
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 }

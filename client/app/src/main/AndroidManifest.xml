@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:usesCleartextTraffic="true"
         android:enableOnBackInvokedCallback="true"
@@ -25,8 +27,24 @@
         </activity>
 
         <activity
-            android:name=".view.activity.ProfileActivity"
-            android:exported="false" />
+            android:name=".view.activity.profileActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Moviebookingapp" />
+
+        <activity
+            android:name=".view.activity.LoginActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Moviebookingapp" />
+            
+        <activity
+            android:name=".view.activity.RegisterActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Moviebookingapp" />
+
+        <activity
+            android:name=".view.activity.selectSeatActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Moviebookingapp" />
 
         <activity
             android:name=".view.activity.LoginPlaceholderActivity"

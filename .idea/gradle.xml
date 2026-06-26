@@ -5,13 +5,8 @@
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
         <option name="testRunner" value="CHOOSE_PER_TEST" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/client" />
-        <option name="modules">
-          <set>
-            <option value="$PROJECT_DIR$/client" />
-            <option value="$PROJECT_DIR$/client/app" />
-          </set>
-        </option>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/client/gradle/wrapper" />
+        <option name="gradleJvm" value="24" />
       </GradleProjectSettings>
     </option>
   </component>

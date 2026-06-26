@@ -1,10 +1,10 @@
 package com.example.movie_booking_app.view.activity
 
-import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.core.view.ViewCompat
@@ -16,8 +16,9 @@ import com.example.movie_booking_app.view.fragment.GenericGridFragment
 import com.example.movie_booking_app.view.fragment.MovieGridFragment
 import com.example.movie_booking_app.view.fragment.MovieListFragment
 import com.example.movie_booking_app.view.fragment.PlaceholderFragment
-import java.util.Locale
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : BaseActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -39,14 +40,12 @@ class MainActivity : BaseActivity() {
     }
 
     private fun setupSafeAreas() {
-        // Handle Safe Area for Main Container (Grid/Placeholder)
         ViewCompat.setOnApplyWindowInsetsListener(binding.mainContainer) { view, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.updatePadding(top = insets.top)
             windowInsets
         }
 
-        // Handle Safe Area for System Navigation Bar
         ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNav) { view, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.updatePadding(bottom = insets.bottom)
@@ -55,7 +54,6 @@ class MainActivity : BaseActivity() {
     }
 
     private fun setupBackStackListener() {
-        // Synchronize UI highlight when back stack changes
         supportFragmentManager.addOnBackStackChangedListener {
             val fragment = supportFragmentManager.findFragmentById(R.id.main_container)
             updateNavHighlightByFragment(fragment)
@@ -68,7 +66,6 @@ class MainActivity : BaseActivity() {
             is MovieGridFragment -> "Movie"
             is GenericGridFragment -> "Movie" 
             is PlaceholderFragment -> {
-                // Determine based on current title or assume section
                 if (currentSection == "Ticket") "Ticket"
                 else if (currentSection == "Profile") "Profile"
                 else "Home"
@@ -105,8 +102,11 @@ class MainActivity : BaseActivity() {
                 PlaceholderFragment.newInstance("Ticket System", R.drawable.ic_ticket)
             }
             "Profile" -> {
+                // Team develop uses an Activity for Profile, you use a Placeholder. 
+                // We'll keep your placeholder but allow navigation to their activity if needed.
                 highlightNav("Profile")
-                PlaceholderFragment.newInstance("User Profile", R.drawable.ic_profile)
+                startActivity(Intent(this, profileActivity::class.java))
+                return // Exit early as we started an Activity
             }
             "Promo", "Service", "News" -> {
                 highlightNav("None") 
@@ -119,11 +119,9 @@ class MainActivity : BaseActivity() {
             .replace(R.id.main_container, fragment)
             .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
         
-        // Add to back stack if it's not the Home page
         if (section != "Home") {
             transaction.addToBackStack(section)
         } else {
-            // Clear back stack when returning home to avoid infinite loops
             supportFragmentManager.popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
         }
             
@@ -134,13 +132,11 @@ class MainActivity : BaseActivity() {
         val yellow = ContextCompat.getColor(this, R.color.yellow)
         val inactive = ContextCompat.getColor(this, R.color.nav_inactive)
 
-        // Reset all
         resetNavItem(binding.imgNavHome, binding.tvNavHome, inactive)
         resetNavItem(binding.imgNavMovie, binding.tvNavMovie, inactive)
         resetNavItem(binding.imgNavTicket, binding.tvNavTicket, inactive)
         resetNavItem(binding.imgNavProfile, binding.tvNavProfile, inactive)
 
-        // Highlight target
         when(target) {
             "Home" -> highlightNavItem(binding.imgNavHome, binding.tvNavHome, yellow)
             "Movie" -> highlightNavItem(binding.imgNavMovie, binding.tvNavMovie, yellow)

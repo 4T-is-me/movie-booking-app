@@ -1,6 +1,6 @@
 package com.example.movie_booking_app.data.model.request
 
-data class RegisterRequest(
+data class registerRequest(
     val username: String,
     val password: String,
     val confirmPassword: String,
