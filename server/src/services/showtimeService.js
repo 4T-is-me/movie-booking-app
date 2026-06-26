@@ -75,7 +75,11 @@ export const getShowtimeSeats = async (showtimeId) => {
 
         return {
             seatId: seat._id,
+            // scheduleSeatId: _id của bản ghi ScheduleSeat (null nếu ghế đang available)
+            scheduleSeatId: scheduleSeat?._id ?? null,
             seatName: seat.seatName,
+            // seatLabel: nhãn hiển thị dạng "A3", "B10", ...
+            seatLabel: `${seat.row}${seat.col}`,
             row: seat.row,         // e.g. "A"
             col: seat.col,         // e.g. "1"
             seatType: seat.seatType,
@@ -93,14 +97,16 @@ export const getShowtimeSeats = async (showtimeId) => {
             rowMap.set(seat.row, []);
         }
         rowMap.get(seat.row).push({
-            seatId: seat.seatId,
-            seatName: seat.seatName,
-            col: seat.col,
-            type: seat.seatType,
-            price: seat.price,
-            status: seat.status,
-            statusLabel: seat.statusLabel,
-            holdExpiresAt: seat.holdExpiresAt
+            seatId:         seat.seatId,
+            scheduleSeatId: seat.scheduleSeatId,   // null nếu ghế available
+            seatLabel:      seat.seatLabel,         // e.g. "A3"
+            seatName:       seat.seatName,
+            col:            seat.col,
+            type:           seat.seatType,
+            price:          seat.price,
+            status:         seat.status,
+            statusLabel:    seat.statusLabel,
+            holdExpiresAt:  seat.holdExpiresAt
         });
     }
 
