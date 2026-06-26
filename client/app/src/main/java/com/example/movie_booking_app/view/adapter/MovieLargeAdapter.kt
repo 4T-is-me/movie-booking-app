@@ -34,13 +34,13 @@ class MovieLargeAdapter(
         private val tvVersion: TextView = view.findViewById(R.id.tvVersionLarge)
 
         fun bind(movie: Movie) {
-            tvNameVn.text = movie.nameVn
-            tvNameEn.text = movie.nameEn
-            tvRating.text = "${movie.rating} (${movie.ratingCount})"
-            tvVersion.text = movie.version
+            tvNameVn.text = movie.movieName
+            tvNameEn.text = movie.movieName
+            tvRating.text = "${movie.rating} (${movie.totalReviews})"
+            tvVersion.text = movie.censorship ?: "2D"
             
             Glide.with(itemView.context)
-                .load(movie.posterUrl)
+                .load(movie.poster)
                 .centerCrop()
                 .placeholder(R.color.card_dark)
                 .error(android.R.drawable.ic_menu_report_image)
@@ -52,7 +52,7 @@ class MovieLargeAdapter(
     }
 
     class MovieDiffCallback : DiffUtil.ItemCallback<Movie>() {
-        override fun areItemsTheSame(oldItem: Movie, newItem: Movie): Boolean = oldItem.movieId == newItem.movieId
+        override fun areItemsTheSame(oldItem: Movie, newItem: Movie): Boolean = oldItem.id == newItem.id
         override fun areContentsTheSame(oldItem: Movie, newItem: Movie): Boolean = oldItem == newItem
     }
 }

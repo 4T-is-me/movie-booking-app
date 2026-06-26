@@ -51,7 +51,7 @@ class MovieListFragment : Fragment() {
                 (activity as? MainActivity)?.navigateToSection(sectionName)
             },
             onMovieClicked = { movie ->
-                Toast.makeText(context, "Opening schedule for: ${movie.nameVn}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Opening schedule for: ${movie.movieName}", Toast.LENGTH_SHORT).show()
             },
             onLoginClicked = {
                 startActivity(Intent(context, LoginPlaceholderActivity::class.java))

@@ -42,23 +42,23 @@ class MovieGridAdapter(
         private val btnViewSchedule: Button = view.findViewById(R.id.btnViewSchedule)
 
         fun bind(movie: Movie, isNowPlaying: Boolean) {
-            tvNameVn.text = movie.nameVn
-            tvNameEn.text = movie.nameEn
+            tvNameVn.text = movie.movieName
+            tvNameEn.text = movie.movieName
             
             if (isNowPlaying) {
                 tvTextRow1.text = movie.rating.toString()
                 tvTextRow2.text = "${movie.duration} min"
-                tvTextRow3.text = movie.version
+                tvTextRow3.text = movie.censorship ?: "2D"
             } else {
                 imgIconRow1.setImageResource(android.R.drawable.ic_menu_today)
                 imgIconRow1.setColorFilter(ContextCompat.getColor(itemView.context, R.color.white))
                 tvTextRow1.text = movie.releaseDate
                 tvTextRow2.text = "${movie.duration} min"
-                tvTextRow3.text = movie.version
+                tvTextRow3.text = movie.censorship ?: "2D"
             }
 
             Glide.with(itemView.context)
-                .load(movie.posterUrl)
+                .load(movie.poster)
                 .placeholder(R.color.card_dark)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(imgPoster)
@@ -69,7 +69,7 @@ class MovieGridAdapter(
     }
 
     class MovieDiffCallback : DiffUtil.ItemCallback<Movie>() {
-        override fun areItemsTheSame(oldItem: Movie, newItem: Movie): Boolean = oldItem.movieId == newItem.movieId
+        override fun areItemsTheSame(oldItem: Movie, newItem: Movie): Boolean = oldItem.id == newItem.id
         override fun areContentsTheSame(oldItem: Movie, newItem: Movie): Boolean = oldItem == newItem
     }
 }

@@ -41,8 +41,7 @@ class MovieViewModel : ViewModel() {
                     movies
                 } else {
                     movies.filter { 
-                        it.nameEn.contains(query, ignoreCase = true) || 
-                        it.nameVn.contains(query, ignoreCase = true) 
+                        it.movieName?.contains(query, ignoreCase = true) == true
                     }
                 }
 
@@ -52,10 +51,10 @@ class MovieViewModel : ViewModel() {
                     val list = mutableListOf<HomeItem>()
                     list.add(HomeItem.HeaderSection("User"))
                     
-                    val nowPlaying = filteredMovies.filter { it.isNowPlaying }
+                    val nowPlaying = filteredMovies.filter { it.status == "showing" }
                     if (nowPlaying.isNotEmpty()) list.add(HomeItem.NowPlayingSection(nowPlaying))
                     
-                    val comingSoon = filteredMovies.filter { !it.isNowPlaying }
+                    val comingSoon = filteredMovies.filter { it.status == "coming_soon" }
                     if (comingSoon.isNotEmpty()) list.add(HomeItem.ComingSoonSection(comingSoon))
                     
                     if (promos.isNotEmpty() && query.isEmpty()) list.add(HomeItem.PromoSection(promos))

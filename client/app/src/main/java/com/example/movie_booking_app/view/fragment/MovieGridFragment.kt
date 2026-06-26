@@ -87,12 +87,14 @@ class MovieGridFragment : Fragment() {
 
     private fun loadMovieData(isNowPlaying: Boolean) {
         val adapter = MovieGridAdapter(isNowPlaying) { movie ->
-            Toast.makeText(context, "Opening schedule for: ${movie.nameEn}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Opening schedule for: ${movie.movieName}", Toast.LENGTH_SHORT).show()
         }
         binding.rvFullList.adapter = adapter
         viewLifecycleOwner.lifecycleScope.launch {
             movieRepository.getMovies().collect { allMovies ->
-                val filtered = allMovies.filter { it.isNowPlaying == isNowPlaying }
+                val filtered = allMovies.filter { 
+                    if (isNowPlaying) it.status == "showing" else it.status == "coming_soon"
+                }
                 adapter.submitList(filtered)
             }
         }

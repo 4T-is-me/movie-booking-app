@@ -10,18 +10,16 @@ import kotlinx.coroutines.flow.flow
 class MovieRepositoryImpl : MovieRepository {
     
     private val mockMovies = listOf(
-        Movie("1", "Avengers: Endgame", "Avengers: Endgame", 181, "IMAX 3D", "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=500", listOf("Russo Brothers"), listOf("Robert Downey Jr.", "Chris Evans"), "The grave course of events...", 4.8, 1500, "showing", "27.04.2019", listOf("Action")),
-        Movie("2", "Spider-Man: No Way Home", "Spider-Man: No Way Home", 148, "2D", "https://images.unsplash.com/photo-1635805737707-575885ab0820?w=500", listOf("Jon Watts"), listOf("Tom Holland", "Zendaya"), "With Spider-Man's identity revealed...", 4.5, 2100, "showing", "17.12.2021", listOf("Action")),
-        Movie("3", "Jurassic World", "Jurassic World", 147, "3D", "https://images.unsplash.com/photo-1568515045052-f9ad85a85f1d?w=500", listOf("Colin Trevorrow"), listOf("Chris Pratt"), "Four years after Isla Nublar...", 4.2, 800, "coming_soon", "10.06.2022", listOf("Sci-fi")),
-        Movie("4", "Top Gun: Maverick", "Top Gun: Maverick", 130, "IMAX 2D", "https://images.unsplash.com/photo-1533613220915-609f661a6fe1?w=500", listOf("Joseph Kosinski"), listOf("Tom Cruise"), "After thirty years of service...", 4.9, 1200, "showing", "27.05.2022", listOf("Action")),
-        Movie("5", "Puss in Boots", "Puss in Boots", 102, "2D", "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=500", listOf("Joel Crawford"), listOf("Antonio Banderas"), "Puss discovers his passion...", 4.7, 500, "coming_soon", "21.12.2022", listOf("Animation"))
+        Movie(id = "1", movieName = "Avengers: Endgame", duration = 181, releaseDate = "27.04.2019", movieGenre = listOf("Action"), language = "English", censorship = "C13", description = "The grave course of events...", director = listOf("Russo Brothers"), actors = listOf("Robert Downey Jr."), country = "USA", status = "showing", poster = "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=500", rating = 4.8, totalReviews = 1500),
+        Movie(id = "2", movieName = "Spider-Man: No Way Home", duration = 148, releaseDate = "17.12.2021", movieGenre = listOf("Action"), language = "English", censorship = "C13", description = "With Spider-Man's identity revealed...", director = listOf("Jon Watts"), actors = listOf("Tom Holland"), country = "USA", status = "showing", poster = "https://images.unsplash.com/photo-1635805737707-575885ab0820?w=500", rating = 4.5, totalReviews = 2100),
+        Movie(id = "3", movieName = "Jurassic World", duration = 147, releaseDate = "10.06.2022", movieGenre = listOf("Sci-fi"), language = "English", censorship = "C13", description = "Four years after Isla Nublar...", director = listOf("Colin Trevorrow"), actors = listOf("Chris Pratt"), country = "USA", status = "coming_soon", poster = "https://images.unsplash.com/photo-1568515045052-f9ad85a85f1d?w=500", rating = 4.2, totalReviews = 800)
     )
 
     override fun getMovies(): Flow<List<Movie>> = flow { emit(mockMovies) }
 
     override fun searchMovies(query: String): Flow<List<Movie>> = flow {
         val filtered = mockMovies.filter { 
-            it.nameEn.contains(query, ignoreCase = true) || it.nameVn.contains(query, ignoreCase = true) 
+            it.movieName?.contains(query, ignoreCase = true) == true
         }
         emit(filtered)
     }

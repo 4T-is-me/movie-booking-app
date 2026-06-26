@@ -34,14 +34,13 @@ class MovieAdapter(
         private val tvReleaseDate: TextView = view.findViewById(R.id.tvReleaseDate)
 
         fun bind(movie: Movie) {
-            android.util.Log.d("GlideDebug", "Loading image: ${movie.posterUrl}")
-            tvNameVn.text = movie.nameVn
-            tvNameEn.text = movie.nameEn
-            tvGenre.text = movie.category
+            tvNameVn.text = movie.movieName
+            tvNameEn.text = movie.movieName // Develop model only has movieName
+            tvGenre.text = movie.movieGenre?.joinToString(", ") ?: "N/A"
             tvReleaseDate.text = movie.releaseDate
             
             Glide.with(itemView.context)
-                .load(movie.posterUrl)
+                .load(movie.poster)
                 .centerCrop()
                 .placeholder(R.color.card_dark)
                 .error(android.R.drawable.ic_menu_report_image)
@@ -53,7 +52,7 @@ class MovieAdapter(
     }
 
     class MovieDiffCallback : DiffUtil.ItemCallback<Movie>() {
-        override fun areItemsTheSame(oldItem: Movie, newItem: Movie): Boolean = oldItem.movieId == newItem.movieId
+        override fun areItemsTheSame(oldItem: Movie, newItem: Movie): Boolean = oldItem.id == newItem.id
         override fun areContentsTheSame(oldItem: Movie, newItem: Movie): Boolean = oldItem == newItem
     }
 }
