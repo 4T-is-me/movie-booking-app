@@ -46,6 +46,7 @@ class RegisterActivity : AppCompatActivity() {
         val edtEmail = findViewById<TextInputEditText>(R.id.edtEmail)
         val edtPhone = findViewById<TextInputEditText>(R.id.edtPhone)
         val edtIdCard = findViewById<TextInputEditText>(R.id.edtIdCard)
+        
         val edtPassword = findViewById<TextInputEditText>(R.id.edtPassword)
         val tilPassword = findViewById<TextInputLayout>(R.id.tilPassword)
 
@@ -170,7 +171,7 @@ class RegisterActivity : AppCompatActivity() {
     private fun validateFields(): Boolean {
         var isValid = true
 
-        val tilUsername = findViewById<TextInputLayout>(R.id.tilUsername)
+        val tilUsername = findViewById<TextInputLayout>(R.id.tilUsernameReg)
         val edtUsername = findViewById<TextInputEditText>(R.id.edtUsername)
         val username = edtUsername.text.toString().trim()
         if (username.isEmpty()) {
