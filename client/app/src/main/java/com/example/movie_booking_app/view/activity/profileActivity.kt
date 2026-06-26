@@ -32,6 +32,11 @@ class profileActivity : AppCompatActivity() {
         observeViewModel()
     }
 
+    override fun onResume() {
+        super.onResume()
+        binding.bottomNavigationView.selectedItemId = R.id.nav_profile
+    }
+
     /**
      * Initializes the bottom navigation selection and listener.
      */
@@ -83,6 +88,19 @@ class profileActivity : AppCompatActivity() {
 
         binding.layoutChangePassword.setOnClickListener {
             Toast.makeText(this, "Change Password Clicked", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.layoutLogout.setOnClickListener {
+            val sharedPref = getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+            with(sharedPref.edit()) {
+                remove("auth_token")
+                remove("username")
+                apply()
+            }
+            val intent = android.content.Intent(this, MainActivity::class.java)
+            intent.flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
         }
     }
 
