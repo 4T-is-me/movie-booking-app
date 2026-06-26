@@ -10,10 +10,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.databinding.ActivitySelectSeatBinding
-import com.example.movie_booking_app.view.adapter.dateAdapter
+import com.example.movie_booking_app.view.adapter.DateAdapter
 import com.example.movie_booking_app.view.adapter.SeatAdapter
-import com.example.movie_booking_app.view.adapter.timeAdapter
-import com.example.movie_booking_app.viewmodel.selectSeatViewModel
+import com.example.movie_booking_app.view.adapter.TimeAdapter
+import com.example.movie_booking_app.viewmodel.SelectSeatViewModel
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
@@ -21,16 +21,16 @@ import java.util.Locale
 /**
  * Activity for Cinema Seat Selection screen.
  */
-class selectSeatActivity : AppCompatActivity() {
+class SelectSeatActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySelectSeatBinding
-    private val viewModel: selectSeatViewModel by lazy {
-        ViewModelProvider(this)[selectSeatViewModel::class.java]
+    private val viewModel: SelectSeatViewModel by lazy {
+        ViewModelProvider(this)[SelectSeatViewModel::class.java]
     }
 
     private lateinit var seatAdapter: SeatAdapter
-    private lateinit var dateAdapter: dateAdapter
-    private lateinit var timeAdapter: timeAdapter
+    private lateinit var dateAdapter: DateAdapter
+    private lateinit var timeAdapter: TimeAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,20 +55,20 @@ class selectSeatActivity : AppCompatActivity() {
         binding.rvSeats.isNestedScrollingEnabled = false
 
         // Date layout: horizontal
-        dateAdapter = dateAdapter { date ->
+        dateAdapter = DateAdapter { date ->
             viewModel.selectDate(date.id)
         }
         binding.rvDates.layoutManager = LinearLayoutManager(
-            this, LinearLayoutManager.HORIZONTAL, false
+            this, LinearLayoutManager.HORIZONTAL, false,
         )
         binding.rvDates.adapter = dateAdapter
 
         // Time layout: horizontal
-        timeAdapter = timeAdapter { time ->
+        timeAdapter = TimeAdapter { time ->
             viewModel.selectTime(time.id)
         }
         binding.rvTimes.layoutManager = LinearLayoutManager(
-            this, LinearLayoutManager.HORIZONTAL, false
+            this, LinearLayoutManager.HORIZONTAL, false,
         )
         binding.rvTimes.adapter = timeAdapter
     }
@@ -130,7 +130,7 @@ class selectSeatActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.error.collect { errorMsg ->
                     errorMsg?.let {
-                        Toast.makeText(this@selectSeatActivity, it, Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@SelectSeatActivity, it, Toast.LENGTH_LONG).show()
                     }
                 }
             }

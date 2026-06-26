@@ -5,15 +5,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.movie_booking_app.data.model.entity.showTime
+import com.example.movie_booking_app.data.model.entity.ShowTime
 import com.example.movie_booking_app.databinding.ItemTimeBinding
 
 /**
  * Adapter mapping session times to the horizontal picker list.
  */
-class timeAdapter(
-    private val onTimeClicked: (showTime) -> Unit
-) : ListAdapter<showTime, timeAdapter.TimeViewHolder>(TimeDiffCallback()) {
+class TimeAdapter(
+    private val onTimeClicked: (ShowTime) -> Unit
+) : ListAdapter<ShowTime, TimeAdapter.TimeViewHolder>(TimeDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimeViewHolder {
         val binding = ItemTimeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -26,7 +26,7 @@ class timeAdapter(
 
     inner class TimeViewHolder(private val binding: ItemTimeBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(showTime: showTime) {
+        fun bind(showTime: ShowTime) {
             binding.tvTime.text = showTime.time
             binding.tvTime.isSelected = showTime.isSelected
 
@@ -36,8 +36,8 @@ class timeAdapter(
         }
     }
 
-    class TimeDiffCallback : DiffUtil.ItemCallback<showTime>() {
-        override fun areItemsTheSame(oldItem: showTime, newItem: showTime) = oldItem.id == newItem.id
-        override fun areContentsTheSame(oldItem: showTime, newItem: showTime) = oldItem == newItem
+    class TimeDiffCallback : DiffUtil.ItemCallback<ShowTime>() {
+        override fun areItemsTheSame(oldItem: ShowTime, newItem: ShowTime) = oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: ShowTime, newItem: ShowTime) = oldItem == newItem
     }
 }
