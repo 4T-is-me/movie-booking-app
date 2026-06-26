@@ -21,7 +21,7 @@ const login = async (req, res, next) => {
 
 const getProfile = async (req, res, next) => {
     try {
-        const accountId = req.user.sub
+        const accountId = req.user.accountId
         const account = await accountService.getProfile(accountId)
         res.status(StatusCodes.OK).json(account)
     } catch (error) {
@@ -31,7 +31,7 @@ const getProfile = async (req, res, next) => {
 
 const updateProfile = async (req, res, next) => {
     try {
-        const accountId = req.user.sub
+        const accountId = req.user.accountId
         const account = await accountService.updateProfile(accountId, req.body)
         res.status(StatusCodes.OK).json(account)
     } catch (error) {

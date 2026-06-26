@@ -1,26 +1,46 @@
 import { Movie } from '../models/movieModel.js';
-import { MovieDate } from '../models/movieDateModel.js';
-import { ShowDates } from '../models/showDatesModel.js';
-import { MovieSchedule } from '../models/movieScheduleModel.js';
-import { Schedule } from '../models/scheduleModel.js';
-
+import { Showtime } from '../models/showTimeModel.js';
+import {Cinema } from '../models/cinemaModel.js';  
+import {CinemaRoom } from '../models/cinemaRoomModel.js';
 // GET /api/movies
-// Hỗ trợ lọc theo trạng thái (now_showing / coming_soon) và phân trang
-export const getMovies = async ({ status, page = 1, limit = 10 }) => {
+// Hỗ trợ lọc theo trạng thái (now_showing / coming_soon), tìm kiếm tên (q) và phân trang
+export const getMovies = async ({ status, page = 1, limit = 10, q }) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const query = {};
+    const conditions = [];
+
+    // Lọc theo trạng thái chiếu dựa trên releaseDate / endDate / status:
+    //   now_showing  → releaseDate <= today AND (endDate >= today OR endDate null)
+    //   coming_soon  → status === 'coming_soon' (chưa xác định endDate)
     if (status === 'now_showing') {
-        query.FROM_DATE = { $lte: today };
-        query.TO_DATE = { $gte: today };
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        conditions.push({
+            releaseDate: { $lte: today },
+            $or: [
+                { endDate: { $gte: today } },
+                { endDate: null },
+                { endDate: { $exists: false } }
+            ]
+        });
     } else if (status === 'coming_soon') {
-        query.FROM_DATE = { $gt: today };
+        conditions.push({ status: 'coming_soon' });
     }
+
+    // Tìm kiếm theo tên phim (movieName)
+    if (q && q.trim() !== '') {
+        conditions.push({
+            movieName: { $regex: q.trim(), $options: 'i' }
+        });
+    }
+
+    const query = conditions.length > 0 ? { $and: conditions } : {};
 
     const skip = (Number(page) - 1) * Number(limit);
     const total = await Movie.countDocuments(query);
     const movies = await Movie.find(query)
+        .sort({ releaseDate: 1 })
         .skip(skip)
         .limit(Number(limit))
         .lean();
@@ -34,75 +54,97 @@ export const getMovies = async ({ status, page = 1, limit = 10 }) => {
     };
 };
 
+
 // GET /api/movies/search?q=...
-// Tìm kiếm tương đối theo tên tiếng Việt hoặc tiếng Anh, sắp xếp a-z
-export const searchMovies = async ({ q }) => {
+// Tìm kiếm theo movieName (dùng $regex + $options 'i'), có phân trang
+export const searchMovies = async ({ q, page = 1, limit = 10 }) => {
     if (!q || q.trim() === '') {
-        return { message: 'Không tìm thấy phim nào khớp với từ khóa.', data: [] };
+        return {
+            page: Number(page),
+            limit: Number(limit),
+            total: 0,
+            totalPages: 0,
+            message: 'Vui lòng nhập từ khóa tìm kiếm.',
+            data: []
+        };
     }
 
-    const regex = new RegExp(q.trim(), 'i');
-    const movies = await Movie.find({
-        $or: [
-            { MOVIE_NAME_VN: { $regex: regex } },
-            { MOVIE_NAME_ENGLISH: { $regex: regex } }
-        ]
-    })
-        .sort({ MOVIE_NAME_VN: 1 })
+    const keyword = q.trim();
+    const searchQuery = {
+        movieName: { $regex: keyword, $options: 'i' }
+    };
+
+    const skip  = (Number(page) - 1) * Number(limit);
+    const total = await Movie.countDocuments(searchQuery);
+    const movies = await Movie.find(searchQuery)
+        .sort({ movieName: 1 })
+        .skip(skip)
+        .limit(Number(limit))
         .lean();
 
     if (movies.length === 0) {
-        return { message: 'Không tìm thấy phim nào khớp với từ khóa.', data: [] };
+        return {
+            page: Number(page),
+            limit: Number(limit),
+            total: 0,
+            totalPages: 0,
+            message: 'Không tìm thấy phim nào khớp với từ khóa.',
+            data: []
+        };
     }
 
-    return { data: movies };
+    return {
+        page: Number(page),
+        limit: Number(limit),
+        total,
+        totalPages: Math.ceil(total / Number(limit)),
+        data: movies
+    };
 };
 
 // GET /api/movies/:id
 // Lấy thông tin chi tiết một bộ phim
 export const getMovieById = async (id) => {
-    const movie = await Movie.findOne({ MOVIE_ID: id }).lean();
-    return movie;
+    return await Movie.findById(id).lean();
 };
 
 // GET /api/movies/:id/showtimes?date=YYYY-MM-DD
-// Lấy danh sách ngày chiếu và khung giờ chiếu của phim
+// Trả về danh sách suất chiếu của ngày đó kèm cinemaRoomName
+// Luồng: MOVIE_DATE → SHOW_DATES (lọc date) + MOVIE_SCHEDULE → SCHEDULE
+//        → SCHEDULE_SEAT → SEAT → CINEMA_ROOM
 export const getMovieShowtimes = async (movieId, date) => {
-    // Lấy tất cả SHOW_DATE_ID của phim này
+    // 1. Kiểm tra phim có ngày chiếu không
     const movieDates = await MovieDate.find({ MOVIE_ID: movieId }).lean();
     if (movieDates.length === 0) return null;
 
     const showDateIds = movieDates.map(md => md.SHOW_DATE_ID);
 
-    // Lọc ShowDates theo date nếu có
+    // 2. Lọc ngày chiếu theo date (nếu có)
     const showDateQuery = { SHOW_DATE_ID: { $in: showDateIds } };
+
     if (date) {
         const target = new Date(date);
         const nextDay = new Date(date);
         nextDay.setDate(nextDay.getDate() + 1);
-        showDateQuery.SHOW_DATE = { $gte: target, $lt: nextDay };
+        query.showDate  = { $gte: target, $lt: nextDay };
     }
-
     const showDates = await ShowDates.find(showDateQuery).sort({ SHOW_DATE: 1 }).lean();
+    if (showDates.length === 0) return null;
+
+    // 3. Lấy danh sách SCHEDULE_ID của phim (một lần duy nhất)
+    const movieSchedules = await MovieSchedule.find({ MOVIE_ID: movieId }).lean();
+    if (movieSchedules.length === 0) return null;
+    const scheduleIds = movieSchedules.map(ms => ms.SCHEDULE_ID);
 
     // Với mỗi ngày chiếu, lấy danh sách giờ chiếu qua MovieSchedule -> Schedule
-    const result = await Promise.all(
-        showDates.map(async (sd) => {
-            const movieSchedules = await MovieSchedule.find({ MOVIE_ID: movieId }).lean();
-            const scheduleIds = movieSchedules.map(ms => ms.SCHEDULE_ID);
-            const schedules = await Schedule.find({ SCHEDULE_ID: { $in: scheduleIds } })
-                .sort({ SCHEDULE_TIME: 1 })
-                .lean();
-
-            return {
-                show_date_id: sd.SHOW_DATE_ID,
-                show_date: sd.SHOW_DATE,
-                date_name: sd.DATE_NAME,
-                schedules: schedules.map(s => ({
-                    schedule_id: s.SCHEDULE_ID,
-                    schedule_time: s.SCHEDULE_TIME
-                }))
-            };
+    const result = showtimes.map((showtime) => ({
+            showtimeId:showtime._id,
+            showDate: showtime.showDate,
+            showTime: showtime.showTime,
+            startTime: showtime.startTime,
+            endTime: showtime.endTime,
+            cinema: showtime.cinemaId?.cinemaName,
+            room: showtime.roomId?.roomName
         })
     );
 

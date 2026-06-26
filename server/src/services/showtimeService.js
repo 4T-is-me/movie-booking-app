@@ -1,81 +1,115 @@
 import { ScheduleSeat } from '../models/scheduleSeatModel.js';
 import { Seat } from '../models/seatModel.js';
 import { CinemaRoom } from '../models/cinemaRoomModel.js';
-import { MovieSchedule } from '../models/movieScheduleModel.js';
-import { Schedule } from '../models/scheduleModel.js';
+import { Showtime } from '../models/showTimeModel.js';
+import { constants } from '../utils/constants.js';
+
+const getSeatStatus = (scheduleSeat) => {
+    if (!scheduleSeat) return constants.SEAT_STATUS.AVAILABLE;
+
+    if (scheduleSeat.status === 'booked') {
+        return constants.SEAT_STATUS.SOLD;
+    }
+
+    if (
+        scheduleSeat.status === 'holding' &&
+        scheduleSeat.holdExpiresAt &&
+        scheduleSeat.holdExpiresAt > new Date()
+    ) {
+        return constants.SEAT_STATUS.HOLD;
+    }
+
+    return constants.SEAT_STATUS.AVAILABLE;
+};
+
+const getSeatStatusLabel = (status) => {
+    switch (status) {
+        case constants.SEAT_STATUS.SOLD:
+            return 'Sold';
+        case constants.SEAT_STATUS.HOLD:
+            return 'Hold';
+        default:
+            return 'Hold';
+    }
+};
 
 /**
  * GET /api/showtimes/:id/seats
- * Trả về cấu trúc phòng chiếu và trạng thái từng vị trí ghế (trống, đã bán, đang chọn)
- * SEAT_STATUS: 0 = trống, 1 = đã bán, 2 = đang chọn
- * SEAT_TYPE:   1 = Thường, 2 = VIP
+ * Returns the room seat map for a showtime with merged booking/holding status.
  */
-export const getShowtimeSeats = async (scheduleId) => {
-    // Lấy thông tin suất chiếu
-    const schedule = await Schedule.findOne({ SCHEDULE_ID: Number(scheduleId) }).lean();
-    if (!schedule) return null;
+export const getShowtimeSeats = async (showtimeId) => {
+    const showtime = await Showtime.findById(showtimeId).lean();
+    if (!showtime) return null;
 
-    // Lấy bộ phim đang chiếu trong suất này
-    const movieSchedule = await MovieSchedule.findOne({ SCHEDULE_ID: Number(scheduleId) }).lean();
+    const [cinemaRoom, seats, scheduleSeats] = await Promise.all([
+        CinemaRoom.findById(showtime.roomId).lean(),
+        Seat.find({ roomId: showtime.roomId, status: 'active' }).sort({ row: 1, col: 1 }).lean(),
+        ScheduleSeat.find({ showtimeId }).lean()
+    ]);
 
-    // Lấy toàn bộ ghế của suất chiếu này từ SCHEDULE_SEAT
-    const scheduleSeats = await ScheduleSeat.find({ SCHEDULE_ID: Number(scheduleId) }).lean();
+    const scheduleSeatMap = new Map(
+        scheduleSeats.map((scheduleSeat) => [
+            scheduleSeat.seatId.toString(),
+            scheduleSeat
+        ])
+    );
 
-    if (scheduleSeats.length === 0) {
-        // Fallback: nếu chưa có dữ liệu SCHEDULE_SEAT, lấy ghế từ SEAT
-        // (trường hợp chưa sinh dữ liệu schedule seat)
-        const seatIds = scheduleSeats.map(ss => ss.SEAT_ID);
+    const seatList = seats.map((seat) => {
+        const scheduleSeat = scheduleSeatMap.get(seat._id.toString());
+        const status = getSeatStatus(scheduleSeat);
+
         return {
-            schedule_id: schedule.SCHEDULE_ID,
-            schedule_time: schedule.SCHEDULE_TIME,
-            movie_id: movieSchedule?.MOVIE_ID || null,
-            cinema_room: null,
-            seats: []
+            seatId: seat._id,
+            seatName: seat.seatName,
+            row: seat.row,
+            col: seat.col,
+            seatType: seat.seatType,
+            price: seat.price,
+            status,
+            statusLabel: getSeatStatusLabel(status),
+            holdExpiresAt: scheduleSeat?.status === 'holding' ? scheduleSeat.holdExpiresAt : null,
+
+            // Backward-compatible aliases for older seat-map clients.
+            seat_id: seat._id,
+            seat_row: seat.row,
+            seat_column: seat.col,
+            seat_type: seat.seatType,
+            seat_status: status,
+            seat_status_label: getSeatStatusLabel(status)
         };
-    }
-
-    // Lấy thông tin ghế gốc để có CINEMA_ROOM_ID
-    const seatIds = scheduleSeats.map(ss => ss.SEAT_ID);
-    const seats = await Seat.find({ SEAT_ID: { $in: seatIds } }).lean();
-    const seatMap = {};
-    seats.forEach(s => { seatMap[s.SEAT_ID] = s; });
-
-    // Xác định phòng chiếu
-    const cinemaRoomId = seats.length > 0 ? seats[0].CINEMA_ROOM_ID : null;
-    const cinemaRoom = cinemaRoomId
-        ? await CinemaRoom.findOne({ CINEMA_ROOM_ID: cinemaRoomId }).lean()
-        : null;
-
-    // Ghép thông tin ghế
-    const seatList = scheduleSeats.map(ss => ({
-        seat_id: ss.SEAT_ID,
-        seat_row: ss.SEAT_ROW,
-        seat_column: ss.SEAT_COLUMN,
-        seat_type: ss.SEAT_TYPE,        // 1 = Thường, 2 = VIP
-        seat_type_label: ss.SEAT_TYPE === 2 ? 'VIP' : 'Thường',
-        seat_status: ss.SEAT_STATUS,    // 0 = trống, 1 = đã bán, 2 = đang chọn
-        seat_status_label: ss.SEAT_STATUS === 1 ? 'Đã bán'
-            : ss.SEAT_STATUS === 2 ? 'Đang chọn'
-                : 'Trống'
-    }));
-
-    // Sắp xếp ghế theo hàng rồi theo cột
-    seatList.sort((a, b) => {
-        if (a.seat_row !== b.seat_row) return a.seat_row - b.seat_row;
-        return a.seat_column.localeCompare(b.seat_column);
     });
 
     return {
-        schedule_id: schedule.SCHEDULE_ID,
-        schedule_time: schedule.SCHEDULE_TIME,
-        movie_id: movieSchedule?.MOVIE_ID || null,
-        cinema_room: cinemaRoom
+        showtimeId: showtime._id,
+        showDate: showtime.showDate,
+        showTime: showtime.showTime,
+        startTime: showtime.startTime,
+        endTime: showtime.endTime,
+        movieId: showtime.movieId,
+        cinemaId: showtime.cinemaId,
+        cinemaRoom: cinemaRoom
             ? {
-                cinema_room_id: cinemaRoom.CINEMA_ROOM_ID,
-                cinema_room_name: cinemaRoom.CINEMA_ROOM_NAME,
-                seat_capacity: cinemaRoom.SEAT_CAPACITY
+                roomId: cinemaRoom._id,
+                roomName: cinemaRoom.roomName,
+                roomType: cinemaRoom.roomType,
+                totalSeats: cinemaRoom.totalSeats,
+                rowsCount: cinemaRoom.rowsCount,
+                colsCount: cinemaRoom.colsCount,
+                seatCapacity: cinemaRoom.seatCapacity
             }
             : null,
-        seats: seatList
+        seats: seatList,
+
+        // Backward-compatible aliases for older clients.
+        showtimeId: showtime._id,
+        showtime: showtime.showTime,
+        movieId: showtime.movieId,
+        cinema_room: cinemaRoom
+            ? {
+                roomId: cinemaRoom._id,
+                roomName: cinemaRoom.roomName,
+                seatCapacity: cinemaRoom.seatCapacity
+            }
+            : null
     };
 };
