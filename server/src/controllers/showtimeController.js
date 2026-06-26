@@ -1,13 +1,21 @@
+import mongoose from 'mongoose';
 import { getShowtimeSeats } from '../services/showtimeService.js';
 
 // GET /api/showtimes/:id/seats
 export const handleGetShowtimeSeats = async (req, res) => {
     try {
         const { id } = req.params;
+
+        if (!mongoose.isValidObjectId(id)) {
+            return res.status(404).json({ message: 'Không tìm thấy suất chiếu.' });
+        }
+
         const result = await getShowtimeSeats(id);
+
         if (!result) {
             return res.status(404).json({ message: 'Không tìm thấy suất chiếu.' });
         }
+
         return res.status(200).json({ data: result });
     } catch (error) {
         console.error('handleGetShowtimeSeats error:', error);

@@ -1,7 +1,9 @@
 import { Movie } from '../models/movieModel.js';
 import { Showtime } from '../models/showTimeModel.js';
-import {Cinema } from '../models/cinemaModel.js';  
-import {CinemaRoom } from '../models/cinemaRoomModel.js';
+import { Cinema } from '../models/cinemaModel.js';
+import { CinemaRoom } from '../models/cinemaRoomModel.js';
+import { ScheduleSeat } from '../models/scheduleSeatModel.js';
+
 // GET /api/movies
 // Hỗ trợ lọc theo trạng thái (now_showing / coming_soon), tìm kiếm tên (q) và phân trang
 export const getMovies = async ({ status, page = 1, limit = 10, q }) => {
@@ -109,44 +111,78 @@ export const getMovieById = async (id) => {
 };
 
 // GET /api/movies/:id/showtimes?date=YYYY-MM-DD
-// Trả về danh sách suất chiếu của ngày đó kèm cinemaRoomName
-// Luồng: MOVIE_DATE → SHOW_DATES (lọc date) + MOVIE_SCHEDULE → SCHEDULE
-//        → SCHEDULE_SEAT → SEAT → CINEMA_ROOM
+// Trả về danh sách suất chiếu của phim kèm cinemaRoomName + availableSeats
 export const getMovieShowtimes = async (movieId, date) => {
-    // 1. Kiểm tra phim có ngày chiếu không
-    const movieDates = await MovieDate.find({ MOVIE_ID: movieId }).lean();
-    if (movieDates.length === 0) return null;
-
-    const showDateIds = movieDates.map(md => md.SHOW_DATE_ID);
-
-    // 2. Lọc ngày chiếu theo date (nếu có)
-    const showDateQuery = { SHOW_DATE_ID: { $in: showDateIds } };
-
+    // 1. Xây dựng filter — movieId bắt buộc, date tuỳ chọn
+    const showtimeQuery = { movieId };
     if (date) {
-        const target = new Date(date);
-        const nextDay = new Date(date);
-        nextDay.setDate(nextDay.getDate() + 1);
-        query.showDate  = { $gte: target, $lt: nextDay };
+        const start = new Date(date);
+        start.setHours(0, 0, 0, 0);
+        const end = new Date(date);
+        end.setHours(23, 59, 59, 999);
+        showtimeQuery.showDate = { $gte: start, $lte: end };
     }
-    const showDates = await ShowDates.find(showDateQuery).sort({ SHOW_DATE: 1 }).lean();
-    if (showDates.length === 0) return null;
 
-    // 3. Lấy danh sách SCHEDULE_ID của phim (một lần duy nhất)
-    const movieSchedules = await MovieSchedule.find({ MOVIE_ID: movieId }).lean();
-    if (movieSchedules.length === 0) return null;
-    const scheduleIds = movieSchedules.map(ms => ms.SCHEDULE_ID);
+    // 2. Lấy danh sách suất chiếu, populate roomId để lấy tên phòng & sức chứa
+    const showtimes = await Showtime.find(showtimeQuery)
+        .populate('roomId', 'roomName roomType seatCapacity')
+        .sort({ showDate: 1, startTime: 1 })
+        .lean();
 
-    // Với mỗi ngày chiếu, lấy danh sách giờ chiếu qua MovieSchedule -> Schedule
-    const result = showtimes.map((showtime) => ({
-            showtimeId:showtime._id,
-            showDate: showtime.showDate,
-            showTime: showtime.showTime,
-            startTime: showtime.startTime,
-            endTime: showtime.endTime,
-            cinema: showtime.cinemaId?.cinemaName,
-            room: showtime.roomId?.roomName
-        })
+    if (showtimes.length === 0) return null;
+
+    // 3. Đếm ghế đã chiếm (booked + holding còn hiệu lực) cho tất cả suất chiếu
+    //    dùng một aggregate duy nhất thay vì N query riêng lẻ
+    const showtimeIds = showtimes.map((st) => st._id);
+    const now = new Date();
+
+    const occupiedAgg = await ScheduleSeat.aggregate([
+        {
+            $match: {
+                showtimeId: { $in: showtimeIds },
+                $or: [
+                    { status: 'booked' },
+                    // Holding còn hiệu lực (chưa hết hạn)
+                    { status: 'holding', holdExpiresAt: { $gt: now } }
+                ]
+            }
+        },
+        {
+            $group: {
+                _id: '$showtimeId',
+                occupiedCount: { $sum: 1 }
+            }
+        }
+    ]);
+
+    // Map: showtimeId (string) → số ghế đã chiếm
+    const occupiedMap = new Map(
+        occupiedAgg.map(({ _id, occupiedCount }) => [_id.toString(), occupiedCount])
     );
 
-    return result;
+    // 4. Gắn availableSeats vào từng suất chiếu
+    return showtimes.map((showtime) => {
+        const totalSeats = showtime.roomId?.seatCapacity ?? 0;
+        const occupied   = occupiedMap.get(showtime._id.toString()) ?? 0;
+
+        return {
+            showtimeId:     showtime._id,
+            showDate:       showtime.showDate,
+            showTime:       showtime.showTime,
+            startTime:      showtime.startTime,
+            endTime:        showtime.endTime,
+            cinemaId:       showtime.cinemaId,
+            cinemaRoomName: showtime.roomId?.roomName ?? null,
+            room: showtime.roomId
+                ? {
+                    roomId:       showtime.roomId._id,
+                    roomName:     showtime.roomId.roomName,
+                    roomType:     showtime.roomId.roomType,
+                    seatCapacity: showtime.roomId.seatCapacity
+                }
+                : null,
+            totalSeats,
+            availableSeats: Math.max(0, totalSeats - occupied)
+        };
+    });
 };
