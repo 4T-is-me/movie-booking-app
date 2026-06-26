@@ -3,23 +3,23 @@ package com.example.movie_booking_app.viewmodel
 import androidx.lifecycle.ViewModel
 import com.example.movie_booking_app.data.model.entity.Seat
 import com.example.movie_booking_app.data.model.entity.SeatStatus
-import com.example.movie_booking_app.data.model.entity.showDate
-import com.example.movie_booking_app.data.model.entity.showTime
+import com.example.movie_booking_app.data.model.entity.ShowDate
+import com.example.movie_booking_app.data.model.entity.ShowTime
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class selectSeatViewModel : ViewModel() {
+class SelectSeatViewModel : ViewModel() {
 
     private val _seats = MutableStateFlow<List<Seat>>(emptyList())
     val seats: StateFlow<List<Seat>> = _seats.asStateFlow()
 
-    private val _dates = MutableStateFlow<List<showDate>>(emptyList())
-    val dates: StateFlow<List<showDate>> = _dates.asStateFlow()
+    private val _dates = MutableStateFlow<List<ShowDate>>(emptyList())
+    val dates: StateFlow<List<ShowDate>> = _dates.asStateFlow()
 
-    private val _times = MutableStateFlow<List<showTime>>(emptyList())
-    val times: StateFlow<List<showTime>> = _times.asStateFlow()
+    private val _times = MutableStateFlow<List<ShowTime>>(emptyList())
+    val times: StateFlow<List<ShowTime>> = _times.asStateFlow()
 
     private val _totalPrice = MutableStateFlow(0)
     val totalPrice: StateFlow<Int> = _totalPrice.asStateFlow()
@@ -44,25 +44,25 @@ class selectSeatViewModel : ViewModel() {
 
         // Mock dates
         _dates.value = listOf(
-            showDate("1", "Dec", "10", true),
-            showDate("2", "Dec", "11"),
-            showDate("3", "Dec", "12"),
-            showDate("4", "Dec", "13"),
-            showDate("5", "Dec", "14"),
-            showDate("6", "Dec", "15"),
-            showDate("7", "Dec", "16"),
-            showDate("8", "Dec", "17"),
-            showDate("9", "Dec", "18"),
-            showDate("10", "Dec", "19")
+            ShowDate("1", "Dec", "10", true),
+            ShowDate("2", "Dec", "11"),
+            ShowDate("3", "Dec", "12"),
+            ShowDate("4", "Dec", "13"),
+            ShowDate("5", "Dec", "14"),
+            ShowDate("6", "Dec", "15"),
+            ShowDate("7", "Dec", "16"),
+            ShowDate("8", "Dec", "17"),
+            ShowDate("9", "Dec", "18"),
+            ShowDate("10", "Dec", "19")
         )
 
         // Mock times
         _times.value = listOf(
-            showTime("1", "12:10"),
-            showTime("2", "14:15", true),
-            showTime("3", "16:20"),
-            showTime("4", "18:25"),
-            showTime("5", "20:30")
+            ShowTime("1", "12:10"),
+            ShowTime("2", "14:15", true),
+            ShowTime("3", "16:20"),
+            ShowTime("4", "18:25"),
+            ShowTime("5", "20:30")
         )
 
         calculateTotalPrice()

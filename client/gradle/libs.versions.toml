@@ -23,7 +23,7 @@ recyclerview = "1.4.0"
 fragment = "1.8.9"
 gridlayout = "1.1.0"
 
-hilt = "2.57"
+hilt = "2.55"
 
 [libraries]
 

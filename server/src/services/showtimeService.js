@@ -1,80 +1,161 @@
 import { ScheduleSeat } from '../models/scheduleSeatModel.js';
 import { Seat } from '../models/seatModel.js';
 import { CinemaRoom } from '../models/cinemaRoomModel.js';
+import { Showtime } from '../models/showTimeModel.js';
+import { Movie } from '../models/movieModel.js';
+import { constants } from '../utils/constants.js';
 
+const getSeatStatus = (scheduleSeat) => {
+    if (!scheduleSeat) return constants.SEAT_STATUS.AVAILABLE;
+
+    if (scheduleSeat.status === 'booked') {
+        return constants.SEAT_STATUS.SOLD;
+    }
+
+    if (
+        scheduleSeat.status === 'holding' &&
+        scheduleSeat.holdExpiresAt &&
+        scheduleSeat.holdExpiresAt > new Date()
+    ) {
+        return constants.SEAT_STATUS.HOLD;
+    }
+
+    return constants.SEAT_STATUS.AVAILABLE;
+};
+
+const getSeatStatusLabel = (status) => {
+    switch (status) {
+        case constants.SEAT_STATUS.SOLD:
+            return 'Sold';
+        case constants.SEAT_STATUS.HOLD:
+            return 'Hold';
+        default:
+            return 'Available';
+    }
+};
 
 /**
  * GET /api/showtimes/:id/seats
- * Trả về cấu trúc phòng chiếu và trạng thái từng vị trí ghế (trống, đã bán, đang chọn)
- * SEAT_STATUS: 0 = trống, 1 = đã bán, 2 = đang chọn
- * SEAT_TYPE:   1 = Thường, 2 = VIP
+ * Returns the room seat map for a showtime with merged booking/holding status.
+ * Seats are grouped by seatRow to serve SeatMapActivity's matrix renderer.
  */
-export const getShowtimeSeats = async (scheduleId) => {
-    // Lấy thông tin suất chiếu
-    const schedule = await Schedule.findOne({ SCHEDULE_ID: Number(scheduleId) }).lean();
-    if (!schedule) return null;
+export const getShowtimeSeats = async (showtimeId) => {
+    // Populate movieId to get movie info in a single query (no extra API call needed)
+    const showtime = await Showtime.findById(showtimeId)
+        .populate('movieId', 'movieName poster duration language censorship movieGenre')
+        .lean();
+    if (!showtime) return null;
 
-    // Lấy bộ phim đang chiếu trong suất này
-    const movieSchedule = await MovieSchedule.findOne({ SCHEDULE_ID: Number(scheduleId) }).lean();
+    const movie = showtime.movieId; // populated Movie document (or null)
 
-    // Lấy toàn bộ ghế của suất chiếu này từ SCHEDULE_SEAT
-    const scheduleSeats = await ScheduleSeat.find({ SCHEDULE_ID: Number(scheduleId) }).lean();
+    // Fetch cinema room info in parallel with seat data
+    const [cinemaRoom, scheduleSeats, allSeats] = await Promise.all([
+        CinemaRoom.findById(showtime.roomId).lean(),
+        // Populate seatId to get row, col, seatType directly from Seat collection
+        ScheduleSeat.find({ showtimeId })
+            .populate('seatId', 'seatName row col seatType price')
+            .lean(),
+        // Fetch all active seats in the room so unbooked seats also appear in the map
+        Seat.find({ roomId: showtime.roomId, status: 'active' })
+            .sort({ row: 1, col: 1 })
+            .lean()
+    ]);
 
-    if (scheduleSeats.length === 0) {
-        // Fallback: nếu chưa có dữ liệu SCHEDULE_SEAT, lấy ghế từ SEAT
-        // (trường hợp chưa sinh dữ liệu schedule seat)
-        const seatIds = scheduleSeats.map(ss => ss.SEAT_ID);
+    // Build a map: seatId (string) → scheduleSeat for O(1) status lookup
+    const scheduleSeatMap = new Map(
+        scheduleSeats
+            .filter((ss) => ss.seatId) // guard against orphaned records
+            .map((ss) => [ss.seatId._id.toString(), ss])
+    );
+
+    // Map every physical seat → enriched seat object
+    const seatList = allSeats.map((seat) => {
+        const scheduleSeat = scheduleSeatMap.get(seat._id.toString());
+        const status = getSeatStatus(scheduleSeat);
+
         return {
-            schedule_id: schedule.SCHEDULE_ID,
-            schedule_time: schedule.SCHEDULE_TIME,
-            movie_id: movieSchedule?.MOVIE_ID || null,
-            cinema_room: null,
-            seats: []
+            seatId: seat._id,
+            // scheduleSeatId: _id của bản ghi ScheduleSeat (null nếu ghế đang available)
+            scheduleSeatId: scheduleSeat?._id ?? null,
+            seatName: seat.seatName,
+            // seatLabel: nhãn hiển thị dạng "A3", "B10", ...
+            seatLabel: `${seat.row}${seat.col}`,
+            row: seat.row,         // e.g. "A"
+            col: seat.col,         // e.g. "1"
+            seatType: seat.seatType,
+            price: seat.price,
+            status,
+            statusLabel: getSeatStatusLabel(status),
+            holdExpiresAt: scheduleSeat?.status === 'holding' ? scheduleSeat.holdExpiresAt : null
         };
-    }
-
-    // Lấy thông tin ghế gốc để có CINEMA_ROOM_ID
-    const seatIds = scheduleSeats.map(ss => ss.SEAT_ID);
-    const seats = await Seat.find({ SEAT_ID: { $in: seatIds } }).lean();
-    const seatMap = {};
-    seats.forEach(s => { seatMap[s.SEAT_ID] = s; });
-
-    // Xác định phòng chiếu
-    const cinemaRoomId = seats.length > 0 ? seats[0].CINEMA_ROOM_ID : null;
-    const cinemaRoom = cinemaRoomId
-        ? await CinemaRoom.findOne({ CINEMA_ROOM_ID: cinemaRoomId }).lean()
-        : null;
-
-    // Ghép thông tin ghế
-    const seatList = scheduleSeats.map(ss => ({
-        seat_id: ss.SEAT_ID,
-        seat_row: ss.SEAT_ROW,
-        seat_column: ss.SEAT_COLUMN,
-        seat_type: ss.SEAT_TYPE,        // 1 = Thường, 2 = VIP
-        seat_type_label: ss.SEAT_TYPE === 2 ? 'VIP' : 'Thường',
-        seat_status: ss.SEAT_STATUS,    // 0 = trống, 1 = đã bán, 2 = đang chọn
-        seat_status_label: ss.SEAT_STATUS === 1 ? 'Đã bán'
-            : ss.SEAT_STATUS === 2 ? 'Đang chọn'
-                : 'Trống'
-    }));
-
-    // Sắp xếp ghế theo hàng rồi theo cột
-    seatList.sort((a, b) => {
-        if (a.seat_row !== b.seat_row) return a.seat_row - b.seat_row;
-        return a.seat_column.localeCompare(b.seat_column);
     });
 
+    // Group seats by row → [{ row: "A", seats: [{ col, type, status, ... }] }, ...]
+    const rowMap = new Map();
+    for (const seat of seatList) {
+        if (!rowMap.has(seat.row)) {
+            rowMap.set(seat.row, []);
+        }
+        rowMap.get(seat.row).push({
+            seatId:         seat.seatId,
+            scheduleSeatId: seat.scheduleSeatId,   // null nếu ghế available
+            seatLabel:      seat.seatLabel,         // e.g. "A3"
+            seatName:       seat.seatName,
+            col:            seat.col,
+            type:           seat.seatType,
+            price:          seat.price,
+            status:         seat.status,
+            statusLabel:    seat.statusLabel,
+            holdExpiresAt:  seat.holdExpiresAt
+        });
+    }
+
+    // Sort rows alphabetically; seats within each row sorted by col (numeric-aware)
+    const rows = Array.from(rowMap.entries())
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([row, seats]) => ({
+            row,
+            seats: seats.sort((a, b) =>
+                String(a.col).localeCompare(String(b.col), undefined, { numeric: true })
+            )
+        }));
+
     return {
-        schedule_id: schedule.SCHEDULE_ID,
-        schedule_time: schedule.SCHEDULE_TIME,
-        movie_id: movieSchedule?.MOVIE_ID || null,
-        cinema_room: cinemaRoom
+        // --- Showtime info ---
+        showtimeId: showtime._id,
+        showDate: showtime.showDate,
+        showTime: showtime.showTime,
+        startTime: showtime.startTime,
+        endTime: showtime.endTime,
+
+        // --- Movie info (populated) ---
+        movieId: movie?._id ?? null,
+        movieName: movie?.movieName ?? null,
+        moviePoster: movie?.poster ?? null,
+        movieDuration: movie?.duration ?? null,
+        movieLanguage: movie?.language ?? null,
+        movieCensorship: movie?.censorship ?? null,
+        movieGenre: movie?.movieGenre ?? [],
+
+        // --- Cinema / Room info ---
+        cinemaId: showtime.cinemaId,
+        cinemaRoom: cinemaRoom
             ? {
-                cinema_room_id: cinemaRoom.CINEMA_ROOM_ID,
-                cinema_room_name: cinemaRoom.CINEMA_ROOM_NAME,
-                seat_capacity: cinemaRoom.SEAT_CAPACITY
+                roomId: cinemaRoom._id,
+                roomName: cinemaRoom.roomName,
+                roomType: cinemaRoom.roomType,
+                totalSeats: cinemaRoom.totalSeats,
+                rowsCount: cinemaRoom.rowsCount,
+                colsCount: cinemaRoom.colsCount,
+                seatCapacity: cinemaRoom.seatCapacity
             }
             : null,
+        cinemaRoomName: cinemaRoom?.roomName ?? null,
+
+        // --- Seat map ---
+        // Grouped by row — directly serves SeatMapActivity matrix renderer
+        rows,
+        // Flat list — kept for backward compatibility with existing clients
         seats: seatList
     };
 };

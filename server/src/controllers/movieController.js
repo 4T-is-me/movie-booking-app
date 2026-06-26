@@ -5,27 +5,29 @@ import {
     getMovieShowtimes
 } from '../services/movieService.js';
 
-// GET /api/movies - Lấy danh sách phim (lọc status, tìm kiếm q, phân trang page/limit)
+import { StatusCodes } from 'http-status-codes';
+
+// GET /api/movies
 export const handleGetMovies = async (req, res) => {
     try {
-        const { status, page, limit, q } = req.query;
-        const result = await getMovies({ status, page, limit, q });
-        return res.status(200).json(result);
+        const { status, page, limit } = req.query;
+        const result = await getMovies({ status, page, limit });
+        return res.status(StatusCodes.OK).json(result);
     } catch (error) {
         console.error('handleGetMovies error:', error);
-        return res.status(500).json({ message: 'Lỗi máy chủ nội bộ.' });
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Lỗi máy chủ nội bộ.' });
     }
 };
 
 // GET /api/movies/search?q=...
 export const handleSearchMovies = async (req, res) => {
     try {
-        const { q, page, limit } = req.query;
-        const result = await searchMovies({ q, page, limit });
-        return res.status(200).json(result);
+        const { q } = req.query;
+        const result = await searchMovies({ q });
+        return res.status(StatusCodes.OK).json(result);
     } catch (error) {
         console.error('handleSearchMovies error:', error);
-        return res.status(500).json({ message: 'Lỗi máy chủ nội bộ.' });
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Lỗi máy chủ nội bộ.' });
     }
 };
 
@@ -35,12 +37,12 @@ export const handleGetMovieById = async (req, res) => {
         const { id } = req.params;
         const movie = await getMovieById(id);
         if (!movie) {
-            return res.status(404).json({ message: 'Movie not found', movieId: id });
+            return res.status(StatusCodes.NOT_FOUND).json({ message: 'Không tìm thấy phim.' });
         }
-        return res.status(200).json({ data: movie });
+        return res.status(StatusCodes.OK).json({ data: movie });
     } catch (error) {
         console.error('handleGetMovieById error:', error);
-        return res.status(500).json({ message: 'Lỗi máy chủ nội bộ.' });
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Lỗi máy chủ nội bộ.' });
     }
 };
 
@@ -58,9 +60,9 @@ export const handleGetMovieShowtimes = async (req, res) => {
                 date: date || null
             });
         }
-        return res.status(200).json({ data: result });
+        return res.status(StatusCodes.OK).json({ data: result });
     } catch (error) {
         console.error('handleGetMovieShowtimes error:', error);
-        return res.status(500).json({ message: 'Lỗi máy chủ nội bộ.' });
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Lỗi máy chủ nội bộ.' });
     }
 };

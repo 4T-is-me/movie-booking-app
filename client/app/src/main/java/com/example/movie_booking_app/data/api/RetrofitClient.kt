@@ -5,7 +5,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
     // 10.0.2.2 is the special alias to your host loopback interface (localhost) for Android emulator
-    private const val BASE_URL = "http://10.88.55.126:5000/"
+    // Note for LDPlayer: If 10.0.2.2 doesn't work, change this to your PC's current IPv4 address (run ipconfig to check).
+    private const val BASE_URL = "http://192.168.10.75/"
+
 
     val instance: Retrofit by lazy {
         Retrofit.Builder()
