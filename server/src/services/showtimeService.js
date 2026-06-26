@@ -3,7 +3,6 @@ import { Seat } from '../models/seatModel.js';
 import { CinemaRoom } from '../models/cinemaRoomModel.js';
 
 
-
 /**
  * GET /api/showtimes/:id/seats
  * Trả về cấu trúc phòng chiếu và trạng thái từng vị trí ghế (trống, đã bán, đang chọn)

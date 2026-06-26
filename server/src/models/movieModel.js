@@ -4,6 +4,7 @@ const movieSchema = new mongoose.Schema({
     movieName: { type: String, required: true, trim: true },
     duration: { type: Number, required: true }, // Thời lượng (phút)
     releaseDate: { type: Date, required: true }, // Ngày công chiếu
+    endDate: { type: Date },                      // Ngày kết thúc chiếu
     movieGenre: { type: [String], required: true }, // Mảng các thể loại phim
     language: { type: String, required: true },
     censorship: { type: String, required: true }, // Độ tuổi (ví dụ: 13T)
@@ -21,5 +22,8 @@ const movieSchema = new mongoose.Schema({
     collection: 'movies', // Khớp với tên collection trong lỗi cũ của bạn
     timestamps: true // Tự động quản lý createdAt và updatedAt dưới dạng ISODate
 });
+
+// Index tối ưu truy vấn lọc phim theo khoảng ngày chiếu (now_showing / coming_soon)
+movieSchema.index({ releaseDate: 1, endDate: 1 });
 
 export const Movie = mongoose.model('Movie', movieSchema);

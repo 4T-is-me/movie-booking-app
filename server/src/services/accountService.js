@@ -63,8 +63,8 @@ const register = async (reqBody) => {
 const login = async (reqBody) => {
     const loginId = reqBody.email;
 
-    let account = await Account.findOne({ 
-        $or: [{ email: loginId }, { username: loginId }] 
+    let account = await Account.findOne({
+        $or: [{ email: loginId }, { username: loginId }]
     }).populate('roleId');
 
     if (!account) {

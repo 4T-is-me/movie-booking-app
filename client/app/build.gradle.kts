@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
 
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
@@ -17,6 +16,7 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -40,36 +40,25 @@ android {
     }
 
     buildFeatures {
-        compose = true
         viewBinding = true
     }
 }
 
 dependencies {
 
-
-
-    implementation(libs.androidx.cardview)
-    implementation(libs.androidx.constraintlayout)
-
     // Core
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.fragment)
-    implementation(libs.androidx.gridlayout)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
 
-    // Compose
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.graphics)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.androidx.navigation.compose)
+    // UI XML
+    implementation(libs.androidx.fragment)
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.viewpager2)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.cardview)
+    implementation(libs.androidx.gridlayout)
     implementation(libs.material)
 
     // Network
@@ -81,19 +70,17 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
 
     // Image Loading
-    implementation(libs.coil.compose)
+    implementation(libs.coil)
     implementation(libs.coil.network.okhttp)
 
-    // Test
-    testImplementation(libs.junit)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(libs.androidx.junit)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
-    debugImplementation(libs.androidx.compose.ui.tooling)
-
+    // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
+    // Unit Test
+    testImplementation(libs.junit)
+
+    // Android Test
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 }
