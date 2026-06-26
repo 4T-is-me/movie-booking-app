@@ -243,7 +243,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/register_prompt"
-        android:textColor="#FFFFFF"
+        android:textColor="#FFC107"
         android:textSize="16sp"
         android:textStyle="bold"
         android:layout_marginTop="24dp"
