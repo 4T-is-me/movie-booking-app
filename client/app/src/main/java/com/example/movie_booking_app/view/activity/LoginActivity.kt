@@ -2,9 +2,12 @@ package com.example.movie_booking_app.view.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -20,16 +23,18 @@ import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var txtError: TextView
+    private lateinit var passwordLayout: TextInputLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
         txtError = findViewById(R.id.txtError)
+        passwordLayout = findViewById(R.id.passwordLayout)
+        
         val ivBack = findViewById<ImageView>(R.id.ivBack)
         ivBack.setOnClickListener {
             finish()
@@ -41,25 +46,31 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        val tvForgotPassword = findViewById<TextView>(R.id.tvForgotPassword)
+        tvForgotPassword.setOnClickListener {
+            // Handle forgot password
+        }
+
+        val cbRememberMe = findViewById<CheckBox>(R.id.cbRememberMe)
+
         val btnLogin = findViewById<Button>(R.id.btnLogin)
         val edtUsername = findViewById<TextInputEditText>(R.id.edtUsername)
         val edtPassword = findViewById<TextInputEditText>(R.id.edtPassword)
-        val passwordLayout = findViewById<TextInputLayout>(R.id.passwordLayout)
 
-        var isPasswordVisible = false
+        // Initialize eye icon state
+        edtPassword.transformationMethod = PasswordTransformationMethod.getInstance()
+        passwordLayout.setEndIconDrawable(R.drawable.ic_visibility_off)
+
         passwordLayout.setEndIconOnClickListener {
-            isPasswordVisible = !isPasswordVisible
-            if (isPasswordVisible) {
-
-                edtPassword.inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            val selection = edtPassword.selectionEnd
+            if (edtPassword.transformationMethod is PasswordTransformationMethod) {
+                edtPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
                 passwordLayout.setEndIconDrawable(R.drawable.ic_visibility)
             } else {
-
-                edtPassword.inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+                edtPassword.transformationMethod = PasswordTransformationMethod.getInstance()
                 passwordLayout.setEndIconDrawable(R.drawable.ic_visibility_off)
             }
-            // Đưa con trỏ văn bản về cuối cùng
-            edtPassword.setSelection(edtPassword.text?.length ?: 0)
+            edtPassword.setSelection(selection)
         }
 
         // Hide error when user starts typing
@@ -70,10 +81,16 @@ class LoginActivity : AppCompatActivity() {
             val username = edtUsername.text.toString().trim()
             val password = edtPassword.text.toString().trim()
 
-            if (username.isEmpty() || password.isEmpty()) {
-                showError("Please enter both username and password")
+            if (username.isEmpty()) {
+                showError("Please enter username")
                 return@setOnClickListener
             }
+            if (password.isEmpty()) {
+                showError("Please enter password")
+                return@setOnClickListener
+            }
+
+            Log.d("LOGIN_DEBUG", "Username: $username")
 
             btnLogin.isEnabled = false
             hideError()
@@ -86,16 +103,29 @@ class LoginActivity : AppCompatActivity() {
                     withContext(Dispatchers.Main) {
                         btnLogin.isEnabled = true
                         if (response.isSuccessful && response.body() != null) {
-                            val accessToken = response.body()?.accessToken
-                            if (accessToken == null) {
-                                Log.e("TOKEN_DEBUG", "❌ CHƯA CÓ TOKEN")
-                            } else {
-                                Log.d("TOKEN_DEBUG", "✅ TOKEN OK: $accessToken")
-                            }
+                            val loginData = response.body()!!
+
+                            
+                            // Save tokens
+                            TokenManager.saveTokens(
+                                this@LoginActivity,
+                                loginData.accessToken,
+                                loginData.refreshToken
+                            )
+
+                            // Get saved tokens
+                            val savedAccessToken = TokenManager.getAccessToken(this@LoginActivity)
+                            val savedRefreshToken = TokenManager.getRefreshToken(this@LoginActivity)
+
+                            Log.d("TOKEN_DEBUG", " Access Tokennn: $savedAccessToken")
+                            Log.d("TOKEN_DEBUG", " Refresh Tokennn $savedRefreshToken")
+
+//                            Toast.makeText(this@LoginActivity, "Login successful! Token saved.", Toast.LENGTH_SHORT).show()
+
+
 
                             val intent = Intent(this@LoginActivity, MainActivity::class.java)
                             startActivity(intent)
-
                             finish()
                         } else {
                             val errorMsg = when(response.code()) {
@@ -122,8 +152,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun hideError() {
-        if (txtError.visibility == View.VISIBLE) {
-            txtError.visibility = View.GONE
-        }
+        txtError.visibility = View.GONE
     }
 }
