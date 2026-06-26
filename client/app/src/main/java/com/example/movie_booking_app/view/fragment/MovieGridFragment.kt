@@ -15,6 +15,7 @@ import com.example.movie_booking_app.data.repository.MovieRepository
 import com.example.movie_booking_app.data.repository.RepositoryProvider
 import com.example.movie_booking_app.databinding.LayoutMovieGridContentBinding
 import com.example.movie_booking_app.view.adapter.MovieGridAdapter
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MovieGridFragment : Fragment() {
@@ -90,12 +91,21 @@ class MovieGridFragment : Fragment() {
             Toast.makeText(context, "Opening schedule for: ${movie.movieName}", Toast.LENGTH_SHORT).show()
         }
         binding.rvFullList.adapter = adapter
+        
         viewLifecycleOwner.lifecycleScope.launch {
+            binding.shimmerGrid.visibility = View.VISIBLE
+            binding.shimmerGrid.startShimmer()
+            binding.rvFullList.visibility = View.GONE
+            
             movieRepository.getMovies().collect { allMovies ->
                 val filtered = allMovies.filter { 
                     if (isNowPlaying) it.status == "showing" else it.status == "coming_soon"
                 }
                 adapter.submitList(filtered)
+                
+                binding.shimmerGrid.stopShimmer()
+                binding.shimmerGrid.visibility = View.GONE
+                binding.rvFullList.visibility = View.VISIBLE
             }
         }
     }

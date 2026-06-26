@@ -36,10 +36,30 @@
             app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/vpPromo"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginTop="16dp" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp">
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/vpPromo"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmerPromo"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:visibility="gone"
+            app:shimmer_auto_start="true"
+            app:shimmer_base_alpha="0.1"
+            app:shimmer_highlight_alpha="0.4">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="16dp"
+                android:background="@color/skeleton_gray" />
+        </com.facebook.shimmer.ShimmerFrameLayout>
+    </FrameLayout>
 
 </LinearLayout>

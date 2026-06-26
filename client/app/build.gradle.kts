@@ -67,6 +67,7 @@ dependencies {
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.viewpager2)
     implementation(libs.material)
+    implementation(libs.shimmer)
 
     // Image Loading - Glide (Preserved Feature)
     implementation(libs.glide)

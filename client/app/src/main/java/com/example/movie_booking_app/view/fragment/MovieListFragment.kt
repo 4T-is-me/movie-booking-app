@@ -16,18 +16,12 @@ import com.example.movie_booking_app.view.adapter.HomeMultiAdapter
 import com.example.movie_booking_app.viewmodel.MovieViewModel
 import kotlinx.coroutines.launch
 
-/**
- * MovieListFragment: Main dashboard utilizing View Binding and multi-viewType adapter.
- */
 class MovieListFragment : Fragment() {
 
     private var _binding: FragmentMovieListBinding? = null
     private val binding get() = _binding!!
     
-    private val viewModel: MovieViewModel by lazy {
-        androidx.lifecycle.ViewModelProvider(this)[MovieViewModel::class.java]
-    }
-
+    private val viewModel: MovieViewModel by viewModels()
     private lateinit var homeAdapter: HomeMultiAdapter
 
     override fun onCreateView(
@@ -63,9 +57,7 @@ class MovieListFragment : Fragment() {
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.homeItems.collect { items ->
-                if (items.isNotEmpty()) {
-                    homeAdapter.submitList(items)
-                }
+                homeAdapter.submitList(items)
             }
         }
     }

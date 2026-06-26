@@ -26,6 +26,7 @@ activity = "1.10.1"
 gridlayout = "1.1.0"
 
 hilt = "2.57"
+shimmer = "0.5.0"
 
 [libraries]
 
@@ -65,6 +66,7 @@ androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview"
 androidx-fragment = { group = "androidx.fragment", name = "fragment", version.ref = "fragment" }
 androidx-gridlayout = { group = "androidx.gridlayout", name = "gridlayout", version.ref = "gridlayout" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+shimmer = { group = "com.facebook.shimmer", name = "shimmer", version.ref = "shimmer" }
 
 # Test
 junit = { group = "junit", name = "junit", version.ref = "junit" }

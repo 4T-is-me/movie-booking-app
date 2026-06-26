@@ -36,26 +36,53 @@
             app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/vpNowPlaying"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="600dp"
-        android:layout_marginTop="16dp"
-        android:clipToPadding="false"
-        android:clipChildren="false" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp">
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/indicatorNowPlaying"
-        android:layout_width="61dp"
-        android:layout_height="8dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp"
-        android:background="@android:color/transparent"
-        app:tabBackground="@drawable/bg_indicator_unselected"
-        app:tabIndicator="@drawable/bg_indicator_selected"
-        app:tabIndicatorColor="@color/yellow"
-        app:tabIndicatorGravity="center"
-        app:tabMaxWidth="20dp"
-        app:tabRippleColor="@android:color/transparent" />
+        <LinearLayout
+            android:id="@+id/layoutContentNowPlaying"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/vpNowPlaying"
+                android:layout_width="match_parent"
+                android:layout_height="600dp"
+                android:clipToPadding="false"
+                android:clipChildren="false" />
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/indicatorNowPlaying"
+                android:layout_width="61dp"
+                android:layout_height="8dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:background="@android:color/transparent"
+                app:tabBackground="@drawable/bg_indicator_unselected"
+                app:tabIndicator="@drawable/bg_indicator_selected"
+                app:tabIndicatorColor="@color/yellow"
+                app:tabIndicatorGravity="center"
+                app:tabMaxWidth="20dp"
+                app:tabRippleColor="@android:color/transparent" />
+        </LinearLayout>
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmerNowPlaying"
+            android:layout_width="match_parent"
+            android:layout_height="600dp"
+            android:visibility="gone"
+            app:shimmer_auto_start="true"
+            app:shimmer_base_alpha="0.1"
+            app:shimmer_highlight_alpha="0.4">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="32dp"
+                android:background="@color/skeleton_gray" />
+        </com.facebook.shimmer.ShimmerFrameLayout>
+    </FrameLayout>
 
 </LinearLayout>

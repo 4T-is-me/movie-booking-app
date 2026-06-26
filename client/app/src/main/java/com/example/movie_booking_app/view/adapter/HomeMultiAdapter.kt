@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import androidx.core.view.ViewCompat
@@ -20,15 +22,14 @@ import com.example.movie_booking_app.data.model.ui.Promo
 import com.example.movie_booking_app.data.model.ui.Service
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.facebook.shimmer.ShimmerFrameLayout
 
 class HomeMultiAdapter(
     private val onSearchQueryChanged: (String) -> Unit,
     private val onSeeAllClicked: (String) -> Unit,
     private val onMovieClicked: (Movie) -> Unit,
     private val onLoginClicked: () -> Unit
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-    private var items = listOf<HomeItem>()
+) : ListAdapter<HomeItem, RecyclerView.ViewHolder>(HomeItemDiffCallback()) {
 
     companion object {
         private const val TYPE_HEADER = 0
@@ -40,15 +41,8 @@ class HomeMultiAdapter(
         private const val TYPE_EMPTY = 6
     }
 
-    fun submitList(newItems: List<HomeItem>) {
-        items = newItems
-        notifyDataSetChanged()
-    }
-
-    override fun getItemCount(): Int = items.size
-
     override fun getItemViewType(position: Int): Int {
-        return when (items[position]) {
+        return when (getItem(position)) {
             is HomeItem.HeaderSection -> TYPE_HEADER
             is HomeItem.NowPlayingSection -> TYPE_NOW_PLAYING
             is HomeItem.ComingSoonSection -> TYPE_COMING_SOON
@@ -74,14 +68,29 @@ class HomeMultiAdapter(
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val item = items[position]
+        val item = getItem(position)
         when (holder) {
             is HeaderViewHolder -> holder.bind((item as HomeItem.HeaderSection).userName)
-            is NowPlayingViewHolder -> holder.bind((item as HomeItem.NowPlayingSection).movies)
-            is ComingSoonViewHolder -> holder.bind((item as HomeItem.ComingSoonSection).movies)
-            is PromoViewHolder -> holder.bind((item as HomeItem.PromoSection).promos)
-            is ServiceViewHolder -> holder.bind((item as HomeItem.ServiceSection).services)
-            is NewsViewHolder -> holder.bind((item as HomeItem.MovieNewsSection).news)
+            is NowPlayingViewHolder -> {
+                val section = item as HomeItem.NowPlayingSection
+                holder.bind(section.movies ?: emptyList(), section.isLoading)
+            }
+            is ComingSoonViewHolder -> {
+                val section = item as HomeItem.ComingSoonSection
+                holder.bind(section.movies ?: emptyList(), section.isLoading)
+            }
+            is PromoViewHolder -> {
+                val section = item as HomeItem.PromoSection
+                holder.bind(section.promos ?: emptyList(), section.isLoading)
+            }
+            is ServiceViewHolder -> {
+                val section = item as HomeItem.ServiceSection
+                holder.bind(section.services ?: emptyList(), section.isLoading)
+            }
+            is NewsViewHolder -> {
+                val section = item as HomeItem.MovieNewsSection
+                holder.bind(section.news ?: emptyList(), section.isLoading)
+            }
         }
     }
 
@@ -90,11 +99,10 @@ class HomeMultiAdapter(
         private val edtSearch: EditText = view.findViewById(R.id.edtSearch)
         private val btnLogin: View = view.findViewById(R.id.btnLogin)
         init {
-            // Xử lý Safe Area cho Header (Độ cao tai thỏ + 16dp đệm thiết kế)
             ViewCompat.setOnApplyWindowInsetsListener(view) { v, windowInsets ->
                 val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
                 val density = v.context.resources.displayMetrics.density
-                val extraPadding = (16 * density).toInt() // Chuyển 16dp sang Pixel
+                val extraPadding = (16 * density).toInt()
                 v.updatePadding(top = insets.top + extraPadding)
                 windowInsets
             }
@@ -115,6 +123,8 @@ class HomeMultiAdapter(
         private val viewPager: ViewPager2 = view.findViewById(R.id.vpNowPlaying)
         private val tvSeeAll: TextView = view.findViewById(R.id.tvSeeAllNowPlaying)
         private val indicator: TabLayout = view.findViewById(R.id.indicatorNowPlaying)
+        private val layoutContent: View = view.findViewById(R.id.layoutContentNowPlaying)
+        private val shimmer: ShimmerFrameLayout = view.findViewById(R.id.shimmerNowPlaying)
         private val adapter = MovieLargeAdapter(onMovie)
         private var mediator: TabLayoutMediator? = null
 
@@ -123,37 +133,70 @@ class HomeMultiAdapter(
             tvSeeAll.setOnClickListener { onSeeAll("Now Playing") }
         }
 
-        fun bind(movies: List<Movie>) { 
-            if (movies.isNotEmpty()) {
-                adapter.submitList(movies)
-                if (mediator == null) {
-                    mediator = TabLayoutMediator(indicator, viewPager) { _, _ -> }
-                    mediator?.attach()
+        fun bind(movies: List<Movie>, isLoading: Boolean) { 
+            if (isLoading) {
+                shimmer.visibility = View.VISIBLE
+                shimmer.startShimmer()
+                layoutContent.visibility = View.GONE
+            } else {
+                shimmer.stopShimmer()
+                shimmer.visibility = View.GONE
+                layoutContent.visibility = View.VISIBLE
+                if (movies.isNotEmpty()) {
+                    adapter.submitList(movies)
+                    if (mediator == null) {
+                        mediator = TabLayoutMediator(indicator, viewPager) { _, _ -> }
+                        mediator?.attach()
+                    }
                 }
-            } 
+            }
         }
     }
 
     class ComingSoonViewHolder(view: View, onSeeAll: (String) -> Unit, onMovie: (Movie) -> Unit) : RecyclerView.ViewHolder(view) {
         private val recyclerView: RecyclerView = view.findViewById(R.id.rvComingSoon)
         private val tvSeeAll: TextView = view.findViewById(R.id.tvSeeAllComingSoon)
+        private val shimmer: ShimmerFrameLayout = view.findViewById(R.id.shimmerComingSoon)
         private val adapter = MovieAdapter(onMovie)
         init { 
             recyclerView.adapter = adapter
             tvSeeAll.setOnClickListener { onSeeAll("Coming Soon") }
         }
-        fun bind(movies: List<Movie>) { if (movies.isNotEmpty()) adapter.submitList(movies) }
+        fun bind(movies: List<Movie>, isLoading: Boolean) { 
+            if (isLoading) {
+                shimmer.visibility = View.VISIBLE
+                shimmer.startShimmer()
+                recyclerView.visibility = View.GONE
+            } else {
+                shimmer.stopShimmer()
+                shimmer.visibility = View.GONE
+                recyclerView.visibility = View.VISIBLE
+                if (movies.isNotEmpty()) adapter.submitList(movies) 
+            }
+        }
     }
 
     class PromoViewHolder(view: View, onSeeAll: (String) -> Unit) : RecyclerView.ViewHolder(view) {
         private val viewPager: ViewPager2 = view.findViewById(R.id.vpPromo)
         private val tvSeeAll: TextView = view.findViewById(R.id.tvSeeAllPromo)
+        private val shimmer: ShimmerFrameLayout = view.findViewById(R.id.shimmerPromo)
         private val adapter = PromoAdapter()
         init { 
             viewPager.adapter = adapter
             tvSeeAll.setOnClickListener { onSeeAll("Promo") }
         }
-        fun bind(promos: List<Promo>) { if (promos.isNotEmpty()) adapter.submitList(promos) }
+        fun bind(promos: List<Promo>, isLoading: Boolean) { 
+            if (isLoading) {
+                shimmer.visibility = View.VISIBLE
+                shimmer.startShimmer()
+                viewPager.visibility = View.GONE
+            } else {
+                shimmer.stopShimmer()
+                shimmer.visibility = View.GONE
+                viewPager.visibility = View.VISIBLE
+                if (promos.isNotEmpty()) adapter.submitList(promos) 
+            }
+        }
     }
 
     class ServiceViewHolder(view: View, onSeeAll: (String) -> Unit) : RecyclerView.ViewHolder(view) {
@@ -164,7 +207,9 @@ class HomeMultiAdapter(
             recyclerView.adapter = adapter
             tvSeeAll.setOnClickListener { onSeeAll("Service") }
         }
-        fun bind(services: List<Service>) { if (services.isNotEmpty()) adapter.submitList(services) }
+        fun bind(services: List<Service>, isLoading: Boolean) { 
+            if (services.isNotEmpty()) adapter.submitList(services) 
+        }
     }
 
     class NewsViewHolder(view: View, onSeeAll: (String) -> Unit) : RecyclerView.ViewHolder(view) {
@@ -175,8 +220,28 @@ class HomeMultiAdapter(
             recyclerView.adapter = adapter
             tvSeeAll.setOnClickListener { onSeeAll("News") }
         }
-        fun bind(news: List<MovieNews>) { if (news.isNotEmpty()) adapter.submitList(news) }
+        fun bind(news: List<MovieNews>, isLoading: Boolean) { 
+            if (news.isNotEmpty()) adapter.submitList(news) 
+        }
     }
 
     class EmptyViewHolder(view: View) : RecyclerView.ViewHolder(view)
+
+    class HomeItemDiffCallback : DiffUtil.ItemCallback<HomeItem>() {
+        override fun areItemsTheSame(oldItem: HomeItem, newItem: HomeItem): Boolean {
+            return when {
+                oldItem is HomeItem.HeaderSection && newItem is HomeItem.HeaderSection -> true
+                oldItem is HomeItem.NowPlayingSection && newItem is HomeItem.NowPlayingSection -> true
+                oldItem is HomeItem.ComingSoonSection && newItem is HomeItem.ComingSoonSection -> true
+                oldItem is HomeItem.PromoSection && newItem is HomeItem.PromoSection -> true
+                oldItem is HomeItem.ServiceSection && newItem is HomeItem.ServiceSection -> true
+                oldItem is HomeItem.MovieNewsSection && newItem is HomeItem.MovieNewsSection -> true
+                oldItem is HomeItem.EmptyState && newItem is HomeItem.EmptyState -> true
+                else -> false
+            }
+        }
+        override fun areContentsTheSame(oldItem: HomeItem, newItem: HomeItem): Boolean {
+            return oldItem == newItem
+        }
+    }
 }
