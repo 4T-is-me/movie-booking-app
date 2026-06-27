@@ -10,6 +10,7 @@ import movieRoutes from './src/routes/movieRoutes.js';
 import showtimeRoutes from './src/routes/showtimeRoutes.js';
 import { accountRoute } from './src/routes/accountRoute.js';
 import { bookingRoute } from './src/routes/bookingRoute.js';
+import adminShowtimeRoutes from './src/routes/admin/adminShowtimeRoutes.js';
 
 const app = express();
 const PORT = env.PORT || 5000;
@@ -26,6 +27,7 @@ app.use('/api/showtimes', showtimeRoutes);
 app.use('/api/auth', accountRoute.authRouter);
 app.use('/api/user', accountRoute.accountRouter);
 app.use('/api/booking', bookingRoute.bookingRouter);
+app.use('/api/admin/showtimes', adminShowtimeRoutes);
 
 const startServer = async () => {
     await connectDB();
