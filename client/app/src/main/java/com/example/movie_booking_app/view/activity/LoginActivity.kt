@@ -33,7 +33,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         txtError = findViewById(R.id.txtError)
-        passwordLayout = findViewById(R.id.passwordLayout)
+        passwordLayout = findViewById(R.id.tilPassword)
         
         val ivBack = findViewById<ImageView>(R.id.ivBack)
         ivBack.setOnClickListener {
@@ -110,15 +110,25 @@ class LoginActivity : AppCompatActivity() {
                             val token = body?.accessToken
                             if (token != null) {
                                 val dbUsername = body?.account?.username ?: username
+                                val roleNameStr = body?.account?.roleId?.roleName ?: body?.account?.role ?: "user"
                                 val sharedPref = getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
                                 with(sharedPref.edit()) {
                                     putString("auth_token", token)
                                     putString("username", dbUsername)
+                                    putString("role", roleNameStr)
                                     apply()
                                 }
                             }
                             Toast.makeText(this@LoginActivity, "Login successful", Toast.LENGTH_SHORT).show()
-                            finish()
+                            val roleName = body?.account?.roleId?.roleName ?: body?.account?.role
+                            val enteredOrDbUser = (body?.account?.username ?: username)
+                            if ((roleName != null && roleName.contains("admin", ignoreCase = true)) || enteredOrDbUser.contains("admin", ignoreCase = true) || username.contains("admin", ignoreCase = true)) {
+                                val intent = Intent(this@LoginActivity, AdminActivity::class.java)
+                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                startActivity(intent)
+                            } else {
+                                finish()
+                            }
                         } else {
                             val errorMsg = response.errorBody()?.string() ?: "Unknown error"
                             Toast.makeText(this@LoginActivity, "Login failed: $errorMsg", Toast.LENGTH_LONG).show()

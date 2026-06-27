@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_profile -> {
-                    startActivity(Intent(this, profileActivity::class.java))
+                    startActivity(Intent(this, ProfileActivity::class.java))
                     false
                 }
                 else -> false
@@ -113,7 +113,15 @@ class MainActivity : AppCompatActivity() {
         val sharedPref = getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
         val token = sharedPref.getString("auth_token", null)
         val username = sharedPref.getString("username", "User")
+        val role = sharedPref.getString("role", "user")
         if (token != null) {
+            if (role?.contains("admin", ignoreCase = true) == true || username?.contains("admin", ignoreCase = true) == true) {
+                val intent = Intent(this, AdminActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
+                return
+            }
             binding.btnLogin.visibility = android.view.View.GONE
             binding.tvHi.visibility = android.view.View.VISIBLE
             binding.tvWelcomeBack.visibility = android.view.View.VISIBLE
