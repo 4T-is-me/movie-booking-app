@@ -3,91 +3,56 @@ package com.example.movie_booking_app.view.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import coil3.load
-import coil3.request.crossfade
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Movie
-import java.text.SimpleDateFormat
-import java.util.Locale
+import com.google.android.material.imageview.ShapeableImageView
 
-class NowPlayingAdapter(private val movies: List<Movie>) : RecyclerView.Adapter<NowPlayingAdapter.ViewHolder>() {
+class MovieAdapter(
+    private val onClick: (Movie) -> Unit
+) : ListAdapter<Movie, MovieAdapter.MovieViewHolder>(MovieDiffCallback()) {
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val ivPoster: ImageView = view.findViewById(R.id.ivPoster)
-        val tvTitle: TextView = view.findViewById(R.id.tvTitle)
-        val tvGenres: TextView = view.findViewById(R.id.tvGenres)
-        val tvRating: TextView = view.findViewById(R.id.tvRating)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_movie, parent, false)
+        return MovieViewHolder(view, onClick)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_now_playing, parent, false)
-        return ViewHolder(view)
+    override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
+        holder.bind(getItem(position))
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val movie = movies[position]
-        holder.tvTitle.text = movie.movieName
-        
-        val duration = movie.duration ?: 0
-        val h = duration / 60
-        val m = duration % 60
-        val durationStr = "${h}h${m}m"
-        val genres = movie.movieGenre?.joinToString(", ") ?: ""
-        holder.tvGenres.text = "$durationStr • $genres"
-        
-        holder.tvRating.text = "⭐ ${movie.rating ?: 0.0} (${movie.totalReviews ?: 0})"
-        
-        movie.poster?.let {
-            holder.ivPoster.load(it) {
-                crossfade(true)
-            }
+    class MovieViewHolder(view: View, val onClick: (Movie) -> Unit) : RecyclerView.ViewHolder(view) {
+        private val imgPoster: ShapeableImageView = view.findViewById(R.id.imgPoster)
+        private val tvNameVn: TextView = view.findViewById(R.id.tvMovieNameVn)
+        private val tvNameEn: TextView = view.findViewById(R.id.tvMovieNameEn)
+        private val tvGenre: TextView = view.findViewById(R.id.tvGenre)
+        private val tvReleaseDate: TextView = view.findViewById(R.id.tvReleaseDate)
+
+        fun bind(movie: Movie) {
+            tvNameVn.text = movie.movieName
+            tvNameEn.text = movie.movieName // Develop model only has movieName
+            tvGenre.text = movie.movieGenre?.joinToString(", ") ?: "N/A"
+            tvReleaseDate.text = movie.releaseDate
+            
+            Glide.with(itemView.context)
+                .load(movie.poster)
+                .centerCrop()
+                .placeholder(R.color.card_dark)
+                .error(android.R.drawable.ic_menu_report_image)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(imgPoster)
+            
+            itemView.setOnClickListener { onClick(movie) }
         }
     }
 
-    override fun getItemCount() = movies.size
-}
-
-class ComingSoonAdapter(private val movies: List<Movie>) : RecyclerView.Adapter<ComingSoonAdapter.ViewHolder>() {
-
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val tvTitle: TextView = view.findViewById(R.id.tvComingSoonTitle)
-        val tvGenres: TextView = view.findViewById(R.id.tvComingSoonGenres)
-        val tvDate: TextView = view.findViewById(R.id.tvComingSoonDate)
+    class MovieDiffCallback : DiffUtil.ItemCallback<Movie>() {
+        override fun areItemsTheSame(oldItem: Movie, newItem: Movie): Boolean = oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: Movie, newItem: Movie): Boolean = oldItem == newItem
     }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_coming_soon, parent, false)
-        return ViewHolder(view)
-    }
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val movie = movies[position]
-        holder.tvTitle.text = movie.movieName
-        val genres = movie.movieGenre?.joinToString(", ") ?: ""
-        holder.tvGenres.text = "📷 $genres"
-        
-        val dateStr = try {
-            val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-            val formatter = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
-            val date = movie.releaseDate?.let { parser.parse(it) }
-            date?.let { formatter.format(it) } ?: movie.releaseDate
-        } catch (e: Exception) {
-            movie.releaseDate
-        }
-        
-        holder.tvDate.text = "📅 $dateStr"
-        
-        // Find imageView dynamically inside cvComingSoonPoster because id is missing or unknown
-        val ivPoster = holder.itemView.findViewById<androidx.cardview.widget.CardView>(R.id.cvComingSoonPoster).getChildAt(0) as? ImageView
-        movie.poster?.let { url ->
-            ivPoster?.load(url) {
-                crossfade(true)
-            }
-        }
-    }
-
-    override fun getItemCount() = movies.size
 }
