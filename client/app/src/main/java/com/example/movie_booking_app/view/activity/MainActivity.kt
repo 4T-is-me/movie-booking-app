@@ -46,6 +46,12 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Synchronize auth state UI elements if necessary
+        // (Current fragment will handle Hi user message via ViewModel/Hilt)
+    }
+
     private fun setupSafeAreas() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.mainContainer) { _, windowInsets -> windowInsets }
         ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNav) { v, windowInsets ->
@@ -86,7 +92,6 @@ class MainActivity : BaseActivity() {
     }
 
     fun navigateToSection(section: String, force: Boolean = false) {
-        // 'force' bypasses the equality check when coming from ProfileActivity
         if (!force && currentSection == section) return
         currentSection = section
         
@@ -114,7 +119,7 @@ class MainActivity : BaseActivity() {
         }
             
         transaction.commit()
-        // Ensure UI updates immediately
+
         val navHighlight = if (section == "Now Playing" || section == "Coming Soon") "Movie" else section
         highlightNav(navHighlight)
     }

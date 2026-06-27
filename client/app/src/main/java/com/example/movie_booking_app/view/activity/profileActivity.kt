@@ -73,6 +73,19 @@ class ProfileActivity : AppCompatActivity() {
         binding.layoutChangePassword.setOnClickListener {
             Toast.makeText(this, "Change Password Clicked", Toast.LENGTH_SHORT).show()
         }
+
+        binding.layoutLogout.setOnClickListener {
+            val sharedPref = getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+            with(sharedPref.edit()) {
+                remove("auth_token")
+                remove("username")
+                apply()
+            }
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+        }
     }
 
     private fun observeViewModel() {

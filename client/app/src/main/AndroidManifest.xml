@@ -42,7 +42,7 @@
             android:theme="@style/Theme.Moviebookingapp" />
 
         <activity
-            android:name=".view.activity.selectSeatActivity"
+            android:name=".view.activity.SelectSeatActivity"
             android:exported="true"
             android:theme="@style/Theme.Moviebookingapp" />
 

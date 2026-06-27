@@ -5,15 +5,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.movie_booking_app.data.model.entity.showDate
+import com.example.movie_booking_app.data.model.entity.ShowDate
 import com.example.movie_booking_app.databinding.ItemDateBinding
 
 /**
  * Adapter mapping show session dates to the horizontal date picker recycler.
  */
-class dateAdapter(
-    private val onDateClicked: (showDate) -> Unit
-) : ListAdapter<showDate, dateAdapter.DateViewHolder>(DateDiffCallback()) {
+class DateAdapter(
+    private val onDateClicked: (ShowDate) -> Unit
+) : ListAdapter<ShowDate, DateAdapter.DateViewHolder>(DateDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DateViewHolder {
         val binding = ItemDateBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -26,7 +26,7 @@ class dateAdapter(
 
     inner class DateViewHolder(private val binding: ItemDateBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(showDate: showDate) {
+        fun bind(showDate: ShowDate) {
             binding.tvMonth.text = showDate.month
             binding.tvDay.text = showDate.day
 
@@ -41,8 +41,8 @@ class dateAdapter(
         }
     }
 
-    class DateDiffCallback : DiffUtil.ItemCallback<showDate>() {
-        override fun areItemsTheSame(oldItem: showDate, newItem: showDate) = oldItem.id == newItem.id
-        override fun areContentsTheSame(oldItem: showDate, newItem: showDate) = oldItem == newItem
+    class DateDiffCallback : DiffUtil.ItemCallback<ShowDate>() {
+        override fun areItemsTheSame(oldItem: ShowDate, newItem: ShowDate) = oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: ShowDate, newItem: ShowDate) = oldItem == newItem
     }
 }
