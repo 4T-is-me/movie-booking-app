@@ -1,8 +1,4 @@
 import { Movie } from '../models/movieModel.js';
-import { Showtime } from '../models/showTimeModel.js';
-import { Cinema } from '../models/cinemaModel.js';
-import { CinemaRoom } from '../models/cinemaRoomModel.js';
-import { ScheduleSeat } from '../models/scheduleSeatModel.js';
 
 // GET /api/movies
 // Hỗ trợ lọc theo trạng thái (now_showing / coming_soon), tìm kiếm tên (q) và phân trang
@@ -76,7 +72,7 @@ export const searchMovies = async ({ q, page = 1, limit = 10 }) => {
         movieName: { $regex: keyword, $options: 'i' }
     };
 
-    const skip  = (Number(page) - 1) * Number(limit);
+    const skip = (Number(page) - 1) * Number(limit);
     const total = await Movie.countDocuments(searchQuery);
     const movies = await Movie.find(searchQuery)
         .sort({ movieName: 1 })
@@ -107,7 +103,8 @@ export const searchMovies = async ({ q, page = 1, limit = 10 }) => {
 // GET /api/movies/:id
 // Lấy thông tin chi tiết một bộ phim
 export const getMovieById = async (id) => {
-    return await Movie.findById(id).lean();
+    const movie = await Movie.findOne({ MOVIE_ID: id }).lean();
+    return movie;
 };
 
 // GET /api/movies/:id/showtimes?date=YYYY-MM-DD
@@ -116,11 +113,10 @@ export const getMovieShowtimes = async (movieId, date) => {
     // 1. Xây dựng filter — movieId bắt buộc, date tuỳ chọn
     const showtimeQuery = { movieId };
     if (date) {
-        const start = new Date(date);
-        start.setHours(0, 0, 0, 0);
-        const end = new Date(date);
-        end.setHours(23, 59, 59, 999);
-        showtimeQuery.showDate = { $gte: start, $lte: end };
+        const target = new Date(date);
+        const nextDay = new Date(date);
+        nextDay.setDate(nextDay.getDate() + 1);
+        showDateQuery.SHOW_DATE = { $gte: target, $lt: nextDay };
     }
 
     // 2. Lấy danh sách suất chiếu, populate roomId để lấy tên phòng & sức chứa

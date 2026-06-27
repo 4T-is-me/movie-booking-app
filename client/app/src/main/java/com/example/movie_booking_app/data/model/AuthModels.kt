@@ -17,7 +17,24 @@ data class RegisterRequest(
     val password: String
 )
 
+data class AccountResponse(
+    val _id: String?,
+    val username: String?,
+    val email: String?,
+    val status: Int?,
+    val registerDate: String?,
+    val accountId: String?,
+    val fullName: String?,
+    val gender: String?,
+    val dateOfBirth: String?,
+    val phoneNumber: String?,
+    val identityCard: String?,
+    val address: String?,
+    val image: String?
+)
+
 data class AuthResponse(
-    val token: String?,
-    val message: String?
+    val account: AccountResponse?,
+    val accessToken: String?,
+    val refreshToken: String?
 )

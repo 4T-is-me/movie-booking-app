@@ -47,6 +47,25 @@
                 app:layout_constraintTop_toBottomOf="@id/tvHi"
                 app:layout_constraintStart_toStartOf="@id/tvHi" />
 
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvWelcomeLogo"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                app:cardCornerRadius="32dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@android:color/transparent"
+                app:layout_constraintTop_toTopOf="@id/tvHi"
+                app:layout_constraintBottom_toBottomOf="@id/tvWelcomeBack"
+                app:layout_constraintStart_toStartOf="@id/tvHi"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/ivWelcomeLogo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop" />
+            </androidx.cardview.widget.CardView>
+
             <Button
                 android:id="@+id/btnLogin"
                 android:layout_width="wrap_content"

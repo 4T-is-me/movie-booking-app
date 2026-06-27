@@ -37,6 +37,9 @@ class LoginActivity : AppCompatActivity() {
         
         val ivBack = findViewById<ImageView>(R.id.ivBack)
         ivBack.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
             finish()
         }
 
@@ -103,37 +106,22 @@ class LoginActivity : AppCompatActivity() {
                     withContext(Dispatchers.Main) {
                         btnLogin.isEnabled = true
                         if (response.isSuccessful && response.body() != null) {
-                            val loginData = response.body()!!
-
-                            
-                            // Save tokens
-                            TokenManager.saveTokens(
-                                this@LoginActivity,
-                                loginData.accessToken,
-                                loginData.refreshToken
-                            )
-
-                            // Get saved tokens
-                            val savedAccessToken = TokenManager.getAccessToken(this@LoginActivity)
-                            val savedRefreshToken = TokenManager.getRefreshToken(this@LoginActivity)
-
-                            Log.d("TOKEN_DEBUG", " Access Tokennn: $savedAccessToken")
-                            Log.d("TOKEN_DEBUG", " Refresh Tokennn $savedRefreshToken")
-
-//                            Toast.makeText(this@LoginActivity, "Login successful! Token saved.", Toast.LENGTH_SHORT).show()
-
-
-
-                            val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                            startActivity(intent)
+                            val body = response.body()
+                            val token = body?.accessToken
+                            if (token != null) {
+                                val dbUsername = body?.account?.username ?: username
+                                val sharedPref = getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+                                with(sharedPref.edit()) {
+                                    putString("auth_token", token)
+                                    putString("username", dbUsername)
+                                    apply()
+                                }
+                            }
+                            Toast.makeText(this@LoginActivity, "Login successful", Toast.LENGTH_SHORT).show()
                             finish()
                         } else {
-                            val errorMsg = when(response.code()) {
-                                401 -> "Invalid username or password"
-                                404 -> "Account not found"
-                                else -> "Login failed (Error: ${response.code()})"
-                            }
-                            showError(errorMsg)
+                            val errorMsg = response.errorBody()?.string() ?: "Unknown error"
+                            Toast.makeText(this@LoginActivity, "Login failed: $errorMsg", Toast.LENGTH_LONG).show()
                         }
                     }
                 } catch (e: Exception) {

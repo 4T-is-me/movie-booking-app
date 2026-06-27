@@ -4,7 +4,7 @@ import { constants } from "../utils/constants.js";
 import { Account } from "../models/accountModel.js";
 import { Member } from "../models/memberModel.js";
 import { Seat } from "../models/seatModel.js"
-import { Promotion} from "../models/promotionModel.js"
+import { Promotion } from "../models/promotionModel.js"
 import { ScoreHistory } from "../models/scoreHistoryModel.js"
 import crypto from "crypto";
 import mongoose from "mongoose";
@@ -18,7 +18,7 @@ const handleHoldSeats = async ({ accountId, showtimeId, seatIds }) => {
     const expiredTime = new Date(Date.now() + 10 * 60 * 1000);// expire in 10 minutes
     const now = new Date();
     const updatedSeats = [];
-    
+
     for (const seatId of seatIds) {
       let seat = await ScheduleSeat.findOne({ showtimeId, seatId }).session(session);
 
@@ -29,7 +29,7 @@ const handleHoldSeats = async ({ accountId, showtimeId, seatIds }) => {
         if (seat.status === "holding" && seat.holdExpiresAt > now && seat.accountId.toString() !== accountId.toString()) {
           throw new Error(`Seat ${seatId} is currently held by someone else`);
         }
-        
+
         // Cập nhật seat
         seat.status = "holding";
         seat.accountId = accountId;
@@ -49,8 +49,8 @@ const handleHoldSeats = async ({ accountId, showtimeId, seatIds }) => {
       updatedSeats.push(seat.toObject ? seat.toObject() : seat);
     }
 
-    await session.commitTransaction(); 
-    return {expiredAt: expiredTime, seats: updatedSeats};
+    await session.commitTransaction();
+    return { expiredAt: expiredTime, seats: updatedSeats };
 
   } catch (error) {
     await session.abortTransaction();
@@ -60,14 +60,14 @@ const handleHoldSeats = async ({ accountId, showtimeId, seatIds }) => {
   }
 };
 // handle generate booking code
-const generateBookingCode =() => {
+const generateBookingCode = () => {
   const randomStr = crypto.randomBytes(4).toString("hex").toUpperCase();
   return `BK-${randomStr.match(/.{1,4}/g).join("-")}`;
 }
 
 
 // handle confirm booking
-const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, pointUsed = 0, paymentMethod, promotionId, combos = []}) => {
+const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, pointUsed = 0, paymentMethod, promotionId, combos = [] }) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
@@ -88,7 +88,7 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, pointUsed 
       seatId: { $in: seatIds },
       status: "holding",
       accountId: accountId,
-holdExpiresAt: { $gte: new Date() },
+      holdExpiresAt: { $gte: new Date() },
     })
       .populate("seatId")
       .session(session);
@@ -149,22 +149,22 @@ holdExpiresAt: { $gte: new Date() },
 
     await member.save({ session });
     // create booking
-    const booking = await Booking.create( 
-      [ {
-        memberId: member._id, 
-        showtimeId: showtimeId, 
-        bookingCode: generateBookingCode(), 
-        promotionId: promotionId, 
-        seatIds: seatIds, 
-        seatNames: seats.map( seat => seat.seatId.seatName ), 
-        combos: combos, 
-        ticketPrice: ticketPrice, 
-        comboPrice: comboPrice, 
-        totalAmount: finalAmount, 
-        paymentStatus: "paid", 
-        paymentMethod: paymentMethod 
-        } 
-      ], { session } 
+    const booking = await Booking.create(
+      [{
+        memberId: member._id,
+        showtimeId: showtimeId,
+        bookingCode: generateBookingCode(),
+        promotionId: promotionId,
+        seatIds: seatIds,
+        seatNames: seats.map(seat => seat.seatId.seatName),
+        combos: combos,
+        ticketPrice: ticketPrice,
+        comboPrice: comboPrice,
+        totalAmount: finalAmount,
+        paymentStatus: "paid",
+        paymentMethod: paymentMethod
+      }
+      ], { session }
     );
 
     // update seat
@@ -184,7 +184,7 @@ holdExpiresAt: { $gte: new Date() },
       },
       { session },
     );
-// create score history
+    // create score history
     await ScoreHistory.create(
       [
         {
@@ -199,16 +199,16 @@ holdExpiresAt: { $gte: new Date() },
     );
 
     await session.commitTransaction();
-    return { 
-      bookingId: booking[0]._id, 
-      bookingCode: booking[0].bookingCode, 
-      ticketPrice, comboPrice, 
-      promotionDiscount, 
-      pointDiscount, 
-      finalAmount, 
-      earnedPoints, 
-      remainingPoints: member.rewardPoints, 
-      membershipRank: member.membershipRank 
+    return {
+      bookingId: booking[0]._id,
+      bookingCode: booking[0].bookingCode,
+      ticketPrice, comboPrice,
+      promotionDiscount,
+      pointDiscount,
+      finalAmount,
+      earnedPoints,
+      remainingPoints: member.rewardPoints,
+      membershipRank: member.membershipRank
     };
   } catch (error) {
     await session.abortTransaction(); // rollback
@@ -221,29 +221,29 @@ holdExpiresAt: { $gte: new Date() },
 // get history
 const handleGetHistory = async (accountId) => {
   const member = await Member.findOne({ accountId });
-  
+
   if (!member) {
     throw new Error("Member not found");
   }
 
-  return await Booking.find({memberId: member._id})
+  return await Booking.find({ memberId: member._id })
     .populate("showtimeId")
     .sort({ createdAt: -1 })
     .lean();
 };
-        
+
 // get score history
 const handleGetScoreHistory = async (accountId) => {
   const member = await Member.findOne({ accountId: accountId });// get member
-  if(!member) {
+  if (!member) {
     throw new Error("Member not found");
   }
-  return await ScoreHistory.find({memberId: member._id}).sort({createdAt: -1}).populate("bookingId");
+  return await ScoreHistory.find({ memberId: member._id }).sort({ createdAt: -1 }).populate("bookingId");
 };
 
 // release seats currently held by the authenticated account for a showtime
 const handleReleaseBooking = async ({ accountId, showtimeId }) => {
-  const result = await ScheduleSeat.deleteMany({ 
+  const result = await ScheduleSeat.deleteMany({
     showtimeId,
     accountId,
     status: "holding",
