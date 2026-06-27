@@ -2,24 +2,19 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="background_black">#121212</color>
-    <color name="card_dark">#1C1C1C</color>
-    <color name="yellow">#FCC434</color>
-    <color name="gold_selected">#FCC434</color>
-    <color name="avatar_bg">#262626</color>
-    <color name="divider_color">#404040</color>
-    <color name="text_gray">#BFBFBF</color>
-    <color name="text_light_gray">#DEDEDE</color>
-    <color name="nav_inactive">#CCCCCC</color>
-    <color name="nav_border">#262626</color>
-    <color name="divider_gray">#404040</color>
-    <color name="hint_gray">#8C8C8C</color>
-
-    <!-- Thêm các màu còn thiếu -->
-    <color name="background_gradient_start">#1C1C1C</color>
-    <color name="background_gradient_end">#121212</color>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="default_background">#121212</color>
-    <color name="skeleton_gray">#333333</color>
+    <color name="gold_selected">#FFC107</color>
+    <color name="divider_color">#22FFFFFF</color>
+    <color name="avatar_bg">#D9D9D9</color>
+    
+    <!-- Admin Console Colors -->
+    <color name="admin_bg">#090B13</color>
+    <color name="admin_header_bg">#E6111827</color>
+    <color name="admin_drawer_bg">#0d1120</color>
+    <color name="admin_text_secondary">#94A3B8</color>
+    <color name="admin_live_indicator">#10b981</color>
+    <color name="admin_gold_transparent">#33FFC107</color>
+    <color name="white_transparent_10">#1AFFFFFF</color>
+    <color name="white_transparent_08">#14FFFFFF</color>
+    <color name="admin_drawer_item_text">#CBD5E1</color>
+    <color name="admin_hint_gray">#808080</color>
 </resources>

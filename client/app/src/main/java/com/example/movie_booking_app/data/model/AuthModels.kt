@@ -1,5 +1,9 @@
 package com.example.movie_booking_app.data.model
 
+data class RoleResponse(
+    val _id: String?,
+    val roleName: String?
+)
 data class LoginRequest(
     val email: String,
     val password: String
@@ -30,7 +34,9 @@ data class AccountResponse(
     val phoneNumber: String?,
     val identityCard: String?,
     val address: String?,
-    val image: String?
+    val image: String?,
+    val role: String?,
+    val roleId: RoleResponse?
 )
 
 data class AuthResponse(
