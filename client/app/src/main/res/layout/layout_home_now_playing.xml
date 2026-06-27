@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="24dp"
+    android:background="@color/background_black">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp">
+
+        <TextView
+            android:id="@+id/tvTitleNowPlaying"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/now_playing"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tvSeeAllNowPlaying"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/see_all"
+            android:textColor="@color/yellow"
+            android:textSize="14sp"
+            app:layout_constraintTop_toTopOf="@id/tvTitleNowPlaying"
+            app:layout_constraintBottom_toBottomOf="@id/tvTitleNowPlaying"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp">
+
+        <LinearLayout
+            android:id="@+id/layoutContentNowPlaying"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/vpNowPlaying"
+                android:layout_width="match_parent"
+                android:layout_height="600dp"
+                android:clipToPadding="false"
+                android:clipChildren="false" />
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/indicatorNowPlaying"
+                android:layout_width="61dp"
+                android:layout_height="8dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:background="@android:color/transparent"
+                app:tabBackground="@drawable/bg_indicator_unselected"
+                app:tabIndicator="@drawable/bg_indicator_selected"
+                app:tabIndicatorColor="@color/yellow"
+                app:tabIndicatorGravity="center"
+                app:tabMaxWidth="20dp"
+                app:tabRippleColor="@android:color/transparent" />
+        </LinearLayout>
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmerNowPlaying"
+            android:layout_width="match_parent"
+            android:layout_height="600dp"
+            android:visibility="gone"
+            app:shimmer_auto_start="true"
+            app:shimmer_base_alpha="0.1"
+            app:shimmer_highlight_alpha="0.4">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="32dp"
+                android:background="@color/skeleton_gray" />
+        </com.facebook.shimmer.ShimmerFrameLayout>
+    </FrameLayout>
+
+</LinearLayout>
