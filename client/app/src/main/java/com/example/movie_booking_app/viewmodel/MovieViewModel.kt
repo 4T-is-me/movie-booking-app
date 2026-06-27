@@ -4,13 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.ui.HomeItem
 import com.example.movie_booking_app.data.repository.MovieRepository
-import com.example.movie_booking_app.data.repository.RepositoryProvider
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MovieViewModel : ViewModel() {
+@HiltViewModel
+class MovieViewModel @Inject constructor(
+    private val repository: MovieRepository
+) : ViewModel() {
 
-    private val repository: MovieRepository = RepositoryProvider.provideMovieRepository()
     private val _searchQuery = MutableStateFlow("")
     
     private val _isLoading = MutableStateFlow(true)

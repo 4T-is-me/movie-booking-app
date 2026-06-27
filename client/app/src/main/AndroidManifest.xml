@@ -27,7 +27,7 @@
         </activity>
 
         <activity
-            android:name=".view.activity.profileActivity"
+            android:name=".view.activity.ProfileActivity"
             android:exported="true"
             android:theme="@style/Theme.Moviebookingapp" />
 

@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -7,14 +8,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.ActivityProfileBinding
 import com.example.movie_booking_app.viewmodel.ProfileViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
-/**
- * Activity representing the User Profile Screen.
- */
+@AndroidEntryPoint
 class ProfileActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityProfileBinding
@@ -32,60 +31,50 @@ class ProfileActivity : AppCompatActivity() {
         observeViewModel()
     }
 
-    /**
-     * Initializes the bottom navigation selection and listener.
-     */
     private fun setupBottomNavigation() {
-        // Pre-select the Profile tab in the bottom bar
-        binding.bottomNavigationView.selectedItemId = R.id.nav_profile
-
-        binding.bottomNavigationView.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_home -> {
-                    Toast.makeText(this, "Home Clicked", Toast.LENGTH_SHORT).show()
-                    true
-                }
-                R.id.nav_ticket -> {
-                    Toast.makeText(this, "Ticket Clicked", Toast.LENGTH_SHORT).show()
-                    true
-                }
-                R.id.nav_movie -> {
-                    Toast.makeText(this, "Movie Clicked", Toast.LENGTH_SHORT).show()
-                    true
-                }
-                R.id.nav_profile -> {
-                    // Already on profile
-                    true
-                }
-                else -> false
-            }
+        binding.btnNavHome.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("TARGET_SECTION", "Home")
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
+            finish()
         }
+        
+        binding.btnNavMovie.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("TARGET_SECTION", "Now Playing")
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
+            finish()
+        }
+
+        binding.btnNavTicket.setOnClickListener {
+            val intent = Intent(this, MainActivity::class.java)
+            intent.putExtra("TARGET_SECTION", "Ticket")
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            startActivity(intent)
+            finish()
+        }
+
+        // Already on Profile
+        binding.btnNavProfile.setOnClickListener { }
     }
 
-    /**
-     * Wires up click handlers for editing profile and menu options.
-     */
     private fun setupClickListeners() {
         binding.ivEditProfile.setOnClickListener {
             Toast.makeText(this, "Edit Profile Clicked", Toast.LENGTH_SHORT).show()
         }
-
         binding.layoutMyTicket.setOnClickListener {
             Toast.makeText(this, "My Ticket Clicked", Toast.LENGTH_SHORT).show()
         }
-
         binding.layoutChangeLanguage.setOnClickListener {
             Toast.makeText(this, "Change Language Clicked", Toast.LENGTH_SHORT).show()
         }
-
         binding.layoutChangePassword.setOnClickListener {
             Toast.makeText(this, "Change Password Clicked", Toast.LENGTH_SHORT).show()
         }
     }
 
-    /**
-     * Observes live updates from the Profile ViewModel.
-     */
     private fun observeViewModel() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -98,7 +87,6 @@ class ProfileActivity : AppCompatActivity() {
                 }
             }
         }
-
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.error.collect { errorMsg ->

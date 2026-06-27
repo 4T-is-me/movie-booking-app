@@ -10,7 +10,8 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 /**
- * Remote implementation with safety handling for network errors.
+ * Clean remote implementation for production/MR.
+ * Connects directly to the backend API.
  */
 class MovieRepositoryRemoteImpl @Inject constructor(
     private val api: MovieApi
@@ -18,22 +19,23 @@ class MovieRepositoryRemoteImpl @Inject constructor(
 
     override fun getMovies(): Flow<List<Movie>> = flow {
         try {
-            val response = api.getMovies()
+            val response = api.getMovies(100)
             if (response.isSuccessful) {
-                emit(response.body() ?: emptyList())
+                emit(response.body()?.data ?: emptyList())
             } else {
                 emit(emptyList())
             }
         } catch (e: Exception) {
-            emit(emptyList()) // Return empty on server crash or network error
+            emit(emptyList())
         }
     }
 
     override fun searchMovies(query: String): Flow<List<Movie>> = flow {
         try {
-            val response = api.searchMovies(query)
+            val response = api.getMovies(1000)
             if (response.isSuccessful) {
-                emit(response.body() ?: emptyList())
+                val movies = response.body()?.data ?: emptyList()
+                emit(movies.filter { it.movieName?.contains(query, ignoreCase = true) == true })
             } else {
                 emit(emptyList())
             }

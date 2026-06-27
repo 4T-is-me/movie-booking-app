@@ -33,22 +33,24 @@ class MainActivity : BaseActivity() {
         setupBottomNav()
         setupBackStackListener()
         
-        // Start with Home
-        if (savedInstanceState == null) {
-            navigateToSection("Home")
+        // Handle explicit section requests from other activities (like Profile)
+        val target = intent.getStringExtra("TARGET_SECTION") ?: "Home"
+        navigateToSection(target, force = true)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        intent.getStringExtra("TARGET_SECTION")?.let { target ->
+            navigateToSection(target, force = true)
         }
     }
 
     private fun setupSafeAreas() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.mainContainer) { view, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.mainContainer) { _, windowInsets -> windowInsets }
+        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNav) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.updatePadding(top = insets.top)
-            windowInsets
-        }
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNav) { view, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.updatePadding(bottom = insets.bottom)
+            v.updatePadding(bottom = insets.bottom)
             windowInsets
         }
     }
@@ -66,14 +68,13 @@ class MainActivity : BaseActivity() {
             is MovieGridFragment -> "Movie"
             is GenericGridFragment -> "Movie" 
             is PlaceholderFragment -> {
-                if (currentSection == "Ticket") "Ticket"
-                else if (currentSection == "Profile") "Profile"
+                val title = fragment.arguments?.getString("TITLE") ?: ""
+                if (title.contains("Ticket", true)) "Ticket"
+                else if (title.contains("Profile", true)) "Profile"
                 else "Home"
             }
             else -> "Home"
         }
-        
-        currentSection = target
         highlightNav(target)
     }
 
@@ -84,34 +85,21 @@ class MainActivity : BaseActivity() {
         binding.btnNavProfile.setOnClickListener { navigateToSection("Profile") }
     }
 
-    fun navigateToSection(section: String) {
-        if (currentSection == section) return
+    fun navigateToSection(section: String, force: Boolean = false) {
+        // 'force' bypasses the equality check when coming from ProfileActivity
+        if (!force && currentSection == section) return
         currentSection = section
         
         val fragment: Fragment = when (section) {
-            "Home" -> {
-                highlightNav("Home")
-                MovieListFragment()
-            }
-            "Now Playing", "Coming Soon" -> {
-                highlightNav("Movie")
-                MovieGridFragment.newInstance(section)
-            }
-            "Ticket" -> {
-                highlightNav("Ticket")
-                PlaceholderFragment.newInstance("Ticket System", R.drawable.ic_ticket)
-            }
+            "Home" -> MovieListFragment()
+            "Now Playing", "Coming Soon" -> MovieGridFragment.newInstance(section)
+            "Ticket" -> PlaceholderFragment.newInstance("Ticket System", R.drawable.ic_ticket)
             "Profile" -> {
-                // Team develop uses an Activity for Profile, you use a Placeholder. 
-                // We'll keep your placeholder but allow navigation to their activity if needed.
                 highlightNav("Profile")
-                startActivity(Intent(this, profileActivity::class.java))
-                return // Exit early as we started an Activity
+                startActivity(Intent(this, ProfileActivity::class.java))
+                return
             }
-            "Promo", "Service", "News" -> {
-                highlightNav("None") 
-                GenericGridFragment.newInstance(section)
-            }
+            "Promo", "Service", "News" -> GenericGridFragment.newInstance(section)
             else -> MovieListFragment()
         }
 
@@ -126,6 +114,9 @@ class MainActivity : BaseActivity() {
         }
             
         transaction.commit()
+        // Ensure UI updates immediately
+        val navHighlight = if (section == "Now Playing" || section == "Coming Soon") "Movie" else section
+        highlightNav(navHighlight)
     }
 
     private fun highlightNav(target: String) {
@@ -139,7 +130,7 @@ class MainActivity : BaseActivity() {
 
         when(target) {
             "Home" -> highlightNavItem(binding.imgNavHome, binding.tvNavHome, yellow)
-            "Movie" -> highlightNavItem(binding.imgNavMovie, binding.tvNavMovie, yellow)
+            "Movie", "Now Playing", "Coming Soon" -> highlightNavItem(binding.imgNavMovie, binding.tvNavMovie, yellow)
             "Ticket" -> highlightNavItem(binding.imgNavTicket, binding.tvNavTicket, yellow)
             "Profile" -> highlightNavItem(binding.imgNavProfile, binding.tvNavProfile, yellow)
         }
