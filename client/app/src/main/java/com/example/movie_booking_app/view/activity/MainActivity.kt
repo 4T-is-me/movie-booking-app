@@ -7,7 +7,8 @@ import androidx.activity.ComponentActivity
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        startActivity(Intent(this, profileActivity::class.java))
+        // Redirecting to the Seating Map screen for testing
+        startActivity(Intent(this, SelectSeatActivity::class.java))
         finish()
     }
 }

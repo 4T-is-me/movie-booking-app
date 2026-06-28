@@ -27,6 +27,11 @@
             android:name=".view.activity.profileActivity"
             android:exported="true"
             android:theme="@style/Theme.Moviebookingapp" />
+
+        <activity
+            android:name=".view.activity.SelectSeatActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Moviebookingapp" />
     </application>
 
 </manifest>

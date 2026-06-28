@@ -7,7 +7,34 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="gold_selected">#FFC107</color>
+
+    <!-- Design Tokens: Background -->
+    <color name="bg_primary">#0A0A0A</color>
+    <color name="bg_surface">#1A1A1A</color>
+    <color name="bg_elevated">#242424</color>
+
+    <!-- Design Tokens: Accent -->
+    <color name="accent_primary">#F5C518</color>
+    <color name="accent_pressed">#D9AD0F</color>
+
+    <!-- Design Tokens: Seat States (SRS) -->
+    <color name="seat_selected">#34C759</color>
+    <color name="seat_sold">#E5484D</color>
+    <color name="seat_available">#3A3A3A</color>
+    <color name="seat_vip">#2F6FED</color>
+    <color name="seat_disabled">#2A2A2A</color>
+
+    <!-- Design Tokens: Text -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#9A9A9A</color>
+    <color name="text_muted">#5C5C5C</color>
+    <color name="text_error">#E5484D</color>
+
+    <!-- Design Tokens: Border -->
+    <color name="border_subtle">#2A2A2A</color>
+    <color name="border_selected">#F5C518</color>
+
+    <color name="gold_selected">#F5C518</color>
     <color name="divider_color">#22FFFFFF</color>
     <color name="avatar_bg">#D9D9D9</color>
 </resources>
