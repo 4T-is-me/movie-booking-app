@@ -6,7 +6,8 @@ import com.example.movie_booking_app.data.model.entity.ShowTime
 import kotlinx.coroutines.flow.Flow
 
 interface BookingRepository {
-    fun getSeats(showtimeId: String): Flow<List<Seat>>
+    // Thêm date để sơ đồ ghế khác nhau theo từng ngày
+    fun getSeats(date: String, time: String): Flow<List<Seat>>
     fun getShowDates(movieId: String): Flow<List<ShowDate>>
     fun getShowTimes(movieId: String, date: String): Flow<List<ShowTime>>
 }

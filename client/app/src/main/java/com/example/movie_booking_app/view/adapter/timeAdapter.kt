@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.ShowTime
 
-class TimeAdapter(
+class timeAdapter(
     private val onTimeClick: (ShowTime) -> Unit
-) : ListAdapter<ShowTime, TimeAdapter.TimeViewHolder>(DiffCallback) {
+) : ListAdapter<ShowTime, timeAdapter.TimeViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimeViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_show_time, parent, false)

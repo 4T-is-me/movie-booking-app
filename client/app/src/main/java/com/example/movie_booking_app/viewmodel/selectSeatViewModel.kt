@@ -4,13 +4,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.entity.*
 import com.example.movie_booking_app.data.repository.BookingRepository
-import com.example.movie_booking_app.data.repository.BookingRepositoryImpl
+import com.example.movie_booking_app.utils.constants
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import dagger.hilt.android.lifecycle.HiltViewModel
 
-class SelectSeatViewModel(
-    private val repository: BookingRepository = BookingRepositoryImpl()
+@HiltViewModel
+class selectSeatViewModel @Inject constructor(
+    private val repository: BookingRepository
 ) : ViewModel() {
+
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
     private val _seats = MutableStateFlow<List<Seat>>(emptyList())
     val seats: StateFlow<List<Seat>> = _seats.asStateFlow()
@@ -30,6 +37,9 @@ class SelectSeatViewModel(
     private val _validationError = MutableSharedFlow<ValidationError>()
     val validationError = _validationError.asSharedFlow()
 
+    private var currentSelectedDate: String = ""
+    private var currentSelectedTime: String = ""
+
     sealed class ValidationError {
         data class SelectMore(val count: Int) : ValidationError()
         data class SelectOnly(val count: Int) : ValidationError()
@@ -37,18 +47,101 @@ class SelectSeatViewModel(
     }
 
     init {
-        loadData()
+        initialLoad()
     }
 
-    private fun loadData() {
+    private fun initialLoad() {
         viewModelScope.launch {
-            repository.getSeats("1").collect { _seats.value = it }
+            _isLoading.value = true
+            // USER REQ: 0.5s loading if data is available
+            val loadingJob = launch { delay(500) }
+            
+            try {
+                val dates = repository.getShowDates("1").take(1).firstOrNull() ?: emptyList()
+                _showDates.value = dates
+                
+                val initialDate = dates.find { it.isSelected } ?: dates.firstOrNull()
+                if (initialDate != null) {
+                    currentSelectedDate = initialDate.toApiId()
+                    val times = repository.getShowTimes("1", currentSelectedDate).take(1).firstOrNull() ?: emptyList()
+                    _showTimes.value = times
+                    
+                    val initialTime = times.find { it.isSelected } ?: times.firstOrNull()
+                    if (initialTime != null) {
+                        currentSelectedTime = initialTime.time
+                        val seats = repository.getSeats(currentSelectedDate, currentSelectedTime).take(1).firstOrNull() ?: emptyList()
+                        _seats.value = seats
+                    }
+                }
+            } catch (e: Exception) {
+                _seats.value = emptyList()
+            }
+            
+            loadingJob.join()
+
+            // LOGIC: If mock data OR real data found, stop loading. Else, load infinitely.
+            if (constants.USE_MOCK_DATA || _seats.value.isNotEmpty()) {
+                _isLoading.value = false
+            }
         }
+    }
+
+    fun onDateSelected(selectedDate: ShowDate) {
         viewModelScope.launch {
-            repository.getShowDates("1").collect { _showDates.value = it }
+            _isLoading.value = true
+            val loadingJob = launch { delay(500) }
+            
+            val dateStr = selectedDate.toApiId()
+            currentSelectedDate = dateStr
+            
+            _showDates.value = _showDates.value.map {
+                it.copy(isSelected = it.day == selectedDate.day)
+            }
+            
+            try {
+                val times = repository.getShowTimes("1", dateStr).take(1).firstOrNull() ?: emptyList()
+                _showTimes.value = times
+                
+                val initialTime = times.find { it.isSelected } ?: times.firstOrNull()
+                if (initialTime != null) {
+                    currentSelectedTime = initialTime.time
+                    val seats = repository.getSeats(dateStr, currentSelectedTime).take(1).firstOrNull() ?: emptyList()
+                    _seats.value = seats
+                    _selectedSeats.value = emptyList()
+                }
+            } catch (e: Exception) {
+                _seats.value = emptyList()
+            }
+            
+            loadingJob.join()
+            if (constants.USE_MOCK_DATA || _seats.value.isNotEmpty()) {
+                _isLoading.value = false
+            }
         }
+    }
+
+    fun onTimeSelected(selectedTime: ShowTime) {
         viewModelScope.launch {
-            repository.getShowTimes("1", "2024-06-24").collect { _showTimes.value = it }
+            _isLoading.value = true
+            val loadingJob = launch { delay(500) }
+            
+            currentSelectedTime = selectedTime.time
+            _showTimes.value = _showTimes.value.map {
+                it.copy(isSelected = it.time == selectedTime.time)
+            }
+            
+            try {
+                val seats = repository.getSeats(currentSelectedDate, selectedTime.time).take(1).firstOrNull() ?: emptyList()
+                _seats.value = seats
+                _selectedSeats.value = emptyList()
+            } catch (e: Exception) {
+                _seats.value = emptyList()
+            }
+            
+            loadingJob.join()
+            if (constants.USE_MOCK_DATA || _seats.value.isNotEmpty()) {
+                _isLoading.value = false
+            }
         }
     }
 
@@ -59,7 +152,6 @@ class SelectSeatViewModel(
     fun onSeatClicked(seat: Seat) {
         if (seat.status == SeatStatus.SOLD) return
 
-        // Immutable update to trigger UI refresh
         val updatedSeats = _seats.value.map { currentSeat ->
             if (currentSeat.id == seat.id) {
                 val newStatus = if (currentSeat.status == SeatStatus.SELECTED) 

@@ -71,6 +71,7 @@ dependencies {
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.viewpager2)
     implementation(libs.material)
+    implementation(libs.shimmer)
 
     // Network
     implementation(libs.retrofit)

@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.ShowDate
 
-class DateAdapter(
+class dateAdapter(
     private val onDateClick: (ShowDate) -> Unit
-) : ListAdapter<ShowDate, DateAdapter.DateViewHolder>(DiffCallback) {
+) : ListAdapter<ShowDate, dateAdapter.DateViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DateViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_show_date, parent, false)
@@ -33,10 +33,10 @@ class DateAdapter(
             tvDay.text = date.day
             
             if (date.isSelected) {
-                tvMonth.setTextColor(ContextCompat.getColor(itemView.context, R.color.black))
-                tvDay.setBackgroundResource(R.drawable.bg_date_selected)
-                tvDay.setTextColor(ContextCompat.getColor(itemView.context, R.color.accent_primary))
-                itemView.setBackgroundResource(R.drawable.bg_date_selected) // Pill background
+                tvMonth.setTextColor(ContextCompat.getColor(itemView.context, R.color.bg_primary))
+                tvDay.setBackgroundResource(R.drawable.bg_date_selected) // Now White
+                tvDay.setTextColor(ContextCompat.getColor(itemView.context, R.color.bg_primary))
+                itemView.setBackgroundResource(R.drawable.bg_date_selected_pill) // Yellow Pill
             } else {
                 tvMonth.setTextColor(ContextCompat.getColor(itemView.context, R.color.text_secondary))
                 tvDay.setBackgroundResource(R.drawable.bg_date_unselected)

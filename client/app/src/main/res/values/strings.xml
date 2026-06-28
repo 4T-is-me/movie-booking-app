@@ -21,4 +21,6 @@
     <!-- Validation Messages -->
     <string name="error_select_more">Please select %1$d seat more</string>
     <string name="error_select_only">Please select only %1$d seat</string>
+    <string name="error_no_seat_selected">Please select at least one seat</string>
+    <string name="msg_proceeding">Proceeding to checkout...</string>
 </resources>
