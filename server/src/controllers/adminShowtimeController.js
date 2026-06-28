@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
-import * as showtimeAdminService from '../../services/admin/showtimeAdminService.js';
-
+1
 // POST /api/admin/showtimes
 export const createShowtime = async (req, res) => {
     try {
