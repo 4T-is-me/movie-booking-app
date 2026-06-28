@@ -4,18 +4,19 @@ import com.google.gson.annotations.SerializedName
 
 data class Movie(
     @SerializedName("_id") val id: String?,
-    val movieName: String?,
-    val duration: Int?,
-    val releaseDate: String?,
-    val movieGenre: List<String>?,
-    val language: String?,
-    val censorship: String?,
-    val description: String?,
-    val director: List<String>?,
-    val actors: List<String>?,
-    val country: String?,
-    val status: String?,
-    val poster: String?,
-    val rating: Double?,
-    val totalReviews: Int?
+    @SerializedName("movieName") val movieName: String?,
+    @SerializedName("duration") val duration: Int?,
+    @SerializedName("releaseDate") val releaseDate: String?,
+    @SerializedName("movieGenre") val movieGenre: List<String>?,
+    @SerializedName("language") val language: String?,
+    @SerializedName("censorship") val censorship: String?,
+    @SerializedName("description") val description: String?,
+    @SerializedName("director") val director: List<String>?,
+    @SerializedName("actors") val actors: List<String>?,
+    @SerializedName("country") val country: String?,
+    @SerializedName("status") val status: String?,
+    @SerializedName("poster") val poster: String?,
+    @SerializedName("rating") val rating: Double?,
+    @SerializedName("totalReviews") val totalReviews: Int?,
+    @SerializedName("totalStars") val totalStars: Int?
 )

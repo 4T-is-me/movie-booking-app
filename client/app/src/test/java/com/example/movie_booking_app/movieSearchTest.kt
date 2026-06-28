@@ -12,7 +12,7 @@ class MovieSearchTest {
     )
 
     @Test
-    fun `search by English name returns correct movie`() {
+    fun searchByEnglishNameReturnsCorrectMovie() {
         val query = "Endgame"
         val result = mockMovies.filter { it.nameEn.contains(query, ignoreCase = true) }
         assertEquals(1, result.size)
@@ -20,7 +20,7 @@ class MovieSearchTest {
     }
 
     @Test
-    fun `search by Vietnamese name returns correct movie`() {
+    fun searchByVietnameseNameReturnsCorrectMovie() {
         val query = "Người Nhện"
         val result = mockMovies.filter { it.nameVn.contains(query, ignoreCase = true) }
         assertEquals(1, result.size)
@@ -28,7 +28,7 @@ class MovieSearchTest {
     }
 
     @Test
-    fun `search with no matches returns empty list`() {
+    fun searchWithNoMatchesReturnsEmptyList() {
         val query = "Batman"
         val result = mockMovies.filter { 
             it.nameEn.contains(query, ignoreCase = true) || it.nameVn.contains(query, ignoreCase = true) 

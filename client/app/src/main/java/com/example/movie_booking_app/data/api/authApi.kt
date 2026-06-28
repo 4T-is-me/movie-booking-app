@@ -1,10 +1,10 @@
 package com.example.movie_booking_app.data.api
 
 
-import com.example.movie_booking_app.data.model.request.loginRequest
-import com.example.movie_booking_app.data.model.request.registerRequest
-import com.example.movie_booking_app.data.model.response.loginResponse
-import com.example.movie_booking_app.data.model.response.registerResponse
+import com.example.movie_booking_app.data.model.request.LoginRequest
+import com.example.movie_booking_app.data.model.request.RegisterRequest
+import com.example.movie_booking_app.data.model.response.LoginResponse
+import com.example.movie_booking_app.data.model.response.RegisterResponse
 
 import retrofit2.Response
 import retrofit2.http.Body
@@ -12,8 +12,8 @@ import retrofit2.http.POST
 
 interface AuthApi {
     @POST("api/auth/login")
-    suspend fun login(@Body request: loginRequest): Response<loginResponse>
+    suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
 
     @POST("api/auth/register")
-    suspend fun register(@Body request: registerRequest): Response<registerResponse>
+    suspend fun register(@Body request: RegisterRequest): Response<RegisterResponse>
 }
