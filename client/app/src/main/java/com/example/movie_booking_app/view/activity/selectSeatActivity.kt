@@ -6,8 +6,6 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
@@ -24,7 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class selectSeatActivity : AppCompatActivity() {
+class selectSeatActivity : BaseActivity() {
 
     private lateinit var binding: ActivitySelectSeatBinding
     private val viewModel: selectSeatViewModel by viewModels()
@@ -38,13 +36,13 @@ class selectSeatActivity : AppCompatActivity() {
         binding = ActivitySelectSeatBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupEdgeToEdge()
+        setupSafeAreas() // Only handle padding, enableEdgeToEdge is now in BaseActivity
         setupUI()
         setupAdapters()
         observeViewModel()
     }
 
-    private fun setupEdgeToEdge() {
+    private fun setupSafeAreas() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.topBar) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(top = insets.top)
@@ -100,10 +98,10 @@ class selectSeatActivity : AppCompatActivity() {
     private fun updateContinueButtonState(isEnabled: Boolean) {
         binding.btnContinue.isEnabled = isEnabled
         if (isEnabled) {
-            binding.btnContinue.backgroundTintList = ContextCompat.getColorStateList(this, R.color.accent_primary)
-            binding.btnContinue.setTextColor(ContextCompat.getColor(this, R.color.black))
+            binding.btnContinue.backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(this, R.color.accent_primary)
+            binding.btnContinue.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.black))
         } else {
-            binding.btnContinue.backgroundTintList = ContextCompat.getColorStateList(this, R.color.seat_available)
+            binding.btnContinue.backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(this, R.color.seat_available)
             binding.btnContinue.setTextColor(android.graphics.Color.parseColor("#80FFFFFF"))
         }
     }
@@ -171,10 +169,12 @@ class selectSeatActivity : AppCompatActivity() {
             viewModel.validationError.collect { error ->
                 when (error) {
                     is selectSeatViewModel.ValidationError.SelectMore -> {
-                        Toast.makeText(this@selectSeatActivity, getString(R.string.error_select_more, error.count), Toast.LENGTH_SHORT).show()
+                        val msg = getString(R.string.error_select_more, error.count)
+                        Toast.makeText(this@selectSeatActivity, msg, Toast.LENGTH_SHORT).show()
                     }
                     is selectSeatViewModel.ValidationError.SelectOnly -> {
-                        Toast.makeText(this@selectSeatActivity, getString(R.string.error_select_only, error.count), Toast.LENGTH_SHORT).show()
+                        val msg = getString(R.string.error_select_only, error.count)
+                        Toast.makeText(this@selectSeatActivity, msg, Toast.LENGTH_SHORT).show()
                     }
                     is selectSeatViewModel.ValidationError.Success -> {
                         Toast.makeText(this@selectSeatActivity, getString(R.string.msg_proceeding), Toast.LENGTH_SHORT).show()

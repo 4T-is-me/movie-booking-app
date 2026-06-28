@@ -53,7 +53,6 @@ class selectSeatViewModel @Inject constructor(
     private fun initialLoad() {
         viewModelScope.launch {
             _isLoading.value = true
-            // USER REQ: 0.5s loading if data is available
             val loadingJob = launch { delay(500) }
             
             try {
@@ -78,11 +77,7 @@ class selectSeatViewModel @Inject constructor(
             }
             
             loadingJob.join()
-
-            // LOGIC: If mock data OR real data found, stop loading. Else, load infinitely.
-            if (constants.USE_MOCK_DATA || _seats.value.isNotEmpty()) {
-                _isLoading.value = false
-            }
+            if (_seats.value.isNotEmpty()) { _isLoading.value = false }
         }
     }
 
@@ -114,9 +109,7 @@ class selectSeatViewModel @Inject constructor(
             }
             
             loadingJob.join()
-            if (constants.USE_MOCK_DATA || _seats.value.isNotEmpty()) {
-                _isLoading.value = false
-            }
+            if (_seats.value.isNotEmpty()) { _isLoading.value = false }
         }
     }
 
@@ -139,9 +132,7 @@ class selectSeatViewModel @Inject constructor(
             }
             
             loadingJob.join()
-            if (constants.USE_MOCK_DATA || _seats.value.isNotEmpty()) {
-                _isLoading.value = false
-            }
+            if (_seats.value.isNotEmpty()) { _isLoading.value = false }
         }
     }
 
@@ -150,7 +141,7 @@ class selectSeatViewModel @Inject constructor(
     }
 
     fun onSeatClicked(seat: Seat) {
-        if (seat.status == SeatStatus.SOLD) return
+        if (seat.status == SeatStatus.RESERVED) return
 
         val updatedSeats = _seats.value.map { currentSeat ->
             if (currentSeat.id == seat.id) {

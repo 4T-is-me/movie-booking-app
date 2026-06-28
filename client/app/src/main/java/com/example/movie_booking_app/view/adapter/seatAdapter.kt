@@ -32,8 +32,8 @@ class seatAdapter(
             // Sử dụng logic đã được tách vào Model
             tvSeat.setBackgroundResource(seat.getBackgroundResource())
             
-            itemView.isEnabled = seat.status != SeatStatus.SOLD
-            itemView.alpha = if (seat.status == SeatStatus.SOLD) 0.5f else 1.0f
+            itemView.isEnabled = seat.status != SeatStatus.RESERVED
+            itemView.alpha = if (seat.status == SeatStatus.RESERVED) 0.5f else 1.0f
 
             itemView.setOnClickListener { onSeatClick(seat) }
         }
