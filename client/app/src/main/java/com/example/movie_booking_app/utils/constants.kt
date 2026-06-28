@@ -6,7 +6,7 @@ object Constants {
      * true -> Use Mock Data (Stable for UI development according to Figma)
      * false -> Use Real Server/DB (For testing connectivity and merging code)
      */
-    const val USE_MOCK_DATA = false
+    const val useMockData = false
 
 
 

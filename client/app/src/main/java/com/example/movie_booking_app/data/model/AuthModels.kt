@@ -1,5 +1,11 @@
 package com.example.movie_booking_app.data.model
 
+import com.google.gson.annotations.SerializedName
+
+data class RoleResponse(
+    @SerializedName("_id") val id: String?,
+    val roleName: String?
+)
 data class LoginRequest(
     val email: String,
     val password: String
@@ -18,7 +24,7 @@ data class RegisterRequest(
 )
 
 data class AccountResponse(
-    val _id: String?,
+    @SerializedName("_id") val id: String?,
     val username: String?,
     val email: String?,
     val status: Int?,
@@ -30,7 +36,9 @@ data class AccountResponse(
     val phoneNumber: String?,
     val identityCard: String?,
     val address: String?,
-    val image: String?
+    val image: String?,
+    val role: String?,
+    val roleId: RoleResponse?
 )
 
 data class AuthResponse(

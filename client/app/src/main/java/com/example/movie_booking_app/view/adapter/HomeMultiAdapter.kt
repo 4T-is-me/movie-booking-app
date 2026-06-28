@@ -32,37 +32,37 @@ class HomeMultiAdapter(
 ) : ListAdapter<HomeItem, RecyclerView.ViewHolder>(HomeItemDiffCallback()) {
 
     companion object {
-        private const val TYPE_HEADER = 0
-        private const val TYPE_NOW_PLAYING = 1
-        private const val TYPE_COMING_SOON = 2
-        private const val TYPE_PROMO = 3
-        private const val TYPE_SERVICE = 4
-        private const val TYPE_NEWS = 5
-        private const val TYPE_EMPTY = 6
+        private const val typeHeader = 0
+        private const val typeNowPlaying = 1
+        private const val typeComingSoon = 2
+        private const val typePromo = 3
+        private const val typeService = 4
+        private const val typeNews = 5
+        private const val typeEmpty = 6
     }
 
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
-            is HomeItem.HeaderSection -> TYPE_HEADER
-            is HomeItem.NowPlayingSection -> TYPE_NOW_PLAYING
-            is HomeItem.ComingSoonSection -> TYPE_COMING_SOON
-            is HomeItem.PromoSection -> TYPE_PROMO
-            is HomeItem.ServiceSection -> TYPE_SERVICE
-            is HomeItem.MovieNewsSection -> TYPE_NEWS
-            is HomeItem.EmptyState -> TYPE_EMPTY
+            is HomeItem.HeaderSection -> typeHeader
+            is HomeItem.NowPlayingSection -> typeNowPlaying
+            is HomeItem.ComingSoonSection -> typeComingSoon
+            is HomeItem.PromoSection -> typePromo
+            is HomeItem.ServiceSection -> typeService
+            is HomeItem.MovieNewsSection -> typeNews
+            is HomeItem.EmptyState -> typeEmpty
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
-            TYPE_HEADER -> HeaderViewHolder(inflater.inflate(R.layout.layout_home_header, parent, false), onSearchQueryChanged, onLoginClicked)
-            TYPE_NOW_PLAYING -> NowPlayingViewHolder(inflater.inflate(R.layout.layout_home_now_playing, parent, false), onSeeAllClicked, onMovieClicked)
-            TYPE_COMING_SOON -> ComingSoonViewHolder(inflater.inflate(R.layout.layout_home_coming_soon, parent, false), onSeeAllClicked, onMovieClicked)
-            TYPE_PROMO -> PromoViewHolder(inflater.inflate(R.layout.layout_home_promo, parent, false), onSeeAllClicked)
-            TYPE_SERVICE -> ServiceViewHolder(inflater.inflate(R.layout.layout_home_services, parent, false), onSeeAllClicked)
-            TYPE_NEWS -> NewsViewHolder(inflater.inflate(R.layout.layout_home_movie_news, parent, false), onSeeAllClicked)
-            TYPE_EMPTY -> EmptyViewHolder(inflater.inflate(R.layout.layout_home_empty_state, parent, false))
+            typeHeader -> HeaderViewHolder(inflater.inflate(R.layout.layout_home_header, parent, false), onSearchQueryChanged, onLoginClicked)
+            typeNowPlaying -> NowPlayingViewHolder(inflater.inflate(R.layout.layout_home_now_playing, parent, false), onSeeAllClicked, onMovieClicked)
+            typeComingSoon -> ComingSoonViewHolder(inflater.inflate(R.layout.layout_home_coming_soon, parent, false), onSeeAllClicked, onMovieClicked)
+            typePromo -> PromoViewHolder(inflater.inflate(R.layout.layout_home_promo, parent, false), onSeeAllClicked)
+            typeService -> ServiceViewHolder(inflater.inflate(R.layout.layout_home_services, parent, false), onSeeAllClicked)
+            typeNews -> NewsViewHolder(inflater.inflate(R.layout.layout_home_movie_news, parent, false), onSeeAllClicked)
+            typeEmpty -> EmptyViewHolder(inflater.inflate(R.layout.layout_home_empty_state, parent, false))
             else -> throw IllegalArgumentException("Invalid ViewType")
         }
     }

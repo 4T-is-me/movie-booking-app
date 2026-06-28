@@ -2,14 +2,12 @@ package com.example.movie_booking_app.view.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
+import androidx.fragment.app.FragmentManager
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.ActivityMainBinding
 import com.example.movie_booking_app.view.fragment.GenericGridFragment
@@ -29,7 +27,6 @@ class MainActivity : BaseActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupSafeAreas()
         setupBottomNav()
         setupBackStackListener()
         
@@ -48,17 +45,7 @@ class MainActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Synchronize auth state UI elements if necessary
-        // (Current fragment will handle Hi user message via ViewModel/Hilt)
-    }
-
-    private fun setupSafeAreas() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.mainContainer) { _, windowInsets -> windowInsets }
-        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNav) { v, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.updatePadding(bottom = insets.bottom)
-            windowInsets
-        }
+        // Synchronize UI state if needed
     }
 
     private fun setupBackStackListener() {
@@ -115,7 +102,7 @@ class MainActivity : BaseActivity() {
         if (section != "Home") {
             transaction.addToBackStack(section)
         } else {
-            supportFragmentManager.popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         }
             
         transaction.commit()

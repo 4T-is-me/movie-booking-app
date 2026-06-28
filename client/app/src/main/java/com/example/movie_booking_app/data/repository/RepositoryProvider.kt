@@ -10,10 +10,7 @@ import com.example.movie_booking_app.utils.Constants
 object RepositoryProvider {
 
     fun provideMovieRepository(): MovieRepository {
-        return if (Constants.USE_MOCK_DATA) {
-            MovieRepositoryImpl()
-        } else {
-            MovieRepositoryRemoteImpl(RetrofitClient.movieApi)
-        }
+        // Currently both use Remote implementation until Mock implementation is restored.
+        return MovieRepositoryRemoteImpl(RetrofitClient.movieApi)
     }
 }

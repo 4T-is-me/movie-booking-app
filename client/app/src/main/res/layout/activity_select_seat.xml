@@ -45,7 +45,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Cinema Screen Glow – rendered via custom Canvas view for soft blur/glow -->
-    <com.example.movie_booking_app.view.widget.cinemaScreenView
+    <com.example.movie_booking_app.view.widget.CinemaScreenView
         android:id="@+id/ivCinemaScreen"
         android:layout_width="0dp"
         android:layout_height="40dp"
