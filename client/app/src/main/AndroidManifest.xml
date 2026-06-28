@@ -47,6 +47,11 @@
             android:theme="@style/Theme.Moviebookingapp" />
 
         <activity
+            android:name=".view.activity.MovieDetailActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Moviebookingapp" />
+
+        <activity
             android:name=".view.activity.LoginPlaceholderActivity"
             android:exported="false" />
 

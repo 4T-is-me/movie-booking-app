@@ -2,12 +2,15 @@ package com.example.movie_booking_app.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.movie_booking_app.data.model.entity.Showtime
+import com.example.movie_booking_app.data.model.response.MovieResponse
 import com.example.movie_booking_app.data.model.ui.HomeItem
 import com.example.movie_booking_app.data.repository.MovieRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.collections.emptyList
 
 @HiltViewModel
 class MovieViewModel @Inject constructor(
@@ -22,6 +25,16 @@ class MovieViewModel @Inject constructor(
     private val _homeItems = MutableStateFlow<List<HomeItem>>(initialHomeState())
     val homeItems: StateFlow<List<HomeItem>> = _homeItems.asStateFlow()
 
+    private val _movieDetail = MutableStateFlow<MovieResponse?>(null)
+    val movieDetail: StateFlow<MovieResponse?> = _movieDetail.asStateFlow()
+    private val _detailError = MutableStateFlow<String?>(null)
+    val detailError: StateFlow<String?> = _detailError.asStateFlow()
+
+    private val _movieShowtimes = MutableStateFlow<List<Showtime>>(emptyList())
+    val movieShowtimes: StateFlow<List<Showtime>> = _movieShowtimes
+
+    private val _showtimeError = MutableStateFlow<String?>(null)
+    val showtimeError: StateFlow<String?> = _showtimeError
     init {
         loadHomeData()
     }
@@ -78,4 +91,35 @@ class MovieViewModel @Inject constructor(
     fun searchMovies(query: String) {
         _searchQuery.value = query
     }
+
+    fun fetchMovieDetail(id: String) {
+        viewModelScope.launch {
+            _movieDetail.value = null
+            _detailError.value = null
+
+            repository.getMovieDetailsById(id)
+                .catch { e ->
+                    _detailError.value = "Lỗi: ${e.localizedMessage}"
+                }
+                .collect { movieData ->
+                    _movieDetail.value = MovieResponse(data = movieData)
+                }
+        }
+    }
+
+    fun fetchMovieShowtimes(movieId: String) {
+        viewModelScope.launch {
+            _movieShowtimes.value = emptyList()
+            _showtimeError.value = null
+
+            repository.getMovieShowtimes(movieId)
+                .catch { e ->
+                    _showtimeError.value = "Lỗi: ${e.localizedMessage}"
+                }
+                .collect { showtimes ->
+                    _movieShowtimes.value = showtimes
+                }
+        }
+    }
+
 }

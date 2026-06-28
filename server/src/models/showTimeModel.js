@@ -5,7 +5,6 @@ const showtimeSchema = new mongoose.Schema({
     cinemaId: {type: mongoose.Schema.Types.ObjectId, ref: "Cinema", required: true},
     roomId: {type: mongoose.Schema.Types.ObjectId, ref: "CinemaRoom"},
     showDate: {type: Date},
-    showTime: {type: Date},
     startTime: {type: Date},
     endTime: {type: Date}
 }, { timestamps: true, versionKey: false, collection: 'showtimes' });
