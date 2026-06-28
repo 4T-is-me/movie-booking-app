@@ -12,12 +12,12 @@
         android:background="#000000"
         android:fillViewport="true">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="24dp">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="24dp">
 
-            <!-- Back Button -->
+            <!-- Back Button and Title Section -->
             <ImageView
                 android:id="@+id/ivBack"
                 android:layout_width="32dp"

@@ -64,8 +64,8 @@ class SelectSeatActivity : AppCompatActivity() {
         binding.rvDates.adapter = dateAdapter
 
         // Time layout: horizontal
-        timeAdapter = TimeAdapter { time ->
-            viewModel.selectTime(time.id)
+        timeAdapter = TimeAdapter { showtime  ->
+            viewModel.selectTime(showtime.id)
         }
         binding.rvTimes.layoutManager = LinearLayoutManager(
             this, LinearLayoutManager.HORIZONTAL, false,

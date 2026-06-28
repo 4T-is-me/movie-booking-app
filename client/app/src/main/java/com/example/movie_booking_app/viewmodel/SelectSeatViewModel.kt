@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.example.movie_booking_app.data.model.entity.Seat
 import com.example.movie_booking_app.data.model.entity.SeatStatus
 import com.example.movie_booking_app.data.model.entity.ShowDate
-import com.example.movie_booking_app.data.model.entity.ShowTime
+import com.example.movie_booking_app.data.model.entity.Showtime
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,8 +18,8 @@ class SelectSeatViewModel : ViewModel() {
     private val _dates = MutableStateFlow<List<ShowDate>>(emptyList())
     val dates: StateFlow<List<ShowDate>> = _dates.asStateFlow()
 
-    private val _times = MutableStateFlow<List<ShowTime>>(emptyList())
-    val times: StateFlow<List<ShowTime>> = _times.asStateFlow()
+    private val _times = MutableStateFlow<List<Showtime>>(emptyList())
+    val times: StateFlow<List<Showtime>> = _times.asStateFlow()
 
     private val _totalPrice = MutableStateFlow(0)
     val totalPrice: StateFlow<Int> = _totalPrice.asStateFlow()
@@ -56,14 +56,14 @@ class SelectSeatViewModel : ViewModel() {
             ShowDate("10", "Dec", "19")
         )
 
-        // Mock times
-        _times.value = listOf(
-            ShowTime("1", "12:10"),
-            ShowTime("2", "14:15", true),
-            ShowTime("3", "16:20"),
-            ShowTime("4", "18:25"),
-            ShowTime("5", "20:30")
-        )
+//        // Mock times
+//        _times.value = listOf(
+//            Showtime("1", "12:10"),
+//            Showtime("2", "14:15", true),
+//            Showtime("3", "16:20"),
+//            Showtime("4", "18:25"),
+//            Showtime("5", "20:30")
+//        )
 
         calculateTotalPrice()
     }

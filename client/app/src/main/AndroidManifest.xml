@@ -47,10 +47,13 @@
             android:theme="@style/Theme.Moviebookingapp" />
 
         <activity
-            android:name=".view.activity.AdminActivity"
-            android:exported="false"
+            android:name=".view.activity.MovieDetailActivity"
+            android:exported="true"
             android:theme="@style/Theme.Moviebookingapp" />
 
+        <activity
+            android:name=".view.activity.LoginPlaceholderActivity"
+            android:exported="false" />
 
     </application>
 

@@ -5,6 +5,8 @@ import com.example.movie_booking_app.data.model.entity.Movie
 import com.example.movie_booking_app.data.model.ui.MovieNews
 import com.example.movie_booking_app.data.model.ui.Promo
 import com.example.movie_booking_app.data.model.ui.Service
+import com.example.movie_booking_app.data.model.entity.Cinema
+import com.example.movie_booking_app.data.model.entity.Showtime
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -44,7 +46,43 @@ class MovieRepositoryRemoteImpl @Inject constructor(
         }
     }
 
-    override fun getPromos(): Flow<List<Promo>> = flow { emit(emptyList()) }
-    override fun getServices(): Flow<List<Service>> = flow { emit(emptyList()) }
-    override fun getNews(): Flow<List<MovieNews>> = flow { emit(emptyList()) }
+    override fun getPromos(): Flow<List<Promo>> = flow {
+        emit(listOf(
+            Promo("1", "Sale 30%", "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=500", "MOVIE30"),
+            Promo("2", "Buy 1 Get 1", "https://images.unsplash.com/photo-1616469829581-73993eb86b02?w=500", "B1G1")
+        ))
+    }
+
+    override fun getServices(): Flow<List<Service>> = flow {
+        emit(listOf(
+            Service("1", "IMAX", "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=100"),
+            Service("2", "4DX", "https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=100")
+        ))
+    }
+
+    override fun getNews(): Flow<List<MovieNews>> = flow {
+        emit(listOf(
+            MovieNews("1", "Avatar 3 release date announced", "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500", "20.12.2023")
+        ))
+    }
+
+    override fun getMovieDetailsById(id: String): Flow<Movie> = flow {
+        try {
+            val response = api.getMovieDetailsById(id)
+            if (response.isSuccessful) {
+                response.body()?.data?.let { emit(it) }
+            }
+        } catch (e: Exception) {
+            // Handle error or emit empty
+        }
+    }
+    override fun getMovieShowtimes(movieId: String): Flow<List<Showtime>> = flow {
+        val response = api.getMovieShowtimes(movieId)
+        if (response.isSuccessful) {
+            emit(response.body()?.data ?: emptyList())
+        } else {
+            val errorBody = response.errorBody()?.string()
+            throw Exception("API Error ${response.code()}: $errorBody")
+        }
+    }
 }
