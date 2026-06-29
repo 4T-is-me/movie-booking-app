@@ -1,147 +1,186 @@
 package com.example.movie_booking_app.view.activity
 
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
+import androidx.activity.viewModels
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.ActivitySelectSeatBinding
-import com.example.movie_booking_app.view.adapter.DateAdapter
-import com.example.movie_booking_app.view.adapter.SeatAdapter
-import com.example.movie_booking_app.view.adapter.TimeAdapter
-import com.example.movie_booking_app.viewmodel.SelectSeatViewModel
+import com.example.movie_booking_app.view.adapter.dateAdapter
+import com.example.movie_booking_app.view.adapter.seatAdapter
+import com.example.movie_booking_app.view.adapter.timeAdapter
+import com.example.movie_booking_app.viewmodel.selectSeatViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import java.text.NumberFormat
-import java.util.Locale
 
-/**
- * Activity for Cinema Seat Selection screen.
- */
-class SelectSeatActivity : AppCompatActivity() {
+@AndroidEntryPoint
+class selectSeatActivity : BaseActivity() {
 
     private lateinit var binding: ActivitySelectSeatBinding
-    private val viewModel: SelectSeatViewModel by lazy {
-        ViewModelProvider(this)[SelectSeatViewModel::class.java]
-    }
+    private val viewModel: selectSeatViewModel by viewModels()
 
-    private lateinit var seatAdapter: SeatAdapter
-    private lateinit var dateAdapter: DateAdapter
-    private lateinit var timeAdapter: TimeAdapter
+    private lateinit var seatAdapter: seatAdapter
+    private lateinit var dateAdapter: dateAdapter
+    private lateinit var timeAdapter: timeAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySelectSeatBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupRecyclerViews()
-        setupListeners()
+        setupSafeAreas() // Only handle padding, enableEdgeToEdge is now in BaseActivity
+        setupUI()
+        setupAdapters()
         observeViewModel()
     }
 
-    /**
-     * Set up recyclerview layouts and binding adapters.
-     */
-    private fun setupRecyclerViews() {
-        // Seat layout: 10 columns
-        seatAdapter = SeatAdapter { seat ->
-            viewModel.toggleSeatSelection(seat.id)
+    private fun setupSafeAreas() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.topBar) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(top = insets.top)
+            windowInsets
         }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.layoutFooter) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(bottom = insets.bottom)
+            windowInsets
+        }
+    }
+
+    private fun setupUI() {
+        binding.ivBack.setOnClickListener { finish() }
+
+        val seatCounts = (1..8).toList()
+        val spinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, seatCounts)
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerQuantity.adapter = spinnerAdapter
+        
+        binding.spinnerQuantity.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                viewModel.setTargetCount(seatCounts[position])
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        binding.btnContinue.setOnClickListener {
+            viewModel.validateAndProceed()
+        }
+
+        binding.legendAvailable.apply {
+            viewSwatch.setBackgroundResource(R.drawable.bg_seat_available)
+            tvLegendLabel.text = getString(R.string.legend_available)
+        }
+        binding.legendVip.apply {
+            viewSwatch.setBackgroundResource(R.drawable.bg_seat_vip)
+            tvLegendLabel.text = getString(R.string.legend_vip)
+        }
+        binding.legendSold.apply {
+            viewSwatch.setBackgroundResource(R.drawable.bg_seat_sold)
+            tvLegendLabel.text = getString(R.string.legend_sold)
+        }
+        binding.legendSelected.apply {
+            viewSwatch.setBackgroundResource(R.drawable.bg_seat_selected)
+            tvLegendLabel.text = getString(R.string.legend_selected)
+        }
+        
+        updateContinueButtonState(false)
+    }
+
+    private fun updateContinueButtonState(isEnabled: Boolean) {
+        binding.btnContinue.isEnabled = isEnabled
+        if (isEnabled) {
+            binding.btnContinue.backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(this, R.color.accent_primary)
+            binding.btnContinue.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.black))
+        } else {
+            binding.btnContinue.backgroundTintList = androidx.core.content.ContextCompat.getColorStateList(this, R.color.seat_available)
+            binding.btnContinue.setTextColor(android.graphics.Color.parseColor("#80FFFFFF"))
+        }
+    }
+
+    private fun setupAdapters() {
+        seatAdapter = seatAdapter { seat -> viewModel.onSeatClicked(seat) }
         binding.rvSeats.layoutManager = GridLayoutManager(this, 10)
         binding.rvSeats.adapter = seatAdapter
-        binding.rvSeats.isNestedScrollingEnabled = false
 
-        // Date layout: horizontal
-        dateAdapter = DateAdapter { date ->
-            viewModel.selectDate(date.id)
-        }
-        binding.rvDates.layoutManager = LinearLayoutManager(
-            this, LinearLayoutManager.HORIZONTAL, false,
-        )
+        dateAdapter = dateAdapter { date -> viewModel.onDateSelected(date) }
+        binding.rvDates.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.rvDates.adapter = dateAdapter
 
-        // Time layout: horizontal
-        timeAdapter = TimeAdapter { showtime  ->
-            viewModel.selectTime(showtime.id)
-        }
-        binding.rvTimes.layoutManager = LinearLayoutManager(
-            this, LinearLayoutManager.HORIZONTAL, false,
-        )
+        timeAdapter = timeAdapter { time -> viewModel.onTimeSelected(time) }
+        binding.rvTimes.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.rvTimes.adapter = timeAdapter
     }
 
-    /**
-     * Attach button listeners.
-     */
-    private fun setupListeners() {
-        binding.btnBack.setOnClickListener {
-            finish()
-        }
-        binding.btnBuyTicket.setOnClickListener {
-            val price = viewModel.totalPrice.value
-            if (price == 0) {
-                Toast.makeText(this, "Please select at least one seat", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Booking confirmed: ${formatCurrency(price)}", Toast.LENGTH_LONG).show()
-            }
-        }
-    }
-
-    /**
-     * Observe ViewModel state flows and sync to UI.
-     */
     private fun observeViewModel() {
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.seats.collect { list ->
-                    seatAdapter.submitList(list)
+            viewModel.isLoading.collect { isLoading ->
+                if (isLoading) {
+                    binding.layoutSkeleton.root.visibility = View.VISIBLE
+                    binding.mainContent.visibility = View.GONE
+                    binding.btnContinue.visibility = View.INVISIBLE
+                } else {
+                    binding.layoutSkeleton.root.visibility = View.GONE
+                    binding.mainContent.visibility = View.VISIBLE
+                    binding.btnContinue.visibility = View.VISIBLE
                 }
             }
         }
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.dates.collect { list ->
-                    dateAdapter.submitList(list)
-                }
+            viewModel.seats.collect { seats ->
+                seatAdapter.submitList(seats)
             }
         }
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.times.collect { list ->
-                    timeAdapter.submitList(list)
-                }
+            viewModel.selectedSeats.collect { selected ->
+                updateContinueButtonState(selected.isNotEmpty())
             }
         }
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.totalPrice.collect { price ->
-                    binding.tvTotalPrice.text = formatCurrency(price)
-                }
+            viewModel.showDates.collect { dates ->
+                dateAdapter.submitList(dates)
             }
         }
 
         lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.error.collect { errorMsg ->
-                    errorMsg?.let {
-                        Toast.makeText(this@SelectSeatActivity, it, Toast.LENGTH_LONG).show()
+            viewModel.showTimes.collect { times ->
+                timeAdapter.submitList(times)
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.totalAmount.collect { amount ->
+                binding.tvTotalAmount.text = String.format("%,d VND", amount)
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.validationError.collect { error ->
+                when (error) {
+                    is selectSeatViewModel.ValidationError.SelectMore -> {
+                        val msg = getString(R.string.error_select_more, error.count)
+                        Toast.makeText(this@selectSeatActivity, msg, Toast.LENGTH_SHORT).show()
+                    }
+                    is selectSeatViewModel.ValidationError.SelectOnly -> {
+                        val msg = getString(R.string.error_select_only, error.count)
+                        Toast.makeText(this@selectSeatActivity, msg, Toast.LENGTH_SHORT).show()
+                    }
+                    is selectSeatViewModel.ValidationError.Success -> {
+                        Toast.makeText(this@selectSeatActivity, getString(R.string.msg_proceeding), Toast.LENGTH_SHORT).show()
                     }
                 }
             }
         }
-    }
-
-    /**
-     * Formats currency amounts with thousand separators (dots) matching mockup presentation style.
-     */
-    private fun formatCurrency(amount: Int): String {
-        val formatter = NumberFormat.getInstance(Locale.GERMANY) // Germany formats digits using dot thousands separator (e.g. 210.000)
-        return "${formatter.format(amount)} VND"
     }
 }
