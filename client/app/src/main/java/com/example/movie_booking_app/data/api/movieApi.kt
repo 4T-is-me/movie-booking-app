@@ -1,2 +1,20 @@
 package com.example.movie_booking_app.data.api
 
+import com.example.movie_booking_app.data.model.response.MovieListResponse
+import com.example.movie_booking_app.data.model.response.MovieResponse
+import com.example.movie_booking_app.data.model.response.ShowtimeResponse
+import retrofit2.Response
+import retrofit2.http.GET
+import retrofit2.http.Path
+import retrofit2.http.Query
+
+interface MovieApi {
+    @GET("api/movies")
+    suspend fun getMovies(@Query("limit") limit: Int = 100): Response<MovieListResponse>
+
+    @GET("api/movies/{id}")
+    suspend fun getMovieDetailsById(@Path("id") id: String): Response<MovieResponse>
+
+    @GET("api/showtimes/movie/{movieId}")
+    suspend fun getMovieShowtimes(@Path("movieId") movieId: String): Response<ShowtimeResponse>
+}

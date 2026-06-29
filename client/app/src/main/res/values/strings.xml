@@ -1,5 +1,72 @@
 <resources>
-    <string name="app_name">movie-booking-app</string>
+    <string name="app_name">MovieBookingApp</string>
+    <string name="hi_user">Hi, %1$s 👋</string>
+    <string name="welcome_back">Welcome back</string>
+    <string name="search_hint">Search</string>
+    <string name="no_movies_found">No movies has found as required</string>
+    <string name="movie_list_title">Movie List</string>
+    <string name="now_playing">Now playing</string>
+    <string name="coming_soon">Coming soon</string>
+    <string name="see_all">See all ></string>
+    <string name="promo_title">Promo &amp; Discount</string>
+    <string name="service_title">Service</string>
+    <string name="news_title">Movie news</string>
+    <string name="view_schedule">View schedule</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_ticket">Ticket</string>
+    <string name="nav_movie">Movie</string>
+    <string name="nav_profile">Profile</string>
+    <string name="page_in_progress">This page is in progress...</string>
+    <string name="login_btn">Login</string>
+    <string name="login">Login</string>
+    <string name="login_placeholder_title">Login Screen Placeholder</string>
+    <string name="auth_team_msg">This feature is being developed by the Auth team.</string>
+
+    <string name="user_name_placeholder">Nguyen Van A</string>
+    <string name="user_phone_placeholder">0987654321</string>
+    <string name="user_email_placeholder">abc@gmail.com</string>
+    <string name="my_ticket">My ticket</string>
+    <string name="change_language">Change language</string>
+    <string name="change_password">Change password</string>
+    <string name="list_title">List</string>
+
+    <!-- Auth Team Strings -->
+    <string name="login_subtitle">Login to continue booking movies</string>
+    <string name="username_label">User name / Email / Phone</string>
+    <string name="username_hint">Enter your user name or email</string>
+    <string name="password_label">Password</string>
+    <string name="remember_me">Remember me</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="password_hint">Enter your password</string>
+    <string name="or_continue_with">Or continue with</string>
+    <string name="google">Google</string>
+    <string name="terms_and_privacy">By sign in or sign up, you agree to our Terms of Service\nand Privacy Policy</string>
+    <string name="dont_have_account">Don\'t have an account? </string>
+    <string name="register_now">Register now!</string>
+    <string name="sign_up">Sign up</string>
+    <string name="register_subtitle">Create your account to start booking movies</string>
+    <string name="full_name_label">Full name *</string>
+    <string name="full_name_hint">Enter your full name</string>
+    <string name="username_reg_label">Username *</string>
+    <string name="username_reg_hint">Enter your username</string>
+    <string name="dob_label">Date of birth *</string>
+    <string name="dob_hint">DD/MM/YYYY</string>
+    <string name="gender_label">Gender</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="email_label">Email *</string>
+    <string name="email_hint">Enter your email address</string>
+    <string name="phone_label">Phone number *</string>
+    <string name="phone_hint">Enter your phone number</string>
+    <string name="id_card_label">Identity card number *</string>
+    <string name="id_card_hint">Enter your Identity card number</string>
+    <string name="password_label_required">Password *</string>
+    <string name="confirm_password_label">Confirm password *</string>
+    <string name="confirm_password_hint">Confirm your password</string>
+    <string name="address_label">Address *</string>
+    <string name="address_hint">Enter your address</string>
+    <string name="register">Register</string>
+    <string name="or_sign_up_with">Or sign up with</string>
 
     <!-- Seating Map Labels -->
     <string name="title_select_seat">Select Seat</string>

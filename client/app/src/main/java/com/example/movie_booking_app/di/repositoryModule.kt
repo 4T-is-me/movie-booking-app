@@ -1,28 +1,20 @@
 package com.example.movie_booking_app.di
 
-import com.example.movie_booking_app.data.api.bookingApi
-import com.example.movie_booking_app.data.repository.*
+import com.example.movie_booking_app.data.repository.MovieRepository
+import com.example.movie_booking_app.data.repository.MovieRepositoryRemoteImpl
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
 
 @Module
-@InstallIn(SingletonComponent::class)
-object repositoryModule {
+@InstallIn(ViewModelComponent::class)
+abstract class RepositoryModule {
 
-    @Provides
-    @Singleton
-    fun provideBookingRepository(api: bookingApi): BookingRepository {
-        // --- MANUAL SWAP AREA ---
-        
-        // 1. Production Mode (Use for submission)
-        return BookingRepositoryRemoteImpl(api)
-        
-        // 2. Mock Mode (Use for local UI testing)
-        // return BookingRepositoryImpl()
-        
-        // -------------------------
-    }
+    @Binds
+    @ViewModelScoped
+    abstract fun bindMovieRepository(
+        movieRepositoryRemoteImpl: MovieRepositoryRemoteImpl
+    ): MovieRepository
 }

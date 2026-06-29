@@ -27,7 +27,7 @@ const register = async (req, res, next) => {
 
 const login = async (req, res, next) => {
     const correctCondition = Joi.object({
-        email: Joi.string().required().email().trim().strict(),
+        email: Joi.string().required().trim().strict(),
         password: Joi.string().required().min(6).strict()
     })
 
