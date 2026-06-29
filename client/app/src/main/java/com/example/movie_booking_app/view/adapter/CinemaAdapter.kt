@@ -5,12 +5,11 @@ import android.view.ViewGroup
 import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Cinema
 import com.example.movie_booking_app.databinding.ItemCinemaBinding
 import com.example.movie_booking_app.utils.Constants
 
-class cinemaAdapter(private val cinemas: List<Cinema>, private val onCinemaClick: (Cinema?) -> Unit):  RecyclerView.Adapter<cinemaAdapter.CinemaViewHolder>() {
+class CinemaAdapter(private val cinemas: List<Cinema>, private val onCinemaClick: (Cinema?) -> Unit):  RecyclerView.Adapter<CinemaAdapter.CinemaViewHolder>() {
     private var selectedPosition = RecyclerView.NO_POSITION
 
     inner class CinemaViewHolder(val binding: ItemCinemaBinding): RecyclerView.ViewHolder(binding.root)

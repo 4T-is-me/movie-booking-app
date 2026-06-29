@@ -1,6 +1,5 @@
 package com.example.movie_booking_app.data.model.entity
 
-import com.example.movie_booking_app.utils.Constants
 import com.google.gson.annotations.SerializedName
 
 data class Movie(

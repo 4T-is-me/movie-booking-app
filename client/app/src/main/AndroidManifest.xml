@@ -43,7 +43,7 @@
 
         <!-- Keeping your enhanced seating map activity -->
         <activity
-            android:name=".view.activity.selectSeatActivity"
+            android:name=".view.activity.SelectSeatActivity"
             android:exported="true"
             android:theme="@style/Theme.Moviebookingapp" />
 
@@ -55,6 +55,11 @@
         <activity
             android:name=".view.activity.LoginPlaceholderActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".view.activity.AdminActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Moviebookingapp" />
 
     </application>
 

@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.databinding.ItemCardPersonBinding
 
-class cardItemAdapter(private val directors: List<String>) : RecyclerView.Adapter<cardItemAdapter.DirectorViewHolder>() {
+class CardItemAdapter(private val directors: List<String>) : RecyclerView.Adapter<CardItemAdapter.DirectorViewHolder>() {
     inner class DirectorViewHolder(val binding: ItemCardPersonBinding): RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DirectorViewHolder {
