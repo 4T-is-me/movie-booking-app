@@ -67,4 +67,6 @@
     <string name="address_hint">Enter your address</string>
     <string name="register">Register</string>
     <string name="or_sign_up_with">Or sign up with</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
 </resources>

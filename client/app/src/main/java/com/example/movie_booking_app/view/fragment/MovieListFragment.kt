@@ -11,11 +11,13 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.movie_booking_app.databinding.FragmentMovieListBinding
 import com.example.movie_booking_app.view.activity.MainActivity
-import com.example.movie_booking_app.view.activity.LoginPlaceholderActivity
+import com.example.movie_booking_app.view.activity.LoginActivity
 import com.example.movie_booking_app.view.adapter.HomeMultiAdapter
 import com.example.movie_booking_app.viewmodel.MovieViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MovieListFragment : Fragment() {
 
     private var _binding: FragmentMovieListBinding? = null
@@ -48,7 +50,7 @@ class MovieListFragment : Fragment() {
                 Toast.makeText(context, "Opening schedule for: ${movie.movieName}", Toast.LENGTH_SHORT).show()
             },
             onLoginClicked = {
-                startActivity(Intent(context, LoginPlaceholderActivity::class.java))
+                startActivity(Intent(context, LoginActivity::class.java))
             }
         )
         binding.rvHome.adapter = homeAdapter
