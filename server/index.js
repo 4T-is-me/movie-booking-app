@@ -11,6 +11,7 @@ import showtimeRoutes from './src/routes/showtimeRoutes.js';
 import { accountRoute } from './src/routes/accountRoute.js';
 import { bookingRoute } from './src/routes/bookingRoute.js';
 import { memberRoute } from './src/routes/memberRoute.js';
+import adminMovieRoutes from './src/routes/adminMovieRoutes.js';
 import adminShowtimeRoutes from './src/routes/adminShowtimeRoutes.js';
 
 const app = express();
@@ -31,6 +32,7 @@ app.use('/api/accounts', accountRoute.accountRouter);
 app.use('/api/members', memberRoute.memberRouter);
 app.use('/api/booking', bookingRoute.bookingRouter);
 app.use('/api/admin/showtimes', adminShowtimeRoutes);
+app.use('/api/admin/movies', adminMovieRoutes);
 
 const startServer = async () => {
     await connectDB();

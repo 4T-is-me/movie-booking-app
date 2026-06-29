@@ -32,30 +32,21 @@ class MovieGridAdapter(
     }
 
     class GridViewHolder(view: View, private val onClick: (Movie) -> Unit) : RecyclerView.ViewHolder(view) {
-        private val imgPoster: ShapeableImageView = view.findViewById(R.id.imgPoster)
-        private val tvNameVn: TextView = view.findViewById(R.id.tvMovieNameVn)
-        private val tvNameEn: TextView = view.findViewById(R.id.tvMovieNameEn)
-        private val tvTextRow1: TextView = view.findViewById(R.id.tvTextRow1)
-        private val tvTextRow2: TextView = view.findViewById(R.id.tvTextRow2)
-        private val tvTextRow3: TextView = view.findViewById(R.id.tvTextRow3)
-        private val imgIconRow1: ImageView = view.findViewById(R.id.imgIconRow1)
+        private val imgPoster: ImageView = view.findViewById(R.id.imgPoster)
+        private val tvTitle: TextView = view.findViewById(R.id.tvMovieNameVn)
+        private val tvTitleEn: TextView = view.findViewById(R.id.tvMovieNameEn)
+        private val tvRow1: TextView = view.findViewById(R.id.tvTextRow1)
+        private val tvRow2: TextView = view.findViewById(R.id.tvTextRow2)
+        private val tvRow3: TextView = view.findViewById(R.id.tvTextRow3)
         private val btnViewSchedule: Button = view.findViewById(R.id.btnViewSchedule)
 
         fun bind(movie: Movie, isNowPlaying: Boolean) {
-            tvNameVn.text = movie.movieName
-            tvNameEn.text = movie.movieName
+            tvTitle.text = movie.movieName
+            tvTitleEn.text = movie.movieName // develop model only has movieName
             
-            if (isNowPlaying) {
-                tvTextRow1.text = movie.rating.toString()
-                tvTextRow2.text = "${movie.duration} min"
-                tvTextRow3.text = movie.censorship ?: "2D"
-            } else {
-                imgIconRow1.setImageResource(android.R.drawable.ic_menu_today)
-                imgIconRow1.setColorFilter(ContextCompat.getColor(itemView.context, R.color.white))
-                tvTextRow1.text = movie.releaseDate
-                tvTextRow2.text = "${movie.duration} min"
-                tvTextRow3.text = movie.censorship ?: "2D"
-            }
+            tvRow1.text = (movie.rating?.toString() ?: "N/A")
+            tvRow2.text = "${movie.duration ?: 0} min • " + (movie.censorship ?: "2D")
+            tvRow3.text = com.example.movie_booking_app.utils.DateUtils.formatMovieDate(movie.releaseDate)
 
             Glide.with(itemView.context)
                 .load(movie.poster)

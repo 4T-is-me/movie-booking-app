@@ -143,4 +143,15 @@ class MovieViewModel @Inject constructor(
             }
         }
     }
+
+    fun addMovie(request: com.example.movie_booking_app.data.model.request.AddMovieRequest) {
+        viewModelScope.launch {
+            try {
+                val success = repository.addMovie(request)
+                _movieActionSuccess.emit(success)
+            } catch (e: Exception) {
+                _movieActionSuccess.emit(false)
+            }
+        }
+    }
 }
