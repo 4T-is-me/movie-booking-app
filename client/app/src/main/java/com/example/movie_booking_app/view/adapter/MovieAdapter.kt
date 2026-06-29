@@ -37,8 +37,8 @@ class MovieAdapter(
             tvNameVn.text = movie.movieName
             tvNameEn.text = movie.movieName // Develop model only has movieName
             tvGenre.text = movie.movieGenre?.joinToString(", ") ?: "N/A"
-            tvReleaseDate.text = movie.releaseDate
-            
+            tvReleaseDate.text = com.example.movie_booking_app.utils.DateUtils.formatMovieDate(movie.releaseDate)
+
             Glide.with(itemView.context)
                 .load(movie.poster)
                 .centerCrop()
@@ -46,7 +46,7 @@ class MovieAdapter(
                 .error(android.R.drawable.ic_menu_report_image)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(imgPoster)
-            
+
             itemView.setOnClickListener { onClick(movie) }
         }
     }

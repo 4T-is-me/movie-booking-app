@@ -55,7 +55,7 @@ class AdminMovieListFragment : Fragment() {
         fabAddMovie.setOnClickListener {
             // TODO: Open Add Movie Fragment
             parentFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, AdminAddMovieFragment())
+                .replace(R.id.fragmentContainer, com.example.movie_booking_app.view.activity.AdminCreateMovieActivity())
                 .addToBackStack(null)
                 .commit()
         }

@@ -18,7 +18,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-class AdminCreateMovieFragment : Fragment() {
+class AdminCreateMovieActivity : Fragment() {
 
     private val availableGenres = listOf("Action", "Adventure", "Animation", "Comedy", "Crime", "Documentary", "Drama", "Family", "Fantasy", "History", "Horror", "Music", "Mystery", "Romance", "Science Fiction", "TV Movie", "Thriller", "War", "Western")
     private val selectedGenres = mutableSetOf<String>()
@@ -129,28 +129,25 @@ class AdminCreateMovieFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            // Note: rating, totalReviews, totalStars should be null or 0.
-            val movieData = mapOf(
-                "movieName" to name,
-                "duration" to duration,
-                "releaseDate" to releaseDate,
-                "movieGenre" to selectedGenres.toList(),
-                "language" to language,
-                "censorship" to censorshipCode,
-                "description" to description,
-                "director" to director,
-                "actors" to actors,
-                "country" to country,
-                "status" to status,
-                "poster" to poster,
-                "rating" to null,
-                "totalReviews" to null,
-                "totalStars" to null
+            val request = com.example.movie_booking_app.data.model.request.AddMovieRequest(
+                movieName = name,
+                duration = duration,
+                releaseDate = releaseDate,
+                movieGenre = selectedGenres.toList(),
+                director = director,
+                actors = actors,
+                description = description,
+                country = country,
+                poster = poster,
+                language = language,
+                censorship = censorshipCode,
+                status = status
             )
 
-            // TODO: Call API to create movie
-            Toast.makeText(requireContext(), "Movie object created! Check Log.", Toast.LENGTH_SHORT).show()
-            println("Created Movie: $movieData")
+            val viewModel = androidx.lifecycle.ViewModelProvider(requireActivity())[com.example.movie_booking_app.viewmodel.MovieViewModel::class.java]
+            viewModel.addMovie(request)
+
+            Toast.makeText(requireContext(), "Adding movie...", Toast.LENGTH_SHORT).show()
         }
     }
 }

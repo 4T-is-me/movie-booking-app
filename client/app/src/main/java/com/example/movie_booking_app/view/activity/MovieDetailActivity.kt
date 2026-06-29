@@ -78,7 +78,7 @@ class MovieDetailActivity : AppCompatActivity() {
                             binding.txtGenre.text =  movie.movieGenre?.joinToString(", ") ?: ""
                             binding.txtLanguage.text = movie.language ?: ""
                             binding.txtDuration.text = formatDuration(movie.duration)
-                            binding.txtReleaseDate.text = formatReleaseDate(movie.releaseDate)
+                            binding.txtReleaseDate.text = com.example.movie_booking_app.utils.DateUtils.formatMovieDate(movie.releaseDate)
                             binding.txtRating.text = movie.rating.toString()
                             
                             val posterUrl = movie.poster
@@ -156,16 +156,4 @@ class MovieDetailActivity : AppCompatActivity() {
         }
     }
 
-    fun formatReleaseDate(date: String?): String {
-        if (date.isNullOrEmpty()) return ""
-
-        return try {
-            val parsedDateTime = ZonedDateTime.parse(date)
-
-            val outputFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
-            parsedDateTime.format(outputFormatter)
-        } catch (e: Exception) {
-            date
-        }
-    }
 }
