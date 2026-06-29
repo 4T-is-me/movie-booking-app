@@ -11,7 +11,6 @@ class BookingRepositoryRemoteImpl @Inject constructor(
 ) : BookingRepository {
 
     override fun getSeats(date: String, time: String): Flow<List<Seat>> = flow {
-        // In reality, you'd fetch using a specific showtimeId constructed from date/time or passed in
         val showtimeId = "$date-$time" 
         try {
             val response = api.getSeats(showtimeId)
@@ -26,12 +25,10 @@ class BookingRepositoryRemoteImpl @Inject constructor(
     }
 
     override fun getShowDates(movieId: String): Flow<List<ShowDate>> = flow {
-        // Call API for dates
         emit(emptyList()) 
     }
 
     override fun getShowTimes(movieId: String, date: String): Flow<List<ShowTime>> = flow {
-        // Call API for times
         emit(emptyList())
     }
 }

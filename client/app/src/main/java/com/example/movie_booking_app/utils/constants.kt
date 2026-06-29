@@ -1,5 +1,8 @@
 package com.example.movie_booking_app.utils
 
 object constants {
-    const val BASE_URL = "http://10.0.2.2:5000/" // Default for emulator
+    /**
+     * Synced with develop branch environment.
+     */
+    const val BASE_URL = "http://192.168.88.100:5000/"
 }
