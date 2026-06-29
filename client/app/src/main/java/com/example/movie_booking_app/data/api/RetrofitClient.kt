@@ -18,7 +18,12 @@ object RetrofitClient {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
+    private val authorizationInterceptor by lazy {
+        AuthorizationInterceptor(com.example.movie_booking_app.MyApplication.getContext())
+    }
+
     private val okHttpClient = OkHttpClient.Builder()
+        .addInterceptor(authorizationInterceptor)
         .addInterceptor(loggingInterceptor)
         .connectTimeout(30, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)
@@ -39,6 +44,10 @@ object RetrofitClient {
 
     val movieApi: MovieApi by lazy {
         instance.create(MovieApi::class.java)
+    }
+
+    val profileApi: ProfileApi by lazy {
+        instance.create(ProfileApi::class.java)
     }
 
 
