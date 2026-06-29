@@ -2,6 +2,9 @@ package com.example.movie_booking_app.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.movie_booking_app.data.model.entity.MovieNews
+import com.example.movie_booking_app.data.model.entity.Promo
+import com.example.movie_booking_app.data.model.entity.Service
 import com.example.movie_booking_app.data.model.entity.Showtime
 import com.example.movie_booking_app.data.model.response.MovieResponse
 import com.example.movie_booking_app.data.model.ui.HomeItem

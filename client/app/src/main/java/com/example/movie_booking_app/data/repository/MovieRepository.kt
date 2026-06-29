@@ -4,9 +4,9 @@ import com.example.movie_booking_app.data.model.entity.Movie
 import com.example.movie_booking_app.data.model.request.AddMovieRequest
 import com.example.movie_booking_app.data.model.request.UpdateMovieRequest
 import com.example.movie_booking_app.data.model.entity.Showtime
-import com.example.movie_booking_app.data.model.ui.MovieNews
-import com.example.movie_booking_app.data.model.ui.Promo
-import com.example.movie_booking_app.data.model.ui.Service
+import com.example.movie_booking_app.data.model.entity.MovieNews
+import com.example.movie_booking_app.data.model.entity.Promo
+import com.example.movie_booking_app.data.model.entity.Service
 import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
