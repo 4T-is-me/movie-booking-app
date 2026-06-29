@@ -28,7 +28,7 @@ class BookingRepositoryRemoteImpl @Inject constructor(
         emit(emptyList()) 
     }
 
-    override fun getShowTimes(movieId: String, date: String): Flow<List<ShowTime>> = flow {
+    override fun getShowTimes(movieId: String, date: String): Flow<List<TimeSlot>> = flow {
         emit(emptyList())
     }
 }

@@ -11,9 +11,9 @@ import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Seat
 import com.example.movie_booking_app.data.model.entity.SeatStatus
 
-class seatAdapter(
+class SeatAdapter(
     private val onSeatClick: (Seat) -> Unit
-) : ListAdapter<Seat, seatAdapter.SeatViewHolder>(DiffCallback) {
+) : ListAdapter<Seat, SeatAdapter.SeatViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SeatViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_seat, parent, false)

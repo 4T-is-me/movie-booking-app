@@ -12,10 +12,11 @@
         android:background="#000000"
         android:fillViewport="true">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="24dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="24dp">
 
             <!-- Back Button and Title Section -->
             <ImageView
@@ -401,8 +402,8 @@
                 app:boxCornerRadiusBottomEnd="12dp"
                 app:boxBackgroundMode="outline"
                 app:hintEnabled="false"
-                app:passwordToggleEnabled="true"
-                app:passwordToggleTint="#808080"
+                app:endIconMode="password_toggle"
+                app:endIconTint="#808080"
                 app:startIconDrawable="@android:drawable/ic_lock_idle_lock"
                 app:startIconTint="#808080"
                 app:layout_constraintTop_toBottomOf="@id/tvPasswordLabel"
@@ -446,8 +447,8 @@
                 app:boxCornerRadiusBottomEnd="12dp"
                 app:boxBackgroundMode="outline"
                 app:hintEnabled="false"
-                app:passwordToggleEnabled="true"
-                app:passwordToggleTint="#808080"
+                app:endIconMode="password_toggle"
+                app:endIconTint="#808080"
                 app:startIconDrawable="@android:drawable/ic_lock_idle_lock"
                 app:startIconTint="#808080"
                 app:layout_constraintTop_toBottomOf="@id/tvConfirmPasswordLabel"

@@ -4,8 +4,9 @@ import com.example.movie_booking_app.data.model.entity.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlin.random.Random
+import javax.inject.Inject
 
-class BookingRepositoryImpl : BookingRepository {
+class BookingRepositoryImpl @Inject constructor() : BookingRepository {
 
     override fun getSeats(date: String, time: String): Flow<List<Seat>> = flow {
         val seats = mutableListOf<Seat>()
@@ -20,8 +21,8 @@ class BookingRepositoryImpl : BookingRepository {
             for (col in 1..10) {
                 val type = if (row in listOf("E", "F", "G")) SeatType.VIP else SeatType.NORMAL
                 // The random distribution will now be different for June 24th vs June 25th
-                val status = if (random.nextInt(100) < 20) SeatStatus.SOLD else SeatStatus.AVAILABLE
-                seats.add(Seat(id = "$uniqueKey-$row$col", row = row, col = col, type = type, status = status))
+                val status = if (random.nextInt(100) < 20) SeatStatus.RESERVED else SeatStatus.AVAILABLE
+                seats.add(Seat(id = "$uniqueKey-$row$col", row = row, number = col, type = type, status = status))
             }
         }
         emit(seats)
@@ -38,14 +39,14 @@ class BookingRepositoryImpl : BookingRepository {
         ))
     }
 
-    override fun getShowTimes(movieId: String, date: String): Flow<List<ShowTime>> = flow {
+    override fun getShowTimes(movieId: String, date: String): Flow<List<TimeSlot>> = flow {
         // We could even return different times for different dates if we wanted
         emit(listOf(
-            ShowTime("09:00", true),
-            ShowTime("12:00"),
-            ShowTime("15:30"),
-            ShowTime("18:00"),
-            ShowTime("21:00")
+            TimeSlot("09:00", true),
+            TimeSlot("12:00"),
+            TimeSlot("15:30"),
+            TimeSlot("18:00"),
+            TimeSlot("21:00")
         ))
     }
 }

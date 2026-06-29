@@ -71,10 +71,16 @@ class MovieViewModel @Inject constructor(
                     val list = mutableListOf<HomeItem>()
                     list.add(HomeItem.HeaderSection("User"))
                     
-                    val nowPlaying = filteredMovies.filter { it.status == "showing" }
+                    val nowPlaying = filteredMovies.filter { 
+                        val s = it.status?.lowercase() ?: ""
+                        s.contains("showing") || s == "active" || s == "now_showing"
+                    }
                     list.add(HomeItem.NowPlayingSection(nowPlaying.ifEmpty { null }, nowPlaying.isEmpty() && query.isEmpty()))
                     
-                    val comingSoon = filteredMovies.filter { it.status == "coming_soon" }
+                    val comingSoon = filteredMovies.filter { 
+                        val s = it.status?.lowercase() ?: ""
+                        s.contains("coming") || s.contains("soon") || s == "upcoming" || s == "inactive"
+                    }
                     list.add(HomeItem.ComingSoonSection(comingSoon.ifEmpty { null }, comingSoon.isEmpty() && query.isEmpty()))
                     
                     if (query.isEmpty()) {
@@ -124,5 +130,17 @@ class MovieViewModel @Inject constructor(
                 }
         }
     }
+    private val _movieActionSuccess = MutableSharedFlow<Boolean>()
+    val movieActionSuccess = _movieActionSuccess.asSharedFlow()
 
+    fun deleteMovie(id: String) {
+        viewModelScope.launch {
+            try {
+                val success = repository.deleteMovie(id)
+                _movieActionSuccess.emit(success)
+            } catch (e: Exception) {
+                _movieActionSuccess.emit(false)
+            }
+        }
+    }
 }

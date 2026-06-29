@@ -2,11 +2,6 @@ package com.example.movie_booking_app
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
-<<<<<<< HEAD
-
-@HiltAndroidApp
-class MyApplication : Application()
-=======
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import coil3.network.okhttp.OkHttpNetworkFetcherFactory
@@ -21,4 +16,3 @@ class MyApplication : Application(), SingletonImageLoader.Factory {
             .build()
     }
 }
->>>>>>> origin/develop

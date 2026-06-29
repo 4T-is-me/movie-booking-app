@@ -114,37 +114,58 @@ const login = async (reqBody) => {
 }
 
 const getProfile = async (accountId) => {
-    const account = await Account.findById(accountId).select('-passwordHash -passwordSalt -refreshToken').lean()
+    const account = await Account.findById(accountId)
+        .populate('roleId')
+        .populate('memberInfo')
+        .select('-passwordHash -passwordSalt -refreshToken')
+        .lean({ virtuals: true });
+
     if (!account) {
-        throw new ApiError(StatusCodes.NOT_FOUND, 'Account not found')
+        throw new ApiError(StatusCodes.NOT_FOUND, 'Account not found');
     }
-    const member = await Member.findOne({ accountId: accountId }).lean()
-    if (member) delete member._id
-    return { ...account, ...(member || {}) }
+
+    return {
+        username: account.username,
+        fullName: account.memberInfo?.fullName,
+        email: account.email,
+        phone: account.memberInfo?.phoneNumber,
+        address: account.memberInfo?.address,
+        dob: account.memberInfo?.dateOfBirth,
+        gender: account.memberInfo?.gender,
+        identityCard: account.memberInfo?.identityCard,
+        score: account.memberInfo?.rewardPoints || 0,
+        role: account.roleId ? (account.roleId.name || account.roleId.roleName || 'Customer') : 'Customer',
+        status: account.status,
+        registerDate: account.registerDate
+    };
 }
 
 const updateProfile = async (accountId, reqBody) => {
-    const allowedUpdates = [
-        'fullName', 'gender', 'dateOfBirth',
-        'phoneNumber', 'identityCard', 'address', 'image'
-    ]
-
-    const updateData = {}
-    Object.keys(reqBody).forEach(key => {
-        if (allowedUpdates.includes(key)) {
-            updateData[key] = reqBody[key]
+    if (reqBody.email) {
+        const existedEmail = await Account.findOne({ email: reqBody.email, _id: { $ne: accountId } });
+        if (existedEmail) {
+            throw new ApiError(StatusCodes.CONFLICT, 'Email already exists');
         }
-    })
-
-    const member = await Member.findOneAndUpdate({ accountId: accountId }, updateData, { new: true }).lean()
-    if (member) delete member._id
-
-    const account = await Account.findById(accountId).select('-passwordHash -passwordSalt -refreshToken').lean()
-
-    if (!account) {
-        throw new ApiError(StatusCodes.NOT_FOUND, 'Account not found')
+        await Account.findByIdAndUpdate(accountId, { email: reqBody.email });
     }
-    return { ...account, ...(member || {}) }
+
+    const memberUpdate = {};
+    if (reqBody.phone) {
+        const existedPhone = await Member.findOne({ phoneNumber: reqBody.phone, accountId: { $ne: accountId } });
+        if (existedPhone) {
+            throw new ApiError(StatusCodes.CONFLICT, 'Phone number already exists');
+        }
+        memberUpdate.phoneNumber = reqBody.phone;
+    }
+    if (reqBody.address !== undefined) {
+        memberUpdate.address = reqBody.address;
+    }
+
+    if (Object.keys(memberUpdate).length > 0) {
+        await Member.findOneAndUpdate({ accountId: accountId }, memberUpdate);
+    }
+
+    return await getProfile(accountId);
 }
 
 export const accountService = {

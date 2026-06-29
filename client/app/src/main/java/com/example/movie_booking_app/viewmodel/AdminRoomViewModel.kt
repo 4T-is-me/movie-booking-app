@@ -48,7 +48,7 @@ class AdminRoomViewModel @Inject constructor(
     }
 
     fun toggleSeatType(seat: Seat) {
-        val newType = if (seat.type == SeatType.STANDARD) SeatType.VIP else SeatType.STANDARD
+        val newType = if (seat.type == SeatType.NORMAL) SeatType.VIP else SeatType.NORMAL
         viewModelScope.launch {
             val success = repository.updateSeatType(seat.id, newType)
             if (success) {

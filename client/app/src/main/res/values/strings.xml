@@ -69,4 +69,19 @@
     <string name="or_sign_up_with">Or sign up with</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
+
+    <!-- Select Seat Activity Strings -->
+    <string name="legend_available">Available</string>
+    <string name="legend_vip">VIP</string>
+    <string name="legend_sold">Sold</string>
+    <string name="legend_selected">Selected</string>
+    <string name="error_select_more">Please select %d more seat(s)</string>
+    <string name="error_select_only">You can only select %d seat(s)</string>
+    <string name="msg_proceeding">Proceeding to checkout...</string>
+    <string name="title_select_seat">Select Seat</string>
+    <string name="label_screen">Screen</string>
+    <string name="label_number_of_seats">Number of Seats</string>
+    <string name="section_select_date_time">Select Date &amp; Time</string>
+    <string name="label_total">Total</string>
+    <string name="btn_continue">Continue</string>
 </resources>

@@ -29,36 +29,10 @@ class MainActivity : BaseActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Login Button
-        binding.btnLogin.setOnClickListener {
-            startActivity(Intent(this, LoginActivity::class.java))
-        }
-
-        // Bottom Navigation
-        binding.bottomNav.selectedItemId = R.id.nav_home
-        binding.bottomNav.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_home -> {
-                    true
-                }
-                R.id.nav_ticket -> {
-                    Toast.makeText(this, "Ticket Clicked", Toast.LENGTH_SHORT).show()
-                    true
-                }
-                R.id.nav_movie -> {
-                    Toast.makeText(this, "Movie Clicked", Toast.LENGTH_SHORT).show()
-                    true
-                }
-                R.id.nav_profile -> {
-                    startActivity(Intent(this, ProfileActivity::class.java))
-                    false
-                }
-                else -> false
-            }
-        }
-
-        val rvNowPlaying = binding.rvNowPlaying
-        val rvComingSoon = binding.rvComingSoon
+        binding.btnNavHome.setOnClickListener { navigateToSection("Home") }
+        binding.btnNavMovie.setOnClickListener { navigateToSection("Movie") }
+        binding.btnNavTicket.setOnClickListener { navigateToSection("Ticket") }
+        binding.btnNavProfile.setOnClickListener { navigateToSection("Profile") }
         
         // Handle explicit section requests from other activities (like Profile)
         val target = intent.getStringExtra("TARGET_SECTION") ?: "Home"
@@ -75,7 +49,6 @@ class MainActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        binding.bottomNav.selectedItemId = R.id.nav_home
         val sharedPref = getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
         val token = sharedPref.getString("auth_token", null)
         val username = sharedPref.getString("username", "User")
@@ -88,16 +61,6 @@ class MainActivity : BaseActivity() {
                 finish()
                 return
             }
-            binding.btnLogin.visibility = android.view.View.GONE
-            binding.tvHi.visibility = android.view.View.VISIBLE
-            binding.tvWelcomeBack.visibility = android.view.View.VISIBLE
-            binding.cvWelcomeLogo.visibility = android.view.View.GONE
-            binding.tvHi.text = "Hi, $username \uD83D\uDC4B"
-        } else {
-            binding.btnLogin.visibility = android.view.View.VISIBLE
-            binding.tvHi.visibility = android.view.View.INVISIBLE
-            binding.tvWelcomeBack.visibility = android.view.View.INVISIBLE
-            binding.cvWelcomeLogo.visibility = android.view.View.VISIBLE
         }
     }
 
@@ -155,7 +118,7 @@ class MainActivity : BaseActivity() {
         if (section != "Home") {
             transaction.addToBackStack(section)
         } else {
-            supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            supportFragmentManager.popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
         }
             
         transaction.commit()

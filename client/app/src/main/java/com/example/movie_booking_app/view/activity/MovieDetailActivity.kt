@@ -112,7 +112,7 @@ class MovieDetailActivity : AppCompatActivity() {
                         binding.rvCinema.visibility = View.VISIBLE
                         binding.tvNoCinema.visibility = View.GONE
                         val cinemas = showtimes
-                            .mapNotNull { it.cinemaId }
+                            .mapNotNull { it.cinema }
                             .distinctBy { it.id ?: it.cinemaName }
                         
                         if (cinemas.isNotEmpty()) {

@@ -145,7 +145,9 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/passwordLayout"
+
+                android:id="@+id/tilPassword"
+
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -159,9 +161,10 @@
                 app:boxCornerRadiusBottomEnd="12dp"
                 app:boxBackgroundMode="outline"
                 app:hintEnabled="false"
-                app:startIconDrawable="@drawable/ic_lock"
+                app:endIconMode="password_toggle"
+                app:endIconTint="#808080"
+                app:startIconDrawable="@android:drawable/ic_lock_idle_lock"
                 app:startIconTint="#808080"
-                app:endIconMode="custom"
                 app:layout_constraintTop_toBottomOf="@id/tvPasswordLabel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
