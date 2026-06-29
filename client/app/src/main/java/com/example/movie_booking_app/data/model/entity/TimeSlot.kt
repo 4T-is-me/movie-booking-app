@@ -1,0 +1,6 @@
+package com.example.movie_booking_app.data.model.entity
+
+data class TimeSlot(
+    val time: String,
+    var isSelected: Boolean = false
+)

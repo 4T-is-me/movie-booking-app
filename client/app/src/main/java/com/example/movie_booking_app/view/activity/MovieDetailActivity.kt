@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.movie_booking_app.data.model.entity.Cinema
 import com.example.movie_booking_app.databinding.ActivityMovieDetailBinding
-import com.example.movie_booking_app.view.adapter.cardItemAdapter
-import com.example.movie_booking_app.view.adapter.cinemaAdapter
+import com.example.movie_booking_app.view.adapter.CardItemAdapter
+import com.example.movie_booking_app.view.adapter.CinemaAdapter
 import com.example.movie_booking_app.viewmodel.MovieViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -92,10 +92,10 @@ class MovieDetailActivity : AppCompatActivity() {
                                 .into(binding.imgPoster)
 
                             binding.rvDirector.layoutManager = LinearLayoutManager(this@MovieDetailActivity, LinearLayoutManager.HORIZONTAL, false)
-                            binding.rvDirector.adapter = cardItemAdapter(movie.director ?: emptyList())
+                            binding.rvDirector.adapter = CardItemAdapter(movie.director ?: emptyList())
 
                             binding.rvActors.layoutManager = LinearLayoutManager(this@MovieDetailActivity, LinearLayoutManager.HORIZONTAL, false)
-                            binding.rvActors.adapter = cardItemAdapter(movie.actors ?: emptyList())
+                            binding.rvActors.adapter = CardItemAdapter(movie.actors ?: emptyList())
                         }
 
                     }
@@ -112,12 +112,12 @@ class MovieDetailActivity : AppCompatActivity() {
                         binding.rvCinema.visibility = View.VISIBLE
                         binding.tvNoCinema.visibility = View.GONE
                         val cinemas = showtimes
-                            .mapNotNull { it.cinema }
+                            .mapNotNull { it.cinemaId }
                             .distinctBy { it.id ?: it.cinemaName }
                         
                         if (cinemas.isNotEmpty()) {
                             binding.rvCinema.layoutManager = LinearLayoutManager(this@MovieDetailActivity, LinearLayoutManager.VERTICAL, false)
-                            binding.rvCinema.adapter = cinemaAdapter(cinemas) { cinema ->
+                            binding.rvCinema.adapter = CinemaAdapter(cinemas) { cinema ->
                                 selectedCinema = cinema
                             }
                         }
