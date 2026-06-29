@@ -65,4 +65,6 @@
     <string name="address_hint">Nhập địa chỉ của bạn</string>
     <string name="register">Đăng ký</string>
     <string name="or_sign_up_with">Hoặc đăng ký với</string>
+    <string name="edit">Sửa</string>
+    <string name="delete">Xóa</string>
 </resources>

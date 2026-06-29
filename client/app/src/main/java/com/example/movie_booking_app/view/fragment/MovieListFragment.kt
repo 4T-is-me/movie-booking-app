@@ -12,7 +12,6 @@ import androidx.lifecycle.lifecycleScope
 import com.example.movie_booking_app.databinding.FragmentMovieListBinding
 import com.example.movie_booking_app.view.activity.MainActivity
 import com.example.movie_booking_app.view.activity.LoginActivity
-import com.example.movie_booking_app.view.activity.MovieDetailActivity
 import com.example.movie_booking_app.view.adapter.HomeMultiAdapter
 import com.example.movie_booking_app.viewmodel.MovieViewModel
 import dagger.hilt.android.AndroidEntryPoint
