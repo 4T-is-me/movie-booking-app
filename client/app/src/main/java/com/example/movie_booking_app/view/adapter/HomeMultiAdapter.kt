@@ -16,10 +16,10 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Movie
+import com.example.movie_booking_app.data.model.entity.MovieNews
+import com.example.movie_booking_app.data.model.entity.Promo
+import com.example.movie_booking_app.data.model.entity.Service
 import com.example.movie_booking_app.data.model.ui.HomeItem
-import com.example.movie_booking_app.data.model.ui.MovieNews
-import com.example.movie_booking_app.data.model.ui.Promo
-import com.example.movie_booking_app.data.model.ui.Service
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.facebook.shimmer.ShimmerFrameLayout

@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
-import com.example.movie_booking_app.data.model.ui.Service
+import com.example.movie_booking_app.data.model.entity.Service
 import com.google.android.material.imageview.ShapeableImageView
 
 class ServiceAdapter : ListAdapter<Service, ServiceAdapter.ServiceViewHolder>(ServiceDiffCallback()) {

@@ -10,32 +10,28 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="50aa3f37-dbdb-4f3d-8e23-795a39fa745f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/data/api/bookingApi.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/data/api/bookingApi.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/data/model/entity/seat.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/data/model/entity/seat.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/data/model/entity/showDate.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/data/model/entity/showDate.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/data/repository/BookingRepositoryImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/data/repository/BookingRepositoryImpl.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/data/repository/bookingRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/data/repository/bookingRepository.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/di/networkModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/di/networkModule.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/di/repositoryModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/di/repositoryModule.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/data/api/RetrofitInstance.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/data/model/entity/ShowDate.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/data/model/entity/ShowDate.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/data/model/entity/ShowTime.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/data/model/entity/ShowTime.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/data/model/entity/promotion.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/data/model/entity/promotion.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/data/model/ui/HomeEntities.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/data/repository/MovieRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/data/repository/MovieRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/data/repository/MovieRepositoryImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/data/repository/MovieRepositoryImpl.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/data/repository/MovieRepositoryRemoteImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/data/repository/MovieRepositoryRemoteImpl.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/di/NetworkModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/di/NetworkModule.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/utils/constants.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/utils/constants.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/view/activity/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/view/activity/MainActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/view/activity/SelectSeatActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/view/activity/selectSeatActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/view/adapter/DateAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/view/adapter/dateAdapter.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/view/adapter/TimeAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/view/adapter/timeAdapter.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/view/adapter/seatAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/view/adapter/seatAdapter.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/viewmodel/selectSeatViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/viewmodel/selectSeatViewModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/src/main/res/drawable/bg_date_selected.xml" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/res/drawable/bg_date_selected.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/src/main/res/layout/activity_select_seat.xml" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/res/layout/activity_select_seat.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/res/values/strings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/client/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/gradle/libs.versions.toml" beforeDir="false" afterPath="$PROJECT_DIR$/client/gradle/libs.versions.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/projecttask.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/view/activity/SelectSeatActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/view/activity/SelectSeatActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/view/adapter/DateAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/view/adapter/DateAdapter.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/view/adapter/HomeMultiAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/view/adapter/HomeMultiAdapter.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/view/adapter/MovieNewsAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/view/adapter/MovieNewsAdapter.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/view/adapter/PromoAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/view/adapter/PromoAdapter.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/view/adapter/ServiceAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/view/adapter/ServiceAdapter.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/view/adapter/TimeAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/view/adapter/TimeAdapter.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/viewmodel/MovieViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/viewmodel/MovieViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/viewmodel/SelectSeatViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/app/src/main/java/com/example/movie_booking_app/viewmodel/SelectSeatViewModel.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,7 +41,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[PhysicalDevice::serial=RFCW70YX9RB]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$/client">
       <ProjectState />
@@ -69,6 +65,11 @@
     </system>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="develop" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitLabMergeRequestFiltersHistory">{
@@ -106,9 +107,10 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;android.gradle.sync.needed&quot;: &quot;true&quot;,
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/design-seating-map-screen&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;fix/issue-10-folder-restructuring&quot;,
     &quot;git.auto.fetch.suggestion.counter&quot;: &quot;1&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;templates.modelproviders.configurable&quot;
