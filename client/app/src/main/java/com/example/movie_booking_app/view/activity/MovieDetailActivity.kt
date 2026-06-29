@@ -62,6 +62,11 @@ class MovieDetailActivity : AppCompatActivity() {
 
             startActivity(intent)
         }
+
+        binding.ivBack.setOnClickListener {
+            finish()
+        }
+
         observeMovie()
     }
 

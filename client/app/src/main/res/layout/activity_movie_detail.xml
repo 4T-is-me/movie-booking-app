@@ -11,13 +11,35 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Poster -->
-        <ImageView
-            android:id="@+id/imgPoster"
+
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="280dp"
-            android:scaleType="centerCrop"
-            android:src="@android:drawable/ic_menu_gallery" />
+            android:layout_height="280dp">
+
+            <!-- Poster -->
+            <ImageView
+                android:id="@+id/imgPoster"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@android:drawable/ic_menu_gallery" />
+
+            <!-- Back Button -->
+            <ImageView
+                android:id="@+id/ivBack"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_gravity="top|start"
+                android:padding="8dp"
+                android:src="@drawable/ic_chevron_right"
+                android:rotation="180"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                app:tint="@android:color/white" />
+        </FrameLayout>
 
         <!-- Movie Info Overlay Card -->
         <com.google.android.material.card.MaterialCardView
