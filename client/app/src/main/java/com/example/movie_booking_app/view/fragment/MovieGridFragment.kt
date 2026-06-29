@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.repository.MovieRepository
 import com.example.movie_booking_app.data.repository.RepositoryProvider
 import com.example.movie_booking_app.databinding.LayoutMovieGridContentBinding
+import com.example.movie_booking_app.view.activity.MovieDetailActivity
 import com.example.movie_booking_app.view.adapter.MovieGridAdapter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -88,7 +90,9 @@ class MovieGridFragment : Fragment() {
 
     private fun loadMovieData(isNowPlaying: Boolean) {
         val adapter = MovieGridAdapter(isNowPlaying) { movie ->
-            Toast.makeText(context, "Opening schedule for: ${movie.movieName}", Toast.LENGTH_SHORT).show()
+            val intent = Intent(context, MovieDetailActivity::class.java)
+            intent.putExtra("movieId", movie.id)
+            startActivity(intent)
         }
         binding.rvFullList.adapter = adapter
         

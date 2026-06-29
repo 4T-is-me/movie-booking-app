@@ -4,7 +4,7 @@ import { CinemaRoom } from '../models/cinemaRoomModel.js';
 import { Showtime } from '../models/showTimeModel.js';
 import { Movie } from '../models/movieModel.js';
 import { constants } from '../utils/constants.js';
-
+import { Cinema } from "../models/cinemaModel.js";
 const getSeatStatus = (scheduleSeat) => {
     if (!scheduleSeat) return constants.SEAT_STATUS.AVAILABLE;
 
@@ -39,7 +39,7 @@ const getSeatStatusLabel = (status) => {
  * Returns the room seat map for a showtime with merged booking/holding status.
  * Seats are grouped by seatRow to serve SeatMapActivity's matrix renderer.
  */
-export const getShowtimeSeats = async (showtimeId) => {
+const getShowtimeSeats = async (showtimeId) => {
     // Populate movieId to get movie info in a single query (no extra API call needed)
     const showtime = await Showtime.findById(showtimeId)
         .populate('movieId', 'movieName poster duration language censorship movieGenre')
@@ -124,7 +124,6 @@ export const getShowtimeSeats = async (showtimeId) => {
         // --- Showtime info ---
         showtimeId: showtime._id,
         showDate: showtime.showDate,
-        showTime: showtime.showTime,
         startTime: showtime.startTime,
         endTime: showtime.endTime,
 
@@ -158,4 +157,24 @@ export const getShowtimeSeats = async (showtimeId) => {
         // Flat list — kept for backward compatibility with existing clients
         seats: seatList
     };
+};
+
+// get showtime + cinema by movieId
+const getMovieShowtimes = async (movieId) => {
+
+    const showtimes = await Showtime.find({ movieId })
+        .populate("cinemaId", "cinemaName address city image hotline status")
+        .sort({
+            showDate: 1,
+            startTime: 1
+        })
+        .lean();
+
+    return showtimes;
+};
+
+export const showtimeService = {
+
+    getShowtimeSeats,
+    getMovieShowtimes
 };

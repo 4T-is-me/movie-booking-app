@@ -5,7 +5,7 @@ import {
     getShowtimesAdmin,
     getShowtimeDetail,
     softDeleteShowtime
-} from '../../controllers/admin/showtimeAdminController.js';
+} from '../controllers/adminShowtimeController.js';
 
 const router = Router();
 

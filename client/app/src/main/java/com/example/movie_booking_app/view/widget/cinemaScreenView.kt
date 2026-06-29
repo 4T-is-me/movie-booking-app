@@ -19,7 +19,7 @@ import android.view.View
  *    and BlurMaskFilter for a realistic light-cast feel without hard edges.
  * 2. A thin, softly glowing gold line at the top representing the screen edge.
  */
-class cinemaScreenView @JvmOverloads constructor(
+class CinemaScreenView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0

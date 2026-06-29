@@ -5,12 +5,12 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import { env } from './src/config/environment.js';
 import connectDB from './src/config/mongoDB.js';
-import {seatHoldCleanUpJobs} from './src/jobs/seatHoldCleanUpJobs.js';
+import { seatHoldCleanUpJobs } from './src/jobs/seatHoldCleanUpJobs.js';
 import movieRoutes from './src/routes/movieRoutes.js';
 import showtimeRoutes from './src/routes/showtimeRoutes.js';
 import { accountRoute } from './src/routes/accountRoute.js';
 import { bookingRoute } from './src/routes/bookingRoute.js';
-import adminShowtimeRoutes from './src/routes/admin/adminShowtimeRoutes.js';
+import adminShowtimeRoutes from './src/routes/adminShowtimeRoutes.js';
 
 const app = express();
 const PORT = env.PORT || 5000;

@@ -16,6 +16,7 @@ import com.example.movie_booking_app.view.adapter.HomeMultiAdapter
 import com.example.movie_booking_app.viewmodel.MovieViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import kotlin.jvm.java
 
 @AndroidEntryPoint
 class MovieListFragment : Fragment() {
@@ -47,7 +48,9 @@ class MovieListFragment : Fragment() {
                 (activity as? MainActivity)?.navigateToSection(sectionName)
             },
             onMovieClicked = { movie ->
-                Toast.makeText(context, "Opening schedule for: ${movie.movieName}", Toast.LENGTH_SHORT).show()
+                val intent = Intent(context, MovieDetailActivity::class.java)
+                intent.putExtra("movieId", movie.id)
+                startActivity(intent)
             },
             onLoginClicked = {
                 startActivity(Intent(context, LoginActivity::class.java))

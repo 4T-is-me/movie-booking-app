@@ -17,7 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.api.RetrofitClient
 import com.example.movie_booking_app.data.local.TokenManager
-import com.example.movie_booking_app.data.model.request.loginRequest
+import com.example.movie_booking_app.data.model.request.LoginRequest
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.Dispatchers
@@ -100,7 +100,7 @@ class LoginActivity : AppCompatActivity() {
 
             lifecycleScope.launch(Dispatchers.IO) {
                 try {
-                    val request = loginRequest(username, password)
+                    val request = LoginRequest(username, password)
                     val response = RetrofitClient.authApi.login(request)
 
                     withContext(Dispatchers.Main) {

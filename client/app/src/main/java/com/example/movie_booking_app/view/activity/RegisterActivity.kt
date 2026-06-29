@@ -16,7 +16,7 @@ import androidx.cardview.widget.CardView
 import androidx.lifecycle.lifecycleScope
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.api.RetrofitClient
-import com.example.movie_booking_app.data.model.request.registerRequest
+import com.example.movie_booking_app.data.model.request.RegisterRequest
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.Dispatchers
@@ -130,7 +130,7 @@ class RegisterActivity : AppCompatActivity() {
 
                 btnRegister.isEnabled = false
 
-                val request = registerRequest(
+                val request = RegisterRequest(
                     username = username,
                     password = password,
                     confirmPassword = confirmPassword,

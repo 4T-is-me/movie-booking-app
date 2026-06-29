@@ -3,6 +3,7 @@ package com.example.movie_booking_app.data.repository
 import com.example.movie_booking_app.data.model.entity.Movie
 import com.example.movie_booking_app.data.model.request.AddMovieRequest
 import com.example.movie_booking_app.data.model.request.UpdateMovieRequest
+import com.example.movie_booking_app.data.model.entity.Showtime
 import com.example.movie_booking_app.data.model.ui.MovieNews
 import com.example.movie_booking_app.data.model.ui.Promo
 import com.example.movie_booking_app.data.model.ui.Service

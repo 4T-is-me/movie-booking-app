@@ -1,64 +1,46 @@
 package com.example.movie_booking_app.view.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
+import android.widget.TextView
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import androidx.core.graphics.toColorInt
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Seat
 import com.example.movie_booking_app.data.model.entity.SeatStatus
-import com.example.movie_booking_app.databinding.ItemSeatBinding
 
-/**
- * Recycler Adapter for grid list of seats.
- */
-class SeatAdapter(
-    private val onSeatClicked: (Seat) -> Unit,
-) : ListAdapter<Seat, SeatAdapter.SeatViewHolder>(SeatDiffCallback()) {
+class seatAdapter(
+    private val onSeatClick: (Seat) -> Unit
+) : ListAdapter<Seat, seatAdapter.SeatViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SeatViewHolder {
-        val binding = ItemSeatBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return SeatViewHolder(binding)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_seat, parent, false)
+        return SeatViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: SeatViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    inner class SeatViewHolder(private val binding: ItemSeatBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class SeatViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        private val tvSeat: TextView = view.findViewById(R.id.tvSeat)
 
         fun bind(seat: Seat) {
-            binding.tvSeat.text = seat.id
+            tvSeat.text = seat.label
+            // Sử dụng logic đã được tách vào Model
+            tvSeat.setBackgroundResource(seat.getBackgroundResource())
+            
+            itemView.isEnabled = seat.status != SeatStatus.RESERVED
+            itemView.alpha = if (seat.status == SeatStatus.RESERVED) 0.5f else 1.0f
 
-            // Apply proper color code according to Seat state
-            // Use mutate() to ensure tint doesn't leak to other shared drawable instances
-            val background = binding.tvSeat.background.mutate()
-            when (seat.status) {
-                SeatStatus.AVAILABLE -> {
-                    background.setTint("#212121".toColorInt())
-                    binding.tvSeat.setTextColor("#A0A0A0".toColorInt())
-                }
-                SeatStatus.RESERVED -> {
-                    background.setTint("#261C02".toColorInt())
-                    binding.tvSeat.setTextColor("#FFC107".toColorInt())
-                }
-                SeatStatus.SELECTED -> {
-                    background.setTint("#FFC107".toColorInt())
-                    binding.tvSeat.setTextColor("#000000".toColorInt())
-                }
-            }
-
-            binding.root.setOnClickListener {
-                if (seat.status != SeatStatus.RESERVED) {
-                    onSeatClicked(seat)
-                }
-            }
+            itemView.setOnClickListener { onSeatClick(seat) }
         }
     }
 
-    class SeatDiffCallback : DiffUtil.ItemCallback<Seat>() {
-        override fun areItemsTheSame(oldItem: Seat, newItem: Seat) = oldItem.id == newItem.id
-        override fun areContentsTheSame(oldItem: Seat, newItem: Seat) = oldItem == newItem
+    object DiffCallback : DiffUtil.ItemCallback<Seat>() {
+        override fun areItemsTheSame(oldItem: Seat, newItem: Seat): Boolean = oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: Seat, newItem: Seat): Boolean = oldItem == newItem
     }
 }
