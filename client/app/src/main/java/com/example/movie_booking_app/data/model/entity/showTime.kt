@@ -1,10 +1,16 @@
 package com.example.movie_booking_app.data.model.entity
 
-/**
- * Data class representing a show session time slot.
- */
-data class ShowTime(
-    val id: String,         // Identifier, e.g. "14:15"
-    val time: String,       // Time string representation, e.g. "14:15"
+data class TimeSlot(
+    val time: String,
     var isSelected: Boolean = false
+)
+
+data class Showtime(
+    val id: String = "",
+    val movieId: String = "",
+    val cinema: Cinema? = null,
+    val room: String = "",
+    val date: String = "",
+    val startTime: String = "",
+    val endTime: String = ""
 )

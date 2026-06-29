@@ -1,14 +1,22 @@
 package com.example.movie_booking_app.view.activity
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 import com.example.movie_booking_app.R
+import com.example.movie_booking_app.view.fragment.AdminMovieListFragment
+import com.example.movie_booking_app.view.fragment.AdminRoomListFragment
 import com.google.android.material.navigation.NavigationView
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class AdminActivity : AppCompatActivity() {
 
     private lateinit var drawerLayout: DrawerLayout
@@ -30,37 +38,60 @@ class AdminActivity : AppCompatActivity() {
 
         navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
+                R.id.nav_movies -> {
+                    tvHeaderTitle.text = "Movies"
+                    loadFragment(AdminMovieListFragment())
+                }
                 R.id.nav_dashboard -> {
                     tvHeaderTitle.text = "Dashboard"
-                    // Load Dashboard Fragment
-                }
-                R.id.nav_movies -> {
-                    tvHeaderTitle.text = "Create Movie"
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.fragmentContainer, AdminCreateMovieFragment())
-                        .commit()
+                    loadFragment(BlankFragment())
                 }
                 R.id.nav_employees -> {
                     tvHeaderTitle.text = "Employees"
+                    loadFragment(BlankFragment())
                 }
                 R.id.nav_rooms -> {
                     tvHeaderTitle.text = "Cinema Rooms"
+                    loadFragment(AdminRoomListFragment())
                 }
                 R.id.nav_promotions -> {
                     tvHeaderTitle.text = "Promotions"
+                    loadFragment(BlankFragment())
                 }
                 R.id.nav_members -> {
                     tvHeaderTitle.text = "Members"
+                    loadFragment(BlankFragment())
                 }
                 R.id.nav_settings -> {
                     tvHeaderTitle.text = "Settings"
+                    loadFragment(BlankFragment())
                 }
             }
             drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
 
-        // Set default selection
-        navigationView.setCheckedItem(R.id.nav_dashboard)
+        // Set default selection to Dashboard (Empty)
+        if (savedInstanceState == null) {
+            navigationView.setCheckedItem(R.id.nav_dashboard)
+            tvHeaderTitle.text = "Dashboard"
+            loadFragment(BlankFragment())
+        }
+    }
+
+    private fun loadFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, fragment)
+            .commit()
+    }
+
+    // A simple fragment that shows nothing
+    class BlankFragment : Fragment() {
+        override fun onCreateView(
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
+        ): View? {
+            return View(context)
+        }
     }
 }

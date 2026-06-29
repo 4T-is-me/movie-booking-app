@@ -103,7 +103,7 @@ export const searchMovies = async ({ q, page = 1, limit = 10 }) => {
 // GET /api/movies/:id
 // Lấy thông tin chi tiết một bộ phim
 export const getMovieById = async (id) => {
-    const movie = await Movie.findOne({ MOVIE_ID: id }).lean();
+    const movie = await Movie.findOne({ _id: id }).lean();
     return movie;
 };
 
@@ -122,6 +122,7 @@ export const getMovieShowtimes = async (movieId, date) => {
     // 2. Lấy danh sách suất chiếu, populate roomId để lấy tên phòng & sức chứa
     const showtimes = await Showtime.find(showtimeQuery)
         .populate('roomId', 'roomName roomType seatCapacity')
+        .populate('cinemaId', 'cinemaName')
         .sort({ showDate: 1, startTime: 1 })
         .lean();
 

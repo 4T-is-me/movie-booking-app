@@ -1,43 +1,49 @@
 package com.example.movie_booking_app.view.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.movie_booking_app.data.model.entity.ShowTime
-import com.example.movie_booking_app.databinding.ItemTimeBinding
+import com.example.movie_booking_app.R
+import com.example.movie_booking_app.data.model.entity.TimeSlot
 
-/**
- * Adapter mapping session times to the horizontal picker list.
- */
 class TimeAdapter(
-    private val onTimeClicked: (ShowTime) -> Unit
-) : ListAdapter<ShowTime, TimeAdapter.TimeViewHolder>(TimeDiffCallback()) {
+    private val onTimeClick: (TimeSlot) -> Unit
+) : ListAdapter<TimeSlot, TimeAdapter.TimeViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TimeViewHolder {
-        val binding = ItemTimeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return TimeViewHolder(binding)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_show_time, parent, false)
+        return TimeViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: TimeViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    inner class TimeViewHolder(private val binding: ItemTimeBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class TimeViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        private val tvTime: TextView = view.findViewById(R.id.tvTime)
 
-        fun bind(showTime: ShowTime) {
-            binding.tvTime.text = showTime.time
-            binding.tvTime.isSelected = showTime.isSelected
-
-            binding.tvTime.setOnClickListener {
-                onTimeClicked(showTime)
+        fun bind(time: TimeSlot) {
+            tvTime.text = time.time
+            
+            if (time.isSelected) {
+                tvTime.setBackgroundResource(R.drawable.bg_time_selected)
+                tvTime.setTextColor(ContextCompat.getColor(itemView.context, R.color.accent_primary))
+            } else {
+                tvTime.setBackgroundResource(R.drawable.bg_time_unselected)
+                tvTime.setTextColor(ContextCompat.getColor(itemView.context, R.color.text_primary))
             }
+
+            itemView.setOnClickListener { onTimeClick(time) }
         }
     }
 
-    class TimeDiffCallback : DiffUtil.ItemCallback<ShowTime>() {
-        override fun areItemsTheSame(oldItem: ShowTime, newItem: ShowTime) = oldItem.id == newItem.id
-        override fun areContentsTheSame(oldItem: ShowTime, newItem: ShowTime) = oldItem == newItem
+    object DiffCallback : DiffUtil.ItemCallback<TimeSlot>() {
+        override fun areItemsTheSame(oldItem: TimeSlot, newItem: TimeSlot): Boolean = oldItem.time == newItem.time
+        override fun areContentsTheSame(oldItem: TimeSlot, newItem: TimeSlot): Boolean = oldItem == newItem
     }
 }
