@@ -4,6 +4,6 @@ import com.example.movie_booking_app.data.model.AccountResponse
 
 data class loginResponse(
     val account: AccountResponse?,
-    val accessToken: String,
-    val refreshToken: String
+    val accessToken: String?,
+    val refreshToken: String?
 )
