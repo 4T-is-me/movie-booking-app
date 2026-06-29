@@ -2,9 +2,9 @@ package com.example.movie_booking_app.view.activity
 
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
@@ -14,6 +14,7 @@ import com.example.movie_booking_app.view.adapter.DateAdapter
 import com.example.movie_booking_app.view.adapter.SeatAdapter
 import com.example.movie_booking_app.view.adapter.TimeAdapter
 import com.example.movie_booking_app.viewmodel.SelectSeatViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
@@ -21,12 +22,11 @@ import java.util.Locale
 /**
  * Activity for Cinema Seat Selection screen.
  */
+@AndroidEntryPoint
 class SelectSeatActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySelectSeatBinding
-    private val viewModel: SelectSeatViewModel by lazy {
-        ViewModelProvider(this)[SelectSeatViewModel::class.java]
-    }
+    private val viewModel: SelectSeatViewModel by viewModels()
 
     private lateinit var seatAdapter: SeatAdapter
     private lateinit var dateAdapter: DateAdapter
@@ -88,12 +88,38 @@ class SelectSeatActivity : AppCompatActivity() {
                 Toast.makeText(this, "Booking confirmed: ${formatCurrency(price)}", Toast.LENGTH_LONG).show()
             }
         }
+
+        val quantityAdapter = android.widget.ArrayAdapter(this, android.R.layout.simple_spinner_item, (1..10).toList())
+        quantityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerQuantity.adapter = quantityAdapter
+        binding.spinnerQuantity.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
+                viewModel.setTargetCount(position + 1)
+            }
+            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
+        }
     }
 
     /**
      * Observe ViewModel state flows and sync to UI.
      */
     private fun observeViewModel() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.isLoading.collect { isLoading ->
+                    if (isLoading) {
+                        binding.mainContent.visibility = android.view.View.GONE
+                        binding.layoutSkeleton.root.visibility = android.view.View.VISIBLE
+                        binding.layoutSkeleton.root.startShimmer()
+                    } else {
+                        binding.mainContent.visibility = android.view.View.VISIBLE
+                        binding.layoutSkeleton.root.stopShimmer()
+                        binding.layoutSkeleton.root.visibility = android.view.View.GONE
+                    }
+                }
+            }
+        }
+
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.seats.collect { list ->
