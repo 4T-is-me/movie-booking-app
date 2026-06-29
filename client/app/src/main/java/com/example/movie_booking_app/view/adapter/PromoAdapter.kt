@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.movie_booking_app.R
-import com.example.movie_booking_app.data.model.ui.Promo
+import com.example.movie_booking_app.data.model.entity.Promo
 
 class PromoAdapter : ListAdapter<Promo, PromoAdapter.PromoViewHolder>(PromoDiffCallback()) {
 
