@@ -23,6 +23,7 @@ import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var txtError: TextView
@@ -130,8 +131,18 @@ class LoginActivity : AppCompatActivity() {
                                 finish()
                             }
                         } else {
-                            val errorMsg = response.errorBody()?.string() ?: "Unknown error"
-                            Toast.makeText(this@LoginActivity, "Login failed: $errorMsg", Toast.LENGTH_LONG).show()
+                            val errorStr = response.errorBody()?.string()
+                            val message = try {
+                                if (errorStr != null && errorStr.trim().startsWith("{")) {
+                                    JSONObject(errorStr).optString("message", "Invalid credentials")
+                                } else {
+                                    "Invalid username or password"
+                                }
+                            } catch (e: Exception) {
+                                "Invalid username or password"
+                            }
+                            showError(message)
+
                         }
                     }
                 } catch (e: Exception) {
