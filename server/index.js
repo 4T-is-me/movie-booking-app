@@ -10,6 +10,7 @@ import movieRoutes from './src/routes/movieRoutes.js';
 import showtimeRoutes from './src/routes/showtimeRoutes.js';
 import { accountRoute } from './src/routes/accountRoute.js';
 import { bookingRoute } from './src/routes/bookingRoute.js';
+import { memberRoute } from './src/routes/memberRoute.js';
 
 const app = express();
 const PORT = env.PORT || 5000;
@@ -24,7 +25,9 @@ app.use(express.json());
 app.use('/api/movies', movieRoutes);
 app.use('/api/showtimes', showtimeRoutes);
 app.use('/api/auth', accountRoute.authRouter);
-app.use('/api/user', accountRoute.accountRouter);
+app.use('/api/users', accountRoute.accountRouter);
+app.use('/api/accounts', accountRoute.accountRouter);
+app.use('/api/members', memberRoute.memberRouter);
 app.use('/api/booking', bookingRoute.bookingRouter);
 
 const startServer = async () => {

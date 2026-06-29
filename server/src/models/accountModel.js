@@ -42,7 +42,16 @@ const accountSchema = new mongoose.Schema({
     }
 }, {
     versionKey: false,
-    collection: 'accounts'
+    collection: 'accounts',
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+});
+
+accountSchema.virtual('memberInfo', {
+    ref: 'Member',
+    localField: '_id',
+    foreignField: 'accountId',
+    justOne: true
 });
 
 export const Account = mongoose.model('Account', accountSchema);

@@ -42,16 +42,13 @@ const login = async (req, res, next) => {
 
 const updateProfile = async (req, res, next) => {
     const correctCondition = Joi.object({
-        fullName: Joi.string().trim().strict(),
-        phoneNumber: Joi.string().trim().strict(),
-        address: Joi.string().trim().strict(),
-        gender: Joi.string().trim().strict(),
-        dateOfBirth: Joi.date(),
-        image: Joi.string().trim().strict()
+        email: Joi.string().email().trim().strict(),
+        phone: Joi.string().pattern(/^0\d{9}$/).trim().strict(),
+        address: Joi.string().trim().strict()
     })
 
     try {
-        await correctCondition.validateAsync(req.body, { abortEarly: false, allowUnknown: true })
+        await correctCondition.validateAsync(req.body, { abortEarly: false, allowUnknown: false })
         next()
     } catch (error) {
         const errorMessage = error.details ? error.details.map(err => err.message).join(', ') : error.message;
