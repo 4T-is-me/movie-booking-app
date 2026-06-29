@@ -119,6 +119,11 @@ class LoginActivity : AppCompatActivity() {
                                     putString("role", roleNameStr)
                                     apply()
                                 }
+                                TokenManager.saveTokens(
+                                    this@LoginActivity,
+                                    token,
+                                    body?.refreshToken ?: ""
+                                )
                             }
                             Toast.makeText(this@LoginActivity, "Login successful", Toast.LENGTH_SHORT).show()
                             val roleName = body?.account?.roleId?.roleName ?: body?.account?.role

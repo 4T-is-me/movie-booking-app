@@ -4,8 +4,8 @@ import android.content.Context
 
 object TokenManager {
 
-    private const val prefName = "auth_prefs"
-    private const val keyAccessToken = "access_token"
+    private const val prefName = "app_prefs"
+    private const val keyAccessToken = "auth_token"
     private const val keyRefreshToken = "refresh_token"
 
 

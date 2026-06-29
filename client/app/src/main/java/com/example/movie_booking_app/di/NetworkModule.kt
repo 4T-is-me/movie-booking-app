@@ -16,4 +16,10 @@ object NetworkModule {
     fun provideMovieApi(): MovieApi {
         return com.example.movie_booking_app.data.api.RetrofitClient.movieApi
     }
+
+    @Provides
+    @Singleton
+    fun provideProfileApi(): com.example.movie_booking_app.data.api.ProfileApi {
+        return com.example.movie_booking_app.data.api.RetrofitClient.profileApi
+    }
 }

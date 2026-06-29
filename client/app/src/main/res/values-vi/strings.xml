@@ -21,9 +21,9 @@
     <string name="login_placeholder_title">Màn hình Đăng nhập</string>
     <string name="auth_team_msg">Tính năng này đang được phát triển bởi nhóm Auth.</string>
 
-    <string name="user_name_placeholder">Nguyễn Văn A</string>
-    <string name="user_phone_placeholder">0987654321</string>
-    <string name="user_email_placeholder">abc@gmail.com</string>
+    <string name="user_name_placeholder">-</string>
+    <string name="user_phone_placeholder">-</string>
+    <string name="user_email_placeholder">-</string>
     <string name="my_ticket">Vé của tôi</string>
     <string name="change_language">Thay đổi ngôn ngữ</string>
     <string name="change_password">Đổi mật khẩu</string>
