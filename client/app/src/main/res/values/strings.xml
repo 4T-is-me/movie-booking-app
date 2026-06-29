@@ -67,4 +67,27 @@
     <string name="address_hint">Enter your address</string>
     <string name="register">Register</string>
     <string name="or_sign_up_with">Or sign up with</string>
+
+    <!-- Seating Map Labels -->
+    <string name="title_select_seat">Select Seat</string>
+    <string name="label_number_of_seats">Number of seats</string>
+    <string name="label_selected_count">%1$d seats selected</string>
+    <string name="label_selected_count_single">1 seat selected</string>
+    <string name="label_screen">SCREEN</string>
+    <string name="label_total">Total</string>
+    <string name="btn_continue">Continue</string>
+    <string name="btn_buy_ticket">Buy ticket</string>
+    <string name="section_select_date_time">Select Date &amp; Time</string>
+
+    <!-- Legend Labels -->
+    <string name="legend_available">Available</string>
+    <string name="legend_vip">VIP</string>
+    <string name="legend_sold">Sold</string>
+    <string name="legend_selected">Selected</string>
+
+    <!-- Validation Messages -->
+    <string name="error_select_more">Please select %1$d seat more</string>
+    <string name="error_select_only">Please select only %1$d seat</string>
+    <string name="error_no_seat_selected">Please select at least one seat</string>
+    <string name="msg_proceeding">Proceeding to checkout...</string>
 </resources>

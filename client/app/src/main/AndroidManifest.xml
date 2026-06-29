@@ -41,8 +41,9 @@
             android:exported="true"
             android:theme="@style/Theme.Moviebookingapp" />
 
+        <!-- Keeping your enhanced seating map activity -->
         <activity
-            android:name=".view.activity.SelectSeatActivity"
+            android:name=".view.activity.selectSeatActivity"
             android:exported="true"
             android:theme="@style/Theme.Moviebookingapp" />
 
