@@ -7,6 +7,8 @@ import com.example.movie_booking_app.data.model.entity.Promo
 import com.example.movie_booking_app.data.model.entity.Service
 import com.example.movie_booking_app.data.model.entity.Cinema
 import com.example.movie_booking_app.data.model.entity.Showtime
+import com.example.movie_booking_app.data.model.request.AddMovieRequest
+import com.example.movie_booking_app.data.model.request.UpdateMovieRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -21,9 +23,10 @@ class MovieRepositoryRemoteImpl @Inject constructor(
 
     override fun getMovies(): Flow<List<Movie>> = flow {
         try {
-            val response = api.getMovies(100)
+            val response = api.getMovies(1000)
             if (response.isSuccessful) {
-                emit(response.body()?.data ?: emptyList())
+                val data = response.body()?.data ?: emptyList()
+                emit(data)
             } else {
                 emit(emptyList())
             }
@@ -86,8 +89,37 @@ class MovieRepositoryRemoteImpl @Inject constructor(
         }
     }
 
-    override suspend fun addMovie(request: com.example.movie_booking_app.data.model.request.AddMovieRequest): Boolean = true
+    override suspend fun addMovie(request: AddMovieRequest): Boolean {
+        return try {
+            val response = api.addMovie(request)
+            response.isSuccessful
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     override suspend fun postMovie(movie: Movie): Boolean = true
-    override suspend fun updateMovie(id: String, request: com.example.movie_booking_app.data.model.request.UpdateMovieRequest): Boolean = true
-    override suspend fun deleteMovie(id: String): Boolean = true
+
+    override suspend fun updateMovie(id: String, request: UpdateMovieRequest): Boolean {
+        return try {
+            val response = api.updateMovie(id, request)
+            response.isSuccessful
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    override suspend fun deleteMovie(id: String): Boolean {
+        return try {
+            val response = api.deleteMovie(id)
+            if (!response.isSuccessful) {
+                val errorBody = response.errorBody()?.string()
+                println("Delete movie failed: ${response.code()} - $errorBody")
+            }
+            response.isSuccessful
+        } catch (e: Exception) {
+            println("Delete movie exception: ${e.message}")
+            false
+        }
+    }
 }

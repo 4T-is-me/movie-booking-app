@@ -2,6 +2,7 @@ package com.example.movie_booking_app.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.movie_booking_app.data.model.entity.Movie
 import com.example.movie_booking_app.data.model.entity.MovieNews
 import com.example.movie_booking_app.data.model.entity.Promo
 import com.example.movie_booking_app.data.model.entity.Service
@@ -28,6 +29,9 @@ class MovieViewModel @Inject constructor(
     private val _homeItems = MutableStateFlow<List<HomeItem>>(initialHomeState())
     val homeItems: StateFlow<List<HomeItem>> = _homeItems.asStateFlow()
 
+    private val _adminMovies = MutableStateFlow<List<Movie>>(emptyList())
+    val adminMovies: StateFlow<List<Movie>> = _adminMovies.asStateFlow()
+
     private val _movieDetail = MutableStateFlow<MovieResponse?>(null)
     val movieDetail: StateFlow<MovieResponse?> = _movieDetail.asStateFlow()
     private val _detailError = MutableStateFlow<String?>(null)
@@ -40,6 +44,15 @@ class MovieViewModel @Inject constructor(
     val showtimeError: StateFlow<String?> = _showtimeError
     init {
         loadHomeData()
+        loadAdminMovies()
+    }
+
+    fun loadAdminMovies() {
+        viewModelScope.launch {
+            repository.getMovies().collect { movies ->
+                _adminMovies.value = movies
+            }
+        }
     }
 
     private fun initialHomeState(): List<HomeItem> = listOf(
@@ -133,11 +146,35 @@ class MovieViewModel @Inject constructor(
     private val _movieActionSuccess = MutableSharedFlow<Boolean>()
     val movieActionSuccess = _movieActionSuccess.asSharedFlow()
 
+    private val _movieActionMessage = MutableSharedFlow<String>()
+    val movieActionMessage = _movieActionMessage.asSharedFlow()
+
     fun deleteMovie(id: String) {
         viewModelScope.launch {
             try {
                 val success = repository.deleteMovie(id)
                 _movieActionSuccess.emit(success)
+                if (success) {
+                    loadAdminMovies()
+                    _movieActionMessage.emit("Xóa phim thành công")
+                } else {
+                    _movieActionMessage.emit("Xóa phim thất bại")
+                }
+            } catch (e: Exception) {
+                _movieActionSuccess.emit(false)
+                _movieActionMessage.emit("Xóa phim thất bại: ${e.message ?: "Lỗi không xác định"}")
+            }
+        }
+    }
+
+    fun addMovie(request: com.example.movie_booking_app.data.model.request.AddMovieRequest) {
+        viewModelScope.launch {
+            try {
+                val success = repository.addMovie(request)
+                _movieActionSuccess.emit(success)
+                if (success) {
+                    loadAdminMovies()
+                }
             } catch (e: Exception) {
                 _movieActionSuccess.emit(false)
             }

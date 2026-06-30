@@ -34,6 +34,7 @@ class AdminRoomListFragment : Fragment() {
 
         val rvRooms = view.findViewById<RecyclerView>(R.id.rvRooms)
         val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
+        val tvTotalRoomsCount = view.findViewById<android.widget.TextView>(R.id.tvTotalRoomsCount)
 
         adapter = AdminRoomAdapter(
             onRoomClick = { room ->
@@ -51,6 +52,7 @@ class AdminRoomListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.rooms.collect { rooms ->
                 adapter.submitList(rooms)
+                tvTotalRoomsCount.text = "${rooms.size} phòng"
             }
         }
 
