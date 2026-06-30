@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -81,12 +82,59 @@ class SelectSeatActivity : AppCompatActivity() {
             finish()
         }
         binding.btnContinue.setOnClickListener {
-            val price = viewModel.totalPrice.value
-            if (price == 0) {
+            val selectedSeatsList = viewModel.selectedSeats.value
+            if (selectedSeatsList.isEmpty()) {
                 Toast.makeText(this, "Please select at least one seat", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Booking confirmed: ${formatCurrency(price)}", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
             }
+
+            val orderId = "BK-" + java.util.UUID.randomUUID().toString().take(8).uppercase(Locale.getDefault())
+            
+            val selectedDateStr = viewModel.dates.value.find { it.isSelected }?.day ?: ""
+            val selectedTimeStr = viewModel.times.value.find { it.isSelected }?.time ?: ""
+            
+            val ticketTotal = viewModel.totalPrice.value
+            
+            val vipCount = selectedSeatsList.count { it.type == com.example.movie_booking_app.data.model.entity.SeatType.VIP }
+            val normalCount = selectedSeatsList.size - vipCount
+            
+            val ticketTypeDetails = mutableListOf<com.example.movie_booking_app.data.model.entity.TicketTypeDetail>()
+            if (vipCount > 0) {
+                ticketTypeDetails.add(com.example.movie_booking_app.data.model.entity.TicketTypeDetail("VIP Seat", vipCount, 120000))
+            }
+            if (normalCount > 0) {
+                ticketTypeDetails.add(com.example.movie_booking_app.data.model.entity.TicketTypeDetail("Normal Seat", normalCount, 80000))
+            }
+
+            val booking = com.example.movie_booking_app.data.model.entity.Booking(
+                orderId = orderId,
+                movieId = intent.getStringExtra("movieId"),
+                movieName = intent.getStringExtra("movieName") ?: "Unknown Movie",
+                moviePoster = intent.getStringExtra("moviePoster"),
+                movieGenre = intent.getStringExtra("movieGenre") ?: "Genre",
+                cinemaName = intent.getStringExtra("cinemaName") ?: "Cinema Center",
+                cinemaAddress = intent.getStringExtra("cinemaAddress") ?: "Cinema Address",
+                roomName = "Room 3",
+                showDate = selectedDateStr,
+                showTime = selectedTimeStr,
+                duration = 120,
+                language = "English",
+                subtitle = "Vietnamese",
+                seatIds = selectedSeatsList.map { it.id },
+                seatNames = selectedSeatsList.map { it.label },
+                ticketTypeDetails = ticketTypeDetails,
+                combos = emptyList(),
+                ticketTotal = ticketTotal,
+                comboTotal = 0,
+                bookingFee = 10000,
+                discount = 0,
+                grandTotal = ticketTotal + 10000
+            )
+
+            val intent = Intent(this, PaymentActivity::class.java).apply {
+                putExtra("BOOKING_SESSION", booking)
+            }
+            startActivity(intent)
         }
 
         val quantityAdapter = android.widget.ArrayAdapter(this, android.R.layout.simple_spinner_item, (1..10).toList())

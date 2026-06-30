@@ -38,6 +38,12 @@
             android:windowSoftInputMode="adjustPan|stateHidden" />
 
         <activity
+            android:name=".view.activity.PaymentActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+
+        <activity
             android:name=".view.activity.LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.Moviebookingapp" />
