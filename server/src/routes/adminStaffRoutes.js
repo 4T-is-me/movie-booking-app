@@ -20,7 +20,7 @@ router.get('/', getStaffList);
 router.post('/', adminStaffValidation.createStaff, createStaff);
 
 // PUT /api/admin/staff/:id - Update staff details
-router.put('/:id', updateStaff);
+router.put('/:id', adminStaffValidation.updateStaff, updateStaff);
 
 // DELETE /api/admin/staff/:id - Lock staff account (soft delete)
 router.delete('/:id', deleteStaff);

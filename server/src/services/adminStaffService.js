@@ -181,8 +181,37 @@ export const createStaff = async (accountData, staffData) => {
     }).lean();
 };
 
-export const updateStaff = async (staffId, staffData) => {
-    return await Staff.findByIdAndUpdate(staffId, staffData, { new: true });
+export const updateStaff = async (staffId, updateData) => {
+    const staff = await Staff.findById(staffId);
+    if (!staff) return null;
+
+    const { email, ...staffFields } = updateData;
+
+    // 1. Update Account email if provided
+    if (email) {
+        const existingAccount = await Account.findOne({ email, _id: { $ne: staff.accountId } });
+        if (existingAccount) {
+            throw new Error('EmailAlreadyExists');
+        }
+        await Account.findByIdAndUpdate(staff.accountId, { email });
+    }
+
+    // 2. Update Staff fields
+    const updatedStaff = await Staff.findByIdAndUpdate(
+        staffId,
+        { $set: staffFields },
+        { new: true }
+    );
+
+    // Trả về bản ghi đã được populate đầy đủ thông tin sau khi cập nhật
+    return await Staff.findById(updatedStaff._id).populate({
+        path: 'accountId',
+        select: '-passwordHash -refreshToken',
+        populate: {
+            path: 'roleId',
+            select: 'roleName name'
+        }
+    }).lean();
 };
 
 /**

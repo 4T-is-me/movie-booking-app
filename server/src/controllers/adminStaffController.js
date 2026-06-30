@@ -41,6 +41,9 @@ export const updateStaff = async (req, res) => {
         
         return res.status(200).json({ success: true, data: staff, message: 'Cập nhật thông tin thành công.' });
     } catch (error) {
+        if (error.message === 'EmailAlreadyExists') {
+            return res.status(400).json({ success: false, message: 'Email đã được sử dụng bởi tài khoản khác.' });
+        }
         return res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
     }
 };

@@ -27,6 +27,28 @@ const createStaff = async (req, res, next) => {
     }
 };
 
+const updateStaff = async (req, res, next) => {
+    const correctCondition = Joi.object({
+        fullName: Joi.string().trim().strict(),
+        email: Joi.string().email().trim().strict(),
+        phone: Joi.string().pattern(/^0\d{9}$/).trim().strict(),
+        address: Joi.string().trim().strict().allow('', null),
+        cinemaId: Joi.string().pattern(/^[0-9a-fA-F]{24}$/).trim().strict(),
+        position: Joi.string().trim().strict(),
+        salary: Joi.number().min(0),
+        startData: Joi.date()
+    });
+
+    try {
+        await correctCondition.validateAsync(req.body, { abortEarly: false, allowUnknown: true });
+        next();
+    } catch (error) {
+        const errorMessage = error.details ? error.details.map(err => err.message).join(', ') : error.message;
+        next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, errorMessage));
+    }
+};
+
 export const adminStaffValidation = {
-    createStaff
+    createStaff,
+    updateStaff
 };
