@@ -13,8 +13,10 @@ import { bookingRoute } from './src/routes/bookingRoute.js';
 import { memberRoute } from './src/routes/memberRoute.js';
 import adminMovieRoutes from './src/routes/adminMovieRoutes.js';
 import adminShowtimeRoutes from './src/routes/adminShowtimeRoutes.js';
+import { adminRoomRoute } from './src/routes/adminRoomRoutes.js';
 import adminStaffRoutes from './src/routes/adminStaffRoutes.js';
 import promotionRoute from './src/routes/promotionRoute.js';
+
 
 const app = express();
 const PORT = env.PORT || 5000;
@@ -37,7 +39,9 @@ app.use('/api/booking', bookingRoute.bookingRouter);
 app.use('/api/promotions', promotionRoute);
 app.use('/api/admin/showtimes', adminShowtimeRoutes);
 app.use('/api/admin/movies', adminMovieRoutes);
+app.use('/api/admin/rooms', adminRoomRoute.adminRoomRouter);
 app.use('/api/admin/staff', adminStaffRoutes);
+
 
 const startServer = async () => {
     await connectDB();
