@@ -32,6 +32,12 @@
             android:theme="@style/Theme.Moviebookingapp" />
 
         <activity
+            android:name=".view.activity.EditProfileActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+
+        <activity
             android:name=".view.activity.LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.Moviebookingapp" />
