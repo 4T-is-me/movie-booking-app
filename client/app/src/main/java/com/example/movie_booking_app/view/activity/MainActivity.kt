@@ -34,6 +34,12 @@ class MainActivity : BaseActivity() {
         binding.btnNavMovie.setOnClickListener { navigateToSection("Movie") }
         binding.btnNavTicket.setOnClickListener { navigateToSection("Ticket") }
         binding.btnNavProfile.setOnClickListener { navigateToSection("Profile") }
+
+        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNav) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(bottom = insets.bottom + (16 * resources.displayMetrics.density).toInt())
+            windowInsets
+        }
         
         // Handle explicit section requests from other activities (like Profile)
         val target = intent.getStringExtra("TARGET_SECTION") ?: "Home"

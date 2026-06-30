@@ -50,7 +50,7 @@
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/vpNowPlaying"
                 android:layout_width="match_parent"
-                android:layout_height="600dp"
+                android:layout_height="520dp"
                 android:clipToPadding="false"
                 android:clipChildren="false" />
 
@@ -72,7 +72,7 @@
         <com.facebook.shimmer.ShimmerFrameLayout
             android:id="@+id/shimmerNowPlaying"
             android:layout_width="match_parent"
-            android:layout_height="600dp"
+            android:layout_height="520dp"
             android:visibility="gone"
             app:shimmer_auto_start="true"
             app:shimmer_base_alpha="0.1"

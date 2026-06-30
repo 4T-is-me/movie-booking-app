@@ -99,14 +99,6 @@ class HomeMultiAdapter(
         private val edtSearch: EditText = view.findViewById(R.id.edtSearch)
         private val btnLogin: View = view.findViewById(R.id.btnLogin)
         init {
-            ViewCompat.setOnApplyWindowInsetsListener(view) { v, windowInsets ->
-                val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-                val density = v.context.resources.displayMetrics.density
-                val extraPadding = (16 * density).toInt()
-                v.updatePadding(top = insets.top + extraPadding)
-                windowInsets
-            }
-
             edtSearch.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {

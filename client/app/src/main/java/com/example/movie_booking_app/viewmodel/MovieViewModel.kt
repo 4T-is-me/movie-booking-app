@@ -9,6 +9,7 @@ import com.example.movie_booking_app.data.model.entity.Showtime
 import com.example.movie_booking_app.data.model.response.MovieResponse
 import com.example.movie_booking_app.data.model.ui.HomeItem
 import com.example.movie_booking_app.data.repository.MovieRepository
+import com.example.movie_booking_app.data.repository.ProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -17,7 +18,8 @@ import kotlin.collections.emptyList
 
 @HiltViewModel
 class MovieViewModel @Inject constructor(
-    private val repository: MovieRepository
+    private val repository: MovieRepository,
+    private val profileRepository: ProfileRepository
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -51,25 +53,33 @@ class MovieViewModel @Inject constructor(
         HomeItem.MovieNewsSection(null, isLoading = true)
     )
 
-    private fun loadHomeData() {
+    fun loadHomeData() {
+        // Luồng lấy tên người dùng, mặc định là "User" nếu lỗi hoặc chưa login
+        val userFlow = profileRepository.getUserProfile()
+            .map { it.username ?: "User" }
+            .catch { emit("User") }
+            .onStart { emit("User") }
+
         viewModelScope.launch {
             combine(
                 repository.getMovies().onStart { emit(emptyList()) },
                 repository.getPromos().onStart { emit(emptyList()) },
                 repository.getServices().onStart { emit(emptyList()) },
                 repository.getNews().onStart { emit(emptyList()) },
-                _searchQuery
-            ) { movies, promos, services, news, query ->
+                combine(userFlow, _searchQuery) { name, query -> name to query }
+            ) { movies, promos, services, news, userAndQuery ->
+                val userName = userAndQuery.first
+                val query = userAndQuery.second
                 
                 val filteredMovies = if (query.isEmpty()) movies else {
                     movies.filter { it.movieName?.contains(query, ignoreCase = true) == true }
                 }
 
                 if (filteredMovies.isEmpty() && query.isNotEmpty()) {
-                    listOf(HomeItem.HeaderSection("User"), HomeItem.EmptyState)
+                    listOf(HomeItem.HeaderSection(userName), HomeItem.EmptyState)
                 } else {
                     val list = mutableListOf<HomeItem>()
-                    list.add(HomeItem.HeaderSection("User"))
+                    list.add(HomeItem.HeaderSection(userName))
                     
                     val nowPlaying = filteredMovies.filter { 
                         val s = it.status?.lowercase() ?: ""
