@@ -230,3 +230,80 @@ export const softDeleteStaff = async (staffId) => {
     
     return updatedAccount;
 };
+
+export const updateStaffStatus = async (staffId, status) => {
+    const staff = await Staff.findById(staffId);
+    if (!staff) return null;
+
+    // Cập nhật trạng thái trong bảng Account
+    await Account.findByIdAndUpdate(
+        staff.accountId,
+        { status: Number(status) },
+        { new: true }
+    );
+
+    // Trả về bản ghi nhân viên đầy đủ thông tin sau khi cập nhật
+    return await Staff.findById(staffId).populate({
+        path: 'accountId',
+        select: '-passwordHash -refreshToken',
+        populate: {
+            path: 'roleId',
+            select: 'roleName name'
+        }
+    }).lean();
+};
+
+export const updateStaffRole = async (staffId, { role, roleId }) => {
+    const staff = await Staff.findById(staffId);
+    if (!staff) return null;
+
+    let targetRoleId = roleId;
+
+    if (role) {
+        let lookupName = role;
+        if (role.toLowerCase() === 'staff') {
+            lookupName = 'Employee';
+        }
+        const roleDoc = await Role.findOne({
+            $or: [
+                { name: { $regex: new RegExp(`^${lookupName}$`, 'i') } },
+                { roleName: { $regex: new RegExp(`^${lookupName}$`, 'i') } }
+            ]
+        }).lean();
+        if (!roleDoc) {
+            throw new Error('RoleNotFound');
+        }
+        targetRoleId = roleDoc._id;
+    } else if (roleId) {
+        const roleDoc = await Role.findById(roleId).lean();
+        if (!roleDoc) {
+            throw new Error('RoleNotFound');
+        }
+        const rName = roleDoc.roleName || roleDoc.name || '';
+        if (
+            rName.toLowerCase() !== 'employee' &&
+            rName.toLowerCase() !== 'manager' &&
+            rName.toLowerCase() !== 'admin'
+        ) {
+            throw new Error('InvalidRole');
+        }
+        targetRoleId = roleDoc._id;
+    }
+
+    // Cập nhật roleId trong bảng Account
+    await Account.findByIdAndUpdate(
+        staff.accountId,
+        { roleId: targetRoleId },
+        { new: true }
+    );
+
+    // Trả về bản ghi nhân viên đầy đủ thông tin sau khi cập nhật
+    return await Staff.findById(staffId).populate({
+        path: 'accountId',
+        select: '-passwordHash -refreshToken',
+        populate: {
+            path: 'roleId',
+            select: 'roleName name'
+        }
+    }).lean();
+};

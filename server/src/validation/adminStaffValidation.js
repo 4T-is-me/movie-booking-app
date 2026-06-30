@@ -48,7 +48,40 @@ const updateStaff = async (req, res, next) => {
     }
 };
 
+const updateStaffStatus = async (req, res, next) => {
+    const correctCondition = Joi.object({
+        status: Joi.number().valid(1, 2).required()
+    });
+
+    try {
+        await correctCondition.validateAsync(req.body, { abortEarly: false });
+        next();
+    } catch (error) {
+        const errorMessage = error.details ? error.details.map(err => err.message).join(', ') : error.message;
+        next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, errorMessage));
+    }
+};
+
+const updateStaffRole = async (req, res, next) => {
+    const correctCondition = Joi.object({
+        role: Joi.string().valid('Staff', 'Employee', 'Manager', 'Admin', 'staff', 'employee', 'manager', 'admin').trim().strict(),
+        roleId: Joi.string().pattern(/^[0-9a-fA-F]{24}$/).trim().strict()
+    }).xor('role', 'roleId').messages({
+        'object.xor': 'Phải cung cấp role (tên role) hoặc roleId (ID của role) và không được cung cấp cả hai.'
+    });
+
+    try {
+        await correctCondition.validateAsync(req.body, { abortEarly: false });
+        next();
+    } catch (error) {
+        const errorMessage = error.details ? error.details.map(err => err.message).join(', ') : error.message;
+        next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, errorMessage));
+    }
+};
+
 export const adminStaffValidation = {
     createStaff,
-    updateStaff
+    updateStaff,
+    updateStaffStatus,
+    updateStaffRole
 };
