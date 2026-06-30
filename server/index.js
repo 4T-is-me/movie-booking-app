@@ -13,6 +13,7 @@ import { bookingRoute } from './src/routes/bookingRoute.js';
 import { memberRoute } from './src/routes/memberRoute.js';
 import adminMovieRoutes from './src/routes/adminMovieRoutes.js';
 import adminShowtimeRoutes from './src/routes/adminShowtimeRoutes.js';
+import promotionRoute from './src/routes/promotionRoute.js';
 
 const app = express();
 const PORT = env.PORT || 5000;
@@ -32,6 +33,7 @@ app.use('/api/users', accountRoute.accountRouter);
 app.use('/api/accounts', accountRoute.accountRouter);
 app.use('/api/members', memberRoute.memberRouter);
 app.use('/api/booking', bookingRoute.bookingRouter);
+app.use('/api/promotions', promotionRoute);
 app.use('/api/admin/showtimes', adminShowtimeRoutes);
 app.use('/api/admin/movies', adminMovieRoutes);
 

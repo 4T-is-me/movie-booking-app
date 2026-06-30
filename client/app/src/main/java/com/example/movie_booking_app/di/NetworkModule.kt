@@ -22,4 +22,10 @@ object NetworkModule {
     fun provideProfileApi(): com.example.movie_booking_app.data.api.ProfileApi {
         return com.example.movie_booking_app.data.api.RetrofitClient.profileApi
     }
+
+    @Provides
+    @Singleton
+    fun providePaymentApi(): com.example.movie_booking_app.data.api.PaymentApi {
+        return com.example.movie_booking_app.data.api.RetrofitClient.paymentApi
+    }
 }

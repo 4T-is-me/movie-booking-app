@@ -1,6 +1,5 @@
 package com.example.movie_booking_app.data.api
 
-import com.example.movie_booking_app.utils.Constants
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -48,6 +47,10 @@ object RetrofitClient {
 
     val profileApi: ProfileApi by lazy {
         instance.create(ProfileApi::class.java)
+    }
+
+    val paymentApi: PaymentApi by lazy {
+        instance.create(PaymentApi::class.java)
     }
 
 
