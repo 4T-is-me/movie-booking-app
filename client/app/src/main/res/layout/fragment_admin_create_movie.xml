@@ -45,7 +45,31 @@
                 android:textColor="@color/white" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Duration & Release Date -->
+        <!-- Duration & Release Date & End Date -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="Duration (mins)"
+            app:boxStrokeColor="@color/text_input_stroke"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxBackgroundMode="outline"
+            app:hintTextColor="#808080">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtDuration"
+                android:inputType="number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white" />
+        </com.google.android.material.textfield.TextInputLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -59,31 +83,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="8dp"
-                android:hint="Duration (mins)"
-                app:boxStrokeColor="@color/text_input_stroke"
-                app:boxStrokeWidth="1dp"
-                app:boxStrokeWidthFocused="2dp"
-                app:boxCornerRadiusTopStart="12dp"
-                app:boxCornerRadiusTopEnd="12dp"
-                app:boxCornerRadiusBottomStart="12dp"
-                app:boxCornerRadiusBottomEnd="12dp"
-                app:boxBackgroundMode="outline"
-                app:hintTextColor="#808080">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edtDuration"
-                    android:inputType="number"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/white" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp"
                 android:hint="Release Date"
                 app:boxStrokeColor="@color/text_input_stroke"
                 app:boxStrokeWidth="1dp"
@@ -97,6 +96,32 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtReleaseDate"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:hint="End Date"
+                app:boxStrokeColor="@color/text_input_stroke"
+                app:boxStrokeWidth="1dp"
+                app:boxStrokeWidthFocused="2dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                app:boxBackgroundMode="outline"
+                app:hintTextColor="#808080">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtEndDate"
                     android:focusable="false"
                     android:clickable="true"
                     android:layout_width="match_parent"
@@ -122,6 +147,21 @@
             app:singleSelection="false">
             <!-- Chips will be added dynamically in code -->
         </com.google.android.material.chip.ChipGroup>
+
+        <!-- Show Times -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Default Show Times"
+            android:textColor="@color/admin_text_secondary"
+            android:textSize="14sp"
+            android:layout_marginBottom="8dp" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupShowTimes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" />
 
         <!-- Censorship & Status -->
         <LinearLayout
@@ -279,7 +319,7 @@
                 android:textColor="@color/white" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Poster URL -->
+        <!-- Poster URL & Selection -->
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
@@ -302,6 +342,26 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/white" />
         </com.google.android.material.textfield.TextInputLayout>
+
+        <ImageView
+            android:id="@+id/ivPosterPreview"
+            android:layout_width="120dp"
+            android:layout_height="180dp"
+            android:layout_gravity="center_horizontal"
+            android:scaleType="centerCrop"
+            android:background="@color/card_dark"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/btnChoosePoster"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Choose Poster"
+            android:textColor="@color/white"
+            app:strokeColor="@color/gold_selected"
+            android:layout_marginBottom="16dp" />
 
         <!-- Description -->
         <com.google.android.material.textfield.TextInputLayout

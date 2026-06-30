@@ -36,7 +36,7 @@ class AdminAddMovieFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_admin_add_movie, container, false)
+        return inflater.inflate(R.layout.fragment_admin_create_movie, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -48,7 +48,7 @@ class AdminAddMovieFragment : Fragment() {
 
         ivPosterPreview = view.findViewById(R.id.ivPosterPreview)
 
-        view.findViewById<Button>(R.id.btnSubmit).setOnClickListener {
+        view.findViewById<Button>(R.id.btnSubmitMovie).setOnClickListener {
             Toast.makeText(context, "Movie Submitted!", Toast.LENGTH_SHORT).show()
             parentFragmentManager.popBackStack()
         }
@@ -59,7 +59,7 @@ class AdminAddMovieFragment : Fragment() {
     }
 
     private fun setupDatePickers(view: View) {
-        val edtStart = view.findViewById<TextInputEditText>(R.id.edtStartDate)
+        val edtStart = view.findViewById<TextInputEditText>(R.id.edtReleaseDate)
         val edtEnd = view.findViewById<TextInputEditText>(R.id.edtEndDate)
 
         val calendar = Calendar.getInstance()
