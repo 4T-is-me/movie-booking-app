@@ -15,5 +15,8 @@ data class UserProfile(
     val score: Int? = null,
     val role: String? = null,
     val status: Int? = null,
-    val registerDate: String? = null
+    val registerDate: String? = null,
+    val avatar: String? = null,
+    val favoriteCinema: String? = null,
+    val favoriteGenres: List<String>? = null
 )

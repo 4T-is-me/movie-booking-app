@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.di
 
+import com.example.movie_booking_app.data.api.CinemaRoomApi
 import com.example.movie_booking_app.data.api.MovieApi
 import dagger.Module
 import dagger.Provides
@@ -19,7 +20,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideProfileApi(): com.example.movie_booking_app.data.api.ProfileApi {
-        return com.example.movie_booking_app.data.api.RetrofitClient.profileApi
+    fun provideCinemaRoomApi(): CinemaRoomApi {
+        return com.example.movie_booking_app.data.api.RetrofitClient.cinemaRoomApi
     }
 }

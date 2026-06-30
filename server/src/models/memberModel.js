@@ -11,7 +11,9 @@ const memberSchema = new mongoose.Schema({
     image: { type: String },
     rewardPoints: { type: Number, default: 0 },
     membershipRank: { type: String, default: 'bronze' }, // bronze, silver, gold
-    totalSpent: { type: Number, default: 0 }
+    totalSpent: { type: Number, default: 0 },
+    favoriteCinema: { type: String },
+    favoriteGenres: { type: [String] }
 }, { versionKey: false, collection: 'members' }
 );
 

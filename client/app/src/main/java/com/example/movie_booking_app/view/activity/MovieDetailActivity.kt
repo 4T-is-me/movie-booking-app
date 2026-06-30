@@ -56,10 +56,16 @@ class MovieDetailActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please select a cinema first.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            val intent = Intent(this, SelectSeatActivity::class.java)
-            intent.putExtra("movieId", movieId)
-            intent.putExtra("cinemaId", selectedCinema!!.id)
-
+            val intent = Intent(this, SelectSeatActivity::class.java).apply {
+                putExtra("movieId", movieId)
+                putExtra("cinemaId", selectedCinema!!.id)
+                val movie = viewModel.movieDetail.value?.data
+                putExtra("movieName", movie?.movieName ?: "")
+                putExtra("moviePoster", movie?.poster ?: "")
+                putExtra("movieGenre", movie?.movieGenre?.joinToString(", ") ?: "")
+                putExtra("cinemaName", selectedCinema!!.cinemaName ?: "")
+                putExtra("cinemaAddress", selectedCinema!!.address ?: "")
+            }
             startActivity(intent)
         }
 

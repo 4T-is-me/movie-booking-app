@@ -2,8 +2,14 @@ import * as adminStaffService from '../services/adminStaffService.js';
 
 export const getStaffList = async (req, res) => {
     try {
-        const { page = 1, limit = 10, status = null } = req.query;
-        const result = await adminStaffService.getStaffList(page, limit, status);
+        const { page = 1, limit = 10, status, role, search } = req.query;
+        const result = await adminStaffService.getStaffList({
+            page: Number(page),
+            limit: Number(limit),
+            status,
+            role,
+            search
+        });
         
         return res.status(200).json({ success: true, data: result, message: 'Lấy danh sách nhân viên thành công.' });
     } catch (error) {
@@ -13,13 +19,8 @@ export const getStaffList = async (req, res) => {
 
 export const createStaff = async (req, res) => {
     try {
-        const { username, email, password, roleId, ...staffData } = req.body;
-        
-        if (!username || !email || !password || !roleId || !staffData.fullName || !staffData.identityCard) {
-            return res.status(400).json({ success: false, message: 'Thiếu thông tin bắt buộc để tạo nhân viên.' });
-        }
-
-        const accountData = { username, email, password, roleId };
+        const { username, email, password, roleId, role, ...staffData } = req.body;
+        const accountData = { username, email, password, roleId, role };
         const staff = await adminStaffService.createStaff(accountData, staffData);
 
         return res.status(201).json({ success: true, data: staff, message: 'Tạo tài khoản nhân viên (Staff) thành công.' });
@@ -40,6 +41,9 @@ export const updateStaff = async (req, res) => {
         
         return res.status(200).json({ success: true, data: staff, message: 'Cập nhật thông tin thành công.' });
     } catch (error) {
+        if (error.message === 'EmailAlreadyExists') {
+            return res.status(400).json({ success: false, message: 'Email đã được sử dụng bởi tài khoản khác.' });
+        }
         return res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
     }
 };
@@ -53,6 +57,54 @@ export const deleteStaff = async (req, res) => {
     } catch (error) {
         if (error.message === 'StaffNotFound') {
             return res.status(404).json({ success: false, message: 'Không tìm thấy nhân viên.' });
+        }
+        return res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
+    }
+};
+
+export const updateStaffStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        const staff = await adminStaffService.updateStaffStatus(id, status);
+        
+        if (!staff) {
+            return res.status(404).json({ success: false, message: 'Không tìm thấy nhân viên (Staff).' });
+        }
+        
+        return res.status(200).json({ 
+            success: true, 
+            data: staff, 
+            message: 'Cập nhật trạng thái tài khoản nhân viên thành công.' 
+        });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
+    }
+};
+
+export const updateStaffRole = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { role, roleId } = req.body;
+
+        const staff = await adminStaffService.updateStaffRole(id, { role, roleId });
+        
+        if (!staff) {
+            return res.status(404).json({ success: false, message: 'Không tìm thấy nhân viên (Staff).' });
+        }
+        
+        return res.status(200).json({ 
+            success: true, 
+            data: staff, 
+            message: 'Gán vai trò mới cho nhân viên thành công.' 
+        });
+    } catch (error) {
+        if (error.message === 'RoleNotFound') {
+            return res.status(400).json({ success: false, message: 'Vai trò (Role) không tồn tại trong hệ thống.' });
+        }
+        if (error.message === 'InvalidRole') {
+            return res.status(400).json({ success: false, message: 'Vai trò không hợp lệ. Chỉ chấp nhận Staff, Manager hoặc Admin.' });
         }
         return res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
     }

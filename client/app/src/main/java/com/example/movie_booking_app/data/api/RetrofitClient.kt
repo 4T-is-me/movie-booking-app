@@ -1,6 +1,5 @@
 package com.example.movie_booking_app.data.api
 
-import com.example.movie_booking_app.utils.Constants
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -11,7 +10,7 @@ object RetrofitClient {
     // 10.0.2.2 is the special alias to your host loopback interface (localhost) for Android emulator
     // Note for LDPlayer: If 10.0.2.2 doesn't work, change this to your PC's current IPv4 address (run ipconfig to check).
 
-    private const val BASE_URL = "http://10.88.54.91:5000"
+    private const val BASE_URL = "http://192.168.9.144:5000"
 
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
@@ -48,6 +47,14 @@ object RetrofitClient {
 
     val profileApi: ProfileApi by lazy {
         instance.create(ProfileApi::class.java)
+    }
+
+    val paymentApi: PaymentApi by lazy {
+        instance.create(PaymentApi::class.java)
+    }
+
+    val cinemaRoomApi: CinemaRoomApi by lazy {
+        instance.create(CinemaRoomApi::class.java)
     }
 
 
