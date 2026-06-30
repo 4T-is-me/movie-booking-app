@@ -1,14 +1,15 @@
 import mongoose from 'mongoose';
-1
+import * as showtimeAdminService from '../services/adminShowtimeService.js';
+
 // POST /api/admin/showtimes
 export const createShowtime = async (req, res) => {
     try {
-        const { movieId, cinemaId, roomId, showDate, showTime, startTime, endTime } = req.body;
+        const { movieId, cinemaId, roomId, showDate, showTime, ticketPrice } = req.body;
 
-        if (!movieId || !cinemaId || !roomId || !showDate || !startTime || !endTime) {
+        if (!movieId || !cinemaId || !roomId || !showDate || !showTime || !ticketPrice) {
             return res.status(400).json({
                 success: false,
-                message: 'Vui lòng điền đủ các trường bắt buộc: movieId, cinemaId, roomId, showDate, startTime, endTime.'
+                message: 'Vui lòng điền đủ các trường bắt buộc: movieId, cinemaId, roomId, showDate, showTime, ticketPrice.'
             });
         }
 

@@ -7,6 +7,8 @@ const showtimeSchema = new mongoose.Schema({
     showDate: {type: Date},
     startTime: {type: Date},
     endTime: {type: Date},
+    showTime: {type: String},
+    ticketPrice: {type: Number},
     isDeleted: {type: Boolean, default: false},
     deletedAt: {type: Date, default: null}
 }, { timestamps: true, versionKey: false, collection: 'showtimes' });

@@ -20,11 +20,12 @@ const handleHoldSeats = async ({ accountId, showtimeId, seatIds }) => {
       let seat = await ScheduleSeat.findOne({ showtimeId, seatId }).session(session);
 
       if (seat) {
-        if (seat.status.toLocaleLowerCase() === constants.SEAT_STATUS.SOLD) {
+        const seatStatusStr = String(seat.status).toLowerCase();
+        if (seatStatusStr === constants.SEAT_STATUS.SOLD) {
           throw new Error(`Seat ${seatId} is already booked`);
         }
         if (
-          seat.status.toLocaleLowerCase() === constants.SEAT_STATUS.HOLD &&
+          seatStatusStr === constants.SEAT_STATUS.HOLD &&
           seat.holdExpiresAt > now &&
           seat.accountId.toString() !== accountId.toString()
         ) {
