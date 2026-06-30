@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -58,6 +59,11 @@ class AdminRoomDetailFragment : Fragment() {
         val rvSeatGrid = view.findViewById<RecyclerView>(R.id.rvSeatGrid)
         val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
         val btnSave = view.findViewById<MaterialButton>(R.id.btnSaveLayout)
+        val tvRoomTitle = view.findViewById<TextView>(R.id.tvRoomTitle)
+        val tvRoomSummary = view.findViewById<TextView>(R.id.tvRoomSummary)
+
+        tvRoomTitle.text = roomName ?: "Seat Layout"
+        tvRoomSummary.text = "Chạm vào ghế để đổi loại ghế"
 
         adapter = AdminSeatAdapter(
             onSeatClick = { seat ->
@@ -71,6 +77,7 @@ class AdminRoomDetailFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.seats.collect { seats ->
                 adapter.submitList(seats)
+                tvRoomSummary.text = "Sơ đồ ghế · ${seats.size} ghế"
             }
         }
 
