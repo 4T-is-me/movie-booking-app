@@ -6,7 +6,7 @@ import { ScheduleSeat } from '../models/scheduleSeatModel.js';
 export const createShowtime = async (showtimeData) => {
     const { movieId, cinemaId, roomId, showDate, showTime, ticketPrice } = showtimeData;
 
-    // 1. Kiểm tra không trùng lịch
+    // 1. Check conflict showdate and showtime in same room
     const conflict = await Showtime.findOne({
         roomId,
         showDate,
@@ -18,7 +18,7 @@ export const createShowtime = async (showtimeData) => {
         throw new Error('CONFLICT');
     }
 
-    // 2. Tạo document Showtime
+    // 2. Create showtime document
     const showtime = new Showtime({
         movieId,
         roomId,
@@ -30,10 +30,10 @@ export const createShowtime = async (showtimeData) => {
     });
     const savedShowtime = await showtime.save();
 
-    // 3. Query toàn bộ Seat của roomId
+    // 3. Query all seat in room
     const seats = await Seat.find({ roomId });
 
-    // 5. Tạo tất cả bản ghi ScheduleSeat với status=1 (empty)
+    // 4. Create all schedule seat with status=1 (empty)
     const scheduleSeats = seats.map(seat => ({
         showtimeId: savedShowtime._id,
         seatId: seat._id,
@@ -47,16 +47,19 @@ export const createShowtime = async (showtimeData) => {
     return savedShowtime;
 };
 
-export const getShowtimesAdmin = async ({ cinemaId, movieId, date, page = 1, limit = 20 }) => {
+export const getShowtimesAdmin = async ({ movieId, cinemaId, showDate, page = 1, limit = 20 }) => {
     const filter = { isDeleted: false };
-    if (cinemaId) filter.cinemaId = cinemaId;
     if (movieId) filter.movieId = movieId;
-    if (date) {
-        filter.showDate = date;
+    if (cinemaId) filter.cinemaId = cinemaId;
+    if (showDate) {
+        const target = new Date(showDate);
+        const nextDay = new Date(showDate);
+        nextDay.setDate(nextDay.getDate() + 1);
+        filter.showDate = { $gte: target, $lt: nextDay };
     }
 
     const skip = (page - 1) * limit;
-    const totalItems = await Showtime.countDocuments(filter);
+    const total = await Showtime.countDocuments(filter);
     const showtimes = await Showtime.find(filter)
         .populate('movieId', 'movieName poster')
         .populate('cinemaId', 'cinemaName')
@@ -67,9 +70,11 @@ export const getShowtimesAdmin = async ({ cinemaId, movieId, date, page = 1, lim
         .lean();
 
     return {
-        data: showtimes,
-        totalItems,
-        totalPages: Math.ceil(totalItems / limit)
+        page: Number(page),
+        limit: Number(limit),
+        total,
+        totalPages: Math.ceil(total / limit),
+        data: showtimes
     };
 };
 

@@ -13,4 +13,7 @@ const showtimeSchema = new mongoose.Schema({
     deletedAt: {type: Date, default: null}
 }, { timestamps: true, versionKey: false, collection: 'showtimes' });
 
+showtimeSchema.index({ movieId: 1, showDate: 1 });
+showtimeSchema.index({ cinemaId: 1, showDate: 1, showTime: 1 });
+
 export const Showtime = mongoose.model('Showtime', showtimeSchema);
