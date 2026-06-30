@@ -2,8 +2,14 @@ import * as adminStaffService from '../services/adminStaffService.js';
 
 export const getStaffList = async (req, res) => {
     try {
-        const { page = 1, limit = 10, status = null } = req.query;
-        const result = await adminStaffService.getStaffList(page, limit, status);
+        const { page = 1, limit = 10, status, role, search } = req.query;
+        const result = await adminStaffService.getStaffList({
+            page: Number(page),
+            limit: Number(limit),
+            status,
+            role,
+            search
+        });
         
         return res.status(200).json({ success: true, data: result, message: 'Lấy danh sách nhân viên thành công.' });
     } catch (error) {
