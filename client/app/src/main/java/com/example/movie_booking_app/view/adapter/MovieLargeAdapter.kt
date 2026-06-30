@@ -35,7 +35,7 @@ class MovieLargeAdapter(
 
         fun bind(movie: Movie) {
             tvNameVn.text = movie.movieName
-            tvNameEn.text = movie.movieName
+            tvNameEn.text = movie.movieGenre?.joinToString(", ")
             tvRating.text = "${movie.rating} (${movie.totalReviews})"
             tvVersion.text = movie.censorship ?: "2D"
             

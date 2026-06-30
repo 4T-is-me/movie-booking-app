@@ -1,25 +1,72 @@
 package com.example.movie_booking_app.data.repository
 
+import com.example.movie_booking_app.data.api.ProfileApi
 import com.example.movie_booking_app.data.model.entity.UserProfile
+import com.example.movie_booking_app.data.model.request.UpdateProfileRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
+
+class UnauthorizedException(message: String) : Exception(message)
 
 /**
  * Repository to manage user profile data loading.
  */
-class ProfileRepository {
+class ProfileRepository @Inject constructor(
+    private val profileApi: ProfileApi
+) {
 
     /**
      * Emits the user profile details.
      */
     fun getUserProfile(): Flow<UserProfile> = flow {
-        // Mocking user profile data corresponding to the layout specs
-        emit(
-            UserProfile(
-                name = "Nguyen Van A",
-                phone = "0987654321",
-                email = "abc@gmail.com"
-            )
-        )
+        val response = profileApi.getProfile()
+        if (response.isSuccessful && response.body() != null) {
+            emit(response.body()!!)
+        } else {
+            val code = response.code()
+            val errorMsg = response.errorBody()?.string() ?: "Failed to fetch profile"
+            if (code == 401) {
+                throw UnauthorizedException(errorMsg)
+            } else {
+                throw Exception(errorMsg)
+            }
+        }
+    }
+
+    /**
+     * Updates and emits the user profile details.
+     */
+    fun updateProfile(request: UpdateProfileRequest): Flow<UserProfile> = flow {
+        val response = profileApi.updateProfile(request)
+        if (response.isSuccessful && response.body() != null) {
+            emit(response.body()!!)
+        } else {
+            val code = response.code()
+            val errorMsg = response.errorBody()?.string() ?: "Failed to update profile"
+            if (code == 401) {
+                throw UnauthorizedException(errorMsg)
+            } else {
+                throw Exception(errorMsg)
+            }
+        }
+    }
+
+    /**
+     * Uploads the user avatar.
+     */
+    fun uploadAvatar(avatarPart: okhttp3.MultipartBody.Part): Flow<com.example.movie_booking_app.data.model.response.UploadAvatarResponse> = flow {
+        val response = profileApi.uploadAvatar(avatarPart)
+        if (response.isSuccessful && response.body() != null) {
+            emit(response.body()!!)
+        } else {
+            val code = response.code()
+            val errorMsg = response.errorBody()?.string() ?: "Failed to upload avatar"
+            if (code == 401) {
+                throw UnauthorizedException(errorMsg)
+            } else {
+                throw Exception(errorMsg)
+            }
+        }
     }
 }

@@ -22,9 +22,9 @@
     <string name="login_placeholder_title">Login Screen Placeholder</string>
     <string name="auth_team_msg">This feature is being developed by the Auth team.</string>
 
-    <string name="user_name_placeholder">Nguyen Van A</string>
-    <string name="user_phone_placeholder">0987654321</string>
-    <string name="user_email_placeholder">abc@gmail.com</string>
+    <string name="user_name_placeholder">-</string>
+    <string name="user_phone_placeholder">-</string>
+    <string name="user_email_placeholder">-</string>
     <string name="my_ticket">My ticket</string>
     <string name="change_language">Change language</string>
     <string name="change_password">Change password</string>

@@ -19,30 +19,37 @@ const handleHoldSeats = async (req, res, next) => {
     }
 }
 
-const handleConfirmBooking = async(req, res, next) =>{
+const handleConfirmBooking = async (req, res, next) => {
     try {
 
-        const {showtimeId, seatIds, pointUsed,  paymentMethod, promotionId, combos } = req.body;
+        const {showtimeId, seatIds, useScore, paymentMethod, promotionId ,combos} = req.body;
 
-        const result =
-            await bookingService.handleConfirmBooking({
-                accountId: req.user?.accountId,
-                showtimeId,
-                seatIds,
-                pointUsed,
-                paymentMethod,
-                promotionId,
-                combos
-            });
-        return res.status(StatusCodes.OK).json({success: true,data: result})
+        const result = await bookingService.handleConfirmBooking({
+            accountId: req.user?.accountId,
+            showtimeId,
+            seatIds,
+            useScore,
+            paymentMethod,
+            promotionId,
+            combos
+        });
+
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            data: result
+        });
+
     } catch (error) {
-        next(error)
+        next(error);
     }
-}
+};
 
 const handleGetHistory = async (req, res, next) => {
     try {
-        const result = await bookingService.handleGetHistory(req.user?.accountId)
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+
+        const result = await bookingService.handleGetHistory(req.user?.accountId, page, limit)
         return res.status(StatusCodes.OK).json({success: true,data: result})
     } catch (error) {
         next(error)

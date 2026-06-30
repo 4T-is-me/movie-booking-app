@@ -97,7 +97,6 @@ class MovieRepositoryRemoteImpl @Inject constructor(
             false
         }
     }
-
     override suspend fun postMovie(movie: Movie): Boolean = true
 
     override suspend fun updateMovie(id: String, request: UpdateMovieRequest): Boolean {

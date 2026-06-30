@@ -56,12 +56,23 @@ class MovieDetailActivity : AppCompatActivity() {
                 Toast.makeText(this, "Please select a cinema first.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            val intent = Intent(this, SelectSeatActivity::class.java)
-            intent.putExtra("movieId", movieId)
-            intent.putExtra("cinemaId", selectedCinema!!.id)
-
+            val intent = Intent(this, SelectSeatActivity::class.java).apply {
+                putExtra("movieId", movieId)
+                putExtra("cinemaId", selectedCinema!!.id)
+                val movie = viewModel.movieDetail.value?.data
+                putExtra("movieName", movie?.movieName ?: "")
+                putExtra("moviePoster", movie?.poster ?: "")
+                putExtra("movieGenre", movie?.movieGenre?.joinToString(", ") ?: "")
+                putExtra("cinemaName", selectedCinema!!.cinemaName ?: "")
+                putExtra("cinemaAddress", selectedCinema!!.address ?: "")
+            }
             startActivity(intent)
         }
+
+        binding.ivBack.setOnClickListener {
+            finish()
+        }
+
         observeMovie()
     }
 
@@ -78,7 +89,7 @@ class MovieDetailActivity : AppCompatActivity() {
                             binding.txtGenre.text =  movie.movieGenre?.joinToString(", ") ?: ""
                             binding.txtLanguage.text = movie.language ?: ""
                             binding.txtDuration.text = formatDuration(movie.duration)
-                            binding.txtReleaseDate.text = formatReleaseDate(movie.releaseDate)
+                            binding.txtReleaseDate.text = com.example.movie_booking_app.utils.DateUtils.formatMovieDate(movie.releaseDate)
                             binding.txtRating.text = movie.rating.toString()
                             
                             val posterUrl = movie.poster
@@ -156,16 +167,4 @@ class MovieDetailActivity : AppCompatActivity() {
         }
     }
 
-    fun formatReleaseDate(date: String?): String {
-        if (date.isNullOrEmpty()) return ""
-
-        return try {
-            val parsedDateTime = ZonedDateTime.parse(date)
-
-            val outputFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
-            parsedDateTime.format(outputFormatter)
-        } catch (e: Exception) {
-            date
-        }
-    }
 }

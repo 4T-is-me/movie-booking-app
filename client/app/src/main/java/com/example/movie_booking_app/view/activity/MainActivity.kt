@@ -16,6 +16,7 @@ import com.example.movie_booking_app.view.fragment.GenericGridFragment
 import com.example.movie_booking_app.view.fragment.MovieGridFragment
 import com.example.movie_booking_app.view.fragment.MovieListFragment
 import com.example.movie_booking_app.view.fragment.PlaceholderFragment
+import com.example.movie_booking_app.view.fragment.ProfileFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -82,6 +83,7 @@ class MainActivity : BaseActivity() {
                 else if (title.contains("Profile", true)) "Profile"
                 else "Home"
             }
+            is ProfileFragment -> "Profile"
             else -> "Home"
         }
         highlightNav(target)
@@ -102,11 +104,7 @@ class MainActivity : BaseActivity() {
             "Home" -> MovieListFragment()
             "Now Playing", "Coming Soon" -> MovieGridFragment.newInstance(section)
             "Ticket" -> PlaceholderFragment.newInstance("Ticket System", R.drawable.ic_ticket)
-            "Profile" -> {
-                highlightNav("Profile")
-                startActivity(Intent(this, ProfileActivity::class.java))
-                return
-            }
+            "Profile" -> ProfileFragment()
             "Promo", "Service", "News" -> GenericGridFragment.newInstance(section)
             else -> MovieListFragment()
         }
