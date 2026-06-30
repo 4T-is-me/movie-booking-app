@@ -6,6 +6,8 @@ import { Promotion } from "../models/promotionModel.js";
 import { ScoreHistory } from "../models/scoreHistoryModel.js";
 import crypto from "crypto";
 import mongoose from "mongoose";
+import { StatusCodes } from "http-status-codes";
+import ApiError from "../utils/ApiError.js";
 
 //handle hold-seats
 const handleHoldSeats = async ({ accountId, showtimeId, seatIds }) => {
@@ -21,14 +23,14 @@ const handleHoldSeats = async ({ accountId, showtimeId, seatIds }) => {
 
       if (seat) {
         if (seat.status.toLocaleLowerCase() === constants.SEAT_STATUS.SOLD) {
-          throw new Error(`Seat ${seatId} is already booked`);
+          throw new ApiError(StatusCodes.CONFLICT,`Seat ${seatId} is already booked`);
         }
         if (
           seat.status.toLocaleLowerCase() === constants.SEAT_STATUS.HOLD &&
           seat.holdExpiresAt > now &&
           seat.accountId.toString() !== accountId.toString()
         ) {
-          throw new Error(`Seat ${seatId} is currently held by someone else`);
+          throw new ApiError(StatusCodes.CONFLICT, `Seat ${seatId} is currently held by someone else`);
         }
 
         // Cập nhật seat
@@ -81,7 +83,7 @@ const handleConfirmBooking = async ({accountId, showtimeId,seatIds,useScore = fa
 
       // validate member
       if (!member) {
-        throw new Error("Member not found");
+        throw new ApiError(StatusCodes.NOT_FOUND, "Member not found");
       }
 
       // find seat
@@ -97,7 +99,7 @@ const handleConfirmBooking = async ({accountId, showtimeId,seatIds,useScore = fa
 
       //validate seats
       if (seats.length !== seatIds.length) {
-        throw new Error("Some seats are no longer held by you");
+        throw new ApiError(StatusCodes.BAD_REQUEST,"Some seats are no longer held by you");
       }
 
       // ticket price
@@ -105,7 +107,7 @@ const handleConfirmBooking = async ({accountId, showtimeId,seatIds,useScore = fa
       seats.forEach((item) => {
         // check price
         if (!item.seatId.price) {
-          throw new Error(`Price not found for seat ${item.seatId.seatName}`);
+          throw new ApiError(StatusCodes.BAD_REQUEST,`Price not found for seat ${item.seatId.seatName}`);
         }
         ticketPrice += item.seatId.price;
       });
@@ -120,15 +122,16 @@ const handleConfirmBooking = async ({accountId, showtimeId,seatIds,useScore = fa
         promotion = await Promotion.findById(promotionId).session(session);
         // validate promotion
         if (!promotion) {
-          throw new Error("Promotion not found");
+          throw new ApiError( StatusCodes.NOT_FOUND,"Promotion not found");
         }
         promotionDiscount = Math.floor(
           subTotal * (promotion.discountLevel / 100),
         );
       }
-      const afterPromotion = subTotal - promotionDiscount; // giá trị sau khi áp mã khuyến mãi, ko có thì promotionDiscount = 0
+      // Value after applying the promotion code; if none, promotionDiscount = 0
+      const afterPromotion = subTotal - promotionDiscount; 
 
-      // xử lí đổi điểm thưởng
+      // Processing reward point redemptions
       let pointUsed = 0;
       let pointDiscount = 0;
       let earnedPoints = 0;
@@ -145,7 +148,8 @@ const handleConfirmBooking = async ({accountId, showtimeId,seatIds,useScore = fa
       }
 
       member.totalSpent += finalAmount;
-      // cập nhật hạng thành viên
+
+      // Update membership rank
       if (member.totalSpent >= 20000000) {
         member.membershipRank = "gold";
       } else if (member.totalSpent >= 5000000) {
@@ -157,7 +161,7 @@ const handleConfirmBooking = async ({accountId, showtimeId,seatIds,useScore = fa
       // 80% success annd 20% fail
       const paymentStatus = Math.random() < 0.8 ? "paid" : "failed";
       if (paymentStatus === "failed") {
-          throw new Error("Payment failed");
+          throw new ApiError(StatusCodes.BAD_REQUEST, "Payment failed");
       }
 
       await member.save({ session });
@@ -241,7 +245,7 @@ const handleGetHistory = async (accountId, page = 1, limit = 10) => {
     const member = await Member.findOne({ accountId });
 
     if (!member) {
-        throw new Error("Member not found");
+        throw new ApiError(StatusCodes.NOT_FOUND, "Member not found");
     }
 
     const skip = (page - 1) * limit;
@@ -273,7 +277,7 @@ const handleGetHistory = async (accountId, page = 1, limit = 10) => {
 const handleGetScoreHistory = async (accountId) => {
   const member = await Member.findOne({ accountId: accountId }); // get member
   if (!member) {
-    throw new Error("Member not found");
+    throw new ApiError(StatusCodes.NOT_FOUND, "Member not found");
   }
   return await ScoreHistory.find({ memberId: member._id })
     .sort({ createdAt: -1 })
