@@ -51,4 +51,22 @@ class ProfileRepository @Inject constructor(
             }
         }
     }
+
+    /**
+     * Uploads the user avatar.
+     */
+    fun uploadAvatar(avatarPart: okhttp3.MultipartBody.Part): Flow<com.example.movie_booking_app.data.model.response.UploadAvatarResponse> = flow {
+        val response = profileApi.uploadAvatar(avatarPart)
+        if (response.isSuccessful && response.body() != null) {
+            emit(response.body()!!)
+        } else {
+            val code = response.code()
+            val errorMsg = response.errorBody()?.string() ?: "Failed to upload avatar"
+            if (code == 401) {
+                throw UnauthorizedException(errorMsg)
+            } else {
+                throw Exception(errorMsg)
+            }
+        }
+    }
 }

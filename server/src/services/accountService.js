@@ -136,7 +136,10 @@ const getProfile = async (accountId) => {
         score: account.memberInfo?.rewardPoints || 0,
         role: account.roleId ? (account.roleId.name || account.roleId.roleName || 'Customer') : 'Customer',
         status: account.status,
-        registerDate: account.registerDate
+        registerDate: account.registerDate,
+        avatar: account.memberInfo?.image,
+        favoriteCinema: account.memberInfo?.favoriteCinema,
+        favoriteGenres: account.memberInfo?.favoriteGenres || []
     };
 }
 
@@ -157,8 +160,33 @@ const updateProfile = async (accountId, reqBody) => {
         }
         memberUpdate.phoneNumber = reqBody.phone;
     }
+    if (reqBody.identityCard) {
+        const existedCard = await Member.findOne({ identityCard: reqBody.identityCard, accountId: { $ne: accountId } });
+        if (existedCard) {
+            throw new ApiError(StatusCodes.CONFLICT, 'Identity card already exists');
+        }
+        memberUpdate.identityCard = reqBody.identityCard;
+    }
+    if (reqBody.fullName !== undefined) {
+        memberUpdate.fullName = reqBody.fullName;
+    }
     if (reqBody.address !== undefined) {
         memberUpdate.address = reqBody.address;
+    }
+    if (reqBody.dob !== undefined) {
+        memberUpdate.dateOfBirth = reqBody.dob;
+    }
+    if (reqBody.gender !== undefined) {
+        memberUpdate.gender = reqBody.gender;
+    }
+    if (reqBody.favoriteCinema !== undefined) {
+        memberUpdate.favoriteCinema = reqBody.favoriteCinema;
+    }
+    if (reqBody.favoriteGenres !== undefined) {
+        memberUpdate.favoriteGenres = reqBody.favoriteGenres;
+    }
+    if (reqBody.avatar !== undefined) {
+        memberUpdate.image = reqBody.avatar;
     }
 
     if (Object.keys(memberUpdate).length > 0) {
