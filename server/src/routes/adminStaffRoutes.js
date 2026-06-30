@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
+import { adminStaffValidation } from '../validation/adminStaffValidation.js';
 import {
     getStaffList,
     createStaff,
@@ -16,7 +17,7 @@ router.use(authMiddleware.isAuthorized, authMiddleware.authorizeRoles('Admin'));
 router.get('/', getStaffList);
 
 // POST /api/admin/staff - Create a new staff member
-router.post('/', createStaff);
+router.post('/', adminStaffValidation.createStaff, createStaff);
 
 // PUT /api/admin/staff/:id - Update staff details
 router.put('/:id', updateStaff);

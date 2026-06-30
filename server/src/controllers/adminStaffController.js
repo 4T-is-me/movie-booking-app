@@ -19,13 +19,8 @@ export const getStaffList = async (req, res) => {
 
 export const createStaff = async (req, res) => {
     try {
-        const { username, email, password, roleId, ...staffData } = req.body;
-        
-        if (!username || !email || !password || !roleId || !staffData.fullName || !staffData.identityCard) {
-            return res.status(400).json({ success: false, message: 'Thiếu thông tin bắt buộc để tạo nhân viên.' });
-        }
-
-        const accountData = { username, email, password, roleId };
+        const { username, email, password, roleId, role, ...staffData } = req.body;
+        const accountData = { username, email, password, roleId, role };
         const staff = await adminStaffService.createStaff(accountData, staffData);
 
         return res.status(201).json({ success: true, data: staff, message: 'Tạo tài khoản nhân viên (Staff) thành công.' });

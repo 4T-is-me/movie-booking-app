@@ -109,13 +109,54 @@ export const getStaffList = async (arg1, arg2, arg3) => {
 
 
 export const createStaff = async (accountData, staffData) => {
+    const { role, roleId } = accountData;
+    let targetRoleId = roleId;
+
+    if (role) {
+        let lookupName = role;
+        if (role.toLowerCase() === 'staff') {
+            lookupName = 'Employee';
+        }
+        const roleDoc = await Role.findOne({
+            $or: [
+                { name: { $regex: new RegExp(`^${lookupName}$`, 'i') } },
+                { roleName: { $regex: new RegExp(`^${lookupName}$`, 'i') } }
+            ]
+        }).lean();
+        if (!roleDoc) {
+            throw new Error('Role không tồn tại trong hệ thống.');
+        }
+        targetRoleId = roleDoc._id;
+    } else if (roleId) {
+        const roleDoc = await Role.findById(roleId).lean();
+        if (!roleDoc) {
+            throw new Error('Role không tồn tại trong hệ thống.');
+        }
+        const rName = roleDoc.roleName || roleDoc.name || '';
+        if (rName.toLowerCase() !== 'employee' && rName.toLowerCase() !== 'manager') {
+            throw new Error('Role không hợp lệ. Chỉ chấp nhận Staff (Employee) hoặc Manager.');
+        }
+        targetRoleId = roleDoc._id;
+    } else {
+        const roleDoc = await Role.findOne({
+            $or: [
+                { name: 'Employee' },
+                { roleName: 'Employee' }
+            ]
+        }).lean();
+        if (!roleDoc) {
+            throw new Error('Không tìm thấy Role mặc định cho Staff (Employee).');
+        }
+        targetRoleId = roleDoc._id;
+    }
+
     // 1. Tạo Account trước
     const hashedPassword = await bcrypt.hash(accountData.password, 10);
     const newAccount = new Account({
         username: accountData.username,
         email: accountData.email,
         passwordHash: hashedPassword,
-        roleId: accountData.roleId,
+        roleId: targetRoleId,
         status: 1
     });
     
@@ -127,7 +168,17 @@ export const createStaff = async (accountData, staffData) => {
         accountId: savedAccount._id
     });
     
-    return await newStaff.save();
+    const savedStaff = await newStaff.save();
+    
+    // Trả về bản ghi đã được populate đầy đủ thông tin
+    return await Staff.findById(savedStaff._id).populate({
+        path: 'accountId',
+        select: '-passwordHash -refreshToken',
+        populate: {
+            path: 'roleId',
+            select: 'roleName name'
+        }
+    }).lean();
 };
 
 export const updateStaff = async (staffId, staffData) => {
