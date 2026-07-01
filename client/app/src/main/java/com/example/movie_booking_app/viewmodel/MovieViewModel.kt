@@ -1,10 +1,9 @@
 package com.example.movie_booking_app.viewmodel
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import android.content.Context
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.movie_booking_app.data.model.entity.MovieNews
-import com.example.movie_booking_app.data.model.entity.Promo
-import com.example.movie_booking_app.data.model.entity.Service
 import com.example.movie_booking_app.data.model.entity.Showtime
 import com.example.movie_booking_app.data.model.response.MovieResponse
 import com.example.movie_booking_app.data.model.ui.HomeItem
@@ -18,9 +17,10 @@ import kotlin.collections.emptyList
 
 @HiltViewModel
 class MovieViewModel @Inject constructor(
+    application: Application,
     private val repository: MovieRepository,
     private val profileRepository: ProfileRepository
-) : ViewModel() {
+) : AndroidViewModel(application) {
 
     private val _searchQuery = MutableStateFlow("")
     
@@ -45,7 +45,7 @@ class MovieViewModel @Inject constructor(
     }
 
     private fun initialHomeState(): List<HomeItem> = listOf(
-        HomeItem.HeaderSection("User", isLoggedIn = false),
+        HomeItem.HeaderSection(getCachedUsername(), isLoggedIn = checkIsLoggedIn()),
         HomeItem.NowPlayingSection(null, isLoading = true),
         HomeItem.ComingSoonSection(null, isLoading = true),
         HomeItem.PromoSection(null, isLoading = true),
@@ -53,12 +53,26 @@ class MovieViewModel @Inject constructor(
         HomeItem.MovieNewsSection(null, isLoading = true)
     )
 
+    private fun getCachedUsername(): String {
+        val sharedPref = getApplication<Application>().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        return sharedPref.getString("username", "User") ?: "User"
+    }
+
+    private fun checkIsLoggedIn(): Boolean {
+        val sharedPref = getApplication<Application>().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val token = sharedPref.getString("auth_token", null)
+        return !token.isNullOrEmpty()
+    }
+
     fun loadHomeData() {
-        // User profile flow, defaults to "User" on error or if not logged in
+        val cachedName = getCachedUsername()
+        val currentlyLoggedIn = checkIsLoggedIn()
+
+        // User profile flow, defaults to cached values on start/error
         val userFlow = profileRepository.getUserProfile()
-            .map { (it.username ?: "User") to true }
-            .catch { emit("User" to false) }
-            .onStart { emit("User" to false) }
+            .map { (it.username ?: cachedName) to true }
+            .catch { emit(cachedName to currentlyLoggedIn) }
+            .onStart { emit(cachedName to currentlyLoggedIn) }
 
         viewModelScope.launch {
             combine(
