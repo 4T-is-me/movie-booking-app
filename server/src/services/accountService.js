@@ -78,13 +78,13 @@ const login = async (reqBody) => {
         throw new ApiError(StatusCodes.UNAUTHORIZED, 'Username, email, phone or password is incorrect')
     }
 
-    if (account.status === 0) {
-        throw new ApiError(StatusCodes.FORBIDDEN, 'Account has been locked!')
-    }
-
     const isMatch = await bcryptjs.compare(reqBody.password, account.passwordHash)
     if (!isMatch) {
         throw new ApiError(StatusCodes.UNAUTHORIZED, 'Username, email, phone or password is incorrect')
+    }
+
+    if (account.status !== 1) {
+        throw new ApiError(StatusCodes.FORBIDDEN, 'Account has been locked!')
     }
 
     const payload = {

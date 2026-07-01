@@ -15,6 +15,7 @@ import adminMovieRoutes from './src/routes/adminMovieRoutes.js';
 import adminShowtimeRoutes from './src/routes/adminShowtimeRoutes.js';
 import { adminRoomRoute } from './src/routes/adminRoomRoutes.js';
 import adminStaffRoutes from './src/routes/adminStaffRoutes.js';
+import adminMemberRoutes from './src/routes/adminMemberRoutes.js';
 import promotionRoute from './src/routes/promotionRoute.js';
 
 
@@ -41,6 +42,7 @@ app.use('/api/admin/showtimes', adminShowtimeRoutes);
 app.use('/api/admin/movies', adminMovieRoutes);
 app.use('/api/admin/rooms', adminRoomRoute.adminRoomRouter);
 app.use('/api/admin/staff', adminStaffRoutes);
+app.use('/api/admin/members', adminMemberRoutes);
 
 
 const startServer = async () => {
