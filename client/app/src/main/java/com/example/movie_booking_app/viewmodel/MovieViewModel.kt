@@ -54,7 +54,7 @@ class MovieViewModel @Inject constructor(
     )
 
     fun loadHomeData() {
-        // Luồng lấy tên người dùng, mặc định là "User" nếu lỗi hoặc chưa login
+        // User profile flow, defaults to "User" on error or if not logged in
         val userFlow = profileRepository.getUserProfile()
             .map { it.username ?: "User" }
             .catch { emit("User") }
@@ -118,7 +118,7 @@ class MovieViewModel @Inject constructor(
 
             repository.getMovieDetailsById(id)
                 .catch { e ->
-                    _detailError.value = "Lỗi: ${e.localizedMessage}"
+                    _detailError.value = "Error: ${e.localizedMessage}"
                 }
                 .collect { movieData ->
                     _movieDetail.value = MovieResponse(data = movieData)
@@ -133,7 +133,7 @@ class MovieViewModel @Inject constructor(
 
             repository.getMovieShowtimes(movieId)
                 .catch { e ->
-                    _showtimeError.value = "Lỗi: ${e.localizedMessage}"
+                    _showtimeError.value = "Error: ${e.localizedMessage}"
                 }
                 .collect { showtimes ->
                     _movieShowtimes.value = showtimes

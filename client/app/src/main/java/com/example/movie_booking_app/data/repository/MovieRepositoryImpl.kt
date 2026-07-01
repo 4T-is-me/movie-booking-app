@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class MovieRepositoryImpl : MovieRepository {
-// xiu phai doi code laji
+
     private val mockMovies = listOf(
         Movie(id = "1", movieName = "Avengers: Endgame", duration = 181, releaseDate = "27.04.2019", movieGenre = listOf("Action"), language = "English", censorship = "C13", description = "The grave course of events...", director = listOf("Russo Brothers"), actors = listOf("Robert Downey Jr."), country = "USA", status = "showing", poster = "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=500", rating = 4.8, totalReviews = 1500, createdAt = null, updatedAt = null, totalStars = null),
         Movie(id = "2", movieName = "Spider-Man: No Way Home", duration = 148, releaseDate = "17.12.2021", movieGenre = listOf("Action"), language = "English", censorship = "C13", description = "With Spider-Man's identity revealed...", director = listOf("Jon Watts"), actors = listOf("Tom Holland"), country = "USA", status = "showing", poster = "https://images.unsplash.com/photo-1635805737707-575885ab0820?w=500", rating = 4.5, totalReviews = 2100, createdAt = null, updatedAt = null, totalStars = null),

@@ -27,8 +27,8 @@ data class Seat(
     val label: String get() = "$row$number"
 
     /**
-     * Logic tách rời: Quyết định màu sắc hiển thị dựa trên trạng thái ghế.
-     * Đảm bảo pass Acceptance Criteria của task.
+     * Helper logic: Decides the background color based on seat status.
+     * Ensures Acceptance Criteria for the task are met.
      */
     fun getBackgroundResource(): Int {
         return when (status) {

@@ -8,7 +8,7 @@ data class ShowDate(
     var isSelected: Boolean = false
 ) {
     /**
-     * Logic tách rời: Chuyển đổi đối tượng Ngày sang chuỗi ID chuẩn cho API.
+     * Helper logic: Converts Date object to a standard ID string for API calls.
      */
     fun toApiId(): String = "$year-$month-$day"
 }
