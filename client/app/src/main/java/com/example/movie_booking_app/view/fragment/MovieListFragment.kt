@@ -42,6 +42,12 @@ class MovieListFragment : Fragment() {
         observeViewModel()
     }
 
+    override fun onResume() {
+        super.onResume()
+        // Refresh home data every time the screen is resumed (e.g., after login)
+        viewModel.loadHomeData()
+    }
+
     private fun setupRecyclerView() {
         homeAdapter = HomeMultiAdapter(
             onSearchQueryChanged = { query -> viewModel.searchMovies(query) },

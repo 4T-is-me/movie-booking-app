@@ -27,7 +27,7 @@ class CinemaScreenView @JvmOverloads constructor(
 
     private val glowPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
-        // Giảm từ 48f xuống 24f để luồng sáng sắc nét, gọn gàng hơn, không bị loang quá rộng
+        // Reduced from 48f to 24f for a sharper, cleaner light projection
         maskFilter = BlurMaskFilter(24f, BlurMaskFilter.Blur.NORMAL)
     }
 
@@ -53,18 +53,18 @@ class CinemaScreenView @JvmOverloads constructor(
 
         val lineY = 8f
 
-        // CHỈNH SỬA TỶ LỆ ĐỂ LUỒNG SÁNG GOM NHỎ LẠI:
-        // Tăng từ 6% lên 12% để thanh LED ngắn lại và luồng sáng gom vào giữa hơn
+        // ADJUST PROPORTIONS TO NARROW THE LIGHT BEAM:
+        // Increased from 6% to 12% to shorten the LED bar and center the light beam
         val topInset = w * 0.12f
         val topLeft = topInset
         val topRight = w - topInset
 
-        // Đáy hình thang không cho tràn 100% nữa, thu hẹp lại cách 2 bên mép 4%
+        // Bottom of the trapezoid is no longer 100% wide; inset by 4% on each side
         val bottomInset = w * 0.04f
         val bottomLeft = bottomInset
         val bottomRight = w - bottomInset
 
-        // Chiều dài luồng sáng (độ phủ dọc): lấy bằng chiều cao view
+        // Length of the light beam (vertical coverage): matches view height
         val bottom = h.toFloat()
 
         trapPath.reset()
@@ -74,15 +74,15 @@ class CinemaScreenView @JvmOverloads constructor(
         trapPath.lineTo(bottomLeft, bottom)
         trapPath.close()
 
-        // Tinh chỉnh Gradient để ánh sáng gom ở trên và tan biến nhanh hơn khi xuống dưới
+        // Tweak Gradient so light is concentrated at the top and fades faster towards the bottom
         glowPaint.shader = LinearGradient(
             w / 2f, lineY, w / 2f, bottom,
             intArrayOf(
-                Color.argb(140, 255, 193, 7),   // Giảm nhẹ độ đậm đỉnh (từ 166 -> 140)
-                Color.argb(45,  255, 193, 7),   // Làm mờ nhanh hơn ở giữa
-                Color.argb(0,   255, 193, 7)    // Biến mất hoàn toàn ở đáy
+                Color.argb(140, 255, 193, 7),   // Slightly reduced peak opacity (from 166 to 140)
+                Color.argb(45,  255, 193, 7),   // Fade faster in the middle
+                Color.argb(0,   255, 193, 7)    // Completely invisible at the bottom
             ),
-            floatArrayOf(0f, 0.35f, 1f), // Đẩy điểm thu hẹp dải sáng lên 0.35f thay vì 0.5f
+            floatArrayOf(0f, 0.35f, 1f), // Shift fade point to 0.35f instead of 0.5f
             Shader.TileMode.CLAMP
         )
     }
@@ -93,7 +93,7 @@ class CinemaScreenView @JvmOverloads constructor(
         canvas.drawPath(trapPath, glowPaint)
 
         val lineY = 8f
-        // Đồng bộ lại độ dài thanh LED trùng với đỉnh luồng sáng mới
+        // Synchronize LED bar length with the top width of the new light beam
         val topInset = width * 0.12f
         canvas.drawLine(topInset, lineY, width - topInset, lineY, linePaint)
         canvas.drawLine(topInset, lineY, width - topInset, lineY, solidLinePaint)
