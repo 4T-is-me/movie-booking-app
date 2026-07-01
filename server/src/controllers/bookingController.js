@@ -2,6 +2,8 @@ import { bookingService } from "../services/bookingService.js";
 import { StatusCodes } from "http-status-codes";
 import ApiError from '../utils/ApiError.js';
 
+
+// POST /api/showtimes/:id/hold - Hold a seat for a booking
 const handleHoldSeats = async (req, res, next) => {
     try {
 
@@ -19,6 +21,7 @@ const handleHoldSeats = async (req, res, next) => {
     }
 }
 
+// POST /api/booking/checkout --check seats valid + total price + check and deduct points
 const handleConfirmBooking = async (req, res, next) => {
     try {
 
@@ -43,7 +46,7 @@ const handleConfirmBooking = async (req, res, next) => {
         next(error);
     }
 };
-
+// GET /api/booking/history --get history
 const handleGetHistory = async (req, res, next) => {
     try {
         const page = Number(req.query.page) || 1;
@@ -55,7 +58,7 @@ const handleGetHistory = async (req, res, next) => {
         next(error)
     }
 }
-
+// GET /api/booking/score-history --get score history
 const handleGetScoreHistory = async (req, res, next) => {
     try {
         const result = await bookingService.handleGetScoreHistory(req.user?.accountId)
@@ -64,6 +67,7 @@ const handleGetScoreHistory = async (req, res, next) => {
         next(error)
     }
 }
+// POST /api/showtimes/:id/release - Release a seat for a booking
 const handleReleaseBooking = async (req, res, next) => {
     try {
         const showtimeId = req.params.id;
@@ -83,7 +87,7 @@ const handleReleaseBooking = async (req, res, next) => {
         next(error);
     }
 }
-
+// POST /api/booking/:id - get booking detail
 const handleGetBookingDetail = async (req, res, next) => {
 
     try {

@@ -6,7 +6,7 @@ const generateTicketCode = async (bookingId) => {
 
     const now = new Date();
     const year = now.getFullYear();
-    // padStart(2, '0') giúp đảm bảo luôn có 2 chữ số, ví dụ: "7" thành "07"
+    // padStart(2, '0') alway 2 number => "7" into "07"
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
     const dateString = `${year}${month}${day}`;
@@ -25,7 +25,7 @@ const generateTicketCode = async (bookingId) => {
 const generateQRCode = async (bookingCode) => {
     try {
         const qrCodeDataURL = await QRCode.toDataURL(bookingCode, {
-            errorCorrectionLevel: 'H',  // Cao hơn để scan tốt
+            errorCorrectionLevel: 'H',  //high better scanning.
             margin: 2,
             width: 300,                 // width of the QR code image
             color: {

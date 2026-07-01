@@ -120,7 +120,8 @@ const handleGetAllRoom = async () => {
                     status: "active"
                 }
             },
-            // Join with the Cinema table(CinemaRoom join Cinema) - from: name collection, cinemaId: CinemaRoom table, _id: Cinema table
+            // Join with the Cinema table(CinemaRoom join Cinema) 
+            // from: name collection, cinemaId: CinemaRoom table, _id: Cinema table
             {
                 $lookup: {
                     from: 'cinemas', 
@@ -258,7 +259,8 @@ const handleUpdateSeatTypes = async (roomId, seatType) => {
             throw new ApiError(StatusCodes.BAD_REQUEST, `Seat type "${item.seatType}" is invalid! Only the following are accepted: ${allowedSeatTypes.join(', ')}`);
         }   
     }
-    //Tạo mảng operations cho bulkWrite -  Ép filter phải trùng roomId để tránh update nhầm phòng khác
+    //Create operations array for bulkWrite 
+    // Enforce a filter matching the roomId => prevent accidentally updating a different room
     const operations = seatType.map(item => {
         return {
             updateOne: {

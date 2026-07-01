@@ -37,13 +37,13 @@ const handleHoldSeats = async ({ accountId, showtimeId, seatIds }) => {
           throw new ApiError(StatusCodes.CONFLICT, `Seat ${seatId} is currently held by someone else`);
         }
 
-        // Cập nhật seat
+        // update existing seat
         seat.status = constants.SEAT_STATUS.HOLD;
         seat.accountId = accountId;
         seat.holdExpiresAt = expiredTime;
         await seat.save({ session });
       } else {
-        // Tạo mới seat
+        // create new seat
         seat = new ScheduleSeat({
           showtimeId,
           seatId,
@@ -111,7 +111,7 @@ const handleConfirmBooking = async ({accountId, showtimeId,seatIds,useScore = fa
         ticketPrice += item.seatId.price;
       });
       const comboPrice = combos.reduce((total, combo) => total + combo.price * combo.quantity,0,); //price combo
-      const subTotal = ticketPrice + comboPrice; // vé + combo
+      const subTotal = ticketPrice + comboPrice; // ticket + combo price
 
       //Promotion(if any)
       let promotionDiscount = 0;
