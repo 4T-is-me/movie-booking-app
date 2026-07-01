@@ -58,9 +58,11 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.cardview)
     implementation(libs.androidx.gridlayout)
+    implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.material)
     implementation(libs.shimmer)
     implementation(libs.glide)
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     ksp(libs.glide.compiler)
 
     // Network

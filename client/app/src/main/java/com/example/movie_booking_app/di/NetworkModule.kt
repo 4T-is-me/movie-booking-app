@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.di
 
+import com.example.movie_booking_app.data.api.AdminApiService
 import com.example.movie_booking_app.data.api.AuthApi
 import com.example.movie_booking_app.data.api.CinemaRoomApi
 import com.example.movie_booking_app.data.api.MovieApi
@@ -44,5 +45,11 @@ object NetworkModule {
     @Singleton
     fun providePaymentApi(): PaymentApi {
         return RetrofitClient.paymentApi
+    }
+
+    @Provides
+    @Singleton
+    fun provideAdminApi(): AdminApiService {
+        return RetrofitClient.adminApi
     }
 }

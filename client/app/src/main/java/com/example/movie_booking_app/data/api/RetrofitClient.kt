@@ -57,5 +57,9 @@ object RetrofitClient {
         instance.create(CinemaRoomApi::class.java)
     }
 
+    val adminApi: AdminApiService by lazy {
+        instance.create(AdminApiService::class.java)
+    }
+
 
 }
