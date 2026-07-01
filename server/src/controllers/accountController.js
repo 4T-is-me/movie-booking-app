@@ -15,6 +15,12 @@ const login = async (req, res, next) => {
         const account = await accountService.login(req.body)
         res.status(StatusCodes.OK).json(account)
     } catch (error) {
+        if (error.statusCode) {
+            return res.status(error.statusCode).json({
+                success: false,
+                message: error.message
+            });
+        }
         next(error)
     }
 }
