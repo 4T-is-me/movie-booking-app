@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.view.fragment.AdminMovieListFragment
 import com.example.movie_booking_app.view.fragment.AdminRoomListFragment
+import com.example.movie_booking_app.view.fragment.admin.AdminStatsFragment
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -44,7 +45,7 @@ class AdminActivity : AppCompatActivity() {
                 }
                 R.id.nav_dashboard -> {
                     tvHeaderTitle.text = "Dashboard"
-                    loadFragment(BlankFragment())
+                    loadFragment(AdminStatsFragment())
                 }
                 R.id.nav_employees -> {
                     tvHeaderTitle.text = "Employees"
@@ -71,11 +72,11 @@ class AdminActivity : AppCompatActivity() {
             true
         }
 
-        // Set default selection to Dashboard (Empty)
+        // Set default selection to Dashboard (AdminStatsFragment)
         if (savedInstanceState == null) {
             navigationView.setCheckedItem(R.id.nav_dashboard)
             tvHeaderTitle.text = "Dashboard"
-            loadFragment(BlankFragment())
+            loadFragment(AdminStatsFragment())
         }
     }
 
