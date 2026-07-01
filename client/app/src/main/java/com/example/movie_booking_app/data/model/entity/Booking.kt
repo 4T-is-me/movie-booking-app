@@ -22,7 +22,7 @@ data class Booking(
     val combos: List<ComboDetail>?,
     val ticketTotal: Int,
     val comboTotal: Int,
-    val bookingFee: Int = 10000,
+    val bookingFee: Int = 0,
     val discount: Int = 0,
     val grandTotal: Int,
     val promotionId: String? = null

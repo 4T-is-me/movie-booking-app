@@ -16,7 +16,7 @@ data class BookingUiState(
     val ticketSubtotal: Int = 0,
     val comboSubtotal: Int = 0,
     val discountAmount: Int = 0,
-    val bookingFee: Int = 10000,
+    val bookingFee: Int = 0,
     val grandTotal: Int = 0,
     val promotionId: String? = null,
     val selectedPaymentMethod: String? = null
