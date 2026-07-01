@@ -70,7 +70,10 @@ class HomeMultiAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position)
         when (holder) {
-            is HeaderViewHolder -> holder.bind((item as HomeItem.HeaderSection).userName)
+            is HeaderViewHolder -> {
+                val section = item as HomeItem.HeaderSection
+                holder.bind(section.userName, section.isLoggedIn)
+            }
             is NowPlayingViewHolder -> {
                 val section = item as HomeItem.NowPlayingSection
                 holder.bind(section.movies ?: emptyList(), section.isLoading)
@@ -108,7 +111,10 @@ class HomeMultiAdapter(
             })
             btnLogin.setOnClickListener { onLogin() }
         }
-        fun bind(name: String) { tvHi.text = "Hi, $name 👋" }
+        fun bind(name: String, isLoggedIn: Boolean) {
+            tvHi.text = "Hi, $name 👋"
+            btnLogin.visibility = if (isLoggedIn) View.GONE else View.VISIBLE
+        }
     }
 
     class NowPlayingViewHolder(view: View, onSeeAll: (String) -> Unit, onMovie: (Movie) -> Unit) : RecyclerView.ViewHolder(view) {

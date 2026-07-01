@@ -45,7 +45,7 @@ class MovieViewModel @Inject constructor(
     }
 
     private fun initialHomeState(): List<HomeItem> = listOf(
-        HomeItem.HeaderSection("User"),
+        HomeItem.HeaderSection("User", isLoggedIn = false),
         HomeItem.NowPlayingSection(null, isLoading = true),
         HomeItem.ComingSoonSection(null, isLoading = true),
         HomeItem.PromoSection(null, isLoading = true),
@@ -56,9 +56,9 @@ class MovieViewModel @Inject constructor(
     fun loadHomeData() {
         // User profile flow, defaults to "User" on error or if not logged in
         val userFlow = profileRepository.getUserProfile()
-            .map { it.username ?: "User" }
-            .catch { emit("User") }
-            .onStart { emit("User") }
+            .map { (it.username ?: "User") to true }
+            .catch { emit("User" to false) }
+            .onStart { emit("User" to false) }
 
         viewModelScope.launch {
             combine(
@@ -66,9 +66,10 @@ class MovieViewModel @Inject constructor(
                 repository.getPromos().onStart { emit(emptyList()) },
                 repository.getServices().onStart { emit(emptyList()) },
                 repository.getNews().onStart { emit(emptyList()) },
-                combine(userFlow, _searchQuery) { name, query -> name to query }
+                combine(userFlow, _searchQuery) { userState, query -> userState to query }
             ) { movies, promos, services, news, userAndQuery ->
-                val userName = userAndQuery.first
+                val userName = userAndQuery.first.first
+                val isLoggedIn = userAndQuery.first.second
                 val query = userAndQuery.second
                 
                 val filteredMovies = if (query.isEmpty()) movies else {
@@ -76,10 +77,10 @@ class MovieViewModel @Inject constructor(
                 }
 
                 if (filteredMovies.isEmpty() && query.isNotEmpty()) {
-                    listOf(HomeItem.HeaderSection(userName), HomeItem.EmptyState)
+                    listOf(HomeItem.HeaderSection(userName, isLoggedIn), HomeItem.EmptyState)
                 } else {
                     val list = mutableListOf<HomeItem>()
-                    list.add(HomeItem.HeaderSection(userName))
+                    list.add(HomeItem.HeaderSection(userName, isLoggedIn))
                     
                     val nowPlaying = filteredMovies.filter { 
                         val s = it.status?.lowercase() ?: ""
