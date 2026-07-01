@@ -126,9 +126,9 @@ class SelectSeatActivity : AppCompatActivity() {
                 combos = emptyList(),
                 ticketTotal = ticketTotal,
                 comboTotal = 0,
-                bookingFee = 10000,
+                bookingFee = 0,
                 discount = 0,
-                grandTotal = ticketTotal + 10000
+                grandTotal = ticketTotal
             )
 
             val intent = Intent(this, PaymentActivity::class.java).apply {
