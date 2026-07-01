@@ -83,10 +83,28 @@ const handleReleaseBooking = async (req, res, next) => {
         next(error);
     }
 }
+
+const handleGetBookingDetail = async (req, res, next) => {
+
+    try {
+        const bookingId = req.params.id;
+        const accountId = req.user?.accountId;
+        //validate input
+        if(!accountId || !bookingId){
+            throw new ApiError(StatusCodes.BAD_REQUEST, "Missing accountId or bookingId");
+        }
+        const result = await bookingService.handleGetbookingDetail(bookingId, accountId);
+        return res.status(StatusCodes.OK).json({success: true, data: result});
+    } catch (error) {
+        next(error);
+    }
+
+}
 export const bookingController = { 
     handleHoldSeats,
     handleConfirmBooking,
     handleGetHistory,
     handleGetScoreHistory,
-    handleReleaseBooking
+    handleReleaseBooking,
+    handleGetBookingDetail
 }
