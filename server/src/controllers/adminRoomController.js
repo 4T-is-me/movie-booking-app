@@ -2,7 +2,7 @@ import {adminRoomService} from "../services/adminRoomService.js";
 import { StatusCodes } from "http-status-codes";
 
 
-//create room
+//POST /api/admin/rooms - create room
 const creatRoomWithSeats = async (req, res, next) => {
     const {cinemaId, roomName, roomType, rowsCount, colsCount} = req.body;
     try {
@@ -29,7 +29,7 @@ const creatRoomWithSeats = async (req, res, next) => {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: `Internal server error: ${error.message}` });
     }
 }
-// get all rooms(admin)
+//GET /api/admin/rooms get all rooms(admin)
 const getAllRooms = async (req, res, next) => {
     try {
         const rooms = await adminRoomService.handleGetAllRoom();
@@ -38,7 +38,8 @@ const getAllRooms = async (req, res, next) => {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: `Internal server error: ${error.message}` });
     }
 }
-// get seats of a room
+
+//GET /api/admin/rooms/:id/seats - get seats of a room
 const getRoomSeats = async (req, res, next) => {
     try {
         const roomId = req.params.id;
@@ -49,7 +50,7 @@ const getRoomSeats = async (req, res, next) => {
     }
 }
 
-// update seat types
+//PATCH /api/admin/rooms/:id/seats - update seat types of a room
 const updateSeatTypes = async (req, res, next) => {
     try {
         const roomId = req.params.id;
@@ -60,7 +61,8 @@ const updateSeatTypes = async (req, res, next) => {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: `Internal server error: ${error.message}` });
     }
 }
-// soft delete
+
+//DELETE /api/admin/rooms/:id - delete a room
 const softDeleteRoom = async (req, res, next) => {
     try {
         const {id: roomId} = req.params;
