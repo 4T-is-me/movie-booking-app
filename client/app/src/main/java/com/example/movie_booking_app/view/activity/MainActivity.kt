@@ -2,7 +2,6 @@ package com.example.movie_booking_app.view.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -14,7 +13,7 @@ import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.ActivityMainBinding
 import com.example.movie_booking_app.view.fragment.GenericGridFragment
 import com.example.movie_booking_app.view.fragment.MovieGridFragment
-import com.example.movie_booking_app.view.fragment.MovieListFragment
+import com.example.movie_booking_app.view.fragment.HomeFragment
 import com.example.movie_booking_app.view.fragment.PlaceholderFragment
 import com.example.movie_booking_app.view.fragment.ProfileFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -77,7 +76,7 @@ class MainActivity : BaseActivity() {
 
     private fun updateNavHighlightByFragment(fragment: Fragment?) {
         val target = when (fragment) {
-            is MovieListFragment -> "Home"
+            is HomeFragment -> "Home"
             is MovieGridFragment -> "Movie"
             is GenericGridFragment -> "Movie" 
             is PlaceholderFragment -> {
@@ -104,12 +103,12 @@ class MainActivity : BaseActivity() {
         currentSection = section
         
         val fragment: Fragment = when (section) {
-            "Home" -> MovieListFragment()
+            "Home" -> HomeFragment()
             "Now Playing", "Coming Soon" -> MovieGridFragment.newInstance(section)
             "Ticket" -> PlaceholderFragment.newInstance("Ticket System", R.drawable.ic_ticket)
             "Profile" -> ProfileFragment()
             "Promo", "Service", "News" -> GenericGridFragment.newInstance(section)
-            else -> MovieListFragment()
+            else -> HomeFragment()
         }
 
         val transaction = supportFragmentManager.beginTransaction()

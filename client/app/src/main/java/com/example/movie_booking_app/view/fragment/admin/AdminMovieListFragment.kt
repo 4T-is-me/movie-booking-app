@@ -1,4 +1,4 @@
-package com.example.movie_booking_app.view.fragment
+package com.example.movie_booking_app.view.fragment.admin
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,10 +11,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
+import com.example.movie_booking_app.data.model.entity.Movie
 import com.example.movie_booking_app.view.adapter.AdminMovieAdapter
 import com.example.movie_booking_app.viewmodel.MovieViewModel
-import com.example.movie_booking_app.data.repository.MovieRepository
-import com.example.movie_booking_app.data.repository.RepositoryProvider
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -24,7 +24,6 @@ class AdminMovieListFragment : Fragment() {
 
     private val viewModel: MovieViewModel by viewModels()
     private lateinit var adapter: AdminMovieAdapter
-    private val movieRepository: MovieRepository = RepositoryProvider.provideMovieRepository()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,7 +44,7 @@ class AdminMovieListFragment : Fragment() {
                 // TODO: Open Edit Fragment
             },
             onDeleteClick = { movie ->
-                movie.id?.let { viewModel.deleteMovie(it) }
+                showDeleteConfirmationDialog(movie)
             }
         )
 
@@ -55,24 +54,42 @@ class AdminMovieListFragment : Fragment() {
         fabAddMovie.setOnClickListener {
             // TODO: Open Add Movie Fragment
             parentFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, com.example.movie_booking_app.view.activity.AdminCreateMovieActivity())
+                .replace(R.id.fragmentContainer, AdminCreateMovieFragment())
                 .addToBackStack(null)
                 .commit()
         }
 
+        viewModel.loadAdminMovies()
         observeViewModel()
+    }
+
+    private fun showDeleteConfirmationDialog(movie: Movie) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Xóa phim")
+            .setMessage("Bạn có chắc chắn muốn xóa phim \"${movie.movieName}\" không?")
+            .setNegativeButton("Hủy", null)
+            .setPositiveButton("Xóa") { _, _ ->
+                movie.id?.let { viewModel.deleteMovie(it) }
+            }
+            .show()
     }
 
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
-            movieRepository.getMovies().collect { movies ->
+            viewModel.adminMovies.collect { movies ->
                 adapter.submitList(movies)
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.movieActionSuccess.collect { success ->
-                val message = if (success) "Action successful!" else "Action failed!"
+                val message = if (success) "Xóa phim thành công" else "Xóa phim thất bại"
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.movieActionMessage.collect { message ->
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             }
         }

@@ -1,4 +1,4 @@
-package com.example.movie_booking_app.data.model
+package com.example.movie_booking_app.data.model.response
 
 data class AccountResponse(
     val username: String?,

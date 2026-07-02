@@ -4,8 +4,8 @@ import com.google.gson.annotations.SerializedName
 
 data class CinemaRoom(
     @SerializedName("_id") val id: String,
-    @SerializedName("room_name") val roomName: String,
-    @SerializedName("total_seats") val totalSeats: Int,
-    val rows: Int = 0,
-    val columns: Int = 0
+    @SerializedName("roomName") val roomName: String,
+    @SerializedName("totalSeats") val totalSeats: Int,
+    @SerializedName("rowsCount") val rows: Int = 0,
+    @SerializedName("colsCount") val columns: Int = 0
 )

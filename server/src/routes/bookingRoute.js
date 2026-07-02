@@ -4,12 +4,14 @@ import { authMiddleware } from '../middlewares/authMiddleware.js'
 
 const bookingRouter = express.Router()
 
-// POST /api/bookings/checkout --check seats valid + total price + check and deduct points
+// POST /api/booking/checkout --check seats valid + total price + check and deduct points
 bookingRouter.post('/checkout', authMiddleware.isAuthorized, bookingController.handleConfirmBooking)
-// GET /api/bookings/history --get history
+// GET /api/booking/history --get history
 bookingRouter.get('/history', authMiddleware.isAuthorized, bookingController.handleGetHistory)
-// GET /api/bookings/score-history --get score history
+// GET /api/booking/score-history --get score history
 bookingRouter.get('/score-history', authMiddleware.isAuthorized, bookingController.handleGetScoreHistory)
+// POST /api/booking/:id - get booking detail
+bookingRouter.get('/:id', authMiddleware.isAuthorized, bookingController.handleGetBookingDetail)
 export const bookingRoute = {
     bookingRouter
 }

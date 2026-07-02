@@ -13,6 +13,12 @@ import { bookingRoute } from './src/routes/bookingRoute.js';
 import { memberRoute } from './src/routes/memberRoute.js';
 import adminMovieRoutes from './src/routes/adminMovieRoutes.js';
 import adminShowtimeRoutes from './src/routes/adminShowtimeRoutes.js';
+import { adminRoomRoute } from './src/routes/adminRoomRoutes.js';
+import adminStaffRoutes from './src/routes/adminStaffRoutes.js';
+import adminMemberRoutes from './src/routes/adminMemberRoutes.js';
+import promotionRoute from './src/routes/promotionRoute.js';
+import adminStatsRoutes from './src/routes/adminStatsRoutes.js';
+
 
 const app = express();
 const PORT = env.PORT || 5000;
@@ -21,6 +27,7 @@ app.use(helmet());
 app.use(morgan('dev'));
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static('uploads'));
 
 
 // Routes
@@ -31,8 +38,14 @@ app.use('/api/users', accountRoute.accountRouter);
 app.use('/api/accounts', accountRoute.accountRouter);
 app.use('/api/members', memberRoute.memberRouter);
 app.use('/api/booking', bookingRoute.bookingRouter);
+app.use('/api/promotions', promotionRoute);
 app.use('/api/admin/showtimes', adminShowtimeRoutes);
 app.use('/api/admin/movies', adminMovieRoutes);
+app.use('/api/admin/rooms', adminRoomRoute.adminRoomRouter);
+app.use('/api/admin/staff', adminStaffRoutes);
+app.use('/api/admin/members', adminMemberRoutes);
+app.use('/api/admin/stats', adminStatsRoutes);
+
 
 const startServer = async () => {
     await connectDB();

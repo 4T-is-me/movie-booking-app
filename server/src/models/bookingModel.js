@@ -4,19 +4,18 @@ const bookingSchema = new mongoose.Schema({
     memberId: { type: mongoose.Schema.Types.ObjectId, ref: 'Member', required: true },
     showtimeId: { type: mongoose.Schema.Types.ObjectId, ref: 'Showtime', required: true },
     promotionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Promotion' },
-    bookingCode: { type: String, required: true, unique: true },
+    bookingCode: { type: String, required: true, unique: true},
     seatIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Seat' }],
     seatNames: [{ type: String }],
-    combos: [{
-        name: String,
-        quantity: Number,
-        price: Number
-    }],
+    combos: [{name: String, quantity: Number, price: Number}],
     ticketPrice: { type: Number, required: true },
     comboPrice: { type: Number, default: 0 },
-    totalAmount: { type: Number, required: true },
+    subTotalAmount: { type: Number, required: true }, // before discount
     paymentStatus: { type: String, default: 'pending' }, // 'pending', 'successful', 'cancel'
     paymentMethod: { type: String, required: true },
+    qrCodeData: { type: String },
+    disCountAmount: { type: Number, default: 0 },
+    finalAmount: { type: Number, required: true }, // after discount
     createdAt: { type: Date, default: Date.now }
 }, {
     // Cấu hình timestamps chỉ tạo createdAt, tắt updatedAt nếu DB không dùng tới

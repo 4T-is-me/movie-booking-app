@@ -4,8 +4,13 @@ import { constants } from "../utils/constants.js";
 import { Member } from "../models/memberModel.js";
 import { Promotion } from "../models/promotionModel.js";
 import { ScoreHistory } from "../models/scoreHistoryModel.js";
+import { ticketUtils } from "../utils/ticketUtils.js";
 import crypto from "crypto";
 import mongoose from "mongoose";
+import { StatusCodes } from "http-status-codes";
+import ApiError from "../utils/ApiError.js";
+import { formatDate } from "../utils/formatters.js";
+import { format } from "path";
 
 //handle hold-seats
 const handleHoldSeats = async ({ accountId, showtimeId, seatIds }) => {
@@ -20,24 +25,25 @@ const handleHoldSeats = async ({ accountId, showtimeId, seatIds }) => {
       let seat = await ScheduleSeat.findOne({ showtimeId, seatId }).session(session);
 
       if (seat) {
-        if (seat.status.toLocaleLowerCase() === constants.SEAT_STATUS.SOLD) {
-          throw new Error(`Seat ${seatId} is already booked`);
+        const seatStatusStr = String(seat.status).toLowerCase();
+        if (seatStatusStr === constants.SEAT_STATUS.SOLD) {
+           throw new ApiError(StatusCodes.CONFLICT,`Seat ${seatId} is already booked`);
         }
         if (
-          seat.status.toLocaleLowerCase() === constants.SEAT_STATUS.HOLD &&
+          seatStatusStr === constants.SEAT_STATUS.HOLD &&
           seat.holdExpiresAt > now &&
           seat.accountId.toString() !== accountId.toString()
         ) {
-          throw new Error(`Seat ${seatId} is currently held by someone else`);
+          throw new ApiError(StatusCodes.CONFLICT, `Seat ${seatId} is currently held by someone else`);
         }
 
-        // Cập nhật seat
+        // update existing seat
         seat.status = constants.SEAT_STATUS.HOLD;
         seat.accountId = accountId;
         seat.holdExpiresAt = expiredTime;
         await seat.save({ session });
       } else {
-        // Tạo mới seat
+        // create new seat
         seat = new ScheduleSeat({
           showtimeId,
           seatId,
@@ -59,11 +65,6 @@ const handleHoldSeats = async ({ accountId, showtimeId, seatIds }) => {
     session.endSession();
   }
 };
-// handle generate booking code
-const generateBookingCode = () => {
-  const randomStr = crypto.randomBytes(6).toString("hex").toUpperCase();
-  return `BK-${randomStr.match(/.{1,4}/g).join("-")}`;
-};
 
 // handle confirm booking
 const handleConfirmBooking = async ({accountId, showtimeId,seatIds,useScore = false,paymentMethod,promotionId,combos = []}) => {
@@ -81,7 +82,7 @@ const handleConfirmBooking = async ({accountId, showtimeId,seatIds,useScore = fa
 
       // validate member
       if (!member) {
-        throw new Error("Member not found");
+        throw new ApiError(StatusCodes.NOT_FOUND, "Member not found");
       }
 
       // find seat
@@ -97,7 +98,7 @@ const handleConfirmBooking = async ({accountId, showtimeId,seatIds,useScore = fa
 
       //validate seats
       if (seats.length !== seatIds.length) {
-        throw new Error("Some seats are no longer held by you");
+        throw new ApiError(StatusCodes.BAD_REQUEST,"Some seats are no longer held by you");
       }
 
       // ticket price
@@ -105,12 +106,12 @@ const handleConfirmBooking = async ({accountId, showtimeId,seatIds,useScore = fa
       seats.forEach((item) => {
         // check price
         if (!item.seatId.price) {
-          throw new Error(`Price not found for seat ${item.seatId.seatName}`);
+          throw new ApiError(StatusCodes.BAD_REQUEST,`Price not found for seat ${item.seatId.seatName}`);
         }
         ticketPrice += item.seatId.price;
       });
       const comboPrice = combos.reduce((total, combo) => total + combo.price * combo.quantity,0,); //price combo
-      const subTotal = ticketPrice + comboPrice; // vé + combo
+      const subTotal = ticketPrice + comboPrice; // ticket + combo price
 
       //Promotion(if any)
       let promotionDiscount = 0;
@@ -120,15 +121,16 @@ const handleConfirmBooking = async ({accountId, showtimeId,seatIds,useScore = fa
         promotion = await Promotion.findById(promotionId).session(session);
         // validate promotion
         if (!promotion) {
-          throw new Error("Promotion not found");
+          throw new ApiError( StatusCodes.NOT_FOUND,"Promotion not found");
         }
         promotionDiscount = Math.floor(
           subTotal * (promotion.discountLevel / 100),
         );
       }
-      const afterPromotion = subTotal - promotionDiscount; // giá trị sau khi áp mã khuyến mãi, ko có thì promotionDiscount = 0
+      // Value after applying the promotion code; if none, promotionDiscount = 0
+      const afterPromotion = subTotal - promotionDiscount; 
 
-      // xử lí đổi điểm thưởng
+      // Processing reward point redemptions
       let pointUsed = 0;
       let pointDiscount = 0;
       let earnedPoints = 0;
@@ -145,7 +147,8 @@ const handleConfirmBooking = async ({accountId, showtimeId,seatIds,useScore = fa
       }
 
       member.totalSpent += finalAmount;
-      // cập nhật hạng thành viên
+
+      // Update membership rank
       if (member.totalSpent >= 20000000) {
         member.membershipRank = "gold";
       } else if (member.totalSpent >= 5000000) {
@@ -157,26 +160,33 @@ const handleConfirmBooking = async ({accountId, showtimeId,seatIds,useScore = fa
       // 80% success annd 20% fail
       const paymentStatus = Math.random() < 0.8 ? "paid" : "failed";
       if (paymentStatus === "failed") {
-          throw new Error("Payment failed");
+          throw new ApiError(StatusCodes.BAD_REQUEST, "Payment failed");
       }
 
       await member.save({ session });
+
+      const ticketCode = await ticketUtils.generateTicketCode();
+      const qrCodeData = await ticketUtils.generateQRCode(ticketCode);
+      
       // create booking
       const booking = await Booking.create(
         [
           {
             memberId: member._id,
             showtimeId: showtimeId,
-            bookingCode: generateBookingCode(),
+            bookingCode: ticketCode,
             promotionId: promotionId,
             seatIds: seatIds,
             seatNames: seats.map((seat) => seat.seatId.seatName),
             combos: combos,
             ticketPrice: ticketPrice,
             comboPrice: comboPrice,
-            totalAmount: finalAmount,
+            subTotalAmount: subTotal,
             paymentStatus: paymentStatus,
             paymentMethod: paymentMethod,
+            qrCodeData: qrCodeData,
+            disCountAmount: promotionDiscount + pointDiscount,
+            finalAmount: finalAmount,
           },
         ],
         { session },
@@ -241,7 +251,7 @@ const handleGetHistory = async (accountId, page = 1, limit = 10) => {
     const member = await Member.findOne({ accountId });
 
     if (!member) {
-        throw new Error("Member not found");
+        throw new ApiError(StatusCodes.NOT_FOUND, "Member not found");
     }
 
     const skip = (page - 1) * limit;
@@ -253,17 +263,45 @@ const handleGetHistory = async (accountId, page = 1, limit = 10) => {
         memberId: member._id
     }).populate({
             path: "showtimeId",
-            populate: {
-                path: "movieId"
-            }
+            populate:[
+              {path: "movieId"},
+              {path: "cinemaId"},
+              {path: "roomId"}
+            ]
       })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .lean();
 
+    const mappedBoookings = bookings.map(booking => {
+        const showtime = booking.showtimeId
+        const movie = showtime?.movieId;
+        console.log("showtime", showtime);
+        const cinema = showtime?.cinemaId;
+        console.log("cinema", cinema);
+        const cinemaRoom = showtime?.roomId;
+        console.log("cinemaRoom", cinemaRoom);  
+
+        return {
+          bookingId: booking._id,
+          bookingCode: booking.bookingCode,
+          movie: movie?.movieName || "",
+          poster: movie?.poster || "",
+          showDate: formatDate(showtime?.showDate) || "",
+          showtime: showtime?.showTime || "",
+          cinemaName: cinema?.cinemaName || "",
+          roomName: cinemaRoom?.roomName || "",
+          seats: booking.seatNames || [],
+          finalAmount: booking.finalAmount || 0,
+          paymentStatus: booking.paymentStatus || "pending",
+          createdAt: formatDate(booking.createdAt, true) || new Date()
+        }
+    })
+
+
     return {
-        data: bookings,
+        data: mappedBoookings,
         totalItems,
         totalPages: Math.ceil(totalItems / limit)
     };
@@ -273,8 +311,9 @@ const handleGetHistory = async (accountId, page = 1, limit = 10) => {
 const handleGetScoreHistory = async (accountId) => {
   const member = await Member.findOne({ accountId: accountId }); // get member
   if (!member) {
-    throw new Error("Member not found");
+    throw new ApiError(StatusCodes.NOT_FOUND, "Member not found");
   }
+
   return await ScoreHistory.find({ memberId: member._id })
     .sort({ createdAt: -1 })
     .populate("bookingId");
@@ -294,10 +333,83 @@ const handleReleaseBooking = async ({ accountId, showtimeId }) => {
   };
 };
 
+// get booking detail - can also be used to display My tickets
+const handleGetbookingDetail = async (bookingId, accountId) => {
+    //find member
+    const member = await Member.findOne({accountId: accountId});
+    //validate member
+    if(!member) {
+      throw new ApiError(StatusCodes.NOT_FOUND, "Member not found");
+    }
+    //Query booking
+    const booking = await Booking.findOne({ _id: bookingId, memberId: member._id })
+    .populate([{
+      path: "showtimeId",
+      populate: [
+            {path: "movieId"}, // get movie from showtime
+            {path: "cinemaId"}, // get cinema room from showtime,
+            {path: "roomId", select: "roomName"} // get room name from cinema room
+        ]
+    },
+    { 
+      path: "seatIds", // get lisst seat from booking
+      select: "seatName seatType price"
+    }])
+
+    //validate booking
+    if(!booking) {
+      throw new ApiError(StatusCodes.NOT_FOUND, "Booking not found");
+    }
+    // get showtime, movie, cinema room to easy map
+    const showtime = booking.showtimeId;
+    const movie = showtime.movieId;
+    const cinema = showtime.cinemaId;
+    const cinemaRoom = showtime.roomId;
+
+    //map data
+    const responseBookingDetail = {
+      bookingId: booking._id,
+      bookingCode: booking.bookingCode,
+      qrCodeData: booking.qrCodeData,
+      movie: {
+        movieName: movie.movieName || "",
+        duration: movie.duration || 0,
+        poster: movie.poster || "",
+        movieGenre: movie.movieGenre || []
+      },
+      showtime: {
+        showDate: showtime.showDate || "",
+        showtime: showtime.showTime || ""
+      },
+      cinema: {
+        cinemaName: cinema.cinemaName || "",
+      },
+      cinemaRoom: {
+        roomName: cinemaRoom.roomName || "",
+      },
+      seats: booking.seatIds.map(seat => ({
+        seatName: seat.seatName || "",
+        seatType: seat.seatType || "",
+        price: seat.price || 0
+      })),
+      payment: {
+        ticketPrice: booking.ticketPrice || 0,
+        comboPrice: booking.comboPrice || 0,
+        subTotalAmount: booking.subTotalAmount || 0,
+        disCountAmount: booking.disCountAmount || 0,
+        finalAmount: booking.finalAmount || 0,
+        paymentMethod: booking.paymentMethod || ""
+      },
+      status: booking.paymentStatus || ""
+    }
+    return responseBookingDetail;
+}
+
 export const bookingService = {
   handleHoldSeats,
   handleConfirmBooking,
   handleGetHistory,
   handleGetScoreHistory,
   handleReleaseBooking,
+  handleGetbookingDetail
 };

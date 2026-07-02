@@ -41,7 +41,7 @@ class MovieDetailActivity : AppCompatActivity() {
         movieId = intent.getStringExtra("movieId") ?: ""
 
         if (movieId.isEmpty()) {
-            Toast.makeText(this, "Movie ID không hợp lệ", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Movie ID invalid", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -51,15 +51,27 @@ class MovieDetailActivity : AppCompatActivity() {
         viewModel.fetchMovieShowtimes(movieId)
 
         binding.btnBookTicket.setOnClickListener {
+            val movie = viewModel.movieDetail.value?.data
+
+            if (movie?.status == "coming-soon") {
+                Toast.makeText(this, "This movie is coming soon.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
             if (selectedCinema == null) {
                 Toast.makeText(this, "Please select a cinema first.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            val intent = Intent(this, SelectSeatActivity::class.java)
-            intent.putExtra("movieId", movieId)
-            intent.putExtra("cinemaId", selectedCinema!!.id)
-
+            val intent = Intent(this, SelectSeatActivity::class.java).apply {
+                putExtra("movieId", movieId)
+                putExtra("cinemaId", selectedCinema!!.id)
+                val movie = viewModel.movieDetail.value?.data
+                putExtra("movieName", movie?.movieName ?: "")
+                putExtra("moviePoster", movie?.poster ?: "")
+                putExtra("movieGenre", movie?.movieGenre?.joinToString(", ") ?: "")
+                putExtra("cinemaName", selectedCinema!!.cinemaName ?: "")
+                putExtra("cinemaAddress", selectedCinema!!.address ?: "")
+            }
             startActivity(intent)
         }
 
@@ -78,14 +90,16 @@ class MovieDetailActivity : AppCompatActivity() {
                 launch {
                     viewModel.movieDetail.collect { response ->
                         response?.data?.let { movie ->
+                            val review = movie.totalReviews.toString()
                             binding.txtTitle.text = movie.movieName ?: "Unknown"
                             binding.txtDescription.text = movie.description ?: ""
                             binding.txtGenre.text =  movie.movieGenre?.joinToString(", ") ?: ""
                             binding.txtLanguage.text = movie.language ?: ""
                             binding.txtDuration.text = formatDuration(movie.duration)
                             binding.txtReleaseDate.text = com.example.movie_booking_app.utils.DateUtils.formatMovieDate(movie.releaseDate)
-                            binding.txtRating.text = movie.rating.toString()
-                            
+                            binding.txtRating.text = movie.rating?.toString() ?: "Unrated"
+                            binding.txtVote.text = "(${review})"
+
                             val posterUrl = movie.poster
                             val fullUrl = if (posterUrl?.startsWith("http") == true) posterUrl 
                                           else "${com.example.movie_booking_app.utils.Constants.BASE_URL}${posterUrl?.removePrefix("/")}"

@@ -44,7 +44,14 @@ const updateProfile = async (req, res, next) => {
     const correctCondition = Joi.object({
         email: Joi.string().email().trim().strict(),
         phone: Joi.string().pattern(/^0\d{9}$/).trim().strict(),
-        address: Joi.string().trim().strict()
+        address: Joi.string().trim().strict().allow('', null),
+        fullName: Joi.string().trim().strict(),
+        dob: Joi.date().allow('', null),
+        gender: Joi.string().trim().strict().allow('', null),
+        identityCard: Joi.string().length(12).pattern(/^[0-9]+$/).trim().strict(),
+        favoriteCinema: Joi.string().trim().strict().allow('', null),
+        favoriteGenres: Joi.array().items(Joi.string().trim().strict()).allow(null),
+        avatar: Joi.string().trim().strict().allow('', null)
     })
 
     try {

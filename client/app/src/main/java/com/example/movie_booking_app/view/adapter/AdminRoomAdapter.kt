@@ -28,10 +28,12 @@ class AdminRoomAdapter(
     class RoomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvRoomName: TextView = itemView.findViewById(R.id.tvRoomName)
         private val tvTotalSeats: TextView = itemView.findViewById(R.id.tvTotalSeats)
+        private val tvRoomHint: TextView = itemView.findViewById(R.id.tvRoomHint)
 
         fun bind(room: CinemaRoom) {
             tvRoomName.text = room.roomName
-            tvTotalSeats.text = "Total Seats: ${room.totalSeats}"
+            tvTotalSeats.text = "Tổng ghế: ${room.totalSeats}"
+            tvRoomHint.text = "Chạm để chỉnh sơ đồ ghế"
         }
     }
 

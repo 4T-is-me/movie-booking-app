@@ -1,10 +1,11 @@
-package com.example.movie_booking_app.view.fragment
+package com.example.movie_booking_app.view.fragment.admin
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -34,10 +35,12 @@ class AdminRoomListFragment : Fragment() {
 
         val rvRooms = view.findViewById<RecyclerView>(R.id.rvRooms)
         val progressBar = view.findViewById<ProgressBar>(R.id.progressBar)
+        val tvTotalRoomsCount = view.findViewById<TextView>(R.id.tvTotalRoomsCount)
 
         adapter = AdminRoomAdapter(
             onRoomClick = { room ->
-                val fragment = AdminRoomDetailFragment.newInstance(room.id, room.roomName, room.columns)
+                val fragment =
+                    AdminRoomDetailFragment.newInstance(room.id, room.roomName, room.columns)
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.fragmentContainer, fragment)
                     .addToBackStack(null)
@@ -51,6 +54,7 @@ class AdminRoomListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.rooms.collect { rooms ->
                 adapter.submitList(rooms)
+                tvTotalRoomsCount.text = "${rooms.size} phòng"
             }
         }
 

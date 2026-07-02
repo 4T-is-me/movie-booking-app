@@ -1,14 +1,15 @@
 import mongoose from 'mongoose';
-1
+import * as showtimeAdminService from '../services/adminShowtimeService.js';
+
 // POST /api/admin/showtimes
 export const createShowtime = async (req, res) => {
     try {
-        const { movieId, cinemaId, roomId, showDate, showTime, startTime, endTime } = req.body;
+        const { movieId, cinemaId, roomId, showDate, showTime, ticketPrice } = req.body;
 
-        if (!movieId || !cinemaId || !roomId || !showDate || !startTime || !endTime) {
+        if (!movieId || !cinemaId || !roomId || !showDate || !showTime || !ticketPrice) {
             return res.status(400).json({
                 success: false,
-                message: 'Vui lòng điền đủ các trường bắt buộc: movieId, cinemaId, roomId, showDate, startTime, endTime.'
+                message: 'Vui lòng điền đủ các trường bắt buộc: movieId, cinemaId, roomId, showDate, showTime, ticketPrice.'
             });
         }
 
@@ -32,12 +33,12 @@ export const createShowtime = async (req, res) => {
 // GET /api/admin/showtimes
 export const getShowtimesAdmin = async (req, res) => {
     try {
-        const { cinemaId, movieId, date, page = 1, limit = 20 } = req.query;
+        const { movieId, cinemaId, showDate, page = 1, limit = 20 } = req.query;
 
         const result = await showtimeAdminService.getShowtimesAdmin({
-            cinemaId,
             movieId,
-            date,
+            cinemaId,
+            showDate,
             page: Number(page),
             limit: Number(limit)
         });
@@ -88,6 +89,9 @@ export const softDeleteShowtime = async (req, res) => {
     } catch (error) {
         if (error.message === 'ALREADY_DELETED') {
             return res.status(409).json({ success: false, message: 'Suất chiếu đã bị xóa trước đó.' });
+        }
+        if (error.message === 'HAS_BOOKINGS') {
+            return res.status(409).json({ success: false, message: 'Không thể xóa suất chiếu đã có ghế được đặt hoặc đang giữ.' });
         }
         return res.status(500).json({ success: false, message: 'Lỗi server.', error: error.message });
     }
