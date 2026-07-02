@@ -1,4 +1,4 @@
-package com.example.movie_booking_app.view.fragment
+package com.example.movie_booking_app.view.fragment.admin
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,7 +14,6 @@ import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Movie
 import com.example.movie_booking_app.view.adapter.AdminMovieAdapter
 import com.example.movie_booking_app.viewmodel.MovieViewModel
-import com.example.movie_booking_app.data.repository.RepositoryProvider
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import dagger.hilt.android.AndroidEntryPoint
@@ -55,7 +54,7 @@ class AdminMovieListFragment : Fragment() {
         fabAddMovie.setOnClickListener {
             // TODO: Open Add Movie Fragment
             parentFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, com.example.movie_booking_app.view.activity.AdminCreateMovieActivity())
+                .replace(R.id.fragmentContainer, AdminCreateMovieFragment())
                 .addToBackStack(null)
                 .commit()
         }

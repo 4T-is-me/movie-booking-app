@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.repository.MovieRepository
 import com.example.movie_booking_app.data.repository.RepositoryProvider
-import com.example.movie_booking_app.databinding.LayoutMovieGridContentBinding
+import com.example.movie_booking_app.databinding.FragmentMovieGridBinding
 import com.example.movie_booking_app.view.activity.MovieDetailActivity
 import com.example.movie_booking_app.view.adapter.MovieGridAdapter
 import kotlinx.coroutines.delay
@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 
 class MovieGridFragment : Fragment() {
 
-    private var _binding: LayoutMovieGridContentBinding? = null
+    private var _binding: FragmentMovieGridBinding? = null
     private val binding get() = _binding!!
 
     private val movieRepository: MovieRepository = RepositoryProvider.provideMovieRepository()
@@ -42,7 +42,7 @@ class MovieGridFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = LayoutMovieGridContentBinding.inflate(inflater, container, false)
+        _binding = FragmentMovieGridBinding.inflate(inflater, container, false)
         return binding.root
     }
 
