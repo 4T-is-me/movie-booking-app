@@ -194,9 +194,9 @@
                         android:hint="@string/dob_hint"
                         android:textColorHint="#808080"
                         android:textColor="#FFFFFF"
-                        android:focusable="false"
+                        android:focusable="true"
                         android:clickable="true"
-                        android:inputType="none"
+                        android:inputType="date"
                         android:ellipsize="end"
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
