@@ -14,7 +14,7 @@ class AdminRepository @Inject constructor(
         api.getDailyRevenue(startDate, endDate)
 
     suspend fun getMonthlyRevenue(year: Int) =
-        api.getMonthlyRevenue(year)
+        api.getMonthlyRevenue("$year-01-01", "$year-12-31")
 
     suspend fun getMovieRevenue() =
         api.getMovieRevenue()

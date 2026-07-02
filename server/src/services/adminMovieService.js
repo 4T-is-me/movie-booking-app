@@ -7,11 +7,25 @@ export const createMovie = async (movieData) => {
 };
 
 export const updateMovie = async (movieId, updateData) => {
-    return await Movie.findByIdAndUpdate(movieId, updateData, { new: true });
+    const movie = await Movie.findById(movieId);
+    if(!movie || movie.isDeleted) {
+        throw new Error('MovieNotFound');
+    }
+    const {_id, safeUpdateData} = updateData;
+    Object.assign(movie, safeUpdateData);
+    await movie.save();
+    return movie;
 };
 
 export const deleteMovie = async (movieId) => {
-    return await Movie.findByIdAndDelete(movieId);
+    const movie = await Movie.findById(movieId);
+    if(!movie || movie.isDeleted) {
+        throw new Error('MovieNotFound');
+    }
+    movie.isDeleted = true;
+    movie.deletedAt = new Date();
+    await movie.save();
+    return movie;
 };
 
 /**
@@ -38,3 +52,41 @@ export const assignMovieToCinemas = async (movieId, cinemaIds) => {
     const assignedCinemas = await Showtime.insertMany(pendingShowtimes);
     return assignedCinemas;
 };
+
+export const getMoviesAdmin = async (query) => {
+    const { status, page = 1, limit = 10, search } = query;
+    const parsedPage = parseInt(page, 10);
+    const parsedLimit = parseInt(limit, 10);
+    
+    const skip = (parsedPage - 1) * parsedLimit;
+    const q = {};
+    if(search) {
+        q.movieName = { $regex: search, $options: 'i' };
+    }
+
+    if(status == 'deleted') {
+        // Chỉ lấy các phim đã bị Soft Delete
+        q.isDeleted = true;
+    }else {
+    //Dùng $ne: true để lấy cả những phim chưa có trường isDeleted
+       q.isDeleted = { $ne: true };
+        if(status === 'showing') {
+            q.status = 'showing';
+        }else if(status === 'coming-soon') {
+            q.status = 'coming-soon';
+        }
+    }
+
+    const [ totalCount, movies] = await Promise.all([
+        Movie.countDocuments(q),
+        Movie.find(q).skip(skip).limit(parsedLimit).sort({ createdAt: -1 }).lean()
+    ]);
+    const totalPages = Math.ceil(totalCount / parsedLimit);
+    return {
+        data: movies,
+        totalCount,
+        totalPages,
+        currentPage: parsedPage
+    }
+
+}  
