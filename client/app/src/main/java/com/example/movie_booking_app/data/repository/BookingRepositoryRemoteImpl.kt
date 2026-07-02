@@ -1,13 +1,13 @@
 package com.example.movie_booking_app.data.repository
 
-import com.example.movie_booking_app.data.api.bookingApi
+import com.example.movie_booking_app.data.api.BookingApi
 import com.example.movie_booking_app.data.model.entity.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class BookingRepositoryRemoteImpl @Inject constructor(
-    private val api: bookingApi
+    private val api: BookingApi
 ) : BookingRepository {
 
     override fun getSeats(date: String, time: String): Flow<List<Seat>> = flow {

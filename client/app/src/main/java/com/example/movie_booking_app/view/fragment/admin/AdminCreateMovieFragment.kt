@@ -1,4 +1,4 @@
-package com.example.movie_booking_app.view.activity
+package com.example.movie_booking_app.view.fragment.admin
 
 import android.app.DatePickerDialog
 import android.os.Bundle
@@ -9,8 +9,13 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.example.movie_booking_app.R
+import com.example.movie_booking_app.data.model.request.AddMovieRequest
+import com.example.movie_booking_app.viewmodel.MovieViewModel
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
@@ -18,10 +23,21 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-class AdminCreateMovieActivity : Fragment() {
+class AdminCreateMovieFragment : Fragment() {
 
     private val availableGenres = listOf("Action", "Adventure", "Animation", "Comedy", "Crime", "Documentary", "Drama", "Family", "Fantasy", "History", "Horror", "Music", "Mystery", "Romance", "Science Fiction", "TV Movie", "Thriller", "War", "Western")
     private val selectedGenres = mutableSetOf<String>()
+
+    private var selectedPosterUri: android.net.Uri? = null
+    
+    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        if (uri != null) {
+            selectedPosterUri = uri
+            view?.findViewById<android.widget.ImageView>(R.id.ivPosterPreview)?.let { iv ->
+                Glide.with(this).load(uri).into(iv)
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,7 +55,6 @@ class AdminCreateMovieActivity : Fragment() {
         val edtLanguage = view.findViewById<TextInputEditText>(R.id.edtLanguage)
         val edtDirector = view.findViewById<TextInputEditText>(R.id.edtDirector)
         val edtActors = view.findViewById<TextInputEditText>(R.id.edtActors)
-        val edtPoster = view.findViewById<TextInputEditText>(R.id.edtPoster)
         val edtDescription = view.findViewById<TextInputEditText>(R.id.edtDescription)
 
         // Setup Release Date Picker
@@ -89,21 +104,38 @@ class AdminCreateMovieActivity : Fragment() {
         val censorshipOptions = arrayOf("P (Mọi lứa tuổi)", "K (Dưới 13 tuổi cần người lớn)", "T13 (Từ 13 tuổi)", "T16 (Từ 16 tuổi)", "T18 (Từ 18 tuổi)", "C (Cấm chiếu)")
         val censorshipCodes = arrayOf("P", "K", "T13", "T16", "T18", "C")
         val spnCensorship = view.findViewById<AutoCompleteTextView>(R.id.spnCensorship)
-        val censorshipAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, censorshipOptions)
+        val censorshipAdapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_dropdown_item_1line,
+            censorshipOptions
+        )
         spnCensorship.setAdapter(censorshipAdapter)
 
         // Setup Status Dropdown
         val statusOptions = arrayOf("showing", "coming-soon")
         val spnStatus = view.findViewById<AutoCompleteTextView>(R.id.spnStatus)
-        val statusAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, statusOptions)
+        val statusAdapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_dropdown_item_1line,
+            statusOptions
+        )
         spnStatus.setAdapter(statusAdapter)
 
         // Setup Country Search Dropdown
         val countryOptions = arrayOf("Vietnam", "USA", "Korea", "Japan", "China", "UK", "France", "India", "Thailand")
         val edtCountry = view.findViewById<AutoCompleteTextView>(R.id.edtCountry)
-        val countryAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, countryOptions)
+        val countryAdapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_dropdown_item_1line,
+            countryOptions
+        )
         edtCountry.setAdapter(countryAdapter)
-        
+
+        val btnChoosePoster = view.findViewById<Button>(R.id.btnChoosePoster)
+        btnChoosePoster.setOnClickListener {
+            pickImageLauncher.launch("image/*")
+        }
+
         val btnSubmit = view.findViewById<Button>(R.id.btnSubmitMovie)
         btnSubmit.setOnClickListener {
             val name = edtMovieName.text.toString()
@@ -112,11 +144,10 @@ class AdminCreateMovieActivity : Fragment() {
             val language = edtLanguage.text.toString()
             val director = edtDirector.text.toString().split(",").map { it.trim() }.filter { it.isNotEmpty() }
             val actors = edtActors.text.toString().split(",").map { it.trim() }.filter { it.isNotEmpty() }
-            val poster = edtPoster.text.toString()
             val description = edtDescription.text.toString()
             val country = edtCountry.text.toString()
             val status = spnStatus.text.toString()
-            
+
             val censorshipRaw = spnCensorship.text.toString()
             var censorshipCode = "P"
             val index = censorshipOptions.indexOf(censorshipRaw)
@@ -129,7 +160,7 @@ class AdminCreateMovieActivity : Fragment() {
                 return@setOnClickListener
             }
 
-            val request = com.example.movie_booking_app.data.model.request.AddMovieRequest(
+            val request = AddMovieRequest(
                 movieName = name,
                 duration = duration,
                 releaseDate = releaseDate,
@@ -138,13 +169,13 @@ class AdminCreateMovieActivity : Fragment() {
                 actors = actors,
                 description = description,
                 country = country,
-                poster = poster,
+                poster = "",
                 language = language,
                 censorship = censorshipCode,
                 status = status
             )
 
-            val viewModel = androidx.lifecycle.ViewModelProvider(requireActivity())[com.example.movie_booking_app.viewmodel.MovieViewModel::class.java]
+            val viewModel = ViewModelProvider(requireActivity())[MovieViewModel::class.java]
             viewModel.addMovie(request)
 
             Toast.makeText(requireContext(), "Adding movie...", Toast.LENGTH_SHORT).show()

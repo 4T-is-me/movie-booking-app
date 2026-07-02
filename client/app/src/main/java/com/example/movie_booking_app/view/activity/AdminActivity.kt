@@ -11,8 +11,8 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.example.movie_booking_app.R
-import com.example.movie_booking_app.view.fragment.AdminMovieListFragment
-import com.example.movie_booking_app.view.fragment.AdminRoomListFragment
+import com.example.movie_booking_app.view.fragment.admin.AdminMovieListFragment
+import com.example.movie_booking_app.view.fragment.admin.AdminRoomListFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminStatsFragment
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
