@@ -41,7 +41,7 @@ class MovieDetailActivity : AppCompatActivity() {
         movieId = intent.getStringExtra("movieId") ?: ""
 
         if (movieId.isEmpty()) {
-            Toast.makeText(this, "Movie ID không hợp lệ", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Movie ID invalid", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -84,14 +84,16 @@ class MovieDetailActivity : AppCompatActivity() {
                 launch {
                     viewModel.movieDetail.collect { response ->
                         response?.data?.let { movie ->
+                            val review = movie.totalReviews.toString()
                             binding.txtTitle.text = movie.movieName ?: "Unknown"
                             binding.txtDescription.text = movie.description ?: ""
                             binding.txtGenre.text =  movie.movieGenre?.joinToString(", ") ?: ""
                             binding.txtLanguage.text = movie.language ?: ""
                             binding.txtDuration.text = formatDuration(movie.duration)
                             binding.txtReleaseDate.text = com.example.movie_booking_app.utils.DateUtils.formatMovieDate(movie.releaseDate)
-                            binding.txtRating.text = movie.rating.toString()
-                            
+                            binding.txtRating.text = movie.rating?.toString() ?: "Unrated"
+                            binding.txtVote.text = "(${review})"
+
                             val posterUrl = movie.poster
                             val fullUrl = if (posterUrl?.startsWith("http") == true) posterUrl 
                                           else "${com.example.movie_booking_app.utils.Constants.BASE_URL}${posterUrl?.removePrefix("/")}"
