@@ -19,7 +19,7 @@ export const getDailyRevenueStats = async (startDate, endDate) => {
         }
     }
 
-    // Lọc theo trạng thái hóa đơn hoạt động (ở model invoice là status = 1)
+    // Filter by active invoice status (in invoice model, status = 1)
     matchStage.status = 1;
 
     const pipeline = [
@@ -27,7 +27,7 @@ export const getDailyRevenueStats = async (startDate, endDate) => {
         {
             $group: {
                 _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-                totalRevenue: { $sum: "$totalMoney" }, // Sử dụng totalMoney của Invoice
+                totalRevenue: { $sum: "$totalMoney" }, // Use totalMoney of Invoice
                 ticketCount: { $sum: 1 }
             }
         },
@@ -60,7 +60,7 @@ export const getMonthlyRevenueStats = async (startDate, endDate) => {
         }
     }
 
-    // Lọc theo trạng thái hóa đơn hoạt động (ở model invoice là status = 1)
+    // Filter by active invoice status (in invoice model, status = 1)
     matchStage.status = 1;
 
     const pipeline = [
@@ -71,7 +71,7 @@ export const getMonthlyRevenueStats = async (startDate, endDate) => {
                     year: { $year: "$createdAt" },
                     month: { $month: "$createdAt" }
                 },
-                totalRevenue: { $sum: "$totalMoney" }, // Sử dụng totalMoney của Invoice
+                totalRevenue: { $sum: "$totalMoney" }, // Use totalMoney of Invoice
                 ticketCount: { $sum: 1 }
             }
         },
@@ -136,7 +136,7 @@ export const getOverviewStats = async () => {
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
 
-    // 1. Tìm role Member trước để dùng trong query Account
+    // 1. Find Member role first to use in Account query
     const memberRole = await Role.findOne({
         $or: [
             { name: 'Member' },
@@ -144,9 +144,9 @@ export const getOverviewStats = async () => {
         ]
     });
 
-    // 2. Chạy song song 4 query bằng Promise.all
+    // 2. Run 4 queries in parallel using Promise.all
     const [revenueData, invoicesToday, memberCount, moviesShowingCount] = await Promise.all([
-        // (1) Doanh thu tháng hiện tại từ Invoice
+        // (1) Current month revenue from Invoice
         Invoice.aggregate([
             {
                 $match: {
@@ -160,13 +160,13 @@ export const getOverviewStats = async () => {
                 }
             }
         ]),
-        // (2) Lấy các invoice bán hôm nay để tính số vé
+        // (2) Get invoices sold today to calculate number of tickets
         Invoice.find({
             createdAt: { $gte: startOfDay, $lte: endOfDay }
         }).select('seat'),
-        // (3) Số Member status=1 từ Account
+        // (3) Number of active Members (status = 1) from Account
         memberRole ? Account.countDocuments({ roleId: memberRole._id, status: 1 }) : 0,
-        // (4) Số phim isDeleted=false đang chiếu từ Movie (dùng Index đã thêm ở ISSUE_30)
+        // (4) Number of active showing movies (isDeleted = false) from Movie
         Movie.countDocuments({
             isDeleted: false,
             releaseDate: { $lte: now },
@@ -174,10 +174,10 @@ export const getOverviewStats = async () => {
         })
     ]);
 
-    // Tính tổng doanh thu tháng hiện tại
+    // Calculate total revenue of the current month
     const currentMonthRevenue = revenueData[0]?.total || 0;
 
-    // Tính số vé bán hôm nay từ danh sách ghế (mỗi ghế là 1 vé)
+    // Calculate tickets sold today from seat list (each seat is 1 ticket)
     let ticketsSoldToday = 0;
     invoicesToday.forEach(invoice => {
         if (invoice.seat) {

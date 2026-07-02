@@ -1,12 +1,8 @@
 import { Router } from 'express';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
-import {
-    createMovie,
-    updateMovie,
-    deleteMovie,
-    assignMovieToCinemas,
-    getMoviesAdmin
-} from '../controllers/adminMovieController.js';
+import { adminMovieController } from '../controllers/adminMovieController.js';
+import { uploadMiddleware } from '../middlewares/uploadCloud.js';
+import { AdminMovieValidation } from '../validation/adminMovieValidation.js';
 
 const router = Router();
 
@@ -14,17 +10,18 @@ const router = Router();
 router.use(authMiddleware.isAuthorized, authMiddleware.authorizeRoles('Admin', 'Manager'));
 
 // POST /api/admin/movies - Create a new movie
-router.post('/', createMovie);
+router.post('/', uploadMiddleware.upload.single('poster'), uploadMiddleware.uploadToCloudinary('movies_poster', 'poster'), AdminMovieValidation.createMovie, adminMovieController.createMovie);
 
 // PUT /api/admin/movies/:id - Update an existing movie
-router.put('/:id', updateMovie);
+router.put('/:id', uploadMiddleware.upload.single('poster'), uploadMiddleware.uploadToCloudinary('movies_poster', 'poster'), AdminMovieValidation.updateMovie, adminMovieController.updateMovie);
 
 // DELETE /api/admin/movies/:id - Delete a movie
-router.delete('/:id', deleteMovie);
+router.delete('/:id', adminMovieController.deleteMovie);
 
 // POST /api/admin/movies/:id/cinemas - Assign a movie to cinemas
-router.post('/:id/cinemas', assignMovieToCinemas);
+router.post('/:id/cinemas', adminMovieController.assignMovieToCinemas);
 
 // GET /api/admin/movies - Get all movies (with optional filters)
-router.get('/', getMoviesAdmin)
+router.get('/', adminMovieController.getMoviesAdmin);
+
 export default router;
