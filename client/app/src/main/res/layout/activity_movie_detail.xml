@@ -131,16 +131,6 @@
                         android:layout_marginStart="4dp"
                         android:text="(1,222)"
                         android:textColor="#AAAAAA" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnTrailer"
-                        style="@style/Widget.Material3.Button.OutlinedButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="30dp"
-                        android:text="Watch Trailer"
-                        android:textSize="13sp"
-                        app:strokeColor="#FFFFFF" />
                 </LinearLayout>
 
                 <RatingBar
