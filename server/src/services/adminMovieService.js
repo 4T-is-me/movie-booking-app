@@ -55,15 +55,15 @@ const softDeleteMovie = async (movieId) => {
 };
 
 /**
- * GÁN PHIM VÀO RẠP CHIẾU
- * Admin chỉ định phim được chiếu ở những rạp nào.
- * Các thông tin như roomId, showDate, startTime, endTime sẽ là null.
+ * ASSIGN MOVIE TO CINEMAS
+ * Admin specifies which cinemas the movie will be screened at.
+ * Information such as roomId, showDate, startTime, endTime will be null.
  */
 const assignMovieToCinemas = async (movieId, cinemaIds) => {
     const movie = await Movie.findById(movieId);
     if (!movie) throw new Error('MovieNotFound');
 
-    // Tạo các bản ghi showtime "nháp" chỉ chứa movieId và cinemaId
+    // Create draft showtime records containing only movieId and cinemaId
     const pendingShowtimes = cinemaIds.map(cinemaId => ({
         movieId: movieId,
         cinemaId: cinemaId,
@@ -74,7 +74,7 @@ const assignMovieToCinemas = async (movieId, cinemaIds) => {
         endTime: null
     }));
 
-    // Lưu hàng loạt vào DB
+    // Batch insert into DB
     const assignedCinemas = await Showtime.insertMany(pendingShowtimes);
     return assignedCinemas;
 };
@@ -91,7 +91,7 @@ const getMoviesAdmin = async (query) => {
     }
 
     if(status == 'deleted') {
-        // Chỉ lấy các phim đã bị Soft Delete
+        // Retrieve only soft-deleted movies
         q.isDeleted = true;
     }else {
         if(status === 'showing') {

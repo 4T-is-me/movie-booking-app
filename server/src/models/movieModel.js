@@ -2,18 +2,18 @@ import mongoose from 'mongoose';
 
 const movieSchema = new mongoose.Schema({
     movieName: { type: String, required: true, trim: true },
-    duration: { type: Number, required: true }, // Thời lượng (phút)
-    releaseDate: { type: Date, required: true }, // Ngày công chiếu
-    endDate: { type: Date },                      // Ngày kết thúc chiếu
-    movieGenre: { type: [String], required: true }, // Mảng các thể loại phim
+    duration: { type: Number, required: true }, // Duration (minutes)
+    releaseDate: { type: Date, required: true }, // Release date
+    endDate: { type: Date },                      // End date
+    movieGenre: { type: [String], required: true }, // Array of movie genres
     language: { type: String, required: true },
-    censorship: { type: String, required: true }, // Độ tuổi (ví dụ: 13T)
-    description: { type: String }, // Mô tả nội dung phim
-    director: { type: [String], required: true }, // Mảng tên các đạo diễn
-    actors: { type: [String], required: true }, // Mảng tên các diễn viên
+    censorship: { type: String, required: true }, // Censorship rating (e.g. 13+)
+    description: { type: String }, // Movie description
+    director: { type: [String], required: true }, // Array of director names
+    actors: { type: [String], required: true }, // Array of actor names
     country: { type: String, required: true },
-    status: { type: String, default: 'coming_soon' }, // Trạng thái phim (ended, showing,...)
-    poster: { type: String }, // Link ảnh poster phim
+    status: { type: String, default: 'coming_soon' }, // Movie status (ended, showing,...)
+    poster: { type: String }, // Poster image link
     rating: { type: Number, default: 0 },
     totalReviews: { type: Number, default: 0 },
     totalStarts: { type: Number, default: 0 },
@@ -21,12 +21,12 @@ const movieSchema = new mongoose.Schema({
     deletedAt: { type: Date, default: null }
 }, {
     versionKey: false,
-    collection: 'movies', // Khớp với tên collection trong lỗi cũ của bạn
-    timestamps: true // Tự động quản lý createdAt và updatedAt dưới dạng ISODate
+    collection: 'movies', // Match collection name
+    timestamps: true // Automatically manage createdAt and updatedAt as ISODate
 });
 
-// Index tối ưu truy vấn lọc phim theo khoảng ngày chiếu (now_showing / coming_soon)
+// Optimized index for filtering movies by release date range (now_showing / coming_soon)
 movieSchema.index({ releaseDate: 1, endDate: 1 });
-// Index để lọc phim chưa xóa và theo ngày công chiếu
+// Index to filter active movies and sort by release date
 movieSchema.index({isDeleted: 1, releaseDate: 1}); 
 export const Movie = mongoose.model('Movie', movieSchema);

@@ -6,7 +6,7 @@ const movieRules = {
     movieName: Joi.string().trim().strict(),
     duration: Joi.number().integer().min(1),
     releaseDate: Joi.date(),
-    endDate: Joi.date().greater(Joi.ref('releaseDate')).allow(null), // endDate phải sau ngày release
+    endDate: Joi.date().greater(Joi.ref('releaseDate')).allow(null), // endDate must be after release date
     movieGenre: Joi.array().items(Joi.string().trim().strict()).min(1),
     language: Joi.string().trim().strict(),
     censorship: Joi.string().trim().strict(),
@@ -14,14 +14,14 @@ const movieRules = {
     director: Joi.array().items(Joi.string().trim().strict()).min(1),
     actors: Joi.array().items(Joi.string().trim().strict()).min(1),
     country: Joi.string().trim().strict(),
-    status: Joi.string().valid('coming-soon', 'showing', 'ended').trim().strict(), // Tùy các status dự án của bạn
+    status: Joi.string().valid('coming-soon', 'showing', 'ended').trim().strict(), // Depending on your project status
     poster: Joi.string().trim().strict().allow('', null),
     rating: Joi.number().min(0).max(10),
     totalReviews: Joi.number().min(0),
     totalStarts: Joi.number().min(0)
 };
 
-//  Validator cho POST /api/admin/movies
+//  Validator for POST /api/admin/movies
 const createMovie = async (req, res, next) => {
     const correctCondition = Joi.object({
         movieName: movieRules.movieName.required(),
@@ -43,7 +43,7 @@ const createMovie = async (req, res, next) => {
     });
 
     try {
-        // Cho phép allowUnknown: true để bỏ qua các field tự động sinh hoặc các trường không định nghĩa nếu có gửi lên
+        // Allow allowUnknown: true to skip auto-generated or undefined fields if sent
         await correctCondition.validateAsync(req.body, { abortEarly: false, allowUnknown: true });
         next();
     } catch (error) {
@@ -52,7 +52,7 @@ const createMovie = async (req, res, next) => {
     }
 };
 
-//  Validator cho PUT /api/admin/movies/:id 
+//  Validator for PUT /api/admin/movies/:id 
 const updateMovie = async (req, res, next) => {
     const correctCondition = Joi.object({
         movieName: movieRules.movieName.optional(),

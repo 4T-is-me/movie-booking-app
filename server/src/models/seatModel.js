@@ -11,7 +11,7 @@ const seatSchema = new mongoose.Schema({
     isDeleted: { type: Boolean, default: false }
 }, { versionKey: false, collection: 'seats' });
 
-// Không cho trùng ghế trong cùng 1 phòng
+// Prevent duplicate seats in the same room
 seatSchema.index({roomId: 1, seatName: 1}, {unique: true});
 seatSchema.index({roomId: 1, row: 1, col: 1});
 export const Seat = mongoose.model('Seat', seatSchema);

@@ -6,11 +6,10 @@ import ApiError from '../utils/ApiError.js';
 const createMovie = async (req, res, next) => {
     try {
         const newMovie = await adminMovieService.createMovie(req.body);
-        console.log(">>> CHECK REQ.BODY TRONG CONTROLLER:", req.body);
         return res.status(StatusCodes.CREATED).json({ 
             success: true, 
             data: newMovie, 
-            message: 'Thêm phim thành công.' 
+            message: 'Movie created successfully.' 
         });
     } catch (error) {
         next(error);
@@ -41,7 +40,7 @@ const updateMovie = async (req, res, next) => {
 const deleteMovie = async (req, res, next) => {
     try {
         const { id } = req.params;
-        await adminMovieService.softDeleteMovie(id); // Gọi hàm soft delete từ service mới viết
+        await adminMovieService.softDeleteMovie(id); // Call soft delete function from service
         
         return res.status(StatusCodes.OK).json({ 
             success: true, 

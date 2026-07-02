@@ -1,23 +1,23 @@
 import { Movie } from '../models/movieModel.js';
 
 // GET /api/movies
-// Hỗ trợ lọc theo trạng thái (now_showing / coming_soon), tìm kiếm tên (q) và phân trang
+// Support filtering by status (now_showing / coming_soon), search by name (q), and pagination
 export const getMovies = async ({ status, page = 1, limit = 10, q }) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
     const conditions = [{ isDeleted: false }];
 
-    // Tìm kiếm theo tên phim (movieName)
+    // Search by movie name (movieName)
     if (q && q.trim() !== '') {
         conditions.push({
             movieName: { $regex: q.trim(), $options: 'i' }
         });
     }
 
-    // Lọc theo trạng thái chiếu dựa trên releaseDate / endDate / status:
-    //   now_showing  → releaseDate <= today AND (endDate >= today OR endDate null)
-    //   coming_soon  → status === 'coming_soon' (chưa xác định endDate)
+    // Filter by screening status based on releaseDate / endDate / status:
+    //   now_showing  → releaseDate <= today AND (endDate >= today OR endDate is null)
+    //   coming_soon  → status === 'coming_soon' (endDate not set)
     if (status === 'now_showing') {
         const tomorrow = new Date(today);
         tomorrow.setDate(tomorrow.getDate() + 1);
@@ -33,7 +33,7 @@ export const getMovies = async ({ status, page = 1, limit = 10, q }) => {
         conditions.push({ status: 'coming_soon' });
     }
 
-    // Tìm kiếm theo tên phim (movieName)
+    // Search by movie name (movieName)
     if (q && q.trim() !== '') {
         conditions.push({
             movieName: { $regex: q.trim(), $options: 'i' }
@@ -61,7 +61,7 @@ export const getMovies = async ({ status, page = 1, limit = 10, q }) => {
 
 
 // GET /api/movies/search?q=...
-// Tìm kiếm theo movieName (dùng $regex + $options 'i'), có phân trang
+// Search by movieName (using $regex + $options 'i'), with pagination
 export const searchMovies = async ({ q, page = 1, limit = 10 }) => {
     if (!q || q.trim() === '') {
         return {
@@ -69,7 +69,7 @@ export const searchMovies = async ({ q, page = 1, limit = 10 }) => {
             limit: Number(limit),
             total: 0,
             totalPages: 0,
-            message: 'Vui lòng nhập từ khóa tìm kiếm.',
+            message: 'Please enter search keyword.',
             data: []
         };
     }
@@ -93,7 +93,7 @@ export const searchMovies = async ({ q, page = 1, limit = 10 }) => {
             limit: Number(limit),
             total: 0,
             totalPages: 0,
-            message: 'Không tìm thấy phim nào khớp với từ khóa.',
+            message: 'No movies found matching the keyword.',
             data: []
         };
     }
@@ -108,16 +108,16 @@ export const searchMovies = async ({ q, page = 1, limit = 10 }) => {
 };
 
 // GET /api/movies/:id
-// Lấy thông tin chi tiết một bộ phim
+// Get movie details
 export const getMovieById = async (id) => {
     const movie = await Movie.findOne({ _id: id, isDeleted: false }).lean();
     return movie;
 };
 
 // GET /api/movies/:id/showtimes?date=YYYY-MM-DD
-// Trả về danh sách suất chiếu của phim kèm cinemaRoomName + availableSeats
+// Returns list of movie showtimes with cinemaRoomName + availableSeats
 export const getMovieShowtimes = async (movieId, date) => {
-    // 1. Xây dựng filter — movieId bắt buộc, date tuỳ chọn
+    // 1. Build filter - movieId is required, date is optional
     const showtimeQuery = { movieId };
     if (date) {
         const target = new Date(date);
@@ -126,7 +126,7 @@ export const getMovieShowtimes = async (movieId, date) => {
         showDateQuery.SHOW_DATE = { $gte: target, $lt: nextDay };
     }
 
-    // 2. Lấy danh sách suất chiếu, populate roomId để lấy tên phòng & sức chứa
+    // 2. Get list of showtimes, populate roomId to get room name & seat capacity
     const showtimes = await Showtime.find(showtimeQuery)
         .populate('roomId', 'roomName roomType seatCapacity')
         .populate('cinemaId', 'cinemaName')
@@ -135,8 +135,8 @@ export const getMovieShowtimes = async (movieId, date) => {
 
     if (showtimes.length === 0) return null;
 
-    // 3. Đếm ghế đã chiếm (booked + holding còn hiệu lực) cho tất cả suất chiếu
-    //    dùng một aggregate duy nhất thay vì N query riêng lẻ
+    // 3. Count occupied seats (booked + active holding) for all showtimes
+    //    using a single aggregation instead of N separate queries
     const showtimeIds = showtimes.map((st) => st._id);
     const now = new Date();
 
@@ -146,7 +146,7 @@ export const getMovieShowtimes = async (movieId, date) => {
                 showtimeId: { $in: showtimeIds },
                 $or: [
                     { status: 'booked' },
-                    // Holding còn hiệu lực (chưa hết hạn)
+                    // Active holding (not expired)
                     { status: 'holding', holdExpiresAt: { $gt: now } }
                 ]
             }
@@ -159,12 +159,12 @@ export const getMovieShowtimes = async (movieId, date) => {
         }
     ]);
 
-    // Map: showtimeId (string) → số ghế đã chiếm
+    // Map: showtimeId (string) → number of occupied seats
     const occupiedMap = new Map(
         occupiedAgg.map(({ _id, occupiedCount }) => [_id.toString(), occupiedCount])
     );
 
-    // 4. Gắn availableSeats vào từng suất chiếu
+    // 4. Attach availableSeats to each showtime
     return showtimes.map((showtime) => {
         const totalSeats = showtime.roomId?.seatCapacity ?? 0;
         const occupied   = occupiedMap.get(showtime._id.toString()) ?? 0;
