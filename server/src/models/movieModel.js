@@ -17,7 +17,6 @@ const movieSchema = new mongoose.Schema({
     rating: { type: Number, default: 0 },
     totalReviews: { type: Number, default: 0 },
     totalStarts: { type: Number, default: 0 },
-    updatedAt: { type: Date, default: Date.now },
     isDeleted: { type: Boolean, default: false },
     deletedAt: { type: Date, default: null }
 }, {

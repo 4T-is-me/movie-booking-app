@@ -1,74 +1,98 @@
-import * as adminMovieService from '../services/adminMovieService.js';
+import { adminMovieService } from '../services/adminMovieService.js';
+import { StatusCodes } from 'http-status-codes';
+import ApiError from '../utils/ApiError.js';
 
-export const createMovie = async (req, res) => {
+// POST /api/admin/movies - 
+const createMovie = async (req, res, next) => {
     try {
-        const { movieName, duration, releaseDate, movieGenre, language, censorship, director, actors, country } = req.body;
-        
-        // Validate cơ bản
-        if (!movieName || !duration || !releaseDate) {
-            return res.status(400).json({ success: false, message: 'Vui lòng điền đủ các trường bắt buộc.' });
-        }
-
         const newMovie = await adminMovieService.createMovie(req.body);
-        return res.status(201).json({ success: true, data: newMovie, message: 'Thêm phim thành công.' });
+        console.log(">>> CHECK REQ.BODY TRONG CONTROLLER:", req.body);
+        return res.status(StatusCodes.CREATED).json({ 
+            success: true, 
+            data: newMovie, 
+            message: 'Thêm phim thành công.' 
+        });
     } catch (error) {
-        return res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
+        next(error);
     }
 };
 
-export const updateMovie = async (req, res) => {
+// PUT /api/admin/movies/:id
+const updateMovie = async (req, res, next) => {
     try {
         const { id } = req.params;
         const updatedMovie = await adminMovieService.updateMovie(id, req.body);
         
-        if (!updatedMovie) return res.status(404).json({ success: false, message: 'Không tìm thấy phim.' });
+        if (!updatedMovie) {
+            throw new ApiError(StatusCodes.NOT_FOUND, 'Movie not found.');
+        }
         
-        return res.status(200).json({ success: true, data: updatedMovie, message: 'Cập nhật phim thành công.' });
+        return res.status(StatusCodes.OK).json({ 
+            success: true, 
+            data: updatedMovie, 
+            message: 'Updated movie successfully.' 
+        });
     } catch (error) {
-        return res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
+        next(error);
     }
 };
 
-export const deleteMovie = async (req, res) => {
+// DELETE /api/admin/movies/:id
+const deleteMovie = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const deletedMovie = await adminMovieService.deleteMovie(id);
+        await adminMovieService.softDeleteMovie(id); // Gọi hàm soft delete từ service mới viết
         
-        if (!deletedMovie) return res.status(404).json({ success: false, message: 'Không tìm thấy phim.' });
-        
-        return res.status(200).json({ success: true, message: 'Xóa phim thành công.' });
+        return res.status(StatusCodes.OK).json({ 
+            success: true, 
+            message: 'Deleted movie successfully.' 
+        });
     } catch (error) {
-        return res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
+        next(error);
     }
 };
 
-export const assignMovieToCinemas = async (req, res) => {
+
+const assignMovieToCinemas = async (req, res, next) => {
     try {
-        const { id } = req.params; // movieId
-        const { cinemaIds } = req.body; // Mảng các ID rạp: ["id_rap_1", "id_rap_2"]
+        const { id } = req.params; 
+        const { cinemaIds } = req.body; 
         
         if (!cinemaIds || !Array.isArray(cinemaIds) || cinemaIds.length === 0) {
-            return res.status(400).json({ success: false, message: 'Danh sách rạp chiếu không hợp lệ.' });
+            throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid cinema list.');
         }
 
         const result = await adminMovieService.assignMovieToCinemas(id, cinemaIds);
-        return res.status(201).json({ 
+        
+        return res.status(StatusCodes.CREATED).json({ 
             success: true, 
             data: result, 
-            message: 'Đã gán phim vào rạp thành công. Chờ quản lý rạp xếp lịch.' 
+            message: 'The movie has been successfully assigned to the cinema. Awaiting the cinema manager to schedule the screenings.' 
         });
     } catch (error) {
-        if (error.message === 'MovieNotFound') {
-            return res.status(404).json({ success: false, message: 'Phim không tồn tại.' });
-        }
-        return res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
+        next(error);
     }
 };
-export const getMoviesAdmin = async (req, res) => {
+
+// GET /api/admin/movies
+const getMoviesAdmin = async (req, res, next) => {
     try {
-        const result = await adminMovieService.getAdminMovies(req.query);
-        return res.status(200).json({ success: true, data: result, message: 'get movies admin success' });
+        const result = await adminMovieService.getMoviesAdmin(req.query);
+        
+        return res.status(StatusCodes.OK).json({ 
+            success: true, 
+            data: result, 
+            message: 'Get movies for admin successfully.' 
+        });
     } catch (error) {
-        return res.status(500).json({ success: false, message: 'server error', error: error.message });
+        next(error);
     }
-}
+};
+
+export const adminMovieController = {
+    createMovie,
+    updateMovie,
+    deleteMovie,
+    assignMovieToCinemas,
+    getMoviesAdmin
+};

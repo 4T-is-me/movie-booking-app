@@ -6,7 +6,14 @@ export const getMovies = async ({ status, page = 1, limit = 10, q }) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const conditions = [];
+    const conditions = [{ isDeleted: false }];
+
+    // Tìm kiếm theo tên phim (movieName)
+    if (q && q.trim() !== '') {
+        conditions.push({
+            movieName: { $regex: q.trim(), $options: 'i' }
+        });
+    }
 
     // Lọc theo trạng thái chiếu dựa trên releaseDate / endDate / status:
     //   now_showing  → releaseDate <= today AND (endDate >= today OR endDate null)
@@ -103,7 +110,7 @@ export const searchMovies = async ({ q, page = 1, limit = 10 }) => {
 // GET /api/movies/:id
 // Lấy thông tin chi tiết một bộ phim
 export const getMovieById = async (id) => {
-    const movie = await Movie.findOne({ _id: id }).lean();
+    const movie = await Movie.findOne({ _id: id, isDeleted: false }).lean();
     return movie;
 };
 

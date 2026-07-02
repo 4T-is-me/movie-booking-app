@@ -1,31 +1,57 @@
 import { Movie } from '../models/movieModel.js';
 import { Showtime } from '../models/showTimeModel.js';
 
-export const createMovie = async (movieData) => {
-    const newMovie = new Movie(movieData);
-    return await newMovie.save();
+//create a new movie
+const createMovie = async (movieData) => {
+    // check the same movieName exists or not
+    const existingMovie = await Movie.findOne({ movieName: movieData.movieName, isDeleted: false });
+    if (existingMovie) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, 'This movie title already exists in the system!');
+    }
+
+    const newMovie = await Movie.create(movieData);
+    return newMovie;
+};
+// update movie
+const updateMovie = async (movieId, updateData) => {
+    const movie = await Movie.findOne({ _id: movieId, isDeleted: false });
+    if (!movie) {
+        throw new ApiError(StatusCodes.NOT_FOUND, 'Movie not found or has been deleted!');
+    }
+
+    // update
+    const updatedMovie = await Movie.findByIdAndUpdate(
+        movieId,
+        { $set: updateData },
+        { new: true, runValidators: true }
+    );
+
+    return updatedMovie;
 };
 
-export const updateMovie = async (movieId, updateData) => {
-    const movie = await Movie.findById(movieId);
-    if(!movie || movie.isDeleted) {
-        throw new Error('MovieNotFound');
+// soft delete movie
+const softDeleteMovie = async (movieId) => {
+    const movie = await Movie.findOne({ _id: movieId, isDeleted: false });
+    if (!movie) {
+        throw new ApiError(StatusCodes.NOT_FOUND, 'Movie not found or has been deleted!');
     }
-    const {_id, safeUpdateData} = updateData;
-    Object.assign(movie, safeUpdateData);
-    await movie.save();
-    return movie;
-};
 
-export const deleteMovie = async (movieId) => {
-    const movie = await Movie.findById(movieId);
-    if(!movie || movie.isDeleted) {
-        throw new Error('MovieNotFound');
-    }
-    movie.isDeleted = true;
-    movie.deletedAt = new Date();
-    await movie.save();
-    return movie;
+    // Update status to isDeleted: true and set deletedAt timestamp
+    const deletedMovie = await Movie.findByIdAndUpdate(
+        movieId,
+        { 
+            $set: { 
+                isDeleted: true,
+                deletedAt: new Date()
+            } 
+        },
+        { new: true }
+    );
+
+    return {
+        message: 'Soft delete movie successful!',
+        id: deletedMovie._id
+    };
 };
 
 /**
@@ -33,7 +59,7 @@ export const deleteMovie = async (movieId) => {
  * Admin chỉ định phim được chiếu ở những rạp nào.
  * Các thông tin như roomId, showDate, startTime, endTime sẽ là null.
  */
-export const assignMovieToCinemas = async (movieId, cinemaIds) => {
+const assignMovieToCinemas = async (movieId, cinemaIds) => {
     const movie = await Movie.findById(movieId);
     if (!movie) throw new Error('MovieNotFound');
 
@@ -53,7 +79,7 @@ export const assignMovieToCinemas = async (movieId, cinemaIds) => {
     return assignedCinemas;
 };
 
-export const getMoviesAdmin = async (query) => {
+const getMoviesAdmin = async (query) => {
     const { status, page = 1, limit = 10, search } = query;
     const parsedPage = parseInt(page, 10);
     const parsedLimit = parseInt(limit, 10);
@@ -68,8 +94,6 @@ export const getMoviesAdmin = async (query) => {
         // Chỉ lấy các phim đã bị Soft Delete
         q.isDeleted = true;
     }else {
-    //Dùng $ne: true để lấy cả những phim chưa có trường isDeleted
-       q.isDeleted = { $ne: true };
         if(status === 'showing') {
             q.status = 'showing';
         }else if(status === 'coming-soon') {
@@ -89,4 +113,12 @@ export const getMoviesAdmin = async (query) => {
         currentPage: parsedPage
     }
 
-}  
+} 
+
+export const adminMovieService = {
+    createMovie,
+    updateMovie,
+    softDeleteMovie,
+    assignMovieToCinemas,
+    getMoviesAdmin
+};
