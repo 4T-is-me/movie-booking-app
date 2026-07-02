@@ -9,20 +9,21 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface AdminApiService {
-    @GET("admin/statistics/overview")
+    @GET("api/admin/stats/overview")
     suspend fun getOverviewStats(): Response<OverviewStatsResponse>
 
-    @GET("admin/statistics/revenue/daily")
+    @GET("api/admin/stats/revenue/daily")
     suspend fun getDailyRevenue(
         @Query("startDate") startDate: String,
         @Query("endDate") endDate: String
     ): Response<DailyRevenueResponse>
 
-    @GET("admin/statistics/revenue/monthly")
+    @GET("api/admin/stats/revenue/monthly")
     suspend fun getMonthlyRevenue(
-        @Query("year") year: Int
+        @Query("startDate") startDate: String,
+        @Query("endDate") endDate: String
     ): Response<MonthlyRevenueResponse>
 
-    @GET("admin/statistics/revenue/movie")
+    @GET("api/admin/stats/revenue/by-movie")
     suspend fun getMovieRevenue(): Response<MovieRevenueResponse>
 }
