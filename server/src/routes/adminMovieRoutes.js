@@ -4,7 +4,8 @@ import {
     createMovie,
     updateMovie,
     deleteMovie,
-    assignMovieToCinemas
+    assignMovieToCinemas,
+    getMoviesAdmin
 } from '../controllers/adminMovieController.js';
 
 const router = Router();
@@ -24,4 +25,6 @@ router.delete('/:id', deleteMovie);
 // POST /api/admin/movies/:id/cinemas - Assign a movie to cinemas
 router.post('/:id/cinemas', assignMovieToCinemas);
 
+// GET /api/admin/movies - Get all movies (with optional filters)
+router.get('/', getMoviesAdmin)
 export default router;

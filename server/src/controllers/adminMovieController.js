@@ -64,3 +64,11 @@ export const assignMovieToCinemas = async (req, res) => {
         return res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
     }
 };
+export const getMoviesAdmin = async (req, res) => {
+    try {
+        const result = await adminMovieService.getAdminMovies(req.query);
+        return res.status(200).json({ success: true, data: result, message: 'get movies admin success' });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: 'server error', error: error.message });
+    }
+}

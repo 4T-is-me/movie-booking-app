@@ -51,6 +51,12 @@ class MovieDetailActivity : AppCompatActivity() {
         viewModel.fetchMovieShowtimes(movieId)
 
         binding.btnBookTicket.setOnClickListener {
+            val movie = viewModel.movieDetail.value?.data
+
+            if (movie?.status == "coming-soon") {
+                Toast.makeText(this, "This movie is coming soon.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
             if (selectedCinema == null) {
                 Toast.makeText(this, "Please select a cinema first.", Toast.LENGTH_SHORT).show()

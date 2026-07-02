@@ -16,7 +16,10 @@ const movieSchema = new mongoose.Schema({
     poster: { type: String }, // Link ảnh poster phim
     rating: { type: Number, default: 0 },
     totalReviews: { type: Number, default: 0 },
-    totalStarts: { type: Number, default: 0 }
+    totalStarts: { type: Number, default: 0 },
+    updatedAt: { type: Date, default: Date.now },
+    isDeleted: { type: Boolean, default: false },
+    deletedAt: { type: Date, default: null }
 }, {
     versionKey: false,
     collection: 'movies', // Khớp với tên collection trong lỗi cũ của bạn
@@ -25,5 +28,6 @@ const movieSchema = new mongoose.Schema({
 
 // Index tối ưu truy vấn lọc phim theo khoảng ngày chiếu (now_showing / coming_soon)
 movieSchema.index({ releaseDate: 1, endDate: 1 });
-
+// Index để lọc phim chưa xóa và theo ngày công chiếu
+movieSchema.index({isDeleted: 1, releaseDate: 1}); 
 export const Movie = mongoose.model('Movie', movieSchema);
