@@ -52,4 +52,7 @@ class StatsRepository @Inject constructor(
             throw e
         }
     }
+
+    fun getMonthlyRevenue(year: Int): Flow<Response<MonthlyRevenueResponse>> =
+        getMonthlyRevenue("$year-01-01", "$year-12-31")
 }
