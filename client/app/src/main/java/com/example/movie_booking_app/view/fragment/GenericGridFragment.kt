@@ -9,7 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.movie_booking_app.data.repository.MovieRepository
 import com.example.movie_booking_app.data.repository.RepositoryProvider
-import com.example.movie_booking_app.databinding.LayoutGenericListContentBinding
+import com.example.movie_booking_app.databinding.FragmentGenericListBinding
 import com.example.movie_booking_app.view.adapter.MovieNewsAdapter
 import com.example.movie_booking_app.view.adapter.PromoAdapter
 import com.example.movie_booking_app.view.adapter.ServiceAdapter
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 
 class GenericGridFragment : Fragment() {
 
-    private var _binding: LayoutGenericListContentBinding? = null
+    private var _binding: FragmentGenericListBinding? = null
     private val binding get() = _binding!!
 
     private val movieRepository: MovieRepository = RepositoryProvider.provideMovieRepository()
@@ -37,7 +37,7 @@ class GenericGridFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = LayoutGenericListContentBinding.inflate(inflater, container, false)
+        _binding = FragmentGenericListBinding.inflate(inflater, container, false)
         return binding.root
     }
 

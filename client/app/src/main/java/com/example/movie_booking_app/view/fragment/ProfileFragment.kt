@@ -12,7 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.movie_booking_app.data.local.TokenManager
-import com.example.movie_booking_app.databinding.ActivityProfileBinding
+import com.example.movie_booking_app.databinding.FragmentProfileBinding
 import com.example.movie_booking_app.view.activity.LoginActivity
 import com.example.movie_booking_app.view.activity.MainActivity
 import com.example.movie_booking_app.viewmodel.ProfileViewModel
@@ -24,7 +24,7 @@ import com.example.movie_booking_app.R
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
 
-    private var _binding: ActivityProfileBinding? = null
+    private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
 
     private val viewModel: ProfileViewModel by viewModels()
@@ -35,7 +35,7 @@ class ProfileFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = ActivityProfileBinding.inflate(inflater, container, false)
+        _binding = FragmentProfileBinding.inflate(inflater, container, false)
         // Hide local redundant bottom navigation
         binding.bottomNav.visibility = View.GONE
         return binding.root
@@ -119,7 +119,7 @@ class ProfileFragment : Fragment() {
                         val finalUrl = if (url.startsWith("http")) {
                             url
                         } else {
-                            "http://192.168.9.144:5000$url"
+                            "${com.example.movie_booking_app.utils.Constants.BASE_URL.removeSuffix("/")}$url"
                         }
                         Glide.with(this@ProfileFragment)
                             .load(finalUrl)
