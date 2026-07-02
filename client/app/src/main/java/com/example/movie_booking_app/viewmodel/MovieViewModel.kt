@@ -1,9 +1,10 @@
 package com.example.movie_booking_app.viewmodel
 
-import android.app.Application
-import android.content.Context
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.movie_booking_app.data.model.entity.MovieNews
+import com.example.movie_booking_app.data.model.entity.Promo
+import com.example.movie_booking_app.data.model.entity.Service
 import com.example.movie_booking_app.data.model.entity.Showtime
 import com.example.movie_booking_app.data.model.response.MovieResponse
 import com.example.movie_booking_app.data.model.ui.HomeItem
@@ -17,10 +18,9 @@ import kotlin.collections.emptyList
 
 @HiltViewModel
 class MovieViewModel @Inject constructor(
-    application: Application,
     private val repository: MovieRepository,
     private val profileRepository: ProfileRepository
-) : AndroidViewModel(application) {
+) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
     
@@ -40,12 +40,16 @@ class MovieViewModel @Inject constructor(
 
     private val _showtimeError = MutableStateFlow<String?>(null)
     val showtimeError: StateFlow<String?> = _showtimeError
+
+    // Missing admin action flows
+    private val _movieActionSuccess = MutableSharedFlow<Boolean>()
+    val movieActionSuccess = _movieActionSuccess.asSharedFlow()
+
     init {
         loadHomeData()
     }
 
     private fun initialHomeState(): List<HomeItem> = listOf(
-        HomeItem.HeaderSection(getCachedUsername(), isLoggedIn = checkIsLoggedIn()),
         HomeItem.NowPlayingSection(null, isLoading = true),
         HomeItem.ComingSoonSection(null, isLoading = true),
         HomeItem.PromoSection(null, isLoading = true),
@@ -53,48 +57,24 @@ class MovieViewModel @Inject constructor(
         HomeItem.MovieNewsSection(null, isLoading = true)
     )
 
-    private fun getCachedUsername(): String {
-        val sharedPref = getApplication<Application>().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        return sharedPref.getString("username", "User") ?: "User"
-    }
-
-    private fun checkIsLoggedIn(): Boolean {
-        val sharedPref = getApplication<Application>().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        val token = sharedPref.getString("auth_token", null)
-        return !token.isNullOrEmpty()
-    }
-
     fun loadHomeData() {
-        val cachedName = getCachedUsername()
-        val currentlyLoggedIn = checkIsLoggedIn()
-
-        // User profile flow, defaults to cached values on start/error
-        val userFlow = profileRepository.getUserProfile()
-            .map { (it.username ?: cachedName) to true }
-            .catch { emit(cachedName to currentlyLoggedIn) }
-            .onStart { emit(cachedName to currentlyLoggedIn) }
-
         viewModelScope.launch {
             combine(
                 repository.getMovies().onStart { emit(emptyList()) },
                 repository.getPromos().onStart { emit(emptyList()) },
                 repository.getServices().onStart { emit(emptyList()) },
                 repository.getNews().onStart { emit(emptyList()) },
-                combine(userFlow, _searchQuery) { userState, query -> userState to query }
-            ) { movies, promos, services, news, userAndQuery ->
-                val userName = userAndQuery.first.first
-                val isLoggedIn = userAndQuery.first.second
-                val query = userAndQuery.second
+                _searchQuery
+            ) { movies, promos, services, news, query ->
                 
                 val filteredMovies = if (query.isEmpty()) movies else {
                     movies.filter { it.movieName?.contains(query, ignoreCase = true) == true }
                 }
 
                 if (filteredMovies.isEmpty() && query.isNotEmpty()) {
-                    listOf(HomeItem.HeaderSection(userName, isLoggedIn), HomeItem.EmptyState)
+                    listOf(HomeItem.EmptyState)
                 } else {
                     val list = mutableListOf<HomeItem>()
-                    list.add(HomeItem.HeaderSection(userName, isLoggedIn))
                     
                     val nowPlaying = filteredMovies.filter { 
                         val s = it.status?.lowercase() ?: ""
@@ -155,9 +135,8 @@ class MovieViewModel @Inject constructor(
                 }
         }
     }
-    private val _movieActionSuccess = MutableSharedFlow<Boolean>()
-    val movieActionSuccess = _movieActionSuccess.asSharedFlow()
 
+    // Restore missing admin methods
     fun deleteMovie(id: String) {
         viewModelScope.launch {
             try {

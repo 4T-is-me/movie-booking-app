@@ -1,19 +1,13 @@
 package com.example.movie_booking_app.view.adapter
 
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Movie
 import com.example.movie_booking_app.data.model.entity.MovieNews
@@ -25,14 +19,11 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.facebook.shimmer.ShimmerFrameLayout
 
 class HomeMultiAdapter(
-    private val onSearchQueryChanged: (String) -> Unit,
     private val onSeeAllClicked: (String) -> Unit,
-    private val onMovieClicked: (Movie) -> Unit,
-    private val onLoginClicked: () -> Unit
+    private val onMovieClicked: (Movie) -> Unit
 ) : ListAdapter<HomeItem, RecyclerView.ViewHolder>(HomeItemDiffCallback()) {
 
     companion object {
-        private const val typeHeader = 0
         private const val typeNowPlaying = 1
         private const val typeComingSoon = 2
         private const val typePromo = 3
@@ -43,20 +34,19 @@ class HomeMultiAdapter(
 
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
-            is HomeItem.HeaderSection -> typeHeader
             is HomeItem.NowPlayingSection -> typeNowPlaying
             is HomeItem.ComingSoonSection -> typeComingSoon
             is HomeItem.PromoSection -> typePromo
             is HomeItem.ServiceSection -> typeService
             is HomeItem.MovieNewsSection -> typeNews
             is HomeItem.EmptyState -> typeEmpty
+            else -> typeEmpty
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
-            typeHeader -> HeaderViewHolder(inflater.inflate(R.layout.layout_home_header, parent, false), onSearchQueryChanged, onLoginClicked)
             typeNowPlaying -> NowPlayingViewHolder(inflater.inflate(R.layout.layout_home_now_playing, parent, false), onSeeAllClicked, onMovieClicked)
             typeComingSoon -> ComingSoonViewHolder(inflater.inflate(R.layout.layout_home_coming_soon, parent, false), onSeeAllClicked, onMovieClicked)
             typePromo -> PromoViewHolder(inflater.inflate(R.layout.layout_home_promo, parent, false), onSeeAllClicked)
@@ -70,10 +60,6 @@ class HomeMultiAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position)
         when (holder) {
-            is HeaderViewHolder -> {
-                val section = item as HomeItem.HeaderSection
-                holder.bind(section.userName, section.isLoggedIn)
-            }
             is NowPlayingViewHolder -> {
                 val section = item as HomeItem.NowPlayingSection
                 holder.bind(section.movies ?: emptyList(), section.isLoading)
@@ -94,26 +80,6 @@ class HomeMultiAdapter(
                 val section = item as HomeItem.MovieNewsSection
                 holder.bind(section.news ?: emptyList(), section.isLoading)
             }
-        }
-    }
-
-    class HeaderViewHolder(view: View, onQueryChanged: (String) -> Unit, onLogin: () -> Unit) : RecyclerView.ViewHolder(view) {
-        private val tvHi: TextView = view.findViewById(R.id.tvHi)
-        private val edtSearch: EditText = view.findViewById(R.id.edtSearch)
-        private val btnLogin: View = view.findViewById(R.id.btnLogin)
-        init {
-            edtSearch.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    onQueryChanged(s?.toString() ?: "")
-                }
-                override fun afterTextChanged(s: Editable?) {}
-            })
-            btnLogin.setOnClickListener { onLogin() }
-        }
-        fun bind(name: String, isLoggedIn: Boolean) {
-            tvHi.text = "Hi, $name 👋"
-            btnLogin.visibility = if (isLoggedIn) View.GONE else View.VISIBLE
         }
     }
 
@@ -228,7 +194,6 @@ class HomeMultiAdapter(
     class HomeItemDiffCallback : DiffUtil.ItemCallback<HomeItem>() {
         override fun areItemsTheSame(oldItem: HomeItem, newItem: HomeItem): Boolean {
             return when {
-                oldItem is HomeItem.HeaderSection && newItem is HomeItem.HeaderSection -> true
                 oldItem is HomeItem.NowPlayingSection && newItem is HomeItem.NowPlayingSection -> true
                 oldItem is HomeItem.ComingSoonSection && newItem is HomeItem.ComingSoonSection -> true
                 oldItem is HomeItem.PromoSection && newItem is HomeItem.PromoSection -> true
