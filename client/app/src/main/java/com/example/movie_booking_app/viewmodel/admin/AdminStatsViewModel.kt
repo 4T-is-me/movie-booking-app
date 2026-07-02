@@ -49,7 +49,7 @@ class AdminStatsViewModel @Inject constructor(
                 // Load parallelly using async/awaitAll as requested
                 val overviewDeferred = async { repository.getOverviewStats().first() }
                 val dailyRevenueDeferred = async { repository.getDailyRevenue("", "").first() }
-                val monthlyRevenueDeferred = async { repository.getMonthlyRevenue(2024).first() }
+                val monthlyRevenueDeferred = async { repository.getMonthlyRevenue("2024-01-01", "2024-12-31").first() }
                 val movieRevenueDeferred = async { repository.getMovieRevenue().first() }
 
                 val results = awaitAll(overviewDeferred, dailyRevenueDeferred, monthlyRevenueDeferred, movieRevenueDeferred)

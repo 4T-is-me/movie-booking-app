@@ -41,6 +41,34 @@ class RegisterActivity : AppCompatActivity() {
         val tilDob = findViewById<TextInputLayout>(R.id.tilDob)
         val edtDob = findViewById<TextInputEditText>(R.id.edtDob)
         
+        edtDob.addTextChangedListener(object : android.text.TextWatcher {
+            private var isFormatting = false
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: android.text.Editable?) {
+                if (isFormatting) return
+                isFormatting = true
+
+                val str = s?.toString()?.replace("-", "")?.replace("/", "") ?: ""
+                val builder = StringBuilder()
+                for (i in str.indices) {
+                    if (i == 8) break
+                    if (i == 2 || i == 4) {
+                        builder.append("-")
+                    }
+                    builder.append(str[i])
+                }
+                
+                val newText = builder.toString()
+                if (s?.toString() != newText) {
+                    edtDob.setText(newText)
+                    edtDob.setSelection(newText.length)
+                }
+                
+                isFormatting = false
+            }
+        })
+        
         val rgGender = findViewById<RadioGroup>(R.id.rgGender)
         
         val edtEmail = findViewById<TextInputEditText>(R.id.edtEmail)
@@ -89,7 +117,7 @@ class RegisterActivity : AppCompatActivity() {
             edtConfirmPassword.setSelection(selection)
         }
 
-        edtDob.setOnClickListener {
+        tilDob.setStartIconOnClickListener {
             val calendar = Calendar.getInstance()
             val year = calendar.get(Calendar.YEAR)
             val month = calendar.get(Calendar.MONTH)
@@ -98,7 +126,7 @@ class RegisterActivity : AppCompatActivity() {
             val datePickerDialog = DatePickerDialog(
                 this,
                 { _, selectedYear, selectedMonth, selectedDay ->
-                    val formattedDate = String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
+                    val formattedDate = String.format("%02d-%02d-%04d", selectedDay, selectedMonth + 1, selectedYear)
                     edtDob.setText(formattedDate)
                     tilDob.error = null
                 },
@@ -106,6 +134,7 @@ class RegisterActivity : AppCompatActivity() {
                 month,
                 day
             )
+            datePickerDialog.datePicker.maxDate = System.currentTimeMillis()
             datePickerDialog.show()
         }
 
@@ -113,7 +142,13 @@ class RegisterActivity : AppCompatActivity() {
             if (validateFields()) {
                 val username = edtUsername.text.toString().trim()
                 val fullName = edtFullName.text.toString().trim()
-                val dob = edtDob.text.toString().trim()
+                val dobStr = edtDob.text.toString().trim()
+                var dob = dobStr
+                try {
+                    val sdfIn = java.text.SimpleDateFormat("dd-MM-yyyy", java.util.Locale.getDefault())
+                    val sdfOut = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
+                    sdfIn.parse(dobStr)?.let { dob = sdfOut.format(it) }
+                } catch (e: Exception) {}
                 val email = edtEmail.text.toString().trim()
                 val phone = edtPhone.text.toString().trim()
                 val idCard = edtIdCard.text.toString().trim()
@@ -153,8 +188,51 @@ class RegisterActivity : AppCompatActivity() {
                                 showNotification("Registration successful!", true)
                                 btnRegister.postDelayed({ finish() }, 1500)
                             } else {
-                                val errorMsg = response.errorBody()?.string() ?: "Registration failed"
-                                showNotification(errorMsg, false)
+                                val errorStr = response.errorBody()?.string()
+                                var errorMessage = "Registration failed"
+                                try {
+                                    if (errorStr != null) {
+                                        val jsonObject = org.json.JSONObject(errorStr)
+                                        errorMessage = jsonObject.optString("message", jsonObject.optString("error", errorStr))
+                                    }
+                                } catch (e: Exception) {
+                                    errorMessage = errorStr ?: "Registration failed"
+                                }
+
+                                val lowerError = errorMessage.lowercase()
+                                val isExistError = lowerError.contains("exist") || lowerError.contains("tồn tại") || lowerError.contains("already") || lowerError.contains("duplicate")
+                                
+                                if (isExistError) {
+                                    var matched = false
+                                    if (lowerError.contains("username") || lowerError.contains("tài khoản")) {
+                                        findViewById<TextInputLayout>(R.id.tilUsernameReg).error = "Username already exists"
+                                        findViewById<TextInputEditText>(R.id.edtUsername).setText("")
+                                        matched = true
+                                    }
+                                    if (lowerError.contains("email")) {
+                                        findViewById<TextInputLayout>(R.id.tilEmail).error = "Email already exists"
+                                        findViewById<TextInputEditText>(R.id.edtEmail).setText("")
+                                        matched = true
+                                    }
+                                    if (lowerError.contains("phone") || lowerError.contains("điện thoại") || lowerError.contains("sdt")) {
+                                        findViewById<TextInputLayout>(R.id.tilPhone).error = "Phone number already exists"
+                                        findViewById<TextInputEditText>(R.id.edtPhone).setText("")
+                                        matched = true
+                                    }
+                                    if (lowerError.contains("id") || lowerError.contains("identity") || lowerError.contains("cccd") || lowerError.contains("cmnd")) {
+                                        findViewById<TextInputLayout>(R.id.tilIdCard).error = "ID Card already exists"
+                                        findViewById<TextInputEditText>(R.id.edtIdCard).setText("")
+                                        matched = true
+                                    }
+                                    
+                                    if (matched) {
+                                        showNotification("Please use a different value", false)
+                                    } else {
+                                        showNotification(errorMessage, false)
+                                    }
+                                } else {
+                                    showNotification(errorMessage, false)
+                                }
                             }
                         }
                     } catch (e: Exception) {
@@ -178,7 +256,8 @@ class RegisterActivity : AppCompatActivity() {
             tilUsername.error = "Username is required"
             isValid = false
         } else if (username.length !in 3..30) {
-            tilUsername.error = "Username must be 3-30 characters"
+            tilUsername.error = "Username must be between 3 and 30 characters"
+            edtUsername.setText("")
             isValid = false
         } else {
             tilUsername.error = null
@@ -186,8 +265,13 @@ class RegisterActivity : AppCompatActivity() {
 
         val tilFullName = findViewById<TextInputLayout>(R.id.tilFullName)
         val edtFullName = findViewById<TextInputEditText>(R.id.edtFullName)
-        if (edtFullName.text.toString().trim().isEmpty()) {
+        val fullName = edtFullName.text.toString().trim()
+        if (fullName.isEmpty()) {
             tilFullName.error = "Full Name is required"
+            isValid = false
+        } else if (fullName.any { it.isDigit() }) {
+            tilFullName.error = "Full Name cannot contain numbers"
+            edtFullName.setText("")
             isValid = false
         } else {
             tilFullName.error = null
@@ -195,11 +279,50 @@ class RegisterActivity : AppCompatActivity() {
 
         val tilDob = findViewById<TextInputLayout>(R.id.tilDob)
         val edtDob = findViewById<TextInputEditText>(R.id.edtDob)
-        if (edtDob.text.toString().trim().isEmpty()) {
-            tilDob.error = "Required"
+        val dobStr = edtDob.text.toString().trim()
+        if (dobStr.isEmpty()) {
+            tilDob.error = "Date of birth is required"
             isValid = false
         } else {
-            tilDob.error = null
+            try {
+                val sdf = java.text.SimpleDateFormat("dd-MM-yyyy", java.util.Locale.getDefault())
+                sdf.isLenient = false
+                val dobDate = sdf.parse(dobStr)
+                if (dobDate == null) {
+                    tilDob.error = "Invalid date"
+                    edtDob.setText("")
+                    isValid = false
+                } else {
+                    val dobCalendar = java.util.Calendar.getInstance()
+                    dobCalendar.time = dobDate
+                    val today = java.util.Calendar.getInstance()
+                    
+                    var age = today.get(java.util.Calendar.YEAR) - dobCalendar.get(java.util.Calendar.YEAR)
+                    if (today.get(java.util.Calendar.DAY_OF_YEAR) < dobCalendar.get(java.util.Calendar.DAY_OF_YEAR)) {
+                        age--
+                    }
+                    
+                    if (dobDate.after(today.time)) {
+                        tilDob.error = "Date of birth cannot be in the future"
+                        edtDob.setText("")
+                        isValid = false
+                    } else if (age <= 15) {
+                        tilDob.error = "You must be older than 15 years"
+                        edtDob.setText("")
+                        isValid = false
+                    } else {
+                        tilDob.error = null
+                    }
+                }
+            } catch (e: Exception) {
+                if (dobStr.matches(Regex("^\\d{2}-\\d{2}-\\d{4}$"))) {
+                    tilDob.error = "Invalid date"
+                } else {
+                    tilDob.error = "Format must be DD-MM-YYYY"
+                }
+                edtDob.setText("")
+                isValid = false
+            }
         }
 
         val tilEmail = findViewById<TextInputLayout>(R.id.tilEmail)
@@ -210,6 +333,7 @@ class RegisterActivity : AppCompatActivity() {
             isValid = false
         } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             tilEmail.error = "Invalid email format"
+            edtEmail.setText("")
             isValid = false
         } else {
             tilEmail.error = null
@@ -219,10 +343,19 @@ class RegisterActivity : AppCompatActivity() {
         val edtPhone = findViewById<TextInputEditText>(R.id.edtPhone)
         val phone = edtPhone.text.toString().trim()
         if (phone.isEmpty()) {
-            tilPhone.error = "Phone is required"
+            tilPhone.error = "Phone number is required"
+            isValid = false
+        } else if (!phone.startsWith("0")) {
+            tilPhone.error = "Phone number must start with 0"
+            edtPhone.setText("")
+            isValid = false
+        } else if (phone.length != 10) {
+            tilPhone.error = "Phone number must be exactly 10 digits"
+            edtPhone.setText("")
             isValid = false
         } else if (!phone.matches(Regex("^0\\d{9}$"))) {
-            tilPhone.error = "Must be 10 digits starting with 0"
+            tilPhone.error = "Invalid phone number format"
+            edtPhone.setText("")
             isValid = false
         } else {
             tilPhone.error = null
@@ -234,8 +367,13 @@ class RegisterActivity : AppCompatActivity() {
         if (idCard.isEmpty()) {
             tilIdCard.error = "ID Card is required"
             isValid = false
+        } else if (idCard.length != 12) {
+            tilIdCard.error = "ID Card must be exactly 12 digits"
+            edtIdCard.setText("")
+            isValid = false
         } else if (!idCard.matches(Regex("^[0-9]{12}$"))) {
-            tilIdCard.error = "Must be 12 digits"
+            tilIdCard.error = "Invalid ID Card format"
+            edtIdCard.setText("")
             isValid = false
         } else {
             tilIdCard.error = null
@@ -248,7 +386,8 @@ class RegisterActivity : AppCompatActivity() {
             tilPassword.error = "Password is required"
             isValid = false
         } else if (password.length < 6) {
-            tilPassword.error = "At least 6 characters"
+            tilPassword.error = "Password must be at least 6 characters"
+            edtPassword.setText("")
             isValid = false
         } else {
             tilPassword.error = null
@@ -262,6 +401,7 @@ class RegisterActivity : AppCompatActivity() {
             isValid = false
         } else if (confirmPassword != password) {
             tilConfirmPassword.error = "Passwords do not match"
+            edtConfirmPassword.setText("")
             isValid = false
         } else {
             tilConfirmPassword.error = null

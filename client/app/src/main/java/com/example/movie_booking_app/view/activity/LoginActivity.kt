@@ -127,8 +127,7 @@ class LoginActivity : AppCompatActivity() {
                             }
                             Toast.makeText(this@LoginActivity, "Login successful", Toast.LENGTH_SHORT).show()
                             val roleName = body?.account?.roleId?.roleName ?: body?.account?.role
-                            val enteredOrDbUser = (body?.account?.username ?: username)
-                            if ((roleName != null && roleName.contains("admin", ignoreCase = true)) || enteredOrDbUser.contains("admin", ignoreCase = true) || username.contains("admin", ignoreCase = true)) {
+                            if (roleName != null && roleName.contains("admin", ignoreCase = true)) {
                                 val intent = Intent(this@LoginActivity, AdminActivity::class.java)
                                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                 startActivity(intent)

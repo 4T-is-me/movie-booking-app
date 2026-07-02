@@ -67,6 +67,20 @@ class AdminActivity : AppCompatActivity() {
                     tvHeaderTitle.text = "Settings"
                     loadFragment(BlankFragment())
                 }
+                R.id.nav_logout -> {
+                    com.example.movie_booking_app.data.local.TokenManager.clearTokens(this@AdminActivity)
+                    val sharedPref = getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+                    with(sharedPref.edit()) {
+                        remove("auth_token")
+                        remove("username")
+                        remove("role")
+                        apply()
+                    }
+                    val intent = android.content.Intent(this@AdminActivity, com.example.movie_booking_app.view.activity.LoginActivity::class.java)
+                    intent.flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                    finish()
+                }
             }
             drawerLayout.closeDrawer(GravityCompat.START)
             true
