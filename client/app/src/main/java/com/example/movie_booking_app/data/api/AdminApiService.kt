@@ -20,8 +20,7 @@ interface AdminApiService {
 
     @GET("api/admin/stats/revenue/monthly")
     suspend fun getMonthlyRevenue(
-        @Query("startDate") startDate: String,
-        @Query("endDate") endDate: String
+        @Query("year") year: Int
     ): Response<MonthlyRevenueResponse>
 
     @GET("api/admin/stats/revenue/by-movie")
