@@ -17,7 +17,17 @@ const accountSchema = new mongoose.Schema({
     },
     passwordHash: {
         type: String,
-        required: true
+        // Make it optional for Google Login
+    },
+    authProvider: {
+        type: String,
+        enum: ['local', 'google'],
+        default: 'local'
+    },
+    googleId: {
+        type: String,
+        unique: true,
+        sparse: true // Allows multiple null values
     },
 
     refreshToken: {

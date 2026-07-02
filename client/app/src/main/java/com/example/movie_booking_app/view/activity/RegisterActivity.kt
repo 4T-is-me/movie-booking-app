@@ -23,8 +23,40 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Calendar
+import android.app.Activity
+import android.content.Intent
+import androidx.activity.result.contract.ActivityResultContracts
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.example.movie_booking_app.data.model.request.GoogleLoginRequest
+import com.example.movie_booking_app.data.local.TokenManager
+import org.json.JSONObject
 
 class RegisterActivity : AppCompatActivity() {
+
+    private lateinit var googleSignInClient: GoogleSignInClient
+
+    private val googleSignInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            account.idToken?.let { idToken ->
+                handleGoogleLogin(idToken)
+            } ?: showNotification("Google token is null", false)
+        } catch (e: ApiException) {
+            val statusCode = e.statusCode
+            val errorMsg = when (statusCode) {
+                10 -> "Developer Error (10): Mismatched SHA-1 or Client ID"
+                12500 -> "Sign In Failed (12500): Check Consent Screen or SHA-1"
+                12501 -> "Sign In Canceled (12501): User closed the dialog"
+                16 -> "Sign In Canceled (16): No network or disabled"
+                else -> "Google sign in failed: $statusCode"
+            }
+            showNotification(errorMsg, false)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -244,6 +276,18 @@ class RegisterActivity : AppCompatActivity() {
                 }
             }
         }
+
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(com.example.movie_booking_app.BuildConfig.GOOGLE_CLIENT_ID.trim())
+            .requestEmail()
+            .build()
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
+
+        val btnGoogleRegister = findViewById<Button>(R.id.btnGoogleRegister)
+        btnGoogleRegister.setOnClickListener {
+            val signInIntent = googleSignInClient.signInIntent
+            googleSignInLauncher.launch(signInIntent)
+        }
     }
 
     private fun validateFields(): Boolean {
@@ -443,5 +487,65 @@ class RegisterActivity : AppCompatActivity() {
             cvNotification.visibility = View.GONE
         }
         cvNotification.postDelayed(hideNotificationRunnable, 3000)
+    }
+
+    private fun handleGoogleLogin(idToken: String) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val request = GoogleLoginRequest(idToken)
+                val response = RetrofitClient.authApi.googleLogin(request)
+
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful && response.body() != null) {
+                        val body = response.body()
+                        val token = body?.accessToken
+                        if (token != null) {
+                            val dbUsername = body?.account?.username ?: ""
+                            val roleNameStr = body?.account?.roleId?.roleName ?: body?.account?.role ?: "user"
+                            val sharedPref = getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+                            with(sharedPref.edit()) {
+                                putString("auth_token", token)
+                                putString("username", dbUsername)
+                                putString("role", roleNameStr)
+                                apply()
+                            }
+                            TokenManager.saveTokens(
+                                this@RegisterActivity,
+                                token,
+                                body?.refreshToken ?: ""
+                            )
+                        }
+                        showNotification("Google Registration successful", true)
+                        val roleName = body?.account?.roleId?.roleName ?: body?.account?.role
+                        if (roleName != null && roleName.contains("admin", ignoreCase = true)) {
+                            val intent = Intent(this@RegisterActivity, AdminActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
+                        } else {
+                            val intent = Intent(this@RegisterActivity, MainActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
+                            finish()
+                        }
+                    } else {
+                        val errorStr = response.errorBody()?.string()
+                        val message = try {
+                            if (errorStr != null && errorStr.trim().startsWith("{")) {
+                                JSONObject(errorStr).optString("message", "Google Registration Failed")
+                            } else {
+                                "Google Registration Failed"
+                            }
+                        } catch (e: Exception) {
+                            "Google Registration Failed"
+                        }
+                        showNotification(message, false)
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    showNotification("Connection error: ${e.localizedMessage}", false)
+                }
+            }
+        }
     }
 }

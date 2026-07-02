@@ -45,9 +45,23 @@ const updateProfile = async (req, res, next) => {
     }
 }
 
+const googleLogin = async (req, res, next) => {
+    try {
+        const result = await accountService.googleLogin(req.body.idToken)
+        res.status(StatusCodes.OK).json(result)
+    } catch (error) {
+        console.error("Google Login Error:", error);
+        return res.status(error.statusCode || 500).json({
+            success: false,
+            message: error.message || 'Internal Server Error'
+        });
+    }
+}
+
 export const accountController = {
     register,
     login,
+    googleLogin,
     getProfile,
     updateProfile
 }

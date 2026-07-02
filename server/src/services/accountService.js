@@ -5,6 +5,7 @@ import { Member } from '../models/memberModel.js'
 import { jwtProvider } from '../utils/jwtProvider.js'
 import bcryptjs from 'bcryptjs'
 import '../models/rolesModel.js'
+import { OAuth2Client } from 'google-auth-library'
 
 const register = async (reqBody) => {
     const existedUser = await Account.findOne({ $or: [{ email: reqBody.email }, { username: reqBody.username }] })
@@ -196,9 +197,79 @@ const updateProfile = async (accountId, reqBody) => {
     return await getProfile(accountId);
 }
 
+const googleLogin = async (idToken) => {
+    // Note: You must configure GOOGLE_CLIENT_ID in your .env file
+    const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID || 'YOUR_CLIENT_ID_HERE');
+    const ticket = await client.verifyIdToken({
+        idToken: idToken,
+        audience: process.env.GOOGLE_CLIENT_ID || 'YOUR_CLIENT_ID_HERE',  
+    });
+    const payload = ticket.getPayload();
+    const { email, name, picture, sub } = payload;
+
+    let account = await Account.findOne({ email: email }).populate('roleId');
+
+    if (account) {
+        if (!account.googleId) {
+            account.googleId = sub;
+            account.authProvider = 'google';
+            await account.save();
+        }
+    } else {
+        account = new Account({
+            username: email.split('@')[0] + '_' + sub.substring(0, 5),
+            email: email,
+            authProvider: 'google',
+            googleId: sub,
+            roleId: '6a38d663cf6b5ffdb33166f5', // Default Role: Member
+            status: 1
+        });
+        await account.save();
+
+        const member = new Member({
+            accountId: account._id,
+            fullName: name || 'User',
+            image: picture || null
+        });
+        await member.save();
+        
+        account = await Account.findById(account._id).populate('roleId');
+    }
+
+    if (account.status !== 1) {
+        throw new ApiError(StatusCodes.FORBIDDEN, 'Account has been locked!');
+    }
+
+    const tokenPayload = {
+        accountId: account._id.toString(),
+        username: account.username,
+        role: account.roleId ? (account.roleId.name || account.roleId.roleName || 'Customer') : 'Customer'
+    };
+
+    const accessToken = jwtProvider.generateAccessToken(tokenPayload);
+    const refreshToken = jwtProvider.generateRefreshToken(tokenPayload);
+
+    account.refreshToken = refreshToken;
+    await account.save();
+
+    const safeAccount = account.toObject();
+    delete safeAccount.passwordHash;
+    if (safeAccount.passwordSalt) delete safeAccount.passwordSalt;
+
+    const memberData = await Member.findOne({ accountId: account._id }).lean();
+    if (memberData) delete memberData._id;
+
+    return {
+        account: { ...safeAccount, ...(memberData || {}) },
+        accessToken,
+        refreshToken
+    };
+}
+
 export const accountService = {
     register,
     login,
+    googleLogin,
     getProfile,
     updateProfile
 }
