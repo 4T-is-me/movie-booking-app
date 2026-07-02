@@ -29,10 +29,7 @@ class MainActivity : BaseActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.btnNavHome.setOnClickListener { navigateToSection("Home") }
-        binding.btnNavMovie.setOnClickListener { navigateToSection("Movie") }
-        binding.btnNavTicket.setOnClickListener { navigateToSection("Ticket") }
-        binding.btnNavProfile.setOnClickListener { navigateToSection("Profile") }
+        setupBottomNav()
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNav) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
