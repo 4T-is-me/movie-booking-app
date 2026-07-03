@@ -85,7 +85,6 @@ class RegisterActivity : AppCompatActivity() {
                 val phone = binding.edtPhone.text.toString().trim()
                 val idCard = binding.edtIdCard.text.toString().trim()
                 val password = binding.edtPassword.text.toString().trim()
-                val confirmPassword = binding.edtConfirmPassword.text.toString().trim()
                 val address = binding.edtAddress.text.toString().trim()
 
                 val selectedGenderId = binding.rgGender.checkedRadioButtonId
@@ -100,7 +99,6 @@ class RegisterActivity : AppCompatActivity() {
                 val request = RegisterRequest(
                     username = username,
                     password = password,
-                    confirmPassword = confirmPassword,
                     fullName = fullName,
                     dateOfBirth = dob,
                     gender = gender,
