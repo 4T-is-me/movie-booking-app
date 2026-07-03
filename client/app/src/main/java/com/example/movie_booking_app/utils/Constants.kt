@@ -12,5 +12,5 @@ object Constants {
      * Updated to your machine's actual IPv4: 192.168.88.100
      * Synced with group's server requirements.
      */
-    const val BASE_URL = "http://192.168.9.144:5000/"
+    const val BASE_URL = "http://192.168.9.49:5000/"
 }

@@ -5,6 +5,7 @@ import { authMiddleware } from '../middlewares/authMiddleware.js'
 import multer from 'multer'
 import path from 'path'
 import fs from 'fs'
+import { uploadMiddleware } from '../middlewares/uploadCloud.js'
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -40,17 +41,14 @@ const accountRouter = express.Router()
 accountRouter.get('/profile', authMiddleware.isAuthorized, accountController.getProfile)
 accountRouter.put('/profile', authMiddleware.isAuthorized, accountValidation.updateProfile, accountController.updateProfile)
 
-accountRouter.post('/upload-avatar', authMiddleware.isAuthorized, upload.single('avatar'), (req, res, next) => {
+accountRouter.post('/upload-avatar', authMiddleware.isAuthorized, uploadMiddleware.upload.single('avatar'), uploadMiddleware.uploadToCloudinary('avatars', 'avatar'), (req, res, next) => {
     try {
-        if (!req.file) {
+        if (!req.body.avatar) {
             return res.status(400).json({ success: false, message: 'Please select an image file to upload.' })
         }
-        const host = req.get('host')
-        const protocol = req.protocol
-        const avatarUrl = `${protocol}://${host}/uploads/${req.file.filename}`
         res.status(200).json({
             success: true,
-            avatarUrl: avatarUrl
+            avatarUrl: req.body.avatar
         })
     } catch (error) {
         next(error)

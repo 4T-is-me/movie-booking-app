@@ -73,6 +73,11 @@
             android:exported="true"
             android:theme="@style/Theme.Moviebookingapp" />
 
+        <activity
+            android:name=".view.activity.PurchaseHistoryActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp" />
+
     </application>
 
 </manifest>
