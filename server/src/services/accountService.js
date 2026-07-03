@@ -134,10 +134,14 @@ const getProfile = async (accountId) => {
         gender: account.memberInfo?.gender,
         identityCard: account.memberInfo?.identityCard,
         score: account.memberInfo?.rewardPoints || 0,
+        rewardPoints: account.memberInfo?.rewardPoints || 0,
+        membershipRank: account.memberInfo?.membershipRank || 'bronze',
+        totalSpent: account.memberInfo?.totalSpent || 0,
         role: account.roleId ? (account.roleId.name || account.roleId.roleName || 'Customer') : 'Customer',
         status: account.status,
         registerDate: account.registerDate,
         avatar: account.memberInfo?.image,
+        image: account.memberInfo?.image,
         favoriteCinema: account.memberInfo?.favoriteCinema,
         favoriteGenres: account.memberInfo?.favoriteGenres || []
     };

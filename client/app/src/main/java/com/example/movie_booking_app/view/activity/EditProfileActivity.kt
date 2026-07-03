@@ -158,7 +158,7 @@ class EditProfileActivity : AppCompatActivity() {
                             url
                         } else {
                             // Prepend base URL for local paths like /uploads/avatar.jpg
-                            "http://192.168.9.144:5000$url"
+                            "${com.example.movie_booking_app.utils.Constants.BASE_URL.removeSuffix("/")}$url"
                         }
                         Glide.with(this@EditProfileActivity)
                             .load(finalUrl)
