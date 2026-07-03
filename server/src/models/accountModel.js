@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const accountSchema = new mongoose.Schema({
-    // 1. Nhóm thông tin tài khoản & bảo mật (Đầu ảnh)
+    // 1. Account & security information group
     username: {
         type: String,
         required: true,
@@ -34,9 +34,9 @@ const accountSchema = new mongoose.Schema({
         type: String
     },
 
-    // 2. Nhóm thông tin cá nhân đã được chuyển sang bảng members
+    // 2. Personal information group has been moved to members collection
 
-    // 3. Nhóm quản lý hệ thống (Cuối ảnh)
+    // 3. System management group
     roleId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Role',

@@ -18,7 +18,7 @@ const bookingSchema = new mongoose.Schema({
     finalAmount: { type: Number, required: true }, // after discount
     createdAt: { type: Date, default: Date.now }
 }, {
-    // Cấu hình timestamps chỉ tạo createdAt, tắt updatedAt nếu DB không dùng tới
+    // Timestamps configuration: only create createdAt, disable updatedAt if not used in DB
     timestamps: { createdAt: true, updatedAt: false },
     versionKey: false,
     collection: 'bookings'
