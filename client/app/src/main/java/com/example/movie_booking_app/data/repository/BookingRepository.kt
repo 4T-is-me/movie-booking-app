@@ -11,5 +11,5 @@ interface BookingRepository {
     fun getSeats(date: String, time: String): Flow<List<Seat>>
     fun getShowDates(movieId: String): Flow<List<ShowDate>>
     fun getShowTimes(movieId: String, date: String): Flow<List<TimeSlot>>
-    fun getScoreHistory() : Flow<ScoreHistoryBaseResponse>
+    fun getScoreHistory(): Flow<ScoreHistoryBaseResponse>
 }

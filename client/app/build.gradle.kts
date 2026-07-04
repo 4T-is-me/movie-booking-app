@@ -1,16 +1,8 @@
-import java.util.Properties
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
-}
-
-val envProperties = Properties()
-val envFile = rootProject.file(".env")
-if (envFile.exists()) {
-    envFile.inputStream().use { envProperties.load(it) }
 }
 
 android {
@@ -24,8 +16,6 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        
-        buildConfigField("String", "GOOGLE_CLIENT_ID", "\"${envProperties["GOOGLE_CLIENT_ID"] ?: ""}\"")
     }
 
     buildTypes {
@@ -49,12 +39,10 @@ android {
 
     buildFeatures {
         viewBinding = true
-        buildConfig = true
     }
 }
 
 dependencies {
-    implementation(libs.androidx.appcompat)
     // Core
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.ktx)
@@ -62,6 +50,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.security.crypto)
 
     // UI XML
     implementation(libs.androidx.fragment)
@@ -81,9 +70,6 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
     implementation(libs.okhttp.logging)
-
-    // Google Sign-In
-    implementation("com.google.android.gms:play-services-auth:21.1.1")
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)

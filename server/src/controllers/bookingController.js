@@ -61,10 +61,7 @@ const handleGetHistory = async (req, res, next) => {
 // GET /api/booking/score-history --get score history
 const handleGetScoreHistory = async (req, res, next) => {
     try {
-        const page = Number(req.query.page) || 1;
-        const limit = Number(req.query.limit) || 10;
-
-        const result = await bookingService.handleGetScoreHistory(req.user?.accountId, page, limit)
+        const result = await bookingService.handleGetScoreHistory(req.user?.accountId)
         return res.status(StatusCodes.OK).json({success: true,data: result})
     } catch (error) {
         next(error)

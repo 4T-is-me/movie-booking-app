@@ -17,15 +17,9 @@ interface AuthApi {
     @POST("api/auth/register")
     suspend fun register(@Body request: RegisterRequest): Response<RegisterResponse>
 
-    @POST("api/auth/check-register")
-    suspend fun checkRegister(@Body request: RegisterRequest): Response<com.example.movie_booking_app.data.model.response.BaseResponse>
+    @POST("api/auth/forgot-password/send-otp")
+    suspend fun sendOtp(@Body request: com.example.movie_booking_app.data.model.request.OtpRequest): Response<okhttp3.ResponseBody>
 
-    @POST("api/auth/google-login")
-    suspend fun googleLogin(@Body request: com.example.movie_booking_app.data.model.request.GoogleLoginRequest): Response<LoginResponse>
-
-    @POST("api/auth/send-otp")
-    suspend fun sendOtp(@Body request: com.example.movie_booking_app.data.model.request.OtpRequest): Response<com.example.movie_booking_app.data.model.response.BaseResponse>
-
-    @POST("api/auth/verify-otp")
-    suspend fun verifyOtp(@Body request: com.example.movie_booking_app.data.model.request.VerifyOtpRequest): Response<com.example.movie_booking_app.data.model.response.BaseResponse>
+    @POST("api/auth/forgot-password/verify-otp")
+    suspend fun verifyOtp(@Body request: com.example.movie_booking_app.data.model.request.VerifyOtpRequest): Response<okhttp3.ResponseBody>
 }

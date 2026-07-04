@@ -16,6 +16,12 @@ import com.example.movie_booking_app.view.fragment.MovieGridFragment
 import com.example.movie_booking_app.view.fragment.HomeFragment
 import com.example.movie_booking_app.view.fragment.PlaceholderFragment
 import com.example.movie_booking_app.view.fragment.ProfileFragment
+import com.example.movie_booking_app.viewmodel.AuthViewModel
+import com.example.movie_booking_app.data.api.AuthEvent
+import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -23,16 +29,15 @@ class MainActivity : BaseActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private var currentSection: String = ""
+    private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.btnNavHome.setOnClickListener { navigateToSection("Home") }
-        binding.btnNavMovie.setOnClickListener { navigateToSection("Movie") }
-        binding.btnNavTicket.setOnClickListener { navigateToSection("Ticket") }
-        binding.btnNavProfile.setOnClickListener { navigateToSection("Profile") }
+        setupBottomNav()
+        observeAuthEvents()
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNav) { v, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -55,19 +60,19 @@ class MainActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        val sharedPref = getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
-        val token = sharedPref.getString("auth_token", null)
-        val username = sharedPref.getString("username", "User")
-        val role = sharedPref.getString("role", "user")
-        if (token != null) {
-            if (role?.contains("admin", ignoreCase = true) == true) {
-                val intent = Intent(this, AdminActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
-                finish()
-                return
-            }
-        }
+//        val sharedPref = getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+//        val token = sharedPref.getString("auth_token", null)
+//        val username = sharedPref.getString("username", "User")
+//        val role = sharedPref.getString("role", "user")
+//        if (token != null) {
+//            if (role?.contains("admin", ignoreCase = true) == true || username?.contains("admin", ignoreCase = true) == true) {
+//                val intent = Intent(this, AdminActivity::class.java)
+//                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//                startActivity(intent)
+//                finish()
+//                return
+//            }
+//        }
     }
 
     private fun setupBackStackListener() {
@@ -144,6 +149,19 @@ class MainActivity : BaseActivity() {
             "Movie", "Now Playing", "Coming Soon" -> highlightNavItem(binding.imgNavMovie, binding.tvNavMovie, yellow)
             "Ticket" -> highlightNavItem(binding.imgNavTicket, binding.tvNavTicket, yellow)
             "Profile" -> highlightNavItem(binding.imgNavProfile, binding.tvNavProfile, yellow)
+        }
+    }
+
+    private fun observeAuthEvents() {
+        lifecycleScope.launch {
+            authViewModel.authEvents.collectLatest { event ->
+                if (event is AuthEvent.SessionExpired) {
+                    val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                    finish()
+                }
+            }
         }
     }
 

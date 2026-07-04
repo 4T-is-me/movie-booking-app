@@ -15,7 +15,7 @@ export const handleGetMovies = async (req, res) => {
         return res.status(StatusCodes.OK).json(result);
     } catch (error) {
         console.error('handleGetMovies error:', error);
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Lỗi máy chủ nội bộ.' });
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error.' });
     }
 };
 
@@ -27,7 +27,7 @@ export const handleSearchMovies = async (req, res) => {
         return res.status(StatusCodes.OK).json(result);
     } catch (error) {
         console.error('handleSearchMovies error:', error);
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Lỗi máy chủ nội bộ.' });
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error.' });
     }
 };
 
@@ -37,17 +37,17 @@ export const handleGetMovieById = async (req, res) => {
         const { id } = req.params;
         const movie = await getMovieById(id);
         if (!movie) {
-            return res.status(StatusCodes.NOT_FOUND).json({ message: 'Không tìm thấy phim.' });
+            return res.status(StatusCodes.NOT_FOUND).json({ message: 'Movie not found.' });
         }
         return res.status(StatusCodes.OK).json({ data: movie });
     } catch (error) {
         console.error('handleGetMovieById error:', error);
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Lỗi máy chủ nội bộ.' });
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error.' });
     }
 };
 
 // GET /api/movies/:id/showtimes?date=YYYY-MM-DD
-// Trả về danh sách suất chiếu của ngày đó kèm cinemaRoomName
+// Returns the list of showtimes for that day including cinemaRoomName
 export const handleGetMovieShowtimes = async (req, res) => {
     try {
         const { id } = req.params;
@@ -63,6 +63,6 @@ export const handleGetMovieShowtimes = async (req, res) => {
         return res.status(StatusCodes.OK).json({ data: result });
     } catch (error) {
         console.error('handleGetMovieShowtimes error:', error);
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Lỗi máy chủ nội bộ.' });
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error.' });
     }
 };

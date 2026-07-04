@@ -1,7 +1,5 @@
 package com.example.movie_booking_app.data.model.entity
 
-import Member
-
 data class ScoreHistory(
     val _id: String,
     val memberId: Member,
