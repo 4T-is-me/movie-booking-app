@@ -17,6 +17,20 @@ const transporter = nodemailer.createTransport({
     }
 })
 
+const checkRegister = async (reqBody) => {
+    const existedUser = await Account.findOne({ $or: [{ email: reqBody.email }, { username: reqBody.username }] })
+    if (existedUser) {
+        throw new ApiError(StatusCodes.CONFLICT, 'Email or username already exists')
+    }
+
+    const existedMember = await Member.findOne({ $or: [{ identityCard: reqBody.identityCard }, { phoneNumber: reqBody.phoneNumber }] })
+    if (existedMember) {
+        throw new ApiError(StatusCodes.CONFLICT, 'Identity card or phone number already exists')
+    }
+
+    return { message: 'Valid' }
+}
+
 const register = async (reqBody) => {
     const existedUser = await Account.findOne({ $or: [{ email: reqBody.email }, { username: reqBody.username }] })
     if (existedUser) {
@@ -320,6 +334,7 @@ const verifyOtp = async (reqBody) => {
 };
 
 export const accountService = {
+    checkRegister,
     register,
     login,
     googleLogin,

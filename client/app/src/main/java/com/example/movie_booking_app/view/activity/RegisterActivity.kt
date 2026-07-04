@@ -212,6 +212,58 @@ class RegisterActivity : AppCompatActivity() {
 
                 lifecycleScope.launch(Dispatchers.IO) {
                     try {
+                        val checkRes = RetrofitClient.authApi.checkRegister(request)
+                        if (!checkRes.isSuccessful) {
+                            withContext(Dispatchers.Main) {
+                                btnRegister.isEnabled = true
+                                val errorStr = checkRes.errorBody()?.string()
+                                var errorMessage = "Registration failed"
+                                try {
+                                    if (errorStr != null) {
+                                        val jsonObject = org.json.JSONObject(errorStr)
+                                        errorMessage = jsonObject.optString("message", jsonObject.optString("error", errorStr))
+                                    }
+                                } catch (e: Exception) {
+                                    errorMessage = errorStr ?: "Registration failed"
+                                }
+                                val lowerError = errorMessage.lowercase()
+                                val isExistError = lowerError.contains("exist") || lowerError.contains("tồn tại") || lowerError.contains("already") || lowerError.contains("duplicate")
+                                
+                                if (isExistError) {
+                                    var matched = false
+                                    if (lowerError.contains("username") || lowerError.contains("tài khoản")) {
+                                        findViewById<TextInputLayout>(R.id.tilUsernameReg).error = "Username already exists"
+                                        findViewById<TextInputEditText>(R.id.edtUsername).setText("")
+                                        matched = true
+                                    }
+                                    if (lowerError.contains("email")) {
+                                        findViewById<TextInputLayout>(R.id.tilEmail).error = "Email already exists"
+                                        findViewById<TextInputEditText>(R.id.edtEmail).setText("")
+                                        matched = true
+                                    }
+                                    if (lowerError.contains("phone") || lowerError.contains("điện thoại") || lowerError.contains("sdt")) {
+                                        findViewById<TextInputLayout>(R.id.tilPhone).error = "Phone number already exists"
+                                        findViewById<TextInputEditText>(R.id.edtPhone).setText("")
+                                        matched = true
+                                    }
+                                    if (lowerError.contains("id") || lowerError.contains("identity") || lowerError.contains("cccd") || lowerError.contains("cmnd")) {
+                                        findViewById<TextInputLayout>(R.id.tilIdCard).error = "ID Card already exists"
+                                        findViewById<TextInputEditText>(R.id.edtIdCard).setText("")
+                                        matched = true
+                                    }
+                                    
+                                    if (matched) {
+                                        showNotification("Vui lòng sử dụng thông tin khác", false)
+                                    } else {
+                                        showNotification(errorMessage, false)
+                                    }
+                                } else {
+                                    showNotification(errorMessage, false)
+                                }
+                            }
+                            return@launch
+                        }
+
                         val otpReq = com.example.movie_booking_app.data.model.request.OtpRequest(email)
                         val otpRes = RetrofitClient.authApi.sendOtp(otpReq)
                         withContext(Dispatchers.Main) {
@@ -247,31 +299,29 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun showOtpDialog(email: String, request: RegisterRequest) {
-        val builder = android.app.AlertDialog.Builder(this)
-        builder.setTitle("Xác thực OTP")
-        builder.setMessage("Nhập mã 6 số đã gửi tới $email")
+        val bottomSheetDialog = com.google.android.material.bottomsheet.BottomSheetDialog(this)
+        val view = layoutInflater.inflate(R.layout.dialog_otp_verify, null)
+        bottomSheetDialog.setContentView(view)
         
-        val input = android.widget.EditText(this)
-        input.inputType = android.text.InputType.TYPE_CLASS_NUMBER
-        input.filters = arrayOf(android.text.InputFilter.LengthFilter(6))
-        val padding = (16 * resources.displayMetrics.density).toInt()
-        input.setPadding(padding, padding, padding, padding)
-        builder.setView(input)
+        val tvOtpMessage = view.findViewById<TextView>(R.id.tvOtpMessage)
+        val edtOtpCode = view.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.edtOtpCode)
+        val btnVerifyOtp = view.findViewById<Button>(R.id.btnVerifyOtp)
+        val tvCancel = view.findViewById<TextView>(R.id.tvCancel)
         
-        builder.setPositiveButton("Xác nhận", null) 
-        builder.setNegativeButton("Hủy") { dialog, _ -> dialog.cancel() }
+        tvOtpMessage.text = "Nhập mã 6 số đã gửi tới $email"
         
-        val dialog = builder.create()
-        dialog.show()
+        tvCancel.setOnClickListener {
+            bottomSheetDialog.dismiss()
+        }
         
-        dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-            val otpCode = input.text.toString().trim()
+        btnVerifyOtp.setOnClickListener {
+            val otpCode = edtOtpCode.text.toString().trim()
             if (otpCode.length != 6) {
                 showNotification("OTP phải có 6 số", false)
                 return@setOnClickListener
             }
             
-            dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).isEnabled = false
+            btnVerifyOtp.isEnabled = false
             
             lifecycleScope.launch(Dispatchers.IO) {
                 try {
@@ -279,21 +329,23 @@ class RegisterActivity : AppCompatActivity() {
                     val verifyRes = RetrofitClient.authApi.verifyOtp(verifyReq)
                     withContext(Dispatchers.Main) {
                         if (verifyRes.isSuccessful) {
-                            dialog.dismiss()
+                            bottomSheetDialog.dismiss()
                             performRegistration(request)
                         } else {
-                            dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).isEnabled = true
+                            btnVerifyOtp.isEnabled = true
                             showNotification("Mã OTP sai hoặc đã hết hạn", false)
                         }
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
-                        dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE).isEnabled = true
+                        btnVerifyOtp.isEnabled = true
                         showNotification("Lỗi kết nối", false)
                     }
                 }
             }
         }
+        
+        bottomSheetDialog.show()
     }
 
     private fun performRegistration(request: RegisterRequest) {

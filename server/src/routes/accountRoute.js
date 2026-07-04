@@ -33,6 +33,7 @@ const upload = multer({
 })
 
 const authRouter = express.Router()
+authRouter.post('/check-register', accountValidation.register, accountController.checkRegister)
 authRouter.post('/register', accountValidation.register, accountController.register)
 authRouter.post('/login', accountValidation.login, accountController.login)
 authRouter.post('/google-login', accountController.googleLogin)

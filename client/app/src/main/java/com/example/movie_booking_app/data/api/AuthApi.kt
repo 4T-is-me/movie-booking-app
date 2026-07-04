@@ -17,6 +17,9 @@ interface AuthApi {
     @POST("api/auth/register")
     suspend fun register(@Body request: RegisterRequest): Response<RegisterResponse>
 
+    @POST("api/auth/check-register")
+    suspend fun checkRegister(@Body request: RegisterRequest): Response<com.example.movie_booking_app.data.model.response.BaseResponse>
+
     @POST("api/auth/google-login")
     suspend fun googleLogin(@Body request: com.example.movie_booking_app.data.model.request.GoogleLoginRequest): Response<LoginResponse>
 
