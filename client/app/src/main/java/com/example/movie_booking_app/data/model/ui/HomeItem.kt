@@ -8,7 +8,7 @@ import com.example.movie_booking_app.data.model.entity.Service
  * Sealed class representing different sections of the Home screen.
  */
 sealed class HomeItem {
-    data class HeaderSection(val userName: String) : HomeItem()
+    data class HeaderSection(val userName: String, val isLoggedIn: Boolean = false) : HomeItem()
     
     // Each section now supports a Loading state
     data class NowPlayingSection(val movies: List<Movie>?, val isLoading: Boolean = false) : HomeItem()

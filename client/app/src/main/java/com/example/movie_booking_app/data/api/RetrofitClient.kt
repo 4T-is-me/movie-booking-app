@@ -18,12 +18,12 @@ object RetrofitClient {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
-    private val authorizationInterceptor by lazy {
-        AuthorizationInterceptor(com.example.movie_booking_app.MyApplication.getContext())
+    private val authInterceptor by lazy {
+        AuthInterceptor(com.example.movie_booking_app.MyApplication.getContext())
     }
 
     private val okHttpClient = OkHttpClient.Builder()
-        .addInterceptor(authorizationInterceptor)
+        .addInterceptor(authInterceptor)
         .addInterceptor(loggingInterceptor)
         .connectTimeout(30, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)
