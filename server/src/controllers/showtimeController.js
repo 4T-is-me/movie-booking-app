@@ -7,19 +7,19 @@ const handleGetShowtimeSeats = async (req, res) => {
         const { id } = req.params;
 
         if (!mongoose.isValidObjectId(id)) {
-            return res.status(StatusCodes.NOT_FOUND).json({ message: 'Không tìm thấy suất chiếu.' });
+            return res.status(StatusCodes.NOT_FOUND).json({ message: 'Showtime not found.' });
         }
 
         const result = await showtimeService.getShowtimeSeats(id);
 
         if (!result) {
-            return res.status(StatusCodes.NOT_FOUND).json({ message: 'Không tìm thấy suất chiếu.' });
+            return res.status(StatusCodes.NOT_FOUND).json({ message: 'Showtime not found.' });
         }
 
         return res.status(StatusCodes.OK).json({ data: result });
     } catch (error) {
         console.error('handleGetShowtimeSeats error:', error);
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Lỗi máy chủ nội bộ.' });
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Internal server error.' });
     }
 }
 ///api/showtimes/movie/id

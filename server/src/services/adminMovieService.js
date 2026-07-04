@@ -10,6 +10,14 @@ const createMovie = async (movieData) => {
         throw new ApiError(StatusCodes.BAD_REQUEST, 'This movie title already exists in the system!');
     }
 
+//create a new movie
+const createMovie = async (movieData) => {
+    // check the same movieName exists or not
+    const existingMovie = await Movie.findOne({ movieName: movieData.movieName, isDeleted: false });
+    if (existingMovie) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, 'This movie title already exists in the system!');
+    }
+
     const newMovie = await Movie.create(movieData);
     return newMovie;
 };
