@@ -1,4 +1,4 @@
-// Cú pháp ES Modules (ES6+) để import thư viện
+// ES Modules syntax (ES6+) to import libraries
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -51,7 +51,7 @@ const startServer = async () => {
     await connectDB();
     seatHoldCleanUpJobs.startSeatCleanupJob();
     app.listen(PORT, () => {
-        console.log(`🚀 Server ES Modules đang chạy tại: http://localhost:${PORT}`);
+        console.log(`🚀 ES Modules Server is running at: http://localhost:${PORT}`);
     });
 }
 

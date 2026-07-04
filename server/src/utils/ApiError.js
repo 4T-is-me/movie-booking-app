@@ -1,21 +1,21 @@
 
 
 /**
- * Định nghĩa riêng một Class ApiError kế thừa class Error sẵn (điều này cần thiết và là Best Practice vì class Error nó là class built-in sẵn)
+ * Custom ApiError class extending the built-in Error class (Best Practice for custom error handling)
  */
 class ApiError extends Error {
     constructor(statusCode, message) {
-        // Gọi tới hàm khởi tạo của class Error (class cha) để còn dùng this (kiến thức OOP lập trình hướng đối tượng căn bản)
-        // Thằng cha (Error) có property message rồi nên gọi nó luôn trong super cho gọn
+        // Call the parent class Error constructor to enable using 'this'
+        // The parent (Error) already has the message property, so pass it to super
         super(message)
 
-        // Tên của cái custom Error này, nếu không set thì mặc định nó sẽ kế thừa là "Error"
+        // Custom name for this error, defaults to "Error" if not set
         this.name = 'ApiError'
 
-        // Gán thêm http status code của chúng ta ở đây
+        // Assign HTTP status code
         this.statusCode = statusCode
 
-        // Ghi lại Stack Trace (dấu vết ngăn xếp) để thuận tiện cho việc debug
+        // Capture stack trace for easier debugging
         Error.captureStackTrace(this, this.constructor)
     }
 }

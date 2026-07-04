@@ -9,7 +9,7 @@ export const createShowtime = async (req, res) => {
         if (!movieId || !cinemaId || !roomId || !showDate || !showTime || !ticketPrice) {
             return res.status(400).json({
                 success: false,
-                message: 'Vui lòng điền đủ các trường bắt buộc: movieId, cinemaId, roomId, showDate, showTime, ticketPrice.'
+                message: 'Please fill in all required fields: movieId, cinemaId, roomId, showDate, showTime, ticketPrice.'
             });
         }
 
@@ -17,16 +17,16 @@ export const createShowtime = async (req, res) => {
         return res.status(201).json({
             success: true,
             data: showtime,
-            message: 'Tạo suất chiếu thành công.'
+            message: 'Showtime created successfully.'
         });
     } catch (error) {
         if (error.message === 'CONFLICT') {
             return res.status(409).json({
                 success: false,
-                message: 'Phòng chiếu đã có suất chiếu trùng thời gian.'
+                message: 'This cinema room already has a showtime at the same time.'
             });
         }
-        return res.status(500).json({ success: false, message: 'Lỗi server.', error: error.message });
+        return res.status(500).json({ success: false, message: 'Internal server error.', error: error.message });
     }
 };
 
@@ -45,7 +45,7 @@ export const getShowtimesAdmin = async (req, res) => {
 
         return res.status(200).json({ success: true, ...result });
     } catch (error) {
-        return res.status(500).json({ success: false, message: 'Lỗi server.', error: error.message });
+        return res.status(500).json({ success: false, message: 'Internal server error.', error: error.message });
     }
 };
 
@@ -55,18 +55,18 @@ export const getShowtimeDetail = async (req, res) => {
         const { id } = req.params;
 
         if (!mongoose.isValidObjectId(id)) {
-            return res.status(400).json({ success: false, message: 'ID suất chiếu không hợp lệ.' });
+            return res.status(400).json({ success: false, message: 'Invalid showtime ID.' });
         }
 
         const showtime = await showtimeAdminService.getShowtimeDetail(id);
 
         if (!showtime) {
-            return res.status(404).json({ success: false, message: 'Không tìm thấy suất chiếu.' });
+            return res.status(404).json({ success: false, message: 'Showtime not found.' });
         }
 
         return res.status(200).json({ success: true, data: showtime });
     } catch (error) {
-        return res.status(500).json({ success: false, message: 'Lỗi server.', error: error.message });
+        return res.status(500).json({ success: false, message: 'Internal server error.', error: error.message });
     }
 };
 
@@ -76,23 +76,23 @@ export const softDeleteShowtime = async (req, res) => {
         const { id } = req.params;
 
         if (!mongoose.isValidObjectId(id)) {
-            return res.status(400).json({ success: false, message: 'ID suất chiếu không hợp lệ.' });
+            return res.status(400).json({ success: false, message: 'Invalid showtime ID.' });
         }
 
         const deleted = await showtimeAdminService.softDeleteShowtime(id);
 
         if (!deleted) {
-            return res.status(404).json({ success: false, message: 'Không tìm thấy suất chiếu.' });
+            return res.status(404).json({ success: false, message: 'Showtime not found.' });
         }
 
-        return res.status(200).json({ success: true, message: 'Đã xóa suất chiếu thành công.' });
+        return res.status(200).json({ success: true, message: 'Showtime deleted successfully.' });
     } catch (error) {
         if (error.message === 'ALREADY_DELETED') {
-            return res.status(409).json({ success: false, message: 'Suất chiếu đã bị xóa trước đó.' });
+            return res.status(409).json({ success: false, message: 'Showtime was already deleted.' });
         }
         if (error.message === 'HAS_BOOKINGS') {
-            return res.status(409).json({ success: false, message: 'Không thể xóa suất chiếu đã có ghế được đặt hoặc đang giữ.' });
+            return res.status(409).json({ success: false, message: 'Cannot delete showtime that has booked or held seats.' });
         }
-        return res.status(500).json({ success: false, message: 'Lỗi server.', error: error.message });
+        return res.status(500).json({ success: false, message: 'Internal server error.', error: error.message });
     }
 };
