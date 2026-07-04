@@ -16,12 +16,12 @@ export const getMemberList = async (req, res) => {
         return res.status(200).json({
             success: true,
             data: result,
-            message: 'Lấy danh sách thành viên thành công.'
+            message: 'Member list retrieved successfully.'
         });
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: 'Lỗi server',
+            message: 'Internal server error.',
             error: error.message
         });
     }
@@ -38,14 +38,14 @@ export const adjustMemberScore = async (req, res) => {
         if (adjustment === undefined || typeof adjustment !== 'number' || adjustment === 0) {
             return res.status(400).json({
                 success: false,
-                message: 'Số điểm điều chỉnh (adjustment) phải là số khác 0.'
+                message: 'Adjustment score must be a non-zero number.'
             });
         }
 
         if (!reason || typeof reason !== 'string' || reason.trim() === '') {
             return res.status(400).json({
                 success: false,
-                message: 'Lý do điều chỉnh (reason) không được để trống.'
+                message: 'Adjustment reason cannot be empty.'
             });
         }
 
@@ -57,7 +57,7 @@ export const adjustMemberScore = async (req, res) => {
         return res.status(200).json({
             success: true,
             data: result,
-            message: 'Điều chỉnh điểm tích lũy thành công.'
+            message: 'Loyalty points adjusted successfully.'
         });
     } catch (error) {
         if (error.statusCode) {
@@ -69,12 +69,12 @@ export const adjustMemberScore = async (req, res) => {
         if (error.name === 'CastError') {
             return res.status(400).json({
                 success: false,
-                message: 'ID thành viên không hợp lệ.'
+                message: 'Invalid member ID.'
             });
         }
         return res.status(500).json({
             success: false,
-            message: 'Lỗi server',
+            message: 'Internal server error.',
             error: error.message
         });
     }
@@ -91,7 +91,7 @@ export const updateMemberStatus = async (req, res) => {
         if (status === undefined || typeof status !== 'number') {
             return res.status(400).json({
                 success: false,
-                message: 'Trạng thái (status) phải là số.'
+                message: 'Status must be a number.'
             });
         }
 
@@ -99,14 +99,14 @@ export const updateMemberStatus = async (req, res) => {
         if (!result) {
             return res.status(404).json({
                 success: false,
-                message: 'Không tìm thấy thành viên.'
+                message: 'Member not found.'
             });
         }
 
         return res.status(200).json({
             success: true,
             data: result,
-            message: 'Cập nhật trạng thái tài khoản thành viên thành công.'
+            message: 'Member account status updated successfully.'
         });
     } catch (error) {
         if (error.statusCode) {
@@ -118,12 +118,12 @@ export const updateMemberStatus = async (req, res) => {
         if (error.name === 'CastError') {
             return res.status(400).json({
                 success: false,
-                message: 'ID thành viên không hợp lệ.'
+                message: 'Invalid member ID.'
             });
         }
         return res.status(500).json({
             success: false,
-            message: 'Lỗi server',
+            message: 'Internal server error.',
             error: error.message
         });
     }

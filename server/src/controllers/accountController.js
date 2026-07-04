@@ -1,15 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
 import { accountService } from '../services/accountService.js'
 
-const checkRegister = async (req, res, next) => {
-    try {
-        const result = await accountService.checkRegister(req.body)
-        res.status(StatusCodes.OK).json(result)
-    } catch (error) {
-        next(error)
-    }
-}
-
 const register = async (req, res, next) => {
     try {
         const createAccount = await accountService.register(req.body)
@@ -54,44 +45,9 @@ const updateProfile = async (req, res, next) => {
     }
 }
 
-const googleLogin = async (req, res, next) => {
-    try {
-        const result = await accountService.googleLogin(req.body.idToken)
-        res.status(StatusCodes.OK).json(result)
-    } catch (error) {
-        console.error("Google Login Error:", error);
-        return res.status(error.statusCode || 500).json({
-            success: false,
-            message: error.message || 'Internal Server Error'
-        });
-    }
-}
-
-const sendOtp = async (req, res, next) => {
-    try {
-        const result = await accountService.sendOtp(req.body);
-        res.status(StatusCodes.OK).json(result);
-    } catch (error) {
-        next(error);
-    }
-}
-
-const verifyOtp = async (req, res, next) => {
-    try {
-        const result = await accountService.verifyOtp(req.body);
-        res.status(StatusCodes.OK).json(result);
-    } catch (error) {
-        next(error);
-    }
-}
-
 export const accountController = {
-    checkRegister,
     register,
     login,
-    googleLogin,
     getProfile,
-    updateProfile,
-    sendOtp,
-    verifyOtp
+    updateProfile
 }
