@@ -132,6 +132,24 @@ class HomeMultiAdapter(
         init { 
             viewPager.adapter = adapter
             tvSeeAll.setOnClickListener { onSeeAll("Now Playing") }
+            
+            // Set offscreen page limit to render adjacent pages
+            viewPager.offscreenPageLimit = 3
+            
+            // Set page transformer for peeking scale and alpha effect
+            viewPager.setPageTransformer { page, position ->
+                val r = 1 - Math.abs(position)
+                // Scale effect
+                page.scaleY = 0.85f + r * 0.15f
+                page.scaleX = 0.85f + r * 0.15f
+                
+                // Alpha effect
+                page.alpha = 0.5f + r * 0.5f
+                
+                // Adjust horizontal spacing (pull adjacent pages closer)
+                val density = page.context.resources.displayMetrics.density
+                page.translationX = position * -32 * density
+            }
         }
 
         fun bind(movies: List<Movie>, isLoading: Boolean) { 
@@ -144,17 +162,25 @@ class HomeMultiAdapter(
                 shimmer.visibility = View.GONE
                 layoutContent.visibility = View.VISIBLE
                 if (movies.isNotEmpty()) {
-                    adapter.submitList(movies)
+                    val isFirstSubmit = adapter.currentList.isEmpty()
+                    adapter.submitList(movies) {
+                        if (isFirstSubmit) {
+                            val size = movies.size
+                            val middle = size * 500
+                            viewPager.setCurrentItem(middle, false)
+                        }
+                    }
                     if (!isCallbackAdded) {
                         isCallbackAdded = true
                         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                                val itemCount = adapter.itemCount
-                                if (itemCount > 1) {
+                                val size = movies.size
+                                if (size > 1) {
                                     indicatorTrack.post {
                                         val totalScrollableWidth = indicatorTrack.width - indicatorThumb.width
-                                        val progress = (position + positionOffset) / (itemCount - 1)
-                                        indicatorThumb.translationX = progress * totalScrollableWidth
+                                        val progress = ((position % size) + positionOffset) / (size - 1)
+                                        val safeProgress = progress.coerceIn(0f, 1f)
+                                        indicatorThumb.translationX = safeProgress * totalScrollableWidth
                                     }
                                 }
                             }

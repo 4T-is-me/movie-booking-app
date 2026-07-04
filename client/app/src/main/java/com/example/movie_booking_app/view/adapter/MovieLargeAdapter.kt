@@ -17,13 +17,21 @@ class MovieLargeAdapter(
     private val onClick: (Movie) -> Unit
 ) : ListAdapter<Movie, MovieLargeAdapter.MovieLargeViewHolder>(MovieDiffCallback()) {
 
+    override fun getItemCount(): Int {
+        val size = currentList.size
+        return if (size == 0) 0 else size * 1000
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieLargeViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_movie_large, parent, false)
         return MovieLargeViewHolder(view, onClick)
     }
 
     override fun onBindViewHolder(holder: MovieLargeViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        val size = currentList.size
+        if (size > 0) {
+            holder.bind(getItem(position % size))
+        }
     }
 
     class MovieLargeViewHolder(view: View, val onClick: (Movie) -> Unit) : RecyclerView.ViewHolder(view) {
