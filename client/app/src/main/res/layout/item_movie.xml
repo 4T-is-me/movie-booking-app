@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     app:cardBackgroundColor="@android:color/transparent"
-    app:cardElevation="0dp">
+    app:cardElevation="0dp"
+    app:strokeWidth="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -26,7 +27,7 @@
         <TextView
             android:id="@+id/tvMovieNameVn"
             android:layout_width="0dp"
-            android:layout_height="42dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:paddingHorizontal="6dp"
             android:ellipsize="end"
@@ -48,6 +49,7 @@
             android:textColor="@color/nav_inactive"
             android:textSize="12sp"
             android:textStyle="italic"
+            android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@id/tvMovieNameVn"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -56,17 +58,17 @@
             android:id="@+id/layoutGenre"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="4dp"
             android:paddingHorizontal="6dp"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            app:layout_constraintTop_toBottomOf="@id/tvMovieNameEn">
+            app:layout_constraintTop_toBottomOf="@id/tvMovieNameVn">
 
             <ImageView
                 android:layout_width="14dp"
                 android:layout_height="14dp"
                 android:contentDescription="@null"
-                android:src="@android:drawable/ic_menu_slideshow"
+                android:src="@drawable/ic_movie"
                 app:tint="@color/white" />
 
             <TextView
@@ -83,16 +85,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:layout_marginBottom="12dp"
             android:paddingHorizontal="6dp"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            app:layout_constraintTop_toBottomOf="@id/layoutGenre">
+            app:layout_constraintTop_toBottomOf="@id/layoutGenre"
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <ImageView
                 android:layout_width="14dp"
                 android:layout_height="14dp"
                 android:contentDescription="@null"
-                android:src="@android:drawable/ic_menu_today"
+                android:src="@drawable/ic_calendar_month_24"
                 app:tint="@color/white" />
 
             <TextView

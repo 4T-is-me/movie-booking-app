@@ -12,7 +12,7 @@ object DateUtils {
             inputFormat.timeZone = TimeZone.getTimeZone("UTC")
             val date = inputFormat.parse(dateString)
             
-            val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val outputFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
             outputFormat.format(date!!)
         } catch (e: Exception) {
             try {
@@ -21,7 +21,7 @@ object DateUtils {
                 inputFormat.timeZone = TimeZone.getTimeZone("UTC")
                 val date = inputFormat.parse(dateString)
                 
-                val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                val outputFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
                 outputFormat.format(date!!)
             } catch (e2: Exception) {
                 try {
@@ -29,7 +29,7 @@ object DateUtils {
                     val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                     val date = inputFormat.parse(dateString)
                     
-                    val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                    val outputFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault())
                     outputFormat.format(date!!)
                 } catch (e3: Exception) {
                     dateString // Return original if parsing fails

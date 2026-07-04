@@ -39,37 +39,41 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp">
+        android:layout_marginTop="16dp"
+        android:clipChildren="false"
+        android:clipToPadding="false">
 
         <LinearLayout
             android:id="@+id/layoutContentNowPlaying"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:clipChildren="false"
+            android:clipToPadding="false">
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/vpNowPlaying"
                 android:layout_width="match_parent"
                 android:layout_height="520dp"
                 android:clipToPadding="false"
-                android:clipChildren="false" />
+                android:clipChildren="false"
+                android:paddingStart="48dp"
+                android:paddingEnd="48dp" />
 
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/indicatorNowPlaying"
-                android:layout_width="wrap_content"
+            <FrameLayout
+                android:id="@+id/layoutIndicatorNowPlaying"
+                android:layout_width="60dp"
                 android:layout_height="4dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/bg_indicator_unselected"
-                app:tabBackground="@android:color/transparent"
-                app:tabIndicator="@drawable/bg_indicator_selected"
-                app:tabIndicatorColor="@color/yellow"
-                app:tabIndicatorGravity="center"
-                app:tabMaxWidth="24dp"
-                app:tabMinWidth="12dp"
-                app:tabPaddingStart="0dp"
-                app:tabPaddingEnd="0dp"
-                app:tabRippleColor="@android:color/transparent" />
+                android:background="@drawable/bg_indicator_track">
+
+                <View
+                    android:id="@+id/viewIndicatorNowPlayingThumb"
+                    android:layout_width="20dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_indicator_thumb" />
+            </FrameLayout>
         </LinearLayout>
 
         <com.facebook.shimmer.ShimmerFrameLayout

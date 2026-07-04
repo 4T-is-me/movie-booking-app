@@ -83,18 +83,63 @@ class HomeMultiAdapter(
         }
     }
 
+    class HeaderViewHolder(view: View, onQueryChanged: (String) -> Unit, onLogin: () -> Unit) : RecyclerView.ViewHolder(view) {
+        private val tvHi: TextView = view.findViewById(R.id.tvHi)
+        private val edtSearch: EditText = view.findViewById(R.id.edtSearch)
+        private val btnLogin: View = view.findViewById(R.id.btnLogin)
+        init {
+            edtSearch.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    onQueryChanged(s?.toString() ?: "")
+                }
+                override fun afterTextChanged(s: Editable?) {}
+            })
+            btnLogin.setOnClickListener { onLogin() }
+        }
+        fun bind(name: String) { 
+            tvHi.text = "Hi, $name 👋" 
+            val token = com.example.movie_booking_app.data.local.TokenManager.getAccessToken(itemView.context)
+            if (token != null) {
+                btnLogin.visibility = View.GONE
+            } else {
+                btnLogin.visibility = View.VISIBLE
+            }
+        }
+    }
+
+
     class NowPlayingViewHolder(view: View, onSeeAll: (String) -> Unit, onMovie: (Movie) -> Unit) : RecyclerView.ViewHolder(view) {
         private val viewPager: ViewPager2 = view.findViewById(R.id.vpNowPlaying)
         private val tvSeeAll: TextView = view.findViewById(R.id.tvSeeAllNowPlaying)
-        private val indicator: TabLayout = view.findViewById(R.id.indicatorNowPlaying)
+        private val indicatorTrack: View = view.findViewById(R.id.layoutIndicatorNowPlaying)
+        private val indicatorThumb: View = view.findViewById(R.id.viewIndicatorNowPlayingThumb)
         private val layoutContent: View = view.findViewById(R.id.layoutContentNowPlaying)
         private val shimmer: ShimmerFrameLayout = view.findViewById(R.id.shimmerNowPlaying)
         private val adapter = MovieLargeAdapter(onMovie)
-        private var mediator: TabLayoutMediator? = null
+        private var isCallbackAdded = false
 
         init { 
             viewPager.adapter = adapter
             tvSeeAll.setOnClickListener { onSeeAll("Now Playing") }
+            
+            // Set offscreen page limit to render adjacent pages
+            viewPager.offscreenPageLimit = 3
+            
+            // Set page transformer for peeking scale and alpha effect
+            viewPager.setPageTransformer { page, position ->
+                val r = 1 - Math.abs(position)
+                // Scale effect
+                page.scaleY = 0.85f + r * 0.15f
+                page.scaleX = 0.85f + r * 0.15f
+                
+                // Alpha effect
+                page.alpha = 0.5f + r * 0.5f
+                
+                // Adjust horizontal spacing (pull adjacent pages closer)
+                val density = page.context.resources.displayMetrics.density
+                page.translationX = position * -32 * density
+            }
         }
 
         fun bind(movies: List<Movie>, isLoading: Boolean) { 
@@ -107,10 +152,29 @@ class HomeMultiAdapter(
                 shimmer.visibility = View.GONE
                 layoutContent.visibility = View.VISIBLE
                 if (movies.isNotEmpty()) {
-                    adapter.submitList(movies)
-                    if (mediator == null) {
-                        mediator = TabLayoutMediator(indicator, viewPager) { _, _ -> }
-                        mediator?.attach()
+                    val isFirstSubmit = adapter.currentList.isEmpty()
+                    adapter.submitList(movies) {
+                        if (isFirstSubmit) {
+                            val size = movies.size
+                            val middle = size * 500
+                            viewPager.setCurrentItem(middle, false)
+                        }
+                    }
+                    if (!isCallbackAdded) {
+                        isCallbackAdded = true
+                        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                                val size = movies.size
+                                if (size > 1) {
+                                    indicatorTrack.post {
+                                        val totalScrollableWidth = indicatorTrack.width - indicatorThumb.width
+                                        val progress = ((position % size) + positionOffset) / (size - 1)
+                                        val safeProgress = progress.coerceIn(0f, 1f)
+                                        indicatorThumb.translationX = safeProgress * totalScrollableWidth
+                                    }
+                                }
+                            }
+                        })
                     }
                 }
             }
