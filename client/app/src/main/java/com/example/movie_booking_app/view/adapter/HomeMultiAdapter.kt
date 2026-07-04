@@ -83,31 +83,6 @@ class HomeMultiAdapter(
         }
     }
 
-    class HeaderViewHolder(view: View, onQueryChanged: (String) -> Unit, onLogin: () -> Unit) : RecyclerView.ViewHolder(view) {
-        private val tvHi: TextView = view.findViewById(R.id.tvHi)
-        private val edtSearch: EditText = view.findViewById(R.id.edtSearch)
-        private val btnLogin: View = view.findViewById(R.id.btnLogin)
-        init {
-            edtSearch.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    onQueryChanged(s?.toString() ?: "")
-                }
-                override fun afterTextChanged(s: Editable?) {}
-            })
-            btnLogin.setOnClickListener { onLogin() }
-        }
-        fun bind(name: String) { 
-            tvHi.text = "Hi, $name 👋" 
-            val token = com.example.movie_booking_app.data.local.TokenManager.getAccessToken(itemView.context)
-            if (token != null) {
-                btnLogin.visibility = View.GONE
-            } else {
-                btnLogin.visibility = View.VISIBLE
-            }
-        }
-    }
-
 
     class NowPlayingViewHolder(view: View, onSeeAll: (String) -> Unit, onMovie: (Movie) -> Unit) : RecyclerView.ViewHolder(view) {
         private val viewPager: ViewPager2 = view.findViewById(R.id.vpNowPlaying)
