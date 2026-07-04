@@ -7,601 +7,193 @@
     android:background="@color/black"
     tools:context=".view.activity.ProfileActivity">
 
-    <!-- Swipe Refresh Layout to display latest values -->
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefresh"
+    <!-- Scrollable content to avoid overlapping with bottom nav -->
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/bottomNav">
 
-        <androidx.core.widget.NestedScrollView
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:paddingBottom="24dp">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
+            <!-- Profile Header Section -->
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivAvatar"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="48dp"
+                android:background="@color/avatar_bg"
+                android:scaleType="centerCrop"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearanceOverlay="@style/CircleImageView" />
+
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:paddingBottom="24dp">
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="12dp"
+                android:text="@string/user_name_placeholder"
+                android:textColor="@color/white"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@id/ivEditProfile"
+                app:layout_constraintStart_toEndOf="@id/ivAvatar"
+                app:layout_constraintTop_toTopOf="@id/ivAvatar" />
 
-                <!-- Member Card (Stroke color is static Gold) -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardMember"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="32dp"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="4dp"
-                    app:strokeWidth="1.5dp"
-                    app:strokeColor="#F5C542"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent">
+            <ImageView
+                android:id="@+id/ivPhone"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginTop="6dp"
+                android:src="@drawable/ic_phone"
+                app:layout_constraintStart_toStartOf="@id/tvName"
+                app:layout_constraintTop_toBottomOf="@id/tvName"
+                app:tint="@color/white" />
 
-                    <!-- Inner ConstraintLayout background is static Gold Gradient -->
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/layoutMemberCardInner"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/member_card_gold"
-                        android:padding="20dp">
+            <TextView
+                android:id="@+id/tvPhone"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/user_phone_placeholder"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@id/ivPhone"
+                app:layout_constraintEnd_toStartOf="@id/ivEditProfile"
+                app:layout_constraintStart_toEndOf="@id/ivPhone"
+                app:layout_constraintTop_toTopOf="@id/ivPhone" />
 
-                        <!-- Avatar Container for Circular Border & Camera Badge -->
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:id="@+id/avatarContainer"
-                            android:layout_width="92dp"
-                            android:layout_height="92dp"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent">
+            <ImageView
+                android:id="@+id/ivEmail"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginTop="6dp"
+                android:src="@drawable/ic_email"
+                app:layout_constraintStart_toStartOf="@id/tvName"
+                app:layout_constraintTop_toBottomOf="@id/ivPhone"
+                app:tint="@color/white" />
 
-                            <!-- Circular Avatar Border (Static Gold) -->
-                            <com.google.android.material.imageview.ShapeableImageView
-                                android:id="@+id/ivAvatar"
-                                android:layout_width="84dp"
-                                android:layout_height="84dp"
-                                android:background="@color/avatar_bg"
-                                android:scaleType="centerCrop"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                app:shapeAppearanceOverlay="@style/CircleImageView"
-                                app:strokeWidth="2.5dp"
-                                app:strokeColor="#F5C542" />
+            <TextView
+                android:id="@+id/tvEmail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="@string/user_email_placeholder"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toBottomOf="@id/ivEmail"
+                app:layout_constraintEnd_toStartOf="@id/ivEditProfile"
+                app:layout_constraintStart_toEndOf="@id/ivEmail"
+                app:layout_constraintTop_toTopOf="@id/ivEmail" />
 
-                            <!-- Camera Badge (Static Gold) -->
-                            <com.google.android.material.card.MaterialCardView
-                                android:id="@+id/cardCamera"
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                app:cardCornerRadius="12dp"
-                                app:cardBackgroundColor="#F5C542"
-                                app:cardElevation="2dp"
-                                app:strokeWidth="0dp"
-                                app:layout_constraintBottom_toBottomOf="@id/ivAvatar"
-                                app:layout_constraintEnd_toEndOf="@id/ivAvatar"
-                                android:layout_margin="2dp">
+            <ImageView
+                android:id="@+id/ivEditProfile"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="16dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/ic_edit"
+                app:layout_constraintBottom_toBottomOf="@id/ivAvatar"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/ivAvatar"
+                app:tint="@color/white" />
 
-                                <ImageView
-                                    android:id="@+id/ivCameraIcon"
-                                    android:layout_width="14dp"
-                                    android:layout_height="14dp"
-                                    android:layout_gravity="center"
-                                    android:src="@drawable/ic_camera"
-                                    app:tint="#000000" />
-                            </com.google.android.material.card.MaterialCardView>
+            <View
+                android:id="@+id/divider1"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="24dp"
+                android:background="@color/divider_color"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ivAvatar" />
 
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-                        <!-- Edit Profile Icon (Static White) -->
-                        <ImageView
-                            android:id="@+id/ivEditProfile"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:background="?android:attr/selectableItemBackgroundBorderless"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:src="@drawable/ic_edit"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:tint="@color/white" />
-
-                        <!-- Name -->
-                        <TextView
-                            android:id="@+id/tvName"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginEnd="8dp"
-                            android:text="@string/user_name_placeholder"
-                            android:textColor="@color/white"
-                            android:textSize="26sp"
-                            android:textStyle="bold"
-                            app:layout_constraintTop_toTopOf="@id/avatarContainer"
-                            app:layout_constraintBottom_toTopOf="@id/layoutBadge"
-                            app:layout_constraintStart_toEndOf="@id/avatarContainer"
-                            app:layout_constraintEnd_toStartOf="@id/ivEditProfile"
-                            app:layout_constraintVertical_chainStyle="packed" />
-
-                        <!-- Badge container (Pill shape background loaded dynamically) -->
-                        <LinearLayout
-                            android:id="@+id/layoutBadge"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginTop="8dp"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:background="@drawable/bg_badge_gold"
-                            android:paddingHorizontal="12dp"
-                            android:paddingVertical="4dp"
-                            app:layout_constraintTop_toBottomOf="@id/tvName"
-                            app:layout_constraintBottom_toBottomOf="@id/avatarContainer"
-                            app:layout_constraintStart_toEndOf="@id/avatarContainer">
-
-                            <ImageView
-                                android:id="@+id/imgBadgeCrownIcon"
-                                android:layout_width="14dp"
-                                android:layout_height="14dp"
-                                android:src="@drawable/ic_crown"
-                                app:tint="#F5C542" />
-
-                            <TextView
-                                android:id="@+id/tvRank"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="6dp"
-                                android:text="Gold Member"
-                                android:textColor="#F5C542"
-                                android:textSize="15sp"
-                                android:fontFamily="sans-serif-medium" />
-                        </LinearLayout>
-
-                        <!-- Horizontal divider above points/spent -->
-                        <View
-                            android:id="@+id/dividerCardMiddle"
-                            android:layout_width="match_parent"
-                            android:layout_height="0.5dp"
-                            android:layout_marginTop="20dp"
-                            android:background="#22FFFFFF"
-                            app:layout_constraintTop_toBottomOf="@id/avatarContainer"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent" />
-
-                        <!-- Reward Points Column -->
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:id="@+id/layoutRewardPoints"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
-                            app:layout_constraintTop_toBottomOf="@id/dividerCardMiddle"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toStartOf="@id/dividerCardVertical">
-
-                            <ImageView
-                                android:id="@+id/imgPointsIcon"
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:src="@drawable/ic_gift"
-                                app:tint="#F5C542"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintBottom_toBottomOf="parent" />
-
-                            <TextView
-                                android:id="@+id/tvPointsLabel"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:text="Reward Points"
-                                android:textColor="#88FFFFFF"
-                                android:textSize="13sp"
-                                app:layout_constraintStart_toEndOf="@id/imgPointsIcon"
-                                app:layout_constraintTop_toTopOf="parent" />
-
-                            <TextView
-                                android:id="@+id/tvPoints"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="0 pts"
-                                android:textColor="#F5C542"
-                                android:textSize="18sp"
-                                android:textStyle="bold"
-                                app:layout_constraintStart_toStartOf="@id/tvPointsLabel"
-                                app:layout_constraintTop_toBottomOf="@id/tvPointsLabel" />
-
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-                        <!-- Vertical Divider in Card -->
-                        <View
-                            android:id="@+id/dividerCardVertical"
-                            android:layout_width="0.5dp"
-                            android:layout_height="40dp"
-                            android:background="#22FFFFFF"
-                            app:layout_constraintTop_toTopOf="@id/layoutRewardPoints"
-                            app:layout_constraintBottom_toBottomOf="@id/layoutRewardPoints"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent" />
-
-                        <!-- Total Spent Column -->
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:id="@+id/layoutTotalSpent"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
-                            android:layout_marginStart="16dp"
-                            app:layout_constraintTop_toBottomOf="@id/dividerCardMiddle"
-                            app:layout_constraintStart_toEndOf="@id/dividerCardVertical"
-                            app:layout_constraintEnd_toEndOf="parent">
-
-                            <ImageView
-                                android:id="@+id/imgWalletIcon"
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:src="@drawable/ic_wallet"
-                                app:tint="#F5C542"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintBottom_toBottomOf="parent" />
-
-                            <TextView
-                                android:id="@+id/tvTotalSpentLabel"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:text="Total Spent"
-                                android:textColor="#88FFFFFF"
-                                android:textSize="13sp"
-                                app:layout_constraintStart_toEndOf="@id/imgWalletIcon"
-                                app:layout_constraintTop_toTopOf="parent" />
-
-                            <TextView
-                                android:id="@+id/tvTotalSpent"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="0 ₫"
-                                android:textColor="#F5C542"
-                                android:textSize="18sp"
-                                android:textStyle="bold"
-                                app:layout_constraintStart_toStartOf="@id/tvTotalSpentLabel"
-                                app:layout_constraintTop_toBottomOf="@id/tvTotalSpentLabel" />
-
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Hidden Contact Info for structural consistency -->
-                <ImageView
-                    android:id="@+id/ivPhone"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="24dp"
-                    android:src="@drawable/ic_phone"
-                    android:visibility="gone"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/cardMember"
-                    app:tint="@color/white" />
-
-                <TextView
-                    android:id="@+id/tvPhone"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginEnd="20dp"
-                    android:text="@string/user_phone_placeholder"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="@id/ivPhone"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/ivPhone"
-                    app:layout_constraintTop_toTopOf="@id/ivPhone" />
-
-                <ImageView
-                    android:id="@+id/ivEmail"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="16dp"
-                    android:src="@drawable/ic_email"
-                    android:visibility="gone"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/ivPhone"
-                    app:tint="@color/white" />
-
-                <TextView
-                    android:id="@+id/tvEmail"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginEnd="20dp"
-                    android:text="@string/user_email_placeholder"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="@id/ivEmail"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/ivEmail"
-                    app:layout_constraintTop_toTopOf="@id/ivEmail" />
-
-                <View
-                    android:id="@+id/divider1"
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="32dp"
-                    android:background="@color/divider_color"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/cardMember" />
-
-                <!-- Change Language Card -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/layoutChangeLanguage"
-                    android:layout_width="match_parent"
-                    android:layout_height="72dp"
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="20dp"
-                    app:cardCornerRadius="18dp"
-                    app:cardBackgroundColor="#151515"
-                    app:strokeWidth="0dp"
-                    app:layout_constraintTop_toBottomOf="@id/divider1"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:paddingHorizontal="20dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:background="?android:attr/selectableItemBackground">
-
-                        <!-- Circular Icon Container -->
-                        <View
-                            android:id="@+id/iconContainerLanguage"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:background="@drawable/bg_circle_icon"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent" />
-
-                        <ImageView
-                            android:id="@+id/ivMenuLanguageIcon"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_language"
-                            app:tint="#F5C542"
-                            app:layout_constraintStart_toStartOf="@id/iconContainerLanguage"
-                            app:layout_constraintEnd_toEndOf="@id/iconContainerLanguage"
-                            app:layout_constraintTop_toTopOf="@id/iconContainerLanguage"
-                            app:layout_constraintBottom_toBottomOf="@id/iconContainerLanguage" />
-
-                        <!-- Title & Subtitle -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginEnd="16dp"
-                            android:orientation="vertical"
-                            app:layout_constraintStart_toEndOf="@id/iconContainerLanguage"
-                            app:layout_constraintEnd_toStartOf="@id/ivChevronLanguage"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Change language"
-                                android:textColor="@color/white"
-                                android:textSize="15sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="Select your preferred language"
-                                android:textColor="#88FFFFFF"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-
-                        <!-- Chevron -->
-                        <ImageView
-                            android:id="@+id/ivChevronLanguage"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="#F5C542"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Change Password Card -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/layoutChangePassword"
-                    android:layout_width="match_parent"
-                    android:layout_height="72dp"
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="16dp"
-                    app:cardCornerRadius="18dp"
-                    app:cardBackgroundColor="#151515"
-                    app:strokeWidth="0dp"
-                    app:layout_constraintTop_toBottomOf="@id/layoutChangeLanguage"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:paddingHorizontal="20dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:background="?android:attr/selectableItemBackground">
-
-                        <!-- Circular Icon Container -->
-                        <View
-                            android:id="@+id/iconContainerPassword"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:background="@drawable/bg_circle_icon"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent" />
-
-                        <ImageView
-                            android:id="@+id/ivMenuPasswordIcon"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_lock"
-                            app:tint="#F5C542"
-                            app:layout_constraintStart_toStartOf="@id/iconContainerPassword"
-                            app:layout_constraintEnd_toEndOf="@id/iconContainerPassword"
-                            app:layout_constraintTop_toTopOf="@id/iconContainerPassword"
-                            app:layout_constraintBottom_toBottomOf="@id/iconContainerPassword" />
-
-                        <!-- Title & Subtitle -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginEnd="16dp"
-                            android:orientation="vertical"
-                            app:layout_constraintStart_toEndOf="@id/iconContainerPassword"
-                            app:layout_constraintEnd_toStartOf="@id/ivChevronPassword"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Change password"
-                                android:textColor="@color/white"
-                                android:textSize="15sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="Update your password securely"
-                                android:textColor="#88FFFFFF"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-
-                        <!-- Chevron -->
-                        <ImageView
-                            android:id="@+id/ivChevronPassword"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="#F5C542"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- Purchase History Card -->
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/layoutPurchaseHistory"
-                    android:layout_width="match_parent"
-                    android:layout_height="72dp"
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="16dp"
-                    app:cardCornerRadius="18dp"
-                    app:cardBackgroundColor="#151515"
-                    app:strokeWidth="0dp"
-                    app:layout_constraintTop_toBottomOf="@id/layoutChangePassword"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent">
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:paddingHorizontal="20dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:background="?android:attr/selectableItemBackground">
-
-                        <!-- Circular Icon Container -->
-                        <View
-                            android:id="@+id/iconContainerHistory"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            android:background="@drawable/bg_circle_icon"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent" />
-
-                        <ImageView
-                            android:id="@+id/ivMenuHistoryIcon"
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_ticket"
-                            app:tint="#F5C542"
-                            app:layout_constraintStart_toStartOf="@id/iconContainerHistory"
-                            app:layout_constraintEnd_toEndOf="@id/iconContainerHistory"
-                            app:layout_constraintTop_toTopOf="@id/iconContainerHistory"
-                            app:layout_constraintBottom_toBottomOf="@id/iconContainerHistory" />
-
-                        <!-- Title & Subtitle -->
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:layout_marginEnd="16dp"
-                            android:orientation="vertical"
-                            app:layout_constraintStart_toEndOf="@id/iconContainerHistory"
-                            app:layout_constraintEnd_toStartOf="@id/ivChevronHistory"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Purchase History"
-                                android:textColor="@color/white"
-                                android:textSize="15sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="View your booked tickets and payment history"
-                                android:textColor="#88FFFFFF"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-
-                        <!-- Chevron -->
-                        <ImageView
-                            android:id="@+id/ivChevronHistory"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="#F5C542"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent" />
-
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </com.google.android.material.card.MaterialCardView>
-
+            <!-- My Ticket Menu Item -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layoutMyTicket"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingHorizontal="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider1">
+                <ImageView android:id="@+id/ivMenuTicketIcon" android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_ticket" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" app:tint="@color/white" />
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="@string/my_ticket" android:textColor="@color/white" android:textSize="16sp" android:textStyle="bold" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toEndOf="@id/ivMenuTicketIcon" app:layout_constraintTop_toTopOf="parent" />
+                <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_chevron_right" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" app:tint="@color/white" />
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.core.widget.NestedScrollView>
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <!-- Navigation bar bottom -->
+            <View android:id="@+id/divider2" android:layout_width="0dp" android:layout_height="1dp" android:background="@color/divider_color" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@id/layoutMyTicket" />
+
+            <!-- Change Language -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layoutChangeLanguage"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingHorizontal="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider2">
+                <ImageView android:id="@+id/ivMenuLanguageIcon" android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_language" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" app:tint="@color/white" />
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="@string/change_language" android:textColor="@color/white" android:textSize="16sp" android:textStyle="bold" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toEndOf="@id/ivMenuLanguageIcon" app:layout_constraintTop_toTopOf="parent" />
+                <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_chevron_right" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" app:tint="@color/white" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View android:id="@+id/divider3" android:layout_width="0dp" android:layout_height="1dp" android:background="@color/divider_color" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@id/layoutChangeLanguage" />
+
+            <!-- Change Password -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layoutChangePassword"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingHorizontal="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider3">
+                <ImageView android:id="@+id/ivMenuPasswordIcon" android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_lock" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" app:tint="@color/white" />
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="@string/change_password" android:textColor="@color/white" android:textSize="16sp" android:textStyle="bold" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toEndOf="@id/ivMenuPasswordIcon" app:layout_constraintTop_toTopOf="parent" />
+                <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_chevron_right" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" app:tint="@color/white" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View android:id="@+id/divider4" android:layout_width="0dp" android:layout_height="1dp" android:background="@color/divider_color" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@id/layoutChangePassword" />
+
+            <!-- Logout Menu Item -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layoutLogout"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingHorizontal="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider4">
+                <ImageView android:id="@+id/ivMenuLogoutIcon" android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_logout" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" app:tint="@color/white" />
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="16dp" android:text="Logout" android:textColor="@color/white" android:textSize="16sp" android:textStyle="bold" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toEndOf="@id/ivMenuLogoutIcon" app:layout_constraintTop_toTopOf="parent" />
+                <ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_chevron_right" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" app:tint="@color/white" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Thanh điều hướng CUSTOM của bạn -->
     <LinearLayout
         android:id="@+id/bottomNav"
         android:layout_width="match_parent"

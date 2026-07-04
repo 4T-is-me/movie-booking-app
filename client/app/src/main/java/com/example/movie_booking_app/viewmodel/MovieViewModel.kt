@@ -44,14 +44,6 @@ class MovieViewModel @Inject constructor(
 
     private val _showtimeError = MutableStateFlow<String?>(null)
     val showtimeError: StateFlow<String?> = _showtimeError
-
-    // Combined admin action flows
-    private val _movieActionSuccess = MutableSharedFlow<Boolean>()
-    val movieActionSuccess = _movieActionSuccess.asSharedFlow()
-
-    private val _movieActionMessage = MutableSharedFlow<String>()
-    val movieActionMessage = _movieActionMessage.asSharedFlow()
-
     init {
         loadHomeData()
         loadAdminMovies()
@@ -66,6 +58,7 @@ class MovieViewModel @Inject constructor(
     }
 
     private fun initialHomeState(): List<HomeItem> = listOf(
+        HomeItem.HeaderSection("User"),
         HomeItem.NowPlayingSection(null, isLoading = true),
         HomeItem.ComingSoonSection(null, isLoading = true),
         HomeItem.PromoSection(null, isLoading = true),
@@ -74,23 +67,32 @@ class MovieViewModel @Inject constructor(
     )
 
     fun loadHomeData() {
+        // User profile flow, defaults to "User" on error or if not logged in
+        val userFlow = profileRepository.getUserProfile()
+            .map { it.username ?: "User" }
+            .catch { emit("User") }
+            .onStart { emit("User") }
+
         viewModelScope.launch {
             combine(
                 repository.getMovies().onStart { emit(emptyList()) },
                 repository.getPromos().onStart { emit(emptyList()) },
                 repository.getServices().onStart { emit(emptyList()) },
                 repository.getNews().onStart { emit(emptyList()) },
-                _searchQuery
-            ) { movies, promos, services, news, query ->
+                combine(userFlow, _searchQuery) { name, query -> name to query }
+            ) { movies, promos, services, news, userAndQuery ->
+                val userName = userAndQuery.first
+                val query = userAndQuery.second
                 
                 val filteredMovies = if (query.isEmpty()) movies else {
                     movies.filter { it.movieName?.contains(query, ignoreCase = true) == true }
                 }
 
                 if (filteredMovies.isEmpty() && query.isNotEmpty()) {
-                    listOf(HomeItem.EmptyState)
+                    listOf(HomeItem.HeaderSection(userName), HomeItem.EmptyState)
                 } else {
                     val list = mutableListOf<HomeItem>()
+                    list.add(HomeItem.HeaderSection(userName))
                     
                     val nowPlaying = filteredMovies.filter { 
                         val s = it.status?.lowercase() ?: ""
@@ -151,6 +153,11 @@ class MovieViewModel @Inject constructor(
                 }
         }
     }
+    private val _movieActionSuccess = MutableSharedFlow<Boolean>()
+    val movieActionSuccess = _movieActionSuccess.asSharedFlow()
+
+    private val _movieActionMessage = MutableSharedFlow<String>()
+    val movieActionMessage = _movieActionMessage.asSharedFlow()
 
     fun deleteMovie(id: String) {
         viewModelScope.launch {

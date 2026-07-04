@@ -8,16 +8,16 @@ import {
 
 const router = Router();
 
-// GET /api/movies - Get list of movies (filtering + pagination)
+// GET /api/movies - Lấy danh sách phim (lọc + phân trang)
 router.get('/', handleGetMovies);
 
-// GET /api/movies/search?q=... - Search movies by name (Vietnamese/English)
+// GET /api/movies/search?q=... - Tìm kiếm phim theo tên VN/EN
 router.get('/search', handleSearchMovies);
 
-// GET /api/movies/:id - Get movie details
+// GET /api/movies/:id - Lấy chi tiết một phim
 router.get('/:id', handleGetMovieById);
 
-// GET /api/movies/:id/showtimes?date=YYYY-MM-DD - Get showtimes and dates of a movie
+// GET /api/movies/:id/showtimes?date=YYYY-MM-DD - Lấy ngày + giờ chiếu của phim
 router.get('/:id/showtimes', handleGetMovieShowtimes);
 
 export default router;

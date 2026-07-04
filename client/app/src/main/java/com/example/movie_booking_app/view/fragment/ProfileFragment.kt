@@ -43,15 +43,8 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupSwipeRefresh()
         setupClickListeners()
         observeViewModel()
-    }
-
-    private fun setupSwipeRefresh() {
-        binding.swipeRefresh.setOnRefreshListener {
-            viewModel.loadUserProfile()
-        }
     }
 
     override fun onResume() {
@@ -72,22 +65,36 @@ class ProfileFragment : Fragment() {
             startActivity(intent)
         }
 
+        binding.layoutMyTicket.setOnClickListener {
+            Toast.makeText(context, "My Ticket Clicked", Toast.LENGTH_SHORT).show()
+        }
         binding.layoutChangeLanguage.setOnClickListener {
             Toast.makeText(context, "Change Language Clicked", Toast.LENGTH_SHORT).show()
         }
         binding.layoutChangePassword.setOnClickListener {
             Toast.makeText(context, "Change Password Clicked", Toast.LENGTH_SHORT).show()
         }
-        binding.layoutPurchaseHistory.setOnClickListener {
-            val intent = Intent(requireContext(), com.example.movie_booking_app.view.activity.PurchaseHistoryActivity::class.java)
+
+        binding.layoutLogout.setOnClickListener {
+            val act = requireActivity()
+            TokenManager.clearTokens(act)
+            val sharedPref = act.getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+            with(sharedPref.edit()) {
+                remove("auth_token")
+                remove("username")
+                remove("role")
+                apply()
+            }
+            val intent = Intent(act, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
+            act.finish()
         }
     }
 
     private fun showLoading(isLoading: Boolean) {
         val act = activity ?: return
         if (isLoading) {
-            if (binding.swipeRefresh.isRefreshing) return
             if (progressDialog == null) {
                 progressDialog = android.app.Dialog(act).apply {
                     setContentView(android.widget.ProgressBar(act))
@@ -98,7 +105,6 @@ class ProfileFragment : Fragment() {
             progressDialog?.show()
         } else {
             progressDialog?.dismiss()
-            binding.swipeRefresh.isRefreshing = false
         }
     }
 
@@ -109,51 +115,18 @@ class ProfileFragment : Fragment() {
                     binding.tvName.text = userProfile?.fullName ?: "-"
                     binding.tvPhone.text = userProfile?.phone ?: "-"
                     binding.tvEmail.text = userProfile?.email ?: "-"
-
-                    val rank = userProfile?.membershipRank ?: "bronze"
-                    val rankClean = rank.trim().lowercase()
-
-                    val badgeColor = when (rankClean) {
-                        "gold" -> android.graphics.Color.parseColor("#F5C542")
-                        "silver" -> android.graphics.Color.parseColor("#C0C0C0")
-                        else -> android.graphics.Color.parseColor("#CD7F32") // bronze
+                    userProfile?.avatar?.let { url ->
+                        val finalUrl = if (url.startsWith("http")) {
+                            url
+                        } else {
+                            "${com.example.movie_booking_app.utils.Constants.BASE_URL.removeSuffix("/")}$url"
+                        }
+                        Glide.with(this@ProfileFragment)
+                            .load(finalUrl)
+                            .placeholder(R.drawable.ic_profile)
+                            .error(R.drawable.ic_profile)
+                            .into(binding.ivAvatar)
                     }
-
-                    val badgeBgRes = when (rankClean) {
-                        "gold" -> R.drawable.bg_badge_gold
-                        "silver" -> R.drawable.bg_badge_silver
-                        else -> R.drawable.bg_badge_bronze
-                    }
-
-                    // Apply badge background and texts
-                    binding.layoutBadge.setBackgroundResource(badgeBgRes)
-                    binding.tvRank.text = "${rank.replaceFirstChar { it.uppercase() }} Member"
-                    binding.tvRank.setTextColor(badgeColor)
-
-                    // Tint crown icon inside the badge
-                    binding.imgBadgeCrownIcon.imageTintList = android.content.res.ColorStateList.valueOf(badgeColor)
-
-                    val points = userProfile?.rewardPoints ?: 0
-                    binding.tvPoints.text = "$points pts"
-
-                    val spent = userProfile?.totalSpent ?: 0
-                    val symbols = java.text.DecimalFormatSymbols(java.util.Locale("vi", "VN")).apply {
-                        groupingSeparator = ','
-                    }
-                    val spentFormatter = java.text.DecimalFormat("#,###", symbols)
-                    binding.tvTotalSpent.text = "${spentFormatter.format(spent)} ₫"
-
-                    val url = userProfile?.image
-                    val finalUrl = when {
-                        url.isNullOrEmpty() -> ""
-                        url.startsWith("http") -> url
-                        else -> "${com.example.movie_booking_app.utils.Constants.BASE_URL.removeSuffix("/")}$url"
-                    }
-                    Glide.with(this@ProfileFragment)
-                        .load(finalUrl.ifEmpty { null })
-                        .placeholder(R.drawable.ic_profile)
-                        .error(R.drawable.ic_profile)
-                        .into(binding.ivAvatar)
                 }
             }
         }

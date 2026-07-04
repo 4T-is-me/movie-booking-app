@@ -1,4 +1,5 @@
 import { Booking } from '../models/bookingModel.js';
+import { Invoice } from '../models/invoiceModel.js';
 import { Account } from '../models/accountModel.js';
 import { Role } from '../models/rolesModel.js';
 import { Movie } from '../models/movieModel.js';
@@ -18,16 +19,16 @@ export const getDailyRevenueStats = async (startDate, endDate) => {
         }
     }
 
-    // Filter by active booking paymentStatus
-    matchStage.paymentStatus = 'paid';
+    // Lọc theo trạng thái hóa đơn hoạt động (ở model invoice là status = 1)
+    matchStage.status = 1;
 
     const pipeline = [
         { $match: matchStage },
         {
             $group: {
                 _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-                totalRevenue: { $sum: "$finalAmount" }, // Use finalAmount of Booking
-                ticketCount: { $sum: { $size: { $ifNull: ["$seatIds", []] } } }
+                totalRevenue: { $sum: "$totalMoney" }, // Sử dụng totalMoney của Invoice
+                ticketCount: { $sum: 1 }
             }
         },
         {
@@ -41,7 +42,7 @@ export const getDailyRevenueStats = async (startDate, endDate) => {
         { $sort: { date: 1 } }
     ];
 
-    return await Booking.aggregate(pipeline);
+    return await Invoice.aggregate(pipeline);
 };
 
 export const getMonthlyRevenueStats = async (startDate, endDate) => {
@@ -59,8 +60,8 @@ export const getMonthlyRevenueStats = async (startDate, endDate) => {
         }
     }
 
-    // Filter by active booking paymentStatus
-    matchStage.paymentStatus = 'paid';
+    // Lọc theo trạng thái hóa đơn hoạt động (ở model invoice là status = 1)
+    matchStage.status = 1;
 
     const pipeline = [
         { $match: matchStage },
@@ -70,8 +71,8 @@ export const getMonthlyRevenueStats = async (startDate, endDate) => {
                     year: { $year: "$createdAt" },
                     month: { $month: "$createdAt" }
                 },
-                totalRevenue: { $sum: "$finalAmount" }, // Use finalAmount of Booking
-                ticketCount: { $sum: { $size: { $ifNull: ["$seatIds", []] } } }
+                totalRevenue: { $sum: "$totalMoney" }, // Sử dụng totalMoney của Invoice
+                ticketCount: { $sum: 1 }
             }
         },
         {
@@ -86,31 +87,15 @@ export const getMonthlyRevenueStats = async (startDate, endDate) => {
         { $sort: { year: 1, month: 1 } }
     ];
 
-    return await Booking.aggregate(pipeline);
+    return await Invoice.aggregate(pipeline);
 };
 
 export const getMovieRevenueStats = async () => {
     const pipeline = [
         {
-            $match: {
-                paymentStatus: 'paid'
-            }
-        },
-        {
-            $lookup: {
-                from: "showtimes",
-                localField: "showtimeId",
-                foreignField: "_id",
-                as: "showtime"
-            }
-        },
-        {
-            $unwind: "$showtime"
-        },
-        {
             $group: {
-                _id: "$showtime.movieId",
-                totalRevenue: { $sum: "$finalAmount" }
+                _id: "$movieId",
+                totalRevenue: { $sum: "$totalMoney" }
             }
         },
         {
@@ -140,7 +125,7 @@ export const getMovieRevenueStats = async () => {
         { $limit: 10 }
     ];
 
-    return await Booking.aggregate(pipeline);
+    return await Invoice.aggregate(pipeline);
 };
 
 export const getOverviewStats = async () => {
@@ -151,7 +136,7 @@ export const getOverviewStats = async () => {
     const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
 
-    // 1. Find Member role first to use in Account query
+    // 1. Tìm role Member trước để dùng trong query Account
     const memberRole = await Role.findOne({
         $or: [
             { name: 'Member' },
@@ -159,31 +144,29 @@ export const getOverviewStats = async () => {
         ]
     });
 
-    // 2. Run 4 queries in parallel using Promise.all
-    const [revenueData, bookingsToday, memberCount, moviesShowingCount] = await Promise.all([
-        // (1) Current month revenue from Booking
-        Booking.aggregate([
+    // 2. Chạy song song 4 query bằng Promise.all
+    const [revenueData, invoicesToday, memberCount, moviesShowingCount] = await Promise.all([
+        // (1) Doanh thu tháng hiện tại từ Invoice
+        Invoice.aggregate([
             {
                 $match: {
-                    paymentStatus: 'paid',
                     createdAt: { $gte: startOfMonth, $lte: endOfMonth }
                 }
             },
             {
                 $group: {
                     _id: null,
-                    total: { $sum: "$finalAmount" }
+                    total: { $sum: "$totalMoney" }
                 }
             }
         ]),
-        // (2) Get bookings sold today to calculate number of tickets
-        Booking.find({
-            paymentStatus: 'paid',
+        // (2) Lấy các invoice bán hôm nay để tính số vé
+        Invoice.find({
             createdAt: { $gte: startOfDay, $lte: endOfDay }
-        }).select('seatIds seatNames'),
-        // (3) Number of active Members (status = 1) from Account
+        }).select('seat'),
+        // (3) Số Member status=1 từ Account
         memberRole ? Account.countDocuments({ roleId: memberRole._id, status: 1 }) : 0,
-        // (4) Number of active showing movies (isDeleted = false) from Movie
+        // (4) Số phim isDeleted=false đang chiếu từ Movie (dùng Index đã thêm ở ISSUE_30)
         Movie.countDocuments({
             isDeleted: false,
             releaseDate: { $lte: now },
@@ -191,16 +174,15 @@ export const getOverviewStats = async () => {
         })
     ]);
 
-    // Calculate total revenue of the current month
+    // Tính tổng doanh thu tháng hiện tại
     const currentMonthRevenue = revenueData[0]?.total || 0;
 
-    // Calculate tickets sold today from seat list (each seat is 1 ticket)
+    // Tính số vé bán hôm nay từ danh sách ghế (mỗi ghế là 1 vé)
     let ticketsSoldToday = 0;
-    bookingsToday.forEach(booking => {
-        if (booking.seatIds) {
-            ticketsSoldToday += booking.seatIds.length;
-        } else if (booking.seatNames) {
-            ticketsSoldToday += booking.seatNames.length;
+    invoicesToday.forEach(invoice => {
+        if (invoice.seat) {
+            const seatsArray = invoice.seat.split(',').map(s => s.trim()).filter(Boolean);
+            ticketsSoldToday += seatsArray.length;
         }
     });
 
@@ -213,4 +195,3 @@ export const getOverviewStats = async () => {
 
     return result;
 };
-
