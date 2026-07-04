@@ -36,7 +36,7 @@ object MockAuthDataSource {
             email = "mock@example.com",
             phone = "0123456789",
             address = "123 Mock Street, Android City",
-            score = 100,
+            rewardPoints = 100,
             role = "Member"
         )
         return Response.success(mockProfile)

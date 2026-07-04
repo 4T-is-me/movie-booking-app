@@ -15,11 +15,11 @@ data class UserProfileResponse(
     val dob: String? = null,
     val gender: String? = null,
     val identityCard: String? = null,
-    val score: Int? = null,
+    val rewardPoints: Int? = null,
     val role: String? = null,
     val status: Int? = null,
     val registerDate: String? = null,
-    val avatar: String? = null,
+    val image: String? = null,
     val favoriteCinema: String? = null,
     val favoriteGenres: List<String>? = null
 )
@@ -37,11 +37,11 @@ fun UserProfileResponse.toUserProfile(): UserProfile {
         dob = dob,
         gender = gender,
         identityCard = identityCard,
-        score = score,
+        rewardPoints = rewardPoints,
         role = role,
         status = status,
         registerDate = registerDate,
-        avatar = avatar,
+        image = image,
         favoriteCinema = favoriteCinema,
         favoriteGenres = favoriteGenres
     )

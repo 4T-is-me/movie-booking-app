@@ -16,4 +16,10 @@ interface AuthApi {
 
     @POST("api/auth/register")
     suspend fun register(@Body request: RegisterRequest): Response<RegisterResponse>
+
+    @POST("api/auth/forgot-password/send-otp")
+    suspend fun sendOtp(@Body request: com.example.movie_booking_app.data.model.request.OtpRequest): Response<okhttp3.ResponseBody>
+
+    @POST("api/auth/forgot-password/verify-otp")
+    suspend fun verifyOtp(@Body request: com.example.movie_booking_app.data.model.request.VerifyOtpRequest): Response<okhttp3.ResponseBody>
 }

@@ -1,6 +1,6 @@
 package com.example.movie_booking_app.viewmodel
 
-import Member
+import com.example.movie_booking_app.data.model.entity.Member
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

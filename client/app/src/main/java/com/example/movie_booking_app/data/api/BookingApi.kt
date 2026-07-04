@@ -8,4 +8,7 @@ import retrofit2.http.Path
 interface BookingApi {
     @GET("bookings/seats/{showtimeId}")
     suspend fun getSeats(@Path("showtimeId") showtimeId: String): Response<List<Seat>>
+
+    @GET("bookings/score-history")
+    suspend fun getScoreHistory(): Response<com.example.movie_booking_app.data.model.response.ScoreHistoryBaseResponse>
 }

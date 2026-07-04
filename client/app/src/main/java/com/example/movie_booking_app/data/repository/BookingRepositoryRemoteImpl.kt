@@ -31,4 +31,17 @@ class BookingRepositoryRemoteImpl @Inject constructor(
     override fun getShowTimes(movieId: String, date: String): Flow<List<TimeSlot>> = flow {
         emit(emptyList())
     }
+
+    override fun getScoreHistory(): Flow<com.example.movie_booking_app.data.model.response.ScoreHistoryBaseResponse> = flow {
+        try {
+            val response = api.getScoreHistory()
+            if (response.isSuccessful && response.body() != null) {
+                emit(response.body()!!)
+            } else {
+                emit(com.example.movie_booking_app.data.model.response.ScoreHistoryBaseResponse(success = false, data = emptyList()))
+            }
+        } catch (e: Exception) {
+            emit(com.example.movie_booking_app.data.model.response.ScoreHistoryBaseResponse(success = false, data = emptyList()))
+        }
+    }
 }

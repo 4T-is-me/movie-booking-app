@@ -49,4 +49,8 @@ class BookingRepositoryImpl @Inject constructor() : BookingRepository {
             TimeSlot("21:00")
         ))
     }
+
+    override fun getScoreHistory(): Flow<com.example.movie_booking_app.data.model.response.ScoreHistoryBaseResponse> = flow {
+        emit(com.example.movie_booking_app.data.model.response.ScoreHistoryBaseResponse(success = true, data = emptyList()))
+    }
 }
