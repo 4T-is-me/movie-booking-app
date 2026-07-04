@@ -48,7 +48,7 @@ class EditProfileViewModel @Inject constructor(
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         userProfile = profile,
-                        avatarUrl = profile.avatar
+                        avatarUrl = profile.image
                     )
                 }
         }
@@ -70,10 +70,28 @@ class EditProfileViewModel @Inject constructor(
                     )
                 }
                 .collect { response ->
-                    _uiState.value = _uiState.value.copy(
-                        isUploadingAvatar = false,
-                        avatarUrl = response.avatarUrl
-                    )
+                    if (response.success) {
+                        val updateReq = UpdateProfileRequest(avatar = response.avatarUrl)
+                        repository.updateProfile(updateReq)
+                            .catch { exception ->
+                                _uiState.value = _uiState.value.copy(
+                                    isUploadingAvatar = false,
+                                    error = "Failed to update profile avatar: ${exception.message}"
+                                )
+                            }
+                            .collect { updatedProfile ->
+                                _uiState.value = _uiState.value.copy(
+                                    isUploadingAvatar = false,
+                                    avatarUrl = response.avatarUrl,
+                                    userProfile = updatedProfile
+                                )
+                            }
+                    } else {
+                        _uiState.value = _uiState.value.copy(
+                            isUploadingAvatar = false,
+                            error = "Failed to upload avatar: response success was false"
+                        )
+                    }
                 }
         }
     }
