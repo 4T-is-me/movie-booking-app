@@ -1,5 +1,14 @@
 import { Movie } from '../models/movieModel.js';
 import { Showtime } from '../models/showTimeModel.js';
+import ApiError from '../utils/ApiError.js';
+import { StatusCodes } from 'http-status-codes';
+//create a new movie
+const createMovie = async (movieData) => {
+    // check the same movieName exists or not
+    const existingMovie = await Movie.findOne({ movieName: movieData.movieName, isDeleted: false });
+    if (existingMovie) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, 'This movie title already exists in the system!');
+    }
 
 //create a new movie
 const createMovie = async (movieData) => {
