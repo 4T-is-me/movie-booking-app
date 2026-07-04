@@ -20,6 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import com.bumptech.glide.Glide
 import com.example.movie_booking_app.R
+import com.example.movie_booking_app.view.activity.RewardPointsActivity
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
@@ -62,6 +63,10 @@ class ProfileFragment : Fragment() {
     private fun setupClickListeners() {
         binding.ivEditProfile.setOnClickListener {
             val intent = Intent(requireContext(), com.example.movie_booking_app.view.activity.EditProfileActivity::class.java)
+            startActivity(intent)
+        }
+        binding.layoutRewardPoints.setOnClickListener {
+            val intent = Intent(requireContext(), RewardPointsActivity::class.java)
             startActivity(intent)
         }
 

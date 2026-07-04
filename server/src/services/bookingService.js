@@ -131,15 +131,13 @@ const handleConfirmBooking = async ({accountId, showtimeId,seatIds,useScore = fa
       const afterPromotion = subTotal - promotionDiscount; 
 
       // Processing reward point redemptions
-      let pointUsed = 0;
-      let pointDiscount = 0;
+      let pointUsed = 0;   //1 point = 1VND
       let earnedPoints = 0;
       let finalAmount = afterPromotion;
 
       if (useScore) {
         pointUsed = Math.min(member.rewardPoints,Math.ceil(afterPromotion / 10));
-        pointDiscount = pointUsed * 10;
-        finalAmount = afterPromotion - pointDiscount;
+        finalAmount = afterPromotion - pointUsed;
         member.rewardPoints -= pointUsed;
       } else {
           earnedPoints = Math.floor((afterPromotion * 0.01) / 10);
@@ -185,7 +183,7 @@ const handleConfirmBooking = async ({accountId, showtimeId,seatIds,useScore = fa
             paymentStatus: paymentStatus,
             paymentMethod: paymentMethod,
             qrCodeData: qrCodeData,
-            disCountAmount: promotionDiscount + pointDiscount,
+            disCountAmount: promotionDiscount + pointUsed,
             finalAmount: finalAmount,
           },
         ],
@@ -231,7 +229,7 @@ const handleConfirmBooking = async ({accountId, showtimeId,seatIds,useScore = fa
         ticketPrice,
         comboPrice,
         promotionDiscount,
-        pointDiscount,
+        pointUsed,
         finalAmount,
         earnedPoints,
         remainingPoints: member.rewardPoints,
@@ -316,7 +314,10 @@ const handleGetScoreHistory = async (accountId) => {
 
   return await ScoreHistory.find({ memberId: member._id })
     .sort({ createdAt: -1 })
-    .populate("bookingId");
+    .populate("bookingId")
+    .populate("memberId")
+    .lean();
+
 };
 
 // release seats currently held by the authenticated account for a showtime

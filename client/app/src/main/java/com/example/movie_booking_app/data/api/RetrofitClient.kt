@@ -62,4 +62,8 @@ object RetrofitClient {
     }
 
 
+    val bookingApi: BookingApi by lazy {
+        instance.create(BookingApi::class.java)
+    }
+
 }

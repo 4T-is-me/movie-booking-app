@@ -2,6 +2,7 @@ package com.example.movie_booking_app.data.repository
 
 import com.example.movie_booking_app.data.api.BookingApi
 import com.example.movie_booking_app.data.model.entity.*
+import com.example.movie_booking_app.data.model.response.ScoreHistoryBaseResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -30,5 +31,22 @@ class BookingRepositoryRemoteImpl @Inject constructor(
 
     override fun getShowTimes(movieId: String, date: String): Flow<List<TimeSlot>> = flow {
         emit(emptyList())
+    }
+
+    override fun getScoreHistory(): Flow<ScoreHistoryBaseResponse> = flow {
+        try {
+            val response = api.getScoreHistory()
+
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    emit(it)
+                } ?: throw Exception("Response body is empty")
+            } else {
+                throw Exception("Error fetching score history: ${response.code()} - ${response.message()}")
+            }
+        } catch (e: Exception) {
+            
+            throw Exception(e.localizedMessage ?: "Unknown network error occured")
+        }
     }
 }

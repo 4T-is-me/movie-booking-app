@@ -116,6 +116,47 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/ivAvatar" />
 
+            <!-- Reward Points Menu Item -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layoutRewardPoints"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingHorizontal="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider1">
+
+                <!-- Icon ngôi sao nằm phẳng, bằng kích thước với các icon menu khác (24dp) -->
+                <ImageView android:id="@+id/ivMenuRewardIcon" android:layout_width="28dp" android:layout_height="28dp" android:src="@drawable/ic_star"  app:layout_constraintBottom_toBottomOf="parent"  app:layout_constraintStart_toStartOf="parent"  app:layout_constraintTop_toTopOf="parent" />
+
+                <!-- Cụm chữ 2 dòng căn chỉnh thẳng hàng theo icon -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/ivChevronReward"
+                    app:layout_constraintStart_toEndOf="@id/ivMenuRewardIcon"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Reward Points" android:textColor="@color/white" android:textSize="16sp" android:textStyle="bold" />
+
+                </LinearLayout>
+                <ImageView android:id="@+id/ivChevronReward" android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_chevron_right" app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" app:tint="@color/white" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <View
+                android:id="@+id/dividerReward"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/divider_color"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/layoutRewardPoints" />
             <!-- My Ticket Menu Item -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layoutMyTicket"
