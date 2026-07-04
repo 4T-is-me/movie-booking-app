@@ -58,10 +58,30 @@ const googleLogin = async (req, res, next) => {
     }
 }
 
+const sendOtp = async (req, res, next) => {
+    try {
+        const result = await accountService.sendOtp(req.body);
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        next(error);
+    }
+}
+
+const verifyOtp = async (req, res, next) => {
+    try {
+        const result = await accountService.verifyOtp(req.body);
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        next(error);
+    }
+}
+
 export const accountController = {
     register,
     login,
     googleLogin,
     getProfile,
-    updateProfile
+    updateProfile,
+    sendOtp,
+    verifyOtp
 }

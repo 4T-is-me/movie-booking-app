@@ -19,4 +19,10 @@ interface AuthApi {
 
     @POST("api/auth/google-login")
     suspend fun googleLogin(@Body request: com.example.movie_booking_app.data.model.request.GoogleLoginRequest): Response<LoginResponse>
+
+    @POST("api/auth/send-otp")
+    suspend fun sendOtp(@Body request: com.example.movie_booking_app.data.model.request.OtpRequest): Response<com.example.movie_booking_app.data.model.response.BaseResponse>
+
+    @POST("api/auth/verify-otp")
+    suspend fun verifyOtp(@Body request: com.example.movie_booking_app.data.model.request.VerifyOtpRequest): Response<com.example.movie_booking_app.data.model.response.BaseResponse>
 }

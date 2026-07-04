@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Xác thực OTP"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="24dp" />
+
+    <TextView
+        android:id="@+id/tvOtpMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nhập mã OTP 6 số đã được gửi đến email của bạn:"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/edtOtpCode"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="Mã OTP"
+        android:inputType="number"
+        android:maxLength="6"
+        android:background="@android:drawable/edit_text"
+        android:padding="12dp"
+        android:layout_marginBottom="24dp" />
+
+    <Button
+        android:id="@+id/btnVerifyOtp"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="Xác nhận" />
+
+</LinearLayout>
