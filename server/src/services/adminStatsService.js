@@ -1,5 +1,4 @@
 import { Booking } from '../models/bookingModel.js';
-import { Invoice } from '../models/invoiceModel.js';
 import { Account } from '../models/accountModel.js';
 import { Role } from '../models/rolesModel.js';
 import { Movie } from '../models/movieModel.js';
@@ -19,16 +18,16 @@ export const getDailyRevenueStats = async (startDate, endDate) => {
         }
     }
 
-    // Filter by active invoice status (in invoice model, status = 1)
-    matchStage.status = 1;
+    // Filter by active booking paymentStatus
+    matchStage.paymentStatus = 'paid';
 
     const pipeline = [
         { $match: matchStage },
         {
             $group: {
                 _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-                totalRevenue: { $sum: "$totalMoney" }, // Use totalMoney of Invoice
-                ticketCount: { $sum: 1 }
+                totalRevenue: { $sum: "$finalAmount" }, // Use finalAmount of Booking
+                ticketCount: { $sum: { $size: { $ifNull: ["$seatIds", []] } } }
             }
         },
         {
@@ -42,7 +41,7 @@ export const getDailyRevenueStats = async (startDate, endDate) => {
         { $sort: { date: 1 } }
     ];
 
-    return await Invoice.aggregate(pipeline);
+    return await Booking.aggregate(pipeline);
 };
 
 export const getMonthlyRevenueStats = async (startDate, endDate) => {
@@ -60,8 +59,8 @@ export const getMonthlyRevenueStats = async (startDate, endDate) => {
         }
     }
 
-    // Filter by active invoice status (in invoice model, status = 1)
-    matchStage.status = 1;
+    // Filter by active booking paymentStatus
+    matchStage.paymentStatus = 'paid';
 
     const pipeline = [
         { $match: matchStage },
@@ -71,8 +70,8 @@ export const getMonthlyRevenueStats = async (startDate, endDate) => {
                     year: { $year: "$createdAt" },
                     month: { $month: "$createdAt" }
                 },
-                totalRevenue: { $sum: "$totalMoney" }, // Use totalMoney of Invoice
-                ticketCount: { $sum: 1 }
+                totalRevenue: { $sum: "$finalAmount" }, // Use finalAmount of Booking
+                ticketCount: { $sum: { $size: { $ifNull: ["$seatIds", []] } } }
             }
         },
         {
@@ -87,15 +86,31 @@ export const getMonthlyRevenueStats = async (startDate, endDate) => {
         { $sort: { year: 1, month: 1 } }
     ];
 
-    return await Invoice.aggregate(pipeline);
+    return await Booking.aggregate(pipeline);
 };
 
 export const getMovieRevenueStats = async () => {
     const pipeline = [
         {
+            $match: {
+                paymentStatus: 'paid'
+            }
+        },
+        {
+            $lookup: {
+                from: "showtimes",
+                localField: "showtimeId",
+                foreignField: "_id",
+                as: "showtime"
+            }
+        },
+        {
+            $unwind: "$showtime"
+        },
+        {
             $group: {
-                _id: "$movieId",
-                totalRevenue: { $sum: "$totalMoney" }
+                _id: "$showtime.movieId",
+                totalRevenue: { $sum: "$finalAmount" }
             }
         },
         {
@@ -125,7 +140,7 @@ export const getMovieRevenueStats = async () => {
         { $limit: 10 }
     ];
 
-    return await Invoice.aggregate(pipeline);
+    return await Booking.aggregate(pipeline);
 };
 
 export const getOverviewStats = async () => {
@@ -145,25 +160,27 @@ export const getOverviewStats = async () => {
     });
 
     // 2. Run 4 queries in parallel using Promise.all
-    const [revenueData, invoicesToday, memberCount, moviesShowingCount] = await Promise.all([
-        // (1) Current month revenue from Invoice
-        Invoice.aggregate([
+    const [revenueData, bookingsToday, memberCount, moviesShowingCount] = await Promise.all([
+        // (1) Current month revenue from Booking
+        Booking.aggregate([
             {
                 $match: {
+                    paymentStatus: 'paid',
                     createdAt: { $gte: startOfMonth, $lte: endOfMonth }
                 }
             },
             {
                 $group: {
                     _id: null,
-                    total: { $sum: "$totalMoney" }
+                    total: { $sum: "$finalAmount" }
                 }
             }
         ]),
-        // (2) Get invoices sold today to calculate number of tickets
-        Invoice.find({
+        // (2) Get bookings sold today to calculate number of tickets
+        Booking.find({
+            paymentStatus: 'paid',
             createdAt: { $gte: startOfDay, $lte: endOfDay }
-        }).select('seat'),
+        }).select('seatIds seatNames'),
         // (3) Number of active Members (status = 1) from Account
         memberRole ? Account.countDocuments({ roleId: memberRole._id, status: 1 }) : 0,
         // (4) Number of active showing movies (isDeleted = false) from Movie
@@ -179,10 +196,11 @@ export const getOverviewStats = async () => {
 
     // Calculate tickets sold today from seat list (each seat is 1 ticket)
     let ticketsSoldToday = 0;
-    invoicesToday.forEach(invoice => {
-        if (invoice.seat) {
-            const seatsArray = invoice.seat.split(',').map(s => s.trim()).filter(Boolean);
-            ticketsSoldToday += seatsArray.length;
+    bookingsToday.forEach(booking => {
+        if (booking.seatIds) {
+            ticketsSoldToday += booking.seatIds.length;
+        } else if (booking.seatNames) {
+            ticketsSoldToday += booking.seatNames.length;
         }
     });
 
@@ -195,3 +213,4 @@ export const getOverviewStats = async () => {
 
     return result;
 };
+

@@ -22,9 +22,13 @@ shimmer = "0.5.0"
 swiperefreshlayout = "1.2.0"
 glide = "4.16.0"
 hilt = "2.51.1"
+securityCrypto = "1.1.0"
 appcompat = "1.7.1"
 
 [libraries]
+# Security
+androidx-security-crypto = { group = "androidx.security", name = "security-crypto", version.ref = "securityCrypto" }
+
 # Hilt
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
