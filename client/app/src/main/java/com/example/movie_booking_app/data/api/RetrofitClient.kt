@@ -61,5 +61,7 @@ object RetrofitClient {
         instance.create(AdminApiService::class.java)
     }
 
-
+    val bookingApi: BookingApi by lazy {
+        instance.create(BookingApi::class.java)
+    }
 }
