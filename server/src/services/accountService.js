@@ -6,6 +6,30 @@ import { jwtProvider } from '../utils/jwtProvider.js'
 import bcryptjs from 'bcryptjs'
 import '../models/rolesModel.js'
 import { OAuth2Client } from 'google-auth-library'
+import nodemailer from 'nodemailer'
+import { Otp } from '../models/otpModel.js'
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER || 'youremail@gmail.com',
+        pass: process.env.EMAIL_PASS || 'yourpassword'
+    }
+})
+
+const checkRegister = async (reqBody) => {
+    const existedUser = await Account.findOne({ $or: [{ email: reqBody.email }, { username: reqBody.username }] })
+    if (existedUser) {
+        throw new ApiError(StatusCodes.CONFLICT, 'Email or username already exists')
+    }
+
+    const existedMember = await Member.findOne({ $or: [{ identityCard: reqBody.identityCard }, { phoneNumber: reqBody.phoneNumber }] })
+    if (existedMember) {
+        throw new ApiError(StatusCodes.CONFLICT, 'Identity card or phone number already exists')
+    }
+
+    return { message: 'Valid' }
+}
 
 const register = async (reqBody) => {
     const existedUser = await Account.findOne({ $or: [{ email: reqBody.email }, { username: reqBody.username }] })
@@ -266,10 +290,56 @@ const googleLogin = async (idToken) => {
     };
 }
 
+const sendOtp = async (reqBody) => {
+    const { email } = reqBody;
+    if (!email) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, 'Email is required');
+    }
+
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+    await Otp.deleteMany({ email: email });
+    await Otp.create({ email, otp: otpCode });
+
+    const mailOptions = {
+        from: '"Movie Booking App" <' + (process.env.EMAIL_USER || 'youremail@gmail.com') + '>',
+        to: email,
+        subject: 'Mã xác nhận OTP của bạn',
+        text: `Mã OTP của bạn là: ${otpCode}. Mã này sẽ hết hạn trong 5 phút.`
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+    } catch (error) {
+        throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, 'Failed to send email');
+    }
+
+    return { message: "Gửi OTP thành công!" };
+};
+
+const verifyOtp = async (reqBody) => {
+    const { email, otp } = reqBody;
+    if (!email || !otp) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, 'Email and OTP are required');
+    }
+
+    const validOtp = await Otp.findOne({ email: email, otp: otp });
+    if (!validOtp) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, 'Mã OTP không hợp lệ hoặc đã hết hạn!');
+    }
+
+    await Otp.deleteOne({ _id: validOtp._id });
+
+    return { message: "Xác thực OTP thành công!" };
+};
+
 export const accountService = {
+    checkRegister,
     register,
     login,
     googleLogin,
     getProfile,
-    updateProfile
+    updateProfile,
+    sendOtp,
+    verifyOtp
 }

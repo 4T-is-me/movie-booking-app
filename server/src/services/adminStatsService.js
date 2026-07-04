@@ -1,12 +1,11 @@
 import { Booking } from '../models/bookingModel.js';
-import { Invoice } from '../models/invoiceModel.js';
 import { Account } from '../models/accountModel.js';
 import { Role } from '../models/rolesModel.js';
 import { Movie } from '../models/movieModel.js';
 
 export const getDailyRevenueStats = async (startDate, endDate) => {
     const matchStage = {};
-    
+
     if (startDate || endDate) {
         matchStage.createdAt = {};
         if (startDate) {
@@ -47,7 +46,7 @@ export const getDailyRevenueStats = async (startDate, endDate) => {
 
 export const getMonthlyRevenueStats = async (startDate, endDate) => {
     const matchStage = {};
-    
+
     if (startDate || endDate) {
         matchStage.createdAt = {};
         if (startDate) {

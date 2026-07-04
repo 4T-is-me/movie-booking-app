@@ -60,7 +60,7 @@ class MainActivity : BaseActivity() {
         val username = sharedPref.getString("username", "User")
         val role = sharedPref.getString("role", "user")
         if (token != null) {
-            if (role?.contains("admin", ignoreCase = true) == true || username?.contains("admin", ignoreCase = true) == true) {
+            if (role?.contains("admin", ignoreCase = true) == true) {
                 val intent = Intent(this, AdminActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 startActivity(intent)

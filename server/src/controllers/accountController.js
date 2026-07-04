@@ -1,6 +1,15 @@
 import { StatusCodes } from 'http-status-codes'
 import { accountService } from '../services/accountService.js'
 
+const checkRegister = async (req, res, next) => {
+    try {
+        const result = await accountService.checkRegister(req.body)
+        res.status(StatusCodes.OK).json(result)
+    } catch (error) {
+        next(error)
+    }
+}
+
 const register = async (req, res, next) => {
     try {
         const createAccount = await accountService.register(req.body)
@@ -58,10 +67,31 @@ const googleLogin = async (req, res, next) => {
     }
 }
 
+const sendOtp = async (req, res, next) => {
+    try {
+        const result = await accountService.sendOtp(req.body);
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        next(error);
+    }
+}
+
+const verifyOtp = async (req, res, next) => {
+    try {
+        const result = await accountService.verifyOtp(req.body);
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        next(error);
+    }
+}
+
 export const accountController = {
+    checkRegister,
     register,
     login,
     googleLogin,
     getProfile,
-    updateProfile
+    updateProfile,
+    sendOtp,
+    verifyOtp
 }
