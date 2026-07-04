@@ -346,6 +346,9 @@
                     android:layout_height="72dp"
                     android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="20dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
                     app:cardCornerRadius="18dp"
                     app:cardBackgroundColor="#151515"
                     app:strokeWidth="0dp"
@@ -357,11 +360,180 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:paddingHorizontal="20dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:background="?android:attr/selectableItemBackground">
+                        android:clickable="false"
+                        android:focusable="false">
 
-                        <!-- Circular Icon Container -->
+                        <View
+                            android:id="@+id/iconContainerReward"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_circle_icon"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent" />
+
+                        <ImageView
+                            android:id="@+id/ivMenuRewardIcon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_star"
+                            app:tint="#F5C542"
+                            app:layout_constraintStart_toStartOf="@id/iconContainerReward"
+                            app:layout_constraintEnd_toEndOf="@id/iconContainerReward"
+                            app:layout_constraintTop_toTopOf="@id/iconContainerReward"
+                            app:layout_constraintBottom_toBottomOf="@id/iconContainerReward" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:orientation="vertical"
+                            app:layout_constraintStart_toEndOf="@id/iconContainerReward"
+                            app:layout_constraintEnd_toStartOf="@id/ivChevronReward"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Reward Points"
+                                android:textColor="@color/white"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvPoints"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="Check and redeem your loyalty points"
+                                android:textColor="#88FFFFFF"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/ivChevronReward"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="#F5C542"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- My Ticket Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/layoutMyTicket"
+                    android:layout_width="match_parent"
+                    android:layout_height="72dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="16dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    app:cardCornerRadius="18dp"
+                    app:cardBackgroundColor="#151515"
+                    app:strokeWidth="0dp"
+                    app:layout_constraintTop_toBottomOf="@id/layoutRewardPoints"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingHorizontal="20dp"
+                        android:clickable="false"
+                        android:focusable="false">
+
+                        <View
+                            android:id="@+id/iconContainerTicket"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_circle_icon"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent" />
+
+                        <ImageView
+                            android:id="@+id/ivMenuTicketIcon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_ticket"
+                            app:tint="#F5C542"
+                            app:layout_constraintStart_toStartOf="@id/iconContainerTicket"
+                            app:layout_constraintEnd_toEndOf="@id/iconContainerTicket"
+                            app:layout_constraintTop_toTopOf="@id/iconContainerTicket"
+                            app:layout_constraintBottom_toBottomOf="@id/iconContainerTicket" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:orientation="vertical"
+                            app:layout_constraintStart_toEndOf="@id/iconContainerTicket"
+                            app:layout_constraintEnd_toStartOf="@id/ivChevronTicket"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/my_ticket"
+                                android:textColor="@color/white"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="Manage your active and expired movie tickets"
+                                android:textColor="#88FFFFFF"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/ivChevronTicket"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="#F5C542"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Change Language Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/layoutChangeLanguage"
+                    android:layout_width="match_parent"
+                    android:layout_height="72dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="16dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    app:cardCornerRadius="18dp"
+                    app:cardBackgroundColor="#151515"
+                    app:strokeWidth="0dp"
+                    app:layout_constraintTop_toBottomOf="@id/layoutMyTicket"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingHorizontal="20dp"
+                        android:clickable="false"
+                        android:focusable="false">
+
                         <View
                             android:id="@+id/iconContainerLanguage"
                             android:layout_width="40dp"
@@ -518,6 +690,9 @@
                     android:layout_height="72dp"
                     android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="16dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
                     app:cardCornerRadius="18dp"
                     app:cardBackgroundColor="#151515"
                     app:strokeWidth="0dp"
@@ -586,6 +761,91 @@
                         <!-- Chevron -->
                         <ImageView
                             android:id="@+id/ivChevronHistory"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="#F5C542"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Logout Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/layoutLogout"
+                    android:layout_width="match_parent"
+                    android:layout_height="72dp"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="16dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    app:cardCornerRadius="18dp"
+                    app:cardBackgroundColor="#151515"
+                    app:strokeWidth="0dp"
+                    app:layout_constraintTop_toBottomOf="@id/layoutPurchaseHistory"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingHorizontal="20dp"
+                        android:clickable="false"
+                        android:focusable="false">
+
+                        <View
+                            android:id="@+id/iconContainerLogout"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="@drawable/bg_circle_icon"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent" />
+
+                        <ImageView
+                            android:id="@+id/ivMenuLogoutIcon"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_logout"
+                            app:tint="#F5C542"
+                            app:layout_constraintStart_toStartOf="@id/iconContainerLogout"
+                            app:layout_constraintEnd_toEndOf="@id/iconContainerLogout"
+                            app:layout_constraintTop_toTopOf="@id/iconContainerLogout"
+                            app:layout_constraintBottom_toBottomOf="@id/iconContainerLogout" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:orientation="vertical"
+                            app:layout_constraintStart_toEndOf="@id/iconContainerLogout"
+                            app:layout_constraintEnd_toStartOf="@id/ivChevronLogout"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Logout"
+                                android:textColor="@color/white"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="Sign out of your account"
+                                android:textColor="#88FFFFFF"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/ivChevronLogout"
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@drawable/ic_chevron_right"
