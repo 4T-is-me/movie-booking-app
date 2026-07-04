@@ -13,4 +13,6 @@ object Constants {
      * Synced with group's server requirements.
      */
     const val BASE_URL = "http://192.168.9.144:5000/"
+    const val RANK_GOLD = 20000000
+    const val RANK_SILVER = 5000000
 }

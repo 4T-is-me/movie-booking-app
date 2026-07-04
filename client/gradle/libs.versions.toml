@@ -22,6 +22,7 @@ shimmer = "0.5.0"
 swiperefreshlayout = "1.2.0"
 glide = "4.16.0"
 hilt = "2.51.1"
+appcompat = "1.7.1"
 
 [libraries]
 # Hilt
@@ -67,6 +68,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

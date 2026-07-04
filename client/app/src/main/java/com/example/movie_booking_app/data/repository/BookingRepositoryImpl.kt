@@ -1,12 +1,14 @@
 package com.example.movie_booking_app.data.repository
 
+import com.example.movie_booking_app.data.api.BookingApi
 import com.example.movie_booking_app.data.model.entity.*
+import com.example.movie_booking_app.data.model.response.ScoreHistoryBaseResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlin.random.Random
 import javax.inject.Inject
 
-class BookingRepositoryImpl @Inject constructor() : BookingRepository {
+class BookingRepositoryImpl @Inject constructor(private val bookingApi: BookingApi) : BookingRepository {
 
     override fun getSeats(date: String, time: String): Flow<List<Seat>> = flow {
         val seats = mutableListOf<Seat>()
@@ -48,5 +50,14 @@ class BookingRepositoryImpl @Inject constructor() : BookingRepository {
             TimeSlot("18:00"),
             TimeSlot("21:00")
         ))
+    }
+
+    override fun getScoreHistory(): Flow<ScoreHistoryBaseResponse> = flow {
+        val response = bookingApi.getScoreHistory() // Gọi trơn
+        if (response.isSuccessful) {
+            response.body()?.let { emit(it) }
+        } else {
+            throw Exception("Error fetching score history: ${response.message()}")
+        }
     }
 }
