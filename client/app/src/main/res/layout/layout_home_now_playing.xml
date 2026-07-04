@@ -54,19 +54,20 @@
                 android:clipToPadding="false"
                 android:clipChildren="false" />
 
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/indicatorNowPlaying"
-                android:layout_width="61dp"
-                android:layout_height="8dp"
+            <FrameLayout
+                android:id="@+id/layoutIndicatorNowPlaying"
+                android:layout_width="60dp"
+                android:layout_height="4dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
-                android:background="@android:color/transparent"
-                app:tabBackground="@drawable/bg_indicator_unselected"
-                app:tabIndicator="@drawable/bg_indicator_selected"
-                app:tabIndicatorColor="@color/yellow"
-                app:tabIndicatorGravity="center"
-                app:tabMaxWidth="20dp"
-                app:tabRippleColor="@android:color/transparent" />
+                android:background="@drawable/bg_indicator_track">
+
+                <View
+                    android:id="@+id/viewIndicatorNowPlayingThumb"
+                    android:layout_width="20dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_indicator_thumb" />
+            </FrameLayout>
         </LinearLayout>
 
         <com.facebook.shimmer.ShimmerFrameLayout
