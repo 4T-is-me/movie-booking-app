@@ -67,7 +67,7 @@ const updateStaffRole = async (req, res, next) => {
         role: Joi.string().valid('Staff', 'Employee', 'Manager', 'Admin', 'staff', 'employee', 'manager', 'admin').trim().strict(),
         roleId: Joi.string().pattern(/^[0-9a-fA-F]{24}$/).trim().strict()
     }).xor('role', 'roleId').messages({
-        'object.xor': 'Must provide either role (role name) or roleId (role ID), but not both.'
+        'object.xor': 'Phải cung cấp role (tên role) hoặc roleId (ID của role) và không được cung cấp cả hai.'
     });
 
     try {

@@ -132,8 +132,8 @@ class AdminStatsFragment : Fragment() {
 
                     state.overview?.let {
                         binding.tvMonthlyRevenue.text = currencyFormat.format(it.totalRevenue)
-                        binding.tvTotalUsers.text = it.totalMembers.toString()
-                        binding.tvTodayTickets.text = it.totalTicketsSold.toString()
+                        binding.tvTotalUsers.text = it.totalUsers.toString()
+                        binding.tvTodayTickets.text = it.totalBookings.toString()
                         binding.tvActiveMovies.text = it.totalMovies.toString()
                     }
                     
@@ -146,14 +146,14 @@ class AdminStatsFragment : Fragment() {
 
     private fun updateLineChart(state: AdminStatsUiState) {
         val isMonthly = binding.toggleGroup.checkedButtonId == R.id.btnMonthly
-
+        
         val entries = if (isMonthly) {
             state.monthlyRevenue.map { item ->
-                Entry(item.month.toFloat(), item.totalRevenue.toFloat())
+                Entry(item.month.toFloat(), item.revenue.toFloat())
             }
         } else {
             state.dailyRevenue.mapIndexed { index, item ->
-                Entry(index.toFloat(), item.totalRevenue.toFloat())
+                Entry(index.toFloat(), item.revenue.toFloat())
             }
         }
 
@@ -190,8 +190,9 @@ class AdminStatsFragment : Fragment() {
 
     private fun updateBarChart(data: List<MovieRevenueItem>) {
         val entries = data.mapIndexed { index, item ->
-            BarEntry(index.toFloat(), item.totalRevenue.toFloat())
+            BarEntry(index.toFloat(), item.revenue.toFloat())
         }
+
         val dataSet = BarDataSet(entries, "Doanh thu phim").apply {
             color = Color.parseColor("#F5C518")
             valueTextColor = Color.WHITE
@@ -200,7 +201,7 @@ class AdminStatsFragment : Fragment() {
         binding.bcMovieRevenue.xAxis.valueFormatter = object : ValueFormatter() {
             override fun getFormattedValue(value: Float): String {
                 val index = value.toInt()
-                return if (index >= 0 && index < data.size) data[index].displayTitle else ""
+                return if (index >= 0 && index < data.size) data[index].movieTitle else ""
             }
         }
 

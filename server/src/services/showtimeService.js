@@ -75,10 +75,10 @@ const getShowtimeSeats = async (showtimeId) => {
 
         return {
             seatId: seat._id,
-            // scheduleSeatId: _id of the ScheduleSeat record (null if seat is available)
+            // scheduleSeatId: _id của bản ghi ScheduleSeat (null nếu ghế đang available)
             scheduleSeatId: scheduleSeat?._id ?? null,
             seatName: seat.seatName,
-            // seatLabel: display label like "A3", "B10", ...
+            // seatLabel: nhãn hiển thị dạng "A3", "B10", ...
             seatLabel: `${seat.row}${seat.col}`,
             row: seat.row,         // e.g. "A"
             col: seat.col,         // e.g. "1"
@@ -98,7 +98,7 @@ const getShowtimeSeats = async (showtimeId) => {
         }
         rowMap.get(seat.row).push({
             seatId:         seat.seatId,
-            scheduleSeatId: seat.scheduleSeatId,   // null if seat is available
+            scheduleSeatId: seat.scheduleSeatId,   // null nếu ghế available
             seatLabel:      seat.seatLabel,         // e.g. "A3"
             seatName:       seat.seatName,
             col:            seat.col,

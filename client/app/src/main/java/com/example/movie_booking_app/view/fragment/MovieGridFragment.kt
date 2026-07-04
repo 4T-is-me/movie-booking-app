@@ -103,12 +103,7 @@ class MovieGridFragment : Fragment() {
             
             movieRepository.getMovies().collect { allMovies ->
                 val filtered = allMovies.filter { 
-                    val s = it.status?.lowercase() ?: ""
-                    if (isNowPlaying) {
-                        s.contains("showing") || s == "active" || s == "now_showing"
-                    } else {
-                        s.contains("coming") || s.contains("soon") || s == "upcoming" || s == "inactive"
-                    }
+                    if (isNowPlaying) it.status == "showing" else it.status == "coming_soon"
                 }
                 adapter.submitList(filtered)
                 

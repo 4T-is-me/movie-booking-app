@@ -1,8 +1,7 @@
 package com.example.movie_booking_app.data.api
 
+import com.example.movie_booking_app.data.model.entity.UserProfile
 import com.example.movie_booking_app.data.model.request.UpdateProfileRequest
-import com.example.movie_booking_app.data.model.response.UserProfileResponse
-import com.example.movie_booking_app.data.model.response.UploadAvatarResponse
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -14,14 +13,15 @@ import retrofit2.http.Part
 
 interface ProfileApi {
     @GET("api/accounts/profile")
-    suspend fun getProfile(): Response<UserProfileResponse>
+    suspend fun getProfile(): Response<UserProfile>
 
     @PUT("api/accounts/profile")
-    suspend fun updateProfile(@Body request: UpdateProfileRequest): Response<UserProfileResponse>
+    suspend fun updateProfile(@Body request: UpdateProfileRequest): Response<UserProfile>
 
     @Multipart
     @POST("api/accounts/upload-avatar")
     suspend fun uploadAvatar(
         @Part avatar: MultipartBody.Part
-    ): Response<UploadAvatarResponse>
+    ): Response<com.example.movie_booking_app.data.model.response.UploadAvatarResponse>
 }
+

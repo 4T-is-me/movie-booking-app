@@ -7,9 +7,6 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
 
-import com.example.movie_booking_app.data.model.response.BookingHistoryResponse
-import retrofit2.http.GET
-
 interface PaymentApi {
     @POST("api/promotions/apply")
     suspend fun applyPromotion(
@@ -20,7 +17,4 @@ interface PaymentApi {
     suspend fun confirmBooking(
         @Body request: ConfirmBookingRequest
     ): Response<ResponseBody>
-
-    @GET("api/booking/history")
-    suspend fun getBookingHistory(): Response<BookingHistoryResponse>
 }
