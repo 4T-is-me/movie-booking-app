@@ -185,20 +185,18 @@
                     app:layout_constraintTop_toBottomOf="@id/tvDobLabel"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/rgGender"
-                    app:layout_constraintHorizontal_weight="1.1">
+                    app:layout_constraintHorizontal_weight="1">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/edtDob"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="DD-MM-YYYY"
+                        android:hint="@string/dob_hint"
                         android:textColorHint="#808080"
                         android:textColor="#FFFFFF"
-                        android:clickable="true"
                         android:focusable="true"
-                        android:focusableInTouchMode="true"
-                        android:cursorVisible="true"
-                        android:inputType="text"
+                        android:clickable="true"
+                        android:inputType="date"
                         android:ellipsize="end"
                         android:singleLine="true" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -223,7 +221,7 @@
                     app:layout_constraintBottom_toBottomOf="@id/tilDob"
                     app:layout_constraintStart_toEndOf="@id/tilDob"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_weight="0.9">
+                    app:layout_constraintHorizontal_weight="1">
 
                     <RadioButton
                         android:id="@+id/rbMale"

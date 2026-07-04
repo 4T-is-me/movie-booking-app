@@ -16,13 +16,21 @@ import com.example.movie_booking_app.view.fragment.admin.AdminRoomListFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminStatsFragment
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
+import com.example.movie_booking_app.viewmodel.AuthViewModel
+import com.example.movie_booking_app.data.api.AuthEvent
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import android.content.Intent
 
 @AndroidEntryPoint
-class AdminActivity : AppCompatActivity() {
+class AdminActivity : BaseActivity() {
 
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
     private lateinit var tvHeaderTitle: TextView
+    private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +39,8 @@ class AdminActivity : AppCompatActivity() {
         drawerLayout = findViewById(R.id.drawerLayout)
         navigationView = findViewById(R.id.navigationView)
         tvHeaderTitle = findViewById(R.id.tvHeaderTitle)
+
+        observeAuthEvents()
 
         val ivMenu = findViewById<ImageView>(R.id.ivMenu)
         ivMenu.setOnClickListener {
@@ -67,20 +77,6 @@ class AdminActivity : AppCompatActivity() {
                     tvHeaderTitle.text = "Settings"
                     loadFragment(BlankFragment())
                 }
-                R.id.nav_logout -> {
-                    com.example.movie_booking_app.data.local.TokenManager.clearTokens(this@AdminActivity)
-                    val sharedPref = getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
-                    with(sharedPref.edit()) {
-                        remove("auth_token")
-                        remove("username")
-                        remove("role")
-                        apply()
-                    }
-                    val intent = android.content.Intent(this@AdminActivity, com.example.movie_booking_app.view.activity.LoginActivity::class.java)
-                    intent.flags = android.content.Intent.FLAG_ACTIVITY_NEW_TASK or android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
-                    finish()
-                }
             }
             drawerLayout.closeDrawer(GravityCompat.START)
             true
@@ -98,6 +94,19 @@ class AdminActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, fragment)
             .commit()
+    }
+
+    private fun observeAuthEvents() {
+        lifecycleScope.launch {
+            authViewModel.authEvents.collectLatest { event ->
+                if (event is AuthEvent.SessionExpired) {
+                    val intent = Intent(this@AdminActivity, LoginActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                    finish()
+                }
+            }
+        }
     }
 
     // A simple fragment that shows nothing

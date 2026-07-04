@@ -66,15 +66,4 @@
     <color name="white_transparent_08">#14FFFFFF</color>
     <color name="admin_drawer_item_text">#CBD5E1</color>
     <color name="admin_hint_gray">#808080</color>
-
-
-    <!-- Color Point-->
-    <color name="textPlus">#34C759</color>
-    <color name="backgroundPlus">#1A34C759</color>
-    <color name="iconPlus">#34C759</color>
-
-    <color name="deduct">#E5484D</color>
-    <color name="backgroundDeduct">#1AE5484D</color>
-    <color name="iconDeduct">#E5484D</color>
-
 </resources>

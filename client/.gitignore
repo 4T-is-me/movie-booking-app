@@ -15,8 +15,3 @@
 local.properties
 .idea/
 gradle/gradle-daemon-jvm.properties
-<<<<<<< HEAD
-.env
-=======
-.env
->>>>>>> 08c1d31 (chore: manually restore files deleted in 8972f2b)
