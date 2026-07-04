@@ -6,12 +6,12 @@ import ApiError from '../utils/ApiError.js';
 import { ScoreHistory } from '../models/scoreHistoryModel.js';
 
 /**
- * Get list of members with status filters and search
+ * Lấy danh sách thành viên với các bộ lọc trạng thái và tìm kiếm
  * @param {Object} options 
  * @param {number} options.page
  * @param {number} options.limit
- * @param {number|string} options.status Linked account status (1: Active, 0: Locked, etc.)
- * @param {string} options.search Search keyword (name, phone number, ID card, email, username)
+ * @param {number|string} options.status Trạng thái của tài khoản liên kết (1: Hoạt động, 0: Khóa, v.v.)
+ * @param {string} options.search Từ khóa tìm kiếm (tên, số điện thoại, CMND, email, username)
  */
 export const getMemberList = async ({ page = 1, limit = 10, status, search }) => {
     const skip = (page - 1) * limit;
@@ -114,14 +114,14 @@ export const adjustMemberScore = async (memberId, { adjustment, reason }) => {
         // 1. find member
         const member = await Member.findById(memberId).session(session);
         if (!member) {
-            throw new ApiError(StatusCodes.NOT_FOUND, 'Member not found.');
+            throw new ApiError(StatusCodes.NOT_FOUND, 'Không tìm thấy thành viên.');
         }
 
         // 2. Check if deduction
         if (adjustment < 0 && member.rewardPoints + adjustment < 0) {
             throw new ApiError(
                 StatusCodes.BAD_REQUEST,
-                `Insufficient loyalty points to perform point deduction (Current: ${member.rewardPoints}, requested deduction: ${Math.abs(adjustment)}).`
+                `Không đủ điểm tích lũy để thực hiện giao dịch trừ điểm (Hiện có: ${member.rewardPoints}, yêu cầu trừ: ${Math.abs(adjustment)}).`
             );
         }
 
@@ -143,7 +143,7 @@ export const adjustMemberScore = async (memberId, { adjustment, reason }) => {
                     usedPoints,
                     earnedPoints,
                     remainingPoints: updatedMember.rewardPoints,
-                    reason: reason || 'Admin adjusted points'
+                    reason: reason || 'Admin điều chỉnh điểm'
                 }
             ],
             { session }
@@ -162,7 +162,7 @@ export const adjustMemberScore = async (memberId, { adjustment, reason }) => {
 /**
  * update status member account
  * @param {string} memberId 
- * @param {number} status new status (1: Active, 0: Locked)
+ * @param {number} status new status (1: Hoạt động, 0: Khóa)
  */
 export const updateMemberStatus = async (memberId, status) => {
     const member = await Member.findById(memberId);

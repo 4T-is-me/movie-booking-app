@@ -26,15 +26,14 @@ class StatsRepository @Inject constructor(
         }
     }
 
-    fun getDailyRevenue(startDate: String, endDate: String): Flow<Response<DailyRevenueResponse>> =
-        flow {
-            try {
-                emit(api.getDailyRevenue(startDate, endDate))
-            } catch (e: Exception) {
-                Log.e("StatsRepository", "Failed to load daily revenue", e)
-                throw e
-            }
+    fun getDailyRevenue(startDate: String, endDate: String): Flow<Response<DailyRevenueResponse>> = flow {
+        try {
+            emit(api.getDailyRevenue(startDate, endDate))
+        } catch (e: Exception) {
+            Log.e("StatsRepository", "Failed to load daily revenue", e)
+            throw e
         }
+    }
 
     fun getMovieRevenue(): Flow<Response<MovieRevenueResponse>> = flow {
         try {
@@ -45,13 +44,12 @@ class StatsRepository @Inject constructor(
         }
     }
 
-    fun getMonthlyRevenue(year: Int): Flow<Response<MonthlyRevenueResponse>> = flow {
+    fun getMonthlyRevenue(startDate: String, endDate: String): Flow<Response<MonthlyRevenueResponse>> = flow {
         try {
-            emit(api.getMonthlyRevenue(year))
+            emit(api.getMonthlyRevenue(startDate, endDate))
         } catch (e: Exception) {
             Log.e("StatsRepository", "Failed to load monthly revenue", e)
             throw e
         }
     }
-
 }

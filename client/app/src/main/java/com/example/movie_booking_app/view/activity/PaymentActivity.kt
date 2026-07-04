@@ -146,7 +146,7 @@ class PaymentActivity : AppCompatActivity() {
                         // Load Movie Poster
                         booking.moviePoster?.let { poster ->
                             val posterUrl = if (poster.startsWith("http")) poster 
-                            else "${com.example.movie_booking_app.utils.Constants.BASE_URL.removeSuffix("/")}$poster"
+                            else "http://192.168.9.144:5000$poster"
                             
                             Glide.with(this@PaymentActivity)
                                 .load(posterUrl)

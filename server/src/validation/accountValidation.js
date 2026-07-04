@@ -3,17 +3,32 @@ import { StatusCodes } from 'http-status-codes'
 import ApiError from '../utils/ApiError.js'
 
 const register = async (req, res, next) => {
+    const maxDate = new Date();
+    maxDate.setFullYear(maxDate.getFullYear() - 15);
+
     const correctCondition = Joi.object({
         username: Joi.string().required().min(3).max(30).trim().strict(),
         email: Joi.string().required().email().trim().strict(),
         password: Joi.string().required().min(6).strict(),
-        fullName: Joi.string().required().trim().strict(),
-        gender: Joi.string().trim().strict(),
-        dateOfBirth: Joi.date(),
-        phoneNumber: Joi.string().pattern(/^0\d{9}$/).required().trim().strict(),
-        identityCard: Joi.string().required().length(12).pattern(/^[0-9]+$/).trim().strict(),
-        address: Joi.string().trim().strict(),
-        image: Joi.string().trim().strict()
+        confirmPassword: Joi.any().valid(Joi.ref('password')).required().messages({
+            'any.only': '"confirmPassword" does not match'
+        }),
+        fullName: Joi.string().required().pattern(/^[^0-9]+$/).trim().strict().messages({
+            'string.pattern.base': '"fullName" cannot contain numbers'
+        }),
+        gender: Joi.string().valid('Male', 'Female').required().trim().strict(),
+        dateOfBirth: Joi.date().required().max(maxDate).messages({
+            'date.max': '"dateOfBirth" must indicate an age greater than 15 years'
+        }),
+        phoneNumber: Joi.string().pattern(/^0\d{9}$/).required().trim().strict().messages({
+            'string.pattern.base': '"phoneNumber" must be exactly 10 digits and start with 0'
+        }),
+        identityCard: Joi.string().required().length(12).pattern(/^[0-9]+$/).trim().strict().messages({
+            'string.pattern.base': '"identityCard" must only contain digits',
+            'string.length': '"identityCard" must be exactly 12 digits'
+        }),
+        address: Joi.string().required().trim().strict(),
+        image: Joi.string().trim().strict().allow('', null)
     })
 
     try {

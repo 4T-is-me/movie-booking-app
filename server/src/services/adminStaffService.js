@@ -124,17 +124,17 @@ export const createStaff = async (accountData, staffData) => {
             ]
         }).lean();
         if (!roleDoc) {
-            throw new Error('Role does not exist in the system.');
+            throw new Error('Role không tồn tại trong hệ thống.');
         }
         targetRoleId = roleDoc._id;
     } else if (roleId) {
         const roleDoc = await Role.findById(roleId).lean();
         if (!roleDoc) {
-            throw new Error('Role does not exist in the system.');
+            throw new Error('Role không tồn tại trong hệ thống.');
         }
         const rName = roleDoc.roleName || roleDoc.name || '';
         if (rName.toLowerCase() !== 'employee' && rName.toLowerCase() !== 'manager') {
-            throw new Error('Invalid role. Only Staff (Employee) or Manager are accepted.');
+            throw new Error('Role không hợp lệ. Chỉ chấp nhận Staff (Employee) hoặc Manager.');
         }
         targetRoleId = roleDoc._id;
     } else {
@@ -145,12 +145,12 @@ export const createStaff = async (accountData, staffData) => {
             ]
         }).lean();
         if (!roleDoc) {
-            throw new Error('Default role for Staff (Employee) not found.');
+            throw new Error('Không tìm thấy Role mặc định cho Staff (Employee).');
         }
         targetRoleId = roleDoc._id;
     }
 
-    // 1. Create Account first
+    // 1. Tạo Account trước
     const hashedPassword = await bcrypt.hash(accountData.password, 10);
     const newAccount = new Account({
         username: accountData.username,
@@ -162,7 +162,7 @@ export const createStaff = async (accountData, staffData) => {
     
     const savedAccount = await newAccount.save();
 
-    // 2. Create Staff linked with Account
+    // 2. Tạo Staff liên kết với Account
     const newStaff = new Staff({
         ...staffData,
         accountId: savedAccount._id
@@ -170,7 +170,7 @@ export const createStaff = async (accountData, staffData) => {
     
     const savedStaff = await newStaff.save();
     
-    // Return record populated with full information
+    // Trả về bản ghi đã được populate đầy đủ thông tin
     return await Staff.findById(savedStaff._id).populate({
         path: 'accountId',
         select: '-passwordHash -refreshToken',
@@ -203,7 +203,7 @@ export const updateStaff = async (staffId, updateData) => {
         { new: true }
     );
 
-    // Return record populated with full information after updating
+    // Trả về bản ghi đã được populate đầy đủ thông tin sau khi cập nhật
     return await Staff.findById(updatedStaff._id).populate({
         path: 'accountId',
         select: '-passwordHash -refreshToken',
@@ -215,13 +215,13 @@ export const updateStaff = async (staffId, updateData) => {
 };
 
 /**
- * SOFT DELETE STAFF
+ * XÓA MỀM (SOFT DELETE) NHÂN VIÊN (STAFF)
  */
 export const softDeleteStaff = async (staffId) => {
     const staffInfo = await Staff.findById(staffId);
     if (!staffInfo) throw new Error('StaffNotFound');
 
-    // Lock login account (Account status = 0)
+    // Khóa tài khoản đăng nhập (Account status = 0)
     const updatedAccount = await Account.findByIdAndUpdate(
         staffInfo.accountId, 
         { status: 0 }, 
@@ -235,14 +235,14 @@ export const updateStaffStatus = async (staffId, status) => {
     const staff = await Staff.findById(staffId);
     if (!staff) return null;
 
-    // Update status in Account collection
+    // Cập nhật trạng thái trong bảng Account
     await Account.findByIdAndUpdate(
         staff.accountId,
         { status: Number(status) },
         { new: true }
     );
 
-    // Return staff record with full information after updating
+    // Trả về bản ghi nhân viên đầy đủ thông tin sau khi cập nhật
     return await Staff.findById(staffId).populate({
         path: 'accountId',
         select: '-passwordHash -refreshToken',
@@ -290,14 +290,14 @@ export const updateStaffRole = async (staffId, { role, roleId }) => {
         targetRoleId = roleDoc._id;
     }
 
-    // Update roleId in Account collection
+    // Cập nhật roleId trong bảng Account
     await Account.findByIdAndUpdate(
         staff.accountId,
         { roleId: targetRoleId },
         { new: true }
     );
 
-    // Return staff record with full information after updating
+    // Trả về bản ghi nhân viên đầy đủ thông tin sau khi cập nhật
     return await Staff.findById(staffId).populate({
         path: 'accountId',
         select: '-passwordHash -refreshToken',

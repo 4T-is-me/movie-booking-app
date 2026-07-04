@@ -3,8 +3,6 @@ package com.example.movie_booking_app.data.repository
 import com.example.movie_booking_app.data.api.ProfileApi
 import com.example.movie_booking_app.data.model.entity.UserProfile
 import com.example.movie_booking_app.data.model.request.UpdateProfileRequest
-import com.example.movie_booking_app.data.model.response.UploadAvatarResponse
-import com.example.movie_booking_app.data.model.response.toUserProfile
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -24,7 +22,7 @@ class ProfileRepository @Inject constructor(
     fun getUserProfile(): Flow<UserProfile> = flow {
         val response = profileApi.getProfile()
         if (response.isSuccessful && response.body() != null) {
-            emit(response.body()!!.toUserProfile())
+            emit(response.body()!!)
         } else {
             val code = response.code()
             val errorMsg = response.errorBody()?.string() ?: "Failed to fetch profile"
@@ -42,7 +40,7 @@ class ProfileRepository @Inject constructor(
     fun updateProfile(request: UpdateProfileRequest): Flow<UserProfile> = flow {
         val response = profileApi.updateProfile(request)
         if (response.isSuccessful && response.body() != null) {
-            emit(response.body()!!.toUserProfile())
+            emit(response.body()!!)
         } else {
             val code = response.code()
             val errorMsg = response.errorBody()?.string() ?: "Failed to update profile"
@@ -57,7 +55,7 @@ class ProfileRepository @Inject constructor(
     /**
      * Uploads the user avatar.
      */
-    fun uploadAvatar(avatarPart: okhttp3.MultipartBody.Part): Flow<UploadAvatarResponse> = flow {
+    fun uploadAvatar(avatarPart: okhttp3.MultipartBody.Part): Flow<com.example.movie_booking_app.data.model.response.UploadAvatarResponse> = flow {
         val response = profileApi.uploadAvatar(avatarPart)
         if (response.isSuccessful && response.body() != null) {
             emit(response.body()!!)

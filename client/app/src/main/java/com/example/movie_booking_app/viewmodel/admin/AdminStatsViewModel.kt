@@ -1,6 +1,5 @@
 package com.example.movie_booking_app.viewmodel.admin
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.admin.DailyRevenueItem
@@ -9,7 +8,6 @@ import com.example.movie_booking_app.data.model.admin.MovieRevenueItem
 import com.example.movie_booking_app.data.model.admin.StatsOverview
 import com.example.movie_booking_app.data.repository.admin.StatsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,10 +15,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 import javax.inject.Inject
 
 data class AdminStatsUiState(
@@ -48,49 +42,43 @@ class AdminStatsViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
 
-            withContext(Dispatchers.IO) {
-                try {
-                    val calendar = Calendar.getInstance()
-                    val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                    val endDate = sdf.format(calendar.time)
-                    calendar.add(Calendar.DAY_OF_YEAR, -30)
-                    val startDate = sdf.format(calendar.time)
-                    val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+            // Giả lập thời gian tải để xem hiệu ứng Shimmer
+            //kotlinx.coroutines.delay(5000)
 
-                    // Gọi tất cả API song song
-                    val overviewDef = async { try { repository.getOverviewStats().first() } catch (e: Exception) { null } }
-                    val dailyDef = async { try { repository.getDailyRevenue(startDate, endDate).first() } catch (e: Exception) { null } }
-                    val monthlyDef = async { try { repository.getMonthlyRevenue(currentYear).first() } catch (e: Exception) { null } }
-                    val movieDef = async { try { repository.getMovieRevenue().first() } catch (e: Exception) { null } }
+            try {
+                // Load parallelly using async/awaitAll as requested
+                val overviewDeferred = async { repository.getOverviewStats().first() }
+                val dailyRevenueDeferred = async { repository.getDailyRevenue("", "").first() }
+                val monthlyRevenueDeferred = async { repository.getMonthlyRevenue("2024-01-01", "2024-12-31").first() }
+                val movieRevenueDeferred = async { repository.getMovieRevenue().first() }
 
-                    val overviewRes = overviewDef.await()
-                    val dailyRes = dailyDef.await()
-                    val monthlyRes = monthlyDef.await()
-                    val movieRes = movieDef.await()
+                val results = awaitAll(overviewDeferred, dailyRevenueDeferred, monthlyRevenueDeferred, movieRevenueDeferred)
 
-                    withContext(Dispatchers.Main) {
-                        Log.d("AdminStatsVM", "Overview response: ${overviewRes?.body()?.data}")
-                        
-                        _uiState.value = _uiState.value.copy(
-                            isLoading = false,
-                            overview = if (overviewRes?.isSuccessful == true) overviewRes.body()?.data else _uiState.value.overview,
-                            dailyRevenue = if (dailyRes?.isSuccessful == true) dailyRes.body()?.data ?: emptyList() else _uiState.value.dailyRevenue,
-                            monthlyRevenue = if (monthlyRes?.isSuccessful == true) monthlyRes.body()?.data ?: emptyList() else _uiState.value.monthlyRevenue,
-                            movieRevenue = if (movieRes?.isSuccessful == true) movieRes.body()?.data ?: emptyList() else _uiState.value.movieRevenue,
-                            error = if (overviewRes == null && dailyRes == null && monthlyRes == null && movieRes == null) 
-                                "Lỗi kết nối hoặc parse dữ liệu" else null
-                        )
-                    }
+                val overviewResponse = results[0] as retrofit2.Response<com.example.movie_booking_app.data.model.response.OverviewStatsResponse>
+                val dailyResponse = results[1] as retrofit2.Response<com.example.movie_booking_app.data.model.response.DailyRevenueResponse>
+                val monthlyResponse = results[2] as retrofit2.Response<com.example.movie_booking_app.data.model.response.MonthlyRevenueResponse>
+                val movieResponse = results[3] as retrofit2.Response<com.example.movie_booking_app.data.model.response.MovieRevenueResponse>
 
-                } catch (e: Exception) {
-                    Log.e("AdminStatsVM", "Error loading dashboard", e)
-                    withContext(Dispatchers.Main) {
-                        _uiState.value = _uiState.value.copy(
-                            isLoading = false,
-                            error = e.message ?: "Đã xảy ra lỗi không xác định"
-                        )
-                    }
+                if (overviewResponse.isSuccessful && dailyResponse.isSuccessful && 
+                    monthlyResponse.isSuccessful && movieResponse.isSuccessful) {
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        overview = overviewResponse.body()?.data,
+                        dailyRevenue = dailyResponse.body()?.data ?: emptyList(),
+                        monthlyRevenue = monthlyResponse.body()?.data ?: emptyList(),
+                        movieRevenue = movieResponse.body()?.data ?: emptyList()
+                    )
+                } else {
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = "Failed to load some data"
+                    )
                 }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = e.message ?: "An unknown error occurred"
+                )
             }
         }
     }

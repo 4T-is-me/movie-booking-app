@@ -5,17 +5,17 @@ export const createPromotion = async (req, res) => {
         const { title, detail, discountLevel, startTime, endTime } = req.body;
 
         if (!title || !detail || discountLevel === undefined || !startTime || !endTime) {
-            return res.status(400).json({ success: false, message: 'Missing required promotion details.' });
+            return res.status(400).json({ success: false, message: 'Thiếu thông tin khuyến mãi bắt buộc.' });
         }
 
         if (new Date(startTime) >= new Date(endTime)) {
-            return res.status(400).json({ success: false, message: 'End time must be after start time.' });
+            return res.status(400).json({ success: false, message: 'Thời gian kết thúc phải sau thời gian bắt đầu.' });
         }
 
         const promotion = await adminPromotionService.createPromotion(req.body);
-        return res.status(201).json({ success: true, data: promotion, message: 'Promotion created successfully.' });
+        return res.status(201).json({ success: true, data: promotion, message: 'Tạo khuyến mãi thành công.' });
     } catch (error) {
-        return res.status(500).json({ success: false, message: 'Internal server error.', error: error.message });
+        return res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
     }
 };
 
@@ -24,11 +24,11 @@ export const updatePromotion = async (req, res) => {
         const { id } = req.params;
         const promotion = await adminPromotionService.updatePromotion(id, req.body);
         
-        if (!promotion) return res.status(404).json({ success: false, message: 'Promotion not found.' });
+        if (!promotion) return res.status(404).json({ success: false, message: 'Không tìm thấy khuyến mãi.' });
         
-        return res.status(200).json({ success: true, data: promotion, message: 'Promotion updated successfully.' });
+        return res.status(200).json({ success: true, data: promotion, message: 'Cập nhật thành công.' });
     } catch (error) {
-        return res.status(500).json({ success: false, message: 'Internal server error.', error: error.message });
+        return res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
     }
 };
 
@@ -37,10 +37,10 @@ export const deletePromotion = async (req, res) => {
         const { id } = req.params;
         const promotion = await adminPromotionService.deletePromotion(id);
         
-        if (!promotion) return res.status(404).json({ success: false, message: 'Promotion not found.' });
+        if (!promotion) return res.status(404).json({ success: false, message: 'Không tìm thấy khuyến mãi.' });
         
-        return res.status(200).json({ success: true, message: 'Promotion deleted successfully.' });
+        return res.status(200).json({ success: true, message: 'Xóa khuyến mãi thành công.' });
     } catch (error) {
-        return res.status(500).json({ success: false, message: 'Internal server error.', error: error.message });
+        return res.status(500).json({ success: false, message: 'Lỗi server', error: error.message });
     }
 };
