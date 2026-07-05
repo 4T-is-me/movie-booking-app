@@ -71,4 +71,19 @@ class ProfileRepository @Inject constructor(
             }
         }
     }
+
+    fun changePassword(request: com.example.movie_booking_app.data.model.request.ChangePasswordRequest): Flow<Unit> = flow {
+        val response = profileApi.changePassword(request)
+        if (response.isSuccessful) {
+            emit(Unit)
+        } else {
+            val code = response.code()
+            val errorMsg = response.errorBody()?.string() ?: "Failed to change password"
+            if (code == 401) {
+                throw UnauthorizedException(errorMsg)
+            } else {
+                throw Exception(errorMsg)
+            }
+        }
+    }
 }

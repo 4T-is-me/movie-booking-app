@@ -40,6 +40,7 @@ authRouter.post('/login', accountValidation.login, accountController.login)
 const accountRouter = express.Router()
 accountRouter.get('/profile', authMiddleware.isAuthorized, accountController.getProfile)
 accountRouter.put('/profile', authMiddleware.isAuthorized, accountValidation.updateProfile, accountController.updateProfile)
+accountRouter.put('/change-password', authMiddleware.isAuthorized, accountValidation.changePassword, accountController.changePassword)
 
 accountRouter.post('/upload-avatar', authMiddleware.isAuthorized, uploadMiddleware.upload.single('avatar'), uploadMiddleware.uploadToCloudinary('avatars', 'avatar'), (req, res, next) => {
     try {
