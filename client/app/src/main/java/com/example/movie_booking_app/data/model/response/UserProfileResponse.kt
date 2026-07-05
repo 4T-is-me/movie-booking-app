@@ -21,7 +21,9 @@ data class UserProfileResponse(
     val registerDate: String? = null,
     val image: String? = null,
     val favoriteCinema: String? = null,
-    val favoriteGenres: List<String>? = null
+    val favoriteGenres: List<String>? = null,
+    val membershipRank: String? = null,
+    val totalSpent: Int? = null
 )
 
 /**
@@ -43,6 +45,8 @@ fun UserProfileResponse.toUserProfile(): UserProfile {
         registerDate = registerDate,
         image = image,
         favoriteCinema = favoriteCinema,
-        favoriteGenres = favoriteGenres
+        favoriteGenres = favoriteGenres,
+        membershipRank = membershipRank,
+        totalSpent = totalSpent
     )
 }

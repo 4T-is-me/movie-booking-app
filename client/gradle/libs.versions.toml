@@ -24,6 +24,7 @@ glide = "4.16.0"
 hilt = "2.51.1"
 securityCrypto = "1.1.0"
 appcompat = "1.7.1"
+roomKtx = "2.8.4"
 
 [libraries]
 # Security
@@ -72,6 +73,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

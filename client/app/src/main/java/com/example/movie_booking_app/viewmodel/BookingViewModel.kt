@@ -1,9 +1,9 @@
 package com.example.movie_booking_app.viewmodel
 
-import com.example.movie_booking_app.data.model.entity.Member
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.movie_booking_app.data.model.entity.Member
 import com.example.movie_booking_app.data.model.entity.ScoreHistory
 import com.example.movie_booking_app.data.repository.BookingRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,7 +38,6 @@ class BookingViewModel @Inject constructor(private val repository: BookingReposi
                 .catch { exception ->
                     _errorMessage.value = exception.message
                     _isLoading.value = false
-                    Log.e("API_ERROR", "${exception.message}")
                 }
                 .collect { baseResponse ->
                     val historyList = baseResponse.data

@@ -65,10 +65,6 @@
             android:theme="@style/Theme.Moviebookingapp" />
 
         <activity
-            android:name=".view.activity.LoginPlaceholderActivity"
-            android:exported="false" />
-
-        <activity
             android:name=".view.activity.AdminActivity"
             android:exported="true"
             android:theme="@style/Theme.Moviebookingapp" />
@@ -77,6 +73,14 @@
             android:name=".view.activity.PurchaseHistoryActivity"
             android:exported="false"
             android:theme="@style/Theme.Moviebookingapp" />
+
+        <activity
+            android:name=".view.activity.ScoreHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.activity.RewardPointsActivity"
+            android:exported="false" />
+
 
     </application>
 
