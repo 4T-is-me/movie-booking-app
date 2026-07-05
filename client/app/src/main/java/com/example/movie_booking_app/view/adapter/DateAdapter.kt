@@ -29,14 +29,14 @@ class DateAdapter(
         private val tvDay: TextView = view.findViewById(R.id.tvDay)
 
         fun bind(date: ShowDate) {
-            tvMonth.text = date.month
+            tvMonth.text = date.dayOfWeek
             tvDay.text = date.day
             
             if (date.isSelected) {
                 tvMonth.setTextColor(ContextCompat.getColor(itemView.context, R.color.bg_primary))
-                tvDay.setBackgroundResource(R.drawable.bg_date_selected) // Now White
+                tvDay.setBackgroundResource(R.drawable.bg_date_selected)
                 tvDay.setTextColor(ContextCompat.getColor(itemView.context, R.color.bg_primary))
-                itemView.setBackgroundResource(R.drawable.bg_date_selected_pill) // Yellow Pill
+                itemView.setBackgroundResource(R.drawable.bg_date_selected_pill)
             } else {
                 tvMonth.setTextColor(ContextCompat.getColor(itemView.context, R.color.text_secondary))
                 tvDay.setBackgroundResource(R.drawable.bg_date_unselected)
@@ -49,7 +49,7 @@ class DateAdapter(
     }
 
     object DiffCallback : DiffUtil.ItemCallback<ShowDate>() {
-        override fun areItemsTheSame(oldItem: ShowDate, newItem: ShowDate): Boolean = oldItem.day == newItem.day
+        override fun areItemsTheSame(oldItem: ShowDate, newItem: ShowDate): Boolean = oldItem.id == newItem.id
         override fun areContentsTheSame(oldItem: ShowDate, newItem: ShowDate): Boolean = oldItem == newItem
     }
 }

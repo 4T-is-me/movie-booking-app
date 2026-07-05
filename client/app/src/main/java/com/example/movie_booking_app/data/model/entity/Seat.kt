@@ -1,41 +1,63 @@
 package com.example.movie_booking_app.data.model.entity
 
 import com.example.movie_booking_app.R
+import com.google.gson.annotations.SerializedName
 
 enum class SeatType {
-    NORMAL, VIP, EMPTY
+    @SerializedName("Regular") NORMAL,
+    @SerializedName("VIP") VIP,
+    @SerializedName("Couple") COUPLE,
+    EMPTY
 }
 
-/**
- * Updated to match develop branch naming while keeping our logic.
- */
 enum class SeatStatus {
-    AVAILABLE, RESERVED, SELECTED
+    AVAILABLE, RESERVED, SELECTED, HOLDING
 }
 
-/**
- * Enhanced Seat model: Compatible with develop branch but contains SRS logic and UI helpers.
- */
 data class Seat(
-    val id: String,         // e.g. "A1"
-    val row: String,        // e.g. "A"
-    val number: Int,        // e.g. 1 (Matches develop naming)
+    @SerializedName("seatId")
+    val id: String,
+    @SerializedName("seatLabel")
+    val label: String,
+    val row: String,
+    @SerializedName("col")
+    val number: Int,
+    @SerializedName("seatType")
     val type: SeatType = SeatType.NORMAL,
-    var status: SeatStatus = SeatStatus.AVAILABLE,
-    val price: Int = 80000 
+    @SerializedName("status")
+    val rawStatus: String? = null,
+    val price: Int = 0,
+    
+    @Transient
+    var displayStatus: SeatStatus = SeatStatus.AVAILABLE
 ) {
-    val label: String get() = "$row$number"
+    /**
+     * Syncs the display status based on the raw status string from the backend.
+     */
+    fun syncStatus() {
+        displayStatus = when (rawStatus) {
+            "available" -> SeatStatus.AVAILABLE
+            "booked" -> SeatStatus.RESERVED
+            "holding" -> SeatStatus.HOLDING
+            else -> SeatStatus.AVAILABLE
+        }
+    }
 
     /**
-     * Helper logic: Decides the background color based on seat status.
-     * Ensures Acceptance Criteria for the task are met.
+     * Returns the appropriate background resource based on seat status and type.
      */
     fun getBackgroundResource(): Int {
-        return when (status) {
+        return when (displayStatus) {
             SeatStatus.SELECTED -> R.drawable.bg_seat_selected
-            SeatStatus.RESERVED -> R.drawable.bg_seat_sold
+            SeatStatus.RESERVED, SeatStatus.HOLDING -> R.drawable.bg_seat_sold
             SeatStatus.AVAILABLE -> {
-                if (type == SeatType.VIP) R.drawable.bg_seat_vip else R.drawable.bg_seat_available
+                if (type == SeatType.VIP) {
+                    R.drawable.bg_seat_vip
+                } else if (type == SeatType.COUPLE) {
+                    R.drawable.bg_seat_couple
+                } else {
+                    R.drawable.bg_seat_available
+                }
             }
         }
     }

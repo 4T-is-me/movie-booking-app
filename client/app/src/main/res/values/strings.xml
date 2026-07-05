@@ -73,6 +73,7 @@
     <!-- Select Seat Activity Strings -->
     <string name="legend_available">Available</string>
     <string name="legend_vip">VIP</string>
+    <string name="legend_couple">Couple</string>
     <string name="legend_sold">Sold</string>
     <string name="legend_selected">Selected</string>
     <string name="error_select_more">Please select %d more seat(s)</string>

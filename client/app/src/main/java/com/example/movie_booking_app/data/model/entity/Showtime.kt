@@ -11,5 +11,6 @@ data class Showtime(
     val showDate: String?,
     val startTime: String?,
     val endTime: String?,
+    val showTime: String? = null,
     var isSelected: Boolean = false
 )

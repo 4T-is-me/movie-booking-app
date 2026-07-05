@@ -32,6 +32,12 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideBookingApi(): BookingApi {
+        return RetrofitClient.bookingApi
+    }
+
+    @Provides
+    @Singleton
     fun provideAuthApi(): AuthApi {
         return RetrofitClient.authApi
     }
@@ -52,11 +58,5 @@ object NetworkModule {
     @Singleton
     fun provideAdminApi(): AdminApiService {
         return RetrofitClient.adminApi
-    }
-
-    @Provides
-    @Singleton
-    fun provideBookingApi(): BookingApi {
-        return RetrofitClient.bookingApi
     }
 }
