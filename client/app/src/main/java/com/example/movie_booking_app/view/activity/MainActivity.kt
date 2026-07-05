@@ -60,7 +60,16 @@ class MainActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-//        val sharedPref = getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+        
+        // Added by AI for User – feature hide navbar – 2026-07-05
+        val sharedPref = getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+        val token = sharedPref.getString("auth_token", null)
+        if (token.isNullOrEmpty()) {
+            binding.bottomNav.visibility = android.view.View.GONE
+        } else {
+            binding.bottomNav.visibility = android.view.View.VISIBLE
+        }
+
 //        val token = sharedPref.getString("auth_token", null)
 //        val username = sharedPref.getString("username", "User")
 //        val role = sharedPref.getString("role", "user")

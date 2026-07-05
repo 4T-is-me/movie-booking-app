@@ -3,4 +3,6 @@
 # IDE files
 .idea/
 *.iml
-rule.md
+AGENTS.md
+issues.md
+TEST_AGENT.md

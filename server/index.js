@@ -18,6 +18,7 @@ import adminStaffRoutes from './src/routes/adminStaffRoutes.js';
 import adminMemberRoutes from './src/routes/adminMemberRoutes.js';
 import promotionRoute from './src/routes/promotionRoute.js';
 import adminStatsRoutes from './src/routes/adminStatsRoutes.js';
+import adminPromotionRoutes from './src/routes/adminPromotionRoutes.js';
 
 
 const app = express();
@@ -44,6 +45,7 @@ app.use('/api/admin/movies', adminMovieRoutes);
 app.use('/api/admin/rooms', adminRoomRoute.adminRoomRouter);
 app.use('/api/admin/staff', adminStaffRoutes);
 app.use('/api/admin/members', adminMemberRoutes);
+app.use('/api/admin/promotions', adminPromotionRoutes);
 app.use('/api/admin/stats', adminStatsRoutes);
 
 
