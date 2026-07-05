@@ -1,6 +1,8 @@
 import { Promotion } from "../models/promotionModel.js";
+import { promotionService } from "../services/promotionService.js";
 import { StatusCodes } from "http-status-codes";
 
+// Keep existing applyPromotion for backward compatibility if needed, but we focus on validatePromotion
 const applyPromotion = async (req, res, next) => {
     try {
         const { code } = req.body;
@@ -35,6 +37,34 @@ const applyPromotion = async (req, res, next) => {
     }
 };
 
+const validatePromotion = async (req, res, next) => {
+    try {
+        const { couponCode, orderTotal } = req.body;
+        const accountId = req.user?.accountId;
+        
+        if (!couponCode || orderTotal === undefined) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                success: false,
+                message: "couponCode and orderTotal are required"
+            });
+        }
+        
+        const result = await promotionService.validateAndApplyPromotion(couponCode, accountId, orderTotal);
+        
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            data: {
+                isValid: result.isValid,
+                discountAmount: result.discountAmount,
+                finalPrice: orderTotal - result.discountAmount
+            }
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const promotionController = {
-    applyPromotion
+    applyPromotion,
+    validatePromotion
 };

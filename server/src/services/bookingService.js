@@ -5,6 +5,8 @@ import { Member } from "../models/memberModel.js";
 import { Promotion } from "../models/promotionModel.js";
 import { ScoreHistory } from "../models/scoreHistoryModel.js";
 import { ticketUtils } from "../utils/ticketUtils.js";
+import { promotionService } from "./promotionService.js";
+import { PromotionUsage } from "../models/promotionUsageModel.js";
 import crypto from "crypto";
 import mongoose from "mongoose";
 import { StatusCodes } from "http-status-codes";
@@ -67,7 +69,7 @@ const handleHoldSeats = async ({ accountId, showtimeId, seatIds }) => {
 };
 
 // handle confirm booking
-const handleConfirmBooking = async ({accountId, showtimeId,seatIds,useScore = false,paymentMethod,promotionId,combos = []}) => {
+const handleConfirmBooking = async ({accountId, showtimeId,seatIds,useScore = false,paymentMethod,couponCode,combos = []}) => {
   
   const session = await mongoose.startSession();
 
@@ -115,17 +117,12 @@ const handleConfirmBooking = async ({accountId, showtimeId,seatIds,useScore = fa
 
       //Promotion(if any)
       let promotionDiscount = 0;
-      let promotion = null;
+      let promotionId = null;
       // check promotion
-      if (promotionId) {
-        promotion = await Promotion.findById(promotionId).session(session);
-        // validate promotion
-        if (!promotion) {
-          throw new ApiError( StatusCodes.NOT_FOUND,"Promotion not found");
-        }
-        promotionDiscount = Math.floor(
-          subTotal * (promotion.discountLevel / 100),
-        );
+      if (couponCode) {
+        const promotionResult = await promotionService.validateAndApplyPromotion(couponCode, accountId, subTotal, session);
+        promotionDiscount = promotionResult.discountAmount;
+        promotionId = promotionResult.promotionId;
       }
       // Value after applying the promotion code; if none, promotionDiscount = 0
       const afterPromotion = subTotal - promotionDiscount; 
@@ -223,7 +220,28 @@ const handleConfirmBooking = async ({accountId, showtimeId,seatIds,useScore = fa
           }
         ],
         { session }
-      )
+      );
+
+      // Create PromotionUsage and update usageCount if promotion applied
+      if (promotionId) {
+        await PromotionUsage.create(
+          [
+            {
+              promotionId: promotionId,
+              accountId: accountId,
+              invoiceId: booking[0]._id,
+              discountAmount: promotionDiscount
+            }
+          ],
+          { session }
+        );
+
+        await Promotion.updateOne(
+          { _id: promotionId },
+          { $inc: { usageCount: 1 } },
+          { session }
+        );
+      }
 
       result = {
         bookingId: booking[0]._id,

@@ -25,7 +25,7 @@ const handleHoldSeats = async (req, res, next) => {
 const handleConfirmBooking = async (req, res, next) => {
     try {
 
-        const {showtimeId, seatIds, useScore, paymentMethod, promotionId ,combos} = req.body;
+        const {showtimeId, seatIds, useScore, paymentMethod, couponCode ,combos} = req.body;
 
         const result = await bookingService.handleConfirmBooking({
             accountId: req.user?.accountId,
@@ -33,7 +33,7 @@ const handleConfirmBooking = async (req, res, next) => {
             seatIds,
             useScore,
             paymentMethod,
-            promotionId,
+            couponCode,
             combos
         });
 
