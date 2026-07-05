@@ -20,6 +20,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import com.bumptech.glide.Glide
 import com.example.movie_booking_app.R
+import com.example.movie_booking_app.view.activity.RewardPointsActivity
+import kotlin.jvm.java
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
@@ -71,7 +73,14 @@ class ProfileFragment : Fragment() {
             val intent = Intent(requireContext(), com.example.movie_booking_app.view.activity.EditProfileActivity::class.java)
             startActivity(intent)
         }
+        binding.layoutRewardPoints.setOnClickListener {
+            val intent = Intent(requireContext(), RewardPointsActivity::class.java)
+            startActivity(intent)
+        }
 
+        binding.layoutMyTicket.setOnClickListener {
+            Toast.makeText(context, "My Ticket Clicked", Toast.LENGTH_SHORT).show()
+        }
         binding.layoutChangeLanguage.setOnClickListener {
             Toast.makeText(context, "Change Language Clicked", Toast.LENGTH_SHORT).show()
         }

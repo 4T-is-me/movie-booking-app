@@ -316,7 +316,9 @@ const handleGetScoreHistory = async (accountId) => {
 
   return await ScoreHistory.find({ memberId: member._id })
     .sort({ createdAt: -1 })
-    .populate("bookingId");
+    .populate("bookingId")
+    .populate("memberId")
+    .lean();
 };
 
 // release seats currently held by the authenticated account for a showtime
