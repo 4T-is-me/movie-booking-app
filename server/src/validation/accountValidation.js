@@ -63,8 +63,24 @@ const updateProfile = async (req, res, next) => {
     }
 }
 
+const changePassword = async (req, res, next) => {
+    const correctCondition = Joi.object({
+        currentPassword: Joi.string().required().strict(),
+        newPassword: Joi.string().required().min(6).strict()
+    })
+
+    try {
+        await correctCondition.validateAsync(req.body, { abortEarly: false })
+        next()
+    } catch (error) {
+        const errorMessage = error.details ? error.details.map(err => err.message).join(', ') : error.message;
+        next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, errorMessage));
+    }
+}
+
 export const accountValidation = {
     register,
     login,
-    updateProfile
+    updateProfile,
+    changePassword
 }

@@ -45,9 +45,26 @@ const updateProfile = async (req, res, next) => {
     }
 }
 
+const changePassword = async (req, res, next) => {
+    try {
+        const accountId = req.user.accountId
+        const result = await accountService.changePassword(accountId, req.body)
+        res.status(StatusCodes.OK).json(result)
+    } catch (error) {
+        if (error.statusCode) {
+            return res.status(error.statusCode).json({
+                success: false,
+                message: error.message
+            });
+        }
+        next(error)
+    }
+}
+
 export const accountController = {
     register,
     login,
     getProfile,
-    updateProfile
+    updateProfile,
+    changePassword
 }

@@ -200,9 +200,33 @@ const updateProfile = async (accountId, reqBody) => {
     return await getProfile(accountId);
 }
 
+const changePassword = async (accountId, reqBody) => {
+    const account = await Account.findById(accountId);
+    if (!account) {
+        throw new ApiError(StatusCodes.NOT_FOUND, 'Account not found');
+    }
+
+    const isMatch = await bcryptjs.compare(reqBody.currentPassword, account.passwordHash);
+    if (!isMatch) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, 'Mật khẩu hiện tại không đúng');
+    }
+
+    const isSame = await bcryptjs.compare(reqBody.newPassword, account.passwordHash);
+    if (isSame) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, 'Mật khẩu mới không được trùng với mật khẩu hiện tại');
+    }
+
+    const hashedPassword = await bcryptjs.hash(reqBody.newPassword, 10);
+    account.passwordHash = hashedPassword;
+    await account.save();
+
+    return { success: true };
+}
+
 export const accountService = {
     register,
     login,
     getProfile,
-    updateProfile
+    updateProfile,
+    changePassword
 }

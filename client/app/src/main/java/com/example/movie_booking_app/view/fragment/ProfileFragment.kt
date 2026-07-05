@@ -85,12 +85,33 @@ class ProfileFragment : Fragment() {
             Toast.makeText(context, "Change Language Clicked", Toast.LENGTH_SHORT).show()
         }
         binding.layoutChangePassword.setOnClickListener {
-            Toast.makeText(context, "Change Password Clicked", Toast.LENGTH_SHORT).show()
+            val intent = Intent(requireContext(), com.example.movie_booking_app.view.activity.ChangePasswordActivity::class.java)
+            startActivity(intent)
         }
         binding.layoutPurchaseHistory.setOnClickListener {
             val intent = Intent(requireContext(), com.example.movie_booking_app.view.activity.PurchaseHistoryActivity::class.java)
             startActivity(intent)
         }
+        binding.layoutLogout.setOnClickListener {
+            performLogout()
+        }
+    }
+
+    private fun performLogout() {
+        val act = activity ?: return
+        TokenManager.clearTokens(act)
+        val sharedPref = act.getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+        with(sharedPref.edit()) {
+            remove("auth_token")
+            remove("username")
+            remove("role")
+            apply()
+        }
+        Toast.makeText(act, "Logged out successfully", Toast.LENGTH_SHORT).show()
+        val intent = Intent(act, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        act.finish()
     }
 
     private fun showLoading(isLoading: Boolean) {

@@ -24,4 +24,9 @@ interface ProfileApi {
     suspend fun uploadAvatar(
         @Part avatar: MultipartBody.Part
     ): Response<UploadAvatarResponse>
+
+    @PUT("api/accounts/change-password")
+    suspend fun changePassword(
+        @Body request: com.example.movie_booking_app.data.model.request.ChangePasswordRequest
+    ): Response<okhttp3.ResponseBody>
 }
