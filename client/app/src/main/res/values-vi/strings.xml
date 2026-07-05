@@ -67,4 +67,15 @@
     <string name="or_sign_up_with">Hoặc đăng ký với</string>
     <string name="edit">Sửa</string>
     <string name="delete">Xóa</string>
+
+    <!-- Select Seat Activity Strings -->
+    <string name="legend_available">Ghế trống</string>
+    <string name="legend_vip">Ghế VIP</string>
+    <string name="legend_couple">Ghế đôi</string>
+    <string name="legend_sold">Đã bán</string>
+    <string name="legend_selected">Đang chọn</string>
+    <string name="error_select_more">Vui lòng chọn thêm %d ghế</string>
+    <string name="error_select_only">Bạn chỉ được chọn tối đa %d ghế</string>
+    <string name="msg_proceeding">Đang xử lý...</string>
+    <string name="title_select_seat">Chọn ghế</string>
 </resources>

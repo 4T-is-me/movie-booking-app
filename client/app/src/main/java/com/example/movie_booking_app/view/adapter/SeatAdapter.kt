@@ -29,11 +29,11 @@ class SeatAdapter(
 
         fun bind(seat: Seat) {
             tvSeat.text = seat.label
-            // Sử dụng logic đã được tách vào Model
             tvSeat.setBackgroundResource(seat.getBackgroundResource())
             
-            itemView.isEnabled = seat.status != SeatStatus.RESERVED
-            itemView.alpha = if (seat.status == SeatStatus.RESERVED) 0.5f else 1.0f
+            val isReserved = seat.displayStatus == SeatStatus.RESERVED || seat.displayStatus == SeatStatus.HOLDING
+            itemView.isEnabled = !isReserved
+            itemView.alpha = if (isReserved) 0.5f else 1.0f
 
             itemView.setOnClickListener { onSeatClick(seat) }
         }
@@ -41,6 +41,7 @@ class SeatAdapter(
 
     object DiffCallback : DiffUtil.ItemCallback<Seat>() {
         override fun areItemsTheSame(oldItem: Seat, newItem: Seat): Boolean = oldItem.id == newItem.id
-        override fun areContentsTheSame(oldItem: Seat, newItem: Seat): Boolean = oldItem == newItem
+        override fun areContentsTheSame(oldItem: Seat, newItem: Seat): Boolean = 
+            oldItem == newItem && oldItem.displayStatus == newItem.displayStatus
     }
 }

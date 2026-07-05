@@ -2,6 +2,9 @@ package com.example.movie_booking_app.view.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -10,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.ActivitySelectSeatBinding
 import com.example.movie_booking_app.view.adapter.DateAdapter
 import com.example.movie_booking_app.view.adapter.SeatAdapter
@@ -18,7 +22,7 @@ import com.example.movie_booking_app.viewmodel.SelectSeatViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
-import java.util.Locale
+import java.util.*
 
 /**
  * Activity for Cinema Seat Selection screen.
@@ -39,15 +43,30 @@ class SelectSeatActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupRecyclerViews()
+        setupLegend()
+        setupQuantitySpinner()
         setupListeners()
         observeViewModel()
     }
 
-    /**
-     * Set up recyclerview layouts and binding adapters.
-     */
+    private fun setupLegend() {
+        binding.legendAvailable.tvLegendLabel.text = getString(R.string.legend_available)
+        binding.legendAvailable.viewSwatch.setBackgroundResource(R.drawable.bg_seat_available)
+
+        binding.legendVip.tvLegendLabel.text = getString(R.string.legend_vip)
+        binding.legendVip.viewSwatch.setBackgroundResource(R.drawable.bg_seat_vip)
+
+        binding.legendCouple.tvLegendLabel.text = getString(R.string.legend_couple)
+        binding.legendCouple.viewSwatch.setBackgroundResource(R.drawable.bg_seat_couple)
+
+        binding.legendSold.tvLegendLabel.text = getString(R.string.legend_sold)
+        binding.legendSold.viewSwatch.setBackgroundResource(R.drawable.bg_seat_sold)
+
+        binding.legendSelected.tvLegendLabel.text = getString(R.string.legend_selected)
+        binding.legendSelected.viewSwatch.setBackgroundResource(R.drawable.bg_seat_selected)
+    }
+
     private fun setupRecyclerViews() {
-        // Seat layout: 10 columns
         seatAdapter = SeatAdapter { seat ->
             viewModel.toggleSeatSelection(seat.id)
         }
@@ -55,74 +74,71 @@ class SelectSeatActivity : AppCompatActivity() {
         binding.rvSeats.adapter = seatAdapter
         binding.rvSeats.isNestedScrollingEnabled = false
 
-        // Date layout: horizontal
         dateAdapter = DateAdapter { date ->
-            viewModel.selectDate(date.day)
+            viewModel.selectDate(date.id)
         }
-        binding.rvDates.layoutManager = LinearLayoutManager(
-            this, LinearLayoutManager.HORIZONTAL, false,
-        )
+        binding.rvDates.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.rvDates.adapter = dateAdapter
 
-        // Time layout: horizontal
         timeAdapter = TimeAdapter { showtime  ->
-            viewModel.selectTime(showtime.time)
+            viewModel.selectTime(showtime.id)
         }
-        binding.rvTimes.layoutManager = LinearLayoutManager(
-            this, LinearLayoutManager.HORIZONTAL, false,
-        )
+        binding.rvTimes.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.rvTimes.adapter = timeAdapter
     }
 
-    /**
-     * Attach button listeners.
-     */
-    private fun setupListeners() {
-        binding.ivBack.setOnClickListener {
-            finish()
+    private fun setupQuantitySpinner() {
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, (1..8).toList())
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerQuantity.adapter = adapter
+        binding.spinnerQuantity.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                viewModel.setTargetCount(position + 1)
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
+    }
+
+    private fun setupListeners() {
+        binding.ivBack.setOnClickListener { finish() }
+        
         binding.btnContinue.setOnClickListener {
             val selectedSeatsList = viewModel.selectedSeats.value
-            if (selectedSeatsList.isEmpty()) {
-                Toast.makeText(this, "Please select at least one seat", Toast.LENGTH_SHORT).show()
+            val targetCount = viewModel.targetCount.value
+            
+            if (selectedSeatsList.size < targetCount) {
+                val diff = targetCount - selectedSeatsList.size
+                Toast.makeText(this, getString(R.string.error_select_more, diff), Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            
+            if (selectedSeatsList.size > targetCount) {
+                Toast.makeText(this, getString(R.string.error_select_only, targetCount), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            val orderId = "BK-" + java.util.UUID.randomUUID().toString().take(8).uppercase(Locale.getDefault())
-            
-            val selectedDateStr = viewModel.dates.value.find { it.isSelected }?.day ?: ""
-            val selectedTimeStr = viewModel.times.value.find { it.isSelected }?.time ?: ""
-            
+            val orderId = "BK-" + UUID.randomUUID().toString().take(8).uppercase(Locale.getDefault())
+            val selectedDate = viewModel.dates.value.find { it.isSelected }
+            val selectedTime = viewModel.times.value.find { it.isSelected }
             val ticketTotal = viewModel.totalPrice.value
-            
-            val vipCount = selectedSeatsList.count { it.type == com.example.movie_booking_app.data.model.entity.SeatType.VIP }
-            val normalCount = selectedSeatsList.size - vipCount
-            
-            val ticketTypeDetails = mutableListOf<com.example.movie_booking_app.data.model.entity.TicketTypeDetail>()
-            if (vipCount > 0) {
-                ticketTypeDetails.add(com.example.movie_booking_app.data.model.entity.TicketTypeDetail("VIP Seat", vipCount, 120000))
-            }
-            if (normalCount > 0) {
-                ticketTypeDetails.add(com.example.movie_booking_app.data.model.entity.TicketTypeDetail("Normal Seat", normalCount, 80000))
-            }
 
             val booking = com.example.movie_booking_app.data.model.entity.Booking(
                 orderId = orderId,
                 movieId = intent.getStringExtra("movieId"),
-                movieName = intent.getStringExtra("movieName") ?: "Unknown Movie",
+                movieName = intent.getStringExtra("movieName") ?: "Movie",
                 moviePoster = intent.getStringExtra("moviePoster"),
-                movieGenre = intent.getStringExtra("movieGenre") ?: "Genre",
+                movieGenre = intent.getStringExtra("movieGenre") ?: "",
                 cinemaName = intent.getStringExtra("cinemaName") ?: "Cinema Center",
                 cinemaAddress = intent.getStringExtra("cinemaAddress") ?: "Cinema Address",
                 roomName = "Room 3",
-                showDate = selectedDateStr,
-                showTime = selectedTimeStr,
+                showDate = selectedDate?.id ?: "",
+                showTime = selectedTime?.showTime ?: selectedTime?.startTime ?: "",
                 duration = 120,
                 language = "English",
                 subtitle = "Vietnamese",
                 seatIds = selectedSeatsList.map { it.id },
                 seatNames = selectedSeatsList.map { it.label },
-                ticketTypeDetails = ticketTypeDetails,
+                ticketTypeDetails = emptyList(),
                 combos = emptyList(),
                 ticketTotal = ticketTotal,
                 comboTotal = 0,
@@ -136,33 +152,20 @@ class SelectSeatActivity : AppCompatActivity() {
             }
             startActivity(intent)
         }
-
-        val quantityAdapter = android.widget.ArrayAdapter(this, android.R.layout.simple_spinner_item, (1..10).toList())
-        quantityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerQuantity.adapter = quantityAdapter
-        binding.spinnerQuantity.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: android.view.View?, position: Int, id: Long) {
-                viewModel.setTargetCount(position + 1)
-            }
-            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
-        }
     }
 
-    /**
-     * Observe ViewModel state flows and sync to UI.
-     */
     private fun observeViewModel() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.isLoading.collect { isLoading ->
                     if (isLoading) {
-                        binding.mainContent.visibility = android.view.View.GONE
-                        binding.layoutSkeleton.root.visibility = android.view.View.VISIBLE
+                        binding.mainContent.visibility = View.GONE
+                        binding.layoutSkeleton.root.visibility = View.VISIBLE
                         binding.layoutSkeleton.root.startShimmer()
                     } else {
-                        binding.mainContent.visibility = android.view.View.VISIBLE
+                        binding.mainContent.visibility = View.VISIBLE
                         binding.layoutSkeleton.root.stopShimmer()
-                        binding.layoutSkeleton.root.visibility = android.view.View.GONE
+                        binding.layoutSkeleton.root.visibility = View.GONE
                     }
                 }
             }
@@ -170,24 +173,27 @@ class SelectSeatActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.seats.collect { list ->
-                    seatAdapter.submitList(list)
-                }
+                viewModel.seats.collect { list -> seatAdapter.submitList(list) }
             }
         }
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.dates.collect { list ->
-                    dateAdapter.submitList(list)
-                }
+                viewModel.dates.collect { list -> dateAdapter.submitList(list) }
             }
         }
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.times.collect { list ->
-                    timeAdapter.submitList(list)
+                viewModel.times.collect { list -> timeAdapter.submitList(list) }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.selectedSeats.collect { list ->
+                    binding.btnContinue.isEnabled = list.isNotEmpty()
+                    binding.btnContinue.alpha = if (list.isNotEmpty()) 1.0f else 0.5f
                 }
             }
         }
@@ -202,20 +208,15 @@ class SelectSeatActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.error.collect { errorMsg ->
-                    errorMsg?.let {
-                        Toast.makeText(this@SelectSeatActivity, it, Toast.LENGTH_LONG).show()
-                    }
+                viewModel.errorMessage.collect { message ->
+                    Toast.makeText(this@SelectSeatActivity, message, Toast.LENGTH_LONG).show()
                 }
             }
         }
     }
 
-    /**
-     * Formats currency amounts with thousand separators (dots) matching mockup presentation style.
-     */
     private fun formatCurrency(amount: Int): String {
-        val formatter = NumberFormat.getInstance(Locale.GERMANY) // Germany formats digits using dot thousands separator (e.g. 210.000)
+        val formatter = NumberFormat.getInstance(Locale.GERMANY)
         return "${formatter.format(amount)} VND"
     }
 }
