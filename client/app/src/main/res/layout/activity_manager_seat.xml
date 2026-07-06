@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0A0F1E"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="40dp">
+
+        <!-- Top Bar -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <ImageView
+                android:id="@+id/ivBack"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_manager_room_icon"
+                android:padding="10dp"
+                android:src="@drawable/ic_back"
+                android:layout_centerVertical="true"
+                app:tint="#FFFFFF" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_toEndOf="@id/ivBack"
+                android:layout_toStartOf="@id/tvTopStatus"
+                android:layout_marginStart="16dp"
+                android:layout_centerVertical="true">
+
+                <TextView
+                    android:id="@+id/tvRoomName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hall C - IMAX"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvRoomSubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="150 seats · IMAX"
+                    android:textColor="#94A3B8"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvTopStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/bg_label_operating"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp"
+                android:text="Operating"
+                android:textColor="#10B981"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+        
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#33FFFFFF" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- ROOM STATUS CARD -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="#111827"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ROOM STATUS"
+                        android:textColor="#94A3B8"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.1" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="16dp">
+                        
+                        <TextView
+                            android:id="@+id/btnStatusOperating"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_btn_status_selected"
+                            android:text="✓ Operating"
+                            android:textColor="#10B981"
+                            android:gravity="center"
+                            android:paddingVertical="12dp"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+                            
+                        <View android:layout_width="12dp" android:layout_height="match_parent" />
+                        
+                        <TextView
+                            android:id="@+id/btnStatusMaintenance"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_btn_status_unselected"
+                            android:text="Maintenance"
+                            android:textColor="#94A3B8"
+                            android:gravity="center"
+                            android:paddingVertical="12dp"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="12dp">
+                        
+                        <TextView
+                            android:id="@+id/btnStatusClosed"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_btn_status_unselected"
+                            android:text="Closed"
+                            android:textColor="#94A3B8"
+                            android:gravity="center"
+                            android:paddingVertical="12dp"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- SEAT CONFIGURATION CARD -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="#111827"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SEAT CONFIGURATION"
+                        android:textColor="#94A3B8"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.1" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="16dp">
+
+                        <!-- Standard -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:background="@drawable/bg_seat_config_item"
+                            android:padding="12dp"
+                            android:gravity="center">
+                            
+                            <TextView
+                                android:id="@+id/tvConfigStdCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="120"
+                                android:textColor="#60A5FA"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="Standard"
+                                android:textColor="#94A3B8"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                        
+                        <View android:layout_width="12dp" android:layout_height="match_parent" />
+
+                        <!-- VIP -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:background="@drawable/bg_seat_config_item"
+                            android:padding="12dp"
+                            android:gravity="center">
+                            
+                            <TextView
+                                android:id="@+id/tvConfigVipCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="20"
+                                android:textColor="#FACC15"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="VIP"
+                                android:textColor="#94A3B8"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                        
+                        <View android:layout_width="12dp" android:layout_height="match_parent" />
+
+                        <!-- Couple -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:background="@drawable/bg_seat_config_item"
+                            android:padding="12dp"
+                            android:gravity="center">
+                            
+                            <TextView
+                                android:id="@+id/tvConfigCoupleCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="10"
+                                android:textColor="#A78BFA"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="Couple"
+                                android:textColor="#94A3B8"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- SEAT LAYOUT EDITOR CARD -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="#111827"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="SEAT LAYOUT EDITOR"
+                            android:textColor="#94A3B8"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.1" />
+                            
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:background="@drawable/bg_btn_status_unselected"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="6dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+                            <ImageView
+                                android:layout_width="14dp"
+                                android:layout_height="14dp"
+                                android:src="@android:drawable/ic_menu_rotate"
+                                app:tint="#94A3B8"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:text="Reset"
+                                android:textColor="#94A3B8"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </RelativeLayout>
+
+
+
+                    <!-- SCREEN -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:gravity="center"
+                        android:text="SCREEN"
+                        android:textColor="#60A5FA"
+                        android:textSize="10sp"
+                        android:letterSpacing="0.2"
+                        android:background="@drawable/bg_screen_glow" />
+
+                    <!-- Seat Matrix Loading -->
+                    <ProgressBar
+                        android:id="@+id/progressBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="32dp"
+                        android:layout_marginBottom="32dp"
+                        android:indeterminateTint="#10B981" />
+
+                    <HorizontalScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:fillViewport="true"
+                        android:scrollbars="none">
+                        
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:orientation="vertical">
+                            
+                            <LinearLayout
+                                android:id="@+id/llSeats"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical" />
+                        </LinearLayout>
+                    </HorizontalScrollView>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- SEAT PRICING CARD -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="#111827"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="SEAT PRICING"
+                            android:textColor="#94A3B8"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.1" />
+                            
+                        <LinearLayout
+                            android:id="@+id/btnEditPricing"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:background="@drawable/bg_btn_status_unselected"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="6dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+                            <!-- TODO: Tạm mock chức năng Edit -->
+                            <ImageView
+                                android:id="@+id/ivEditAction"
+                                android:layout_width="14dp"
+                                android:layout_height="14dp"
+                                android:src="@android:drawable/ic_menu_edit"
+                                app:tint="#A78BFA"/>
+                            <TextView
+                                android:id="@+id/tvEditAction"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:text="Edit"
+                                android:textColor="#A78BFA"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </RelativeLayout>
+                    
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="16dp">
+                        
+                        <!-- Standard Price -->
+                        <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingVertical="8dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerVertical="true" android:text="Standard" android:textColor="#FFFFFF" android:textSize="14sp"/>
+                            <TextView android:id="@+id/tvStdPrice" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:text="100.000đ" android:textColor="#60A5FA" android:textSize="14sp" android:textStyle="bold"/>
+                            <LinearLayout android:id="@+id/llStdEdit" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:orientation="horizontal" android:visibility="gone" android:background="@drawable/bg_seat_config_item" android:paddingHorizontal="12dp" android:paddingVertical="4dp">
+                                <EditText android:id="@+id/etStdPrice" android:layout_width="80dp" android:layout_height="wrap_content" android:inputType="numberDecimal" android:textColor="#60A5FA" android:textSize="14sp" android:textStyle="bold" android:gravity="end" android:background="@null" android:padding="0dp" />
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="đ" android:textColor="#60A5FA" android:textSize="14sp" android:textStyle="bold" android:layout_marginStart="2dp"/>
+                            </LinearLayout>
+                        </RelativeLayout>
+                        
+                        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#1AFFFFFF"/>
+                        
+                        <!-- VIP Price -->
+                        <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingVertical="8dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerVertical="true" android:text="VIP" android:textColor="#FFFFFF" android:textSize="14sp"/>
+                            <TextView android:id="@+id/tvVipPrice" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:text="150.000đ" android:textColor="#FACC15" android:textSize="14sp" android:textStyle="bold"/>
+                            <LinearLayout android:id="@+id/llVipEdit" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:orientation="horizontal" android:visibility="gone" android:background="@drawable/bg_seat_config_item" android:paddingHorizontal="12dp" android:paddingVertical="4dp">
+                                <EditText android:id="@+id/etVipPrice" android:layout_width="80dp" android:layout_height="wrap_content" android:inputType="numberDecimal" android:textColor="#FACC15" android:textSize="14sp" android:textStyle="bold" android:gravity="end" android:background="@null" android:padding="0dp" />
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="đ" android:textColor="#FACC15" android:textSize="14sp" android:textStyle="bold" android:layout_marginStart="2dp"/>
+                            </LinearLayout>
+                        </RelativeLayout>
+                        
+                        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#1AFFFFFF"/>
+                        
+                        <!-- Couple Price -->
+                        <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingVertical="8dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_centerVertical="true" android:text="Couple /pair" android:textColor="#FFFFFF" android:textSize="14sp"/>
+                            <TextView android:id="@+id/tvCouplePrice" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:text="280.000đ" android:textColor="#A78BFA" android:textSize="14sp" android:textStyle="bold"/>
+                            <LinearLayout android:id="@+id/llCoupleEdit" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:layout_centerVertical="true" android:orientation="horizontal" android:visibility="gone" android:background="@drawable/bg_seat_config_item" android:paddingHorizontal="12dp" android:paddingVertical="4dp">
+                                <EditText android:id="@+id/etCouplePrice" android:layout_width="80dp" android:layout_height="wrap_content" android:inputType="numberDecimal" android:textColor="#A78BFA" android:textSize="14sp" android:textStyle="bold" android:gravity="end" android:background="@null" android:padding="0dp" />
+                                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="đ" android:textColor="#A78BFA" android:textSize="14sp" android:textStyle="bold" android:layout_marginStart="2dp"/>
+                            </LinearLayout>
+                        </RelativeLayout>
+                        
+                        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#1AFFFFFF"/>
+                        
+                        <!-- Est Capacity -->
+                        <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingVertical="12dp">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Est. Full Capacity" android:textColor="#94A3B8" android:textSize="14sp"/>
+                            <TextView android:id="@+id/tvFullCap" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:text="16.400.000đ" android:textColor="#C084FC" android:textSize="14sp" android:textStyle="bold"/>
+                        </RelativeLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- SAVE BUTTON -->
+            <Button
+                android:id="@+id/btnSaveAll"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="32dp"
+                android:text="SAVE ALL CHANGES"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:backgroundTint="#10B981" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
