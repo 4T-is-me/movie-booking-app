@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.entity.*
 import com.example.movie_booking_app.data.repository.BookingRepository
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -59,13 +58,10 @@ class SelectSeatViewModel @Inject constructor(
 
         viewModelScope.launch {
             _isLoading.value = true
-            val minLoadingTime = launch { delay(500) }
-            
             repository.getMovieShowtimes(targetMovieId).collect { list ->
                 _allShowtimes.value = list
                 
                 if (list.isEmpty()) {
-                    minLoadingTime.join()
                     _isLoading.value = false
                     _errorMessage.emit("This movie has no available showtimes.")
                     return@collect
@@ -101,7 +97,6 @@ class SelectSeatViewModel @Inject constructor(
                 if (sortedDates.isNotEmpty()) {
                     selectDate(sortedDates[0].id)
                 } else {
-                    minLoadingTime.join()
                     _isLoading.value = false
                 }
             }
@@ -129,13 +124,9 @@ class SelectSeatViewModel @Inject constructor(
         
         viewModelScope.launch {
             _isLoading.value = true
-            val minLoadingTime = launch { delay(500) }
-            
             repository.getSeats(showtimeId).collect { seatList ->
                 _seats.value = seatList
                 _selectedSeats.value = emptyList()
-                
-                minLoadingTime.join()
                 _isLoading.value = false
                 if (seatList.isEmpty()) {
                     _errorMessage.emit("No seats available for this showtime.")
@@ -149,10 +140,26 @@ class SelectSeatViewModel @Inject constructor(
     }
 
     fun toggleSeatSelection(seatId: String) {
+        val seatToToggle = _seats.value.find { it.id == seatId } ?: return
+        
+        if (seatToToggle.displayStatus == SeatStatus.RESERVED || seatToToggle.displayStatus == SeatStatus.HOLDING) return
+
+        if (seatToToggle.displayStatus != SeatStatus.SELECTED) {
+            val currentlySelected = _selectedSeats.value
+            if (currentlySelected.isNotEmpty()) {
+                val baseType = currentlySelected.first().type
+                if (seatToToggle.type != baseType) {
+                    viewModelScope.launch {
+                        _errorMessage.emit("Please select seats of the same type")
+                    }
+                    return
+                }
+            }
+        }
+
         _seats.update { list ->
             list.map { currentSeat ->
                 if (currentSeat.id == seatId) {
-                    if (currentSeat.displayStatus == SeatStatus.RESERVED || currentSeat.displayStatus == SeatStatus.HOLDING) return@map currentSeat
                     val newStatus = if (currentSeat.displayStatus == SeatStatus.SELECTED) 
                         SeatStatus.AVAILABLE else SeatStatus.SELECTED
                     currentSeat.copy(displayStatus = newStatus)
@@ -164,7 +171,11 @@ class SelectSeatViewModel @Inject constructor(
         _selectedSeats.value = _seats.value.filter { it.displayStatus == SeatStatus.SELECTED }
     }
 
+    val selectedSeatsTotalCount: StateFlow<Int> = _selectedSeats.map { list ->
+        list.fold(0) { acc, seat -> acc + if (seat.type == SeatType.COUPLE) 2 else 1 }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, 0)
+
     val totalPrice: StateFlow<Int> = _selectedSeats.map { list ->
-        list.sumOf { it.price }
+        list.fold(0) { acc, seat -> acc + seat.price }
     }.stateIn(viewModelScope, SharingStarted.Lazily, 0)
 }
