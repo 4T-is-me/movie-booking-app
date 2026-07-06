@@ -100,45 +100,62 @@ class SelectSeatActivity : AppCompatActivity() {
                 Toast.makeText(this, getString(R.string.error_no_selection), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
-            val orderId = "BK-" + UUID.randomUUID().toString().take(8).uppercase(Locale.getDefault())
-            val selectedDate = viewModel.dates.value.find { it.isSelected }
             val selectedTime = viewModel.times.value.find { it.isSelected }
-            val ticketTotal = viewModel.totalPrice.value
-
-            val booking = com.example.movie_booking_app.data.model.entity.Booking(
-                orderId = orderId,
-                movieId = intent.getStringExtra("movieId"),
-                movieName = intent.getStringExtra("movieName") ?: getString(R.string.unknown_movie),
-                moviePoster = intent.getStringExtra("moviePoster"),
-                movieGenre = intent.getStringExtra("movieGenre") ?: "",
-                cinemaName = intent.getStringExtra("cinemaName") ?: getString(R.string.cinema_center),
-                cinemaAddress = intent.getStringExtra("cinemaAddress") ?: "",
-                roomName = getString(R.string.default_room_name),
-                showDate = selectedDate?.id ?: "",
-                showTime = selectedTime?.showTime ?: selectedTime?.startTime ?: "",
-                duration = 120,
-                language = getString(R.string.default_language),
-                subtitle = getString(R.string.default_subtitle),
-                seatIds = selectedSeatsList.map { it.id },
-                seatNames = selectedSeatsList.map { it.label },
-                ticketTypeDetails = emptyList(),
-                combos = emptyList(),
-                ticketTotal = ticketTotal,
-                comboTotal = 0,
-                bookingFee = 0,
-                discount = 0,
-                grandTotal = ticketTotal
-            )
-
-            val intent = Intent(this, PaymentActivity::class.java).apply {
-                putExtra("BOOKING_SESSION", booking)
+            if (selectedTime == null) {
+                Toast.makeText(this, "Please select a showtime", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
-            startActivity(intent)
+            viewModel.holdSeats(selectedTime.id, selectedSeatsList.map { it.id })
         }
     }
 
     private fun observeViewModel() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.holdSuccess.collect { success ->
+                    if (success) {
+                        viewModel.resetHoldSuccess()
+                        val selectedSeatsList = viewModel.selectedSeats.value
+                        val selectedDate = viewModel.dates.value.find { it.isSelected }
+                        val selectedTime = viewModel.times.value.find { it.isSelected }
+                        val ticketTotal = viewModel.totalPrice.value
+                        val orderId = "BK-" + UUID.randomUUID().toString().take(8).uppercase(Locale.getDefault())
+
+                        val booking = com.example.movie_booking_app.data.model.entity.Booking(
+                            orderId = orderId,
+                            movieId = intent.getStringExtra("movieId"),
+                            movieName = intent.getStringExtra("movieName") ?: getString(R.string.unknown_movie),
+                            moviePoster = intent.getStringExtra("moviePoster"),
+                            movieGenre = intent.getStringExtra("movieGenre") ?: "",
+                            cinemaName = intent.getStringExtra("cinemaName") ?: getString(R.string.cinema_center),
+                            cinemaAddress = intent.getStringExtra("cinemaAddress") ?: "",
+                            roomName = getString(R.string.default_room_name),
+                            showDate = selectedDate?.id ?: "",
+                            showTime = selectedTime?.showTime ?: selectedTime?.startTime ?: "",
+                            duration = 120,
+                            language = getString(R.string.default_language),
+                            subtitle = getString(R.string.default_subtitle),
+                            seatIds = selectedSeatsList.map { it.id },
+                            seatNames = selectedSeatsList.map { it.label },
+                            ticketTypeDetails = emptyList(),
+                            combos = emptyList(),
+                            ticketTotal = ticketTotal,
+                            comboTotal = 0,
+                            bookingFee = 0,
+                            discount = 0,
+                            grandTotal = ticketTotal,
+                            showtimeId = selectedTime?.id
+                        )
+
+                        val intent = Intent(this@SelectSeatActivity, PaymentActivity::class.java).apply {
+                            putExtra("BOOKING_SESSION", booking)
+                        }
+                        startActivity(intent)
+                    }
+                }
+            }
+        }
+
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.isLoading.collect { isLoading ->

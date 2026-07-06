@@ -40,6 +40,9 @@ class SelectSeatViewModel @Inject constructor(
     private val _errorMessage = MutableSharedFlow<String>()
     val errorMessage = _errorMessage.asSharedFlow()
 
+    private val _holdSuccess = MutableStateFlow(false)
+    val holdSuccess: StateFlow<Boolean> = _holdSuccess.asStateFlow()
+
     private val _error = MutableSharedFlow<String?>()
     val error = _error.asSharedFlow()
 
@@ -178,4 +181,25 @@ class SelectSeatViewModel @Inject constructor(
     val totalPrice: StateFlow<Int> = _selectedSeats.map { list ->
         list.fold(0) { acc, seat -> acc + seat.price }
     }.stateIn(viewModelScope, SharingStarted.Lazily, 0)
+
+    fun holdSeats(showtimeId: String, seatIds: List<String>) {
+        viewModelScope.launch {
+            repository.holdSeats(showtimeId, seatIds)
+                .onStart {
+                    _isLoading.value = true
+                }
+                .catch { exception ->
+                    _isLoading.value = false
+                    _errorMessage.emit(exception.message ?: "Failed to hold seats")
+                }
+                .collect {
+                    _isLoading.value = false
+                    _holdSuccess.value = true
+                }
+        }
+    }
+
+    fun resetHoldSuccess() {
+        _holdSuccess.value = false
+    }
 }

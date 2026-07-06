@@ -148,7 +148,7 @@ class PaymentViewModel @Inject constructor(
 
         viewModelScope.launch {
             val request = ConfirmBookingRequest(
-                showtimeId = booking.showTime ?: "1",
+                showtimeId = booking.showtimeId ?: "",
                 seatIds = booking.seatIds,
                 useScore = false,
                 paymentMethod = state.selectedPaymentMethod,

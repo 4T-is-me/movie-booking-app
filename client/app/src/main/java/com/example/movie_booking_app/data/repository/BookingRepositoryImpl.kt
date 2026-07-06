@@ -28,4 +28,9 @@ class BookingRepositoryImpl @Inject constructor(private val bookingApi: BookingA
             throw Exception("Error fetching score history: ${response.message()}")
         }
     }
+
+    override fun holdSeats(showtimeId: String, seatIds: List<String>): Flow<Unit> = flow {
+        Log.w("BookingRepo", "WARNING: Using MOCK holdSeats")
+        emit(Unit)
+    }
 }

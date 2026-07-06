@@ -56,4 +56,28 @@ class BookingRepositoryRemoteImpl @Inject constructor(
             throw Exception(e.localizedMessage ?: "Unknown network error occurred")
         }
     }
+
+    override fun holdSeats(showtimeId: String, seatIds: List<String>): Flow<Unit> = flow {
+        val payload = com.example.movie_booking_app.data.api.HoldSeatsRequest(seatIds)
+        val response = bookingApi.holdSeats(showtimeId, payload)
+        if (response.isSuccessful) {
+            emit(Unit)
+        } else {
+            val errorMsg = response.errorBody()?.string() ?: "Failed to hold seats"
+            throw Exception(parseErrorMessage(errorMsg))
+        }
+    }
+
+    private fun parseErrorMessage(raw: String): String {
+        return try {
+            if (raw.startsWith("{") && raw.contains("message")) {
+                val json = com.google.gson.JsonParser.parseString(raw).asJsonObject
+                json.get("message")?.asString ?: raw
+            } else {
+                raw
+            }
+        } catch (e: Exception) {
+            raw
+        }
+    }
 }
