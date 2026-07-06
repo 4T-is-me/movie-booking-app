@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/nav_dashboard" android:title="Dashboard" />
+        <item android:id="@+id/nav_schedule" android:title="Showtime Scheduling" />
+        <item android:id="@+id/nav_rooms" android:title="Cinema Rooms" />
+        <item android:id="@+id/nav_staff" android:title="Staff Management" />
+        <item android:id="@+id/nav_reports" android:title="Branch Reports" />
+    </group>
+    
+    <item android:title="Account">
+        <menu>
+            <item android:id="@+id/nav_notifications" android:title="Notifications" />
+            <item android:id="@+id/nav_profile" android:title="My Profile" />
+            <item android:id="@+id/nav_settings" android:title="Settings" />
+            <item android:id="@+id/nav_logout" android:title="Sign Out" />
+        </menu>
+    </item>
+</menu>

@@ -38,6 +38,15 @@
             android:windowSoftInputMode="adjustPan|stateHidden" />
 
         <activity
+            android:name=".view.activity.manager.ManagerRoomListActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".view.activity.manager.ManagerSeatActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp" />
+
+        <activity
             android:name=".view.activity.ChangePasswordActivity"
             android:exported="false"
             android:theme="@style/Theme.Moviebookingapp"
