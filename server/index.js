@@ -5,7 +5,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import { env } from './src/config/environment.js';
 import connectDB from './src/config/mongoDB.js';
-import { seatHoldCleanUpJobs } from './src/jobs/seatHoldCleanUpJobs.js';
+import { CleanUpJobs } from './src/jobs/cleanUpJobs.js';
 import movieRoutes from './src/routes/movieRoutes.js';
 import showtimeRoutes from './src/routes/showtimeRoutes.js';
 import { accountRoute } from './src/routes/accountRoute.js';
@@ -51,7 +51,8 @@ app.use('/api/admin/stats', adminStatsRoutes);
 
 const startServer = async () => {
     await connectDB();
-    seatHoldCleanUpJobs.startSeatCleanupJob();
+    CleanUpJobs.startSeatCleanupJob();
+    CleanUpJobs.updateMovieStatus()
     app.listen(PORT, () => {
         console.log(`🚀 ES Modules Server is running at: http://localhost:${PORT}`);
     });

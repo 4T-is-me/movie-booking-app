@@ -93,26 +93,12 @@ class ProfileFragment : Fragment() {
             startActivity(intent)
         }
         binding.layoutLogout.setOnClickListener {
-            performLogout()
+            val act = activity ?: return@setOnClickListener
+            com.example.movie_booking_app.utils.AuthUtils.showLogoutConfirmationDialog(act)
         }
     }
 
-    private fun performLogout() {
-        val act = activity ?: return
-        TokenManager.clearTokens(act)
-        val sharedPref = act.getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
-        with(sharedPref.edit()) {
-            remove("auth_token")
-            remove("username")
-            remove("role")
-            apply()
-        }
-        Toast.makeText(act, "Logged out successfully", Toast.LENGTH_SHORT).show()
-        val intent = Intent(act, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-        act.finish()
-    }
+
 
     private fun showLoading(isLoading: Boolean) {
         val act = activity ?: return
