@@ -20,5 +20,6 @@ data class Movie(
     val totalReviews: Int?,
     val createdAt : String?,
     val updatedAt : String?,
-    val totalStars: Int?
+    val totalStars: Int?,
+    val isDeleted: Boolean? = false
 )
