@@ -3,27 +3,28 @@ package com.example.movie_booking_app.view.activity
 import android.app.DatePickerDialog
 import android.graphics.Color
 import android.os.Bundle
-import android.text.method.HideReturnsTransformationMethod
-import android.text.method.PasswordTransformationMethod
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.movie_booking_app.R
-import com.example.movie_booking_app.data.api.RetrofitClient
 import com.example.movie_booking_app.data.model.request.RegisterRequest
 import com.example.movie_booking_app.databinding.ActivityRegisterBinding
+import com.example.movie_booking_app.viewmodel.RegisterUiState
+import com.example.movie_booking_app.viewmodel.RegisterViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import kotlinx.coroutines.Dispatchers
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+@AndroidEntryPoint
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterBinding
+    private val viewModel: RegisterViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,37 +35,55 @@ class RegisterActivity : AppCompatActivity() {
             finish()
         }
 
-        // Initialize state: Hide password by default and set "eye closed" icon
-        binding.edtPassword.transformationMethod = PasswordTransformationMethod.getInstance()
-        binding.tilPassword.setEndIconDrawable(R.drawable.ic_visibility_off)
+        binding.edtDob.addTextChangedListener(object : android.text.TextWatcher {
+            private var isUpdating = false
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: android.text.Editable?) {
+                if (isUpdating) return
+                isUpdating = true
 
-        binding.edtConfirmPassword.transformationMethod = PasswordTransformationMethod.getInstance()
-        binding.tilConfirmPassword.setEndIconDrawable(R.drawable.ic_visibility_off)
+                val originalText = s.toString()
+                val cursorPosition = binding.edtDob.selectionEnd
 
-        // Handle password visibility manually
-        binding.tilPassword.setEndIconOnClickListener {
-            val selection = binding.edtPassword.selectionEnd
-            if (binding.edtPassword.transformationMethod is PasswordTransformationMethod) {
-                binding.edtPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
-                binding.tilPassword.setEndIconDrawable(R.drawable.ic_visibility)
-            } else {
-                binding.edtPassword.transformationMethod = PasswordTransformationMethod.getInstance()
-                binding.tilPassword.setEndIconDrawable(R.drawable.ic_visibility_off)
+                var digitsBeforeCursor = 0
+                for (i in 0 until cursorPosition) {
+                    if (i < originalText.length && originalText[i].isDigit()) {
+                        digitsBeforeCursor++
+                    }
+                }
+
+                val digitsOnly = originalText.replace("/", "")
+                val formatted = java.lang.StringBuilder()
+
+                for (i in digitsOnly.indices) {
+                    if (i == 2 || i == 4) {
+                        formatted.append("/")
+                    }
+                    formatted.append(digitsOnly[i])
+                }
+
+                val formattedString = formatted.toString()
+                binding.edtDob.setText(formattedString)
+
+                var newCursorPosition = 0
+                var digitsCount = 0
+                while (newCursorPosition < formattedString.length && digitsCount < digitsBeforeCursor) {
+                    if (formattedString[newCursorPosition].isDigit()) {
+                        digitsCount++
+                    }
+                    newCursorPosition++
+                }
+
+                if (newCursorPosition < formattedString.length && formattedString[newCursorPosition] == '/') {
+                    newCursorPosition++
+                }
+
+                binding.edtDob.setSelection(newCursorPosition.coerceIn(0, formattedString.length))
+
+                isUpdating = false
             }
-            binding.edtPassword.setSelection(selection)
-        }
-
-        binding.tilConfirmPassword.setEndIconOnClickListener {
-            val selection = binding.edtConfirmPassword.selectionEnd
-            if (binding.edtConfirmPassword.transformationMethod is PasswordTransformationMethod) {
-                binding.edtConfirmPassword.transformationMethod = HideReturnsTransformationMethod.getInstance()
-                binding.tilConfirmPassword.setEndIconDrawable(R.drawable.ic_visibility)
-            } else {
-                binding.edtConfirmPassword.transformationMethod = PasswordTransformationMethod.getInstance()
-                binding.tilConfirmPassword.setEndIconDrawable(R.drawable.ic_visibility_off)
-            }
-            binding.edtConfirmPassword.setSelection(selection)
-        }
+        })
 
         binding.edtDob.setOnClickListener {
             showDatePicker(binding.edtDob, binding.tilDob)
@@ -94,13 +113,23 @@ class RegisterActivity : AppCompatActivity() {
                     else -> "Male"
                 }
 
-                binding.btnRegister.isEnabled = false
+                var formattedApiDob = dob
+                try {
+                    val inputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.US)
+                    val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+                    val date = inputFormat.parse(dob)
+                    if (date != null) {
+                        formattedApiDob = outputFormat.format(date)
+                    }
+                } catch (e: Exception) {
+                    // Ignored
+                }
 
                 val request = RegisterRequest(
                     username = username,
                     password = password,
                     fullName = fullName,
-                    dateOfBirth = dob,
+                    dateOfBirth = formattedApiDob,
                     gender = gender,
                     identityCard = idCard,
                     email = email,
@@ -108,25 +137,37 @@ class RegisterActivity : AppCompatActivity() {
                     phoneNumber = phone
                 )
 
-                lifecycleScope.launch(Dispatchers.IO) {
-                    try {
-                        val response = RetrofitClient.authApi.register(request)
+                viewModel.register(request)
+            }
+        }
 
-                        withContext(Dispatchers.Main) {
-                            binding.btnRegister.isEnabled = true
-                            if (response.isSuccessful && response.body() != null) {
-                                showNotification("Registration successful!", true)
-                                binding.btnRegister.postDelayed({ finish() }, 1500)
-                            } else {
-                                val errorMsg = response.errorBody()?.string() ?: "Registration failed"
-                                showNotification(errorMsg, false)
-                            }
-                        }
-                    } catch (e: Exception) {
-                        withContext(Dispatchers.Main) {
-                            binding.btnRegister.isEnabled = true
-                            showNotification("Error: ${e.message}", false)
-                        }
+        observeViewModel()
+    }
+
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            viewModel.uiState.collect { state ->
+                when (state) {
+                    is RegisterUiState.Idle -> {
+                        binding.btnRegister.isEnabled = true
+                        binding.pbLoading.visibility = View.GONE
+                    }
+                    is RegisterUiState.Loading -> {
+                        binding.btnRegister.isEnabled = false
+                        binding.pbLoading.visibility = View.VISIBLE
+                    }
+                    is RegisterUiState.Success -> {
+                        binding.btnRegister.isEnabled = true
+                        binding.pbLoading.visibility = View.GONE
+                        showNotification(state.message, true)
+                        binding.btnRegister.postDelayed({ finish() }, 1500)
+                        viewModel.resetState()
+                    }
+                    is RegisterUiState.Error -> {
+                        binding.btnRegister.isEnabled = true
+                        binding.pbLoading.visibility = View.GONE
+                        showNotification(state.message, false)
+                        viewModel.resetState()
                     }
                 }
             }
@@ -209,6 +250,17 @@ class RegisterActivity : AppCompatActivity() {
             binding.tilAddress.error = null
         }
 
+        val idCard = binding.edtIdCard.text.toString().trim()
+        if (idCard.isEmpty()) {
+            binding.tilIdCard.error = "Identify card is required"
+            isValid = false
+        } else if (idCard.length != 9 && idCard.length != 12) {
+            binding.tilIdCard.error = "Identity card must be 9 or 12 digits"
+            isValid = false
+        } else {
+            binding.tilIdCard.error = null
+        }
+
         return isValid
     }
 
@@ -235,7 +287,7 @@ class RegisterActivity : AppCompatActivity() {
                     tilDob.error = "Date of birth cannot be in the future"
                     edtDob.setText("")
                 } else {
-                    val formattedDate = String.format(Locale.US, "%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
+                    val formattedDate = String.format(Locale.US, "%02d/%02d/%04d", selectedDay, selectedMonth + 1, selectedYear)
                     edtDob.setText(formattedDate)
                     tilDob.error = null
                 }
@@ -254,7 +306,7 @@ class RegisterActivity : AppCompatActivity() {
             return false
         }
 
-        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+        val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.US)
         formatter.isLenient = false
 
         return try {
@@ -280,7 +332,7 @@ class RegisterActivity : AppCompatActivity() {
                 true
             }
         } catch (_: Exception) {
-            tilDob.error = "Invalid date format (yyyy-MM-dd)"
+            tilDob.error = "Invalid date format (dd/MM/yyyy)"
             false
         }
     }
