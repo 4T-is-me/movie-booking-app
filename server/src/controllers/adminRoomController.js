@@ -32,7 +32,9 @@ const creatRoomWithSeats = async (req, res, next) => {
 //GET /api/admin/rooms get all rooms(admin)
 const getAllRooms = async (req, res, next) => {
     try {
-        const rooms = await adminRoomService.handleGetAllRoom();
+        let cinemaId = req.query.cinemaId;
+
+        const rooms = await adminRoomService.handleGetAllRoom(cinemaId);
         return res.status(StatusCodes.OK).json({success: true, data: rooms})
     } catch (error) {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: `Internal server error: ${error.message}` });

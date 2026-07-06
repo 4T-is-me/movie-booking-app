@@ -110,15 +110,20 @@ const handleCreateRoom = async ({ cinemaId, roomName, roomType, rowsCount, colsC
     }
 };
 
-const handleGetAllRoom = async () => {
+const handleGetAllRoom = async (cinemaId) => {
     try {
+        const matchStage = {
+            isDeleted: false,
+            status: "active"
+        };
+        if (cinemaId) {
+            matchStage.cinemaId = new mongoose.Types.ObjectId(cinemaId);
+        }
+
         const rooms = await CinemaRoom.aggregate([
             // Filter rooms that have not been deleted.
             {   
-                $match: {
-                    isDeleted: false,
-                    status: "active"
-                }
+                $match: matchStage
             },
             // Join with the Cinema table(CinemaRoom join Cinema) 
             // from: name collection, cinemaId: CinemaRoom table, _id: Cinema table

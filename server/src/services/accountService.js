@@ -87,6 +87,7 @@ const login = async (reqBody) => {
     const safeAccount = account.toObject()
     delete safeAccount.passwordHash
     if (safeAccount.passwordSalt) delete safeAccount.passwordSalt
+    safeAccount.role = payload.role;
 
     const member = await Member.findOne({ accountId: account._id }).lean()
     if (member) delete member._id
@@ -264,6 +265,7 @@ const googleLogin = async (idToken) => {
         const safeAccount = account.toObject();
         delete safeAccount.passwordHash;
         if (safeAccount.passwordSalt) delete safeAccount.passwordSalt;
+        safeAccount.role = jwtPayload.role;
 
         const member = await Member.findOne({ accountId: account._id }).lean();
         if (member) delete member._id;

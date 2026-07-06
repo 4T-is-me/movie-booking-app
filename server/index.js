@@ -19,7 +19,7 @@ import adminMemberRoutes from './src/routes/adminMemberRoutes.js';
 import promotionRoute from './src/routes/promotionRoute.js';
 import adminStatsRoutes from './src/routes/adminStatsRoutes.js';
 import adminPromotionRoutes from './src/routes/adminPromotionRoutes.js';
-
+import managerRoomRoutes from './src/routes/managerRoomRoutes.js';
 
 const app = express();
 const PORT = env.PORT || 5000;
@@ -47,7 +47,7 @@ app.use('/api/admin/staff', adminStaffRoutes);
 app.use('/api/admin/members', adminMemberRoutes);
 app.use('/api/admin/promotions', adminPromotionRoutes);
 app.use('/api/admin/stats', adminStatsRoutes);
-
+app.use('/api/manager/rooms', managerRoomRoutes);
 
 const startServer = async () => {
     await connectDB();
