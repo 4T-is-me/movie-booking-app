@@ -67,6 +67,46 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    fun googleLogin(idToken: String) {
+        viewModelScope.launch {
+            _uiState.value = LoginUiState.Loading
+            try {
+                val response = repository.googleLogin(idToken)
+                if (response.isSuccessful && response.body() != null) {
+                    val body = response.body()
+                    val token = body?.accessToken
+                    
+                    val dbUsername = body?.account?.username ?: "GoogleUser"
+                    val roleNameStr = body?.account?.roleId?.roleName ?: body?.account?.role ?: "user"
+                    
+                    if (token != null) {
+                        repository.saveLoginData(
+                            token = token,
+                            refreshToken = body?.refreshToken ?: "",
+                            username = dbUsername,
+                            role = roleNameStr
+                        )
+                    }
+                    _uiState.value = LoginUiState.Success(roleNameStr, dbUsername)
+                } else {
+                    val errorStr = response.errorBody()?.string()
+                    val message = try {
+                        if (errorStr != null && errorStr.trim().startsWith("{")) {
+                            JSONObject(errorStr).optString("message", "Google login failed")
+                        } else {
+                            "Google login failed"
+                        }
+                    } catch (e: Exception) {
+                        "Google login failed"
+                    }
+                    _uiState.value = LoginUiState.Error(message)
+                }
+            } catch (e: Exception) {
+                _uiState.value = LoginUiState.Error("Connection error: ${e.localizedMessage}")
+            }
+        }
+    }
+
     fun resetState() {
         _uiState.value = LoginUiState.Idle
     }

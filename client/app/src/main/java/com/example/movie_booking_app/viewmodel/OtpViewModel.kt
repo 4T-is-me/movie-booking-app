@@ -27,12 +27,12 @@ class OtpViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<OtpUiState>(OtpUiState.Idle)
     val uiState: StateFlow<OtpUiState> = _uiState.asStateFlow()
 
-    fun verifyOtp(email: String, otpCode: String) {
+    fun verifyOtp(email: String, otpCode: String, type: String = "forgot_password") {
         viewModelScope.launch {
             _uiState.value = OtpUiState.Loading
             try {
                 val request = VerifyOtpRequest(email, otpCode)
-                val response = repository.verifyOtp(request)
+                val response = if (type == "register") repository.verifyRegisterOtp(request) else repository.verifyOtp(request)
                 if (response.isSuccessful) {
                     _uiState.value = OtpUiState.Success
                 } else {

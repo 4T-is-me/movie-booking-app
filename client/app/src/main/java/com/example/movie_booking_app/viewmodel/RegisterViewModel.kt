@@ -43,6 +43,35 @@ class RegisterViewModel @Inject constructor(
         }
     }
 
+    fun googleLogin(idToken: String) {
+        viewModelScope.launch {
+            _uiState.value = RegisterUiState.Loading
+            try {
+                val response = repository.googleLogin(idToken)
+                if (response.isSuccessful && response.body() != null) {
+                    val body = response.body()
+                    val token = body?.accessToken
+                    val dbUsername = body?.account?.username ?: "GoogleUser"
+                    val roleNameStr = body?.account?.roleId?.roleName ?: body?.account?.role ?: "user"
+                    
+                    if (token != null) {
+                        repository.saveLoginData(
+                            token = token,
+                            refreshToken = body?.refreshToken ?: "",
+                            username = dbUsername,
+                            role = roleNameStr
+                        )
+                    }
+                    _uiState.value = RegisterUiState.Success("GOOGLE_SUCCESS")
+                } else {
+                    _uiState.value = RegisterUiState.Error("Google sign-in failed")
+                }
+            } catch (e: Exception) {
+                _uiState.value = RegisterUiState.Error("Error: ${e.message}")
+            }
+        }
+    }
+
     fun resetState() {
         _uiState.value = RegisterUiState.Idle
     }

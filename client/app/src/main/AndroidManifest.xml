@@ -87,6 +87,20 @@
             android:name=".view.activity.RewardPointsActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".view.activity.ForgotPasswordActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp" />
+
+        <activity
+            android:name=".view.activity.VerifyOtpActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp" />
+
+        <activity
+            android:name=".view.activity.ResetPasswordActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp" />
 
     </application>
 
