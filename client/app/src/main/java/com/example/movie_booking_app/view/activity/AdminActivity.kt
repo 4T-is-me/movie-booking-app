@@ -78,6 +78,9 @@ class AdminActivity : BaseActivity() {
                     tvHeaderTitle.text = "Settings"
                     loadFragment(BlankFragment())
                 }
+                R.id.nav_logout -> {
+                    com.example.movie_booking_app.utils.AuthUtils.showLogoutConfirmationDialog(this)
+                }
             }
             drawerLayout.closeDrawer(GravityCompat.START)
             true
@@ -109,6 +112,8 @@ class AdminActivity : BaseActivity() {
             }
         }
     }
+
+
 
     // A simple fragment that shows nothing
     class BlankFragment : Fragment() {
