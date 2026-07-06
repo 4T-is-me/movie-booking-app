@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:padding="3dp">
+
+    <!-- Ghế đôi bên trái (Size 26dp matching normal seat) -->
+    <TextView
+        android:id="@+id/tvSeatLeft"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:background="@drawable/bg_seat_couple"
+        android:gravity="center"
+        android:textColor="#FFFFFF"
+        android:textSize="9sp"
+        android:textStyle="bold" />
+
+    <!-- Khoảng hở nhỏ ở giữa -->
+    <View
+        android:layout_width="2dp"
+        android:layout_height="1dp" />
+
+    <!-- Ghế đôi bên phải (Size 26dp matching normal seat) -->
+    <TextView
+        android:id="@+id/tvSeatRight"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:background="@drawable/bg_seat_couple"
+        android:gravity="center"
+        android:textColor="#FFFFFF"
+        android:textSize="9sp"
+        android:textStyle="bold" />
+
+</LinearLayout>

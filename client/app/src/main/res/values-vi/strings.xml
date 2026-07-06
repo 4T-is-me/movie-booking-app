@@ -76,6 +76,18 @@
     <string name="legend_selected">Đang chọn</string>
     <string name="error_select_more">Vui lòng chọn thêm %d ghế</string>
     <string name="error_select_only">Bạn chỉ được chọn tối đa %d ghế</string>
+    <string name="error_same_type">Vui lòng chọn ghế cùng loại</string>
     <string name="msg_proceeding">Đang xử lý...</string>
     <string name="title_select_seat">Chọn ghế</string>
+    <string name="error_no_selection">Vui lòng chọn ít nhất 1 ghế</string>
+    <string name="unknown_movie">Phim không xác định</string>
+    <string name="cinema_center">Trung tâm rạp</string>
+    <string name="default_room_name">Phòng 3</string>
+    <string name="default_language">Tiếng Anh</string>
+    <string name="default_subtitle">Tiếng Việt</string>
+    <string name="label_screen">Màn hình</string>
+    <string name="label_number_of_seats">Số lượng ghế</string>
+    <string name="section_select_date_time">Chọn Ngày &amp; Giờ</string>
+    <string name="label_total">Tổng cộng</string>
+    <string name="btn_continue">Tiếp tục</string>
 </resources>
