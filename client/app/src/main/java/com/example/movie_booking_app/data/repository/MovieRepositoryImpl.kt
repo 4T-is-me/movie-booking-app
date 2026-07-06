@@ -8,14 +8,13 @@ import com.example.movie_booking_app.data.model.entity.Promo
 import com.example.movie_booking_app.data.model.entity.Service
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
 
 class MovieRepositoryImpl : MovieRepository {
 
     private val mockMovies = listOf(
-        Movie(id = "1", movieName = "Avengers: Endgame", duration = 181, releaseDate = "27.04.2019", movieGenre = listOf("Action"), language = "English", censorship = "C13", description = "The grave course of events...", director = listOf("Russo Brothers"), actors = listOf("Robert Downey Jr."), country = "USA", status = "showing", poster = "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=500", rating = 4.8, totalReviews = 1500, createdAt = null, updatedAt = null, totalStars = null),
-        Movie(id = "2", movieName = "Spider-Man: No Way Home", duration = 148, releaseDate = "17.12.2021", movieGenre = listOf("Action"), language = "English", censorship = "C13", description = "With Spider-Man's identity revealed...", director = listOf("Jon Watts"), actors = listOf("Tom Holland"), country = "USA", status = "showing", poster = "https://images.unsplash.com/photo-1635805737707-575885ab0820?w=500", rating = 4.5, totalReviews = 2100, createdAt = null, updatedAt = null, totalStars = null),
-        Movie(id = "3", movieName = "Jurassic World", duration = 147, releaseDate = "10.06.2022", movieGenre = listOf("Sci-fi"), language = "English", censorship = "C13", description = "Four years after Isla Nublar...", director = listOf("Colin Trevorrow"), actors = listOf("Chris Pratt"), country = "USA", status = "coming_soon", poster = "https://images.unsplash.com/photo-1568515045052-f9ad85a85f1d?w=500", rating = 4.2, totalReviews = 800, createdAt = null, updatedAt = null, totalStars = null)
+        Movie(id = "1", movieName = "Avengers: Endgame", duration = 181, releaseDate = "27.04.2019", endDate = "27.05.2019", movieGenre = listOf("Action"), language = "English", censorship = "C13", description = "The grave course of events...", director = listOf("Russo Brothers"), actors = listOf("Robert Downey Jr."), country = "USA", status = "showing", poster = "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?w=500", rating = 4.8, totalReviews = 1500, createdAt = null, updatedAt = null, totalStars = null),
+        Movie(id = "2", movieName = "Spider-Man: No Way Home", duration = 148, releaseDate = "17.12.2021", endDate = "17.01.2022", movieGenre = listOf("Action"), language = "English", censorship = "C13", description = "With Spider-Man's identity revealed...", director = listOf("Jon Watts"), actors = listOf("Tom Holland"), country = "USA", status = "showing", poster = "https://images.unsplash.com/photo-1635805737707-575885ab0820?w=500", rating = 4.5, totalReviews = 2100, createdAt = null, updatedAt = null, totalStars = null),
+        Movie(id = "3", movieName = "Jurassic World", duration = 147, releaseDate = "10.06.2022", endDate = "10.07.2022", movieGenre = listOf("Sci-fi"), language = "English", censorship = "C13", description = "Four years after Isla Nublar...", director = listOf("Colin Trevorrow"), actors = listOf("Chris Pratt"), country = "USA", status = "coming_soon", poster = "https://images.unsplash.com/photo-1568515045052-f9ad85a85f1d?w=500", rating = 4.2, totalReviews = 800, createdAt = null, updatedAt = null, totalStars = null)
     )
 
     private val mockCinemas = listOf(
@@ -30,6 +29,8 @@ class MovieRepositoryImpl : MovieRepository {
     )
 
     override fun getMovies(): Flow<List<Movie>> = flow { emit(mockMovies) }
+
+    override fun getAdminMovies(): Flow<List<Movie>> = flow { emit(mockMovies) }
 
     override fun searchMovies(query: String): Flow<List<Movie>> = flow {
         val filtered = mockMovies.filter {

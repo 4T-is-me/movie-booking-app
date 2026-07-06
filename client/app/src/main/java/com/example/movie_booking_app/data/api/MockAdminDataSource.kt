@@ -71,58 +71,58 @@ object MockAdminDataSource {
         )
     }
 
-    fun getMockMovies(): MovieListResponse {
-        return MovieListResponse(
-            page = 1,
-            limit = 10,
-            total = 2,
-            totalPages = 1,
-            data = listOf(
-                Movie(
-                    id = "1",
-                    movieName = "Avengers: Endgame",
-                    duration = 181,
-                    releaseDate = "2019-04-26",
-                    movieGenre = listOf("Action", "Sci-Fi"),
-                    language = "English",
-                    censorship = "PG-13",
-                    description = "After the devastating events of Infinity War...",
-                    director = listOf("Anthony Russo", "Joe Russo"),
-                    actors = listOf("Robert Downey Jr.", "Chris Evans"),
-                    country = "USA",
-                    status = "released",
-                    poster = "https://link-to-poster.com/endgame.jpg",
-                    rating = 8.4,
-                    totalReviews = 1000000,
-                    createdAt = "2024-01-01",
-                    updatedAt = "2024-01-01",
-                    totalStars = 5,
-                    isDeleted = false
-                ),
-                Movie(
-                    id = "2",
-                    movieName = "Old Movie",
-                    duration = 120,
-                    releaseDate = "2010-01-01",
-                    movieGenre = listOf("Drama"),
-                    language = "English",
-                    censorship = "PG",
-                    description = "A very old movie description.",
-                    director = listOf("Unknown"),
-                    actors = listOf("Unknown"),
-                    country = "USA",
-                    status = "archived",
-                    poster = null,
-                    rating = 6.0,
-                    totalReviews = 100,
-                    createdAt = "2024-01-01",
-                    updatedAt = "2024-01-01",
-                    totalStars = 3,
-                    isDeleted = true
-                )
-            )
-        )
-    }
+//    fun getMockMovies(): MovieListResponse {
+//        return MovieListResponse(
+//            page = 1,
+//            limit = 10,
+//            total = 2,
+//            totalPages = 1,
+//            data = listOf(
+//                Movie(
+//                    id = "1",
+//                    movieName = "Avengers: Endgame",
+//                    duration = 181,
+//                    releaseDate = "2019-04-26",
+//                    movieGenre = listOf("Action", "Sci-Fi"),
+//                    language = "English",
+//                    censorship = "PG-13",
+//                    description = "After the devastating events of Infinity War...",
+//                    director = listOf("Anthony Russo", "Joe Russo"),
+//                    actors = listOf("Robert Downey Jr.", "Chris Evans"),
+//                    country = "USA",
+//                    status = "released",
+//                    poster = "https://link-to-poster.com/endgame.jpg",
+//                    rating = 8.4,
+//                    totalReviews = 1000000,
+//                    createdAt = "2024-01-01",
+//                    updatedAt = "2024-01-01",
+//                    totalStars = 5,
+//                    isDeleted = false
+//                ),
+//                Movie(
+//                    id = "2",
+//                    movieName = "Old Movie",
+//                    duration = 120,
+//                    releaseDate = "2010-01-01",
+//                    movieGenre = listOf("Drama"),
+//                    language = "English",
+//                    censorship = "PG",
+//                    description = "A very old movie description.",
+//                    director = listOf("Unknown"),
+//                    actors = listOf("Unknown"),
+//                    country = "USA",
+//                    status = "archived",
+//                    poster = null,
+//                    rating = 6.0,
+//                    totalReviews = 100,
+//                    createdAt = "2024-01-01",
+//                    updatedAt = "2024-01-01",
+//                    totalStars = 3,
+//                    isDeleted = true
+//                )
+//            )
+//        )
+//    }
 
     fun getMockRooms(): CinemaRoomListResponse {
         return CinemaRoomListResponse(

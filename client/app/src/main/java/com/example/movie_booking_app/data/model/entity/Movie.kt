@@ -1,12 +1,14 @@
 package com.example.movie_booking_app.data.model.entity
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class Movie(
     @SerializedName("_id") val id: String?,
     val movieName: String?,
     val duration: Int?,
     val releaseDate: String?,
+    val endDate: String?,
     val movieGenre: List<String>?,
     val language: String?,
     val censorship: String?,
@@ -22,4 +24,4 @@ data class Movie(
     val updatedAt : String?,
     val totalStars: Int?,
     val isDeleted: Boolean? = false
-)
+) : Serializable

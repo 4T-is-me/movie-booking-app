@@ -19,6 +19,8 @@ import com.example.movie_booking_app.viewmodel.MovieViewModel
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
+import android.widget.TextView
+import android.widget.ImageView
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -27,6 +29,7 @@ class AdminCreateMovieFragment : Fragment() {
 
     private val availableGenres = listOf("Action", "Adventure", "Animation", "Comedy", "Crime", "Documentary", "Drama", "Family", "Fantasy", "History", "Horror", "Music", "Mystery", "Romance", "Science Fiction", "TV Movie", "Thriller", "War", "Western")
     private val selectedGenres = mutableSetOf<String>()
+    private var editingMovie: com.example.movie_booking_app.data.model.entity.Movie? = null
 
     private var selectedPosterUri: android.net.Uri? = null
     
@@ -49,57 +52,40 @@ class AdminCreateMovieFragment : Fragment() {
     }
 
     private fun setupViews(view: View) {
+        val tvFormTitle = view.findViewById<TextView>(R.id.tvFormTitle)
         val edtMovieName = view.findViewById<TextInputEditText>(R.id.edtMovieName)
         val edtDuration = view.findViewById<TextInputEditText>(R.id.edtDuration)
         val edtReleaseDate = view.findViewById<TextInputEditText>(R.id.edtReleaseDate)
+        val edtEndDate = view.findViewById<TextInputEditText>(R.id.edtEndDate)
         val edtLanguage = view.findViewById<TextInputEditText>(R.id.edtLanguage)
         val edtDirector = view.findViewById<TextInputEditText>(R.id.edtDirector)
         val edtActors = view.findViewById<TextInputEditText>(R.id.edtActors)
         val edtDescription = view.findViewById<TextInputEditText>(R.id.edtDescription)
+        val ivPosterPreview = view.findViewById<ImageView>(R.id.ivPosterPreview)
+        val btnSubmit = view.findViewById<Button>(R.id.btnSubmitMovie)
 
-        // Setup Release Date Picker
-        val calendar = Calendar.getInstance()
-        val dateSetListener = DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
-            calendar.set(Calendar.YEAR, year)
-            calendar.set(Calendar.MONTH, month)
-            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-            val sdf = SimpleDateFormat("yyyy-MM-dd'T'00:00:00.000'Z'", Locale.US)
-            edtReleaseDate.setText(sdf.format(calendar.time))
-        }
+        // Setup Date Picker logic
+        val sdf = SimpleDateFormat("yyyy-MM-dd'T'00:00:00.000'Z'", Locale.US)
+        
         edtReleaseDate.setOnClickListener {
-            DatePickerDialog(
-                requireContext(), dateSetListener,
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-            ).show()
+            val calendar = Calendar.getInstance()
+            DatePickerDialog(requireContext(), { _, year, month, day ->
+                calendar.set(year, month, day)
+                edtReleaseDate.setText(sdf.format(calendar.time))
+            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+        }
+
+        edtEndDate.setOnClickListener {
+            val calendar = Calendar.getInstance()
+            DatePickerDialog(requireContext(), { _, year, month, day ->
+                calendar.set(year, month, day)
+                edtEndDate.setText(sdf.format(calendar.time))
+            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
         }
 
         // Setup Genres Chips
         val chipGroupGenres = view.findViewById<ChipGroup>(R.id.chipGroupGenres)
-        for (genre in availableGenres) {
-            val chip = Chip(requireContext()).apply {
-                text = genre
-                isCheckable = true
-                isCheckedIconVisible = false
-                setTextColor(resources.getColor(android.R.color.white, null))
-                setChipBackgroundColorResource(R.color.black)
-                setCheckedIconTintResource(R.color.black)
-                chipStrokeWidth = 2f
-                setChipStrokeColorResource(R.color.text_input_stroke)
-                setOnCheckedChangeListener { _, isChecked ->
-                    if (isChecked) {
-                        selectedGenres.add(genre)
-                        setChipStrokeColorResource(R.color.gold_selected)
-                    } else {
-                        selectedGenres.remove(genre)
-                        setChipStrokeColorResource(R.color.text_input_stroke)
-                    }
-                }
-            }
-            chipGroupGenres.addView(chip)
-        }
-
+        
         // Setup Censorship Dropdown
         val censorshipOptions = arrayOf("P (Mọi lứa tuổi)", "K (Dưới 13 tuổi cần người lớn)", "T13 (Từ 13 tuổi)", "T16 (Từ 16 tuổi)", "T18 (Từ 18 tuổi)", "C (Cấm chiếu)")
         val censorshipCodes = arrayOf("P", "K", "T13", "T16", "T18", "C")
@@ -131,16 +117,70 @@ class AdminCreateMovieFragment : Fragment() {
         )
         edtCountry.setAdapter(countryAdapter)
 
+        // Pre-fill if editing
+        editingMovie = arguments?.getSerializable("movie") as? com.example.movie_booking_app.data.model.entity.Movie
+        editingMovie?.let { movie ->
+            tvFormTitle.text = "Update Movie"
+            btnSubmit.text = "UPDATE MOVIE"
+            
+            edtMovieName.setText(movie.movieName)
+            edtDuration.setText(movie.duration?.toString())
+            edtReleaseDate.setText(movie.releaseDate)
+            edtEndDate.setText(movie.endDate)
+            edtLanguage.setText(movie.language)
+            edtDirector.setText(movie.director?.joinToString(", "))
+            edtActors.setText(movie.actors?.joinToString(", "))
+            edtDescription.setText(movie.description)
+            edtCountry.setText(movie.country)
+            spnStatus.setText(movie.status, false)
+            
+            val cIndex = censorshipCodes.indexOf(movie.censorship)
+            if (cIndex >= 0) {
+                spnCensorship.setText(censorshipOptions[cIndex], false)
+            }
+            
+            movie.movieGenre?.forEach { selectedGenres.add(it) }
+            
+            if (!movie.poster.isNullOrEmpty()) {
+                Glide.with(this).load(movie.poster).into(ivPosterPreview)
+            }
+        }
+
+        // Add Chips after pre-filling selectedGenres
+        for (genre in availableGenres) {
+            val chip = Chip(requireContext()).apply {
+                text = genre
+                isCheckable = true
+                isCheckedIconVisible = false
+                isChecked = selectedGenres.contains(genre)
+                setTextColor(resources.getColor(android.R.color.white, null))
+                setChipBackgroundColorResource(R.color.black)
+                setCheckedIconTintResource(R.color.black)
+                chipStrokeWidth = 2f
+                setChipStrokeColorResource(if (isChecked) R.color.gold_selected else R.color.text_input_stroke)
+                setOnCheckedChangeListener { _, isChecked ->
+                    if (isChecked) {
+                        selectedGenres.add(genre)
+                        setChipStrokeColorResource(R.color.gold_selected)
+                    } else {
+                        selectedGenres.remove(genre)
+                        setChipStrokeColorResource(R.color.text_input_stroke)
+                    }
+                }
+            }
+            chipGroupGenres.addView(chip)
+        }
+
         val btnChoosePoster = view.findViewById<Button>(R.id.btnChoosePoster)
         btnChoosePoster.setOnClickListener {
             pickImageLauncher.launch("image/*")
         }
 
-        val btnSubmit = view.findViewById<Button>(R.id.btnSubmitMovie)
         btnSubmit.setOnClickListener {
             val name = edtMovieName.text.toString()
             val duration = edtDuration.text.toString().toIntOrNull() ?: 0
             val releaseDate = edtReleaseDate.text.toString()
+            val endDate = edtEndDate.text.toString()
             val language = edtLanguage.text.toString()
             val director = edtDirector.text.toString().split(",").map { it.trim() }.filter { it.isNotEmpty() }
             val actors = edtActors.text.toString().split(",").map { it.trim() }.filter { it.isNotEmpty() }
@@ -160,25 +200,48 @@ class AdminCreateMovieFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            val request = AddMovieRequest(
-                movieName = name,
-                duration = duration,
-                releaseDate = releaseDate,
-                movieGenre = selectedGenres.toList(),
-                director = director,
-                actors = actors,
-                description = description,
-                country = country,
-                poster = "",
-                language = language,
-                censorship = censorshipCode,
-                status = status
-            )
-
             val viewModel = ViewModelProvider(requireActivity())[MovieViewModel::class.java]
-            viewModel.addMovie(request)
 
-            Toast.makeText(requireContext(), "Adding movie...", Toast.LENGTH_SHORT).show()
+            if (editingMovie != null) {
+                val request = com.example.movie_booking_app.data.model.request.UpdateMovieRequest(
+                    movieName = name,
+                    duration = duration,
+                    releaseDate = releaseDate,
+                    endDate = if (endDate.isNotEmpty()) endDate else null,
+                    movieGenre = selectedGenres.toList(),
+                    director = director,
+                    actors = actors,
+                    description = description,
+                    country = country,
+                    poster = editingMovie?.poster,
+                    language = language,
+                    censorship = censorshipCode,
+                    status = status
+                )
+                editingMovie?.id?.let { id ->
+                    viewModel.updateMovie(id, request)
+                }
+                Toast.makeText(requireContext(), "Updating movie...", Toast.LENGTH_SHORT).show()
+            } else {
+                val request = com.example.movie_booking_app.data.model.request.AddMovieRequest(
+                    movieName = name,
+                    duration = duration,
+                    releaseDate = releaseDate,
+                    endDate = if (endDate.isNotEmpty()) endDate else null,
+                    movieGenre = selectedGenres.toList(),
+                    director = director,
+                    actors = actors,
+                    description = description,
+                    country = country,
+                    poster = "",
+                    language = language,
+                    censorship = censorshipCode,
+                    status = status
+                )
+                viewModel.addMovie(request)
+                Toast.makeText(requireContext(), "Adding movie...", Toast.LENGTH_SHORT).show()
+            }
+            parentFragmentManager.popBackStack()
         }
     }
 }
