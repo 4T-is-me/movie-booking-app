@@ -1,0 +1,49 @@
+package com.example.movie_booking_app.viewmodel
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.movie_booking_app.data.model.request.RegisterRequest
+import com.example.movie_booking_app.data.repository.AuthRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+sealed class RegisterUiState {
+    object Idle : RegisterUiState()
+    object Loading : RegisterUiState()
+    data class Success(val message: String) : RegisterUiState()
+    data class Error(val message: String) : RegisterUiState()
+}
+
+@HiltViewModel
+class RegisterViewModel @Inject constructor(
+    private val repository: AuthRepository
+) : ViewModel() {
+
+    private val _uiState = MutableStateFlow<RegisterUiState>(RegisterUiState.Idle)
+    val uiState: StateFlow<RegisterUiState> = _uiState.asStateFlow()
+
+    fun register(request: RegisterRequest) {
+        viewModelScope.launch {
+            _uiState.value = RegisterUiState.Loading
+            try {
+                val response = repository.register(request)
+                if (response.isSuccessful && response.body() != null) {
+                    _uiState.value = RegisterUiState.Success("Registration successful!")
+                } else {
+                    val errorMsg = response.errorBody()?.string() ?: "Registration failed"
+                    _uiState.value = RegisterUiState.Error(errorMsg)
+                }
+            } catch (e: Exception) {
+                _uiState.value = RegisterUiState.Error("Error: ${e.message}")
+            }
+        }
+    }
+
+    fun resetState() {
+        _uiState.value = RegisterUiState.Idle
+    }
+}
