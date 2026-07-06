@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.security.crypto)
+    implementation(libs.play.services.auth)
 
     // UI XML
     implementation(libs.androidx.fragment)

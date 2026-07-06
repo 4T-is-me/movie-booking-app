@@ -3,6 +3,10 @@
 # IDE files
 .idea/
 *.iml
+
 AGENTS.md
 issues.md
 TEST_AGENT.md
+TEST_AGENT_FRONTEND.md
+TEST_AGENT_BACKEND_REVIEW.md
+Test

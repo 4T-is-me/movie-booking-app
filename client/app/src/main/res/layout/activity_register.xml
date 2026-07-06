@@ -524,6 +524,18 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
+            <ProgressBar
+                android:id="@+id/pbLoading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:elevation="4dp"
+                android:indeterminateTint="#000000"
+                app:layout_constraintTop_toTopOf="@id/btnRegister"
+                app:layout_constraintBottom_toBottomOf="@id/btnRegister"
+                app:layout_constraintEnd_toEndOf="@id/btnRegister"
+                android:layout_marginEnd="16dp" />
+
             <!-- Or continue with -->
             <LinearLayout
                 android:id="@+id/llOrContinue"

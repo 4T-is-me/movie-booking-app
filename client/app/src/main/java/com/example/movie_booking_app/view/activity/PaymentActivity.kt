@@ -31,6 +31,7 @@ class PaymentActivity : AppCompatActivity() {
     private var combo1Count = 0
     private var combo2Count = 0
     private var isExpiredDialogShown = false
+    private var isSuccessDialogShown = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,14 +107,7 @@ class PaymentActivity : AppCompatActivity() {
                 Snackbar.make(binding.root, "Please select a payment method", Snackbar.LENGTH_LONG).show()
                 return@setOnClickListener
             }
-            showPremiumSuccessDialog("Selected $selectedMethod payment method successfully.") {
-                // Return to MainActivity home section
-                val intent = Intent(this@PaymentActivity, MainActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-                }
-                startActivity(intent)
-                finish()
-            }
+            viewModel.confirmCheckout()
         }
     }
 
@@ -163,6 +157,20 @@ class PaymentActivity : AppCompatActivity() {
                     if (state.isCountdownExpired && !isExpiredDialogShown) {
                         isExpiredDialogShown = true
                         showExpiredDialog()
+                    }
+
+                    // Observe checkoutSuccess to display Success dialog
+                    if (state.checkoutSuccess && !isSuccessDialogShown) {
+                        isSuccessDialogShown = true
+                        showPremiumSuccessDialog("Booking completed successfully!") {
+                            // Reload GET /profile from the server and navigate to Profile tab
+                            val intent = Intent(this@PaymentActivity, MainActivity::class.java).apply {
+                                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                                putExtra("TARGET_SECTION", "Profile")
+                            }
+                            startActivity(intent)
+                            finish()
+                        }
                     }
 
                     // Price Breakdown bindings
