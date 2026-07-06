@@ -34,7 +34,7 @@ const handleHoldSeats = async ({ accountId, showtimeId, seatIds }) => {
         if (
           seatStatusStr === constants.SEAT_STATUS.HOLD &&
           seat.holdExpiresAt > now &&
-          seat.accountId.toString() !== accountId.toString()
+          seat.accountId && seat.accountId.toString() !== accountId.toString()
         ) {
           throw new ApiError(StatusCodes.CONFLICT, `Seat ${seatId} is currently held by someone else`);
         }
@@ -70,196 +70,215 @@ const handleHoldSeats = async ({ accountId, showtimeId, seatIds }) => {
 
 // handle confirm booking
 const handleConfirmBooking = async ({accountId, showtimeId,seatIds,useScore = false,paymentMethod,couponCode,combos = []}) => {
-  
   const session = await mongoose.startSession();
+  session.startTransaction();
 
   try {
-    let result;
+    // find member
+    const member = await Member.findOne({ accountId: accountId }).session(session);
 
-    await session.withTransaction(async () => {
-      // find member
-      const member = await Member.findOne({ accountId: accountId }).session(
-        session,
-      );
+    // validate member
+    if (!member) {
+      throw new ApiError(StatusCodes.NOT_FOUND, "Member not found");
+    }
 
-      // validate member
-      if (!member) {
-        throw new ApiError(StatusCodes.NOT_FOUND, "Member not found");
+    // find seat
+    const seats = await ScheduleSeat.find({
+      showtimeId: showtimeId,
+      seatId: { $in: seatIds },
+      status: constants.SEAT_STATUS.HOLD,
+      accountId: accountId,
+      holdExpiresAt: { $gte: new Date() },
+    })
+      .populate("seatId")
+      .session(session);
+
+    //validate seats
+    if (seats.length !== seatIds.length) {
+      throw new ApiError(StatusCodes.BAD_REQUEST,"Some seats are no longer held by you");
+    }
+
+    // ticket price
+    let ticketPrice = 0;
+    seats.forEach((item) => {
+      // check price
+      if (!item.seatId.price) {
+        throw new ApiError(StatusCodes.BAD_REQUEST,`Price not found for seat ${item.seatId.seatName}`);
       }
+      ticketPrice += item.seatId.price;
+    });
+    const comboPrice = combos.reduce((total, combo) => total + combo.price * combo.quantity,0,); //price combo
+    const subTotal = ticketPrice + comboPrice; // ticket + combo price
 
-      // find seat
-      const seats = await ScheduleSeat.find({
+    //Promotion(if any)
+    let promotionDiscount = 0;
+    let promotionId = null;
+    // check promotion
+    if (couponCode) {
+      const promotionResult = await promotionService.validateAndApplyPromotion(couponCode, accountId, subTotal, session);
+      promotionDiscount = promotionResult.discountAmount;
+      promotionId = promotionResult.promotionId;
+    }
+    // Value after applying the promotion code; if none, promotionDiscount = 0
+    const afterPromotion = subTotal - promotionDiscount; 
+
+    // Processing reward point redemptions
+    let pointUsed = 0;
+    let pointDiscount = 0;
+    let earnedPoints = 0;
+    let finalAmount = afterPromotion;
+
+    if (useScore) {
+      pointUsed = Math.min(member.rewardPoints,Math.ceil(afterPromotion / 10));
+      pointDiscount = pointUsed * 10;
+      finalAmount = afterPromotion - pointDiscount;
+      member.rewardPoints -= pointUsed;
+    } else {
+        earnedPoints = Math.floor((afterPromotion * 0.01) / 10);
+        member.rewardPoints += earnedPoints;
+    }
+
+    const prevTotalSpent = member.totalSpent;
+    const prevRewardPoints = useScore ? member.rewardPoints + pointUsed : member.rewardPoints - earnedPoints;
+
+    member.totalSpent += finalAmount;
+
+    // Update membership rank
+    if (member.totalSpent >= 20000000) {
+      member.membershipRank = "gold";
+    } else if (member.totalSpent >= 5000000) {
+      member.membershipRank = "silver";
+    } else {
+      member.membershipRank = "bronze";
+    }
+    
+    const paymentStatus = "paid";
+
+    console.log(`[DEBUG] User ID: ${member._id}`);
+    console.log(`[DEBUG] Previous totalSpent: ${prevTotalSpent}`);
+    console.log(`[DEBUG] New totalSpent: ${member.totalSpent}`);
+    console.log(`[DEBUG] Previous rewardPoints: ${prevRewardPoints}`);
+    console.log(`[DEBUG] New rewardPoints: ${member.rewardPoints}`);
+    console.log(`[DEBUG] New membershipRank: ${member.membershipRank}`);
+
+    const memberUpdateResult = await Member.updateOne(
+      { _id: member._id },
+      {
+        $set: {
+          totalSpent: member.totalSpent,
+          rewardPoints: member.rewardPoints,
+          membershipRank: member.membershipRank
+        }
+      },
+      { session }
+    );
+
+    console.log(`[DEBUG] Result of Member.updateOne(): matchedCount = ${memberUpdateResult.matchedCount}, modifiedCount = ${memberUpdateResult.modifiedCount}`);
+
+    const ticketCode = await ticketUtils.generateTicketCode();
+    const qrCodeData = await ticketUtils.generateQRCode(ticketCode);
+    
+    // create booking
+    const booking = await Booking.create(
+      [
+        {
+          memberId: member._id,
+          showtimeId: showtimeId,
+          bookingCode: ticketCode,
+          promotionId: promotionId,
+          seatIds: seatIds,
+          seatNames: seats.map((seat) => seat.seatId.seatName),
+          combos: combos,
+          ticketPrice: ticketPrice,
+          comboPrice: comboPrice,
+          subTotalAmount: subTotal,
+          paymentStatus: paymentStatus,
+          paymentMethod: paymentMethod,
+          qrCodeData: qrCodeData,
+          disCountAmount: promotionDiscount + pointDiscount,
+          finalAmount: finalAmount,
+        },
+      ],
+      { session },
+    );
+    
+    // update seat
+    await ScheduleSeat.updateMany(
+      {
         showtimeId: showtimeId,
         seatId: { $in: seatIds },
         status: constants.SEAT_STATUS.HOLD,
         accountId: accountId,
         holdExpiresAt: { $gte: new Date() },
-      })
-        .populate("seatId")
-        .session(session);
+      },
+      {
+        $set: {
+          status: constants.SEAT_STATUS.SOLD,
+          holdExpiresAt: null,
+        },
+      },
+      { session },
+    );
 
-      //validate seats
-      if (seats.length !== seatIds.length) {
-        throw new ApiError(StatusCodes.BAD_REQUEST,"Some seats are no longer held by you");
-      }
-
-      // ticket price
-      let ticketPrice = 0;
-      seats.forEach((item) => {
-        // check price
-        if (!item.seatId.price) {
-          throw new ApiError(StatusCodes.BAD_REQUEST,`Price not found for seat ${item.seatId.seatName}`);
-        }
-        ticketPrice += item.seatId.price;
-      });
-      const comboPrice = combos.reduce((total, combo) => total + combo.price * combo.quantity,0,); //price combo
-      const subTotal = ticketPrice + comboPrice; // ticket + combo price
-
-      //Promotion(if any)
-      let promotionDiscount = 0;
-      let promotionId = null;
-      // check promotion
-      if (couponCode) {
-        const promotionResult = await promotionService.validateAndApplyPromotion(couponCode, accountId, subTotal, session);
-        promotionDiscount = promotionResult.discountAmount;
-        promotionId = promotionResult.promotionId;
-      }
-      // Value after applying the promotion code; if none, promotionDiscount = 0
-      const afterPromotion = subTotal - promotionDiscount; 
-
-      // Processing reward point redemptions
-      let pointUsed = 0;
-      let pointDiscount = 0;
-      let earnedPoints = 0;
-      let finalAmount = afterPromotion;
-
-      if (useScore) {
-        pointUsed = Math.min(member.rewardPoints,Math.ceil(afterPromotion / 10));
-        pointDiscount = pointUsed * 10;
-        finalAmount = afterPromotion - pointDiscount;
-        member.rewardPoints -= pointUsed;
-      } else {
-          earnedPoints = Math.floor((afterPromotion * 0.01) / 10);
-          member.rewardPoints += earnedPoints;
-      }
-
-      member.totalSpent += finalAmount;
-
-      // Update membership rank
-      if (member.totalSpent >= 20000000) {
-        member.membershipRank = "gold";
-      } else if (member.totalSpent >= 5000000) {
-        member.membershipRank = "silver";
-      } else {
-        member.membershipRank = "bronze";
-      }
-      
-      // 80% success annd 20% fail
-      const paymentStatus = Math.random() < 0.8 ? "paid" : "failed";
-      if (paymentStatus === "failed") {
-          throw new ApiError(StatusCodes.BAD_REQUEST, "Payment failed");
-      }
-
-      await member.save({ session });
-
-      const ticketCode = await ticketUtils.generateTicketCode();
-      const qrCodeData = await ticketUtils.generateQRCode(ticketCode);
-      
-      // create booking
-      const booking = await Booking.create(
-        [
-          {
+    // create score history
+    await ScoreHistory.create(
+      [
+        {
             memberId: member._id,
-            showtimeId: showtimeId,
-            bookingCode: ticketCode,
-            promotionId: promotionId,
-            seatIds: seatIds,
-            seatNames: seats.map((seat) => seat.seatId.seatName),
-            combos: combos,
-            ticketPrice: ticketPrice,
-            comboPrice: comboPrice,
-            subTotalAmount: subTotal,
-            paymentStatus: paymentStatus,
-            paymentMethod: paymentMethod,
-            qrCodeData: qrCodeData,
-            disCountAmount: promotionDiscount + pointDiscount,
-            finalAmount: finalAmount,
-          },
-        ],
-        { session },
-      );
-      
-      // update seat
-      await ScheduleSeat.updateMany(
-        {
-          showtimeId: showtimeId,
-          seatId: { $in: seatIds },
-          status: constants.SEAT_STATUS.HOLD,
-          accountId: accountId,
-          holdExpiresAt: { $gte: new Date() },
-        },
-        {
-          $set: {
-            status: constants.SEAT_STATUS.SOLD,
-            holdExpiresAt: null,
-          },
-        },
-        { session },
-      );
+            bookingId: booking[0]._id,
+            usedPoints: pointUsed,
+            earnedPoints,
+            remainingPoints: member.rewardPoints,
+            reason: useScore ? "USE_SCORE" : "BUY_TICKET"
+        }
+      ],
+      { session }
+    );
 
-      // create score history
-      await ScoreHistory.create(
+    // Create PromotionUsage and update usageCount if promotion applied
+    if (promotionId) {
+      await PromotionUsage.create(
         [
           {
-              memberId: member._id,
-              bookingId: booking[0]._id,
-              usedPoints: pointUsed,
-              earnedPoints,
-              remainingPoints: member.rewardPoints,
-              reason: useScore ? "USE_SCORE" : "BUY_TICKET"
+            promotionId: promotionId,
+            accountId: accountId,
+            invoiceId: booking[0]._id,
+            discountAmount: promotionDiscount
           }
         ],
         { session }
       );
 
-      // Create PromotionUsage and update usageCount if promotion applied
-      if (promotionId) {
-        await PromotionUsage.create(
-          [
-            {
-              promotionId: promotionId,
-              accountId: accountId,
-              invoiceId: booking[0]._id,
-              discountAmount: promotionDiscount
-            }
-          ],
-          { session }
-        );
+      await Promotion.updateOne(
+        { _id: promotionId },
+        { $inc: { usageCount: 1 } },
+        { session }
+      );
+    }
 
-        await Promotion.updateOne(
-          { _id: promotionId },
-          { $inc: { usageCount: 1 } },
-          { session }
-        );
-      }
+    const result = {
+      bookingId: booking[0]._id,
+      bookingCode: booking[0].bookingCode,
+      ticketPrice,
+      comboPrice,
+      promotionDiscount,
+      pointDiscount,
+      finalAmount,
+      earnedPoints,
+      remainingPoints: member.rewardPoints,
+      membershipRank: member.membershipRank,
+    };
 
-      result = {
-        bookingId: booking[0]._id,
-        bookingCode: booking[0].bookingCode,
-        ticketPrice,
-        comboPrice,
-        promotionDiscount,
-        pointDiscount,
-        finalAmount,
-        earnedPoints,
-        remainingPoints: member.rewardPoints,
-        membershipRank: member.membershipRank,
-      };
-    });
+    await session.commitTransaction();
+    console.log("[DEBUG] Transaction committed successfully. commitTransaction() executed.");
 
     return result;
+  } catch (error) {
+    console.error("[DEBUG] Transaction aborted due to error:", error.message);
+    await session.abortTransaction();
+    throw error;
   } finally {
-    await session.endSession();
+    session.endSession();
   };
 }
 
