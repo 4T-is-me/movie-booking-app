@@ -4,15 +4,32 @@ import ApiError from '../utils/ApiError.js';
 import { StatusCodes } from 'http-status-codes';
 //create a new movie
 const createMovie = async (movieData) => {
-        // check the same movieName exists or not
-        const existingMovie = await Movie.findOne({ movieName: movieData.movieName, isDeleted: false });
-        if (existingMovie) {
-            throw new ApiError(StatusCodes.BAD_REQUEST, 'This movie title already exists in the system!');
-        }
+    const existingMovie = await Movie.findOne({
+        movieName: movieData.movieName,
+        isDeleted: false
+    });
 
-        const newMovie = await Movie.create(movieData);
-        return newMovie;
-    };
+    if (existingMovie) {
+        throw new ApiError(
+            StatusCodes.BAD_REQUEST,
+            'This movie title already exists in the system!'
+        );
+    }
+
+    const today = new Date();
+    const releaseDate = new Date(movieData.releaseDate);
+    const endDate = new Date(movieData.endDate);
+
+    if (today < releaseDate) {
+        movieData.status = "coming-soon";
+    } else if (today > endDate) {
+        movieData.status = "ended";
+    } else {
+        movieData.status = "showing";
+    }
+
+    return await Movie.create(movieData);
+};
     // update movie
     const updateMovie = async (movieId, updateData) => {
         const movie = await Movie.findOne({ _id: movieId, isDeleted: false });
