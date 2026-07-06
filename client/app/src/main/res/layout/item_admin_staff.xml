@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="?attr/selectableItemBackground"
+    android:paddingVertical="12dp">
+
+    <!-- Account -->
+    <TextView
+        android:id="@+id/tvStaffUsername"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:ellipsize="end"
+        android:maxLines="1"/>
+
+    <!-- Full Name -->
+    <TextView
+        android:id="@+id/tvStaffFullName"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:ellipsize="end"
+        android:maxLines="1"/>
+
+    <!-- Date of Birth -->
+    <TextView
+        android:id="@+id/tvStaffDob"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:ellipsize="end"
+        android:maxLines="1"/>
+
+    <!-- Gender -->
+    <TextView
+        android:id="@+id/tvStaffGender"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:ellipsize="end"
+        android:maxLines="1"/>
+
+    <!-- Email -->
+    <TextView
+        android:id="@+id/tvStaffEmail"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:ellipsize="end"
+        android:maxLines="1"/>
+
+    <!-- ID Card (CMND) -->
+    <TextView
+        android:id="@+id/tvStaffIdCard"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:ellipsize="end"
+        android:maxLines="1"/>
+
+    <!-- Phone (SĐT) -->
+    <TextView
+        android:id="@+id/tvStaffPhone"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:ellipsize="end"
+        android:maxLines="1"/>
+
+    <!-- Address -->
+    <TextView
+        android:id="@+id/tvStaffAddress"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:ellipsize="end"
+        android:maxLines="2"/>
+</LinearLayout>

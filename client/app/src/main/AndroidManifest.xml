@@ -75,6 +75,8 @@
             android:exported="true"
             android:theme="@style/Theme.Moviebookingapp" />
 
+
+
         <activity
             android:name=".view.activity.PurchaseHistoryActivity"
             android:exported="false"
