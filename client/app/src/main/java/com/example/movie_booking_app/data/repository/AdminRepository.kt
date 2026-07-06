@@ -18,4 +18,7 @@ class AdminRepository @Inject constructor(
 
     suspend fun getMovieRevenue() =
         api.getMovieRevenue()
+
+    suspend fun getStaffList(page: Int? = null, limit: Int? = null, search: String? = null) =
+        api.getStaffList(page, limit, search)
 }
