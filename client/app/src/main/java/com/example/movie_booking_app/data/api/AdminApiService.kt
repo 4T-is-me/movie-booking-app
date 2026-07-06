@@ -3,6 +3,11 @@ package com.example.movie_booking_app.data.api
 import com.example.movie_booking_app.data.model.request.AddMovieRequest
 import com.example.movie_booking_app.data.model.request.UpdateMovieRequest
 import com.example.movie_booking_app.data.model.response.*
+import com.example.movie_booking_app.data.model.response.DailyRevenueResponse
+import com.example.movie_booking_app.data.model.response.MonthlyRevenueResponse
+import com.example.movie_booking_app.data.model.response.MovieRevenueResponse
+import com.example.movie_booking_app.data.model.response.OverviewStatsResponse
+import com.example.movie_booking_app.data.model.response.AdminStaffListResponse
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -38,4 +43,11 @@ interface AdminApiService {
 
     @GET("api/admin/stats/revenue/by-movie")
     suspend fun getMovieRevenue(): Response<MovieRevenueResponse>
+
+    @GET("api/admin/staff")
+    suspend fun getStaffList(
+        @Query("page") page: Int? = null,
+        @Query("limit") limit: Int? = null,
+        @Query("search") search: String? = null
+    ): Response<AdminStaffListResponse>
 }

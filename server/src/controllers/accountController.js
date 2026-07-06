@@ -61,10 +61,53 @@ const changePassword = async (req, res, next) => {
     }
 }
 
+const googleLogin = async (req, res, next) => {
+    try {
+        const { idToken } = req.body
+        const result = await accountService.googleLogin(idToken)
+        res.status(StatusCodes.OK).json(result)
+    } catch (error) {
+        if (error.statusCode) {
+            return res.status(error.statusCode).json({
+                success: false,
+                message: error.message
+            });
+        }
+        next(error)
+    }
+}
+
+const sendOtp = async (req, res, next) => {
+    try {
+        const result = await accountService.sendOtp(req.body);
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        if (error.statusCode) {
+            return res.status(error.statusCode).json({ success: false, message: error.message });
+        }
+        next(error);
+    }
+}
+
+const verifyOtp = async (req, res, next) => {
+    try {
+        const result = await accountService.verifyOtp(req.body);
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        if (error.statusCode) {
+            return res.status(error.statusCode).json({ success: false, message: error.message });
+        }
+        next(error);
+    }
+}
+
 export const accountController = {
     register,
     login,
+    googleLogin,
     getProfile,
     updateProfile,
-    changePassword
+    changePassword,
+    sendOtp,
+    verifyOtp
 }

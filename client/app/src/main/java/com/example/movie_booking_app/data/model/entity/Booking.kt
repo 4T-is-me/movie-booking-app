@@ -25,7 +25,8 @@ data class Booking(
     val bookingFee: Int = 0,
     val discount: Int = 0,
     val grandTotal: Int,
-    val promotionId: String? = null
+    val promotionId: String? = null,
+    val showtimeId: String? = null
 ) : Serializable
 
 data class TicketTypeDetail(

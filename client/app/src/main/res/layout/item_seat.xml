@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tvSeat"
-    android:layout_width="32dp"
-    android:layout_height="32dp"
-    android:layout_margin="4dp"
+    android:layout_width="26dp"
+    android:layout_height="26dp"
+    android:layout_margin="3dp"
     android:gravity="center"
     android:textColor="#FFFFFF"
-    android:textSize="11sp"
+    android:textSize="9sp"
     android:textStyle="bold"
     android:background="@drawable/bg_seat_available" />

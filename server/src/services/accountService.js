@@ -4,7 +4,12 @@ import { Account } from '../models/accountModel.js'
 import { Member } from '../models/memberModel.js'
 import { jwtProvider } from '../utils/jwtProvider.js'
 import bcryptjs from 'bcryptjs'
+import { OAuth2Client } from 'google-auth-library'
+import { Otp } from '../models/otpModel.js'
+import { sendEmail } from '../utils/sendEmail.js'
 import '../models/rolesModel.js'
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID || 'PLACEHOLDER_CLIENT_ID')
 
 const register = async (reqBody) => {
     const existedUser = await Account.findOne({ $or: [{ email: reqBody.email }, { username: reqBody.username }] })
@@ -17,46 +22,26 @@ const register = async (reqBody) => {
         throw new ApiError(StatusCodes.CONFLICT, 'Identity card or phone number already exists')
     }
 
-    const passwordHash = await bcryptjs.hash(reqBody.password, 10)
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    await Otp.deleteMany({ email: reqBody.email });
+    await new Otp({ 
+        email: reqBody.email, 
+        otp: otpCode,
+        type: 'register',
+        payload: reqBody
+    }).save();
 
-    const newAccount = new Account({
+    await sendEmail(
+        reqBody.email,
+        'Xác thực tài khoản Movie Booking',
+        `Mã OTP xác thực tài khoản của bạn là: ${otpCode}. Mã này có hiệu lực trong 5 phút.`
+    );
+
+    return { 
         username: reqBody.username,
         email: reqBody.email,
-        passwordHash: passwordHash,
-        roleId: '6a38d663cf6b5ffdb33166f5', // Default Role: Member
-        status: 1,
-        registerDate: new Date()
-    })
-
-    const savedAccount = await newAccount.save()
-
-    try {
-        const newMember = new Member({
-            accountId: savedAccount._id,
-            fullName: reqBody.fullName,
-            gender: reqBody.gender,
-            dateOfBirth: reqBody.dateOfBirth,
-            phoneNumber: reqBody.phoneNumber,
-            identityCard: reqBody.identityCard,
-            address: reqBody.address,
-            image: reqBody.image || null
-        })
-        const savedMember = await newMember.save()
-
-        const safeAccount = savedAccount.toObject()
-        delete safeAccount.passwordHash
-        if (safeAccount.passwordSalt) delete safeAccount.passwordSalt
-
-        const safeMember = savedMember.toObject()
-        delete safeMember._id
-
-        return { ...safeAccount, ...safeMember }
-    } catch (error) {
-        await Account.findByIdAndDelete(savedAccount._id)
-        if (error.code === 11000) {
-            throw new ApiError(StatusCodes.CONFLICT, 'Identity card or phone number already exists')
-        }
-        throw error
+        fullName: reqBody.fullName,
+        phoneNumber: reqBody.phoneNumber
     }
 }
 
@@ -223,10 +208,151 @@ const changePassword = async (accountId, reqBody) => {
     return { success: true };
 }
 
+const googleLogin = async (idToken) => {
+    try {
+        const ticket = await googleClient.verifyIdToken({
+            idToken: idToken,
+            audience: process.env.GOOGLE_CLIENT_ID || 'PLACEHOLDER_CLIENT_ID'
+        });
+        const payload = ticket.getPayload();
+        const email = payload['email'];
+        const name = payload['name'];
+        const picture = payload['picture'];
+
+        let account = await Account.findOne({ email }).populate('roleId');
+
+        if (!account) {
+            // Register new account
+            const passwordHash = await bcryptjs.hash(Math.random().toString(36).slice(-8), 10);
+            const newAccount = new Account({
+                username: email.split('@')[0] + Math.floor(Math.random() * 1000),
+                email: email,
+                passwordHash: passwordHash,
+                roleId: '6a38d663cf6b5ffdb33166f5', // Default Role: Member
+                status: 1,
+                registerDate: new Date()
+            });
+            account = await newAccount.save();
+
+            const newMember = new Member({
+                accountId: account._id,
+                fullName: name,
+                image: picture
+            });
+            await newMember.save();
+            
+            // Re-fetch to populate role
+            account = await Account.findById(account._id).populate('roleId');
+        }
+
+        if (account.status !== 1) {
+            throw new ApiError(StatusCodes.FORBIDDEN, 'Account has been locked!');
+        }
+
+        const jwtPayload = {
+            accountId: account._id.toString(),
+            username: account.username,
+            role: account.roleId ? (account.roleId.name || account.roleId.roleName || 'Customer') : 'Customer'
+        };
+
+        const accessToken = jwtProvider.generateAccessToken(jwtPayload);
+        const refreshToken = jwtProvider.generateRefreshToken(jwtPayload);
+
+        account.refreshToken = refreshToken;
+        await account.save();
+
+        const safeAccount = account.toObject();
+        delete safeAccount.passwordHash;
+        if (safeAccount.passwordSalt) delete safeAccount.passwordSalt;
+
+        const member = await Member.findOne({ accountId: account._id }).lean();
+        if (member) delete member._id;
+
+        return {
+            account: { ...safeAccount, ...(member || {}) },
+            accessToken,
+            refreshToken
+        };
+    } catch (error) {
+        throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid Google token');
+    }
+}
+
+const verifyOtp = async (reqBody) => {
+    const { email, otp } = reqBody;
+    const otpRecord = await Otp.findOne({ email, otp });
+    if (!otpRecord) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, 'Mã OTP không hợp lệ hoặc đã hết hạn');
+    }
+
+    if (otpRecord.type === 'register') {
+        const payload = otpRecord.payload;
+        if (!payload) throw new ApiError(StatusCodes.BAD_REQUEST, 'Dữ liệu đăng ký không hợp lệ');
+
+        const passwordHash = await bcryptjs.hash(payload.password, 10);
+        const newAccount = new Account({
+            username: payload.username,
+            email: payload.email,
+            passwordHash: passwordHash,
+            roleId: '6a38d663cf6b5ffdb33166f5', // Default Role: Member
+            status: 1,
+            registerDate: new Date()
+        });
+        const savedAccount = await newAccount.save();
+
+        const newMember = new Member({
+            accountId: savedAccount._id,
+            fullName: payload.fullName,
+            gender: payload.gender,
+            dateOfBirth: payload.dateOfBirth,
+            phoneNumber: payload.phoneNumber,
+            identityCard: payload.identityCard,
+            address: payload.address,
+            image: payload.image || null
+        });
+        await newMember.save();
+    } else {
+        const account = await Account.findOne({ email });
+        if (!account) {
+            throw new ApiError(StatusCodes.NOT_FOUND, 'Tài khoản không tồn tại');
+        }
+
+        if (account.status === 0) {
+            account.status = 1;
+            await account.save();
+        }
+    }
+
+    await Otp.deleteOne({ _id: otpRecord._id });
+    return { success: true, message: 'Xác thực thành công' };
+}
+
+const sendOtp = async (reqBody) => {
+    const { email } = reqBody;
+    const account = await Account.findOne({ email });
+    if (!account) {
+        throw new ApiError(StatusCodes.NOT_FOUND, 'Tài khoản không tồn tại');
+    }
+
+    const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    await Otp.deleteMany({ email });
+    await new Otp({ email, otp: otpCode, type: 'forgot_password' }).save();
+
+    await sendEmail(
+        email,
+        'Khôi phục mật khẩu Movie Booking',
+        `Mã OTP khôi phục mật khẩu của bạn là: ${otpCode}. Mã này có hiệu lực trong 5 phút.`
+    );
+    return { success: true, message: 'OTP sent' };
+}
+
 export const accountService = {
     register,
     login,
+    googleLogin,
     getProfile,
     updateProfile,
-    changePassword
+    changePassword,
+    verifyOtp,
+    sendOtp
 }

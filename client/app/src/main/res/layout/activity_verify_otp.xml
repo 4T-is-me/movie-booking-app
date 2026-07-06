@@ -1,42 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:gravity="center">
+    android:background="#000000"
+    android:padding="24dp">
+
+    <!-- Back Button -->
+    <ImageView
+        android:id="@+id/ivBack"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/ic_chevron_right"
+        android:rotation="180"
+        app:tint="#FFFFFF"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:layout_width="match_parent"
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Xác thực OTP"
-        android:textSize="24sp"
+        android:textColor="#FFC107"
+        android:textSize="32sp"
         android:textStyle="bold"
-        android:gravity="center"
-        android:layout_marginBottom="24dp" />
+        android:layout_marginTop="32dp"
+        app:layout_constraintTop_toBottomOf="@id/ivBack"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/tvOtpMessage"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Nhập mã OTP 6 số đã được gửi đến email của bạn:"
-        android:layout_marginBottom="8dp" />
+        android:textColor="#808080"
+        android:textSize="14sp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <EditText
-        android:id="@+id/edtOtpCode"
+    <!-- 6 OTP Boxes -->
+    <LinearLayout
+        android:id="@+id/llOtpContainer"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:hint="Mã OTP"
-        android:inputType="number"
-        android:maxLength="6"
-        android:background="@android:drawable/edit_text"
-        android:padding="12dp"
-        android:layout_marginBottom="24dp" />
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="40dp"
+        app:layout_constraintTop_toBottomOf="@id/tvOtpMessage">
 
-    <Button
+        <EditText android:id="@+id/edtOtp1" android:layout_width="45dp" android:layout_height="56dp" android:layout_margin="4dp" android:background="@drawable/bg_otp_input" android:gravity="center" android:inputType="number" android:maxLength="1" android:textColor="#FFFFFF" android:textSize="24sp" android:textStyle="bold" android:focusable="true" android:focusableInTouchMode="true"/>
+        <EditText android:id="@+id/edtOtp2" android:layout_width="45dp" android:layout_height="56dp" android:layout_margin="4dp" android:background="@drawable/bg_otp_input" android:gravity="center" android:inputType="number" android:maxLength="1" android:textColor="#FFFFFF" android:textSize="24sp" android:textStyle="bold" android:focusable="true" android:focusableInTouchMode="true"/>
+        <EditText android:id="@+id/edtOtp3" android:layout_width="45dp" android:layout_height="56dp" android:layout_margin="4dp" android:background="@drawable/bg_otp_input" android:gravity="center" android:inputType="number" android:maxLength="1" android:textColor="#FFFFFF" android:textSize="24sp" android:textStyle="bold" android:focusable="true" android:focusableInTouchMode="true"/>
+        <EditText android:id="@+id/edtOtp4" android:layout_width="45dp" android:layout_height="56dp" android:layout_margin="4dp" android:background="@drawable/bg_otp_input" android:gravity="center" android:inputType="number" android:maxLength="1" android:textColor="#FFFFFF" android:textSize="24sp" android:textStyle="bold" android:focusable="true" android:focusableInTouchMode="true"/>
+        <EditText android:id="@+id/edtOtp5" android:layout_width="45dp" android:layout_height="56dp" android:layout_margin="4dp" android:background="@drawable/bg_otp_input" android:gravity="center" android:inputType="number" android:maxLength="1" android:textColor="#FFFFFF" android:textSize="24sp" android:textStyle="bold" android:focusable="true" android:focusableInTouchMode="true"/>
+        <EditText android:id="@+id/edtOtp6" android:layout_width="45dp" android:layout_height="56dp" android:layout_margin="4dp" android:background="@drawable/bg_otp_input" android:gravity="center" android:inputType="number" android:maxLength="1" android:textColor="#FFFFFF" android:textSize="24sp" android:textStyle="bold" android:focusable="true" android:focusableInTouchMode="true"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvError"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FF5252"
+        android:textSize="14sp"
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/llOtpContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnVerifyOtp"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="60dp"
-        android:text="Xác nhận" />
+        android:text="Xác nhận"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginTop="32dp"
+        app:backgroundTint="#FFC107"
+        app:cornerRadius="30dp"
+        app:layout_constraintTop_toBottomOf="@id/tvError"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-</LinearLayout>
+    <ProgressBar
+        android:id="@+id/pbLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:elevation="4dp"
+        android:indeterminateTint="#000000"
+        app:layout_constraintTop_toTopOf="@id/btnVerifyOtp"
+        app:layout_constraintBottom_toBottomOf="@id/btnVerifyOtp"
+        app:layout_constraintEnd_toEndOf="@id/btnVerifyOtp"
+        android:layout_marginEnd="16dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

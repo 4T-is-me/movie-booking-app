@@ -299,7 +299,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false"
-                tools:listitem="@layout/item_history_transaction"
+                tools:listitem="@layout/item_score_history"
                 tools:itemCount="3"/>
 
         </LinearLayout>

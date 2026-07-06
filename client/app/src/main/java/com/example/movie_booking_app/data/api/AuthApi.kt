@@ -22,4 +22,10 @@ interface AuthApi {
 
     @POST("api/auth/forgot-password/verify-otp")
     suspend fun verifyOtp(@Body request: com.example.movie_booking_app.data.model.request.VerifyOtpRequest): Response<okhttp3.ResponseBody>
+
+    @POST("api/auth/verify-otp")
+    suspend fun verifyRegisterOtp(@Body request: com.example.movie_booking_app.data.model.request.VerifyOtpRequest): Response<okhttp3.ResponseBody>
+
+    @POST("api/auth/google")
+    suspend fun googleLogin(@Body request: Map<String, String>): Response<LoginResponse>
 }
