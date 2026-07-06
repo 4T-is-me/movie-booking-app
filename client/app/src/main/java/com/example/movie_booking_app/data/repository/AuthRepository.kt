@@ -22,6 +22,13 @@ class AuthRepository @Inject constructor(
     suspend fun verifyOtp(request: com.example.movie_booking_app.data.model.request.VerifyOtpRequest) =
         api.verifyOtp(request)
 
+    suspend fun verifyRegisterOtp(request: com.example.movie_booking_app.data.model.request.VerifyOtpRequest) =
+        api.verifyRegisterOtp(request)
+
+    suspend fun googleLogin(idToken: String) =
+        api.googleLogin(mapOf("idToken" to idToken))
+
+
     fun saveLoginData(token: String, refreshToken: String, username: String, role: String) {
         val sharedPref = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         with(sharedPref.edit()) {

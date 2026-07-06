@@ -14,6 +14,11 @@ import com.example.movie_booking_app.databinding.ActivityLoginBinding
 import com.example.movie_booking_app.viewmodel.LoginUiState
 import com.example.movie_booking_app.viewmodel.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import androidx.activity.result.contract.ActivityResultContracts
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -21,6 +26,23 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
     private val viewModel: LoginViewModel by viewModels()
+    private lateinit var googleSignInClient: GoogleSignInClient
+
+    private val googleSignInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            val idToken = account?.idToken
+            if (idToken != null) {
+                viewModel.googleLogin(idToken)
+            } else {
+                showError("Google Sign-In failed: No ID token")
+            }
+        } catch (e: ApiException) {
+            Log.w("LOGIN_DEBUG", "Google sign in failed", e)
+            showError("Google Sign-In failed: ${e.statusCode}")
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +71,7 @@ class LoginActivity : AppCompatActivity() {
 
         binding.btnLogin.setOnClickListener {
             val username = binding.edtUsername.text.toString().trim()
-            val password = binding.edtPassword.text.toString().trim()
+            val password = binding.edtPassword.text.toString()
 
             if (username.isEmpty()) {
                 showError("Please enter username")
@@ -64,6 +86,19 @@ class LoginActivity : AppCompatActivity() {
             hideError()
 
             viewModel.login(LoginRequest(username, password))
+        }
+
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken("1042352766201-25ddh24aoqt74h069sqinlhn1lhn4rlh.apps.googleusercontent.com")
+            .requestEmail()
+            .build()
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
+
+        binding.btnGoogleLogin.setOnClickListener {
+            googleSignInClient.signOut().addOnCompleteListener {
+                val signInIntent = googleSignInClient.signInIntent
+                googleSignInLauncher.launch(signInIntent)
+            }
         }
 
         observeViewModel()

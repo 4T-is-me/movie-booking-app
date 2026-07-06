@@ -29,12 +29,14 @@ class VerifyOtpActivity : AppCompatActivity() {
     private lateinit var pbLoading: ProgressBar
     private lateinit var tvError: TextView
     private lateinit var email: String
+    private lateinit var type: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_verify_otp)
 
         email = intent.getStringExtra("email") ?: ""
+        type = intent.getStringExtra("type") ?: "forgot_password"
         val tvMessage = findViewById<TextView>(R.id.tvOtpMessage)
         tvMessage.text = "Nhập mã OTP 6 số đã được gửi đến:\n$email"
 
@@ -64,7 +66,7 @@ class VerifyOtpActivity : AppCompatActivity() {
             }
 
             hideError()
-            viewModel.verifyOtp(email, otpCode)
+            viewModel.verifyOtp(email, otpCode, type)
         }
 
         observeViewModel()
@@ -115,10 +117,15 @@ class VerifyOtpActivity : AppCompatActivity() {
                         pbLoading.visibility = View.GONE
                         Toast.makeText(this@VerifyOtpActivity, "Xác thực thành công!", Toast.LENGTH_SHORT).show()
                         
-                        // Chuyển hướng người dùng sang màn hình đổi mật khẩu
-                        val intent = Intent(this@VerifyOtpActivity, ResetPasswordActivity::class.java)
-                        intent.putExtra("email", email)
-                        startActivity(intent)
+                        if (type == "register") {
+                            val intent = Intent(this@VerifyOtpActivity, LoginActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
+                        } else {
+                            val intent = Intent(this@VerifyOtpActivity, ResetPasswordActivity::class.java)
+                            intent.putExtra("email", email)
+                            startActivity(intent)
+                        }
                         finish()
                     }
                     is OtpUiState.Error -> {

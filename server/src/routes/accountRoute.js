@@ -36,6 +36,10 @@ const upload = multer({
 const authRouter = express.Router()
 authRouter.post('/register', accountValidation.register, accountController.register)
 authRouter.post('/login', accountValidation.login, accountController.login)
+authRouter.post('/google', accountController.googleLogin)
+authRouter.post('/forgot-password/send-otp', accountController.sendOtp)
+authRouter.post('/forgot-password/verify-otp', accountController.verifyOtp)
+authRouter.post('/verify-otp', accountController.verifyOtp)
 
 const accountRouter = express.Router()
 accountRouter.get('/profile', authMiddleware.isAuthorized, accountController.getProfile)

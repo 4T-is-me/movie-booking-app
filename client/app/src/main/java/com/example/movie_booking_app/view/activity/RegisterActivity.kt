@@ -12,8 +12,15 @@ import com.example.movie_booking_app.data.model.request.RegisterRequest
 import com.example.movie_booking_app.databinding.ActivityRegisterBinding
 import com.example.movie_booking_app.viewmodel.RegisterUiState
 import com.example.movie_booking_app.viewmodel.RegisterViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import androidx.activity.result.contract.ActivityResultContracts
+import android.util.Log
+import android.content.Intent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -25,6 +32,23 @@ class RegisterActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterBinding
     private val viewModel: RegisterViewModel by viewModels()
+    private lateinit var googleSignInClient: GoogleSignInClient
+
+    private val googleSignInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            val idToken = account?.idToken
+            if (idToken != null) {
+                viewModel.googleLogin(idToken)
+            } else {
+                showNotification("Google Sign-In failed: No ID token", false)
+            }
+        } catch (e: ApiException) {
+            Log.w("REGISTER_DEBUG", "Google sign in failed", e)
+            showNotification("Google Sign-In failed: ${e.statusCode}", false)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,7 +127,7 @@ class RegisterActivity : AppCompatActivity() {
                 val email = binding.edtEmail.text.toString().trim()
                 val phone = binding.edtPhone.text.toString().trim()
                 val idCard = binding.edtIdCard.text.toString().trim()
-                val password = binding.edtPassword.text.toString().trim()
+                val password = binding.edtPassword.text.toString()
                 val address = binding.edtAddress.text.toString().trim()
 
                 val selectedGenderId = binding.rgGender.checkedRadioButtonId
@@ -141,6 +165,19 @@ class RegisterActivity : AppCompatActivity() {
             }
         }
 
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken("1042352766201-25ddh24aoqt74h069sqinlhn1lhn4rlh.apps.googleusercontent.com")
+            .requestEmail()
+            .build()
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
+
+        binding.btnGoogleRegister.setOnClickListener {
+            googleSignInClient.signOut().addOnCompleteListener {
+                val signInIntent = googleSignInClient.signInIntent
+                googleSignInLauncher.launch(signInIntent)
+            }
+        }
+
         observeViewModel()
     }
 
@@ -159,8 +196,22 @@ class RegisterActivity : AppCompatActivity() {
                     is RegisterUiState.Success -> {
                         binding.btnRegister.isEnabled = true
                         binding.pbLoading.visibility = View.GONE
-                        showNotification(state.message, true)
-                        binding.btnRegister.postDelayed({ finish() }, 1500)
+                        
+                        if (state.message == "GOOGLE_SUCCESS") {
+                            showNotification("Đăng nhập Google thành công!", true)
+                            val intent = Intent(this@RegisterActivity, MainActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
+                            finish()
+                        } else {
+                            showNotification("Vui lòng kiểm tra email để lấy mã OTP!", true)
+                            val intent = Intent(this@RegisterActivity, VerifyOtpActivity::class.java)
+                            intent.putExtra("email", binding.edtEmail.text.toString().trim())
+                            intent.putExtra("type", "register")
+                            startActivity(intent)
+                            finish()
+                        }
+                        
                         viewModel.resetState()
                     }
                     is RegisterUiState.Error -> {
@@ -221,7 +272,7 @@ class RegisterActivity : AppCompatActivity() {
             binding.tilPhone.error = null
         }
 
-        val password = binding.edtPassword.text.toString().trim()
+        val password = binding.edtPassword.text.toString()
         if (password.isEmpty()) {
             binding.tilPassword.error = "Password is required"
             isValid = false
@@ -232,7 +283,7 @@ class RegisterActivity : AppCompatActivity() {
             binding.tilPassword.error = null
         }
 
-        val confirmPassword = binding.edtConfirmPassword.text.toString().trim()
+        val confirmPassword = binding.edtConfirmPassword.text.toString()
         if (confirmPassword.isEmpty()) {
             binding.tilConfirmPassword.error = "Please confirm password"
             isValid = false
