@@ -24,8 +24,6 @@ import com.example.movie_booking_app.data.api.AuthEvent
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import android.content.Intent
-import android.widget.Toast
-import com.example.movie_booking_app.data.local.TokenManager
 
 @AndroidEntryPoint
 class AdminActivity : BaseActivity() {
@@ -81,7 +79,7 @@ class AdminActivity : BaseActivity() {
                     loadFragment(BlankFragment())
                 }
                 R.id.nav_logout -> {
-                    performLogout()
+                    com.example.movie_booking_app.utils.AuthUtils.showLogoutConfirmationDialog(this)
                 }
             }
             drawerLayout.closeDrawer(GravityCompat.START)
@@ -114,6 +112,7 @@ class AdminActivity : BaseActivity() {
             }
         }
     }
+
 
 
     // A simple fragment that shows nothing

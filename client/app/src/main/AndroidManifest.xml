@@ -104,6 +104,11 @@
             android:exported="false"
             android:theme="@style/Theme.Moviebookingapp" />
 
+        <activity
+            android:name=".view.activity.ManagerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp" />
+
     </application>
 
 </manifest>

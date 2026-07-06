@@ -18,7 +18,8 @@ const movieRules = {
     poster: Joi.string().trim().strict().allow('', null),
     rating: Joi.number().min(0).max(10),
     totalReviews: Joi.number().min(0),
-    totalStarts: Joi.number().min(0)
+    totalStarts: Joi.number().min(0),
+    tier: Joi.number().integer()
 };
 
 //  Validator for POST /api/admin/movies
@@ -39,7 +40,8 @@ const createMovie = async (req, res, next) => {
         poster: movieRules.poster.optional(),
         rating: movieRules.rating.optional(),
         totalReviews: movieRules.totalReviews.optional(),
-        totalStarts: movieRules.totalStarts.optional()
+        totalStarts: movieRules.totalStarts.optional(),
+        tier: movieRules.tier.optional()
     });
 
     try {
@@ -70,7 +72,8 @@ const updateMovie = async (req, res, next) => {
         poster: movieRules.poster.optional(),
         rating: movieRules.rating.optional(),
         totalReviews: movieRules.totalReviews.optional(),
-        totalStarts: movieRules.totalStarts.optional()
+        totalStarts: movieRules.totalStarts.optional(),
+        tier: movieRules.tier.optional()
     });
 
     try {

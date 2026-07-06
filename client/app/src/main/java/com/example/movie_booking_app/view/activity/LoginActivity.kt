@@ -62,7 +62,8 @@ class LoginActivity : AppCompatActivity() {
         }
 
         binding.tvForgotPassword.setOnClickListener {
-            // Handle forgot password
+            val intent = Intent(this, ForgotPasswordActivity::class.java)
+            startActivity(intent)
         }
 
         // Hide error when user starts typing
@@ -123,12 +124,18 @@ class LoginActivity : AppCompatActivity() {
                         
                         val username = binding.edtUsername.text.toString().trim()
                         val enteredOrDbUser = state.username
-                        val roleName = state.role
+                        val roleName = state.role ?: ""
                         
                         if (roleName.equals("Admin", ignoreCase = true)) {
                             val intent = Intent(this@LoginActivity, AdminActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(intent)
+                            finish()
+                        } else if (roleName.equals("Manager", ignoreCase = true) || roleName.equals("Cinema Manager", ignoreCase = true)) {
+                            val intent = Intent(this@LoginActivity, ManagerActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
+                            finish()
                         } else {
                             val intent = Intent(this@LoginActivity, MainActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
