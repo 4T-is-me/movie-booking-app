@@ -13,6 +13,7 @@ data class AdminPromotion(
     @SerializedName("_id") val id: String,
     val title: String,
     val detail: String?,
+    val image: String?,
     val couponCode: String?,
     val discountType: String?, // "percentage" or "fixed"
     val discountValue: Double?,

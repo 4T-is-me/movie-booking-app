@@ -45,9 +45,36 @@
             android:textStyle="bold"
             android:background="@drawable/bg_rounded_badge"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/tvPromoTitle"
+            app:layout_constraintEnd_toStartOf="@id/btnEditPromo"
+            android:layout_marginEnd="8dp"
             tools:text="ĐANG ÁP DỤNG"
             tools:backgroundTint="@color/admin_live_indicator" />
+
+        <ImageButton
+            android:id="@+id/btnEditPromo"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_edit"
+            android:contentDescription="Edit Promotion"
+            app:tint="@color/yellow"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/tvPromoTitle"
+            app:layout_constraintEnd_toStartOf="@id/btnDeletePromo"
+            android:layout_marginEnd="4dp" />
+
+        <ImageButton
+            android:id="@+id/btnDeletePromo"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_delete"
+            android:contentDescription="Delete Promotion"
+            app:tint="#F44336"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/tvPromoTitle"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <!-- Detail/Description -->
         <TextView

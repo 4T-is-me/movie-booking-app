@@ -17,7 +17,10 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-class AdminPromotionAdapter : ListAdapter<AdminPromotion, AdminPromotionAdapter.AdminPromotionViewHolder>(AdminPromotionDiffCallback()) {
+class AdminPromotionAdapter(
+    private val onEditClick: (AdminPromotion) -> Unit,
+    private val onDeleteClick: (AdminPromotion) -> Unit
+) : ListAdapter<AdminPromotion, AdminPromotionAdapter.AdminPromotionViewHolder>(AdminPromotionDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdminPromotionViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -36,8 +39,13 @@ class AdminPromotionAdapter : ListAdapter<AdminPromotion, AdminPromotionAdapter.
         private val tvCouponCode: TextView = view.findViewById(R.id.tvCouponCode)
         private val tvDiscountValue: TextView = view.findViewById(R.id.tvDiscountValue)
         private val tvPromoDateRange: TextView = view.findViewById(R.id.tvPromoDateRange)
+        private val btnEditPromo: android.widget.ImageButton = view.findViewById(R.id.btnEditPromo)
+        private val btnDeletePromo: android.widget.ImageButton = view.findViewById(R.id.btnDeletePromo)
 
         fun bind(promotion: AdminPromotion) {
+            btnEditPromo.setOnClickListener { onEditClick(promotion) }
+            btnDeletePromo.setOnClickListener { onDeleteClick(promotion) }
+
             tvPromoTitle.text = promotion.title
             tvPromoDetail.text = promotion.detail ?: "Không có chi tiết"
             tvCouponCode.text = promotion.couponCode ?: ""

@@ -64,7 +64,25 @@ const validatePromotion = async (req, res, next) => {
     }
 };
 
+const getPromotions = async (req, res, next) => {
+    try {
+        const now = new Date();
+        const promotions = await Promotion.find({
+            isDeleted: false,
+            endDate: { $gte: now }
+        }).sort({ createdAt: -1 });
+
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            data: promotions
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const promotionController = {
     applyPromotion,
-    validatePromotion
+    validatePromotion,
+    getPromotions
 };
