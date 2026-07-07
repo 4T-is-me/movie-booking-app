@@ -21,6 +21,9 @@ export const createPromotion = async (req, res) => {
             return res.status(400).json({ success: false, message: 'End date must be after start date.' });
         }
 
+        req.body.startTime = new Date(startDate);
+        req.body.endTime = new Date(endDate);
+
         const promotion = await adminPromotionService.createPromotion(req.body);
         return res.status(201).json({ success: true, data: promotion, message: 'Promotion created successfully.' });
     } catch (error) {
@@ -34,6 +37,19 @@ export const createPromotion = async (req, res) => {
 export const updatePromotion = async (req, res) => {
     try {
         const { id } = req.params;
+        const { startDate, endDate } = req.body;
+
+        if (startDate && endDate && new Date(startDate) >= new Date(endDate)) {
+            return res.status(400).json({ success: false, message: 'End date must be after start date.' });
+        }
+
+        if (startDate) {
+            req.body.startTime = new Date(startDate);
+        }
+        if (endDate) {
+            req.body.endTime = new Date(endDate);
+        }
+
         const promotion = await adminPromotionService.updatePromotion(id, req.body);
         
         if (!promotion) return res.status(404).json({ success: false, message: 'Promotion not found.' });

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    app:cardBackgroundColor="@color/card_dark"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    app:strokeColor="@color/divider_gray"
+    app:strokeWidth="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- Title -->
+        <TextView
+            android:id="@+id/tvPromoTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:ellipsize="end"
+            android:maxLines="1"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/tvPromoStatus"
+            tools:text="Khuyến mãi Hè Rực Rỡ" />
+
+        <!-- Status Badge -->
+        <TextView
+            android:id="@+id/tvPromoStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:background="@drawable/bg_rounded_badge"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/tvPromoTitle"
+            app:layout_constraintEnd_toStartOf="@id/btnEditPromo"
+            android:layout_marginEnd="8dp"
+            tools:text="ĐANG ÁP DỤNG"
+            tools:backgroundTint="@color/admin_live_indicator" />
+
+        <ImageButton
+            android:id="@+id/btnEditPromo"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_edit"
+            android:contentDescription="Edit Promotion"
+            app:tint="@color/yellow"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/tvPromoTitle"
+            app:layout_constraintEnd_toStartOf="@id/btnDeletePromo"
+            android:layout_marginEnd="4dp" />
+
+        <ImageButton
+            android:id="@+id/btnDeletePromo"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_delete"
+            android:contentDescription="Delete Promotion"
+            app:tint="#F44336"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/tvPromoTitle"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Detail/Description -->
+        <TextView
+            android:id="@+id/tvPromoDetail"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textColor="@color/text_gray"
+            android:textSize="13sp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            app:layout_constraintTop_toBottomOf="@id/tvPromoTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="Giảm giá cực sốc lên đến 20% cho tất cả các giao dịch đặt vé xem phim trong tháng 7 này." />
+
+        <View
+            android:id="@+id/dividerLine"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:background="@color/divider_gray"
+            app:layout_constraintTop_toBottomOf="@id/tvPromoDetail" />
+
+        <!-- Coupon Code Tag -->
+        <LinearLayout
+            android:id="@+id/layoutCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_rounded_badge"
+            android:backgroundTint="@color/white_transparent_08"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toBottomOf="@id/dividerLine"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MÃ: "
+                android:textColor="@color/admin_text_secondary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvCouponCode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/yellow"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                tools:text="SUMMER20" />
+        </LinearLayout>
+
+        <!-- Discount Value (Mức giảm giá) -->
+        <TextView
+            android:id="@+id/tvDiscountValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/yellow"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="@id/layoutCode"
+            app:layout_constraintBottom_toBottomOf="@id/layoutCode"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="-20%" />
+
+        <!-- Date Range -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toBottomOf="@id/layoutCode">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@android:drawable/ic_menu_my_calendar"
+                app:tint="@color/admin_text_secondary" />
+
+            <TextView
+                android:id="@+id/tvPromoDateRange"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/admin_text_secondary"
+                android:textSize="12sp"
+                tools:text="01/07/2026 - 31/07/2026" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

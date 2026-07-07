@@ -65,4 +65,19 @@ interface AdminApiService {
 
     @DELETE("api/admin/staff/{id}")
     suspend fun deleteStaff(@Path("id") id: String): Response<Unit>
+
+    @GET("api/admin/promotions")
+    suspend fun getPromotions(): Response<AdminPromotionsResponse>
+
+    @POST("api/admin/promotions")
+    suspend fun createPromotion(@Body request: com.example.movie_booking_app.data.model.request.AdminPromotionRequest): Response<Unit>
+
+    @PUT("api/admin/promotions/{id}")
+    suspend fun updatePromotion(
+        @Path("id") id: String,
+        @Body request: com.example.movie_booking_app.data.model.request.AdminPromotionRequest
+    ): Response<Unit>
+
+    @DELETE("api/admin/promotions/{id}")
+    suspend fun deletePromotion(@Path("id") id: String): Response<Unit>
 }

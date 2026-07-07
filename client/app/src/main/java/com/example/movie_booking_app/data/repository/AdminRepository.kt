@@ -33,4 +33,16 @@ class AdminRepository @Inject constructor(
 
     suspend fun deleteStaff(id: String) =
         api.deleteStaff(id)
+
+    suspend fun getPromotions() =
+        api.getPromotions()
+
+    suspend fun createPromotion(request: com.example.movie_booking_app.data.model.request.AdminPromotionRequest) =
+        api.createPromotion(request)
+
+    suspend fun updatePromotion(id: String, request: com.example.movie_booking_app.data.model.request.AdminPromotionRequest) =
+        api.updatePromotion(id, request)
+
+    suspend fun deletePromotion(id: String) =
+        api.deletePromotion(id)
 }

@@ -31,4 +31,7 @@ interface MovieApi {
 
     @DELETE("api/admin/movies/{id}")
     suspend fun deleteMovie(@Path("id") id: String): Response<Unit>
+
+    @GET("api/promotions")
+    suspend fun getPromotions(): Response<com.example.movie_booking_app.data.model.response.AdminPromotionsResponse>
 }
