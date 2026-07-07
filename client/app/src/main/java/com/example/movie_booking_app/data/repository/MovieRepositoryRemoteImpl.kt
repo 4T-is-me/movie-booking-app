@@ -1,6 +1,7 @@
 package com.example.movie_booking_app.data.repository
 
 import com.example.movie_booking_app.data.api.MovieApi
+import com.example.movie_booking_app.data.api.AdminApiService
 import com.example.movie_booking_app.data.model.entity.Movie
 import com.example.movie_booking_app.data.model.entity.MovieNews
 import com.example.movie_booking_app.data.model.entity.Promo
@@ -18,7 +19,8 @@ import javax.inject.Inject
  * Connects directly to the backend API.
  */
 class MovieRepositoryRemoteImpl @Inject constructor(
-    private val api: MovieApi
+    private val api: MovieApi,
+    private val adminApi: AdminApiService
 ) : MovieRepository {
 
     override fun getMovies(): Flow<List<Movie>> = flow {
@@ -32,6 +34,37 @@ class MovieRepositoryRemoteImpl @Inject constructor(
             }
         } catch (e: Exception) {
             emit(emptyList())
+        }
+    }
+
+    override fun getAdminMovies(): Flow<List<Movie>> = flow {
+        try {
+            // Thử gọi API admin trước
+            val response = adminApi.getMovies()
+            if (response.isSuccessful) {
+                val data = response.body()?.data ?: emptyList()
+                emit(data)
+            } else {
+                // Nếu API admin lỗi (có thể chưa có), thử gọi API movies bình thường
+                val publicResponse = api.getMovies(1000)
+                if (publicResponse.isSuccessful) {
+                    emit(publicResponse.body()?.data ?: emptyList())
+                } else {
+                    emit(emptyList())
+                }
+            }
+        } catch (e: Exception) {
+            // Fallback sang API public nếu có exception
+            try {
+                val publicResponse = api.getMovies(1000)
+                if (publicResponse.isSuccessful) {
+                    emit(publicResponse.body()?.data ?: emptyList())
+                } else {
+                    emit(emptyList())
+                }
+            } catch (e2: Exception) {
+                emit(emptyList())
+            }
         }
     }
 
@@ -91,7 +124,7 @@ class MovieRepositoryRemoteImpl @Inject constructor(
 
     override suspend fun addMovie(request: AddMovieRequest): Boolean {
         return try {
-            val response = api.addMovie(request)
+            val response = adminApi.createMovie(request)
             response.isSuccessful
         } catch (e: Exception) {
             false
@@ -101,7 +134,7 @@ class MovieRepositoryRemoteImpl @Inject constructor(
 
     override suspend fun updateMovie(id: String, request: UpdateMovieRequest): Boolean {
         return try {
-            val response = api.updateMovie(id, request)
+            val response = adminApi.updateMovie(id, request)
             response.isSuccessful
         } catch (e: Exception) {
             false
@@ -110,7 +143,7 @@ class MovieRepositoryRemoteImpl @Inject constructor(
 
     override suspend fun deleteMovie(id: String): Boolean {
         return try {
-            val response = api.deleteMovie(id)
+            val response = adminApi.deleteMovie(id)
             if (!response.isSuccessful) {
                 val errorBody = response.errorBody()?.string()
                 println("Delete movie failed: ${response.code()} - $errorBody")

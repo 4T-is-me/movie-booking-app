@@ -40,8 +40,15 @@ class AdminMovieListFragment : Fragment() {
 
         adapter = AdminMovieAdapter(
             onEditClick = { movie ->
-                Toast.makeText(context, "Edit: ${movie.movieName}", Toast.LENGTH_SHORT).show()
-                // TODO: Open Edit Fragment
+                val fragment = AdminCreateMovieFragment().apply {
+                    arguments = Bundle().apply {
+                        putSerializable("movie", movie)
+                    }
+                }
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainer, fragment)
+                    .addToBackStack(null)
+                    .commit()
             },
             onDeleteClick = { movie ->
                 showDeleteConfirmationDialog(movie)
@@ -65,10 +72,10 @@ class AdminMovieListFragment : Fragment() {
 
     private fun showDeleteConfirmationDialog(movie: Movie) {
         MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Xóa phim")
-            .setMessage("Bạn có chắc chắn muốn xóa phim \"${movie.movieName}\" không?")
-            .setNegativeButton("Hủy", null)
-            .setPositiveButton("Xóa") { _, _ ->
+            .setTitle("Delete Movie")
+            .setMessage("Are you sure you want to delete the movie \"${movie.movieName}\"?")
+            .setNegativeButton("Cancel", null)
+            .setPositiveButton("Delete") { _, _ ->
                 movie.id?.let { viewModel.deleteMovie(it) }
             }
             .show()
@@ -83,7 +90,7 @@ class AdminMovieListFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.movieActionSuccess.collect { success ->
-                val message = if (success) "Xóa phim thành công" else "Xóa phim thất bại"
+                val message = if (success) "Movie deleted successfully" else "Failed to delete movie"
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             }
         }

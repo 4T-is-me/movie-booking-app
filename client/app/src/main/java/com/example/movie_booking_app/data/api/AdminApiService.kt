@@ -1,15 +1,32 @@
 package com.example.movie_booking_app.data.api
 
+import com.example.movie_booking_app.data.model.request.AddMovieRequest
+import com.example.movie_booking_app.data.model.request.UpdateMovieRequest
+import com.example.movie_booking_app.data.model.response.*
 import com.example.movie_booking_app.data.model.response.DailyRevenueResponse
 import com.example.movie_booking_app.data.model.response.MonthlyRevenueResponse
 import com.example.movie_booking_app.data.model.response.MovieRevenueResponse
 import com.example.movie_booking_app.data.model.response.OverviewStatsResponse
 import com.example.movie_booking_app.data.model.response.AdminStaffListResponse
 import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface AdminApiService {
+    @GET("api/admin/movies")
+    suspend fun getMovies(): Response<MovieListResponse>
+
+    @POST("api/admin/movies")
+    suspend fun createMovie(@Body request: AddMovieRequest): Response<Unit>
+
+    @PUT("api/admin/movies/{id}")
+    suspend fun updateMovie(
+        @Path("id") id: String,
+        @Body request: UpdateMovieRequest
+    ): Response<Unit>
+
+    @DELETE("api/admin/movies/{id}")
+    suspend fun deleteMovie(@Path("id") id: String): Response<Unit>
+
     @GET("api/admin/stats/overview")
     suspend fun getOverviewStats(): Response<OverviewStatsResponse>
 
