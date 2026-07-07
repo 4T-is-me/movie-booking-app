@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import { env } from './src/config/environment.js';
 import connectDB from './src/config/mongoDB.js';
 import { CleanUpJobs } from './src/jobs/cleanUpJobs.js';
+import { Cinema } from './src/models/cinemaModel.js';
 import movieRoutes from './src/routes/movieRoutes.js';
 import showtimeRoutes from './src/routes/showtimeRoutes.js';
 import { accountRoute } from './src/routes/accountRoute.js';
@@ -48,6 +49,15 @@ app.use('/api/admin/members', adminMemberRoutes);
 app.use('/api/admin/promotions', adminPromotionRoutes);
 app.use('/api/admin/stats', adminStatsRoutes);
 app.use('/api/manager/rooms', managerRoomRoutes);
+
+app.get('/api/cinemas', async (req, res) => {
+    try {
+        const cinemas = await Cinema.find({});
+        res.json({ success: true, data: cinemas });
+    } catch (e) {
+        res.status(500).json({ success: false, message: e.message });
+    }
+});
 
 const startServer = async () => {
     await connectDB();

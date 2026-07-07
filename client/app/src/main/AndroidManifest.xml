@@ -84,6 +84,12 @@
             android:exported="true"
             android:theme="@style/Theme.Moviebookingapp" />
 
+        <activity
+            android:name=".view.activity.AdminStaffActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+
 
 
         <activity
