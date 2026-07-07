@@ -75,14 +75,27 @@ class AdminStaffFragment : Fragment() {
     }
 
     private fun showDeleteConfirmationDialog(staff: Staff) {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Khóa tài khoản nhân viên")
-            .setMessage("Bạn có chắc chắn muốn khóa tài khoản của nhân viên \"${staff.fullName}\"?")
-            .setPositiveButton("Khóa") { _, _ ->
-                staff.id?.let { viewModel.deleteStaff(it) }
-            }
-            .setNegativeButton("Hủy", null)
-            .show()
+        val dialog = android.app.Dialog(requireContext())
+        dialog.setContentView(com.example.movie_booking_app.R.layout.dialog_confirm_delete_staff)
+        dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
+        dialog.setCancelable(true)
+
+        val tvDeleteMessage = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDeleteMessage)
+        val btnCancel = dialog.findViewById<com.google.android.material.button.MaterialButton>(com.example.movie_booking_app.R.id.btnCancelDelete)
+        val btnConfirm = dialog.findViewById<com.google.android.material.button.MaterialButton>(com.example.movie_booking_app.R.id.btnConfirmDelete)
+
+        tvDeleteMessage.text = "Bạn có muốn xóa tài khoản nhân viên \"${staff.fullName}\" không?"
+
+        btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        btnConfirm.setOnClickListener {
+            dialog.dismiss()
+            staff.id?.let { viewModel.deleteStaff(it) }
+        }
+
+        dialog.show()
     }
 
     private fun observeViewModel() {

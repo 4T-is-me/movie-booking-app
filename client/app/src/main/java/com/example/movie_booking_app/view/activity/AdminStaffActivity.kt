@@ -53,7 +53,7 @@ class AdminStaffActivity : BaseActivity() {
             binding.layoutUsername.visibility = View.GONE
             binding.layoutPassword.visibility = View.GONE
             binding.layoutAddress.visibility = View.VISIBLE
-
+ 
             // Pre-populate fields
             currentStaff?.let { staff ->
                 binding.edtFullName.setText(staff.fullName)
