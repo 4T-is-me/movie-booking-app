@@ -33,4 +33,7 @@ class AdminRepository @Inject constructor(
 
     suspend fun deleteStaff(id: String) =
         api.deleteStaff(id)
+
+    suspend fun getPromotions() =
+        api.getPromotions()
 }

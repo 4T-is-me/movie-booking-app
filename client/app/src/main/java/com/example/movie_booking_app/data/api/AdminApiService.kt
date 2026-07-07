@@ -65,4 +65,7 @@ interface AdminApiService {
 
     @DELETE("api/admin/staff/{id}")
     suspend fun deleteStaff(@Path("id") id: String): Response<Unit>
+
+    @GET("api/admin/promotions")
+    suspend fun getPromotions(): Response<AdminPromotionsResponse>
 }
