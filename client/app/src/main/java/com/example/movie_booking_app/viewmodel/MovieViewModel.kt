@@ -59,7 +59,7 @@ class MovieViewModel @Inject constructor(
 
     fun loadAdminMovies() {
         viewModelScope.launch {
-            repository.getMovies().collect { movies ->
+            repository.getAdminMovies().collect { movies ->
                 _adminMovies.value = movies
             }
         }
@@ -159,13 +159,13 @@ class MovieViewModel @Inject constructor(
                 _movieActionSuccess.emit(success)
                 if (success) {
                     loadAdminMovies()
-                    _movieActionMessage.emit("Xóa phim thành công")
+                    _movieActionMessage.emit("Movie deleted successfully")
                 } else {
-                    _movieActionMessage.emit("Xóa phim thất bại")
+                    _movieActionMessage.emit("Failed to delete movie")
                 }
             } catch (e: Exception) {
                 _movieActionSuccess.emit(false)
-                _movieActionMessage.emit("Xóa phim thất bại: ${e.message ?: "Lỗi không xác định"}")
+                _movieActionMessage.emit("Failed to delete movie: ${e.message ?: "Unknown error"}")
             }
         }
     }
@@ -175,8 +175,33 @@ class MovieViewModel @Inject constructor(
             try {
                 val success = repository.addMovie(request)
                 _movieActionSuccess.emit(success)
+                if (success) {
+                    loadAdminMovies()
+                    _movieActionMessage.emit("Movie added successfully")
+                } else {
+                    _movieActionMessage.emit("Failed to add movie")
+                }
             } catch (e: Exception) {
                 _movieActionSuccess.emit(false)
+                _movieActionMessage.emit("Failed to add movie: ${e.message ?: "Unknown error"}")
+            }
+        }
+    }
+
+    fun updateMovie(id: String, request: com.example.movie_booking_app.data.model.request.UpdateMovieRequest) {
+        viewModelScope.launch {
+            try {
+                val success = repository.updateMovie(id, request)
+                _movieActionSuccess.emit(success)
+                if (success) {
+                    loadAdminMovies()
+                    _movieActionMessage.emit("Movie updated successfully")
+                } else {
+                    _movieActionMessage.emit("Failed to update movie")
+                }
+            } catch (e: Exception) {
+                _movieActionSuccess.emit(false)
+                _movieActionMessage.emit("Failed to update movie: ${e.message ?: "Unknown error"}")
             }
         }
     }
