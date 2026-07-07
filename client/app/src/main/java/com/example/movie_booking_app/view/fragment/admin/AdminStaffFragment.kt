@@ -1,16 +1,20 @@
 package com.example.movie_booking_app.view.fragment.admin
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.movie_booking_app.data.model.entity.Staff
 import com.example.movie_booking_app.databinding.FragmentAdminStaffBinding
+import com.example.movie_booking_app.view.activity.AdminStaffActivity
 import com.example.movie_booking_app.view.adapter.AdminStaffAdapter
 import com.example.movie_booking_app.viewmodel.admin.AdminStaffViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,10 +44,25 @@ class AdminStaffFragment : Fragment() {
         setupRecyclerView()
         setupSearch()
         observeViewModel()
+
+        binding.fabAddStaff.setOnClickListener {
+            val intent = Intent(requireContext(), AdminStaffActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun setupRecyclerView() {
-        adapter = AdminStaffAdapter()
+        adapter = AdminStaffAdapter(
+            onEditClick = { staff ->
+                val intent = Intent(requireContext(), AdminStaffActivity::class.java).apply {
+                    putExtra("staff", staff)
+                }
+                startActivity(intent)
+            },
+            onDeleteClick = { staff ->
+                showDeleteConfirmationDialog(staff)
+            }
+        )
         binding.rvAdminStaff.layoutManager = LinearLayoutManager(context)
         binding.rvAdminStaff.adapter = adapter
     }
@@ -55,6 +74,17 @@ class AdminStaffFragment : Fragment() {
         }
     }
 
+    private fun showDeleteConfirmationDialog(staff: Staff) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Khóa tài khoản nhân viên")
+            .setMessage("Bạn có chắc chắn muốn khóa tài khoản của nhân viên \"${staff.fullName}\"?")
+            .setPositiveButton("Khóa") { _, _ ->
+                staff.id?.let { viewModel.deleteStaff(it) }
+            }
+            .setNegativeButton("Hủy", null)
+            .show()
+    }
+
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collectLatest { state ->
@@ -64,6 +94,20 @@ class AdminStaffFragment : Fragment() {
                 state.error?.let { err ->
                     Toast.makeText(context, err, Toast.LENGTH_SHORT).show()
                 }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.actionSuccess.collectLatest { success ->
+                if (success) {
+                    viewModel.loadStaff()
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.actionMessage.collectLatest { message ->
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             }
         }
     }

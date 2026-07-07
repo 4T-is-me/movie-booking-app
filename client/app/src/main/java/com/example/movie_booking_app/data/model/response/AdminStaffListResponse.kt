@@ -22,6 +22,14 @@ data class DbStaffItem(
     @SerializedName("identityCard") val identityCard: String? = null,
     @SerializedName("position") val position: String? = null,
     @SerializedName("salary") val salary: Double? = null,
+    @SerializedName("cinemaId") val cinemaId: String? = null,
+    @SerializedName("startDate") val startDate: String? = null,
+    @SerializedName("address") val address: String? = null,
+    @SerializedName("kpiPoints") val kpiPoints: Int? = null,
+    @SerializedName("ticketSold") val ticketSold: Int? = null,
+    @SerializedName("rating") val rating: Double? = null,
+    @SerializedName("totalRatings") val totalRatings: Int? = null,
+    @SerializedName("totalStars") val totalStars: Int? = null,
     @SerializedName("accountId") val account: DbStaffAccount? = null
 )
 

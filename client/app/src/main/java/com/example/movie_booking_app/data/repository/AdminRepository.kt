@@ -21,4 +21,16 @@ class AdminRepository @Inject constructor(
 
     suspend fun getStaffList(page: Int? = null, limit: Int? = null, search: String? = null) =
         api.getStaffList(page, limit, search)
+
+    suspend fun getCinemas() =
+        api.getCinemas()
+
+    suspend fun createStaff(request: com.example.movie_booking_app.data.model.request.CreateStaffRequest) =
+        api.createStaff(request)
+
+    suspend fun updateStaff(id: String, request: com.example.movie_booking_app.data.model.request.UpdateStaffRequest) =
+        api.updateStaff(id, request)
+
+    suspend fun deleteStaff(id: String) =
+        api.deleteStaff(id)
 }

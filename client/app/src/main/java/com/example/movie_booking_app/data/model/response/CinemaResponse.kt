@@ -1,0 +1,10 @@
+package com.example.movie_booking_app.data.model.response
+
+import com.example.movie_booking_app.data.model.entity.Cinema
+import com.google.gson.annotations.SerializedName
+
+data class CinemaResponse(
+    @SerializedName("success") val success: Boolean? = null,
+    @SerializedName("data") val data: List<Cinema>? = null,
+    @SerializedName("message") val message: String? = null
+)
