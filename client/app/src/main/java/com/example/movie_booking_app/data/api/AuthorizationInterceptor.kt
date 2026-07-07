@@ -10,7 +10,11 @@ import okhttp3.Response
  */
 class AuthorizationInterceptor(private val context: Context) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val token = TokenManager.getAccessToken(context)
+        var token = TokenManager.getAccessToken(context)
+        if (token.isNullOrEmpty()) {
+            val sharedPref = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+            token = sharedPref.getString("auth_token", null)
+        }
         val originalRequest = chain.request()
         
         // If there's a token, append it to the request as Bearer Authorization header

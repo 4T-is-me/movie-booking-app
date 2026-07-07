@@ -33,6 +33,30 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Added by AI – feature auto login routing – 2026-07-06
+        val sharedPref = getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+        val token = sharedPref.getString("auth_token", null)
+        val role = sharedPref.getString("role", "") ?: ""
+        
+        android.util.Log.d("MAIN_DEBUG", "AutoLogin check - token: ${token?.take(10)}..., role: $role")
+        
+        if (!token.isNullOrEmpty()) {
+            if (role.equals("Admin", ignoreCase = true)) {
+                val intent = Intent(this, AdminActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
+                return
+            } else if (role.equals("Manager", ignoreCase = true) || role.equals("Cinema Manager", ignoreCase = true)) {
+                val intent = Intent(this, ManagerActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
+                return
+            }
+        }
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -69,19 +93,6 @@ class MainActivity : BaseActivity() {
         } else {
             binding.bottomNav.visibility = android.view.View.VISIBLE
         }
-
-//        val token = sharedPref.getString("auth_token", null)
-//        val username = sharedPref.getString("username", "User")
-//        val role = sharedPref.getString("role", "user")
-//        if (token != null) {
-//            if (role?.contains("admin", ignoreCase = true) == true || username?.contains("admin", ignoreCase = true) == true) {
-//                val intent = Intent(this, AdminActivity::class.java)
-//                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-//                startActivity(intent)
-//                finish()
-//                return
-//            }
-//        }
     }
 
     private fun setupBackStackListener() {

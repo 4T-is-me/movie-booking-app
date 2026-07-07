@@ -13,7 +13,11 @@ class AuthInterceptor(private val context: Context) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
-        val token = TokenManager.getAccessToken(context)
+        var token = TokenManager.getAccessToken(context)
+        if (token.isNullOrEmpty()) {
+            val sharedPref = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+            token = sharedPref.getString("auth_token", null)
+        }
 
         val requestBuilder = originalRequest.newBuilder()
         if (!token.isNullOrEmpty()) {

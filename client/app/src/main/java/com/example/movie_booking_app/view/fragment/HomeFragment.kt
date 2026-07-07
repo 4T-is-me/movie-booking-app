@@ -49,7 +49,9 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         updateHeaderUI()
-        viewModel.loadHomeData()
+        // Added by AI – feature optimize performance – 2026-07-06
+        // Removed viewModel.loadHomeData() here to prevent excessive API calls and UI freezing.
+        // Data is already loaded in ViewModel init and cached in StateFlow.
     }
 
     private fun setupHeader() {
