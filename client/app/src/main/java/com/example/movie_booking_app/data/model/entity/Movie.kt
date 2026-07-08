@@ -25,4 +25,4 @@ data class Movie(
     val totalStars: Int?,
     val isDeleted: Boolean? = false,
     val tier: Int? = null
-)
+): Serializable
