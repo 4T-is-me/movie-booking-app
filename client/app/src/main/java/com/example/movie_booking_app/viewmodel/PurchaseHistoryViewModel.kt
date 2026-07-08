@@ -3,7 +3,7 @@ package com.example.movie_booking_app.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.response.BookingHistoryItem
-import com.example.movie_booking_app.data.repository.HistoryRepository
+import com.example.movie_booking_app.data.repository.PurchaseHistoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PurchaseHistoryViewModel @Inject constructor(
-    private val repository: HistoryRepository
+    private val repository: PurchaseHistoryRepository
 ) : ViewModel() {
 
     private val _isLoading = MutableStateFlow(false)
@@ -29,22 +29,23 @@ class PurchaseHistoryViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
-            repository.getBookingHistory().collect { response ->
-                _isLoading.value = false
-                if (response.isSuccessful) {
-                    val body = response.body()
-                    if (body != null && body.success) {
-                        // Display completed bookings only (paymentStatus == "paid")
-                        val completedList = body.data?.filter { 
-                            it.paymentStatus.trim().lowercase() == "paid" 
-                        } ?: emptyList()
-                        _bookings.value = completedList
+            try {
+                repository.getPurchaseHistory().collect { response ->
+                    _isLoading.value = false
+                    if (response.isSuccessful) {
+                        val body = response.body()
+                        if (body != null && body.success) {
+                            _bookings.value = body.data ?: emptyList()
+                        } else {
+                            _error.value = "Failed to load booking history"
+                        }
                     } else {
-                        _error.value = "Failed to load booking history"
+                        _error.value = "Server returned an error: ${response.code()}"
                     }
-                } else {
-                    _error.value = "Server returned an error: ${response.code()}"
                 }
+            } catch (e: Exception) {
+                _isLoading.value = false
+                _error.value = "Network error: ${e.localizedMessage ?: "Unknown error"}"
             }
         }
     }

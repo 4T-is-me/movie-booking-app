@@ -10,6 +10,8 @@ bookingRouter.post('/checkout', authMiddleware.isAuthorized, bookingController.h
 bookingRouter.get('/history', authMiddleware.isAuthorized, bookingController.handleGetHistory)
 // GET /api/booking/score-history --get score history
 bookingRouter.get('/score-history', authMiddleware.isAuthorized, bookingController.handleGetScoreHistory)
+// GET /api/booking/my-tickets --get active tickets
+bookingRouter.get('/my-tickets', authMiddleware.isAuthorized, bookingController.handleGetMyTickets)
 // POST /api/booking/:id - get booking detail
 bookingRouter.get('/:id', authMiddleware.isAuthorized, bookingController.handleGetBookingDetail)
 export const bookingRoute = {

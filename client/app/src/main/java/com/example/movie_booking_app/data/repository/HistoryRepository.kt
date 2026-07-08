@@ -13,11 +13,10 @@ class HistoryRepository @Inject constructor(
     private val paymentApi: PaymentApi
 ) {
     fun getBookingHistory(): Flow<Response<BookingHistoryResponse>> = flow {
-        try {
-            emit(paymentApi.getBookingHistory())
-        } catch (e: Exception) {
-            // Return empty response on failure
-            emit(Response.success(BookingHistoryResponse(false, emptyList())))
-        }
+        emit(paymentApi.getBookingHistory())
+    }
+
+    fun getBookingDetail(bookingId: String): Flow<Response<com.example.movie_booking_app.data.model.response.BookingDetailResponse>> = flow {
+        emit(paymentApi.getBookingDetail(bookingId))
     }
 }
