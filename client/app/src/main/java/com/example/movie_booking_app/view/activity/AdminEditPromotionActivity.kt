@@ -59,12 +59,12 @@ class AdminEditPromotionActivity : BaseActivity() {
 
     private fun setupUI() {
         // Setup Discount Type Dropdown
-        val discountTypes = arrayOf("Phần trăm (%)", "Số tiền cố định (VND)")
+        val discountTypes = arrayOf("Percentage (%)", "Fixed Amount (VND)")
         val typeAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, discountTypes)
         binding.actvDiscountType.setAdapter(typeAdapter)
 
         if (isEditMode) {
-            binding.tvFormTitle.text = "Cập Nhật Khuyến Mãi"
+            binding.tvFormTitle.text = "Update Promotion"
             
             currentPromotion?.let { promo ->
                 binding.edtPromoTitle.setText(promo.title)
@@ -72,9 +72,9 @@ class AdminEditPromotionActivity : BaseActivity() {
                 binding.edtCouponCode.setText(promo.couponCode ?: "")
                 
                 if (promo.discountType == "percentage") {
-                    binding.actvDiscountType.setText("Phần trăm (%)", false)
+                    binding.actvDiscountType.setText("Percentage (%)", false)
                 } else {
-                    binding.actvDiscountType.setText("Số tiền cố định (VND)", false)
+                    binding.actvDiscountType.setText("Fixed Amount (VND)", false)
                 }
 
                 binding.edtDiscountValue.setText(promo.discountValue?.toInt()?.toString() ?: "")
@@ -96,8 +96,8 @@ class AdminEditPromotionActivity : BaseActivity() {
                 }
             }
         } else {
-            binding.tvFormTitle.text = "Thêm Khuyến Mãi Mới"
-            binding.actvDiscountType.setText("Phần trăm (%)", false)
+            binding.tvFormTitle.text = "Add New Promotion"
+            binding.actvDiscountType.setText("Percentage (%)", false)
         }
     }
 
@@ -181,25 +181,25 @@ class AdminEditPromotionActivity : BaseActivity() {
 
         if (title.isEmpty() || detail.isEmpty() || couponCode.isEmpty() || discountTypeRaw.isEmpty() ||
             discountValueStr.isEmpty() || startDateStr.isEmpty() || endDateStr.isEmpty()) {
-            Toast.makeText(this, "Vui lòng nhập đầy đủ các trường thông tin bắt buộc (*)", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Please enter all required fields (*)", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val discountType = if (discountTypeRaw.contains("Phần trăm")) "percentage" else "fixed"
+        val discountType = if (discountTypeRaw.contains("Percentage")) "percentage" else "fixed"
         val discountValue = discountValueStr.toDoubleOrNull()
         if (discountValue == null || discountValue <= 0) {
-            Toast.makeText(this, "Mức giảm giá phải là số dương lớn hơn 0", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Discount value must be a positive number greater than 0", Toast.LENGTH_SHORT).show()
             return
         }
 
         if (discountType == "percentage" && discountValue > 100) {
-            Toast.makeText(this, "Mức giảm phần trăm không được vượt quá 100%", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Percentage discount cannot exceed 100%", Toast.LENGTH_SHORT).show()
             return
         }
 
         val minOrderValue = minOrderValueStr.toDoubleOrNull() ?: 0.0
         if (minOrderValue < 0) {
-            Toast.makeText(this, "Giá trị tối thiểu đơn hàng không được âm", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Minimum order value cannot be negative", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -210,7 +210,7 @@ class AdminEditPromotionActivity : BaseActivity() {
         val isoEndDate = convertSimpleToIsoDate(endDateStr)
         
         if (isoStartDate == null || isoEndDate == null) {
-            Toast.makeText(this, "Lỗi định dạng ngày tháng", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Invalid date format", Toast.LENGTH_SHORT).show()
             return
         }
 

@@ -73,10 +73,10 @@ class AdminPromotionActivity : BaseActivity() {
 
     private fun showDeleteConfirmationDialog(promotion: AdminPromotion) {
         MaterialAlertDialogBuilder(this)
-            .setTitle("Xóa Khuyến Mãi")
-            .setMessage("Bạn có chắc chắn muốn xóa chương trình khuyến mãi \"${promotion.title}\" không?")
-            .setNegativeButton("Hủy", null)
-            .setPositiveButton("Xóa") { _, _ ->
+            .setTitle("Delete Promotion")
+            .setMessage("Are you sure you want to delete the promotion \"${promotion.title}\"?")
+            .setNegativeButton("Cancel", null)
+            .setPositiveButton("Delete") { _, _ ->
                 viewModel.deletePromotion(promotion.id)
             }
             .show()
