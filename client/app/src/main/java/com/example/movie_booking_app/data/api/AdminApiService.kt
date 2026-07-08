@@ -50,4 +50,34 @@ interface AdminApiService {
         @Query("limit") limit: Int? = null,
         @Query("search") search: String? = null
     ): Response<AdminStaffListResponse>
+
+    @GET("api/cinemas")
+    suspend fun getCinemas(): Response<CinemaResponse>
+
+    @POST("api/admin/staff")
+    suspend fun createStaff(@Body request: com.example.movie_booking_app.data.model.request.CreateStaffRequest): Response<Unit>
+
+    @PUT("api/admin/staff/{id}")
+    suspend fun updateStaff(
+        @Path("id") id: String,
+        @Body request: com.example.movie_booking_app.data.model.request.UpdateStaffRequest
+    ): Response<Unit>
+
+    @DELETE("api/admin/staff/{id}")
+    suspend fun deleteStaff(@Path("id") id: String): Response<Unit>
+
+    @GET("api/admin/promotions")
+    suspend fun getPromotions(): Response<AdminPromotionsResponse>
+
+    @POST("api/admin/promotions")
+    suspend fun createPromotion(@Body request: com.example.movie_booking_app.data.model.request.AdminPromotionRequest): Response<Unit>
+
+    @PUT("api/admin/promotions/{id}")
+    suspend fun updatePromotion(
+        @Path("id") id: String,
+        @Body request: com.example.movie_booking_app.data.model.request.AdminPromotionRequest
+    ): Response<Unit>
+
+    @DELETE("api/admin/promotions/{id}")
+    suspend fun deletePromotion(@Path("id") id: String): Response<Unit>
 }

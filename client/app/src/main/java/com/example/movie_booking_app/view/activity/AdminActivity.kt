@@ -67,8 +67,8 @@ class AdminActivity : BaseActivity() {
                     loadFragment(AdminRoomListFragment())
                 }
                 R.id.nav_promotions -> {
-                    tvHeaderTitle.text = "Promotions"
-                    loadFragment(BlankFragment())
+                    val intent = Intent(this, AdminPromotionActivity::class.java)
+                    startActivity(intent)
                 }
                 R.id.nav_members -> {
                     tvHeaderTitle.text = "Members"

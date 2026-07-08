@@ -11,7 +11,7 @@ import com.example.movie_booking_app.data.repository.MovieRepository
 import com.example.movie_booking_app.data.repository.RepositoryProvider
 import com.example.movie_booking_app.databinding.FragmentGenericListBinding
 import com.example.movie_booking_app.view.adapter.MovieNewsAdapter
-import com.example.movie_booking_app.view.adapter.PromoAdapter
+import com.example.movie_booking_app.view.adapter.PromoSeeAllAdapter
 import com.example.movie_booking_app.view.adapter.ServiceAdapter
 import kotlinx.coroutines.launch
 
@@ -55,7 +55,7 @@ class GenericGridFragment : Fragment() {
         when (sectionName) {
             "Promo" -> {
                 binding.rvGenericList.layoutManager = GridLayoutManager(context, 1)
-                val adapter = PromoAdapter()
+                val adapter = PromoSeeAllAdapter()
                 binding.rvGenericList.adapter = adapter
                 viewLifecycleOwner.lifecycleScope.launch { movieRepository.getPromos().collect { adapter.submitList(it) } }
             }

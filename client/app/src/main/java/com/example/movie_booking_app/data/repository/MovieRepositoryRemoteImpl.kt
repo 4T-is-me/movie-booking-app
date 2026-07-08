@@ -83,10 +83,29 @@ class MovieRepositoryRemoteImpl @Inject constructor(
     }
 
     override fun getPromos(): Flow<List<Promo>> = flow {
-        emit(listOf(
-            Promo("1", "Sale 30%", "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=500", "MOVIE30"),
-            Promo("2", "Buy 1 Get 1", "https://images.unsplash.com/photo-1616469829581-73993eb86b02?w=500", "B1G1")
-        ))
+        try {
+            val response = api.getPromotions()
+            if (response.isSuccessful && response.body() != null) {
+                val promotions = response.body()?.data?.map { adminPromo ->
+                    Promo(
+                        id = adminPromo.id,
+                        title = adminPromo.title,
+                        imageUrl = adminPromo.image ?: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=500",
+                        discountCode = adminPromo.couponCode ?: "",
+                        detail = adminPromo.detail,
+                        discountType = adminPromo.discountType,
+                        discountValue = adminPromo.discountValue,
+                        minOrderValue = adminPromo.minOrderValue,
+                        endDate = adminPromo.endDate
+                    )
+                } ?: emptyList()
+                emit(promotions)
+            } else {
+                emit(emptyList())
+            }
+        } catch (e: Exception) {
+            emit(emptyList())
+        }
     }
 
     override fun getServices(): Flow<List<Service>> = flow {

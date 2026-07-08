@@ -19,6 +19,7 @@ export const getStaffList = async (req, res) => {
 
 export const createStaff = async (req, res) => {
     try {
+        console.log("CREATE STAFF BODY:", req.body);
         const { username, email, password, roleId, role, ...staffData } = req.body;
         const accountData = { username, email, password, roleId, role };
         const staff = await adminStaffService.createStaff(accountData, staffData);

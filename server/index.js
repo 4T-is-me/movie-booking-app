@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import { env } from './src/config/environment.js';
 import connectDB from './src/config/mongoDB.js';
 import { CleanUpJobs } from './src/jobs/cleanUpJobs.js';
+import { Cinema } from './src/models/cinemaModel.js';
 import movieRoutes from './src/routes/movieRoutes.js';
 import showtimeRoutes from './src/routes/showtimeRoutes.js';
 import { accountRoute } from './src/routes/accountRoute.js';
@@ -21,6 +22,8 @@ import adminStatsRoutes from './src/routes/adminStatsRoutes.js';
 import adminPromotionRoutes from './src/routes/adminPromotionRoutes.js';
 import managerRoomRoutes from './src/routes/managerRoomRoutes.js';
 import managerDashboardRoutes from './src/routes/managerDashboardRoute.js';
+import { errorHandlingMiddleware } from './src/middlewares/errorHandlingMiddleware.js';
+
 
 const app = express();
 const PORT = env.PORT || 5000;
@@ -50,6 +53,18 @@ app.use('/api/admin/promotions', adminPromotionRoutes);
 app.use('/api/admin/stats', adminStatsRoutes);
 app.use('/api/manager/rooms', managerRoomRoutes);
 app.use('/api/manager/dashboard', managerDashboardRoutes);
+
+app.get('/api/cinemas', async (req, res) => {
+    try {
+        const cinemas = await Cinema.find({});
+        res.json({ success: true, data: cinemas });
+    } catch (e) {
+        res.status(500).json({ success: false, message: e.message });
+    }
+});
+
+// Centralized error handling middleware
+app.use(errorHandlingMiddleware);
 
 const startServer = async () => {
     await connectDB();

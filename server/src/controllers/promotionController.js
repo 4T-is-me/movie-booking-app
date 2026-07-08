@@ -15,15 +15,26 @@ const applyPromotion = async (req, res, next) => {
 
         const now = new Date();
         const promotion = await Promotion.findOne({
-            title: code.trim().toUpperCase(),
-            startTime: { $lte: now },
-            endTime: { $gte: now }
+            $or: [
+                { couponCode: code.trim().toUpperCase() },
+                { title: code.trim().toUpperCase() }
+            ],
+            isDeleted: false,
+            startDate: { $lte: now },
+            endDate: { $gte: now }
         });
 
         if (!promotion) {
             return res.status(StatusCodes.NOT_FOUND).json({
                 success: false,
                 message: "Invalid or expired coupon code"
+            });
+        }
+
+        if (promotion.maxUsage !== -1 && promotion.usageCount >= promotion.maxUsage) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                success: false,
+                message: "This coupon code has reached its maximum usage limit"
             });
         }
 
@@ -64,7 +75,25 @@ const validatePromotion = async (req, res, next) => {
     }
 };
 
+const getPromotions = async (req, res, next) => {
+    try {
+        const now = new Date();
+        const promotions = await Promotion.find({
+            isDeleted: false,
+            endDate: { $gte: now }
+        }).sort({ createdAt: -1 });
+
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            data: promotions
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const promotionController = {
     applyPromotion,
-    validatePromotion
+    validatePromotion,
+    getPromotions
 };
