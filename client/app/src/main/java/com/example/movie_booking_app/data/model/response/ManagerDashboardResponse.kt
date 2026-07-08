@@ -6,12 +6,18 @@ data class ManagerDashboardResponse (
     val data: DashboardData?
 )
 
+data class WeeklyRevenueResponse(
+    val date: String,      // ex: "2026-07-08"
+    val totalAmount: Double // Revenue amount for that day
+)
+
 data class DashboardData(
     val managerId: String,
     val managerName: String,
     val cinemaId: String,
     val kpiSummary: KpiSummary,
-    val todayShowtimes: List<ShowtimeTodayResponse>
+    val todayShowtimes: List<ShowtimeTodayResponse>,
+    val weeklyRevenue: List<WeeklyRevenueResponse>
 )
 
 data class KpiSummary(
@@ -21,8 +27,10 @@ data class KpiSummary(
     val runningMoviesToday: Int,
     val activeScreenToday: Int,
     val allScreenToday: Int,
-    val occupancyRate: String
+    val occupancyRate: String,
 )
+
+
 data class ShowtimeTodayResponse(
     val showtimeId: String,
     val movieId: String,

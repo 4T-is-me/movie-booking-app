@@ -1,28 +1,29 @@
 package com.example.movie_booking_app.view.activity
 
 import android.content.Intent
-import android.icu.number.NumberFormatter
+import android.graphics.Color
+import com.github.mikephil.charting.data.Entry
 import android.os.Bundle
 import android.util.Log
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.local.TokenManager
+import com.example.movie_booking_app.data.model.response.WeeklyRevenueResponse
 import com.example.movie_booking_app.databinding.ActivityManagerBinding
 import com.example.movie_booking_app.view.activity.manager.ManagerRoomListActivity
 import com.example.movie_booking_app.view.adapter.manager.ManagerShowtimeAdapter
 import com.example.movie_booking_app.viewmodel.manager.ManagerViewModel
-import com.google.android.material.navigation.NavigationView
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import java.lang.System.console
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -93,8 +94,8 @@ class ManagerActivity : AppCompatActivity() {
 
 
                     val listShowtime = data.todayShowtimes.orEmpty()
-                    //Log.d("CheckShowtime", "Danh sách lịch chiếu: $listShowtime")
-                    //gửi data cho adapter
+                    //Log.d("CheckShowtime", "Showtimes List: $listShowtime")
+                    //send data to the adapter
                     if (listShowtime.isEmpty()) {
                         binding.rvTodayShowtimes.visibility = android.view.View.GONE
                         binding.tvNoShowtimes.visibility = android.view.View.VISIBLE
@@ -106,9 +107,78 @@ class ManagerActivity : AppCompatActivity() {
                         binding.rvTodayShowtimes.visibility = android.view.View.VISIBLE
                         binding.tvNoShowtimes.visibility = android.view.View.GONE
                     }
+
+                    val weeklyData = data.weeklyRevenue.orEmpty()
+                    //Log.d("CheckShowtime", "Data: $weeklyData")
+                    if(weeklyData.isNotEmpty()) {
+                        setUpWeeklyChart(weeklyData)
+                    }
                 }
             }
         }
+    }
+
+    private fun setUpWeeklyChart(weeklyList: List<WeeklyRevenueResponse>) {
+        val entries = ArrayList<Entry>()
+        val lables = ArrayList<String>()
+
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("E", Locale("en", "US"))
+        //nạp data
+        weeklyList.forEachIndexed { index, item ->
+            entries.add(Entry(index.toFloat(), item.totalAmount.toFloat()))
+            val dayOfWeekName = try {
+                val date = inputFormat.parse(item.date)
+                date?.let { outputFormat.format(it) } ?: item.date
+            } catch (e: Exception) {
+                item.date // Returns the original date
+            }
+            lables.add(dayOfWeekName)
+        }
+
+        //lines data
+        val lineDataSet = LineDataSet(entries, "Revenue (VND)").apply {
+            color = Color.parseColor("#D4AF37")
+            setCircleColor(Color.parseColor("#D4AF37"))
+            lineWidth = 3f                      // Line thickness
+            circleRadius = 4f                   // Node size
+            setDrawCircleHole(false)
+            valueTextColor = Color.WHITE
+            valueTextSize = 10f
+            mode = LineDataSet.Mode.CUBIC_BEZIER    // Smooth and curve the line
+            setDrawFilled(true)                    // Apply a subtle gradient fill below the curved line
+            fillColor = Color.parseColor("#D4AF37")
+            fillAlpha = 25                          // Opacity of the bottom shadow area
+
+        }
+
+        val lineData = LineData(lineDataSet)
+        binding.lineChartWeekly.apply {
+            data = lineData
+            description.isEnabled = false
+            legend.textColor = Color.WHITE
+
+            // Cấu hình trục X (Trục ngang dưới cùng)
+            xAxis.apply {
+                position = XAxis.XAxisPosition.BOTTOM
+                textColor = Color.WHITE
+                valueFormatter = IndexAxisValueFormatter(lables)
+                granularity = 1f
+                setDrawGridLines(false)               // Hide vertical grid lines for a cleaner app look
+            }
+            // Configure left Y-axis (Display amount)
+            axisLeft.apply {
+                textColor = Color.WHITE
+                setDrawGridLines(true)
+                gridColor = Color.parseColor("#2C2C2E") // Dark grid color blends with the cinema's black background
+            }
+            // Hide the right Y-axis
+            axisRight.isEnabled = false
+            // Animation effect that runs when the chart loads
+            animateX(1000)
+            invalidate() // Refresh chart
+        }
+
     }
 
     private fun setupNavigationEvents() {
