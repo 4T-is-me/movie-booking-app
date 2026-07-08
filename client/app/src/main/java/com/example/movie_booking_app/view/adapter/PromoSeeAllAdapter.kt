@@ -22,6 +22,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import android.content.Intent
+import com.example.movie_booking_app.view.activity.PromotionDetailActivity
 
 class PromoSeeAllAdapter : ListAdapter<Promo, PromoSeeAllAdapter.PromoViewHolder>(PromoDiffCallback()) {
 
@@ -77,6 +79,23 @@ class PromoSeeAllAdapter : ListAdapter<Promo, PromoSeeAllAdapter.PromoViewHolder
             // Parse and format date range
             val formattedDate = formatIsoDate(promo.endDate)
             tvPromoDateRange.text = "Valid until: $formattedDate"
+
+            // Click card to open details screen
+            itemView.setOnClickListener {
+                val context = itemView.context
+                val intent = Intent(context, PromotionDetailActivity::class.java).apply {
+                    putExtra("promo_id", promo.id)
+                    putExtra("promo_title", promo.title)
+                    putExtra("promo_image", promo.imageUrl)
+                    putExtra("promo_code", promo.discountCode)
+                    putExtra("promo_detail", promo.detail)
+                    putExtra("promo_discount_type", promo.discountType)
+                    putExtra("promo_discount_value", promo.discountValue ?: 0.0)
+                    putExtra("promo_min_order", promo.minOrderValue ?: 0.0)
+                    putExtra("promo_end_date", promo.endDate)
+                }
+                context.startActivity(intent)
+            }
 
             // Copy button click listener with premium feedback animation
             btnCopyCode.setOnClickListener {
