@@ -272,24 +272,53 @@ const getOccupancyRateToday = async (cinemaId) => {
     return Number((bookedSeats / totalSeats) * 100).toFixed(2);
 }
 
-
-
-const getTodayShowtimes = async (cinemaId) => {
-
+const getRangeDate = (type) => {
     const now = new Date();
-    const year = now.getUTCFullYear();
-    const month = String(now.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(now.getUTCDate()).padStart(2, '0');
+    let start, end;
 
-    const startOfDay = new Date(`${year}-${month}-${day}T00:00:00.000Z`);
-    const endOfDay = new Date(`${year}-${month}-${day}T23:59:59.999Z`);
+    switch (type) {
+        case 'day':
+            start = new Date(now.setUTCHours(0, 0, 0, 0));
+            end = new Date(now.setUTCHours(23, 59, 59, 999));
+            break;
+        case 'week':
+            // Lấy đầu tuần (Thứ 2) và cuối tuần (Chủ nhật)
+            const currentDay = now.getUTCDay();
+            const distanceToMonday = currentDay === 0 ? -6 : 1 - currentDay; 
+            start = new Date(now.setUTCDate(now.getUTCDate() + distanceToMonday));
+            start.setUTCHours(0, 0, 0, 0);
+            
+            end = new Date(start);
+            end.setUTCDate(start.getUTCDate() + 6);
+            end.setUTCHours(23, 59, 59, 999);
+            break;
+        case 'month':
+            // Lấy từ ngày 1 đến ngày cuối cùng của tháng hiện tại
+            start = new Date(Date.utc(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0));
+            end = new Date(Date.utc(now.getUTCFullYear(), now.getUTCMonth() + 1, 0, 23, 59, 59, 999));
+            break;
+        case 'year':
+            // Lấy từ 01/01 đến 31/12 của năm hiện tại
+            start = new Date(Date.utc(now.getUTCFullYear(), 0, 1, 0, 0, 0, 0));
+            end = new Date(Date.utc(now.getUTCFullYear(), 11, 31, 23, 59, 59, 999));
+            break;
+        default:
+            throw new Error("Loại report không hợp lệ!");
+    }
+    return { start, end };
+};
 
-    // --- TEST FULL PIPELINE CÓ PRESERVE UNWIND ---
+
+
+const getRevenueReport = async (cinemaId, reportType = 'day') => {
+    const now = new Date();
+    const { start, end } = getRangeDate(reportType);
+
     const showtimes = await Showtime.aggregate([
         {
             $match: {
                 cinemaId: new mongoose.Types.ObjectId(cinemaId),
-                showDate: { $gte: startOfDay, $lte: endOfDay },
+                showDate: { $gte: start, $lte: end },
                 isDeleted: false
             }
         },
@@ -302,9 +331,7 @@ const getTodayShowtimes = async (cinemaId) => {
                 as: 'movieInfo'
             }
         },
-        // Chống bốc hơi dữ liệu nếu sai tên collection
         { $unwind: { path: '$movieInfo', preserveNullAndEmptyArrays: true } },
-
         {
             $lookup: {
                 from: 'cinema_rooms', 
@@ -314,7 +341,6 @@ const getTodayShowtimes = async (cinemaId) => {
             }
         },
         { $unwind: { path: '$roomInfo', preserveNullAndEmptyArrays: true } },
-
         {
             $lookup: {
                 from: 'bookings',
@@ -384,6 +410,66 @@ const getTodayShowtimes = async (cinemaId) => {
 
     return showtimes;
 };
+
+
+/**
+ * Daily revenue for each day of the service week
+ * 
+ */
+const getWeeklyRevenueChartData = async (cinemaId) => {
+    const endOfWeek = new Date();
+    endOfWeek.setHours(23, 59, 59, 999);
+
+    const startOfWeek = new Date();
+    startOfWeek.setDate(startOfWeek.getDate() - 6);// Get the last 7 days, including today
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const result = await Booking.aggregate([
+        {
+            $match: {
+                paymentStatus: 'paid',
+                createdAt: { $gte: startOfWeek, $lte: endOfWeek }
+            }
+        },
+        {
+            $lookup: {
+                from: 'showtimes',
+                localField: 'showtimeId',
+                foreignField: '_id',
+                as: 'showtimeInfo'
+            }
+        },
+        { $unwind: '$showtimeInfo' },
+        {
+            $match: {
+                'showtimeInfo.cinemaId': new mongoose.Types.ObjectId(cinemaId)
+            }
+        },
+        {
+            $group: {
+                _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt", timezone: "+07:00" } },
+                totalAmount: { $sum: '$finalAmount' }
+            }
+        },
+        { $sort: { _id: 1 } }
+    ]);
+
+    // Reformat the data to cover 7 consecutive days; set revenue to 0 for days with no sales.
+    const weeklyReport = [];
+    for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const dateStr = d.toLocaleDateString('en-CA'); // YYYY-MM-DD
+        
+        const dayData = result.find(item => item._id === dateStr);
+        weeklyReport.push({
+            date: dateStr,
+            totalAmount: dayData ? dayData.totalAmount : 0
+        });
+    }
+    return weeklyReport;
+};
+
 /**
  * Tổng hợp toàn bộ dữ liệu Dashboard cho Manager dựa trên accountId lấy từ JWT
  * @param {string} accountId 
@@ -405,7 +491,8 @@ const getManagerDashboard = async (accountId) => {
         activeScreenToday,
         allScreenToday,
         occupancyRateToday,
-        todayShowtimes
+        todayShowtimesData,
+        weeklyRevenueData
     ] = await Promise.all([
         getRevenueToday(cinemaId),
         getFoodRevenueToday(cinemaId),
@@ -414,7 +501,8 @@ const getManagerDashboard = async (accountId) => {
         getActiveScreenToday(cinemaId),
         getAllScreenToday(cinemaId),
         getOccupancyRateToday(cinemaId),
-        getTodayShowtimes(cinemaId)
+        getRevenueReport(cinemaId),
+        getWeeklyRevenueChartData(cinemaId)
     ])
 
     return {
@@ -430,7 +518,9 @@ const getManagerDashboard = async (accountId) => {
             allScreenToday,
             occupancyRate: `${occupancyRateToday}%`
         },
-        todayShowtimes: todayShowtimes
+        todayShowtimes: todayShowtimesData,
+        weeklyRevenue: weeklyRevenueData
+        
     }
 
 }
