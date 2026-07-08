@@ -21,6 +21,14 @@ interface PaymentApi {
         @Body request: ConfirmBookingRequest
     ): Response<ResponseBody>
 
+    @GET("api/booking/my-tickets")
+    suspend fun getMyTickets(): Response<BookingHistoryResponse>
+
     @GET("api/booking/history")
     suspend fun getBookingHistory(): Response<BookingHistoryResponse>
+
+    @GET("api/booking/{id}")
+    suspend fun getBookingDetail(
+        @retrofit2.http.Path("id") id: String
+    ): Response<com.example.movie_booking_app.data.model.response.BookingDetailResponse>
 }

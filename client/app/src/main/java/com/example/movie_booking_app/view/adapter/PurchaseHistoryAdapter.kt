@@ -13,7 +13,8 @@ import java.text.DecimalFormatSymbols
 import java.util.Locale
 
 class PurchaseHistoryAdapter(
-    private var items: List<BookingHistoryItem> = emptyList()
+    private var items: List<BookingHistoryItem> = emptyList(),
+    private val onItemClick: ((BookingHistoryItem) -> Unit)? = null
 ) : RecyclerView.Adapter<PurchaseHistoryAdapter.ViewHolder>() {
 
     fun updateData(newItems: List<BookingHistoryItem>) {
@@ -29,7 +30,7 @@ class PurchaseHistoryAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(items[position], onItemClick)
     }
 
     override fun getItemCount(): Int = items.size
@@ -38,7 +39,7 @@ class PurchaseHistoryAdapter(
         private val binding: ItemPurchaseHistoryBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: BookingHistoryItem) {
+        fun bind(item: BookingHistoryItem, onItemClick: ((BookingHistoryItem) -> Unit)?) {
             binding.tvMovieTitle.text = item.movie
             binding.tvBookingCode.text = "Code: ${item.bookingCode}"
             binding.tvShowtime.text = "${item.showDate} • ${item.showtime}"
@@ -46,6 +47,7 @@ class PurchaseHistoryAdapter(
             
             val seatList = item.seats ?: emptyList()
             binding.tvSeats.text = "Seats: ${seatList.joinToString(", ").ifEmpty { "-" }}"
+            binding.tvPaymentMethod.text = "Paid via ${item.paymentMethod ?: "-"}"
 
             // Format Vietnamese currency
             val symbols = DecimalFormatSymbols(Locale("vi", "VN")).apply {
@@ -67,6 +69,10 @@ class PurchaseHistoryAdapter(
                 .placeholder(R.drawable.movie) // fallback placeholder
                 .error(R.drawable.movie)
                 .into(binding.ivPoster)
+
+            itemView.setOnClickListener {
+                onItemClick?.invoke(item)
+            }
         }
     }
 }

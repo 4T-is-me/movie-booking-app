@@ -78,9 +78,7 @@ class ProfileFragment : Fragment() {
             startActivity(intent)
         }
 
-        binding.layoutMyTicket.setOnClickListener {
-            Toast.makeText(context, "My Ticket Clicked", Toast.LENGTH_SHORT).show()
-        }
+
         binding.layoutChangeLanguage.setOnClickListener {
             Toast.makeText(context, "Change Language Clicked", Toast.LENGTH_SHORT).show()
         }
