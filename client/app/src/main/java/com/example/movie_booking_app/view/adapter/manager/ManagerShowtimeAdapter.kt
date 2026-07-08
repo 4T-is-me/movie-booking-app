@@ -19,12 +19,11 @@ class ManagerShowtimeAdapter : ListAdapter<ShowtimeTodayResponse, ManagerShowtim
     }
 
     override fun onBindViewHolder( holder: ShowtimeViewHolder, position: Int ) {
-        val isLastItem = position == itemCount - 1
-        holder.bind(getItem(position), isLastItem)
+        holder.bind(getItem(position))
     }
 
     class ShowtimeViewHolder(private val binding: ItemManagerShowtimeBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: ShowtimeTodayResponse, isLastItem: Boolean) {
+        fun bind(item: ShowtimeTodayResponse) {
             val context = binding.root.context
             binding.tvMovieName.text = item.movieName
             binding.tvRoomAndTime.text = "${item.roomName} · ${item.startTime} - ${item.endTime}"
@@ -35,8 +34,6 @@ class ManagerShowtimeAdapter : ListAdapter<ShowtimeTodayResponse, ManagerShowtim
             binding.pbOccupancy.progress = rateInt
             binding.tvStatus.text = item.status
 
-            // Ẩn đường line nếu là phần tử cuối
-            binding.lineVertical.visibility = if (isLastItem) View.GONE else View.VISIBLE
             // Màu sắc động theo trạng thái (Live: Xanh, Done: Xám/vàng tối)
             if (item.status.equals("Live", ignoreCase = true)) {
                 // Đèn xanh cho trạng thái đang chiếu
