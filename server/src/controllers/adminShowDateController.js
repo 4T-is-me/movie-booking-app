@@ -1,36 +1,16 @@
 import mongoose from 'mongoose';
 import { ShowDate } from '../models/showDateModel.js';
+import { Showtime } from '../models/showTimeModel.js';
 import { StatusCodes } from 'http-status-codes';
 
 // GET /api/admin/show-dates
 export const getShowDates = async (req, res) => {
     try {
-        const { page = 1, limit = 20, all = false } = req.query;
-        
         const filter = { isDeleted: false };
-        
-        if (all === 'true' || all === true) {
-            const showDates = await ShowDate.find(filter).sort({ showDate: 1 }).lean();
-            return res.status(StatusCodes.OK).json({
-                success: true,
-                data: showDates
-            });
-        }
-
-        const skip = (Number(page) - 1) * Number(limit);
-        const total = await ShowDate.countDocuments(filter);
-        const showDates = await ShowDate.find(filter)
-            .sort({ showDate: 1 })
-            .skip(skip)
-            .limit(Number(limit))
-            .lean();
+        const showDates = await ShowDate.find(filter).sort({ showDate: 1 }).lean();
 
         return res.status(StatusCodes.OK).json({
             success: true,
-            page: Number(page),
-            limit: Number(limit),
-            total,
-            totalPages: Math.ceil(total / Number(limit)),
             data: showDates
         });
     } catch (error) {
@@ -45,7 +25,7 @@ export const getShowDates = async (req, res) => {
 // POST /api/admin/show-dates
 export const createShowDate = async (req, res) => {
     try {
-        const { showDate } = req.body;
+        const { showDate, dateLabel } = req.body;
 
         if (!showDate) {
             return res.status(StatusCodes.BAD_REQUEST).json({
@@ -54,11 +34,17 @@ export const createShowDate = async (req, res) => {
             });
         }
 
-        const targetDate = new Date(showDate);
-        if (isNaN(targetDate.getTime())) {
+        let targetDate;
+        try {
+            const dateStr = typeof showDate === 'string' ? showDate.substring(0, 10) : new Date(showDate).toISOString().substring(0, 10);
+            targetDate = new Date(`${dateStr}T00:00:00.000Z`);
+            if (isNaN(targetDate.getTime())) {
+                throw new Error();
+            }
+        } catch (e) {
             return res.status(StatusCodes.BAD_REQUEST).json({
                 success: false,
-                message: 'Invalid date format.'
+                message: 'Invalid date format. Please use YYYY-MM-DD.'
             });
         }
 
@@ -76,6 +62,9 @@ export const createShowDate = async (req, res) => {
         if (softDeleted) {
             softDeleted.isDeleted = false;
             softDeleted.deletedAt = null;
+            if (dateLabel !== undefined) {
+                softDeleted.dateLabel = dateLabel;
+            }
             const updated = await softDeleted.save();
             return res.status(StatusCodes.CREATED).json({
                 success: true,
@@ -84,7 +73,7 @@ export const createShowDate = async (req, res) => {
             });
         }
 
-        const newShowDate = new ShowDate({ showDate: targetDate });
+        const newShowDate = new ShowDate({ showDate: targetDate, dateLabel });
         const saved = await newShowDate.save();
 
         return res.status(StatusCodes.CREATED).json({
@@ -105,27 +94,12 @@ export const createShowDate = async (req, res) => {
 export const updateShowDate = async (req, res) => {
     try {
         const { id } = req.params;
-        const { showDate } = req.body;
+        const { showDate, dateLabel } = req.body;
 
         if (!mongoose.isValidObjectId(id)) {
             return res.status(StatusCodes.BAD_REQUEST).json({
                 success: false,
                 message: 'Invalid show date ID.'
-            });
-        }
-
-        if (!showDate) {
-            return res.status(StatusCodes.BAD_REQUEST).json({
-                success: false,
-                message: 'showDate field is required.'
-            });
-        }
-
-        const targetDate = new Date(showDate);
-        if (isNaN(targetDate.getTime())) {
-            return res.status(StatusCodes.BAD_REQUEST).json({
-                success: false,
-                message: 'Invalid date format.'
             });
         }
 
@@ -137,20 +111,41 @@ export const updateShowDate = async (req, res) => {
             });
         }
 
-        // Check unique constraint for the updated date value (excluding current record)
-        const duplicate = await ShowDate.findOne({
-            _id: { $ne: id },
-            showDate: targetDate,
-            isDeleted: false
-        });
-        if (duplicate) {
-            return res.status(StatusCodes.CONFLICT).json({
-                success: false,
-                message: 'This show date value already exists on another record.'
+        if (showDate !== undefined) {
+            let targetDate;
+            try {
+                const dateStr = typeof showDate === 'string' ? showDate.substring(0, 10) : new Date(showDate).toISOString().substring(0, 10);
+                targetDate = new Date(`${dateStr}T00:00:00.000Z`);
+                if (isNaN(targetDate.getTime())) {
+                    throw new Error();
+                }
+            } catch (e) {
+                return res.status(StatusCodes.BAD_REQUEST).json({
+                    success: false,
+                    message: 'Invalid date format. Please use YYYY-MM-DD.'
+                });
+            }
+
+            // Check unique constraint for the updated date value (excluding current record)
+            const duplicate = await ShowDate.findOne({
+                _id: { $ne: id },
+                showDate: targetDate,
+                isDeleted: false
             });
+            if (duplicate) {
+                return res.status(StatusCodes.CONFLICT).json({
+                    success: false,
+                    message: 'This show date value already exists on another record.'
+                });
+            }
+
+            existingRecord.showDate = targetDate;
         }
 
-        existingRecord.showDate = targetDate;
+        if (dateLabel !== undefined) {
+            existingRecord.dateLabel = dateLabel;
+        }
+
         const updated = await existingRecord.save();
 
         return res.status(StatusCodes.OK).json({
@@ -185,6 +180,42 @@ export const deleteShowDate = async (req, res) => {
                 success: false,
                 message: 'Show date not found or already deleted.'
             });
+        }
+
+        const today = new Date();
+        today.setUTCHours(0, 0, 0, 0); // UTC midnight of today
+
+        // Check if the show date is today or in the future
+        const isFutureOrToday = existingRecord.showDate >= today;
+
+        if (isFutureOrToday) {
+            // Check if any active showtimes are scheduled on this date
+            const showtimeConflict = await Showtime.findOne({
+                showDate: existingRecord.showDate,
+                isDeleted: false
+            });
+
+            if (showtimeConflict) {
+                return res.status(StatusCodes.CONFLICT).json({
+                    success: false,
+                    message: 'Cannot delete this show date because there are active showtimes scheduled on this date.'
+                });
+            }
+
+            // Check dynamically if MovieDate model exists and is in use
+            if (mongoose.models.MovieDate) {
+                const movieDateConflict = await mongoose.models.MovieDate.findOne({
+                    showDate: existingRecord.showDate,
+                    isDeleted: false
+                });
+
+                if (movieDateConflict) {
+                    return res.status(StatusCodes.CONFLICT).json({
+                        success: false,
+                        message: 'Cannot delete this show date because it is being used by MovieDate.'
+                    });
+                }
+            }
         }
 
         existingRecord.isDeleted = true;
