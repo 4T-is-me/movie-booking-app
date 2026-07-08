@@ -47,7 +47,7 @@ class AdminPromotionAdapter(
             btnDeletePromo.setOnClickListener { onDeleteClick(promotion) }
 
             tvPromoTitle.text = promotion.title
-            tvPromoDetail.text = promotion.detail ?: "Không có chi tiết"
+            tvPromoDetail.text = promotion.detail ?: "No details"
             tvCouponCode.text = promotion.couponCode ?: ""
 
             // Format discount value
@@ -74,13 +74,13 @@ class AdminPromotionAdapter(
             val statusColor: Int
 
             if (start != null && now.before(start)) {
-                statusText = "SẮP DIỄN RA"
+                statusText = "UPCOMING"
                 statusColor = ContextCompat.getColor(itemView.context, R.color.yellow)
             } else if (end != null && now.after(end)) {
-                statusText = "HẾT HẠN"
+                statusText = "EXPIRED"
                 statusColor = ContextCompat.getColor(itemView.context, R.color.deduct)
             } else {
-                statusText = "ĐANG ÁP DỤNG"
+                statusText = "ACTIVE"
                 statusColor = ContextCompat.getColor(itemView.context, R.color.admin_live_indicator)
             }
 
