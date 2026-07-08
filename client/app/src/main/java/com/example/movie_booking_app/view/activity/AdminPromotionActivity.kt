@@ -72,14 +72,27 @@ class AdminPromotionActivity : BaseActivity() {
     }
 
     private fun showDeleteConfirmationDialog(promotion: AdminPromotion) {
-        MaterialAlertDialogBuilder(this)
-            .setTitle("Delete Promotion")
-            .setMessage("Are you sure you want to delete the promotion \"${promotion.title}\"?")
-            .setNegativeButton("Cancel", null)
-            .setPositiveButton("Delete") { _, _ ->
-                viewModel.deletePromotion(promotion.id)
-            }
-            .show()
+        val dialog = android.app.Dialog(this)
+        dialog.setContentView(com.example.movie_booking_app.R.layout.dialog_confirm_delete_promotion)
+        dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
+        dialog.setCancelable(true)
+
+        val tvDeleteMessage = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDeleteMessage)
+        val btnCancel = dialog.findViewById<com.google.android.material.button.MaterialButton>(com.example.movie_booking_app.R.id.btnCancelDelete)
+        val btnConfirm = dialog.findViewById<com.google.android.material.button.MaterialButton>(com.example.movie_booking_app.R.id.btnConfirmDelete)
+
+        tvDeleteMessage.text = "Are you sure you want to delete the promotion \"${promotion.title}\"?"
+
+        btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        btnConfirm.setOnClickListener {
+            dialog.dismiss()
+            viewModel.deletePromotion(promotion.id)
+        }
+
+        dialog.show()
     }
 
     private fun observeViewModel() {
