@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_black">
+
+    <!-- Scrollable content -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/layoutBottomCta">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Banner Header & Translucent shadow gradient -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/ivPromoBanner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitXY"
+                    android:contentDescription="Promotion Banner"
+                    tools:src="@color/card_dark" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_gravity="bottom"
+                    android:background="@drawable/default_background" />
+            </FrameLayout>
+
+            <!-- Content Area -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:paddingBottom="40dp">
+
+                <!-- Header block: Title & Discount badge -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="top">
+
+                    <TextView
+                        android:id="@+id/tvPromoTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textColor="@color/white"
+                        android:textSize="22sp"
+                        android:textStyle="bold"
+                        tools:text="TRUNG THU ĐOÀN VIÊN" />
+
+                    <TextView
+                        android:id="@+id/tvDiscountValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:textColor="@color/yellow"
+                        android:textSize="24sp"
+                        android:textStyle="bold"
+                        tools:text="-30.000 VND" />
+                </LinearLayout>
+
+                <!-- Basic description -->
+                <TextView
+                    android:id="@+id/tvPromoDesc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:textColor="#BDBDBD"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="4dp"
+                    tools:text="Tết Trung Thu ấm áp, giảm 30.000 VND cho mỗi hóa đơn đặt vé có mua kèm Combo bắp nước." />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="#22FFFFFF" />
+
+                <!-- Valid date & Min Spend requirements info -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_calendar_month_24"
+                        app:tint="#8E8E93" />
+
+                    <TextView
+                        android:id="@+id/tvPromoDateRange"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:textColor="#8E8E93"
+                        android:textSize="13sp"
+                        tools:text="Hạn sử dụng: 01/10/2026" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_ticket"
+                        app:tint="#8E8E93" />
+
+                    <TextView
+                        android:id="@+id/tvMinOrderValue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:textColor="#8E8E93"
+                        android:textSize="13sp"
+                        tools:text="Áp dụng tối thiểu: 120.000 VND" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="#22FFFFFF" />
+
+                <!-- Dotted Coupon Card area -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mã ưu đãi của bạn"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="10dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_coupon_dotted"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="14dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="MÃ KHUYẾN MÃI"
+                            android:textColor="#8E8E93"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvPromoCode"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/yellow"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:layout_marginTop="2dp"
+                            tools:text="TRUNGTHU30" />
+                    </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnCopyCode"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:text="Copy"
+                        android:textColor="@color/yellow"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:icon="@android:drawable/ic_menu_share"
+                        app:iconSize="16dp"
+                        app:iconTint="@color/yellow" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="#22FFFFFF" />
+
+                <!-- Terms and conditions detail -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Điều kiện &amp; Quy định áp dụng"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp"/>
+
+                <TextView
+                    android:id="@+id/tvPromoConditions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#9E9E9E"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="6dp"
+                    android:text="• Mỗi khách hàng chỉ được áp dụng mã ưu đãi này 1 lần duy nhất trong suốt thời gian diễn ra chương trình.\n• Chỉ áp dụng cho các giao dịch đặt vé trực tuyến thông qua ứng dụng chính thức.\n• Không áp dụng đồng thời với các hình thức thẻ quà tặng, ưu đãi đối tác hoặc các chương trình khuyến mãi khác.\n• Không có giá trị quy đổi thành tiền mặt hoặc hoàn lại tiền thừa.\n• Đơn hàng hợp lệ phải thỏa mãn giá trị chi tiêu tối thiểu được yêu cầu ở trên.\n• Ban quản lý rạp chiếu phim có quyền thay đổi điều khoản áp dụng mà không cần báo trước." />
+
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Translucent Overlay / Circle Back Button -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/btnBack"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="20dp"
+        app:cardBackgroundColor="#CC1E2130"
+        app:strokeWidth="0dp"
+        app:cardElevation="4dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_back"
+            app:tint="@color/white"
+            android:contentDescription="Back" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Sticky Bottom Call To Action Button -->
+    <LinearLayout
+        android:id="@+id/layoutBottomCta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#12131C"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnBookNow"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="ĐẶT VÉ NGAY"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            app:backgroundTint="@color/yellow"
+            app:cornerRadius="26dp"
+            android:elevation="4dp"/>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
