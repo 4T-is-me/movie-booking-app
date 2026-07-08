@@ -15,6 +15,7 @@ import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.local.TokenManager
 import com.example.movie_booking_app.data.model.response.WeeklyRevenueResponse
 import com.example.movie_booking_app.databinding.ActivityManagerBinding
+import com.example.movie_booking_app.view.activity.manager.ManagerReportActivity
 import com.example.movie_booking_app.view.activity.manager.ManagerRoomListActivity
 import com.example.movie_booking_app.view.adapter.manager.ManagerShowtimeAdapter
 import com.example.movie_booking_app.viewmodel.manager.ManagerViewModel
@@ -200,7 +201,7 @@ class ManagerActivity : AppCompatActivity() {
             Toast.makeText(this, "Feature coming soon", Toast.LENGTH_SHORT).show()
         }
         binding.layoutReports.setOnClickListener {
-            Toast.makeText(this, "Feature coming soon", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, ManagerReportActivity::class.java))
         }
 
 
@@ -209,6 +210,9 @@ class ManagerActivity : AppCompatActivity() {
                 R.id.nav_logout -> performLogout()
                 R.id.nav_rooms -> {
                     startActivity(Intent(this, ManagerRoomListActivity::class.java))
+                }
+                R.id.layoutReports -> {
+                    startActivity(Intent(this, ManagerReportActivity::class.java))
                 }
                 else -> Toast.makeText(this, "Feature coming soon", Toast.LENGTH_SHORT).show()
             }

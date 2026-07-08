@@ -25,16 +25,11 @@ const getManagerById = async (accountId) => {
  * @param {string|mongoose.Types.ObjectId} cinemaId 
  * @returns {Promise<number>} Tổng số tiền doanh thu (đã trừ giảm giá)
  */
-
 const getRevenueToday = async (cinemaId) => {
-
-    // start of day
-    const startOfDay = new Date()
-    startOfDay.setHours(0, 0, 0, 0)
-
-    // end of day
-    const endOfDay = new Date()
-    endOfDay.setHours(23, 59, 59, 999)
+    // start of day tính theo múi giờ +07
+    const startOfDay = new Date(new Date().setHours(0, 0, 0, 0) + 7 * 60 * 60 * 1000);
+    // end of day tính theo múi giờ +07
+    const endOfDay = new Date(new Date().setHours(23, 59, 59, 999) + 7 * 60 * 60 * 1000);
 
     const result = await Booking.aggregate([
         //match time and payment status 
@@ -63,7 +58,6 @@ const getRevenueToday = async (cinemaId) => {
         //filter cinema by id
         {
             $match: {
-                // casting to ObjectId
                 'showtimeInfo.cinemaId': new mongoose.Types.ObjectId(cinemaId)
             }
         }
@@ -84,13 +78,9 @@ const getRevenueToday = async (cinemaId) => {
  * @param {string|mongoose.Types.ObjectId} cinemaId 
  * @returns {Promise<number>} Tổng số tiền doanh thu combo bắp nước
  */
-
 const getFoodRevenueToday = async (cinemaId) => {
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
-
-    const endOfDay = new Date();
-    endOfDay.setHours(23, 59, 59, 999);
+    const startOfDay = new Date(new Date().setHours(0, 0, 0, 0) + 7 * 60 * 60 * 1000);
+    const endOfDay = new Date(new Date().setHours(23, 59, 59, 999) + 7 * 60 * 60 * 1000);
     
     const result = await Booking.aggregate([
         {
@@ -121,7 +111,7 @@ const getFoodRevenueToday = async (cinemaId) => {
         {
             $group: {
                 _id: null,
-                foodAndBeverageRevenue: { $sum: '$comboPrice' } // Khác biệt duy nhất ở đây!
+                foodAndBeverageRevenue: { $sum: '$comboPrice' }
             }
         }
     ]);
@@ -134,11 +124,8 @@ const getFoodRevenueToday = async (cinemaId) => {
  * @returns {Promise<number>} Tổng số vé đã bán
  */
 const getTicketSoldToday = async (cinemaId) => {
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
-    
-    const endOfDay = new Date();
-    endOfDay.setHours(23, 59, 59, 999);
+    const startOfDay = new Date(new Date().setHours(0, 0, 0, 0) + 7 * 60 * 60 * 1000);
+    const endOfDay = new Date(new Date().setHours(23, 59, 59, 999) + 7 * 60 * 60 * 1000);
 
     const result = await Booking.aggregate([
         {
@@ -170,7 +157,7 @@ const getTicketSoldToday = async (cinemaId) => {
             $group: {
                 _id: null,
                 ticketsSold: { 
-                    $sum: { $size: '$seatIds' } // Đếm số lượng ghế trong từng booking và cộng dồn lại
+                    $sum: { $size: '$seatIds' } 
                 }
             }
         }
@@ -184,13 +171,9 @@ const getTicketSoldToday = async (cinemaId) => {
  * @returns {Promise<number>} Số lượng phim đang chiếu
  */
 const getRunningMoviesToday = async (cinemaId) =>{
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
-    
-    const endOfDay = new Date();
-    endOfDay.setHours(23, 59, 59, 999);
+    const startOfDay = new Date(new Date().setHours(0, 0, 0, 0) + 7 * 60 * 60 * 1000);
+    const endOfDay = new Date(new Date().setHours(23, 59, 59, 999) + 7 * 60 * 60 * 1000);
 
-    //distinct để lấy danh sách các movieId không trùng lặp
     const uniqueMovieIds = await Showtime.distinct('movieId', {
         cinemaId: new mongoose.Types.ObjectId(cinemaId),
         startTime: {
@@ -214,17 +197,15 @@ const getActiveScreenToday = async (cinemaId) => {
 const getAllScreenToday = async (cinemaId) => {
     return await CinemaRoom.countDocuments({ cinemaId, isDeleted: false });
 }
+
 /**
  * Tính tổng số ghế có thể bán của tất cả các suất chiếu trong ngày hôm nay tại một rạp cụ thể
  * @param {string|mongoose.Types.ObjectId} cinemaId 
  * @returns {Promise<number>} Tổng năng suất ghế (Mẫu số)
  */
 const getTotalAvailibleSeatsToday = async (cinemaId) => {
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
-
-    const endOfDay = new Date();
-    endOfDay.setHours(23, 59, 59, 999);
+    const startOfDay = new Date(new Date().setHours(0, 0, 0, 0) + 7 * 60 * 60 * 1000);
+    const endOfDay = new Date(new Date().setHours(23, 59, 59, 999) + 7 * 60 * 60 * 1000);
 
     const result = await Showtime.aggregate([
         {
@@ -234,7 +215,6 @@ const getTotalAvailibleSeatsToday = async (cinemaId) => {
                 isDeleted: false
             }
         },
-        //join vs cinema_rooms
         {
             $lookup:{
                 from: 'cinema_rooms',
@@ -262,89 +242,114 @@ const getTotalAvailibleSeatsToday = async (cinemaId) => {
  * @returns {Promise<number>} Tỷ lệ % (Ví dụ: 35.5)
  */
 const getOccupancyRateToday = async (cinemaId) => {
-    //đếm vé đã bán (Tử số) và hàm năng suất ghế vừa viết (Mẫu số)
     const [bookedSeats, totalSeats] = await Promise.all([
         getTicketSoldToday(cinemaId),
         getTotalAvailibleSeatsToday(cinemaId)
     ])
-    //case: status CinemaRoom = 'mantainance', no showtime today (Mẫu số = 0)
     if (totalSeats === 0) return 0;
     return Number((bookedSeats / totalSeats) * 100).toFixed(2);
 }
 
 const getRangeDate = (type) => {
-    const now = new Date();
-    let start, end;
+    const now = new Date(new Date().getTime() + 7 * 60 * 60 * 1000); // Đưa về mốc timezone +07 trước
+    let start = new Date(now);
+    let end = new Date(now);
 
     switch (type) {
         case 'day':
-            start = new Date(now.setUTCHours(0, 0, 0, 0));
-            end = new Date(now.setUTCHours(23, 59, 59, 999));
+            start.setHours(0, 0, 0, 0);
+            end.setHours(23, 59, 59, 999);
             break;
-        case 'week':
-            // Lấy đầu tuần (Thứ 2) và cuối tuần (Chủ nhật)
-            const currentDay = now.getUTCDay();
-            const distanceToMonday = currentDay === 0 ? -6 : 1 - currentDay; 
-            start = new Date(now.setUTCDate(now.getUTCDate() + distanceToMonday));
-            start.setUTCHours(0, 0, 0, 0);
             
-            end = new Date(start);
-            end.setUTCDate(start.getUTCDate() + 6);
-            end.setUTCHours(23, 59, 59, 999);
+        case 'week': {
+            const currentDay = now.getDay();
+            const distanceToMonday = currentDay === 0 ? -6 : 1 - currentDay; 
+            
+            start.setDate(now.getDate() + distanceToMonday);
+            start.setHours(0, 0, 0, 0);
+            
+            end.setDate(start.getDate() + 6);
+            end.setHours(23, 59, 59, 999);
             break;
+        }
+            
         case 'month':
-            // Lấy từ ngày 1 đến ngày cuối cùng của tháng hiện tại
-            start = new Date(Date.utc(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0));
-            end = new Date(Date.utc(now.getUTCFullYear(), now.getUTCMonth() + 1, 0, 23, 59, 59, 999));
+            start = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
+            end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
             break;
+            
         case 'year':
-            // Lấy từ 01/01 đến 31/12 của năm hiện tại
-            start = new Date(Date.utc(now.getUTCFullYear(), 0, 1, 0, 0, 0, 0));
-            end = new Date(Date.utc(now.getUTCFullYear(), 11, 31, 23, 59, 59, 999));
+            start = new Date(now.getFullYear(), 0, 1, 0, 0, 0, 0);
+            end = new Date(now.getFullYear(), 11, 31, 23, 59, 59, 999);
             break;
+            
         default:
             throw new Error("Loại report không hợp lệ!");
     }
     return { start, end };
 };
 
+/**
+ * Lấy khoảng thời gian của chu kỳ trước (Không làm biến đổi dữ liệu gốc)
+ */
+const getPreviousRangeDate = (type, currentStart) => {
+    let start = new Date(currentStart.getTime());
+    let end = new Date(currentStart.getTime());
 
+    switch (type) {
+        case 'day':
+            start.setDate(start.getDate() - 1);
+            end.setDate(end.getDate() - 1);
+            end.setHours(23, 59, 59, 999);
+            break;
+            
+        case 'week':
+            start.setDate(start.getDate() - 7);
+            end.setDate(start.getDate() + 6);
+            end.setHours(23, 59, 59, 999);
+            break;
+            
+        case 'month':
+            start.setMonth(start.getMonth() - 1);
+            start.setDate(1); 
+            end = new Date(start.getFullYear(), start.getMonth() + 1, 0, 23, 59, 59, 999);
+            break;
+            
+        case 'year':
+            start.setFullYear(start.getFullYear() - 1);
+            end = new Date(start.getFullYear(), 11, 31, 23, 59, 59, 999);
+            break;
+    }
+    return { start, end };
+};
+
+/**
+ * Hàm Helper tính toán % tăng trưởng an toàn
+ */
+const calculateGrowthRate = (current, previous) => {
+    if (!previous || previous === 0) {
+        return current > 0 ? 100 : 0; 
+    }
+    
+    const rate = Math.round(((current - previous) / previous) * 100);
+    if (rate > 999) return 999; 
+    if (rate < -999) return -999;
+
+    return rate;
+};
 
 const getRevenueReport = async (cinemaId, reportType = 'day') => {
-    const now = new Date();
+    const now = new Date(new Date().getTime() + 7 * 60 * 60 * 1000);
     const { start, end } = getRangeDate(reportType);
 
     const showtimes = await Showtime.aggregate([
-        {
-            $match: {
-                cinemaId: new mongoose.Types.ObjectId(cinemaId),
-                showDate: { $gte: start, $lte: end },
-                isDeleted: false
-            }
-        },
+        { $match: {  cinemaId: new mongoose.Types.ObjectId(cinemaId),  showDate: { $gte: start, $lte: end },  isDeleted: false } },
         { $sort: { startTime: 1 } },
-        {
-            $lookup: {
-                from: 'movies', 
-                localField: 'movieId',
-                foreignField: '_id',
-                as: 'movieInfo'
-            }
-        },
+        { $lookup: { from: 'movies',  localField: 'movieId', foreignField: '_id', as: 'movieInfo'  } },
         { $unwind: { path: '$movieInfo', preserveNullAndEmptyArrays: true } },
-        {
-            $lookup: {
-                from: 'cinema_rooms', 
-                localField: 'roomId',
-                foreignField: '_id',
-                as: 'roomInfo'
-            }
-        },
+        { $lookup: { from: 'cinema_rooms',  localField: 'roomId',  foreignField: '_id', as: 'roomInfo' } },
         { $unwind: { path: '$roomInfo', preserveNullAndEmptyArrays: true } },
-        {
-            $lookup: {
-                from: 'bookings',
-                let: { showtimeId: '$_id' },
+        { $lookup: { from: 'bookings', let: { showtimeId: '$_id' },
                 pipeline: [
                     {
                         $match: {
@@ -375,20 +380,8 @@ const getRevenueReport = async (cinemaId, reportType = 'day') => {
                         { $round: [{ $multiply: [{ $divide: ['$bookedSeats', '$totalSeats'] }, 100] }, 0] },
                         0
                     ]
-                },
-                status: {
-                    $cond: [
-                        { $lt: [now, '$startTime'] },
-                        'Coming',
-                        {
-                            $cond: [
-                                { $gt: [now, '$endTime'] },
-                                'Done',
-                                'Live'
-                            ]
-                        }
-                    ]
                 }
+                // Giữ nguyên status logic gốc của bạn
             }
         },
         {
@@ -403,7 +396,19 @@ const getRevenueReport = async (cinemaId, reportType = 'day') => {
                 bookedSeats: 1,
                 totalSeats: 1,
                 occupancyRate: 1,
-                status: 1
+                status: {
+                    $cond: [
+                        { $lt: [now, '$startTime'] },
+                        'Coming',
+                        {
+                            $cond: [
+                                { $gt: [now, '$endTime'] },
+                                'Done',
+                                'Live'
+                            ]
+                        }
+                    ]
+                }
             }
         }
     ]);
@@ -414,52 +419,26 @@ const getRevenueReport = async (cinemaId, reportType = 'day') => {
 
 /**
  * Daily revenue for each day of the service week
- * 
  */
 const getWeeklyRevenueChartData = async (cinemaId) => {
-    const endOfWeek = new Date();
-    endOfWeek.setHours(23, 59, 59, 999);
-
-    const startOfWeek = new Date();
-    startOfWeek.setDate(startOfWeek.getDate() - 6);// Get the last 7 days, including today
-    startOfWeek.setHours(0, 0, 0, 0);
+    const endOfWeek = new Date(new Date().setHours(23, 59, 59, 999) + 7 * 60 * 60 * 1000);
+    const startOfWeek = new Date(new Date().setHours(0, 0, 0, 0) + 7 * 60 * 60 * 1000);
+    startOfWeek.setDate(startOfWeek.getDate() - 6);
 
     const result = await Booking.aggregate([
-        {
-            $match: {
-                paymentStatus: 'paid',
-                createdAt: { $gte: startOfWeek, $lte: endOfWeek }
-            }
-        },
-        {
-            $lookup: {
-                from: 'showtimes',
-                localField: 'showtimeId',
-                foreignField: '_id',
-                as: 'showtimeInfo'
-            }
-        },
+        { $match: { paymentStatus: 'paid', createdAt: { $gte: startOfWeek, $lte: endOfWeek } } },
+        { $lookup: { from: 'showtimes', localField: 'showtimeId', foreignField: '_id', as: 'showtimeInfo' } },
         { $unwind: '$showtimeInfo' },
-        {
-            $match: {
-                'showtimeInfo.cinemaId': new mongoose.Types.ObjectId(cinemaId)
-            }
-        },
-        {
-            $group: {
-                _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt", timezone: "+07:00" } },
-                totalAmount: { $sum: '$finalAmount' }
-            }
-        },
+        { $match: { 'showtimeInfo.cinemaId': new mongoose.Types.ObjectId(cinemaId) } },
+        { $group: { _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt", timezone: "+07:00" } }, totalAmount: { $sum: '$finalAmount' }  } },
         { $sort: { _id: 1 } }
     ]);
 
-    // Reformat the data to cover 7 consecutive days; set revenue to 0 for days with no sales.
     const weeklyReport = [];
     for (let i = 6; i >= 0; i--) {
-        const d = new Date();
+        const d = new Date(new Date().getTime() + 7 * 60 * 60 * 1000);
         d.setDate(d.getDate() - i);
-        const dateStr = d.toLocaleDateString('en-CA'); // YYYY-MM-DD
+        const dateStr = d.toLocaleDateString('en-CA'); 
         
         const dayData = result.find(item => item._id === dateStr);
         weeklyReport.push({
@@ -472,8 +451,6 @@ const getWeeklyRevenueChartData = async (cinemaId) => {
 
 /**
  * Tổng hợp toàn bộ dữ liệu Dashboard cho Manager dựa trên accountId lấy từ JWT
- * @param {string} accountId 
- * @returns {Promise<Object>} Object chứa thông tin Manager và các KPI hôm nay
  */
 const getManagerDashboard = async (accountId) => {
     const manager = await Manager.findOne({ accountId });
@@ -520,13 +497,110 @@ const getManagerDashboard = async (accountId) => {
         },
         todayShowtimes: todayShowtimesData,
         weeklyRevenue: weeklyRevenueData
-        
     }
-
 }
 
 
+const getManagerReport = async (accountId, reportType = 'day') => {
+    const manager = await Manager.findOne({ accountId });
+    if (!manager) {
+        throw new ApiError(StatusCodes.NOT_FOUND, 'Không tìm thấy thông tin Quản lý cho tài khoản này!');
+    }
+
+    const cinemaId = manager.cinemaId;
+    const currentRange = getRangeDate(reportType);
+    const previousRange = getPreviousRangeDate(reportType, currentRange.start);
+
+    // Đồng nhất cách tính: Doanh thu vé = finalAmount - comboPrice
+    const getStatsByRange = async (start, end) => {
+        const stats = await Booking.aggregate([
+            { $match: { paymentStatus: 'paid', createdAt: { $gte: start, $lte: end } } },
+            { $lookup: { from: 'showtimes', localField: 'showtimeId', foreignField: '_id', as: 'showtimeInfo' } },
+            { $unwind: '$showtimeInfo' },
+            { $match: { 'showtimeInfo.cinemaId': new mongoose.Types.ObjectId(cinemaId) } },
+            { 
+                $group: { 
+                    _id: null, 
+                    totalTicketRevenue: { $sum: { $subtract: ['$finalAmount', '$comboPrice'] } }, 
+                    totalFbRevenue: { $sum: '$comboPrice' }, 
+                    totalTicketsSold: { $sum: { $size: '$seatIds' } } 
+                } 
+            }
+        ]);
+        
+        const res = stats[0] || { totalTicketRevenue: 0, totalFbRevenue: 0, totalTicketsSold: 0 };
+        const avg = res.totalTicketsSold > 0 ? Math.round(res.totalTicketRevenue / res.totalTicketsSold) : 0;
+        
+        return { ...res, avgTicketPrice: avg };
+    };
+
+    const getChartDataByRange = async (start, end, types) => {
+        let format = "%Y-%m-%d"; 
+        if (types === 'day') format = "%H:00"; 
+        if (types === 'year') format = "%Y-%m"; 
+
+        const chartStats = await Booking.aggregate([
+            { $match: { paymentStatus: 'paid', createdAt: { $gte: start, $lte: end } } },
+            { $lookup: { from: 'showtimes', localField: 'showtimeId', foreignField: '_id', as: 'showtimeInfo' } },
+            { $unwind: '$showtimeInfo' },
+            { $match: { 'showtimeInfo.cinemaId': new mongoose.Types.ObjectId(cinemaId) } },
+            {
+                $group: {
+                    _id: { $dateToString: { format: format, date: "$createdAt", timezone: "+07:00" } },
+                    ticketRevenue: { $sum: { $subtract: ['$finalAmount', '$comboPrice'] } }, 
+                    fbRevenue: { $sum: '$comboPrice' }
+                }
+            },
+            { $sort: { _id: 1 } }
+        ]);
+
+        if (types === 'month') {
+            const fullMonthData = [];
+            let cursor = new Date(start.getTime());
+            while (cursor <= end) {
+                const dateStr = cursor.toLocaleDateString('en-CA'); 
+                const match = chartStats.find(item => item._id === dateStr);
+                
+                fullMonthData.push({
+                    label: dateStr,
+                    ticketRevenue: match ? match.ticketRevenue : 0,
+                    fbRevenue: match ? match.fbRevenue : 0
+                });
+                cursor.setDate(cursor.getDate() + 1);
+            }
+            return fullMonthData;
+        }
+
+        return chartStats.map(item => ({
+            label: item._id,
+            ticketRevenue: item.ticketRevenue,
+            fbRevenue: item.fbRevenue
+        }));
+    };
+
+    const [currentData, previousData, chartData] = await Promise.all([
+        getStatsByRange(currentRange.start, currentRange.end),
+        getStatsByRange(previousRange.start, previousRange.end),
+        getChartDataByRange(currentRange.start, currentRange.end, reportType)
+    ]);
+
+    return {
+        ticketRevenue: currentData.totalTicketRevenue,
+        fbRevenue: currentData.totalFbRevenue,
+        totalTickets: currentData.totalTicketsSold,
+        avgTicket: currentData.avgTicketPrice,
+        growth: {
+            ticket: calculateGrowthRate(currentData.totalTicketRevenue, previousData.totalTicketRevenue),
+            fb: calculateGrowthRate(currentData.totalFbRevenue, previousData.totalFbRevenue),
+            totalTickets: calculateGrowthRate(currentData.totalTicketsSold, previousData.totalTicketsSold),
+            avgTicket: calculateGrowthRate(currentData.avgTicketPrice, previousData.avgTicketPrice)
+        },
+        chartData: chartData 
+    };
+};
+
 export const managerDashboardService = {
     getManagerDashboard,
-    getTotalAvailibleSeatsToday
+    getTotalAvailibleSeatsToday,
+    getManagerReport
 }
