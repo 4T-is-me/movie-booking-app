@@ -21,6 +21,7 @@ import promotionRoute from './src/routes/promotionRoute.js';
 import adminStatsRoutes from './src/routes/adminStatsRoutes.js';
 import adminPromotionRoutes from './src/routes/adminPromotionRoutes.js';
 import managerRoomRoutes from './src/routes/managerRoomRoutes.js';
+import { errorHandlingMiddleware } from './src/middlewares/errorHandlingMiddleware.js';
 
 const app = express();
 const PORT = env.PORT || 5000;
@@ -58,6 +59,9 @@ app.get('/api/cinemas', async (req, res) => {
         res.status(500).json({ success: false, message: e.message });
     }
 });
+
+// Centralized error handling middleware
+app.use(errorHandlingMiddleware);
 
 const startServer = async () => {
     await connectDB();

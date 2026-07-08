@@ -28,6 +28,8 @@ class PaymentViewModel @Inject constructor(
 
     private var countdownJob: Job? = null
     private var discountLevelPercent = 0
+    private var discountType: String? = null
+    private var discountValue = 0.0
 
     private var combo1Quantity = 0
     private var combo2Quantity = 0
@@ -83,7 +85,14 @@ class PaymentViewModel @Inject constructor(
         val comboSub = (combo1Quantity * 80000) + (combo2Quantity * 120000)
         
         val subtotal = ticketSub + comboSub
-        val discount = Math.floor(subtotal * (discountLevelPercent / 100.0)).toInt()
+        val discount = when (discountType) {
+            "percentage" -> Math.floor(subtotal * (discountValue / 100.0)).toInt()
+            "fixed" -> discountValue.toInt()
+            else -> {
+                // Fallback to legacy discountLevelPercent
+                Math.floor(subtotal * (discountLevelPercent / 100.0)).toInt()
+            }
+        }
         val fee = _uiState.value.bookingFee
         val grandTotal = subtotal + fee - discount
 
@@ -92,6 +101,20 @@ class PaymentViewModel @Inject constructor(
             discountAmount = discount,
             grandTotal = grandTotal
         )
+    }
+
+    fun removeCoupon() {
+        discountLevelPercent = 0
+        discountType = null
+        discountValue = 0.0
+        _uiState.value = _uiState.value.copy(
+            couponApplied = false,
+            couponSuccessMessage = null,
+            couponError = null,
+            promotionId = null,
+            discountAmount = 0
+        )
+        recalculateTotals()
     }
 
     fun applyCoupon(code: String) {
@@ -119,6 +142,8 @@ class PaymentViewModel @Inject constructor(
                         promotionId = response.data?.id
                     )
                     discountLevelPercent = response.data?.discountLevel ?: 0
+                    discountType = response.data?.discountType
+                    discountValue = response.data?.discountValue ?: 0.0
                     recalculateTotals()
                 }
         }

@@ -2,7 +2,7 @@
 
 /* eslint-disable no-unused-vars */
 import { StatusCodes } from 'http-status-codes'
-import { env } from '~/config/environment'
+import { env } from '../config/environment.js'
 
 // Centralized error handling middleware in Node.js Back-end application (ExpressJS)
 export const errorHandlingMiddleware = (err, req, res, next) => {

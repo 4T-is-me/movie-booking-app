@@ -41,8 +41,8 @@ class MovieRepositoryImpl : MovieRepository {
 
     override fun getPromos(): Flow<List<Promo>> = flow {
         emit(listOf(
-            Promo("1", "Sale 30%", "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=500", "MOVIE30"),
-            Promo("2", "Buy 1 Get 1", "https://images.unsplash.com/photo-1616469829581-73993eb86b02?w=500", "B1G1")
+            Promo("1", "Sale 30%", "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=500", "MOVIE30", "Get 30% off on all tickets", "percentage", 30.0, 100000.0, "2026-12-31T23:59:59.000Z"),
+            Promo("2", "Buy 1 Get 1", "https://images.unsplash.com/photo-1616469829581-73993eb86b02?w=500", "B1G1", "Buy one ticket get one free", "fixed", 50000.0, 150000.0, "2026-12-31T23:59:59.000Z")
         ))
     }
 

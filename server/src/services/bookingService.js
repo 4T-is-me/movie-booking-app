@@ -69,7 +69,7 @@ const handleHoldSeats = async ({ accountId, showtimeId, seatIds }) => {
 };
 
 // handle confirm booking
-const handleConfirmBooking = async ({accountId, showtimeId,seatIds,useScore = false,paymentMethod,couponCode,combos = []}) => {
+const handleConfirmBooking = async ({accountId, showtimeId,seatIds,useScore = false,paymentMethod,couponCode,promotionId: requestPromotionId,combos = []}) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
@@ -113,9 +113,18 @@ const handleConfirmBooking = async ({accountId, showtimeId,seatIds,useScore = fa
     //Promotion(if any)
     let promotionDiscount = 0;
     let promotionId = null;
+
+    let activeCouponCode = couponCode;
+    if (!activeCouponCode && requestPromotionId) {
+      const promotionDoc = await Promotion.findById(requestPromotionId).session(session);
+      if (promotionDoc) {
+        activeCouponCode = promotionDoc.couponCode;
+      }
+    }
+
     // check promotion
-    if (couponCode) {
-      const promotionResult = await promotionService.validateAndApplyPromotion(couponCode, accountId, subTotal, session);
+    if (activeCouponCode) {
+      const promotionResult = await promotionService.validateAndApplyPromotion(activeCouponCode, accountId, subTotal, session);
       promotionDiscount = promotionResult.discountAmount;
       promotionId = promotionResult.promotionId;
     }
