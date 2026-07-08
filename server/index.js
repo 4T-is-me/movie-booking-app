@@ -21,7 +21,9 @@ import promotionRoute from './src/routes/promotionRoute.js';
 import adminStatsRoutes from './src/routes/adminStatsRoutes.js';
 import adminPromotionRoutes from './src/routes/adminPromotionRoutes.js';
 import managerRoomRoutes from './src/routes/managerRoomRoutes.js';
+import managerDashboardRoutes from './src/routes/managerDashboardRoute.js';
 import { errorHandlingMiddleware } from './src/middlewares/errorHandlingMiddleware.js';
+
 
 const app = express();
 const PORT = env.PORT || 5000;
@@ -50,6 +52,7 @@ app.use('/api/admin/members', adminMemberRoutes);
 app.use('/api/admin/promotions', adminPromotionRoutes);
 app.use('/api/admin/stats', adminStatsRoutes);
 app.use('/api/manager/rooms', managerRoomRoutes);
+app.use('/api/manager/dashboard', managerDashboardRoutes);
 
 app.get('/api/cinemas', async (req, res) => {
     try {

@@ -75,4 +75,10 @@
     <color name="deduct">#E5484D</color>
     <color name="backgroundDeduct">#1AE5484D</color>
     <color name="iconDeduct">#E5484D</color>
+
+    <!-- showtime status color  -->
+    <color name="color_gray_status">#94A3B8</color>
+    <color name="color_gray_status_bg">#1A94A3B8</color>
+    <color name="color_green_status">#34C759</color>
+    <color name="color_green_status_bg">#1A34C759</color>
 </resources>
