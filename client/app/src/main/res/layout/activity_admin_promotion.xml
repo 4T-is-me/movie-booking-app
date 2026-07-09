@@ -45,7 +45,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Quản Lý Khuyến Mãi"
+                android:text="Manage Promotions"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -53,7 +53,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Danh sách chương trình khuyến mãi"
+                android:text="List of promotion programs"
                 android:textColor="@color/admin_text_secondary"
                 android:textSize="11sp" />
         </LinearLayout>
@@ -116,7 +116,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Không tìm thấy khuyến mãi nào"
+                android:text="No promotions found"
                 android:textColor="@color/admin_text_secondary"
                 android:textSize="16sp"
                 android:textStyle="bold" />

@@ -13,5 +13,7 @@ data class PromotionData(
     @SerializedName("_id") val id: String,
     val title: String,
     val detail: String?,
-    val discountLevel: Int
+    val discountLevel: Int,
+    val discountType: String? = null,
+    val discountValue: Double? = null
 ) : Serializable

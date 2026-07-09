@@ -57,7 +57,7 @@ class AdminPromotionViewModel @Inject constructor(
                                 error = null
                             )
                         } else {
-                            val errorMsg = response.errorBody()?.string() ?: "Lấy danh sách khuyến mãi thất bại"
+                            val errorMsg = response.errorBody()?.string() ?: "Failed to load promotions"
                             _uiState.value = _uiState.value.copy(
                                 isLoading = false,
                                 error = errorMsg
@@ -68,7 +68,7 @@ class AdminPromotionViewModel @Inject constructor(
                     withContext(Dispatchers.Main) {
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
-                            error = e.localizedMessage ?: "Lỗi kết nối mạng"
+                            error = e.localizedMessage ?: "Network connection error"
                         )
                     }
                 }
@@ -86,18 +86,18 @@ class AdminPromotionViewModel @Inject constructor(
                         _uiState.value = _uiState.value.copy(isLoading = false)
                         if (response.isSuccessful) {
                             _actionSuccess.emit(true)
-                            _actionMessage.emit("Thêm khuyến mãi thành công!")
+                            _actionMessage.emit("Promotion added successfully!")
                             loadPromotions()
                         } else {
                             _actionSuccess.emit(false)
-                            _actionMessage.emit(response.errorBody()?.string() ?: "Thêm khuyến mãi thất bại")
+                            _actionMessage.emit(response.errorBody()?.string() ?: "Failed to add promotion")
                         }
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
                         _uiState.value = _uiState.value.copy(isLoading = false)
                         _actionSuccess.emit(false)
-                        _actionMessage.emit(e.localizedMessage ?: "Lỗi kết nối mạng")
+                        _actionMessage.emit(e.localizedMessage ?: "Network connection error")
                     }
                 }
             }
@@ -114,18 +114,18 @@ class AdminPromotionViewModel @Inject constructor(
                         _uiState.value = _uiState.value.copy(isLoading = false)
                         if (response.isSuccessful) {
                             _actionSuccess.emit(true)
-                            _actionMessage.emit("Cập nhật khuyến mãi thành công!")
+                            _actionMessage.emit("Promotion updated successfully!")
                             loadPromotions()
                         } else {
                             _actionSuccess.emit(false)
-                            _actionMessage.emit(response.errorBody()?.string() ?: "Cập nhật khuyến mãi thất bại")
+                            _actionMessage.emit(response.errorBody()?.string() ?: "Failed to update promotion")
                         }
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
                         _uiState.value = _uiState.value.copy(isLoading = false)
                         _actionSuccess.emit(false)
-                        _actionMessage.emit(e.localizedMessage ?: "Lỗi kết nối mạng")
+                        _actionMessage.emit(e.localizedMessage ?: "Network connection error")
                     }
                 }
             }
@@ -142,18 +142,18 @@ class AdminPromotionViewModel @Inject constructor(
                         _uiState.value = _uiState.value.copy(isLoading = false)
                         if (response.isSuccessful) {
                             _actionSuccess.emit(true)
-                            _actionMessage.emit("Xóa khuyến mãi thành công!")
+                            _actionMessage.emit("Promotion deleted successfully!")
                             loadPromotions()
                         } else {
                             _actionSuccess.emit(false)
-                            _actionMessage.emit(response.errorBody()?.string() ?: "Xóa khuyến mãi thất bại")
+                            _actionMessage.emit(response.errorBody()?.string() ?: "Failed to delete promotion")
                         }
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
                         _uiState.value = _uiState.value.copy(isLoading = false)
                         _actionSuccess.emit(false)
-                        _actionMessage.emit(e.localizedMessage ?: "Lỗi kết nối mạng")
+                        _actionMessage.emit(e.localizedMessage ?: "Network connection error")
                     }
                 }
             }

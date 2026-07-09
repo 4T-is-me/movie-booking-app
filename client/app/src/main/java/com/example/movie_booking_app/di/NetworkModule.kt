@@ -4,6 +4,7 @@ import com.example.movie_booking_app.data.api.AdminApiService
 import com.example.movie_booking_app.data.api.AuthApi
 import com.example.movie_booking_app.data.api.BookingApi
 import com.example.movie_booking_app.data.api.CinemaRoomApi
+import com.example.movie_booking_app.data.api.ManagerApi
 import com.example.movie_booking_app.data.api.MovieApi
 import com.example.movie_booking_app.data.api.PaymentApi
 import com.example.movie_booking_app.data.api.ProfileApi
@@ -65,5 +66,11 @@ object NetworkModule {
     @Singleton
     fun provideManagerRoomApi(): ManagerRoomApi {
         return RetrofitClient.managerRoomApi
+    }
+
+    @Provides
+    @Singleton
+    fun provideManagerApi(): ManagerApi {
+        return RetrofitClient.managerApi
     }
 }

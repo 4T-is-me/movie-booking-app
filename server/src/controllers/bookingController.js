@@ -9,13 +9,13 @@ const handleHoldSeats = async (req, res, next) => {
 
         const showtimeId = req.params.id
 
-        const {  seatIds } = req.body;
+        const { seatIds } = req.body;
         const result = await bookingService.handleHoldSeats({
             accountId: req.user?.accountId,
             showtimeId,
             seatIds
         })
-        return res.status(StatusCodes.OK).json({success: true,data: result})
+        return res.status(StatusCodes.OK).json({ success: true, data: result })
     } catch (error) {
         next(error)
     }
@@ -25,7 +25,7 @@ const handleHoldSeats = async (req, res, next) => {
 const handleConfirmBooking = async (req, res, next) => {
     try {
 
-        const {showtimeId, seatIds, useScore, paymentMethod, couponCode ,combos} = req.body;
+        const { showtimeId, seatIds, useScore, paymentMethod, couponCode, promotionId, combos } = req.body;
 
         const result = await bookingService.handleConfirmBooking({
             accountId: req.user?.accountId,
@@ -34,6 +34,7 @@ const handleConfirmBooking = async (req, res, next) => {
             useScore,
             paymentMethod,
             couponCode,
+            promotionId,
             combos
         });
 
@@ -53,7 +54,19 @@ const handleGetHistory = async (req, res, next) => {
         const limit = Number(req.query.limit) || 10;
 
         const result = await bookingService.handleGetHistory(req.user?.accountId, page, limit)
-        return res.status(StatusCodes.OK).json({success: true,data: result})
+        return res.status(StatusCodes.OK).json({ success: true, data: result })
+    } catch (error) {
+        next(error)
+    }
+}
+// GET /api/booking/my-tickets --get active tickets
+const handleGetMyTickets = async (req, res, next) => {
+    try {
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+
+        const result = await bookingService.handleGetMyTickets(req.user?.accountId, page, limit)
+        return res.status(StatusCodes.OK).json({ success: true, data: result })
     } catch (error) {
         next(error)
     }
@@ -62,7 +75,7 @@ const handleGetHistory = async (req, res, next) => {
 const handleGetScoreHistory = async (req, res, next) => {
     try {
         const result = await bookingService.handleGetScoreHistory(req.user?.accountId)
-        return res.status(StatusCodes.OK).json({success: true,data: result})
+        return res.status(StatusCodes.OK).json({ success: true, data: result })
     } catch (error) {
         next(error)
     }
@@ -94,21 +107,22 @@ const handleGetBookingDetail = async (req, res, next) => {
         const bookingId = req.params.id;
         const accountId = req.user?.accountId;
         //validate input
-        if(!accountId || !bookingId){
+        if (!accountId || !bookingId) {
             throw new ApiError(StatusCodes.BAD_REQUEST, "Missing accountId or bookingId");
         }
         const result = await bookingService.handleGetbookingDetail(bookingId, accountId);
-        return res.status(StatusCodes.OK).json({success: true, data: result});
+        return res.status(StatusCodes.OK).json({ success: true, data: result });
     } catch (error) {
         next(error);
     }
 
 }
-export const bookingController = { 
+export const bookingController = {
     handleHoldSeats,
     handleConfirmBooking,
     handleGetHistory,
     handleGetScoreHistory,
     handleReleaseBooking,
-    handleGetBookingDetail
+    handleGetBookingDetail,
+    handleGetMyTickets
 }

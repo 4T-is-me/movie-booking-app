@@ -16,6 +16,7 @@ import com.example.movie_booking_app.view.fragment.MovieGridFragment
 import com.example.movie_booking_app.view.fragment.HomeFragment
 import com.example.movie_booking_app.view.fragment.PlaceholderFragment
 import com.example.movie_booking_app.view.fragment.ProfileFragment
+import com.example.movie_booking_app.view.fragment.MyTicketFragment
 import com.example.movie_booking_app.viewmodel.AuthViewModel
 import com.example.movie_booking_app.data.api.AuthEvent
 import androidx.activity.viewModels
@@ -113,6 +114,7 @@ class MainActivity : BaseActivity() {
                 else if (title.contains("Profile", true)) "Profile"
                 else "Home"
             }
+            is MyTicketFragment -> "Ticket"
             is ProfileFragment -> "Profile"
             else -> "Home"
         }
@@ -133,7 +135,7 @@ class MainActivity : BaseActivity() {
         val fragment: Fragment = when (section) {
             "Home" -> HomeFragment()
             "Now Playing", "Coming Soon" -> MovieGridFragment.newInstance(section)
-            "Ticket" -> PlaceholderFragment.newInstance("Ticket System", R.drawable.ic_ticket)
+            "Ticket" -> MyTicketFragment()
             "Profile" -> ProfileFragment()
             "Promo", "Service", "News" -> GenericGridFragment.newInstance(section)
             else -> HomeFragment()

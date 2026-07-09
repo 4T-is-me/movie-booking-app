@@ -100,6 +100,17 @@ class PaymentActivity : AppCompatActivity() {
             viewModel.applyCoupon(code)
         }
 
+        // Listen for coupon code edits to reset applied coupon state
+        binding.etCouponCode.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: android.text.Editable?) {
+                if (viewModel.uiState.value.couponApplied) {
+                    viewModel.removeCoupon()
+                }
+            }
+        })
+
         // Continue Button Checkout action
         binding.btnContinue.setOnClickListener {
             val selectedMethod = viewModel.uiState.value.selectedPaymentMethod
@@ -166,7 +177,7 @@ class PaymentActivity : AppCompatActivity() {
                             // Reload GET /profile from the server and navigate to Profile tab
                             val intent = Intent(this@PaymentActivity, MainActivity::class.java).apply {
                                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-                                putExtra("TARGET_SECTION", "Profile")
+                                putExtra("TARGET_SECTION", "Ticket")
                             }
                             startActivity(intent)
                             finish()
@@ -183,9 +194,9 @@ class PaymentActivity : AppCompatActivity() {
 
                     // Coupon validation messages & updates
                     if (state.couponApplied) {
-                        binding.etCouponCode.isEnabled = false
-                        binding.btnApplyCoupon.isEnabled = false
                         binding.etCouponCode.setTextColor(Color.parseColor("#34C759"))
+                    } else {
+                        binding.etCouponCode.setTextColor(Color.parseColor("#FFFFFF"))
                     }
 
                     state.couponSuccessMessage?.let { msg ->

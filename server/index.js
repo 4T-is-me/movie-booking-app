@@ -20,7 +20,12 @@ import adminMemberRoutes from './src/routes/adminMemberRoutes.js';
 import promotionRoute from './src/routes/promotionRoute.js';
 import adminStatsRoutes from './src/routes/adminStatsRoutes.js';
 import adminPromotionRoutes from './src/routes/adminPromotionRoutes.js';
+import adminShowDateRoutes from './src/routes/adminShowDateRoutes.js';
 import managerRoomRoutes from './src/routes/managerRoomRoutes.js';
+import managerDashboardRoutes from './src/routes/managerDashboardRoute.js';
+import managerReportRoutes from './src/routes/managerReportRoute.js';
+import { errorHandlingMiddleware } from './src/middlewares/errorHandlingMiddleware.js';
+
 
 const app = express();
 const PORT = env.PORT || 5000;
@@ -47,8 +52,11 @@ app.use('/api/admin/rooms', adminRoomRoute.adminRoomRouter);
 app.use('/api/admin/staff', adminStaffRoutes);
 app.use('/api/admin/members', adminMemberRoutes);
 app.use('/api/admin/promotions', adminPromotionRoutes);
+app.use('/api/admin/show-dates', adminShowDateRoutes);
 app.use('/api/admin/stats', adminStatsRoutes);
 app.use('/api/manager/rooms', managerRoomRoutes);
+app.use('/api/manager/dashboard', managerDashboardRoutes);
+app.use('/api/manager/reports', managerReportRoutes);
 
 app.get('/api/cinemas', async (req, res) => {
     try {
@@ -58,6 +66,9 @@ app.get('/api/cinemas', async (req, res) => {
         res.status(500).json({ success: false, message: e.message });
     }
 });
+
+// Centralized error handling middleware
+app.use(errorHandlingMiddleware);
 
 const startServer = async () => {
     await connectDB();

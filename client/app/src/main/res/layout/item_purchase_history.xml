@@ -29,21 +29,37 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
+        <!-- Completed Badge -->
+        <TextView
+            android:id="@+id/tvCompletedBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_completed_badge"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="3dp"
+            android:text="COMPLETED"
+            android:textColor="#34C759"
+            android:textSize="9sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <!-- Movie Title -->
         <TextView
             android:id="@+id/tvMovieTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Avengers: Endgame"
+            android:layout_marginEnd="8dp"
             android:textColor="@color/white"
-            android:textSize="16sp"
+            android:textSize="15sp"
             android:textStyle="bold"
-            android:maxLines="2"
+            android:maxLines="1"
             android:ellipsize="end"
             app:layout_constraintStart_toEndOf="@id/ivPoster"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toStartOf="@id/tvCompletedBadge"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Avengers: Endgame" />
 
         <!-- Booking Code -->
         <TextView
@@ -51,25 +67,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Code: EX12345"
             android:textColor="#F5C542"
             android:textSize="12sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@id/tvMovieTitle"
-            app:layout_constraintTop_toBottomOf="@id/tvMovieTitle" />
+            app:layout_constraintTop_toBottomOf="@id/tvMovieTitle"
+            tools:text="Code: EX12345" />
 
         <!-- Showtime (Date and Time) -->
         <TextView
             android:id="@+id/tvShowtime"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:text="Mon, Jun 24 • 15:30"
+            android:layout_marginTop="5dp"
             android:textColor="#BBFFFFFF"
-            android:textSize="13sp"
+            android:textSize="12sp"
             app:layout_constraintStart_toStartOf="@id/tvMovieTitle"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvBookingCode" />
+            app:layout_constraintTop_toBottomOf="@id/tvBookingCode"
+            tools:text="Mon, Jun 24 • 15:30" />
 
         <!-- Cinema & Room -->
         <TextView
@@ -77,12 +93,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:text="Lotte Cinema • Room 3"
             android:textColor="#88FFFFFF"
             android:textSize="12sp"
             app:layout_constraintStart_toStartOf="@id/tvMovieTitle"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvShowtime" />
+            app:layout_constraintTop_toBottomOf="@id/tvShowtime"
+            tools:text="Lotte Cinema • Room 3" />
 
         <!-- Seats -->
         <TextView
@@ -90,24 +106,37 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:text="Seats: G5, G6"
             android:textColor="#88FFFFFF"
             android:textSize="12sp"
             app:layout_constraintStart_toStartOf="@id/tvMovieTitle"
             app:layout_constraintEnd_toStartOf="@id/tvFinalAmount"
-            app:layout_constraintTop_toBottomOf="@id/tvCinemaRoom" />
+            app:layout_constraintTop_toBottomOf="@id/tvCinemaRoom"
+            tools:text="Seats: G5, G6" />
+
+        <!-- Payment Method -->
+        <TextView
+            android:id="@+id/tvPaymentMethod"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="#88FFFFFF"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@id/tvMovieTitle"
+            app:layout_constraintEnd_toStartOf="@id/tvFinalAmount"
+            app:layout_constraintTop_toBottomOf="@id/tvSeats"
+            tools:text="Paid via MOMO" />
 
         <!-- Final Amount -->
         <TextView
             android:id="@+id/tvFinalAmount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="200,000 ₫"
             android:textColor="#F5C542"
-            android:textSize="16sp"
+            android:textSize="15sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="200,000 ₫" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

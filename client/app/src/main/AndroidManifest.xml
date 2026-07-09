@@ -80,6 +80,11 @@
             android:theme="@style/Theme.Moviebookingapp" />
 
         <activity
+            android:name=".view.activity.PromotionDetailActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp" />
+
+        <activity
             android:name=".view.activity.AdminActivity"
             android:exported="true"
             android:theme="@style/Theme.Moviebookingapp" />
@@ -110,6 +115,11 @@
             android:theme="@style/Theme.Moviebookingapp" />
 
         <activity
+            android:name=".view.activity.BookingDetailActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp" />
+
+        <activity
             android:name=".view.activity.ScoreHistoryActivity"
             android:exported="false" />
         <activity
@@ -133,6 +143,11 @@
 
         <activity
             android:name=".view.activity.ManagerActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp" />
+
+        <activity
+            android:name=".view.activity.manager.ManagerReportActivity"
             android:exported="false"
             android:theme="@style/Theme.Moviebookingapp" />
 

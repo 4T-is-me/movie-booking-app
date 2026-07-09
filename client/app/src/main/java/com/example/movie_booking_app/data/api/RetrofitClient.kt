@@ -68,4 +68,8 @@ object RetrofitClient {
     val managerRoomApi: ManagerRoomApi by lazy {
         instance.create(ManagerRoomApi::class.java)
     }
+
+    val managerApi: ManagerApi by lazy {
+        instance.create(ManagerApi:: class.java)
+    }
 }

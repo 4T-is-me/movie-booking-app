@@ -91,7 +91,12 @@ class MovieRepositoryRemoteImpl @Inject constructor(
                         id = adminPromo.id,
                         title = adminPromo.title,
                         imageUrl = adminPromo.image ?: "https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=500",
-                        discountCode = adminPromo.couponCode ?: ""
+                        discountCode = adminPromo.couponCode ?: "",
+                        detail = adminPromo.detail,
+                        discountType = adminPromo.discountType,
+                        discountValue = adminPromo.discountValue,
+                        minOrderValue = adminPromo.minOrderValue,
+                        endDate = adminPromo.endDate
                     )
                 } ?: emptyList()
                 emit(promotions)
