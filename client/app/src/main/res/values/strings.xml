@@ -98,7 +98,7 @@
     <string name="error_no_showtimes">This movie has no available showtimes.</string>
     <string name="error_no_seats">No seats available for this showtime.</string>
     <string name="error_hold_failed">Failed to hold seats</string>
-    <string name="error_hold_conflict">Ghế đã bị người khác chọn, vui lòng chọn lại</string>
+    <string name="error_hold_conflict">The seats have been selected by another person, please choose again</string>
     <string name="error_release_failed">Failed to release seats</string>
     <string name="error_select_time">Please select a showtime</string>
     <string name="countdown_initial">10:00</string>
