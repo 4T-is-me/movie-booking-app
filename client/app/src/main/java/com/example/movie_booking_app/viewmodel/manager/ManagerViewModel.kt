@@ -21,8 +21,8 @@ class ManagerViewModel @Inject constructor(private val repository: ManagerReposi
     val reportData: StateFlow<ManagerReportsResponse?> = _reportData.asStateFlow()
 
     init {
-        // Mặc định là day
-        loadReport("day")
+        // Mặc định là week
+        loadReport("week")
     }
     fun loadDashboard() {
         viewModelScope.launch {
