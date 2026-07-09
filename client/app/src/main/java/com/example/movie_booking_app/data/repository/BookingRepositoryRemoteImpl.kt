@@ -62,6 +62,8 @@ class BookingRepositoryRemoteImpl @Inject constructor(
         val response = bookingApi.holdSeats(showtimeId, payload)
         if (response.isSuccessful) {
             emit(Unit)
+        } else if (response.code() == 409) {
+            throw Exception("CONFLICT")
         } else {
             val errorMsg = response.errorBody()?.string() ?: "Failed to hold seats"
             throw Exception(parseErrorMessage(errorMsg))
