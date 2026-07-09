@@ -59,6 +59,19 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
+                    <TextView
+                        android:id="@+id/tvCountdown"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/countdown_initial"
+                        android:textColor="@color/accent_primary"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <ImageView
@@ -103,37 +116,13 @@
                     <include layout="@layout/view_legend_item" android:id="@+id/legendSelected" />
                 </com.google.android.material.chip.ChipGroup>
 
-                <TextView
-                    android:id="@+id/tvHeaderDateTime"
-                    android:layout_width="wrap_content"
+                <androidx.fragment.app.FragmentContainerView
+                    android:id="@+id/showtimeContainer"
+                    android:name="com.example.movie_booking_app.view.fragment.ShowtimeSelectionFragment"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="32dp"
-                    android:text="@string/section_select_date_time"
-                    android:textColor="@color/text_primary"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/layoutLegend" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvDates"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:orientation="horizontal"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintTop_toBottomOf="@id/tvHeaderDateTime"
-                    tools:listitem="@layout/item_show_date" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvTimes"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:orientation="horizontal"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintTop_toBottomOf="@id/rvDates"
-                    tools:listitem="@layout/item_show_time" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
