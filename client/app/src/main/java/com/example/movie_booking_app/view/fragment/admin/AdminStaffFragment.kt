@@ -29,6 +29,13 @@ class AdminStaffFragment : Fragment() {
     
     private val viewModel: AdminStaffViewModel by viewModels()
     private lateinit var adapter: AdminStaffAdapter
+    
+    private var selectedTab = TAB_ACTIVE
+
+    companion object {
+        private const val TAB_ACTIVE = "active"
+        private const val TAB_INACTIVE = "inactive"
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,6 +50,7 @@ class AdminStaffFragment : Fragment() {
         
         setupRecyclerView()
         setupSearch()
+        setupTabs()
         observeViewModel()
 
         binding.fabAddStaff.setOnClickListener {
@@ -149,7 +157,7 @@ class AdminStaffFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collectLatest { state ->
                 // Show loading state if needed, here we submit the list
-                adapter.submitList(state.staffList)
+                adapter.submitList(getFilteredStaffList(state.staffList))
                 
                 state.error?.let { err ->
                     Toast.makeText(context, err, Toast.LENGTH_SHORT).show()
@@ -169,6 +177,41 @@ class AdminStaffFragment : Fragment() {
             viewModel.actionMessage.collectLatest { message ->
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    private fun setupTabs() {
+        binding.tabActiveStaff.setOnClickListener { switchTab(TAB_ACTIVE) }
+        binding.tabInactiveStaff.setOnClickListener { switchTab(TAB_INACTIVE) }
+    }
+
+    private fun switchTab(tab: String) {
+        if (selectedTab == tab) return
+        selectedTab = tab
+        
+        val isActive = (tab == TAB_ACTIVE)
+        updateTabStyle(binding.tabActiveStaff, isActive)
+        updateTabStyle(binding.tabInactiveStaff, !isActive)
+        
+        val fullList = viewModel.uiState.value.staffList
+        adapter.submitList(getFilteredStaffList(fullList))
+    }
+
+    private fun updateTabStyle(tabView: android.widget.TextView, isActive: Boolean) {
+        if (isActive) {
+            tabView.setBackgroundResource(com.example.movie_booking_app.R.drawable.bg_tab_active)
+            tabView.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), com.example.movie_booking_app.R.color.black))
+        } else {
+            tabView.background = null
+            tabView.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), com.example.movie_booking_app.R.color.text_gray))
+        }
+    }
+
+    private fun getFilteredStaffList(fullList: List<Staff>): List<Staff> {
+        return if (selectedTab == TAB_ACTIVE) {
+            fullList.filter { it.status != 0 }
+        } else {
+            fullList.filter { it.status == 0 }
         }
     }
 

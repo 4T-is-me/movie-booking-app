@@ -74,9 +74,7 @@ class AdminStaffViewModel @Inject constructor(
                     withContext(Dispatchers.Main) {
                         if (response.isSuccessful && response.body() != null) {
                             val dbStaffItems = response.body()?.data?.staffs ?: emptyList()
-                            val mappedStaffs = dbStaffItems
-                                .filter { it.account?.status != 0 }
-                                .map { dbStaff ->
+                            val mappedStaffs = dbStaffItems.map { dbStaff ->
                                 Staff(
                                     id = dbStaff.id,
                                     username = dbStaff.account?.username ?: "",
@@ -95,7 +93,8 @@ class AdminStaffViewModel @Inject constructor(
                                     ticketSold = dbStaff.ticketSold ?: 0,
                                     rating = dbStaff.rating ?: 0.0,
                                     totalRatings = dbStaff.totalRatings ?: 0,
-                                    totalStars = dbStaff.totalStars ?: 0
+                                    totalStars = dbStaff.totalStars ?: 0,
+                                    status = dbStaff.account?.status
                                 )
                             }
                             _uiState.value = AdminStaffUiState(
