@@ -10,7 +10,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.ActivitySelectSeatBinding
 import com.example.movie_booking_app.view.adapter.DateAdapter
@@ -32,8 +31,6 @@ class SelectSeatActivity : AppCompatActivity() {
     private val viewModel: SelectSeatViewModel by viewModels()
 
     private lateinit var seatAdapter: SeatAdapter
-    private lateinit var dateAdapter: DateAdapter
-    private lateinit var timeAdapter: TimeAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,22 +74,15 @@ class SelectSeatActivity : AppCompatActivity() {
         binding.rvSeats.layoutManager = layoutManager
         binding.rvSeats.adapter = seatAdapter
         binding.rvSeats.isNestedScrollingEnabled = false
-
-        dateAdapter = DateAdapter { date ->
-            viewModel.selectDate(date.id)
-        }
-        binding.rvDates.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        binding.rvDates.adapter = dateAdapter
-
-        timeAdapter = TimeAdapter { showtime  ->
-            viewModel.selectTime(showtime.id)
-        }
-        binding.rvTimes.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        binding.rvTimes.adapter = timeAdapter
     }
 
     private fun setupListeners() {
-        binding.ivBack.setOnClickListener { finish() }
+        binding.ivBack.setOnClickListener {
+            if (viewModel.uiState.value == com.example.movie_booking_app.viewmodel.SeatingUiState.HELD) {
+                viewModel.releaseCurrentHold()
+            }
+            finish()
+        }
         
         binding.btnContinue.setOnClickListener {
             val selectedSeatsList = viewModel.selectedSeats.value
@@ -102,7 +92,7 @@ class SelectSeatActivity : AppCompatActivity() {
             }
             val selectedTime = viewModel.times.value.find { it.isSelected }
             if (selectedTime == null) {
-                Toast.makeText(this, "Please select a showtime", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.error_select_time), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             viewModel.holdSeats(selectedTime.id, selectedSeatsList.map { it.id })
@@ -180,18 +170,6 @@ class SelectSeatActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.dates.collect { list -> dateAdapter.submitList(list) }
-            }
-        }
-
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.times.collect { list -> timeAdapter.submitList(list) }
-            }
-        }
-
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.selectedSeatsTotalCount.collect { count ->
                     binding.btnContinue.isEnabled = count > 0
                     binding.btnContinue.alpha = if (count > 0) 1.0f else 0.5f
@@ -214,6 +192,45 @@ class SelectSeatActivity : AppCompatActivity() {
                 }
             }
         }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.timerManager.remainingSeconds.collect { seconds ->
+                    val isActive = viewModel.timerManager.isActive.value
+                    binding.tvCountdown.visibility = if (isActive) View.VISIBLE else View.GONE
+                    binding.tvCountdown.text = formatTime(seconds)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    if (state == com.example.movie_booking_app.viewmodel.SeatingUiState.EXPIRED) {
+                        showExpiredDialog()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun formatTime(seconds: Int): String {
+        val minutes = seconds / 60
+        val remainingSeconds = seconds % 60
+        return String.format(Locale.getDefault(), "%02d:%02d", minutes, remainingSeconds)
+    }
+
+    private fun showExpiredDialog() {
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.title_expired))
+        builder.setMessage(getString(R.string.msg_expired))
+        builder.setPositiveButton(getString(R.string.btn_ok)) { dialog, _ ->
+            dialog.dismiss()
+            val selectedTime = viewModel.times.value.find { it.isSelected }
+            selectedTime?.let { viewModel.selectTime(it.id) }
+        }
+        builder.setCancelable(false)
+        builder.show()
     }
 
     private fun formatCurrency(amount: Int): String {

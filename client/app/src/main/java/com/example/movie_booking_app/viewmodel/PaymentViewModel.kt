@@ -20,13 +20,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PaymentViewModel @Inject constructor(
-    private val repository: PaymentRepository
+    private val repository: PaymentRepository,
+    val timerManager: com.example.movie_booking_app.utils.BookingTimerManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(BookingUiState())
     val uiState: StateFlow<BookingUiState> = _uiState.asStateFlow()
 
-    private var countdownJob: Job? = null
     private var discountLevelPercent = 0
 
     private var combo1Quantity = 0
@@ -39,25 +39,26 @@ class PaymentViewModel @Inject constructor(
             ticketSubtotal = booking.ticketTotal,
             grandTotal = total
         )
-        startCountdown()
+        // Timer is already started by SelectSeatViewModel, just observe it
+        observeTimer()
     }
 
-    private fun startCountdown() {
-        countdownJob?.cancel()
-        countdownJob = viewModelScope.launch {
-            var remainingSeconds = 900 // 15 mins (15 * 60 = 900)
-            while (remainingSeconds >= 0) {
-                val minutes = remainingSeconds / 60
-                val seconds = remainingSeconds % 60
-                val timeStr = String.format("%02d:%02d", minutes, seconds)
-                
+    private fun observeTimer() {
+        viewModelScope.launch {
+            timerManager.remainingSeconds.collect { seconds ->
+                val minutes = seconds / 60
+                val secs = seconds % 60
+                val timeStr = String.format("%02d:%02d", minutes, secs)
                 _uiState.value = _uiState.value.copy(
-                    countdownText = timeStr,
-                    isCountdownExpired = remainingSeconds == 0
+                    countdownText = timeStr
                 )
-                if (remainingSeconds == 0) break
-                delay(1000)
-                remainingSeconds--
+            }
+        }
+        viewModelScope.launch {
+            timerManager.isExpired.collect { expired ->
+                if (expired) {
+                    _uiState.value = _uiState.value.copy(isCountdownExpired = true)
+                }
             }
         }
     }
@@ -185,6 +186,5 @@ class PaymentViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
-        countdownJob?.cancel()
     }
 }

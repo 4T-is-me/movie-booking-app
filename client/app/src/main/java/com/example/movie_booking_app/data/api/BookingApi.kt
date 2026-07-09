@@ -24,4 +24,10 @@ interface BookingApi {
         @Path("showtimeId") showtimeId: String,
         @Body request: HoldSeatsRequest
     ): Response<okhttp3.ResponseBody>
+
+    @POST("api/showtimes/{showtimeId}/release")
+    suspend fun releaseSeats(
+        @Path("showtimeId") showtimeId: String,
+        @Body request: HoldSeatsRequest
+    ): Response<okhttp3.ResponseBody>
 }

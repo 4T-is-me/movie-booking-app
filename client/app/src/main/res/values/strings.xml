@@ -92,4 +92,13 @@
     <string name="section_select_date_time">Select Date &amp; Time</string>
     <string name="label_total">Total</string>
     <string name="btn_continue">Continue</string>
+    <string name="title_expired">Time Expired</string>
+    <string name="msg_expired">Your seat hold has expired. Please select seats again.</string>
+    <string name="btn_ok">OK</string>
+    <string name="error_no_showtimes">This movie has no available showtimes.</string>
+    <string name="error_no_seats">No seats available for this showtime.</string>
+    <string name="error_hold_failed">Failed to hold seats</string>
+    <string name="error_release_failed">Failed to release seats</string>
+    <string name="error_select_time">Please select a showtime</string>
+    <string name="countdown_initial">10:00</string>
 </resources>

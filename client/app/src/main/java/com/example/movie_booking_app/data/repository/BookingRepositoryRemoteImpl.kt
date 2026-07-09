@@ -68,6 +68,17 @@ class BookingRepositoryRemoteImpl @Inject constructor(
         }
     }
 
+    override fun releaseSeats(showtimeId: String, seatIds: List<String>): Flow<Unit> = flow {
+        val payload = com.example.movie_booking_app.data.api.HoldSeatsRequest(seatIds)
+        val response = bookingApi.releaseSeats(showtimeId, payload)
+        if (response.isSuccessful) {
+            emit(Unit)
+        } else {
+            val errorMsg = response.errorBody()?.string() ?: "Failed to release seats"
+            throw Exception(parseErrorMessage(errorMsg))
+        }
+    }
+
     private fun parseErrorMessage(raw: String): String {
         return try {
             if (raw.startsWith("{") && raw.contains("message")) {
