@@ -187,7 +187,6 @@ class ManagerActivity : AppCompatActivity() {
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
         binding.tvViewAll.setOnClickListener {
-//      // Lưu ý: Để truyền trực tiếp list này, ShowtimeTodayResponse của bạn cần implement java.io.Serializable
 //      putExtra("EXTRA_FULL_SHOWTIMES", ArrayList(listShowtime))
             Toast.makeText(this, "No showtimes available to view", Toast.LENGTH_SHORT).show()
         }
@@ -211,7 +210,7 @@ class ManagerActivity : AppCompatActivity() {
                 R.id.nav_rooms -> {
                     startActivity(Intent(this, ManagerRoomListActivity::class.java))
                 }
-                R.id.layoutReports -> {
+                R.id.nav_reports -> {
                     startActivity(Intent(this, ManagerReportActivity::class.java))
                 }
                 else -> Toast.makeText(this, "Feature coming soon", Toast.LENGTH_SHORT).show()

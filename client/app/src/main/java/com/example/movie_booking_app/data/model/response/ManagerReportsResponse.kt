@@ -24,7 +24,7 @@ data class GrowthData(
 )
 
 data class ReportChartItemResponse(
-    val label: String,          // Sẽ là "10:00", "2026-07-08", v.v. tùy loại report
+    val label: String,
     val ticketRevenue: Double,
     val fbRevenue: Double
 )

@@ -34,7 +34,6 @@ class ManagerReportActivity : AppCompatActivity() {
     private lateinit var tabButtons: List<TextView>
     private lateinit var binding: ActivityManagerReportBinding
 
-    // Biến lưu trạng thái tab hiện tại để format trục X chính xác
     private var currentReportType = "week"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -145,7 +144,7 @@ class ManagerReportActivity : AppCompatActivity() {
             ticketEntries.add(Entry(index.toFloat(), item.ticketRevenue.toFloat()))
             fbEntries.add(Entry(index.toFloat(), item.fbRevenue.toFloat()))
 
-            // Dựa hẳn vào currentReportType để định dạng chữ hiển thị dưới chân biểu đồ
+            
             val cleanLabel = when {
                 item.label.contains(":") -> item.label
                 item.label.length == 10 -> {
