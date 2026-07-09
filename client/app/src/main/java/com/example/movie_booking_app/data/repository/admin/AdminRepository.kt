@@ -31,6 +31,8 @@ class AdminRepository @Inject constructor(
     suspend fun createStaff(request: CreateStaffRequest) = api.createStaff(request)
     suspend fun updateStaff(id: String, request: UpdateStaffRequest) = api.updateStaff(id, request)
     suspend fun deleteStaff(id: String) = api.deleteStaff(id)
+    suspend fun updateStaffStatus(id: String, status: Int) = 
+        api.updateStaffStatus(id, com.example.movie_booking_app.data.model.request.UpdateStaffStatusRequest(status))
 
     suspend fun getCinemas() = api.getCinemas()
 

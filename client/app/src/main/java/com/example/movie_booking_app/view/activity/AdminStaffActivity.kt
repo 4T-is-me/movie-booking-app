@@ -49,10 +49,11 @@ class AdminStaffActivity : BaseActivity() {
 
     private fun setupUI() {
         if (isEditMode) {
-            binding.tvFormTitle.text = "Cập Nhật Nhân Viên"
+            binding.tvFormTitle.text = "Update Employee"
             binding.layoutUsername.visibility = View.GONE
             binding.layoutPassword.visibility = View.GONE
             binding.layoutAddress.visibility = View.VISIBLE
+            binding.layoutStatus.visibility = View.VISIBLE
  
             // Pre-populate fields
             currentStaff?.let { staff ->
@@ -65,21 +66,30 @@ class AdminStaffActivity : BaseActivity() {
                 binding.edtStartDate.setText(staff.startDate?.take(10) ?: "")
                 binding.edtAddress.setText(staff.address)
                 
+                val statusText = if (staff.status != 0) "Active" else "Inactive"
+                binding.actvStatus.setText(statusText, false)
+
                 // Set identity card non-editable in edit mode
                 binding.edtIdentityCard.isEnabled = false
                 binding.layoutIdentityCard.alpha = 0.6f
             }
         } else {
-            binding.tvFormTitle.text = "Thêm Nhân Viên Mới"
+            binding.tvFormTitle.text = "Add New Employee"
             binding.layoutUsername.visibility = View.VISIBLE
             binding.layoutPassword.visibility = View.VISIBLE
             binding.layoutAddress.visibility = View.VISIBLE
+            binding.layoutStatus.visibility = View.GONE
         }
 
         // Setup Role autocomplete dropdown
         val roles = arrayOf("Employee", "Manager")
         val roleAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, roles)
         binding.actvRole.setAdapter(roleAdapter)
+
+        // Setup Status autocomplete dropdown
+        val statuses = arrayOf("Active", "Inactive")
+        val statusAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, statuses)
+        binding.actvStatus.setAdapter(statusAdapter)
 
         // Set default role selection if adding
         if (!isEditMode) {
@@ -173,38 +183,40 @@ class AdminStaffActivity : BaseActivity() {
         if (fullName.isEmpty() || email.isEmpty() || phone.isEmpty() || identityCard.isEmpty() ||
             role.isEmpty() || position.isEmpty() || salaryStr.isEmpty() || startDate.isEmpty() ||
             selectedCinemaId == null) {
-            Toast.makeText(this, "Vui lòng nhập đầy đủ các trường thông tin bắt buộc (*)", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Please fill in all required fields (*)", Toast.LENGTH_SHORT).show()
             return
         }
 
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(this, "Email không hợp lệ", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Invalid email address", Toast.LENGTH_SHORT).show()
             return
         }
 
         if (!phone.matches(Regex("^0\\d{9}$"))) {
-            Toast.makeText(this, "Số điện thoại phải bắt đầu bằng số 0 và gồm 10 chữ số", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Phone number must start with 0 and consist of 10 digits", Toast.LENGTH_SHORT).show()
             return
         }
 
         if (identityCard.length != 12 || !identityCard.all { it.isDigit() }) {
-            Toast.makeText(this, "Số CMND/CCCD phải gồm 12 chữ số", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Identity Card must be 12 digits", Toast.LENGTH_SHORT).show()
             return
         }
 
         val salary = salaryStr.toDoubleOrNull()
         if (salary == null || salary < 0) {
-            Toast.makeText(this, "Lương không hợp lệ", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Invalid salary amount", Toast.LENGTH_SHORT).show()
             return
         }
 
         if (isEditMode) {
             val staffId = currentStaff?.id
             if (staffId == null) {
-                Toast.makeText(this, "Không tìm thấy ID nhân viên", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Employee ID not found", Toast.LENGTH_SHORT).show()
                 return
             }
             val address = binding.edtAddress.text.toString().trim()
+            val statusText = binding.actvStatus.text.toString()
+            val statusVal = if (statusText.contains("Active") || statusText.contains("Hoạt động")) 1 else 0
             val request = UpdateStaffRequest(
                 fullName = fullName,
                 email = email,
@@ -213,7 +225,8 @@ class AdminStaffActivity : BaseActivity() {
                 cinemaId = selectedCinemaId!!,
                 position = position,
                 salary = salary,
-                startDate = startDate
+                startDate = startDate,
+                status = statusVal
             )
             viewModel.updateStaff(staffId, request)
         } else {

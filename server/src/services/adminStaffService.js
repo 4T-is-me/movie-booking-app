@@ -185,15 +185,22 @@ export const updateStaff = async (staffId, updateData) => {
     const staff = await Staff.findById(staffId);
     if (!staff) return null;
 
-    const { email, ...staffFields } = updateData;
-
-    // 1. Update Account email if provided
+    const { email, status, ...staffFields } = updateData;
+ 
+    // 1. Update Account email and status if provided
+    const accountUpdates = {};
     if (email) {
         const existingAccount = await Account.findOne({ email, _id: { $ne: staff.accountId } });
         if (existingAccount) {
             throw new Error('EmailAlreadyExists');
         }
-        await Account.findByIdAndUpdate(staff.accountId, { email });
+        accountUpdates.email = email;
+    }
+    if (status !== undefined) {
+        accountUpdates.status = Number(status);
+    }
+    if (Object.keys(accountUpdates).length > 0) {
+        await Account.findByIdAndUpdate(staff.accountId, accountUpdates);
     }
 
     // 2. Update Staff fields
