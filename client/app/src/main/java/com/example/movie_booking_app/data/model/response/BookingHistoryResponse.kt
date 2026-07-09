@@ -19,5 +19,7 @@ data class BookingHistoryItem(
     @SerializedName("seats") val seats: List<String>?,
     @SerializedName("finalAmount") val finalAmount: Double,
     @SerializedName("paymentStatus") val paymentStatus: String,
-    @SerializedName("createdAt") val createdAt: String
+    @SerializedName("createdAt") val createdAt: String,
+    @SerializedName("qrCodeData") val qrCodeData: String? = null,
+    @SerializedName("paymentMethod") val paymentMethod: String? = null
 )

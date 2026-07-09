@@ -177,7 +177,7 @@ class PaymentActivity : AppCompatActivity() {
                             // Reload GET /profile from the server and navigate to Profile tab
                             val intent = Intent(this@PaymentActivity, MainActivity::class.java).apply {
                                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-                                putExtra("TARGET_SECTION", "Profile")
+                                putExtra("TARGET_SECTION", "Ticket")
                             }
                             startActivity(intent)
                             finish()
