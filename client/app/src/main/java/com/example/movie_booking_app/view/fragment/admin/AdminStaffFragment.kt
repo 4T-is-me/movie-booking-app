@@ -53,6 +53,11 @@ class AdminStaffFragment : Fragment() {
         setupTabs()
         observeViewModel()
 
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            val query = binding.etSearchStaff.text.toString().trim()
+            viewModel.loadStaff(query.ifEmpty { null })
+        }
+
         binding.fabAddStaff.setOnClickListener {
             val intent = Intent(requireContext(), AdminStaffActivity::class.java)
             startActivity(intent)
@@ -156,6 +161,7 @@ class AdminStaffFragment : Fragment() {
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collectLatest { state ->
+                binding.swipeRefreshLayout.isRefreshing = state.isLoading
                 // Show loading state if needed, here we submit the list
                 adapter.submitList(getFilteredStaffList(state.staffList))
                 
