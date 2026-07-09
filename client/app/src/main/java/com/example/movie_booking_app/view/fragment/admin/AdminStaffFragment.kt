@@ -53,6 +53,9 @@ class AdminStaffFragment : Fragment() {
 
     private fun setupRecyclerView() {
         adapter = AdminStaffAdapter(
+            onDetailClick = { staff ->
+                showStaffDetailDialog(staff)
+            },
             onEditClick = { staff ->
                 val intent = Intent(requireContext(), AdminStaffActivity::class.java).apply {
                     putExtra("staff", staff)
@@ -93,6 +96,50 @@ class AdminStaffFragment : Fragment() {
         btnConfirm.setOnClickListener {
             dialog.dismiss()
             staff.id?.let { viewModel.deleteStaff(it) }
+        }
+
+        dialog.show()
+    }
+
+    private fun showStaffDetailDialog(staff: Staff) {
+        val dialog = android.app.Dialog(requireContext())
+        dialog.setContentView(com.example.movie_booking_app.R.layout.dialog_detail_staff)
+        dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
+        dialog.setCancelable(true)
+
+        val tvDetailUsername = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailUsername)
+        val tvDetailFullName = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailFullName)
+        val tvDetailPosition = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailPosition)
+        val tvDetailEmail = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailEmail)
+        val tvDetailPhone = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailPhone)
+        val tvDetailDob = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailDob)
+        val tvDetailGender = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailGender)
+        val tvDetailIdentityCard = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailIdentityCard)
+        val tvDetailAddress = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailAddress)
+        val tvDetailSalary = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailSalary)
+        val tvDetailStartDate = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailStartDate)
+        val tvDetailKpi = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailKpi)
+        val tvDetailTicketSold = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailTicketSold)
+        val tvDetailRating = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailRating)
+        val btnClose = dialog.findViewById<com.google.android.material.button.MaterialButton>(com.example.movie_booking_app.R.id.btnCloseDetail)
+
+        tvDetailUsername.text = staff.username ?: "-"
+        tvDetailFullName.text = staff.fullName ?: "-"
+        tvDetailPosition.text = staff.position ?: "-"
+        tvDetailEmail.text = staff.email ?: "-"
+        tvDetailPhone.text = staff.phone ?: "-"
+        tvDetailDob.text = staff.dob?.take(10) ?: "-"
+        tvDetailGender.text = staff.gender ?: "-"
+        tvDetailIdentityCard.text = staff.identityCard ?: "-"
+        tvDetailAddress.text = staff.address ?: "-"
+        tvDetailSalary.text = staff.salary?.let { String.format("%,.0f đ", it) } ?: "-"
+        tvDetailStartDate.text = staff.startDate?.take(10) ?: "-"
+        tvDetailKpi.text = staff.kpiPoints?.toString() ?: "0"
+        tvDetailTicketSold.text = staff.ticketSold?.toString() ?: "0"
+        tvDetailRating.text = staff.rating?.toString() ?: "0.0"
+
+        btnClose.setOnClickListener {
+            dialog.dismiss()
         }
 
         dialog.show()
