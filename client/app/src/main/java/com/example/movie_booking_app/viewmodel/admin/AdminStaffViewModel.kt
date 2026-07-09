@@ -7,7 +7,7 @@ import com.example.movie_booking_app.data.model.entity.Cinema
 import com.example.movie_booking_app.data.model.entity.Staff
 import com.example.movie_booking_app.data.model.request.CreateStaffRequest
 import com.example.movie_booking_app.data.model.request.UpdateStaffRequest
-import com.example.movie_booking_app.data.repository.AdminRepository
+import com.example.movie_booking_app.data.repository.admin.AdminRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow

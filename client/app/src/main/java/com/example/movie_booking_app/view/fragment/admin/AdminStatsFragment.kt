@@ -78,23 +78,21 @@ class AdminStatsFragment : Fragment() {
             setPinchZoom(true)
             xAxis.position = XAxis.XAxisPosition.BOTTOM
             xAxis.textColor = Color.WHITE
-            axisLeft.textColor = Color.WHITE
-            axisRight.isEnabled = false
-            legend.textColor = Color.WHITE
-            
-            xAxis.valueFormatter = object : ValueFormatter() {
-                override fun getFormattedValue(value: Float): String {
-                    // This assumes we pass an index or timestamp. 
-                    // We'll handle mapping in updateLineChart
-                    return value.toString()
-                }
-            }
+            xAxis.granularity = 1f
+            xAxis.setAvoidFirstLastClipping(true)
 
+            axisLeft.textColor = Color.WHITE
+            axisLeft.labelCount = 5
             axisLeft.valueFormatter = object : ValueFormatter() {
                 override fun getFormattedValue(value: Float): String {
-                    return currencyFormat.format(value.toDouble())
+                    return when {
+                        value >= 1000000 -> String.format(Locale.US, "%.1fM", value / 1000000)
+                        value >= 1000 -> String.format(Locale.US, "%.0fK", value / 1000)
+                        else -> value.toInt().toString()
+                    }
                 }
             }
+            axisRight.isEnabled = false
         }
 
         // HorizontalBarChart setup
@@ -103,15 +101,23 @@ class AdminStatsFragment : Fragment() {
             setTouchEnabled(true)
             xAxis.position = XAxis.XAxisPosition.BOTTOM
             xAxis.textColor = Color.WHITE
+            xAxis.granularity = 1f
+            xAxis.setDrawGridLines(false)
+            
             axisLeft.textColor = Color.WHITE
-            axisRight.isEnabled = false
-            legend.textColor = Color.WHITE
-
+            axisLeft.axisMinimum = 0f
+            axisLeft.labelCount = 5
             axisLeft.valueFormatter = object : ValueFormatter() {
                 override fun getFormattedValue(value: Float): String {
-                    return currencyFormat.format(value.toDouble())
+                    return when {
+                        value >= 1000000 -> String.format(Locale.US, "%.1fM", value / 1000000)
+                        value >= 1000 -> String.format(Locale.US, "%.0fK", value / 1000)
+                        else -> value.toInt().toString()
+                    }
                 }
             }
+            axisRight.isEnabled = false
+            legend.textColor = Color.WHITE
         }
     }
 
@@ -173,7 +179,7 @@ class AdminStatsFragment : Fragment() {
         binding.lcDailyRevenue.xAxis.valueFormatter = object : ValueFormatter() {
             override fun getFormattedValue(value: Float): String {
                 return if (isMonthly) {
-                    "Tháng ${value.toInt()}"
+                    "T${value.toInt()}"
                 } else {
                     val index = value.toInt()
                     if (index >= 0 && index < state.dailyRevenue.size) {
@@ -183,25 +189,58 @@ class AdminStatsFragment : Fragment() {
                 }
             }
         }
+        
+        // Adjust label count to prevent overlap
+        binding.lcDailyRevenue.xAxis.labelCount = if (isMonthly) 12 else 6
 
         binding.lcDailyRevenue.data = LineData(dataSet)
         binding.lcDailyRevenue.invalidate()
     }
 
     private fun updateBarChart(data: List<MovieRevenueItem>) {
-        val entries = data.mapIndexed { index, item ->
+        // Reverse data for HorizontalBarChart so highest revenue is at the top (highest index)
+        val sortedData = data.reversed()
+        
+        val entries = sortedData.mapIndexed { index, item ->
             BarEntry(index.toFloat(), item.totalRevenue.toFloat())
         }
         val dataSet = BarDataSet(entries, "Doanh thu phim").apply {
             color = Color.parseColor("#F5C518")
             valueTextColor = Color.WHITE
+            valueTextSize = 10f
+            // Format values inside the chart
+            valueFormatter = object : ValueFormatter() {
+                override fun getFormattedValue(value: Float): String {
+                    return if (value >= 1000000) {
+                        String.format(Locale.US, "%.1fM", value / 1000000)
+                    } else if (value >= 1000) {
+                        String.format(Locale.US, "%.0fK", value / 1000)
+                    } else {
+                        value.toInt().toString()
+                    }
+                }
+            }
         }
 
-        binding.bcMovieRevenue.xAxis.valueFormatter = object : ValueFormatter() {
-            override fun getFormattedValue(value: Float): String {
-                val index = value.toInt()
-                return if (index >= 0 && index < data.size) data[index].displayTitle else ""
+        binding.bcMovieRevenue.apply {
+            xAxis.valueFormatter = object : ValueFormatter() {
+                override fun getFormattedValue(value: Float): String {
+                    val index = value.toInt()
+                    return if (index >= 0 && index < sortedData.size) {
+                        val title = sortedData[index].displayTitle
+                        if (title.length > 12) title.substring(0, 10) + "..." else title
+                    } else ""
+                }
             }
+            xAxis.granularity = 1f
+            xAxis.labelCount = sortedData.size
+            xAxis.setDrawGridLines(false)
+            axisLeft.setDrawGridLines(true)
+            axisLeft.gridColor = Color.parseColor("#33FFFFFF")
+            
+            // Adjust offsets to prevent label clipping
+            setExtraOffsets(20f, 0f, 40f, 0f)
+            animateY(1000)
         }
 
         binding.bcMovieRevenue.data = BarData(dataSet)
