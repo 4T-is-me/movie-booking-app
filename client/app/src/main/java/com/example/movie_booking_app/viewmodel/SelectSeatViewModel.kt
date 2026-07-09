@@ -208,7 +208,12 @@ class SelectSeatViewModel @Inject constructor(
                 .catch { exception ->
                     _isLoading.value = false
                     _uiState.value = SeatingUiState.ERROR
-                    _errorMessage.emit(exception.message ?: (savedStateHandle.get<String>("error_hold_failed") ?: "Failed to hold seats"))
+                    val msg = if (exception.message == "CONFLICT") {
+                        savedStateHandle.get<String>("error_hold_conflict") ?: "The seats have been selected by another person, please choose again"
+                    } else {
+                        exception.message ?: (savedStateHandle.get<String>("error_hold_failed") ?: "Failed to hold seats")
+                    }
+                    _errorMessage.emit(msg)
                 }
                 .collect {
                     _isLoading.value = false

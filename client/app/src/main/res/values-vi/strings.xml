@@ -96,6 +96,7 @@
     <string name="error_no_showtimes">Phim này hiện không có suất chiếu nào.</string>
     <string name="error_no_seats">Không còn ghế trống cho suất chiếu này.</string>
     <string name="error_hold_failed">Giữ ghế thất bại</string>
+    <string name="error_hold_conflict">Ghế đã bị người khác chọn, vui lòng chọn lại</string>
     <string name="error_release_failed">Thả ghế thất bại</string>
     <string name="error_select_time">Vui lòng chọn suất chiếu</string>
     <string name="countdown_initial">10:00</string>
