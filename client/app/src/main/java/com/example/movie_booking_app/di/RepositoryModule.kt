@@ -25,6 +25,12 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
+    abstract fun bindCinemaRoomsRepository(
+        impl: CinemaRoomsRepositoryImpl
+    ): CinemaRoomsRepository
+
+    @Binds
+    @Singleton
     abstract fun bindBookingRepository(
         impl: BookingRepositoryRemoteImpl // Phải là RemoteImpl để gọi API thật
     ): BookingRepository

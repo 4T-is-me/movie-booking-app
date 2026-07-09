@@ -7,7 +7,7 @@ import { StatusCodes } from "http-status-codes";
 import { Showtime } from "../models/showTimeModel.js";
 
 //create room and generate seats
-const handleCreateRoom = async ({ cinemaId, roomName, roomType, rowsCount, colsCount }) => {
+const handleCreateRoom = async ({ cinemaId, roomName, roomType, screenType, rowsCount, colsCount, status, seatsInput }) => {
     const session = await mongoose.startSession();
 
     try {
@@ -30,14 +30,14 @@ const handleCreateRoom = async ({ cinemaId, roomName, roomType, rowsCount, colsC
             throw new ApiError(StatusCodes.CONFLICT, "Room name already exists!");
         }
 
-        //validate room type
-        const VALID_ROOM_TYPES = ["2D", "3D", "IMAX"];
-        const finalRoomType = roomType.toUpperCase();
+        //validate screen type
+        const VALID_SCREEN_TYPES = ["2D", "3D", "IMAX"];
+        const finalScreenType = (screenType || "2D").toUpperCase();
 
-        if (!VALID_ROOM_TYPES.includes(finalRoomType)) {
+        if (!VALID_SCREEN_TYPES.includes(finalScreenType)) {
             throw new ApiError(
                 StatusCodes.BAD_REQUEST,
-                "Invalid room type! It must be 2D, 3D or IMAX!"
+                "Invalid screen type! It must be 2D, 3D or IMAX!"
             );
         }
         //total seats
@@ -52,7 +52,9 @@ const handleCreateRoom = async ({ cinemaId, roomName, roomType, rowsCount, colsC
                     rowsCount,
                     colsCount,
                     totalSeats,
-                    roomType: finalRoomType
+                    roomType: roomType || 'Standard',
+                    screenType: finalScreenType,
+                    status: status || 'active'
                 }
             ],
             { session }
@@ -61,35 +63,67 @@ const handleCreateRoom = async ({ cinemaId, roomName, roomType, rowsCount, colsC
         //generate seats
         const seats = [];
 
-        for (let row = 0; row < rowsCount; row++) {
-            //convert row to letter
-            const rowLetter = String.fromCharCode(row + 65);
+        if (seatsInput && Array.isArray(seatsInput) && seatsInput.length > 0) {
+            for (const s of seatsInput) {
+                const name = s.seatName; // e.g. "A1"
+                const inputType = s.seatType || "standard";
+                
+                // Parse row and col from seatName
+                const rowLetter = name.charAt(0);
+                const colNumber = parseInt(name.substring(1), 10);
 
-            for (let col = 1; col <= colsCount; col++) {
-                //default
                 let seatType = "Regular";
                 let price = 100000;
 
-                // the last row -> Couple
-                if (row === rowsCount - 1) {
-                    seatType = "Couple";
-                    price = 250000;
-                }
-                // the last 2 rows -> VIP
-                else if (row === rowsCount - 2 || row === rowsCount - 3) {
+                if (inputType.toLowerCase() === "vip") {
                     seatType = "VIP";
                     price = 150000;
+                } else if (inputType.toLowerCase() === "couple") {
+                    seatType = "Couple";
+                    price = 250000;
                 }
 
                 seats.push({
                     roomId: createdRoom._id,
-                    seatName: `${rowLetter}${col}`,
+                    seatName: name,
                     row: rowLetter,
-                    col,
+                    col: colNumber,
                     price,
                     status: "active",
                     seatType
                 });
+            }
+        } else {
+            for (let row = 0; row < rowsCount; row++) {
+                //convert row to letter
+                const rowLetter = String.fromCharCode(row + 65);
+
+                for (let col = 1; col <= colsCount; col++) {
+                    //default
+                    let seatType = "Regular";
+                    let price = 100000;
+
+                    // the last row -> Couple
+                    if (row === rowsCount - 1) {
+                        seatType = "Couple";
+                        price = 250000;
+                    }
+                    // the last 2 rows -> VIP
+                    else if (row === rowsCount - 2 || row === rowsCount - 3) {
+                        seatType = "VIP";
+                        price = 150000;
+                    }
+
+                    seats.push({
+                        roomId: createdRoom._id,
+                        seatName: `${rowLetter}${col}`,
+                        row: rowLetter,
+                        col,
+                        price,
+                        status: "active",
+                        seatType
+                    });
+                }
             }
         }
 
@@ -113,8 +147,7 @@ const handleCreateRoom = async ({ cinemaId, roomName, roomType, rowsCount, colsC
 const handleGetAllRoom = async (cinemaId) => {
     try {
         const matchStage = {
-            isDeleted: false,
-            status: "active"
+            isDeleted: false
         };
         if (cinemaId) {
             matchStage.cinemaId = new mongoose.Types.ObjectId(cinemaId);
@@ -163,6 +196,9 @@ const handleGetAllRoom = async (cinemaId) => {
                 $group: {
                     _id: '$_id',
                     roomName: {$first: '$roomName'},
+                    roomType: {$first: '$roomType'},
+                    screenType: {$first: '$screenType'},
+                    status: {$first: '$status'},
                     rowsCount: {$first: '$rowsCount'},
                     colsCount: {$first: '$colsCount'},
                     cinemaName: {$first: '$cinemaInfo.cinemaName'},
