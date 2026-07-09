@@ -100,7 +100,7 @@ class AdminStaffFragment : Fragment() {
         val btnCancel = dialog.findViewById<com.google.android.material.button.MaterialButton>(com.example.movie_booking_app.R.id.btnCancelDelete)
         val btnConfirm = dialog.findViewById<com.google.android.material.button.MaterialButton>(com.example.movie_booking_app.R.id.btnConfirmDelete)
 
-        tvDeleteMessage.text = "Bạn có muốn xóa tài khoản nhân viên \"${staff.fullName}\" không?"
+        tvDeleteMessage.text = "Are you sure you want to delete employee \"${staff.fullName}\"?"
 
         btnCancel.setOnClickListener {
             dialog.dismiss()

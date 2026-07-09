@@ -19,7 +19,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Chi tiết nhân viên"
+            android:text="Employee Details"
             android:textColor="#FFFFFF"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -47,7 +47,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tài khoản"
+                        android:text="Username"
                         android:textColor="#8E8E93"
                         android:textSize="12sp" />
                     <TextView
@@ -68,7 +68,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Họ tên"
+                        android:text="Full Name"
                         android:textColor="#8E8E93"
                         android:textSize="12sp" />
                     <TextView
@@ -88,7 +88,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Chức vụ"
+                        android:text="Position"
                         android:textColor="#8E8E93"
                         android:textSize="12sp" />
                     <TextView
@@ -128,7 +128,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Số điện thoại"
+                        android:text="Phone Number"
                         android:textColor="#8E8E93"
                         android:textSize="12sp" />
                     <TextView
@@ -154,7 +154,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Ngày sinh"
+                            android:text="Date of Birth"
                             android:textColor="#8E8E93"
                             android:textSize="12sp" />
                         <TextView
@@ -172,7 +172,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Giới tính"
+                            android:text="Gender"
                             android:textColor="#8E8E93"
                             android:textSize="12sp" />
                         <TextView
@@ -193,7 +193,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Số CMND/CCCD"
+                        android:text="Identity Card"
                         android:textColor="#8E8E93"
                         android:textSize="12sp" />
                     <TextView
@@ -213,7 +213,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Địa chỉ"
+                        android:text="Address"
                         android:textColor="#8E8E93"
                         android:textSize="12sp" />
                     <TextView
@@ -233,7 +233,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Mức lương"
+                        android:text="Salary"
                         android:textColor="#8E8E93"
                         android:textSize="12sp" />
                     <TextView
@@ -253,7 +253,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Ngày bắt đầu làm việc"
+                        android:text="Start Date"
                         android:textColor="#8E8E93"
                         android:textSize="12sp" />
                     <TextView
@@ -297,7 +297,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Vé đã bán"
+                            android:text="Tickets Sold"
                             android:textColor="#8E8E93"
                             android:textSize="12sp" />
                         <TextView
@@ -315,7 +315,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Đánh giá"
+                            android:text="Rating"
                             android:textColor="#8E8E93"
                             android:textSize="12sp" />
                         <TextView
@@ -335,7 +335,7 @@
             android:id="@+id/btnCloseDetail"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:text="Đóng"
+            android:text="Close"
             android:textColor="#000000"
             android:textSize="14sp"
             android:textStyle="bold"
