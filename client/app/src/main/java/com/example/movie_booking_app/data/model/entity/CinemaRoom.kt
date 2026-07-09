@@ -7,5 +7,9 @@ data class CinemaRoom(
     @SerializedName("roomName") val roomName: String,
     @SerializedName("totalSeats") val totalSeats: Int,
     @SerializedName("rowsCount") val rows: Int = 0,
-    @SerializedName("colsCount") val columns: Int = 0
+    @SerializedName("colsCount") val columns: Int = 0,
+    @SerializedName("roomType") val roomType: String? = null,
+    @SerializedName("screenType") val screenType: String? = null,
+    @SerializedName("status") val status: String? = null,
+    @SerializedName("roomImage") val roomImage: String? = null
 )
