@@ -72,6 +72,7 @@
 
         <!-- Full Name -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutFullName"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -94,6 +95,7 @@
 
         <!-- Email -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutEmail"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -116,6 +118,7 @@
 
         <!-- Phone -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutPhone"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -184,6 +187,7 @@
 
         <!-- Cinema Dropdown -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutCinema"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -206,6 +210,7 @@
 
         <!-- Position -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutPosition"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -228,6 +233,7 @@
 
         <!-- Salary -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutSalary"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -250,6 +256,7 @@
 
         <!-- Start Date -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutStartDate"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -271,7 +278,7 @@
                 android:clickable="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Address (Edit Mode Only) -->
+        <!-- Address -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutAddress"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
