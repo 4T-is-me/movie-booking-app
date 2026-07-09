@@ -66,6 +66,12 @@ interface AdminApiService {
     @DELETE("api/admin/staff/{id}")
     suspend fun deleteStaff(@Path("id") id: String): Response<Unit>
 
+    @PATCH("api/admin/staff/{id}/status")
+    suspend fun updateStaffStatus(
+        @Path("id") id: String,
+        @Body request: com.example.movie_booking_app.data.model.request.UpdateStaffStatusRequest
+    ): Response<Unit>
+
     @GET("api/admin/promotions")
     suspend fun getPromotions(): Response<AdminPromotionsResponse>
 

@@ -53,6 +53,7 @@ class AdminStaffActivity : BaseActivity() {
             binding.layoutUsername.visibility = View.GONE
             binding.layoutPassword.visibility = View.GONE
             binding.layoutAddress.visibility = View.VISIBLE
+            binding.layoutStatus.visibility = View.VISIBLE
  
             // Pre-populate fields
             currentStaff?.let { staff ->
@@ -65,6 +66,9 @@ class AdminStaffActivity : BaseActivity() {
                 binding.edtStartDate.setText(staff.startDate?.take(10) ?: "")
                 binding.edtAddress.setText(staff.address)
                 
+                val statusText = if (staff.status != 0) "Active (Hoạt động)" else "Inactive (Ngưng hoạt động)"
+                binding.actvStatus.setText(statusText, false)
+
                 // Set identity card non-editable in edit mode
                 binding.edtIdentityCard.isEnabled = false
                 binding.layoutIdentityCard.alpha = 0.6f
@@ -74,12 +78,18 @@ class AdminStaffActivity : BaseActivity() {
             binding.layoutUsername.visibility = View.VISIBLE
             binding.layoutPassword.visibility = View.VISIBLE
             binding.layoutAddress.visibility = View.VISIBLE
+            binding.layoutStatus.visibility = View.GONE
         }
 
         // Setup Role autocomplete dropdown
         val roles = arrayOf("Employee", "Manager")
         val roleAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, roles)
         binding.actvRole.setAdapter(roleAdapter)
+
+        // Setup Status autocomplete dropdown
+        val statuses = arrayOf("Active (Hoạt động)", "Inactive (Ngưng hoạt động)")
+        val statusAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, statuses)
+        binding.actvStatus.setAdapter(statusAdapter)
 
         // Set default role selection if adding
         if (!isEditMode) {
@@ -205,6 +215,8 @@ class AdminStaffActivity : BaseActivity() {
                 return
             }
             val address = binding.edtAddress.text.toString().trim()
+            val statusText = binding.actvStatus.text.toString()
+            val statusVal = if (statusText.contains("Active") || statusText.contains("Hoạt động")) 1 else 0
             val request = UpdateStaffRequest(
                 fullName = fullName,
                 email = email,
@@ -213,7 +225,8 @@ class AdminStaffActivity : BaseActivity() {
                 cinemaId = selectedCinemaId!!,
                 position = position,
                 salary = salary,
-                startDate = startDate
+                startDate = startDate,
+                status = statusVal
             )
             viewModel.updateStaff(staffId, request)
         } else {

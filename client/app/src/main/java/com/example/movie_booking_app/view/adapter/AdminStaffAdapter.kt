@@ -1,6 +1,7 @@
 package com.example.movie_booking_app.view.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -38,8 +39,14 @@ class AdminStaffAdapter(
             binding.btnEditStaff.setOnClickListener {
                 onEditClick(staff)
             }
-            binding.btnDeleteStaff.setOnClickListener {
-                onDeleteClick(staff)
+            
+            if (staff.status == 0) {
+                binding.btnDeleteStaff.visibility = View.GONE
+            } else {
+                binding.btnDeleteStaff.visibility = View.VISIBLE
+                binding.btnDeleteStaff.setOnClickListener {
+                    onDeleteClick(staff)
+                }
             }
         }
     }

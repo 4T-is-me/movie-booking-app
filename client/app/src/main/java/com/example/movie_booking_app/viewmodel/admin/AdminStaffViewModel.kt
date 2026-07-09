@@ -208,4 +208,34 @@ class AdminStaffViewModel @Inject constructor(
             }
         }
     }
+
+    fun updateStaffStatus(id: String, status: Int) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            withContext(Dispatchers.IO) {
+                try {
+                    val response = repository.updateStaffStatus(id, status)
+                    withContext(Dispatchers.Main) {
+                        _uiState.value = _uiState.value.copy(isLoading = false)
+                        if (response.isSuccessful) {
+                            _actionSuccess.emit(true)
+                            val statusMsg = if (status != 0) "Đã kích hoạt lại tài khoản nhân viên!" else "Đã khóa tài khoản nhân viên!"
+                            _actionMessage.emit(statusMsg)
+                            loadStaff()
+                        } else {
+                            _actionSuccess.emit(false)
+                            _actionMessage.emit(response.errorBody()?.string() ?: "Cập nhật trạng thái tài khoản thất bại")
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e("AdminStaffVM", "Error updating staff status", e)
+                    withContext(Dispatchers.Main) {
+                        _uiState.value = _uiState.value.copy(isLoading = false)
+                        _actionSuccess.emit(false)
+                        _actionMessage.emit(e.localizedMessage ?: "Lỗi kết nối mạng")
+                    }
+                }
+            }
+        }
+    }
 }
