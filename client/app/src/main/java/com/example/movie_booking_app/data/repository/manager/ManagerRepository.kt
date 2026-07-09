@@ -2,6 +2,7 @@ package com.example.movie_booking_app.data.repository.manager
 
 import com.example.movie_booking_app.data.api.ManagerApi
 import com.example.movie_booking_app.data.model.response.ManagerDashboardResponse
+import com.example.movie_booking_app.data.model.response.ManagerReportsResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -17,6 +18,19 @@ class ManagerRepository @Inject constructor(private val api: ManagerApi) {
             if (response.isSuccessful) {
                 emit(response.body())
             }else {
+                emit(null)
+            }
+        } catch (e: Exception) {
+            emit(null)
+        }
+    }
+
+    fun getManagerReport(type: String): Flow<ManagerReportsResponse?> = flow {
+        try {
+            val response = api.getReportData(type)
+            if (response.isSuccessful) {
+                emit(response.body())
+            } else {
                 emit(null)
             }
         } catch (e: Exception) {

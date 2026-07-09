@@ -23,6 +23,7 @@ import adminPromotionRoutes from './src/routes/adminPromotionRoutes.js';
 import adminShowDateRoutes from './src/routes/adminShowDateRoutes.js';
 import managerRoomRoutes from './src/routes/managerRoomRoutes.js';
 import managerDashboardRoutes from './src/routes/managerDashboardRoute.js';
+import managerReportRoutes from './src/routes/managerReportRoute.js';
 import { errorHandlingMiddleware } from './src/middlewares/errorHandlingMiddleware.js';
 
 
@@ -55,6 +56,7 @@ app.use('/api/admin/show-dates', adminShowDateRoutes);
 app.use('/api/admin/stats', adminStatsRoutes);
 app.use('/api/manager/rooms', managerRoomRoutes);
 app.use('/api/manager/dashboard', managerDashboardRoutes);
+app.use('/api/manager/reports', managerReportRoutes);
 
 app.get('/api/cinemas', async (req, res) => {
     try {

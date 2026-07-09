@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import  { managerDashboardService} from '../services/managerDashboardService.js';
 const getManagerDashboard = async (req, res, next) => {
     try {
-     const accountId = req.user.accountId
+        const accountId = req.user.accountId
         const dashboardData = await managerDashboardService.getManagerDashboard(accountId);
         return res.status(StatusCodes.OK).json({
             success: true,
@@ -15,6 +15,7 @@ const getManagerDashboard = async (req, res, next) => {
         next(error)
     }            
 }
+
 
 export const managerDashboardController = {
     getManagerDashboard
