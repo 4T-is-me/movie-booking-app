@@ -70,18 +70,16 @@ class AdminPromotionAdapter(
             val start = parseIsoDate(promotion.startDate)
             val end = parseIsoDate(promotion.endDate)
 
+            val isActive = promotion.isDeleted != true && (start == null || !now.before(start)) && (end == null || !now.after(end))
             val statusText: String
             val statusColor: Int
 
-            if (start != null && now.before(start)) {
-                statusText = "UPCOMING"
-                statusColor = ContextCompat.getColor(itemView.context, R.color.yellow)
-            } else if (end != null && now.after(end)) {
-                statusText = "EXPIRED"
-                statusColor = ContextCompat.getColor(itemView.context, R.color.deduct)
-            } else {
+            if (isActive) {
                 statusText = "ACTIVE"
                 statusColor = ContextCompat.getColor(itemView.context, R.color.admin_live_indicator)
+            } else {
+                statusText = "INACTIVE"
+                statusColor = ContextCompat.getColor(itemView.context, R.color.deduct)
             }
 
             tvPromoStatus.text = statusText
