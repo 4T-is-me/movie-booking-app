@@ -12,6 +12,11 @@ import com.example.movie_booking_app.data.model.request.AddMovieRequest
 import com.example.movie_booking_app.data.model.request.UpdateMovieRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 import javax.inject.Inject
 
 /**
@@ -141,9 +146,32 @@ class MovieRepositoryRemoteImpl @Inject constructor(
         }
     }
 
-    override suspend fun addMovie(request: AddMovieRequest): Boolean {
+    override suspend fun addMovie(request: AddMovieRequest, posterFile: File?): Boolean {
         return try {
-            val response = adminApi.createMovie(request)
+            val response = if (posterFile != null) {
+                val posterPart = MultipartBody.Part.createFormData(
+                    "poster",
+                    posterFile.name,
+                    posterFile.asRequestBody("image/*".toMediaTypeOrNull())
+                )
+                adminApi.createMovieWithPoster(
+                    movieName = request.movieName.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    duration = request.duration.toString().toRequestBody("text/plain".toMediaTypeOrNull()),
+                    releaseDate = request.releaseDate.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    endDate = request.endDate?.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    movieGenre = request.movieGenre.joinToString(",").toRequestBody("text/plain".toMediaTypeOrNull()),
+                    language = request.language.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    censorship = request.censorship.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    description = request.description?.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    director = request.director.joinToString(",").toRequestBody("text/plain".toMediaTypeOrNull()),
+                    actors = request.actors.joinToString(",").toRequestBody("text/plain".toMediaTypeOrNull()),
+                    country = request.country.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    status = request.status.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    poster = posterPart
+                )
+            } else {
+                adminApi.createMovie(request)
+            }
             response.isSuccessful
         } catch (e: Exception) {
             false
@@ -151,9 +179,33 @@ class MovieRepositoryRemoteImpl @Inject constructor(
     }
     override suspend fun postMovie(movie: Movie): Boolean = true
 
-    override suspend fun updateMovie(id: String, request: UpdateMovieRequest): Boolean {
+    override suspend fun updateMovie(id: String, request: UpdateMovieRequest, posterFile: File?): Boolean {
         return try {
-            val response = adminApi.updateMovie(id, request)
+            val response = if (posterFile != null) {
+                val posterPart = MultipartBody.Part.createFormData(
+                    "poster",
+                    posterFile.name,
+                    posterFile.asRequestBody("image/*".toMediaTypeOrNull())
+                )
+                adminApi.updateMovieWithPoster(
+                    id = id,
+                    movieName = request.movieName?.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    duration = request.duration?.toString()?.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    releaseDate = request.releaseDate?.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    endDate = request.endDate?.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    movieGenre = request.movieGenre?.joinToString(",")?.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    language = request.language?.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    censorship = request.censorship?.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    description = request.description?.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    director = request.director?.joinToString(",")?.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    actors = request.actors?.joinToString(",")?.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    country = request.country?.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    status = request.status?.toRequestBody("text/plain".toMediaTypeOrNull()),
+                    poster = posterPart
+                )
+            } else {
+                adminApi.updateMovie(id, request)
+            }
             response.isSuccessful
         } catch (e: Exception) {
             false

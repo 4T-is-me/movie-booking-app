@@ -66,8 +66,8 @@ class MovieRepositoryImpl : MovieRepository {
         emit(mockShowtimes.filter { it.movieId == movieId })
     }
 
-    override suspend fun addMovie(request: com.example.movie_booking_app.data.model.request.AddMovieRequest): Boolean = true
+    override suspend fun addMovie(request: com.example.movie_booking_app.data.model.request.AddMovieRequest, posterFile: java.io.File?): Boolean = true
     override suspend fun postMovie(movie: Movie): Boolean = true
-    override suspend fun updateMovie(id: String, request: com.example.movie_booking_app.data.model.request.UpdateMovieRequest): Boolean = true
+    override suspend fun updateMovie(id: String, request: com.example.movie_booking_app.data.model.request.UpdateMovieRequest, posterFile: java.io.File?): Boolean = true
     override suspend fun deleteMovie(id: String): Boolean = true
 }

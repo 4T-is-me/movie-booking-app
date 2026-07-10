@@ -16,11 +16,13 @@ import com.bumptech.glide.Glide
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.request.AddMovieRequest
 import com.example.movie_booking_app.viewmodel.MovieViewModel
+import com.example.movie_booking_app.utils.DateUtils
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
 import android.widget.TextView
 import android.widget.ImageView
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -42,6 +44,21 @@ class AdminCreateMovieFragment : Fragment() {
         }
     }
 
+    private fun createPosterFile(uri: android.net.Uri): File? {
+        return try {
+            val inputStream = requireContext().contentResolver.openInputStream(uri) ?: return null
+            val tempFile = File.createTempFile("movie_poster_", ".jpg", requireContext().cacheDir)
+            inputStream.use { input ->
+                tempFile.outputStream().use { output ->
+                    input.copyTo(output)
+                }
+            }
+            tempFile
+        } catch (_: Exception) {
+            null
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -58,6 +75,7 @@ class AdminCreateMovieFragment : Fragment() {
         val edtReleaseDate = view.findViewById<TextInputEditText>(R.id.edtReleaseDate)
         val edtEndDate = view.findViewById<TextInputEditText>(R.id.edtEndDate)
         val edtLanguage = view.findViewById<TextInputEditText>(R.id.edtLanguage)
+
         val edtDirector = view.findViewById<TextInputEditText>(R.id.edtDirector)
         val edtActors = view.findViewById<TextInputEditText>(R.id.edtActors)
         val edtDescription = view.findViewById<TextInputEditText>(R.id.edtDescription)
@@ -65,29 +83,41 @@ class AdminCreateMovieFragment : Fragment() {
         val btnSubmit = view.findViewById<Button>(R.id.btnSubmitMovie)
 
         // Setup Date Picker logic
-        val sdf = SimpleDateFormat("yyyy-MM-dd'T'00:00:00.000'Z'", Locale.US)
+        val displaySdf = SimpleDateFormat("dd/MM/yyyy", Locale.US)
+        val serverSdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
         
         edtReleaseDate.setOnClickListener {
             val calendar = Calendar.getInstance()
-            DatePickerDialog(requireContext(), { _, year, month, day ->
+            val datePicker = DatePickerDialog(requireContext(), { _, year, month, day ->
                 calendar.set(year, month, day)
-                edtReleaseDate.setText(sdf.format(calendar.time))
-            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+                edtReleaseDate.setText(displaySdf.format(calendar.time))
+            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+            
+            // Only prevent past dates if it's a NEW movie. 
+            // For editing, we allow historical dates.
+            if (editingMovie == null) {
+                datePicker.datePicker.minDate = System.currentTimeMillis() - 1000
+            }
+            datePicker.show()
         }
 
         edtEndDate.setOnClickListener {
             val calendar = Calendar.getInstance()
-            DatePickerDialog(requireContext(), { _, year, month, day ->
+            val datePicker = DatePickerDialog(requireContext(), { _, year, month, day ->
                 calendar.set(year, month, day)
-                edtEndDate.setText(sdf.format(calendar.time))
-            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+                edtEndDate.setText(displaySdf.format(calendar.time))
+            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+            
+            // End date must be at least today
+            datePicker.datePicker.minDate = System.currentTimeMillis() - 1000
+            datePicker.show()
         }
 
         // Setup Genres Chips
         val chipGroupGenres = view.findViewById<ChipGroup>(R.id.chipGroupGenres)
         
         // Setup Censorship Dropdown
-        val censorshipOptions = arrayOf("P (Mọi lứa tuổi)", "K (Dưới 13 tuổi cần người lớn)", "T13 (Từ 13 tuổi)", "T16 (Từ 16 tuổi)", "T18 (Từ 18 tuổi)", "C (Cấm chiếu)")
+        val censorshipOptions = arrayOf("P (General Audience)", "K (Children Under 13)", "T13 (13+)", "T16 (16+)", "T18 (18+)", "C (Banned)")
         val censorshipCodes = arrayOf("P", "K", "T13", "T16", "T18", "C")
         val spnCensorship = view.findViewById<AutoCompleteTextView>(R.id.spnCensorship)
         val censorshipAdapter = ArrayAdapter(
@@ -96,16 +126,6 @@ class AdminCreateMovieFragment : Fragment() {
             censorshipOptions
         )
         spnCensorship.setAdapter(censorshipAdapter)
-
-        // Setup Status Dropdown
-        val statusOptions = arrayOf("showing", "coming-soon")
-        val spnStatus = view.findViewById<AutoCompleteTextView>(R.id.spnStatus)
-        val statusAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_dropdown_item_1line,
-            statusOptions
-        )
-        spnStatus.setAdapter(statusAdapter)
 
         // Setup Country Search Dropdown
         val countryOptions = arrayOf("Vietnam", "USA", "Korea", "Japan", "China", "UK", "France", "India", "Thailand")
@@ -125,14 +145,14 @@ class AdminCreateMovieFragment : Fragment() {
             
             edtMovieName.setText(movie.movieName)
             edtDuration.setText(movie.duration?.toString())
-            edtReleaseDate.setText(movie.releaseDate)
-            edtEndDate.setText(movie.endDate)
+            edtReleaseDate.setText(DateUtils.formatMovieDate(movie.releaseDate))
+            edtEndDate.setText(DateUtils.formatMovieDate(movie.endDate))
             edtLanguage.setText(movie.language)
+
             edtDirector.setText(movie.director?.joinToString(", "))
             edtActors.setText(movie.actors?.joinToString(", "))
             edtDescription.setText(movie.description)
             edtCountry.setText(movie.country)
-            spnStatus.setText(movie.status, false)
             
             val cIndex = censorshipCodes.indexOf(movie.censorship)
             if (cIndex >= 0) {
@@ -179,14 +199,27 @@ class AdminCreateMovieFragment : Fragment() {
         btnSubmit.setOnClickListener {
             val name = edtMovieName.text.toString()
             val duration = edtDuration.text.toString().toIntOrNull() ?: 0
-            val releaseDate = edtReleaseDate.text.toString()
-            val endDate = edtEndDate.text.toString()
+            val releaseDateStr = edtReleaseDate.text.toString()
+            val endDateStr = edtEndDate.text.toString()
+            
+            val releaseDate = try {
+                val date = displaySdf.parse(releaseDateStr)
+                serverSdf.format(date!!)
+            } catch (e: Exception) { releaseDateStr }
+
+            val endDate = try {
+                if (endDateStr.isNotEmpty()) {
+                    val date = displaySdf.parse(endDateStr)
+                    serverSdf.format(date!!)
+                } else null
+            } catch (e: Exception) { endDateStr }
+
             val language = edtLanguage.text.toString()
             val director = edtDirector.text.toString().split(",").map { it.trim() }.filter { it.isNotEmpty() }
             val actors = edtActors.text.toString().split(",").map { it.trim() }.filter { it.isNotEmpty() }
             val description = edtDescription.text.toString()
             val country = edtCountry.text.toString()
-            val status = spnStatus.text.toString()
+
 
             val censorshipRaw = spnCensorship.text.toString()
             var censorshipCode = "P"
@@ -195,31 +228,51 @@ class AdminCreateMovieFragment : Fragment() {
                 censorshipCode = censorshipCodes[index]
             }
 
-            if (name.isEmpty() || releaseDate.isEmpty()) {
+            if (name.isEmpty() || releaseDateStr.isEmpty()) {
                 Toast.makeText(requireContext(), "Please fill required fields", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
+            // Additional validation for past dates when creating a new movie
+            if (editingMovie == null) {
+                try {
+                    val selectedDate = displaySdf.parse(releaseDateStr)
+                    val today = Calendar.getInstance().apply {
+                        set(Calendar.HOUR_OF_DAY, 0)
+                        set(Calendar.MINUTE, 0)
+                        set(Calendar.SECOND, 0)
+                        set(Calendar.MILLISECOND, 0)
+                    }.time
+                    
+                    if (selectedDate != null && selectedDate.before(today)) {
+                        Toast.makeText(requireContext(), "Release date cannot be in the past", Toast.LENGTH_SHORT).show()
+                        return@setOnClickListener
+                    }
+                } catch (e: Exception) {
+                    // Ignore parse errors here as they are handled by formatting logic below
+                }
+            }
+
             val viewModel = ViewModelProvider(requireActivity())[MovieViewModel::class.java]
+            val posterFile = selectedPosterUri?.let { createPosterFile(it) }
 
             if (editingMovie != null) {
                 val request = com.example.movie_booking_app.data.model.request.UpdateMovieRequest(
                     movieName = name,
                     duration = duration,
                     releaseDate = releaseDate,
-                    endDate = if (endDate.isNotEmpty()) endDate else null,
+                    endDate = endDate,
                     movieGenre = selectedGenres.toList(),
                     director = director,
                     actors = actors,
                     description = description,
                     country = country,
-                    poster = editingMovie?.poster,
+
                     language = language,
-                    censorship = censorshipCode,
-                    status = status
+                    censorship = censorshipCode
                 )
                 editingMovie?.id?.let { id ->
-                    viewModel.updateMovie(id, request)
+                    viewModel.updateMovie(id, request, posterFile)
                 }
                 Toast.makeText(requireContext(), "Updating movie...", Toast.LENGTH_SHORT).show()
             } else {
@@ -227,18 +280,16 @@ class AdminCreateMovieFragment : Fragment() {
                     movieName = name,
                     duration = duration,
                     releaseDate = releaseDate,
-                    endDate = if (endDate.isNotEmpty()) endDate else null,
+                    endDate = endDate,
                     movieGenre = selectedGenres.toList(),
                     director = director,
                     actors = actors,
                     description = description,
                     country = country,
-                    poster = "",
                     language = language,
-                    censorship = censorshipCode,
-                    status = status
+                    censorship = censorshipCode
                 )
-                viewModel.addMovie(request)
+                viewModel.addMovie(request, posterFile)
                 Toast.makeText(requireContext(), "Adding movie...", Toast.LENGTH_SHORT).show()
             }
             parentFragmentManager.popBackStack()

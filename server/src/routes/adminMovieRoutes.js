@@ -10,10 +10,10 @@ const router = Router();
 router.use(authMiddleware.isAuthorized, authMiddleware.authorizeRoles('Admin', 'Manager'));
 
 // POST /api/admin/movies - Create a new movie
-router.post('/', uploadMiddleware.upload.single('poster'), uploadMiddleware.uploadToCloudinary('movies_poster', 'poster'), AdminMovieValidation.createMovie, adminMovieController.createMovie);
+router.post('/', uploadMiddleware.uploadIfMultipart, uploadMiddleware.uploadToCloudinary('movies_poster', 'poster'), uploadMiddleware.normalizeMultipartBody, AdminMovieValidation.createMovie, adminMovieController.createMovie);
 
 // PUT /api/admin/movies/:id - Update an existing movie
-router.put('/:id', uploadMiddleware.upload.single('poster'), uploadMiddleware.uploadToCloudinary('movies_poster', 'poster'), AdminMovieValidation.updateMovie, adminMovieController.updateMovie);
+router.put('/:id', uploadMiddleware.uploadIfMultipart, uploadMiddleware.uploadToCloudinary('movies_poster', 'poster'), uploadMiddleware.normalizeMultipartBody, AdminMovieValidation.updateMovie, adminMovieController.updateMovie);
 
 // DELETE /api/admin/movies/:id - Delete a movie
 router.delete('/:id', adminMovieController.deleteMovie);

@@ -17,15 +17,34 @@ const createMovie = async (movieData) => {
     }
 
     const today = new Date();
-    const releaseDate = new Date(movieData.releaseDate);
-    const endDate = new Date(movieData.endDate);
 
+    // Parse and validate dates safely
+    const releaseDate = movieData.releaseDate ? new Date(movieData.releaseDate) : null;
+    const endDate = movieData.endDate ? new Date(movieData.endDate) : null;
+
+    if (!releaseDate || Number.isNaN(releaseDate.getTime())) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid or missing releaseDate');
+    }
+
+    if (endDate && Number.isNaN(endDate.getTime())) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid endDate');
+    }
+
+    if (endDate && endDate <= releaseDate) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, 'endDate must be after releaseDate');
+    }
+
+    // Normalize the date fields in the payload so mongoose stores proper Date objects
+    movieData.releaseDate = releaseDate;
+    movieData.endDate = endDate || null;
+
+    // Determine status based on dates
     if (today < releaseDate) {
-        movieData.status = "coming-soon";
-    } else if (today > endDate) {
-        movieData.status = "ended";
+        movieData.status = 'coming_soon';
+    } else if (endDate && today > endDate) {
+        movieData.status = 'ended';
     } else {
-        movieData.status = "showing";
+        movieData.status = 'showing';
     }
 
     return await Movie.create(movieData);
@@ -114,8 +133,8 @@ const createMovie = async (movieData) => {
         } else {
             if (status === 'showing') {
                 q.status = 'showing';
-            } else if (status === 'coming-soon') {
-                q.status = 'coming-soon';
+            } else if (status === 'coming-soon' || status === 'coming_soon') {
+                q.status = 'coming_soon';
             }
         }
 

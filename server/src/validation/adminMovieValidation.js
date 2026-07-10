@@ -14,7 +14,8 @@ const movieRules = {
     director: Joi.array().items(Joi.string().trim().strict()).min(1),
     actors: Joi.array().items(Joi.string().trim().strict()).min(1),
     country: Joi.string().trim().strict(),
-    status: Joi.string().valid('coming-soon', 'showing', 'ended').trim().strict(), // Depending on your project status
+    // Accept both hyphen and underscore variants; server determines final value
+    status: Joi.string().valid('coming-soon', 'coming_soon', 'showing', 'ended').trim().strict(),
     poster: Joi.string().trim().strict().allow('', null),
     rating: Joi.number().min(0).max(10),
     totalReviews: Joi.number().min(0),
@@ -45,11 +46,17 @@ const createMovie = async (req, res, next) => {
     });
 
     try {
+        // Ensure server computes status; remove any client-provided value
+        if (req.body && Object.prototype.hasOwnProperty.call(req.body, 'status')) {
+            delete req.body.status;
+        }
+
         // Allow allowUnknown: true to skip auto-generated or undefined fields if sent
         await correctCondition.validateAsync(req.body, { abortEarly: false, allowUnknown: true });
         next();
     } catch (error) {
-        const errorMessage = error.details ? error.details.map(err => err.message).join(', ') : error.message;
+        console.error('Validation error in AdminMovieValidation.createMovie:', error);
+        const errorMessage = error.details ? error.details.map(err => err.message).join(',') : error.message;
         next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, errorMessage));
     }
 };
@@ -77,9 +84,14 @@ const updateMovie = async (req, res, next) => {
     });
 
     try {
+        if (req.body && Object.prototype.hasOwnProperty.call(req.body, 'status')) {
+            delete req.body.status;
+        }
+
         await correctCondition.validateAsync(req.body, { abortEarly: false, allowUnknown: true });
         next();
     } catch (error) {
+        console.error('Validation error in AdminMovieValidation.updateMovie:', error);
         const errorMessage = error.details ? error.details.map(err => err.message).join(', ') : error.message;
         next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, errorMessage));
     }

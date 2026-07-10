@@ -17,9 +17,9 @@ interface MovieRepository {
     fun getServices(): Flow<List<Service>>
     fun getNews(): Flow<List<MovieNews>>
     
-    suspend fun addMovie(request: AddMovieRequest): Boolean
+    suspend fun addMovie(request: AddMovieRequest, posterFile: java.io.File? = null): Boolean
     suspend fun postMovie(movie: Movie): Boolean
-    suspend fun updateMovie(id: String, request: UpdateMovieRequest): Boolean
+    suspend fun updateMovie(id: String, request: UpdateMovieRequest, posterFile: java.io.File? = null): Boolean
     suspend fun deleteMovie(id: String): Boolean
     fun getMovieDetailsById(id: String): Flow<Movie>
     fun getMovieShowtimes(movieId: String): Flow<List<Showtime>>
