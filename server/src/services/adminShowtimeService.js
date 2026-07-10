@@ -2,6 +2,7 @@ import { Showtime } from '../models/showTimeModel.js';
 import { Seat } from '../models/seatModel.js';
 import { CinemaRoom } from '../models/cinemaRoomModel.js';
 import { ScheduleSeat } from '../models/scheduleSeatModel.js';
+import { Movie } from '../models/movieModel.js';
 
 export const createShowtime = async (showtimeData) => {
     const { movieId, cinemaId, roomId, showDate, showTime, ticketPrice } = showtimeData;
@@ -18,6 +19,18 @@ export const createShowtime = async (showtimeData) => {
         throw new Error('CONFLICT');
     }
 
+    const movie = await Movie.findById(movieId);
+    if (!movie) {
+        throw new Error('MovieNotFound');
+    }
+
+    const [hours, minutes] = showTime.split(':').map(Number);
+    const startTime = new Date(showDate);
+    startTime.setUTCHours(hours - 7, minutes, 0, 0); // Convert local +07:00 time to UTC
+
+    const durationMinutes = movie.duration || 120;
+    const endTime = new Date(startTime.getTime() + durationMinutes * 60 * 1000);
+
     // 2. Create showtime document
     const showtime = new Showtime({
         movieId,
@@ -26,6 +39,8 @@ export const createShowtime = async (showtimeData) => {
         showDate,
         showTime,
         ticketPrice,
+        startTime,
+        endTime,
         isDeleted: false
     });
     const savedShowtime = await showtime.save();

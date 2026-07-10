@@ -147,6 +147,17 @@ class ProfileFragment : Fragment() {
                     // Tint crown icon inside the badge
                     binding.imgBadgeCrownIcon.imageTintList = android.content.res.ColorStateList.valueOf(badgeColor)
 
+                    // Dynamically refresh Member Card styling
+                    val memberCardBg = when (rankClean) {
+                        "gold" -> R.drawable.member_card_gold
+                        "silver" -> R.drawable.member_card_silver
+                        else -> R.drawable.member_card_bronze
+                    }
+                    binding.layoutMemberCardInner.setBackgroundResource(memberCardBg)
+                    binding.cardMember.strokeColor = badgeColor
+                    binding.ivAvatar.strokeColor = android.content.res.ColorStateList.valueOf(badgeColor)
+                    binding.cardCamera.setCardBackgroundColor(android.content.res.ColorStateList.valueOf(badgeColor))
+
                     val points = userProfile?.rewardPoints ?: 0
                     binding.tvPoints.text = "$points pts"
 

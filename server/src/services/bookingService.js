@@ -141,6 +141,9 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
     let finalAmount = afterPromotion;
 
     if (useScore) {
+      if (!member.rewardPoints || member.rewardPoints <= 0) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "Not enough reward points");
+      }
       pointUsed = Math.min(member.rewardPoints, Math.ceil(afterPromotion / 10));
       pointDiscount = pointUsed * 10;
       finalAmount = afterPromotion - pointDiscount;
@@ -166,12 +169,13 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
 
     const paymentStatus = "paid";
 
-    console.log(`[DEBUG] User ID: ${member._id}`);
+    console.log(`[DEBUG] User ID (memberId): ${member._id}`);
     console.log(`[DEBUG] Previous totalSpent: ${prevTotalSpent}`);
     console.log(`[DEBUG] New totalSpent: ${member.totalSpent}`);
     console.log(`[DEBUG] Previous rewardPoints: ${prevRewardPoints}`);
     console.log(`[DEBUG] New rewardPoints: ${member.rewardPoints}`);
     console.log(`[DEBUG] New membershipRank: ${member.membershipRank}`);
+    console.log(`[DEBUG] finalAmount to charge: ${finalAmount}`);
 
     const memberUpdateResult = await Member.updateOne(
       { _id: member._id },
@@ -189,6 +193,8 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
 
     const ticketCode = await ticketUtils.generateTicketCode();
     const qrCodeData = await ticketUtils.generateQRCode(ticketCode);
+
+    console.log(`[DEBUG] Invoking Booking.create() for memberId=${member._id}, showtimeId=${showtimeId}, paymentStatus=${paymentStatus}, finalAmount=${finalAmount}`);
 
     // create booking
     const booking = await Booking.create(
@@ -213,6 +219,8 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
       ],
       { session },
     );
+
+    console.log(`[DEBUG] Booking.create() finished. bookingId=${booking[0]._id}, paymentStatus=${booking[0].paymentStatus}`);
 
     // update seat
     await ScheduleSeat.updateMany(
@@ -282,7 +290,7 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
     };
 
     await session.commitTransaction();
-    console.log("[DEBUG] Transaction committed successfully. commitTransaction() executed.");
+    console.log(`[DEBUG] Transaction committed successfully for booking ${booking[0]._id}. commitTransaction() executed.`);
 
     return result;
   } catch (error) {

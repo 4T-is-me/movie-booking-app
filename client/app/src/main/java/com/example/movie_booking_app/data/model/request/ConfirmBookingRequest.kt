@@ -4,6 +4,7 @@ data class ConfirmBookingRequest(
     val showtimeId: String,
     val seatIds: List<String>,
     val useScore: Boolean,
+    val useRewardPoints: Boolean,
     val paymentMethod: String,
     val promotionId: String?,
     val combos: List<ComboRequest>

@@ -111,6 +111,11 @@ class PaymentActivity : AppCompatActivity() {
             }
         })
 
+        // Reward Points Switch toggle listener
+        binding.switchRewardPoints.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.toggleRewardPoints(isChecked)
+        }
+
         // Continue Button Checkout action
         binding.btnContinue.setOnClickListener {
             val selectedMethod = viewModel.uiState.value.selectedPaymentMethod
@@ -130,6 +135,19 @@ class PaymentActivity : AppCompatActivity() {
                     val isRunning = state.isLoading || state.isCheckingOut
                     binding.layoutLoading.visibility = if (isRunning) View.VISIBLE else View.GONE
                     binding.btnContinue.isEnabled = !state.isCheckingOut
+
+                    // Reward Points availability and switch control
+                    if (state.availablePoints <= 0) {
+                        binding.switchRewardPoints.isEnabled = false
+                        binding.tvAvailablePoints.text = "No reward points available"
+                    } else {
+                        binding.switchRewardPoints.isEnabled = true
+                        binding.tvAvailablePoints.text = "Available: ${state.availablePoints} pts"
+                    }
+
+                    if (binding.switchRewardPoints.isChecked != state.useRewardPoints) {
+                        binding.switchRewardPoints.isChecked = state.useRewardPoints
+                    }
 
                     // Summary bindings
                     state.booking?.let { booking ->
@@ -191,6 +209,14 @@ class PaymentActivity : AppCompatActivity() {
                     binding.tvBookingFee.text = formatCurrency(state.bookingFee)
                     binding.tvGrandTotal.text = formatCurrency(state.grandTotal)
                     binding.tvFooterGrandTotal.text = formatCurrency(state.grandTotal)
+
+                    // Reward points discount summary row
+                    if (state.useRewardPoints && state.rewardDiscount > 0) {
+                        binding.layoutRewardDiscount.visibility = View.VISIBLE
+                        binding.tvRewardDiscount.text = "-${formatCurrency(state.rewardDiscount)} (${state.rewardDiscount / 10} pts)"
+                    } else {
+                        binding.layoutRewardDiscount.visibility = View.GONE
+                    }
 
                     // Coupon validation messages & updates
                     if (state.couponApplied) {
