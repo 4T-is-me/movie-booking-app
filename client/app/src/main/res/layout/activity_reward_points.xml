@@ -57,7 +57,6 @@
             android:padding="16dp">
 
             <!-- ================= LUXURY GRADIENT GOLD-BLACK CARD ================= -->
-            <!-- Gọi trực tiếp file gradient vừa tạo để triệt tiêu lỗi biên dịch -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/layoutMemberCard"
                 android:layout_width="match_parent"
@@ -293,7 +292,20 @@
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!-- RECYCLERVIEW (Item template vẫn nằm trong file item_history_transaction.xml cũ) -->
+            <!-- TEXT HIỂN THỊ KHI TRỐNG -->
+            <TextView
+                android:id="@+id/tvEmptyHistory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="24dp"
+                android:gravity="center"
+                android:text="No transaction history yet"
+                android:textColor="@color/text_muted"
+                android:textSize="14sp"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <!-- RECYCLERVIEW -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvHistory"
                 android:layout_width="match_parent"

@@ -63,8 +63,14 @@ class ScoreHistoryActivity : AppCompatActivity() {
                 // Retrieve and display the full list.
                 launch {
                     viewModel.scoreHistoryState.collect { historyList ->
+                        val historyList = historyList.orEmpty()
                         if (historyList.isNotEmpty()) {
+                            binding.nestedScrollView.visibility = View.VISIBLE
+                            binding.layoutEmpty.visibility = View.GONE
                             historyAdapter.updateData(historyList)
+                        }else{
+                            binding.nestedScrollView.visibility = View.GONE
+                            binding.layoutEmpty.visibility = View.VISIBLE
                         }
                     }
                 }

@@ -11,10 +11,13 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.ReportChartItemResponse
 import com.example.movie_booking_app.data.model.response.ReportData
+import com.example.movie_booking_app.data.model.response.TopMoviesResponse
 import com.example.movie_booking_app.databinding.ActivityManagerReportBinding
+import com.example.movie_booking_app.view.adapter.manager.ManagerTopMoviesAdapter
 import com.example.movie_booking_app.viewmodel.manager.ManagerViewModel
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
@@ -31,10 +34,19 @@ import java.util.Locale
 @AndroidEntryPoint
 class ManagerReportActivity : AppCompatActivity() {
     private val viewModel: ManagerViewModel by viewModels()
+    private val topMovieManagerAdapter = ManagerTopMoviesAdapter()
     private lateinit var tabButtons: List<TextView>
     private lateinit var binding: ActivityManagerReportBinding
 
+
     private var currentReportType = "week"
+
+    //  Formatter
+    private val sourceDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    private val sourceMonthFormat = SimpleDateFormat("yyyy-MM", Locale.getDefault())
+    private val targetWeekFormat = SimpleDateFormat("E", Locale("en", "US")) // Mon, Tue...
+    private val targetMonthFormat = SimpleDateFormat("dd/MM", Locale.getDefault()) // 09/07
+    private val targetYearFormat = SimpleDateFormat("MMM", Locale("en", "US")) // Jan, Feb...
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,12 +62,11 @@ class ManagerReportActivity : AppCompatActivity() {
         setUpClickListeners()
         observeReportData()
         setActiveTab(binding.btnWeekReport, "week")
+        setUpRecyclerView()
     }
 
     private fun setUpClickListeners() {
-        binding.ivBack.setOnClickListener {
-            finish()
-        }
+        binding.ivBack.setOnClickListener { finish() }
         binding.btnDayReport.setOnClickListener { setActiveTab(binding.btnDayReport, "day") }
         binding.btnWeekReport.setOnClickListener { setActiveTab(binding.btnWeekReport, "week") }
         binding.btnMonthReport.setOnClickListener { setActiveTab(binding.btnMonthReport, "month") }
@@ -63,31 +74,34 @@ class ManagerReportActivity : AppCompatActivity() {
     }
 
     private fun setActiveTab(selectedTab: TextView, type: String) {
-        currentReportType = type // Cập nhật loại report đang chọn
+        currentReportType = type
+        val textColor = ContextCompat.getColor(this, R.color.text_color_chart)
         for (tab in tabButtons) {
             tab.setBackgroundColor(Color.TRANSPARENT)
-            tab.setTextColor(Color.parseColor("#94A3B8"))
+            tab.setTextColor(textColor)
             tab.setTypeface(null, Typeface.NORMAL)
         }
         selectedTab.setBackgroundResource(R.drawable.bg_badge_gold)
-        selectedTab.setTextColor(Color.parseColor("#FFFFFF"))
+        selectedTab.setTextColor(Color.WHITE)
         selectedTab.setTypeface(null, Typeface.BOLD)
         viewModel.loadReport(type)
     }
 
-    fun formatVND(amount: Long): String {
+    private fun formatVND(amount: Long): String {
         val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
         return formatter.format(amount)
     }
 
     private fun displayGrowth(textView: TextView, growthValue: Int) {
+        val greenColor = ContextCompat.getColor(this, R.color.color_green_status)
+        val redColor = ContextCompat.getColor(this, R.color.iconDeduct)
         if (growthValue >= 0) {
             textView.text = "+$growthValue%"
-            textView.setTextColor(Color.parseColor("#10B981"))
+            textView.setTextColor(greenColor)
             textView.backgroundTintList = ContextCompat.getColorStateList(this, android.R.color.transparent)
         } else {
             textView.text = "$growthValue%"
-            textView.setTextColor(Color.parseColor("#EF4444"))
+            textView.setTextColor(redColor)
         }
     }
 
@@ -98,7 +112,7 @@ class ManagerReportActivity : AppCompatActivity() {
                     response?.data?.let { reportData ->
                         setUpKPICards(reportData)
                         updateTrendChart(reportData.chartData)
-                        //Log.d("CheckShowtime", "Showtimes List: $reportData.chartData")
+                        setUpTopMovies(reportData.topMovies)
                     }
                 }
             }
@@ -121,11 +135,36 @@ class ManagerReportActivity : AppCompatActivity() {
 
     private fun updateTrendChart(chartList: List<ReportChartItemResponse>?) {
         val nonNullChartList = chartList.orEmpty()
-       // Log.d("CheckChart", "Dữ liệu dòng xu hướng: $nonNullChartList")
         if (nonNullChartList.isNotEmpty()) {
             setUpReportTrendChart(nonNullChartList)
         } else {
             binding.lineChartReportTrend.clear()
+        }
+    }
+
+    /**
+     * assign Label, base on currentReportType
+     */
+    private fun formatChartLabel(label: String, reportType: String): String {
+        return try {
+            when (reportType) {
+                "day" -> label // "00:00", "01:00"
+                "week" -> {
+                    val date = sourceDateFormat.parse(label)
+                    date?.let { targetWeekFormat.format(it) } ?: label
+                }
+                "month" -> {
+                    val date = sourceDateFormat.parse(label)
+                    date?.let { targetMonthFormat.format(it) } ?: label
+                }
+                "year" -> {
+                    val date = sourceMonthFormat.parse(label)
+                    date?.let { targetYearFormat.format(it) } ?: label
+                }
+                else -> label
+            }
+        } catch (e: Exception) {
+            label // Fallback return old label
         }
     }
 
@@ -134,43 +173,22 @@ class ManagerReportActivity : AppCompatActivity() {
         val fbEntries = ArrayList<Entry>()
         val labels = ArrayList<String>()
 
-        val sourceDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val sourceMonthFormat = SimpleDateFormat("yyyy-MM", Locale.getDefault())
-        val targetWeekFormat = SimpleDateFormat("E", Locale("en", "US"))
-        val targetMonthFormat = SimpleDateFormat("dd/MM", Locale.getDefault())
-        val targetYearFormat = SimpleDateFormat("MMM", Locale("en", "US"))
+        //color
+        val yellowColor = ContextCompat.getColor(this, R.color.color_gold)
+        val yellowBgColor = ContextCompat.getColor(this, R.color.yellow_bg_chart)
+        val labelFbColor = ContextCompat.getColor(this, R.color.blue_label_color)
+        val columnColor = ContextCompat.getColor(this, R.color.darkGray_column_color)
 
         chartList.forEachIndexed { index, item ->
             ticketEntries.add(Entry(index.toFloat(), item.ticketRevenue.toFloat()))
             fbEntries.add(Entry(index.toFloat(), item.fbRevenue.toFloat()))
 
-            
-            val cleanLabel = when {
-                item.label.contains(":") -> item.label
-                item.label.length == 10 -> {
-                    try {
-                        val date = sourceDateFormat.parse(item.label)
-                        if (currentReportType == "week") {
-                            date?.let { targetWeekFormat.format(it) } ?: item.label
-                        } else {
-                            date?.let { targetMonthFormat.format(it) } ?: item.label
-                        }
-                    } catch (e: Exception) { item.label }
-                }
-                item.label.length == 7 -> {
-                    try {
-                        val date = sourceMonthFormat.parse(item.label)
-                        date?.let { targetYearFormat.format(it) } ?: item.label
-                    } catch (e: Exception) { item.label }
-                }
-                else -> item.label
-            }
-            labels.add(cleanLabel)
+            labels.add(formatChartLabel(item.label, currentReportType))
         }
 
         val ticketDataSet = LineDataSet(ticketEntries, "Ticket Revenue").apply {
-            color = Color.parseColor("#D4AF37")
-            setCircleColor(Color.parseColor("#D4AF37"))
+            color = yellowColor
+            setCircleColor(yellowBgColor)
             lineWidth = 3f
             circleRadius = 3f
             setDrawCircleHole(false)
@@ -179,8 +197,8 @@ class ManagerReportActivity : AppCompatActivity() {
         }
 
         val fbDataSet = LineDataSet(fbEntries, "F&B Revenue").apply {
-            color = Color.parseColor("#00BCD4")
-            setCircleColor(Color.parseColor("#00BCD4"))
+            color = labelFbColor
+            setCircleColor(labelFbColor)
             lineWidth = 3f
             circleRadius = 3f
             setDrawCircleHole(false)
@@ -205,14 +223,33 @@ class ManagerReportActivity : AppCompatActivity() {
             axisLeft.apply {
                 textColor = Color.WHITE
                 setDrawGridLines(true)
-                gridColor = Color.parseColor("#2C2C2E")
-                granularity = 2000000f
-                isGranularityEnabled = true
+                gridColor = columnColor
+                isGranularityEnabled = false
             }
 
             axisRight.isEnabled = false
             animateX(800)
             invalidate()
+        }
+    }
+
+    private fun setUpRecyclerView () {
+        binding.rvTopMovies.apply {
+            layoutManager = LinearLayoutManager(this@ManagerReportActivity)
+            adapter = topMovieManagerAdapter
+            isNestedScrollingEnabled = false
+        }
+    }
+
+    private fun setUpTopMovies (topMovies:  List<TopMoviesResponse>) {
+        val movies = topMovies.orEmpty()
+        if(movies.isEmpty()) {
+            binding.rvTopMovies.visibility = android.view.View.GONE
+            binding.txtNoMovieData.visibility = android.view.View.VISIBLE
+        }else{
+            binding.rvTopMovies.visibility = android.view.View.VISIBLE
+            binding.txtNoMovieData.visibility = android.view.View.GONE
+            topMovieManagerAdapter.submitList(movies.toMutableList())
         }
     }
 }

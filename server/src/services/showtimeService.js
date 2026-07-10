@@ -161,9 +161,16 @@ const getShowtimeSeats = async (showtimeId) => {
 
 // get showtime + cinema by movieId
 const getMovieShowtimes = async (movieId) => {
+    const now = new Date();
 
-    const showtimes = await Showtime.find({ movieId })
-        .populate("cinemaId", "cinemaName address city image hotline status")
+    const showtimes = await Showtime.find({
+        movieId,
+        startTime: { $gte: now }
+    })
+        .populate(
+            "cinemaId",
+            "cinemaName address city image hotline status"
+        )
         .sort({
             showDate: 1,
             startTime: 1
@@ -172,7 +179,6 @@ const getMovieShowtimes = async (movieId) => {
 
     return showtimes;
 };
-
 export const showtimeService = {
 
     getShowtimeSeats,

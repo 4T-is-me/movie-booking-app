@@ -68,6 +68,21 @@
     <color name="admin_drawer_item_text">#CBD5E1</color>
     <color name="admin_hint_gray">#808080</color>
 
+    <!-- Rank Gold Colors -->
+    <color name="rank_gold_start">#2E2401</color>
+    <color name="rank_gold_middle">#141103</color>
+    <color name="rank_gold_end">#141103</color>
+
+    <!-- Rank Silver Colors -->
+    <color name="rank_silver_start">#2C3E50</color>
+    <color name="rank_silver_middle">#1A252F</color>
+    <color name="rank_silver_end">#0F0F11</color>
+
+    <!-- Rank Bronze Colors -->
+    <color name="rank_bronze_start">#0F0F11</color>
+    <color name="rank_bronze_middle">#150D05</color>
+    <color name="rank_bronze_end">#2A1A0A</color>
+
     <!-- Score History Colors -->
     <color name="textPlus">#34C759</color>
     <color name="backgroundPlus">#1A34C759</color>
@@ -76,14 +91,37 @@
     <color name="backgroundDeduct">#1AE5484D</color>
     <color name="iconDeduct">#E5484D</color>
 
+
     <!-- showtime status color  -->
     <color name="color_gray_status">#94A3B8</color>
     <color name="color_gray_status_bg">#1A94A3B8</color>
     <color name="color_green_status">#34C759</color>
-    <color name="color_green_status_bg">#1A34C759</color>    <!-- Cinema Rooms Theme Colors -->
+    <color name="color_green_status_bg">#1A34C759</color>
+
+    <!-- dashboard color   -->
+    <color name="dark_grid_color">#2C2C2E</color>
+
+    <!--Report color    -->
+    <color name="text_color_chart">#94A3B8</color>
+    <color name="yellow_bg_chart">#D4AF37</color>
+    <color name="blue_label_color">#00BCD4</color>
+    <color name="darkGray_column_color">#2C2C2E</color>
+
+
+    <!-- Top Movies color  -->
+    <color name="color_gold">#EAB308</color>
+    <color name="color_bg_text_bottom">#A855F7</color>
+
+
+
+
+
+
+    <!-- Cinema Rooms Theme Colors -->
     <color name="cinema_bg">#0B0F17</color>
     <color name="cinema_card">#1A2232</color>
     <color name="cinema_primary">#F5C542</color>
     <color name="cinema_text_secondary">#9CA3AF</color>
+
 
 </resources>
