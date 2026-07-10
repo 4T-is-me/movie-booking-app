@@ -19,5 +19,8 @@ data class BookingUiState(
     val bookingFee: Int = 0,
     val grandTotal: Int = 0,
     val promotionId: String? = null,
-    val selectedPaymentMethod: String? = null
+    val selectedPaymentMethod: String? = null,
+    val availablePoints: Int = 0,
+    val useRewardPoints: Boolean = false,
+    val rewardDiscount: Int = 0
 )

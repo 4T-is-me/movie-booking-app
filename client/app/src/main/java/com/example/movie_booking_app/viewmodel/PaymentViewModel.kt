@@ -7,6 +7,7 @@ import com.example.movie_booking_app.data.model.entity.ComboDetail
 import com.example.movie_booking_app.data.model.request.ComboRequest
 import com.example.movie_booking_app.data.model.request.ConfirmBookingRequest
 import com.example.movie_booking_app.data.repository.PaymentRepository
+import com.example.movie_booking_app.data.repository.ProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -21,6 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class PaymentViewModel @Inject constructor(
     private val repository: PaymentRepository,
+    private val profileRepository: ProfileRepository,
     val timerManager: com.example.movie_booking_app.utils.BookingTimerManager
 ) : ViewModel() {
 
@@ -41,8 +43,28 @@ class PaymentViewModel @Inject constructor(
             ticketSubtotal = booking.ticketTotal,
             grandTotal = total
         )
-        // Timer is already started by SelectSeatViewModel, just observe it
         observeTimer()
+        loadRewardPoints()
+    }
+
+    private fun loadRewardPoints() {
+        viewModelScope.launch {
+            profileRepository.getUserProfile()
+                .catch { exception ->
+                    _uiState.value = _uiState.value.copy(availablePoints = 0)
+                }
+                .collect { profile ->
+                    _uiState.value = _uiState.value.copy(
+                        availablePoints = profile.rewardPoints ?: 0
+                    )
+                    recalculateTotals()
+                }
+        }
+    }
+
+    fun toggleRewardPoints(usePoints: Boolean) {
+        _uiState.value = _uiState.value.copy(useRewardPoints = usePoints)
+        recalculateTotals()
     }
 
     private fun observeTimer() {
@@ -86,20 +108,28 @@ class PaymentViewModel @Inject constructor(
         val comboSub = (combo1Quantity * 80000) + (combo2Quantity * 120000)
         
         val subtotal = ticketSub + comboSub
-        val discount = when (discountType) {
+        val promotionDiscount = when (discountType) {
             "percentage" -> Math.floor(subtotal * (discountValue / 100.0)).toInt()
             "fixed" -> discountValue.toInt()
             else -> {
-                // Fallback to legacy discountLevelPercent
                 Math.floor(subtotal * (discountLevelPercent / 100.0)).toInt()
             }
         }
+        
+        val afterPromotion = subtotal - promotionDiscount
+        val rewardDiscount = if (_uiState.value.useRewardPoints) {
+            Math.min(_uiState.value.availablePoints * 10, afterPromotion)
+        } else {
+            0
+        }
+        
         val fee = _uiState.value.bookingFee
-        val grandTotal = subtotal + fee - discount
+        val grandTotal = subtotal + fee - promotionDiscount - rewardDiscount
 
         _uiState.value = _uiState.value.copy(
             comboSubtotal = comboSub,
-            discountAmount = discount,
+            discountAmount = promotionDiscount,
+            rewardDiscount = rewardDiscount,
             grandTotal = grandTotal
         )
     }
@@ -176,7 +206,8 @@ class PaymentViewModel @Inject constructor(
             val request = ConfirmBookingRequest(
                 showtimeId = booking.showtimeId ?: "",
                 seatIds = booking.seatIds,
-                useScore = false,
+                useScore = state.useRewardPoints,
+                useRewardPoints = state.useRewardPoints,
                 paymentMethod = state.selectedPaymentMethod,
                 promotionId = state.promotionId,
                 combos = requestCombos
@@ -187,10 +218,20 @@ class PaymentViewModel @Inject constructor(
                     _uiState.value = _uiState.value.copy(isCheckingOut = true, error = null)
                 }
                 .catch { exception ->
-                    _uiState.value = _uiState.value.copy(
-                        isCheckingOut = false,
-                        error = exception.message ?: "Checkout failed"
-                    )
+                    val errorMsg = exception.message ?: "Checkout failed"
+                    if (errorMsg.contains("Not enough reward points", ignoreCase = true)) {
+                        _uiState.value = _uiState.value.copy(
+                            isCheckingOut = false,
+                            useRewardPoints = false,
+                            error = "You don't have enough reward points."
+                        )
+                        recalculateTotals()
+                    } else {
+                        _uiState.value = _uiState.value.copy(
+                            isCheckingOut = false,
+                            error = errorMsg
+                        )
+                    }
                 }
                 .collect {
                     _uiState.value = _uiState.value.copy(
