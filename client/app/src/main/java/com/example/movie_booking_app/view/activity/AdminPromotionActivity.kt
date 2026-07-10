@@ -174,9 +174,9 @@ class AdminPromotionActivity : BaseActivity() {
             val isActive = promo.isDeleted != true && (start == null || !now.before(start)) && (end == null || !now.after(end))
 
             val matchesTab = when (selectedTab) {
-                1 -> isActive // Active
-                2 -> !isActive // Inactive
-                else -> true // All
+                0 -> isActive // Active
+                1 -> !isActive // Inactive
+                else -> true
             }
 
             matchesQuery && matchesTab
