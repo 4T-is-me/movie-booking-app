@@ -9,6 +9,7 @@ data class ChangePasswordUiState(
     val confirmMatches: Boolean = false,
     
     val currentPasswordError: String? = null,
+    val newPasswordError: String? = null,
     val confirmPasswordError: String? = null,
     
     val isLoading: Boolean = false,
