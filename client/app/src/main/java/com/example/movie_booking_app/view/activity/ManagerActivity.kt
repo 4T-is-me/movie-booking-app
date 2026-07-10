@@ -8,6 +8,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -123,6 +124,9 @@ class ManagerActivity : AppCompatActivity() {
         val entries = ArrayList<Entry>()
         val lables = ArrayList<String>()
 
+        val yellowColor = ContextCompat.getColor(this, R.color.color_gold)
+        val darkGridColor = ContextCompat.getColor(this, R.color.dark_grid_color)
+
         val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val outputFormat = SimpleDateFormat("E", Locale("en", "US"))
         //nạp data
@@ -139,8 +143,8 @@ class ManagerActivity : AppCompatActivity() {
 
         //lines data
         val lineDataSet = LineDataSet(entries, "Revenue (VND)").apply {
-            color = Color.parseColor("#D4AF37")
-            setCircleColor(Color.parseColor("#D4AF37"))
+            color = yellowColor
+            setCircleColor(yellowColor)
             lineWidth = 3f                      // Line thickness
             circleRadius = 4f                   // Node size
             setDrawCircleHole(false)
@@ -148,7 +152,7 @@ class ManagerActivity : AppCompatActivity() {
             valueTextSize = 10f
             mode = LineDataSet.Mode.CUBIC_BEZIER    // Smooth and curve the line
             setDrawFilled(true)                    // Apply a subtle gradient fill below the curved line
-            fillColor = Color.parseColor("#D4AF37")
+            fillColor = yellowColor
             fillAlpha = 25                          // Opacity of the bottom shadow area
 
         }
@@ -171,7 +175,7 @@ class ManagerActivity : AppCompatActivity() {
             axisLeft.apply {
                 textColor = Color.WHITE
                 setDrawGridLines(true)
-                gridColor = Color.parseColor("#2C2C2E") // Dark grid color blends with the cinema's black background
+                gridColor = darkGridColor // Dark grid color blends with the cinema's black background
             }
             // Hide the right Y-axis
             axisRight.isEnabled = false
@@ -207,6 +211,9 @@ class ManagerActivity : AppCompatActivity() {
         binding.navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_logout -> performLogout()
+                R.id.nav_dashboard -> {
+                    startActivity(Intent(this, ManagerActivity ::class.java))
+                }
                 R.id.nav_rooms -> {
                     startActivity(Intent(this, ManagerRoomListActivity::class.java))
                 }

@@ -13,7 +13,8 @@ data class ReportData(
     val totalTickets: Int,
     val avgTicket: Int,
     val growth: GrowthData,
-    val chartData: List<ReportChartItemResponse>
+    val chartData: List<ReportChartItemResponse>,
+    val topMovies: List<TopMoviesResponse>
 )
 
 data class GrowthData(
@@ -27,4 +28,10 @@ data class ReportChartItemResponse(
     val label: String,
     val ticketRevenue: Double,
     val fbRevenue: Double
+)
+
+data class TopMoviesResponse (
+    val _id: String,
+    val totalTickets: Int,
+    val title: String
 )

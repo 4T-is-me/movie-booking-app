@@ -1,7 +1,9 @@
 package com.example.movie_booking_app.view.activity
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -131,8 +133,12 @@ class MovieDetailActivity : AppCompatActivity() {
                         binding.rvCinema.visibility = View.VISIBLE
                         binding.tvNoCinema.visibility = View.GONE
                         val cinemas = showtimes
-                            .mapNotNull { it.cinemaId }
-                            .distinctBy { it.id ?: it.cinemaName }
+                            .mapNotNull {
+                                it.cinemaId
+                            }
+                            .distinctBy {
+                                it.id ?: it.cinemaName
+                            }
                         
                         if (cinemas.isNotEmpty()) {
                             binding.rvCinema.layoutManager = LinearLayoutManager(this@MovieDetailActivity, LinearLayoutManager.VERTICAL, false)

@@ -68,19 +68,26 @@ class RewardPointsActivity : AppCompatActivity() {
                 // list score history
                 launch {
                     viewModel.scoreHistoryState.collect { historyList ->
-                        val homeList = historyList.take(3)
-                        historyAdapter.updateData(homeList)
+                        if (historyList.isEmpty()) {
+                            binding.rvHistory.visibility = View.GONE
+                            binding.tvEmptyHistory.visibility = View.VISIBLE
+                            updateCardRankStyle(0.0, 0, "bronze")
+                        } else {
 
-                        val firstItem = historyList.firstOrNull()
-                        if (firstItem != null) {
-                            val member = firstItem.memberId
-                            // get totalSpent => double => async
-                            val totalSpent = member.totalSpent.toDouble()
-                            // Standard remaining points balance after the final transaction
-                            val currentPoints = firstItem.remainingPoints
-                            val memberRank = member.membershipRank
-                            //Call the card color-changing function and run a automated progress bar based on real data.
-                            updateCardRankStyle(totalSpent, currentPoints, memberRank)
+                            binding.rvHistory.visibility = View.VISIBLE
+                            binding.tvEmptyHistory.visibility = View.GONE
+
+                            val homeList = historyList.take(3)
+                            historyAdapter.updateData(homeList)
+
+                            val firstItem = historyList.firstOrNull()
+                            if (firstItem != null) {
+                                val member = firstItem.memberId
+                                val totalSpent = member.totalSpent.toDouble()
+                                val currentPoints = firstItem.remainingPoints
+                                val memberRank = member.membershipRank
+                                updateCardRankStyle(totalSpent, currentPoints, memberRank)
+                            }
                         }
                     }
                 }
@@ -113,9 +120,9 @@ class RewardPointsActivity : AppCompatActivity() {
             "gold" -> {
                 rankText = "GOLD MEMBER"
                 colors = intArrayOf(
-                    android.graphics.Color.parseColor("#2E2401"), // start
-                    android.graphics.Color.parseColor("#141103"), // middle
-                    android.graphics.Color.parseColor("#141103")//end
+                    ContextCompat.getColor(this, R.color.rank_gold_start),
+                    ContextCompat.getColor(this, R.color.rank_gold_middle),
+                    ContextCompat.getColor(this, R.color.rank_gold_end)
                 )
 
                 progressPercentage = 100
@@ -126,9 +133,9 @@ class RewardPointsActivity : AppCompatActivity() {
             "silver" -> {
                 rankText = "SILVER MEMBER"
                 colors = intArrayOf(
-                    android.graphics.Color.parseColor("#2C3E50"),
-                    android.graphics.Color.parseColor("#1A252F"),
-                    android.graphics.Color.parseColor("#0F0F11")
+                    ContextCompat.getColor(this, R.color.rank_silver_start),
+                    ContextCompat.getColor(this, R.color.rank_silver_middle),
+                    ContextCompat.getColor(this, R.color.rank_silver_end)
                 )
 
                 progressPercentage = ((totalSpent / Constants.RANK_GOLD) * 100).toInt()
@@ -137,15 +144,14 @@ class RewardPointsActivity : AppCompatActivity() {
                 val moneyLeft = Constants.RANK_GOLD - totalSpentLong
 
                 progressLabelText = "Progress to Gold Member"
-                nextTierLeftText = String.format("%,dđ more to reach Gold Member", moneyLeft)
+                nextTierLeftText = String.format("%,d more to reach Gold Member", moneyLeft)
             }
             else -> { // Default to Bronze
                 rankText = "BRONZE MEMBER"
                 colors = intArrayOf(
-                    android.graphics.Color.parseColor("#0F0F11"),
-                    android.graphics.Color.parseColor("#150D05"),
-                    android.graphics.Color.parseColor("#2A1A0A")
-
+                    ContextCompat.getColor(this, R.color.rank_bronze_start),
+                    ContextCompat.getColor(this, R.color.rank_bronze_middle),
+                    ContextCompat.getColor(this, R.color.rank_bronze_end)
                 )
 
                 progressPercentage = ((totalSpent / Constants.RANK_SILVER) * 100).toInt()
@@ -154,10 +160,9 @@ class RewardPointsActivity : AppCompatActivity() {
                 val moneyLeft = Constants.RANK_SILVER - totalSpentLong
 
                 progressLabelText = "Progress to Silver Member"
-                nextTierLeftText = String.format("%,dđ more to reach Silver Member", moneyLeft)
+                nextTierLeftText = String.format("%,d more to reach Silver Member", moneyLeft)
             }
         }
-
         // Create a Gradient Drawable with a 135-degree diagonal sweep from a dynamic color array.
         val gradientDrawable = GradientDrawable(GradientDrawable.Orientation.TL_BR, colors)
         gradientDrawable.cornerRadius = dpToPx(20)
