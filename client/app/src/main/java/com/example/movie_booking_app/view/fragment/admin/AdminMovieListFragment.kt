@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class AdminMovieListFragment : Fragment() {
 
-    private val viewModel: MovieViewModel by viewModels()
+    private val viewModel: MovieViewModel by activityViewModels()
     private lateinit var adapter: AdminMovieAdapter
 
     override fun onCreateView(

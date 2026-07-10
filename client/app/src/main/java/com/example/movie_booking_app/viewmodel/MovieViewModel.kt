@@ -14,6 +14,7 @@ import com.example.movie_booking_app.data.repository.ProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 import kotlin.collections.emptyList
 
@@ -170,13 +171,14 @@ class MovieViewModel @Inject constructor(
         }
     }
 
-    fun addMovie(request: com.example.movie_booking_app.data.model.request.AddMovieRequest) {
+    fun addMovie(request: com.example.movie_booking_app.data.model.request.AddMovieRequest, posterFile: File? = null) {
         viewModelScope.launch {
             try {
-                val success = repository.addMovie(request)
+                val success = repository.addMovie(request, posterFile)
                 _movieActionSuccess.emit(success)
                 if (success) {
                     loadAdminMovies()
+                    loadHomeData()
                     _movieActionMessage.emit("Movie added successfully")
                 } else {
                     _movieActionMessage.emit("Failed to add movie")
@@ -188,13 +190,14 @@ class MovieViewModel @Inject constructor(
         }
     }
 
-    fun updateMovie(id: String, request: com.example.movie_booking_app.data.model.request.UpdateMovieRequest) {
+    fun updateMovie(id: String, request: com.example.movie_booking_app.data.model.request.UpdateMovieRequest, posterFile: File? = null) {
         viewModelScope.launch {
             try {
-                val success = repository.updateMovie(id, request)
+                val success = repository.updateMovie(id, request, posterFile)
                 _movieActionSuccess.emit(success)
                 if (success) {
                     loadAdminMovies()
+                    loadHomeData()
                     _movieActionMessage.emit("Movie updated successfully")
                 } else {
                     _movieActionMessage.emit("Failed to update movie")

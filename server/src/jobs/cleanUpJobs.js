@@ -26,7 +26,7 @@ const updateMovieStatus = async () => {
         {
             releaseDate: { $lte: now },
             endDate: { $gte: now },
-            status: "coming-soon"
+        status: "coming_soon"
         },
         {
             $set: { status: "showing" }

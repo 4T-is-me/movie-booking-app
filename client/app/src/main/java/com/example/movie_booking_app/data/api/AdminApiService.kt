@@ -8,6 +8,8 @@ import com.example.movie_booking_app.data.model.response.MonthlyRevenueResponse
 import com.example.movie_booking_app.data.model.response.MovieRevenueResponse
 import com.example.movie_booking_app.data.model.response.OverviewStatsResponse
 import com.example.movie_booking_app.data.model.response.AdminStaffListResponse
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -17,11 +19,59 @@ interface AdminApiService {
 
     @POST("api/admin/movies")
     suspend fun createMovie(@Body request: AddMovieRequest): Response<Unit>
+//    val movieName: String,
+//    val duration: Int,
+//    val releaseDate: String,
+//    val endDate: String? = null,
+//    val movieGenre: List<String>,
+//    val language: String,
+//    val censorship: String,
+//    val description: String? = null,
+//    val director: List<String>,
+//    val actors: List<String>,
+//    val country: String,
+//    val status: String = "coming_soon",
+    @Multipart
+    @POST("api/admin/movies")
+    suspend fun createMovieWithPoster(
+        @Part("movieName") movieName: RequestBody,
+        @Part("duration") duration: RequestBody,
+        @Part("releaseDate") releaseDate: RequestBody,
+        @Part("endDate") endDate: RequestBody?,
+        @Part("movieGenre") movieGenre: RequestBody,
+        @Part("language") language: RequestBody,
+        @Part("censorship") censorship: RequestBody,
+        @Part("description") description: RequestBody?,
+        @Part("director") director: RequestBody,
+        @Part("actors") actors: RequestBody,
+        @Part("country") country: RequestBody,
+        @Part("status") status: RequestBody,
+        @Part poster: MultipartBody.Part?
+    ): Response<Unit>
 
     @PUT("api/admin/movies/{id}")
     suspend fun updateMovie(
         @Path("id") id: String,
         @Body request: UpdateMovieRequest
+    ): Response<Unit>
+
+    @Multipart
+    @PUT("api/admin/movies/{id}")
+    suspend fun updateMovieWithPoster(
+        @Path("id") id: String,
+        @Part("movieName") movieName: RequestBody?,
+        @Part("duration") duration: RequestBody?,
+        @Part("releaseDate") releaseDate: RequestBody?,
+        @Part("endDate") endDate: RequestBody?,
+        @Part("movieGenre") movieGenre: RequestBody?,
+        @Part("language") language: RequestBody?,
+        @Part("censorship") censorship: RequestBody?,
+        @Part("description") description: RequestBody?,
+        @Part("director") director: RequestBody?,
+        @Part("actors") actors: RequestBody?,
+        @Part("country") country: RequestBody?,
+        @Part("status") status: RequestBody?,
+        @Part poster: MultipartBody.Part?
     ): Response<Unit>
 
     @DELETE("api/admin/movies/{id}")
