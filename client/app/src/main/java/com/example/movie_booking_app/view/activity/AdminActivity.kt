@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.view.fragment.admin.AdminMovieListFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminRoomListFragment
+import com.example.movie_booking_app.view.fragment.admin.CinemaRoomsFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminStatsFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminStaffFragment
 import com.google.android.material.navigation.NavigationView
@@ -64,7 +65,7 @@ class AdminActivity : BaseActivity() {
                 }
                 R.id.nav_rooms -> {
                     tvHeaderTitle.text = "Cinema Rooms"
-                    loadFragment(AdminRoomListFragment())
+                    loadFragment(CinemaRoomsFragment())
                 }
                 R.id.nav_promotions -> {
                     val intent = Intent(this, AdminPromotionActivity::class.java)

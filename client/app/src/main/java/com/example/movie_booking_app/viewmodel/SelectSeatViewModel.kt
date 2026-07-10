@@ -12,16 +12,26 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 
+enum class SeatingUiState {
+    IDLE, HOLDING, HELD, EXPIRED, ERROR
+}
+
 @HiltViewModel
 class SelectSeatViewModel @Inject constructor(
     private val repository: BookingRepository,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    val timerManager: com.example.movie_booking_app.utils.BookingTimerManager
 ) : ViewModel() {
 
     private val movieId: String = savedStateHandle["movieId"] ?: ""
 
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    private val _uiState = MutableStateFlow(SeatingUiState.IDLE)
+    val uiState: StateFlow<SeatingUiState> = _uiState.asStateFlow()
+
+    private var lastHeldSeatIds: List<String>? = null
 
     private val _allShowtimes = MutableStateFlow<List<Showtime>>(emptyList())
 
@@ -66,7 +76,7 @@ class SelectSeatViewModel @Inject constructor(
                 
                 if (list.isEmpty()) {
                     _isLoading.value = false
-                    _errorMessage.emit("This movie has no available showtimes.")
+                    _errorMessage.emit(savedStateHandle.get<String>("error_no_showtimes") ?: "This movie has no available showtimes.")
                     return@collect
                 }
                 
@@ -132,7 +142,7 @@ class SelectSeatViewModel @Inject constructor(
                 _selectedSeats.value = emptyList()
                 _isLoading.value = false
                 if (seatList.isEmpty()) {
-                    _errorMessage.emit("No seats available for this showtime.")
+                    _errorMessage.emit(savedStateHandle.get<String>("error_no_seats") ?: "No seats available for this showtime.")
                 }
             }
         }
@@ -153,7 +163,7 @@ class SelectSeatViewModel @Inject constructor(
                 val baseType = currentlySelected.first().type
                 if (seatToToggle.type != baseType) {
                     viewModelScope.launch {
-                        _errorMessage.emit("Please select seats of the same type")
+                        _errorMessage.emit(savedStateHandle.get<String>("error_same_type") ?: "Please select seats of the same type")
                     }
                     return
                 }
@@ -183,20 +193,76 @@ class SelectSeatViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.Lazily, 0)
 
     fun holdSeats(showtimeId: String, seatIds: List<String>) {
+        // If selection hasn't changed and timer is still active, just proceed without resetting
+        if (lastHeldSeatIds?.sorted() == seatIds.sorted() && timerManager.isActive.value) {
+            _holdSuccess.value = true
+            return
+        }
+
         viewModelScope.launch {
             repository.holdSeats(showtimeId, seatIds)
                 .onStart {
                     _isLoading.value = true
+                    _uiState.value = SeatingUiState.HOLDING
                 }
                 .catch { exception ->
                     _isLoading.value = false
-                    _errorMessage.emit(exception.message ?: "Failed to hold seats")
+                    _uiState.value = SeatingUiState.ERROR
+                    val msg = if (exception.message == "CONFLICT") {
+                        savedStateHandle.get<String>("error_hold_conflict") ?: "The seats have been selected by another person, please choose again"
+                    } else {
+                        exception.message ?: (savedStateHandle.get<String>("error_hold_failed") ?: "Failed to hold seats")
+                    }
+                    _errorMessage.emit(msg)
                 }
                 .collect {
                     _isLoading.value = false
+                    _uiState.value = SeatingUiState.HELD
+                    lastHeldSeatIds = seatIds
                     _holdSuccess.value = true
+                    startCountdown(showtimeId, seatIds)
                 }
         }
+    }
+
+    private fun startCountdown(showtimeId: String, seatIds: List<String>) {
+        timerManager.startTimer(900)
+        viewModelScope.launch {
+            timerManager.isExpired.collect { expired ->
+                if (expired) {
+                    _uiState.value = SeatingUiState.EXPIRED
+                    releaseSeats(showtimeId, seatIds)
+                }
+            }
+        }
+    }
+
+    fun releaseCurrentHold() {
+        val selectedTime = _showTimes.value.find { it.isSelected }
+        val seatIds = _selectedSeats.value.map { it.id }
+        if (selectedTime != null && seatIds.isNotEmpty()) {
+            releaseSeats(selectedTime.id, seatIds)
+        }
+    }
+
+    private fun releaseSeats(showtimeId: String, seatIds: List<String>) {
+        timerManager.stopTimer()
+        viewModelScope.launch {
+            repository.releaseSeats(showtimeId, seatIds)
+                .catch { /* Silently fail on release */ }
+                .collect {
+                    _uiState.value = SeatingUiState.IDLE
+                    lastHeldSeatIds = null
+                    _selectedSeats.value = emptyList()
+                    // Re-fetch seats to show they are available again
+                    selectTime(showtimeId)
+                }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        // Note: Release seats here if needed using a separate scope since viewModelScope is canceled
     }
 
     fun resetHoldSuccess() {

@@ -33,4 +33,9 @@ class BookingRepositoryImpl @Inject constructor(private val bookingApi: BookingA
         Log.w("BookingRepo", "WARNING: Using MOCK holdSeats")
         emit(Unit)
     }
+
+    override fun releaseSeats(showtimeId: String, seatIds: List<String>): Flow<Unit> = flow {
+        Log.w("BookingRepo", "WARNING: Using MOCK releaseSeats")
+        emit(Unit)
+    }
 }

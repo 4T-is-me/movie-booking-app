@@ -90,4 +90,14 @@
     <string name="section_select_date_time">Chọn Ngày &amp; Giờ</string>
     <string name="label_total">Tổng cộng</string>
     <string name="btn_continue">Tiếp tục</string>
+    <string name="title_expired">Hết thời gian</string>
+    <string name="msg_expired">Thời gian giữ ghế đã hết. Vui lòng chọn lại ghế.</string>
+    <string name="btn_ok">Đồng ý</string>
+    <string name="error_no_showtimes">Phim này hiện không có suất chiếu nào.</string>
+    <string name="error_no_seats">Không còn ghế trống cho suất chiếu này.</string>
+    <string name="error_hold_failed">Giữ ghế thất bại</string>
+    <string name="error_hold_conflict">Ghế đã bị người khác chọn, vui lòng chọn lại</string>
+    <string name="error_release_failed">Thả ghế thất bại</string>
+    <string name="error_select_time">Vui lòng chọn suất chiếu</string>
+    <string name="countdown_initial">10:00</string>
 </resources>

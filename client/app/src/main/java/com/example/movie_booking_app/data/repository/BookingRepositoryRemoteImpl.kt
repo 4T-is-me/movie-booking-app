@@ -62,8 +62,21 @@ class BookingRepositoryRemoteImpl @Inject constructor(
         val response = bookingApi.holdSeats(showtimeId, payload)
         if (response.isSuccessful) {
             emit(Unit)
+        } else if (response.code() == 409) {
+            throw Exception("CONFLICT")
         } else {
             val errorMsg = response.errorBody()?.string() ?: "Failed to hold seats"
+            throw Exception(parseErrorMessage(errorMsg))
+        }
+    }
+
+    override fun releaseSeats(showtimeId: String, seatIds: List<String>): Flow<Unit> = flow {
+        val payload = com.example.movie_booking_app.data.api.HoldSeatsRequest(seatIds)
+        val response = bookingApi.releaseSeats(showtimeId, payload)
+        if (response.isSuccessful) {
+            emit(Unit)
+        } else {
+            val errorMsg = response.errorBody()?.string() ?: "Failed to release seats"
             throw Exception(parseErrorMessage(errorMsg))
         }
     }

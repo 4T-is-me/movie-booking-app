@@ -3,7 +3,7 @@ package com.example.movie_booking_app.viewmodel.admin
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.response.AdminPromotion
-import com.example.movie_booking_app.data.repository.AdminRepository
+import com.example.movie_booking_app.data.repository.admin.AdminRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

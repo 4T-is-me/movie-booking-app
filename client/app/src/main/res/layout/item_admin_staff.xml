@@ -1,31 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:background="?attr/selectableItemBackground"
-    android:paddingVertical="12dp">
-
-    <!-- Account -->
-    <TextView
-        android:id="@+id/tvStaffUsername"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:textColor="@color/white"
-        android:textSize="14sp"
-        android:ellipsize="end"
-        android:maxLines="1"/>
+    android:paddingVertical="12dp"
+    android:weightSum="4"
+    android:gravity="center_vertical">
 
     <!-- Full Name -->
     <TextView
         android:id="@+id/tvStaffFullName"
-        android:layout_width="180dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1.8"
         android:paddingStart="12dp"
-        android:paddingEnd="12dp"
+        android:paddingEnd="4dp"
         android:textColor="@color/white"
         android:textSize="14sp"
         android:ellipsize="end"
@@ -34,125 +25,42 @@
     <!-- Position -->
     <TextView
         android:id="@+id/tvStaffPosition"
-        android:layout_width="120dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
+        android:layout_weight="1.0"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
         android:textColor="@color/white"
         android:textSize="14sp"
         android:ellipsize="end"
         android:maxLines="1"/>
-
-    <!-- Salary -->
-    <TextView
-        android:id="@+id/tvStaffSalary"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:textColor="@color/white"
-        android:textSize="14sp"
-        android:ellipsize="end"
-        android:maxLines="1"/>
-
-    <!-- KPI Points -->
-    <TextView
-        android:id="@+id/tvStaffKpi"
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:textColor="@color/white"
-        android:textSize="14sp"
-        android:ellipsize="end"
-        android:maxLines="1"/>
-
-    <!-- Tickets Sold -->
-    <TextView
-        android:id="@+id/tvStaffTicketSold"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:textColor="@color/white"
-        android:textSize="14sp"
-        android:ellipsize="end"
-        android:maxLines="1"/>
-
-    <!-- Rating -->
-    <TextView
-        android:id="@+id/tvStaffRating"
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:textColor="@color/white"
-        android:textSize="14sp"
-        android:ellipsize="end"
-        android:maxLines="1"/>
-
-    <!-- Email -->
-    <TextView
-        android:id="@+id/tvStaffEmail"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:textColor="@color/white"
-        android:textSize="14sp"
-        android:ellipsize="end"
-        android:maxLines="1"/>
-
-    <!-- ID Card (CMND) -->
-    <TextView
-        android:id="@+id/tvStaffIdCard"
-        android:layout_width="130dp"
-        android:layout_height="wrap_content"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:textColor="@color/white"
-        android:textSize="14sp"
-        android:ellipsize="end"
-        android:maxLines="1"/>
-
-    <!-- Phone (SĐT) -->
-    <TextView
-        android:id="@+id/tvStaffPhone"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:textColor="@color/white"
-        android:textSize="14sp"
-        android:ellipsize="end"
-        android:maxLines="1"/>
-
-    <!-- Address -->
-    <TextView
-        android:id="@+id/tvStaffAddress"
-        android:layout_width="220dp"
-        android:layout_height="wrap_content"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:textColor="@color/white"
-        android:textSize="14sp"
-        android:ellipsize="end"
-        android:maxLines="2"/>
 
     <!-- Actions -->
     <LinearLayout
-        android:layout_width="100dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1.2"
         android:orientation="horizontal"
         android:gravity="center"
-        android:paddingStart="12dp"
+        android:paddingStart="4dp"
         android:paddingEnd="12dp">
 
         <ImageView
+            android:id="@+id/btnDetailStaff"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginEnd="8dp"
+            android:src="@android:drawable/ic_menu_info_details"
+            android:contentDescription="Staff Detail"
+            app:tint="@color/yellow"
+            android:clickable="true"
+            android:focusable="true"/>
+
+        <ImageView
             android:id="@+id/btnEditStaff"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginEnd="12dp"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginEnd="8dp"
             android:src="@android:drawable/ic_menu_edit"
             android:contentDescription="Edit Staff"
             app:tint="@color/yellow"
@@ -161,8 +69,8 @@
 
         <ImageView
             android:id="@+id/btnDeleteStaff"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
             android:src="@android:drawable/ic_menu_delete"
             android:contentDescription="Delete Staff"
             app:tint="@color/deduct"

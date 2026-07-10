@@ -1,6 +1,7 @@
 package com.example.movie_booking_app.view.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -9,6 +10,7 @@ import com.example.movie_booking_app.data.model.entity.Staff
 import com.example.movie_booking_app.databinding.ItemAdminStaffBinding
 
 class AdminStaffAdapter(
+    private val onDetailClick: (Staff) -> Unit,
     private val onEditClick: (Staff) -> Unit,
     private val onDeleteClick: (Staff) -> Unit
 ) : ListAdapter<Staff, AdminStaffAdapter.StaffViewHolder>(StaffDiffCallback()) {
@@ -28,23 +30,23 @@ class AdminStaffAdapter(
 
     inner class StaffViewHolder(private val binding: ItemAdminStaffBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(staff: Staff) {
-            binding.tvStaffUsername.text = staff.username ?: "-"
             binding.tvStaffFullName.text = staff.fullName ?: "-"
             binding.tvStaffPosition.text = staff.position ?: "-"
-            binding.tvStaffSalary.text = staff.salary?.toString() ?: "-"
-            binding.tvStaffKpi.text = staff.kpiPoints?.toString() ?: "0"
-            binding.tvStaffTicketSold.text = staff.ticketSold?.toString() ?: "0"
-            binding.tvStaffRating.text = staff.rating?.toString() ?: "0.0"
-            binding.tvStaffEmail.text = staff.email ?: "-"
-            binding.tvStaffIdCard.text = staff.identityCard ?: "-"
-            binding.tvStaffPhone.text = staff.phone ?: "-"
-            binding.tvStaffAddress.text = staff.address ?: "-"
 
+            binding.btnDetailStaff.setOnClickListener {
+                onDetailClick(staff)
+            }
             binding.btnEditStaff.setOnClickListener {
                 onEditClick(staff)
             }
-            binding.btnDeleteStaff.setOnClickListener {
-                onDeleteClick(staff)
+            
+            if (staff.status == 0) {
+                binding.btnDeleteStaff.visibility = View.GONE
+            } else {
+                binding.btnDeleteStaff.visibility = View.VISIBLE
+                binding.btnDeleteStaff.setOnClickListener {
+                    onDeleteClick(staff)
+                }
             }
         }
     }

@@ -24,5 +24,6 @@ data class Staff(
     @SerializedName("ticketSold") val ticketSold: Int? = null,
     @SerializedName("rating") val rating: Double? = null,
     @SerializedName("totalRatings") val totalRatings: Int? = null,
-    @SerializedName("totalStars") val totalStars: Int? = null
+    @SerializedName("totalStars") val totalStars: Int? = null,
+    @SerializedName("status") val status: Int? = null
 ) : Serializable

@@ -10,5 +10,10 @@ data class UpdateStaffRequest(
     @SerializedName("cinemaId") val cinemaId: String,
     @SerializedName("position") val position: String,
     @SerializedName("salary") val salary: Double,
-    @SerializedName("startDate") val startDate: String
+    @SerializedName("startDate") val startDate: String,
+    @SerializedName("status") val status: Int? = null
+)
+
+data class UpdateStaffStatusRequest(
+    @SerializedName("status") val status: Int
 )

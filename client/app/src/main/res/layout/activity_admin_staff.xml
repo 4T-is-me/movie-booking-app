@@ -16,7 +16,7 @@
             android:id="@+id/tvFormTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Thêm Nhân Viên Mới"
+            android:text="Add New Employee"
             android:textColor="@color/white"
             android:textSize="22sp"
             android:textStyle="bold"
@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="Tên đăng nhập (*)"
+            android:hint="Username (*)"
             app:boxStrokeColor="@color/yellow"
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
@@ -52,7 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="Mật khẩu (*)"
+            android:hint="Password (*)"
             app:boxStrokeColor="@color/yellow"
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
@@ -72,11 +72,12 @@
 
         <!-- Full Name -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutFullName"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="Họ và tên (*)"
+            android:hint="Full Name (*)"
             app:boxStrokeColor="@color/yellow"
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
@@ -94,6 +95,7 @@
 
         <!-- Email -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutEmail"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -116,11 +118,12 @@
 
         <!-- Phone -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutPhone"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="Số điện thoại (*)"
+            android:hint="Phone Number (*)"
             app:boxStrokeColor="@color/yellow"
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
@@ -143,7 +146,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="Số CMND/CCCD (12 số) (*)"
+            android:hint="Identity Card (12 digits) (*)"
             app:boxStrokeColor="@color/yellow"
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
@@ -166,7 +169,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="Vai trò (*)"
+            android:hint="Role (*)"
             app:boxStrokeColor="@color/yellow"
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
@@ -184,11 +187,12 @@
 
         <!-- Cinema Dropdown -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutCinema"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="Rạp phim (*)"
+            android:hint="Cinema (*)"
             app:boxStrokeColor="@color/yellow"
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
@@ -206,11 +210,12 @@
 
         <!-- Position -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutPosition"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="Chức vụ (*)"
+            android:hint="Position (*)"
             app:boxStrokeColor="@color/yellow"
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
@@ -228,11 +233,12 @@
 
         <!-- Salary -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutSalary"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="Lương (*)"
+            android:hint="Salary (*)"
             app:boxStrokeColor="@color/yellow"
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
@@ -250,11 +256,12 @@
 
         <!-- Start Date -->
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutStartDate"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="Ngày bắt đầu làm (*)"
+            android:hint="Start Date (*)"
             app:boxStrokeColor="@color/yellow"
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
@@ -271,14 +278,14 @@
                 android:clickable="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Address (Edit Mode Only) -->
+        <!-- Address -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutAddress"
             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:hint="Địa chỉ"
+            android:layout_marginBottom="16dp"
+            android:hint="Address"
             app:boxStrokeColor="@color/yellow"
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
@@ -294,6 +301,29 @@
                 android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Status Dropdown (Edit Mode Only) -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutStatus"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:hint="Status (*)"
+            app:boxStrokeColor="@color/yellow"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:hintTextColor="@color/admin_text_secondary">
+
+            <AutoCompleteTextView
+                android:id="@+id/actvStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
         <!-- Action Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -307,7 +337,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="12dp"
-                android:text="Hủy"
+                android:text="Cancel"
                 android:textColor="@color/white"
                 app:strokeColor="@color/admin_text_secondary"
                 app:cornerRadius="8dp" />
@@ -316,7 +346,7 @@
                 android:id="@+id/btnSave"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Lưu"
+                android:text="Save"
                 android:textColor="@color/black"
                 app:backgroundTint="@color/yellow"
                 app:cornerRadius="8dp" />

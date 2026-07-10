@@ -38,7 +38,8 @@ const updateStaff = async (req, res, next) => {
         cinemaId: Joi.string().pattern(/^[0-9a-fA-F]{24}$/).trim().strict(),
         position: Joi.string().trim().strict(),
         salary: Joi.number().min(0),
-        startDate: Joi.date()
+        startDate: Joi.date(),
+        status: Joi.number().valid(0, 1)
     });
 
     try {

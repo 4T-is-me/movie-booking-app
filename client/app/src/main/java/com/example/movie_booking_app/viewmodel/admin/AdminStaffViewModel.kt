@@ -7,7 +7,7 @@ import com.example.movie_booking_app.data.model.entity.Cinema
 import com.example.movie_booking_app.data.model.entity.Staff
 import com.example.movie_booking_app.data.model.request.CreateStaffRequest
 import com.example.movie_booking_app.data.model.request.UpdateStaffRequest
-import com.example.movie_booking_app.data.repository.AdminRepository
+import com.example.movie_booking_app.data.repository.admin.AdminRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -74,9 +74,7 @@ class AdminStaffViewModel @Inject constructor(
                     withContext(Dispatchers.Main) {
                         if (response.isSuccessful && response.body() != null) {
                             val dbStaffItems = response.body()?.data?.staffs ?: emptyList()
-                            val mappedStaffs = dbStaffItems
-                                .filter { it.account?.status != 0 }
-                                .map { dbStaff ->
+                            val mappedStaffs = dbStaffItems.map { dbStaff ->
                                 Staff(
                                     id = dbStaff.id,
                                     username = dbStaff.account?.username ?: "",
@@ -95,7 +93,8 @@ class AdminStaffViewModel @Inject constructor(
                                     ticketSold = dbStaff.ticketSold ?: 0,
                                     rating = dbStaff.rating ?: 0.0,
                                     totalRatings = dbStaff.totalRatings ?: 0,
-                                    totalStars = dbStaff.totalStars ?: 0
+                                    totalStars = dbStaff.totalStars ?: 0,
+                                    status = dbStaff.account?.status
                                 )
                             }
                             _uiState.value = AdminStaffUiState(
@@ -106,7 +105,7 @@ class AdminStaffViewModel @Inject constructor(
                         } else {
                             _uiState.value = _uiState.value.copy(
                                 isLoading = false,
-                                error = "Lấy dữ liệu nhân viên thất bại"
+                                error = "Failed to load employee list"
                             )
                         }
                     }
@@ -115,7 +114,7 @@ class AdminStaffViewModel @Inject constructor(
                     withContext(Dispatchers.Main) {
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
-                            error = e.localizedMessage ?: "Lỗi kết nối mạng"
+                            error = e.localizedMessage ?: "Network connection error"
                         )
                     }
                 }
@@ -133,11 +132,11 @@ class AdminStaffViewModel @Inject constructor(
                         _uiState.value = _uiState.value.copy(isLoading = false)
                         if (response.isSuccessful) {
                             _actionSuccess.emit(true)
-                            _actionMessage.emit("Thêm nhân viên thành công!")
+                            _actionMessage.emit("Employee added successfully!")
                             loadStaff()
                         } else {
                             _actionSuccess.emit(false)
-                            _actionMessage.emit(response.errorBody()?.string() ?: "Thêm nhân viên thất bại")
+                            _actionMessage.emit(response.errorBody()?.string() ?: "Failed to add employee")
                         }
                     }
                 } catch (e: Exception) {
@@ -145,7 +144,7 @@ class AdminStaffViewModel @Inject constructor(
                     withContext(Dispatchers.Main) {
                         _uiState.value = _uiState.value.copy(isLoading = false)
                         _actionSuccess.emit(false)
-                        _actionMessage.emit(e.localizedMessage ?: "Lỗi kết nối mạng")
+                        _actionMessage.emit(e.localizedMessage ?: "Network connection error")
                     }
                 }
             }
@@ -162,11 +161,11 @@ class AdminStaffViewModel @Inject constructor(
                         _uiState.value = _uiState.value.copy(isLoading = false)
                         if (response.isSuccessful) {
                             _actionSuccess.emit(true)
-                            _actionMessage.emit("Cập nhật nhân viên thành công!")
+                            _actionMessage.emit("Employee updated successfully!")
                             loadStaff()
                         } else {
                             _actionSuccess.emit(false)
-                            _actionMessage.emit(response.errorBody()?.string() ?: "Cập nhật nhân viên thất bại")
+                            _actionMessage.emit(response.errorBody()?.string() ?: "Failed to update employee")
                         }
                     }
                 } catch (e: Exception) {
@@ -174,7 +173,7 @@ class AdminStaffViewModel @Inject constructor(
                     withContext(Dispatchers.Main) {
                         _uiState.value = _uiState.value.copy(isLoading = false)
                         _actionSuccess.emit(false)
-                        _actionMessage.emit(e.localizedMessage ?: "Lỗi kết nối mạng")
+                        _actionMessage.emit(e.localizedMessage ?: "Network connection error")
                     }
                 }
             }
@@ -191,11 +190,11 @@ class AdminStaffViewModel @Inject constructor(
                         _uiState.value = _uiState.value.copy(isLoading = false)
                         if (response.isSuccessful) {
                             _actionSuccess.emit(true)
-                            _actionMessage.emit("Đã khóa tài khoản nhân viên!")
+                            _actionMessage.emit("Employee account disabled!")
                             loadStaff()
                         } else {
                             _actionSuccess.emit(false)
-                            _actionMessage.emit(response.errorBody()?.string() ?: "Khóa tài khoản thất bại")
+                            _actionMessage.emit(response.errorBody()?.string() ?: "Failed to disable account")
                         }
                     }
                 } catch (e: Exception) {
@@ -203,7 +202,37 @@ class AdminStaffViewModel @Inject constructor(
                     withContext(Dispatchers.Main) {
                         _uiState.value = _uiState.value.copy(isLoading = false)
                         _actionSuccess.emit(false)
-                        _actionMessage.emit(e.localizedMessage ?: "Lỗi kết nối mạng")
+                        _actionMessage.emit(e.localizedMessage ?: "Network connection error")
+                    }
+                }
+            }
+        }
+    }
+
+    fun updateStaffStatus(id: String, status: Int) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            withContext(Dispatchers.IO) {
+                try {
+                    val response = repository.updateStaffStatus(id, status)
+                    withContext(Dispatchers.Main) {
+                        _uiState.value = _uiState.value.copy(isLoading = false)
+                        if (response.isSuccessful) {
+                            _actionSuccess.emit(true)
+                            val statusMsg = if (status != 0) "Employee account reactivated!" else "Employee account disabled!"
+                            _actionMessage.emit(statusMsg)
+                            loadStaff()
+                        } else {
+                            _actionSuccess.emit(false)
+                            _actionMessage.emit(response.errorBody()?.string() ?: "Failed to update account status")
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e("AdminStaffVM", "Error updating staff status", e)
+                    withContext(Dispatchers.Main) {
+                        _uiState.value = _uiState.value.copy(isLoading = false)
+                        _actionSuccess.emit(false)
+                        _actionMessage.emit(e.localizedMessage ?: "Network connection error")
                     }
                 }
             }

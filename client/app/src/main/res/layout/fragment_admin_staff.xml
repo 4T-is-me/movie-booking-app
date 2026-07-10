@@ -11,199 +11,132 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-    <!-- Search Section -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        <!-- Search Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-        <androidx.cardview.widget.CardView
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            app:cardBackgroundColor="@color/card_dark"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="0dp">
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/card_dark"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="12dp">
-
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@android:drawable/ic_menu_search"
-                    app:tint="@color/admin_text_secondary" />
-
-                <EditText
-                    android:id="@+id/etSearchStaff"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@android:color/transparent"
-                    android:hint="Tìm kiếm theo họ tên hoặc email..."
-                    android:textColorHint="@color/admin_text_secondary"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:maxLines="1"
-                    android:inputType="text"/>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-    </LinearLayout>
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="12dp">
 
-    <!-- Table Container (Horizontal Scrollable) -->
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="horizontal|vertical">
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@android:drawable/ic_menu_search"
+                        app:tint="@color/admin_text_secondary" />
 
+                    <EditText
+                        android:id="@+id/etSearchStaff"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@android:color/transparent"
+                        android:hint="Search by name or email..."
+                        android:textColorHint="@color/admin_text_secondary"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:paddingStart="8dp"
+                        android:paddingEnd="8dp"
+                        android:maxLines="1"
+                        android:inputType="text"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+
+        <!-- Tabs Section -->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/tabContainer"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="16dp"
+            android:background="@drawable/bg_tab_container"
+            android:padding="3dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tabActiveStaff"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Active"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:background="@drawable/bg_tab_active" />
+
+            <TextView
+                android:id="@+id/tabInactiveStaff"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Inactive"
+                android:textColor="@color/text_gray"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Table Container (Fits screen width) -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
             <!-- Table Header Row -->
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:background="@color/card_dark"
-                android:paddingVertical="14dp">
-
-                <!-- Account -->
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:text="Tài khoản"
-                    android:textColor="@color/yellow"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                android:paddingVertical="14dp"
+                android:weightSum="4">
 
                 <!-- Full Name -->
                 <TextView
-                    android:layout_width="180dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1.8"
                     android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:text="Họ tên"
+                    android:paddingEnd="4dp"
+                    android:text="Full Name"
                     android:textColor="@color/yellow"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
                 <!-- Position -->
                 <TextView
-                    android:layout_width="120dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:text="Chức vụ"
-                    android:textColor="@color/yellow"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <!-- Salary -->
-                <TextView
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:text="Lương"
-                    android:textColor="@color/yellow"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <!-- KPI Points -->
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:text="KPI"
-                    android:textColor="@color/yellow"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <!-- Tickets Sold -->
-                <TextView
-                    android:layout_width="100dp"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:text="Vé đã bán"
-                    android:textColor="@color/yellow"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <!-- Rating -->
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:text="Đánh giá"
-                    android:textColor="@color/yellow"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <!-- Email -->
-                <TextView
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:text="Email"
-                    android:textColor="@color/yellow"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <!-- ID Card (CMND) -->
-                <TextView
-                    android:layout_width="130dp"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:text="CMND"
-                    android:textColor="@color/yellow"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <!-- Phone (SĐT) -->
-                <TextView
-                    android:layout_width="120dp"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:text="SĐT"
-                    android:textColor="@color/yellow"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <!-- Address -->
-                <TextView
-                    android:layout_width="220dp"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:text="Địa chỉ"
+                    android:layout_weight="1.0"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:text="Position"
                     android:textColor="@color/yellow"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
                 <!-- Actions -->
                 <TextView
-                    android:layout_width="100dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:paddingStart="12dp"
+                    android:layout_weight="1.2"
+                    android:paddingStart="4dp"
                     android:paddingEnd="12dp"
-                    android:text="Hành động"
+                    android:text="Actions"
                     android:textColor="@color/yellow"
                     android:textSize="14sp"
                     android:textStyle="bold"
@@ -216,14 +149,19 @@
                 android:background="@color/divider_gray" />
 
             <!-- Table Rows List -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvAdminStaff"
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipeRefreshLayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:paddingBottom="80dp" />
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvAdminStaff"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:paddingBottom="80dp" />
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
         </LinearLayout>
-    </HorizontalScrollView>
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
