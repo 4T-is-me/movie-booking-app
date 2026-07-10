@@ -14,7 +14,8 @@ import java.util.Locale
 
 class MyTicketAdapter(
     private var items: List<BookingHistoryItem> = emptyList(),
-    private val onItemClick: (BookingHistoryItem) -> Unit
+    private val onViewTicketClick: (BookingHistoryItem) -> Unit,
+    private val onViewQrClick: (BookingHistoryItem) -> Unit
 ) : RecyclerView.Adapter<MyTicketAdapter.ViewHolder>() {
 
     fun updateData(newItems: List<BookingHistoryItem>) {
@@ -30,7 +31,7 @@ class MyTicketAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(items[position], onItemClick)
+        holder.bind(items[position], onViewTicketClick, onViewQrClick)
     }
 
     override fun getItemCount(): Int = items.size
@@ -39,10 +40,16 @@ class MyTicketAdapter(
         private val binding: ItemMyTicketBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: BookingHistoryItem, onItemClick: (BookingHistoryItem) -> Unit) {
+        fun bind(
+            item: BookingHistoryItem,
+            onViewTicketClick: (BookingHistoryItem) -> Unit,
+            onViewQrClick: (BookingHistoryItem) -> Unit
+        ) {
             binding.tvMovieTitle.text = item.movie
-            binding.tvShowtime.text = "${item.showDate} • ${item.showtime}"
-            binding.tvCinemaRoom.text = "${item.cinemaName} • ${item.roomName}"
+            binding.tvShowDate.text = item.showDate
+            binding.tvShowTime.text = item.showtime
+            binding.tvCinemaName.text = item.cinemaName
+            binding.tvRoomName.text = item.roomName
             
             val seatList = item.seats ?: emptyList()
             binding.tvSeats.text = "Seats: ${seatList.joinToString(", ").ifEmpty { "-" }}"
@@ -54,22 +61,6 @@ class MyTicketAdapter(
             }
             val formatter = DecimalFormat("#,###", symbols)
             binding.tvTotalPaid.text = "Total Paid: ${formatter.format(item.finalAmount)} ₫"
-
-            // Decode QR Code
-            val qr = item.qrCodeData
-            if (!qr.isNullOrEmpty()) {
-                try {
-                    val cleanBase64 = qr.substringAfter("base64,")
-                    val imageBytes = android.util.Base64.decode(cleanBase64, android.util.Base64.DEFAULT)
-                    val decodedImage = android.graphics.BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-                    binding.ivQrCode.setImageBitmap(decodedImage)
-                    binding.ivQrCode.visibility = android.view.View.VISIBLE
-                } catch (e: Exception) {
-                    binding.ivQrCode.visibility = android.view.View.GONE
-                }
-            } else {
-                binding.ivQrCode.visibility = android.view.View.GONE
-            }
 
             // Load Poster Image
             val url = item.poster
@@ -86,7 +77,13 @@ class MyTicketAdapter(
                 .into(binding.ivPoster)
 
             itemView.setOnClickListener {
-                onItemClick(item)
+                onViewTicketClick(item)
+            }
+            binding.btnViewTicket.setOnClickListener {
+                onViewTicketClick(item)
+            }
+            binding.btnViewQr.setOnClickListener {
+                onViewQrClick(item)
             }
         }
     }

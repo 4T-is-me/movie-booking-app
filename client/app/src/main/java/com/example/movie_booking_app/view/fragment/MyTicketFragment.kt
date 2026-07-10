@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.movie_booking_app.data.model.response.BookingHistoryItem
 import com.example.movie_booking_app.databinding.FragmentMyTicketBinding
 import com.example.movie_booking_app.view.activity.BookingDetailActivity
 import com.example.movie_booking_app.view.activity.MainActivity
@@ -56,12 +57,17 @@ class MyTicketFragment : Fragment() {
             viewModel.loadActiveTickets()
         }
 
-        adapter = MyTicketAdapter { item ->
-            val intent = Intent(requireContext(), BookingDetailActivity::class.java).apply {
-                putExtra("BOOKING_ID", item.bookingId)
+        adapter = MyTicketAdapter(
+            onViewTicketClick = { item ->
+                val intent = Intent(requireContext(), BookingDetailActivity::class.java).apply {
+                    putExtra("BOOKING_ID", item.bookingId)
+                }
+                startActivity(intent)
+            },
+            onViewQrClick = { item ->
+                showQrDialog(item)
             }
-            startActivity(intent)
-        }
+        )
         binding.rvActiveTickets.adapter = adapter
 
         binding.btnBookMovie.setOnClickListener {
@@ -134,5 +140,45 @@ class MyTicketFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun showQrDialog(item: BookingHistoryItem) {
+        val dialog = android.app.Dialog(requireContext())
+        dialog.setContentView(com.example.movie_booking_app.R.layout.dialog_qr_code)
+        dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
+        dialog.setCancelable(true)
+
+        val tvMovieTitle = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvMovieTitle)
+        val tvBookingCode = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvBookingCode)
+        val tvDateTime = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDateTime)
+        val tvCinemaRoom = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvCinemaRoom)
+        val ivQrCode = dialog.findViewById<android.widget.ImageView>(com.example.movie_booking_app.R.id.ivQrCode)
+        val btnClose = dialog.findViewById<com.google.android.material.button.MaterialButton>(com.example.movie_booking_app.R.id.btnClose)
+
+        tvMovieTitle.text = item.movie
+        tvBookingCode.text = "Booking ID: ${item.bookingCode}"
+        tvDateTime.text = "${item.showDate} • ${item.showtime}"
+        tvCinemaRoom.text = "${item.cinemaName} • ${item.roomName}"
+
+        // Decode and load QR Code
+        val qr = item.qrCodeData
+        if (!qr.isNullOrEmpty()) {
+            try {
+                val cleanBase64 = qr.substringAfter("base64,")
+                val imageBytes = android.util.Base64.decode(cleanBase64, android.util.Base64.DEFAULT)
+                val decodedImage = android.graphics.BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                ivQrCode.setImageBitmap(decodedImage)
+            } catch (e: Exception) {
+                ivQrCode.setImageResource(com.example.movie_booking_app.R.drawable.ic_ticket)
+            }
+        } else {
+            ivQrCode.setImageResource(com.example.movie_booking_app.R.drawable.ic_ticket)
+        }
+
+        btnClose.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 }
