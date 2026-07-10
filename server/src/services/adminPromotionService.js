@@ -1,8 +1,8 @@
 import { Promotion } from '../models/promotionModel.js';
 
 export const getPromotions = async (query = {}) => {
-    // Only return non-deleted promotions unless specified otherwise
-    const filter = { isDeleted: false, ...query };
+    // Return all promotions including soft-deleted ones for admin
+    const filter = { ...query };
     return await Promotion.find(filter).sort({ createdAt: -1 });
 };
 
