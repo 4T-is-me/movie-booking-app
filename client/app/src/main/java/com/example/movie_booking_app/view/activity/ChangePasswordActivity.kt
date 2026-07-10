@@ -61,7 +61,6 @@ class ChangePasswordActivity : AppCompatActivity() {
     private fun setupInputListeners() {
         binding.edtCurrentPassword.doAfterTextChanged { text ->
             viewModel.onCurrentPasswordChanged(text?.toString() ?: "")
-            binding.tilCurrentPassword.error = null
         }
 
         binding.edtNewPassword.doAfterTextChanged { text ->
@@ -70,7 +69,6 @@ class ChangePasswordActivity : AppCompatActivity() {
 
         binding.edtConfirmPassword.doAfterTextChanged { text ->
             viewModel.onConfirmPasswordChanged(text?.toString() ?: "")
-            binding.tilConfirmPassword.error = null
         }
 
         binding.edtCurrentPassword.setOnFocusChangeListener { _, hasFocus ->
@@ -110,11 +108,16 @@ class ChangePasswordActivity : AppCompatActivity() {
                     updateValidationCard(state)
                     updateInlineErrors(state)
                     
-                    binding.btnUpdatePassword.isEnabled = !state.isLoading && viewModel.isSubmitEnabled()
+                    binding.btnUpdatePassword.isEnabled = !state.isLoading
 
                     if (state.isSuccess) {
+                        Toast.makeText(this@ChangePasswordActivity, "Password changed successfully.", Toast.LENGTH_SHORT).show()
+                        binding.edtCurrentPassword.setText("")
+                        binding.edtNewPassword.setText("")
+                        binding.edtConfirmPassword.setText("")
+                        hideKeyboard()
                         viewModel.resetState()
-                        showSuccessDialog()
+                        finish()
                     }
 
                     if (state.error != null) {
@@ -203,27 +206,24 @@ class ChangePasswordActivity : AppCompatActivity() {
 
     private fun updateInlineErrors(state: com.example.movie_booking_app.viewmodel.ChangePasswordUiState) {
         binding.tilCurrentPassword.error = state.currentPasswordError
+        binding.tilNewPassword.error = state.newPasswordError
         binding.tilConfirmPassword.error = state.confirmPasswordError
-    }
-
-    private fun showSuccessDialog() {
-        MaterialAlertDialogBuilder(this)
-            .setTitle("Password Updated")
-            .setMessage("Your password has been changed successfully.")
-            .setCancelable(false)
-            .setPositiveButton("OK") { dialog, _ ->
-                dialog.dismiss()
-                finish()
-            }
-            .show()
     }
 
     private fun showError(message: String) {
         Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
     }
 
+    private fun hideKeyboard() {
+        val view = this.currentFocus
+        if (view != null) {
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+    }
+
     private fun handleSessionExpired() {
-        Toast.makeText(this, "Session expired. Please login again.", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "Your session has expired. Please log in again.", Toast.LENGTH_LONG).show()
         TokenManager.clearTokens(this)
         val sharedPref = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         with(sharedPref.edit()) {
