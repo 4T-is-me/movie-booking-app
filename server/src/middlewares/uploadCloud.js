@@ -16,6 +16,56 @@ const upload = multer({
     }
 });
 
+const isMultipartRequest = (req) => {
+    const contentType = req.headers['content-type'];
+    return typeof contentType === 'string' && contentType.startsWith('multipart/form-data');
+};
+
+const uploadIfMultipart = (req, res, next) => {
+    if (!isMultipartRequest(req)) {
+        return next();
+    }
+    return upload.single('poster')(req, res, next);
+};
+
+const normalizeMultipartBody = (req, res, next) => {
+    if (!req.body || typeof req.body !== 'object') {
+        return next();
+    }
+
+    const normalizedBody = { ...req.body };
+
+    Object.entries(normalizedBody).forEach(([key, value]) => {
+        if (typeof value !== 'string') {
+            return;
+        }
+
+        const trimmedValue = value.trim();
+        if (trimmedValue === '' || trimmedValue === 'null' || trimmedValue === 'undefined') {
+            normalizedBody[key] = null;
+            return;
+        }
+
+        if (['movieGenre', 'director', 'actors'].includes(key)) {
+            normalizedBody[key] = trimmedValue
+                .split(',')
+                .map((item) => item.trim())
+                .filter(Boolean);
+            return;
+        }
+
+        if (['duration', 'rating', 'totalReviews', 'totalStarts', 'tier'].includes(key)) {
+            const parsedNumber = Number(trimmedValue);
+            if (!Number.isNaN(parsedNumber)) {
+                normalizedBody[key] = parsedNumber;
+            }
+        }
+    });
+
+    req.body = normalizedBody;
+    next();
+};
+
 const uploadToCloudinary = (folder, bodyKey) => {
     return (req, res, next) => {
         if (!req.file) {
@@ -38,5 +88,7 @@ const uploadToCloudinary = (folder, bodyKey) => {
 
 export const uploadMiddleware = {
     upload,
+    uploadIfMultipart,
+    normalizeMultipartBody,
     uploadToCloudinary
 };

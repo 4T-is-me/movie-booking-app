@@ -1,0 +1,267 @@
+package com.example.movie_booking_app.view.fragment.admin
+
+import android.content.Intent
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.widget.doAfterTextChanged
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.movie_booking_app.data.model.response.AdminPromotion
+import com.example.movie_booking_app.databinding.FragmentAdminPromotionBinding
+import com.example.movie_booking_app.view.activity.AdminEditPromotionActivity
+import com.example.movie_booking_app.view.adapter.AdminPromotionAdapter
+import com.example.movie_booking_app.viewmodel.admin.AdminPromotionViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
+
+@AndroidEntryPoint
+class AdminPromotionFragment : Fragment() {
+
+    private var _binding: FragmentAdminPromotionBinding? = null
+    private val binding get() = _binding!!
+
+    private val viewModel: AdminPromotionViewModel by viewModels()
+    private lateinit var adapter: AdminPromotionAdapter
+    private var allPromotions: List<AdminPromotion> = emptyList()
+    private var selectedTab = TAB_ACTIVE
+
+    companion object {
+        private const val TAB_ACTIVE = "active"
+        private const val TAB_INACTIVE = "inactive"
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentAdminPromotionBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        setupRecyclerView()
+        setupListeners()
+        setupTabs()
+        observeViewModel()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadPromotions()
+    }
+
+    private fun setupRecyclerView() {
+        adapter = AdminPromotionAdapter(
+            onEditClick = { promotion ->
+                val intent = Intent(requireContext(), AdminEditPromotionActivity::class.java).apply {
+                    putExtra("promotion", promotion)
+                }
+                startActivity(intent)
+            },
+            onDeleteClick = { promotion ->
+                showDeleteConfirmationDialog(promotion)
+            }
+        )
+        binding.rvAdminPromotions.layoutManager = LinearLayoutManager(context)
+        binding.rvAdminPromotions.adapter = adapter
+    }
+
+    private fun setupListeners() {
+        binding.fabAddPromotion.setOnClickListener {
+            val intent = Intent(requireContext(), AdminEditPromotionActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.etSearch.doAfterTextChanged {
+            filterAndSubmit()
+        }
+    }
+
+    private fun setupTabs() {
+        binding.tabActivePromotion.setOnClickListener { switchTab(TAB_ACTIVE) }
+        binding.tabInactivePromotion.setOnClickListener { switchTab(TAB_INACTIVE) }
+    }
+
+    private fun switchTab(tab: String) {
+        if (selectedTab == tab) return
+        selectedTab = tab
+
+        val isActive = (tab == TAB_ACTIVE)
+        updateTabStyle(binding.tabActivePromotion, isActive)
+        updateTabStyle(binding.tabInactivePromotion, !isActive)
+
+        filterAndSubmit()
+    }
+
+    private fun updateTabStyle(tabView: android.widget.TextView, isActive: Boolean) {
+        if (isActive) {
+            tabView.setBackgroundResource(com.example.movie_booking_app.R.drawable.bg_tab_active)
+            tabView.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), com.example.movie_booking_app.R.color.black))
+        } else {
+            tabView.background = null
+            tabView.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), com.example.movie_booking_app.R.color.text_gray))
+        }
+    }
+
+    private fun showDeleteConfirmationDialog(promotion: AdminPromotion) {
+        val dialog = android.app.Dialog(requireContext())
+        dialog.setContentView(com.example.movie_booking_app.R.layout.dialog_confirm_delete_promotion)
+        dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
+        dialog.setCancelable(true)
+
+        val tvDeleteMessage = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDeleteMessage)
+        val btnCancel = dialog.findViewById<com.google.android.material.button.MaterialButton>(com.example.movie_booking_app.R.id.btnCancelDelete)
+        val btnConfirm = dialog.findViewById<com.google.android.material.button.MaterialButton>(com.example.movie_booking_app.R.id.btnConfirmDelete)
+
+        tvDeleteMessage.text = "Are you sure you want to delete the promotion \"${promotion.title}\"?"
+
+        btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        btnConfirm.setOnClickListener {
+            dialog.dismiss()
+            viewModel.deletePromotion(promotion.id)
+        }
+
+        dialog.show()
+    }
+
+    private fun parseIsoDate(dateStr: String?): Date? {
+        if (dateStr.isNullOrEmpty()) return null
+        val formats = arrayOf(
+            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+            "yyyy-MM-dd'T'HH:mm:ss'Z'",
+            "yyyy-MM-dd'T'HH:mm:ss.SSSZ",
+            "yyyy-MM-dd"
+        )
+        for (format in formats) {
+            try {
+                val sdf = SimpleDateFormat(format, Locale.US)
+                if (format.endsWith("'Z'")) {
+                    sdf.timeZone = TimeZone.getTimeZone("UTC")
+                }
+                return sdf.parse(dateStr)
+            } catch (e: Exception) {
+                // Try next format
+            }
+        }
+        return null
+    }
+
+    private fun updateStatistics(promotions: List<AdminPromotion>) {
+        val now = Date()
+        val total = promotions.size
+        var active = 0
+        var inactive = 0
+
+        for (promo in promotions) {
+            val start = parseIsoDate(promo.startDate)
+            val end = parseIsoDate(promo.endDate)
+
+            val isActive = promo.isDeleted != true && (start == null || !now.before(start)) && (end == null || !now.after(end))
+            if (isActive) {
+                active++
+            } else {
+                inactive++
+            }
+        }
+
+        binding.tvStatTotal.text = total.toString()
+        binding.tvStatActive.text = active.toString()
+        binding.tvStatInactive.text = inactive.toString()
+    }
+
+    private fun filterAndSubmit() {
+        val now = Date()
+        val query = binding.etSearch.text.toString().trim().lowercase(Locale.getDefault())
+        val isActiveTab = (selectedTab == TAB_ACTIVE)
+
+        val filtered = allPromotions.filter { promo ->
+            // Filter by search query
+            val matchesQuery = promo.title.lowercase(Locale.getDefault()).contains(query) ||
+                    (promo.couponCode?.lowercase(Locale.getDefault())?.contains(query) == true)
+
+            // Filter by tab
+            val start = parseIsoDate(promo.startDate)
+            val end = parseIsoDate(promo.endDate)
+            val isActive = promo.isDeleted != true && (start == null || !now.before(start)) && (end == null || !now.after(end))
+
+            val matchesTab = (isActive == isActiveTab)
+
+            matchesQuery && matchesTab
+        }
+
+        if (filtered.isEmpty()) {
+            binding.rvAdminPromotions.visibility = View.GONE
+            binding.layoutEmpty.visibility = View.VISIBLE
+        } else {
+            binding.rvAdminPromotions.visibility = View.VISIBLE
+            binding.layoutEmpty.visibility = View.GONE
+            adapter.submitList(filtered)
+        }
+    }
+
+    private fun observeViewModel() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collectLatest { state ->
+                    // Handle loading indicator
+                    binding.pbLoading.visibility = if (state.isLoading) View.VISIBLE else View.GONE
+
+                    // Handle error message
+                    state.error?.let { err ->
+                        Toast.makeText(context, err, Toast.LENGTH_SHORT).show()
+                    }
+
+                    // Handle list and stats updates
+                    if (!state.isLoading) {
+                        allPromotions = state.promotions
+                        updateStatistics(allPromotions)
+                        filterAndSubmit()
+                    } else {
+                        binding.rvAdminPromotions.visibility = View.GONE
+                        binding.layoutEmpty.visibility = View.GONE
+                    }
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.actionSuccess.collectLatest { success ->
+                    if (success) {
+                        viewModel.loadPromotions()
+                    }
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.actionMessage.collectLatest { message ->
+                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+}

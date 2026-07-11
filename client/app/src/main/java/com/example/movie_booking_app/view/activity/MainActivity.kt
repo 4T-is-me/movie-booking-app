@@ -62,6 +62,7 @@ class MainActivity : BaseActivity() {
         setContentView(binding.root)
 
         setupBottomNav()
+        setupBackStackListener()
         observeAuthEvents()
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNav) { v, windowInsets ->

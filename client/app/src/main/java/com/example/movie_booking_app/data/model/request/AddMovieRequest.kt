@@ -13,7 +13,7 @@ data class AddMovieRequest(
     val actors: List<String>,
     val country: String,
     val status: String = "coming_soon",
-    val poster: String? = null
+
 )
 
 data class UpdateMovieRequest(
@@ -29,5 +29,5 @@ data class UpdateMovieRequest(
     val actors: List<String>? = null,
     val country: String? = null,
     val status: String? = null,
-    val poster: String? = null
+
 )
