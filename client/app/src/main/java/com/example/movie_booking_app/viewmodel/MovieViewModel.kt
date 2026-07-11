@@ -54,8 +54,38 @@ class MovieViewModel @Inject constructor(
     val movieActionMessage = _movieActionMessage.asSharedFlow()
 
     init {
+        setupSearch()
         loadHomeData()
         loadAdminMovies()
+    }
+
+    @OptIn(kotlinx.coroutines.FlowPreview::class)
+    private fun setupSearch() {
+        _searchQuery
+            .debounce(500)
+            .distinctUntilChanged()
+            .onEach { query ->
+                if (query.isNotEmpty()) {
+                    performSearch(query)
+                } else {
+                    loadHomeData()
+                }
+            }
+            .launchIn(viewModelScope)
+    }
+
+    private fun performSearch(query: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            repository.searchMovies(query).collect { movies ->
+                if (movies.isEmpty()) {
+                    _homeItems.value = listOf(HomeItem.EmptyState)
+                } else {
+                    _homeItems.value = listOf(HomeItem.NowPlayingSection(movies, isLoading = false))
+                }
+                _isLoading.value = false
+            }
+        }
     }
 
     fun loadAdminMovies() {
@@ -76,45 +106,47 @@ class MovieViewModel @Inject constructor(
 
     fun loadHomeData() {
         viewModelScope.launch {
+            _isLoading.value = true
             combine(
                 repository.getMovies().onStart { emit(emptyList()) },
                 repository.getPromos().onStart { emit(emptyList()) },
                 repository.getServices().onStart { emit(emptyList()) },
-                repository.getNews().onStart { emit(emptyList()) },
-                _searchQuery
-            ) { movies, promos, services, news, query ->
+                repository.getNews().onStart { emit(emptyList()) }
+            ) { movies, promos, services, news ->
+                val list = mutableListOf<HomeItem>()
                 
-                val filteredMovies = if (query.isEmpty()) movies else {
-                    movies.filter { it.movieName?.contains(query, ignoreCase = true) == true }
+                // Now Playing Section
+                val nowPlaying = movies.filter { 
+                    val s = it.status?.lowercase() ?: ""
+                    s.contains("showing") || s == "active" || s == "now_showing"
                 }
-
-                if (filteredMovies.isEmpty() && query.isNotEmpty()) {
-                    listOf(HomeItem.EmptyState)
-                } else {
-                    val list = mutableListOf<HomeItem>()
-                    
-                    val nowPlaying = filteredMovies.filter { 
-                        val s = it.status?.lowercase() ?: ""
-                        s.contains("showing") || s == "active" || s == "now_showing"
-                    }
-                    list.add(HomeItem.NowPlayingSection(nowPlaying.ifEmpty { null }, nowPlaying.isEmpty() && query.isEmpty()))
-                    
-                    val comingSoon = filteredMovies.filter { 
-                        val s = it.status?.lowercase() ?: ""
-                        s.contains("coming") || s.contains("soon") || s == "upcoming" || s == "inactive"
-                    }
-                    list.add(HomeItem.ComingSoonSection(comingSoon.ifEmpty { null }, comingSoon.isEmpty() && query.isEmpty()))
-                    
-                    if (query.isEmpty()) {
-                        list.add(HomeItem.PromoSection(promos.ifEmpty { null }, promos.isEmpty()))
-                        list.add(HomeItem.ServiceSection(services.ifEmpty { null }, services.isEmpty()))
-                        list.add(HomeItem.MovieNewsSection(news.ifEmpty { null }, news.isEmpty()))
-                    }
-                    list
+                list.add(HomeItem.NowPlayingSection(
+                    if (movies.isEmpty()) null else nowPlaying, 
+                    isLoading = movies.isEmpty()
+                ))
+                
+                // Coming Soon Section
+                val comingSoon = movies.filter { 
+                    val s = it.status?.lowercase() ?: ""
+                    s.contains("coming") || s.contains("soon") || s == "upcoming" || s == "inactive"
                 }
+                list.add(HomeItem.ComingSoonSection(
+                    if (movies.isEmpty()) null else comingSoon, 
+                    isLoading = movies.isEmpty()
+                ))
+                
+                list.add(HomeItem.PromoSection(if (promos.isEmpty()) null else promos, isLoading = promos.isEmpty()))
+                list.add(HomeItem.ServiceSection(if (services.isEmpty()) null else services, isLoading = services.isEmpty()))
+                list.add(HomeItem.MovieNewsSection(if (news.isEmpty()) null else news, isLoading = news.isEmpty()))
+                list
             }.collect {
                 _homeItems.value = it
-                _isLoading.value = false
+                if (it.any { item -> 
+                    (item is HomeItem.NowPlayingSection && !item.isLoading) || 
+                    (item is HomeItem.ComingSoonSection && !item.isLoading)
+                }) {
+                    _isLoading.value = false
+                }
             }
         }
     }
