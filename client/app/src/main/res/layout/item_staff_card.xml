@@ -29,7 +29,6 @@
     </FrameLayout>
 
     <!-- Status Badge (Active / Assigned / Absent) -->
-    <!-- Tui đảo thằng này lên trước để làm điểm neo layout_toStartOf chuẩn không bị tràn chữ -->
     <TextView
         android:id="@+id/tvStatusBadge"
         android:layout_width="wrap_content"
@@ -44,7 +43,7 @@
         android:textSize="11sp"
         android:textStyle="bold" />
 
-    <!-- Thông tin Tên, Chức vụ & Rating -->
+   <!-- Name, Position & Rating Information -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -55,7 +54,7 @@
         android:layout_centerVertical="true"
         android:orientation="vertical">
 
-        <!-- Tên + Rating -->
+        <!-- name + Rating -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -74,7 +73,7 @@
                 android:textColor="@color/text_primary"
                 tools:text="Nguyễn Văn Thanh" />
 
-            <!-- Rating có thêm ngôi sao nè ông -->
+    
             <TextView
                 android:id="@+id/tvStaffRating"
                 android:layout_width="wrap_content"

@@ -21,7 +21,7 @@ class StaffFilterBottomSheetFragment(private val onApplyFilter: (startDate: Stri
     private var _binding: FragmentStaffFilterBottomSheetBinding? = null
     private val binding get() = _binding!!
 
-    // Biến lưu trữ chuỗi ISO gửi lên API (Đồng nhất với định dạng Date của Backend)
+    // Variable storing the ISO string sent to the API (consistent with the backend's date format)
     private var selectedStartDate: String? = null
     private var selectedEndDate: String? = null
     private val apiDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US).apply {
