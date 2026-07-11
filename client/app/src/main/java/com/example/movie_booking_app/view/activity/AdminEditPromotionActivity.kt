@@ -66,6 +66,11 @@ class AdminEditPromotionActivity : BaseActivity() {
         if (isEditMode) {
             binding.tvFormTitle.text = "Update Promotion"
             
+            binding.layoutStatus.visibility = View.VISIBLE
+            val statuses = arrayOf("Active", "Inactive")
+            val statusAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, statuses)
+            binding.actvStatus.setAdapter(statusAdapter)
+            
             currentPromotion?.let { promo ->
                 binding.edtPromoTitle.setText(promo.title)
                 binding.edtPromoDetail.setText(promo.detail ?: "")
@@ -80,6 +85,12 @@ class AdminEditPromotionActivity : BaseActivity() {
                 binding.edtDiscountValue.setText(promo.discountValue?.toInt()?.toString() ?: "")
                 binding.edtMinOrderValue.setText(promo.minOrderValue?.toInt()?.toString() ?: "0")
                 binding.edtMaxUsage.setText(promo.maxUsage?.toString() ?: "-1")
+                
+                if (promo.isDeleted == true) {
+                    binding.actvStatus.setText("Inactive", false)
+                } else {
+                    binding.actvStatus.setText("Active", false)
+                }
                 
                 val startDateSimple = formatIsoToSimpleDate(promo.startDate)
                 binding.edtStartDate.setText(startDateSimple)
@@ -214,6 +225,13 @@ class AdminEditPromotionActivity : BaseActivity() {
             return
         }
 
+        val isDeletedVal = if (isEditMode) {
+            val statusStr = binding.actvStatus.text.toString().trim()
+            statusStr == "Inactive"
+        } else {
+            null
+        }
+
         val request = AdminPromotionRequest(
             title = title,
             detail = detail,
@@ -224,7 +242,8 @@ class AdminEditPromotionActivity : BaseActivity() {
             maxUsage = maxUsage,
             startDate = isoStartDate,
             endDate = isoEndDate,
-            image = imageUrl.ifEmpty { "/uploads/promotions/default.jpg" }
+            image = imageUrl.ifEmpty { "/uploads/promotions/default.jpg" },
+            isDeleted = isDeletedVal
         )
 
         if (isEditMode) {

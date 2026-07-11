@@ -95,11 +95,7 @@
             android:theme="@style/Theme.Moviebookingapp"
             android:windowSoftInputMode="adjustPan|stateHidden" />
 
-        <activity
-            android:name=".view.activity.AdminPromotionActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Moviebookingapp"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
+
 
         <activity
             android:name=".view.activity.AdminEditPromotionActivity"

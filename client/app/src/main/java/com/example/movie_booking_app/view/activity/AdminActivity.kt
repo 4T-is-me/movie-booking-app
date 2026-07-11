@@ -16,6 +16,7 @@ import com.example.movie_booking_app.view.fragment.admin.AdminRoomListFragment
 import com.example.movie_booking_app.view.fragment.admin.CinemaRoomsFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminStatsFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminStaffFragment
+import com.example.movie_booking_app.view.fragment.admin.AdminPromotionFragment
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.activity.viewModels
@@ -68,8 +69,8 @@ class AdminActivity : BaseActivity() {
                     loadFragment(CinemaRoomsFragment())
                 }
                 R.id.nav_promotions -> {
-                    val intent = Intent(this, AdminPromotionActivity::class.java)
-                    startActivity(intent)
+                    tvHeaderTitle.text = "Promotions"
+                    loadFragment(AdminPromotionFragment())
                 }
                 R.id.nav_members -> {
                     tvHeaderTitle.text = "Members"

@@ -10,5 +10,6 @@ data class AdminPromotionRequest(
     val maxUsage: Int = -1,
     val startDate: String,
     val endDate: String,
-    val image: String? = null
+    val image: String? = null,
+    val isDeleted: Boolean? = null
 )
