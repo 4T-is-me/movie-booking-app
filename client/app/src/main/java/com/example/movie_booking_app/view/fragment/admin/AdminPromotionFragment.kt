@@ -1,45 +1,61 @@
-package com.example.movie_booking_app.view.activity
+package com.example.movie_booking_app.view.fragment.admin
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.viewModels
+import androidx.core.widget.doAfterTextChanged
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.movie_booking_app.databinding.ActivityAdminPromotionBinding
+import com.example.movie_booking_app.data.model.response.AdminPromotion
+import com.example.movie_booking_app.databinding.FragmentAdminPromotionBinding
+import com.example.movie_booking_app.view.activity.AdminEditPromotionActivity
 import com.example.movie_booking_app.view.adapter.AdminPromotionAdapter
 import com.example.movie_booking_app.viewmodel.admin.AdminPromotionViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-
-import android.content.Intent
-import androidx.core.widget.doAfterTextChanged
-import com.example.movie_booking_app.data.model.response.AdminPromotion
-import com.google.android.material.tabs.TabLayout
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
 @AndroidEntryPoint
-class AdminPromotionActivity : BaseActivity() {
+class AdminPromotionFragment : Fragment() {
 
-    private lateinit var binding: ActivityAdminPromotionBinding
+    private var _binding: FragmentAdminPromotionBinding? = null
+    private val binding get() = _binding!!
+
     private val viewModel: AdminPromotionViewModel by viewModels()
     private lateinit var adapter: AdminPromotionAdapter
     private var allPromotions: List<AdminPromotion> = emptyList()
+    private var selectedTab = TAB_ACTIVE
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityAdminPromotionBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    companion object {
+        private const val TAB_ACTIVE = "active"
+        private const val TAB_INACTIVE = "inactive"
+    }
 
-        setupToolbar()
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentAdminPromotionBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         setupRecyclerView()
         setupListeners()
+        setupTabs()
         observeViewModel()
     }
 
@@ -48,16 +64,10 @@ class AdminPromotionActivity : BaseActivity() {
         viewModel.loadPromotions()
     }
 
-    private fun setupToolbar() {
-        binding.btnBack.setOnClickListener {
-            finish()
-        }
-    }
-
     private fun setupRecyclerView() {
         adapter = AdminPromotionAdapter(
             onEditClick = { promotion ->
-                val intent = Intent(this, AdminEditPromotionActivity::class.java).apply {
+                val intent = Intent(requireContext(), AdminEditPromotionActivity::class.java).apply {
                     putExtra("promotion", promotion)
                 }
                 startActivity(intent)
@@ -66,31 +76,49 @@ class AdminPromotionActivity : BaseActivity() {
                 showDeleteConfirmationDialog(promotion)
             }
         )
-        binding.rvAdminPromotions.layoutManager = LinearLayoutManager(this)
+        binding.rvAdminPromotions.layoutManager = LinearLayoutManager(context)
         binding.rvAdminPromotions.adapter = adapter
     }
 
     private fun setupListeners() {
         binding.fabAddPromotion.setOnClickListener {
-            val intent = Intent(this, AdminEditPromotionActivity::class.java)
+            val intent = Intent(requireContext(), AdminEditPromotionActivity::class.java)
             startActivity(intent)
         }
 
         binding.etSearch.doAfterTextChanged {
             filterAndSubmit()
         }
+    }
 
-        binding.tabLayoutFilter.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                filterAndSubmit()
-            }
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
-        })
+    private fun setupTabs() {
+        binding.tabActivePromotion.setOnClickListener { switchTab(TAB_ACTIVE) }
+        binding.tabInactivePromotion.setOnClickListener { switchTab(TAB_INACTIVE) }
+    }
+
+    private fun switchTab(tab: String) {
+        if (selectedTab == tab) return
+        selectedTab = tab
+
+        val isActive = (tab == TAB_ACTIVE)
+        updateTabStyle(binding.tabActivePromotion, isActive)
+        updateTabStyle(binding.tabInactivePromotion, !isActive)
+
+        filterAndSubmit()
+    }
+
+    private fun updateTabStyle(tabView: android.widget.TextView, isActive: Boolean) {
+        if (isActive) {
+            tabView.setBackgroundResource(com.example.movie_booking_app.R.drawable.bg_tab_active)
+            tabView.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), com.example.movie_booking_app.R.color.black))
+        } else {
+            tabView.background = null
+            tabView.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), com.example.movie_booking_app.R.color.text_gray))
+        }
     }
 
     private fun showDeleteConfirmationDialog(promotion: AdminPromotion) {
-        val dialog = android.app.Dialog(this)
+        val dialog = android.app.Dialog(requireContext())
         dialog.setContentView(com.example.movie_booking_app.R.layout.dialog_confirm_delete_promotion)
         dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
         dialog.setCancelable(true)
@@ -161,7 +189,7 @@ class AdminPromotionActivity : BaseActivity() {
     private fun filterAndSubmit() {
         val now = Date()
         val query = binding.etSearch.text.toString().trim().lowercase(Locale.getDefault())
-        val selectedTab = binding.tabLayoutFilter.selectedTabPosition
+        val isActiveTab = (selectedTab == TAB_ACTIVE)
 
         val filtered = allPromotions.filter { promo ->
             // Filter by search query
@@ -173,11 +201,7 @@ class AdminPromotionActivity : BaseActivity() {
             val end = parseIsoDate(promo.endDate)
             val isActive = promo.isDeleted != true && (start == null || !now.before(start)) && (end == null || !now.after(end))
 
-            val matchesTab = when (selectedTab) {
-                0 -> isActive // Active
-                1 -> !isActive // Inactive
-                else -> true
-            }
+            val matchesTab = (isActive == isActiveTab)
 
             matchesQuery && matchesTab
         }
@@ -193,15 +217,15 @@ class AdminPromotionActivity : BaseActivity() {
     }
 
     private fun observeViewModel() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collectLatest { state ->
                     // Handle loading indicator
                     binding.pbLoading.visibility = if (state.isLoading) View.VISIBLE else View.GONE
 
                     // Handle error message
                     state.error?.let { err ->
-                        Toast.makeText(this@AdminPromotionActivity, err, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, err, Toast.LENGTH_SHORT).show()
                     }
 
                     // Handle list and stats updates
@@ -217,8 +241,8 @@ class AdminPromotionActivity : BaseActivity() {
             }
         }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.actionSuccess.collectLatest { success ->
                     if (success) {
                         viewModel.loadPromotions()
@@ -227,12 +251,17 @@ class AdminPromotionActivity : BaseActivity() {
             }
         }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.actionMessage.collectLatest { message ->
-                    Toast.makeText(this@AdminPromotionActivity, message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                 }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
