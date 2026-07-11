@@ -17,6 +17,9 @@ interface MovieApi {
     @GET("api/movies")
     suspend fun getMovies(@Query("limit") limit: Int = 100): Response<MovieListResponse>
 
+    @GET("api/movies/search")
+    suspend fun searchMovies(@Query("q") query: String): Response<MovieListResponse>
+
     @GET("api/movies/{id}")
     suspend fun getMovieDetailsById(@Path("id") id: String): Response<MovieResponse>
 

@@ -32,6 +32,7 @@ class SelectSeatViewModel @Inject constructor(
     val uiState: StateFlow<SeatingUiState> = _uiState.asStateFlow()
 
     private var lastHeldSeatIds: List<String>? = null
+    private var countdownCollectJob: kotlinx.coroutines.Job? = null
 
     private val _allShowtimes = MutableStateFlow<List<Showtime>>(emptyList())
 
@@ -227,7 +228,8 @@ class SelectSeatViewModel @Inject constructor(
 
     private fun startCountdown(showtimeId: String, seatIds: List<String>) {
         timerManager.startTimer(900)
-        viewModelScope.launch {
+        countdownCollectJob?.cancel()
+        countdownCollectJob = viewModelScope.launch {
             timerManager.isExpired.collect { expired ->
                 if (expired) {
                     _uiState.value = SeatingUiState.EXPIRED
@@ -247,6 +249,7 @@ class SelectSeatViewModel @Inject constructor(
 
     private fun releaseSeats(showtimeId: String, seatIds: List<String>) {
         timerManager.stopTimer()
+        countdownCollectJob?.cancel()
         viewModelScope.launch {
             repository.releaseSeats(showtimeId, seatIds)
                 .catch { /* Silently fail on release */ }

@@ -75,10 +75,10 @@ class MovieRepositoryRemoteImpl @Inject constructor(
 
     override fun searchMovies(query: String): Flow<List<Movie>> = flow {
         try {
-            val response = api.getMovies(1000)
+            val response = api.searchMovies(query)
             if (response.isSuccessful) {
                 val movies = response.body()?.data ?: emptyList()
-                emit(movies.filter { it.movieName?.contains(query, ignoreCase = true) == true })
+                emit(movies)
             } else {
                 emit(emptyList())
             }
