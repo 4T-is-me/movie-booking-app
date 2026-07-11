@@ -15,4 +15,10 @@ object Constants {
     const val BASE_URL = "http://10.41.79.56:5000/"
     const val RANK_GOLD = 10000000L
     const val RANK_SILVER = 5000000L
+
+    const val MORNING = "08–12"
+    const val AFTERNOON = "12–17"
+    const val EVENING = "17–21"
+    const val NIGHT = "21–02"
+    const val FULLTIME = "08–22"
 }

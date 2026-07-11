@@ -75,18 +75,22 @@ class ManagerReportActivity : AppCompatActivity() {
 
     private fun setActiveTab(selectedTab: TextView, type: String) {
         currentReportType = type
-        val textColor = ContextCompat.getColor(this, R.color.text_color_chart)
+
+        val inactiveTextColor = ContextCompat.getColor(this, R.color.text_secondary) // Màu xám bạc cho tab chưa chọn
+        val activeTextColor = ContextCompat.getColor(this, R.color.bg_primary) // Chữ màu tối để nổi bật trên nền vàng Gold
+
         for (tab in tabButtons) {
-            tab.setBackgroundColor(Color.TRANSPARENT)
-            tab.setTextColor(textColor)
+            tab.setBackgroundResource(android.R.color.transparent)
+            tab.setTextColor(inactiveTextColor)
             tab.setTypeface(null, Typeface.NORMAL)
         }
-        selectedTab.setBackgroundResource(R.drawable.bg_badge_gold)
-        selectedTab.setTextColor(Color.WHITE)
+        
+        selectedTab.setBackgroundResource(R.drawable.bg_tab_active_gold)
+        selectedTab.setTextColor(activeTextColor)
         selectedTab.setTypeface(null, Typeface.BOLD)
+
         viewModel.loadReport(type)
     }
-
     private fun formatVND(amount: Long): String {
         val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
         return formatter.format(amount)
