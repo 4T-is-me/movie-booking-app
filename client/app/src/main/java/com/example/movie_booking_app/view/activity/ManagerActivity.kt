@@ -18,6 +18,7 @@ import com.example.movie_booking_app.data.model.response.WeeklyRevenueResponse
 import com.example.movie_booking_app.databinding.ActivityManagerBinding
 import com.example.movie_booking_app.view.activity.manager.ManagerReportActivity
 import com.example.movie_booking_app.view.activity.manager.ManagerRoomListActivity
+import com.example.movie_booking_app.view.activity.manager.ManagerStaffActivity
 import com.example.movie_booking_app.view.adapter.manager.ManagerShowtimeAdapter
 import com.example.movie_booking_app.viewmodel.manager.ManagerViewModel
 import com.github.mikephil.charting.components.XAxis
@@ -201,7 +202,7 @@ class ManagerActivity : AppCompatActivity() {
             startActivity(Intent(this, ManagerRoomListActivity::class.java))
         }
         binding.layoutStaff.setOnClickListener {
-            Toast.makeText(this, "Feature coming soon", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, ManagerStaffActivity::class.java))
         }
         binding.layoutReports.setOnClickListener {
             startActivity(Intent(this, ManagerReportActivity::class.java))
@@ -219,6 +220,9 @@ class ManagerActivity : AppCompatActivity() {
                 }
                 R.id.nav_reports -> {
                     startActivity(Intent(this, ManagerReportActivity::class.java))
+                }
+                R.id.nav_staff -> {
+                    startActivity(Intent(this, ManagerStaffActivity::class.java))
                 }
                 else -> Toast.makeText(this, "Feature coming soon", Toast.LENGTH_SHORT).show()
             }
