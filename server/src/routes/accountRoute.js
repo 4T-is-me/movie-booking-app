@@ -46,6 +46,9 @@ accountRouter.get('/profile', authMiddleware.isAuthorized, accountController.get
 accountRouter.put('/profile', authMiddleware.isAuthorized, accountValidation.updateProfile, accountController.updateProfile)
 accountRouter.put('/change-password', authMiddleware.isAuthorized, accountValidation.changePassword, accountController.changePassword)
 
+// POST /api/accounts/fcm-token  – stores the Android/iOS FCM device token for push notification delivery
+accountRouter.post('/fcm-token', authMiddleware.isAuthorized, accountController.registerFcmToken)
+
 accountRouter.post('/upload-avatar', authMiddleware.isAuthorized, uploadMiddleware.upload.single('avatar'), uploadMiddleware.uploadToCloudinary('avatars', 'avatar'), (req, res, next) => {
     try {
         if (!req.body.avatar) {

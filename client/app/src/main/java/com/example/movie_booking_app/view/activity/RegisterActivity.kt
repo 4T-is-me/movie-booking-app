@@ -3,11 +3,13 @@ package com.example.movie_booking_app.view.activity
 import android.app.DatePickerDialog
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.movie_booking_app.R
+import com.example.movie_booking_app.data.local.FcmTokenHelper
 import com.example.movie_booking_app.data.model.request.RegisterRequest
 import com.example.movie_booking_app.databinding.ActivityRegisterBinding
 import com.example.movie_booking_app.viewmodel.RegisterUiState
@@ -19,19 +21,23 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import androidx.activity.result.contract.ActivityResultContracts
-import android.util.Log
 import android.content.Intent
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterBinding
     private val viewModel: RegisterViewModel by viewModels()
+
+    @Inject
+    lateinit var fcmTokenHelper: FcmTokenHelper
     private lateinit var googleSignInClient: GoogleSignInClient
 
     private val googleSignInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -196,14 +202,20 @@ class RegisterActivity : AppCompatActivity() {
                     is RegisterUiState.Success -> {
                         binding.btnRegister.isEnabled = true
                         binding.pbLoading.visibility = View.GONE
-                        
+
                         if (state.message == "GOOGLE_SUCCESS") {
                             showNotification("Đăng nhập Google thành công!", true)
+                            // User now has a valid JWT – register FCM token immediately
+                            lifecycleScope.launch(Dispatchers.IO) {
+                                fcmTokenHelper.registerCurrentToken("RegisterActivity")
+                            }
                             val intent = Intent(this@RegisterActivity, MainActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(intent)
                             finish()
                         } else {
+                            // Regular registration: user is redirected to OTP verification first.
+                            // No JWT yet, so FCM token will be sent after the first login.
                             showNotification("Vui lòng kiểm tra email để lấy mã OTP!", true)
                             val intent = Intent(this@RegisterActivity, VerifyOtpActivity::class.java)
                             intent.putExtra("email", binding.edtEmail.text.toString().trim())
@@ -211,7 +223,7 @@ class RegisterActivity : AppCompatActivity() {
                             startActivity(intent)
                             finish()
                         }
-                        
+
                         viewModel.resetState()
                     }
                     is RegisterUiState.Error -> {

@@ -72,4 +72,8 @@ object RetrofitClient {
     val managerApi: ManagerApi by lazy {
         instance.create(ManagerApi:: class.java)
     }
+
+    val fcmApi: FcmApi by lazy {
+        instance.create(FcmApi::class.java)
+    }
 }

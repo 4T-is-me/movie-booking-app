@@ -25,7 +25,8 @@ import managerRoomRoutes from './src/routes/managerRoomRoutes.js';
 import managerDashboardRoutes from './src/routes/managerDashboardRoute.js';
 import managerReportRoutes from './src/routes/managerReportRoute.js';
 import managerStaffShiftRoutes from './src/routes/managerStaffShiftRoutes.js';
-import { errorHandlingMiddleware } from './src/middlewares/errorHandlingMiddleware.js';
+import { errorHandlingMiddleware } from './src/middlewares/errorHandlingMiddleware.js'
+import './src/config/firebaseAdmin.js'  // Initialize Firebase Admin SDK at startup;
 
 
 const app = express();
