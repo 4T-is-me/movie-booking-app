@@ -30,6 +30,7 @@ class HomeMultiAdapter(
         private const val typeService = 4
         private const val typeNews = 5
         private const val typeEmpty = 6
+        private const val typeVideos = 7
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -39,6 +40,7 @@ class HomeMultiAdapter(
             is HomeItem.PromoSection -> typePromo
             is HomeItem.ServiceSection -> typeService
             is HomeItem.MovieNewsSection -> typeNews
+            is HomeItem.VideosSection -> typeVideos
             is HomeItem.EmptyState -> typeEmpty
             else -> typeEmpty
         }
@@ -52,6 +54,7 @@ class HomeMultiAdapter(
             typePromo -> PromoViewHolder(inflater.inflate(R.layout.layout_home_promo, parent, false), onSeeAllClicked)
             typeService -> ServiceViewHolder(inflater.inflate(R.layout.layout_home_services, parent, false), onSeeAllClicked)
             typeNews -> NewsViewHolder(inflater.inflate(R.layout.layout_home_movie_news, parent, false), onSeeAllClicked)
+            typeVideos -> VideosViewHolder(inflater.inflate(R.layout.layout_home_videos, parent, false), onSeeAllClicked, onMovieClicked)
             typeEmpty -> EmptyViewHolder(inflater.inflate(R.layout.layout_home_empty_state, parent, false))
             else -> throw IllegalArgumentException("Invalid ViewType")
         }
@@ -79,6 +82,10 @@ class HomeMultiAdapter(
             is NewsViewHolder -> {
                 val section = item as HomeItem.MovieNewsSection
                 holder.bind(section.news ?: emptyList(), section.isLoading)
+            }
+            is VideosViewHolder -> {
+                val section = item as HomeItem.VideosSection
+                holder.bind(section.videos ?: emptyList(), section.isLoading)
             }
         }
     }
@@ -228,6 +235,21 @@ class HomeMultiAdapter(
         }
     }
 
+    class VideosViewHolder(view: View, onSeeAll: (String) -> Unit, onMovie: (Movie) -> Unit) : RecyclerView.ViewHolder(view) {
+        private val recyclerView: RecyclerView = view.findViewById(R.id.rvVideos)
+        private val tvSeeAll: TextView = view.findViewById(R.id.tvSeeAllVideos)
+        private val adapter = VideoHorizontalAdapter { movie ->
+            onSeeAll("Videos")
+        }
+        init {
+            recyclerView.adapter = adapter
+            tvSeeAll.setOnClickListener { onSeeAll("Videos") }
+        }
+        fun bind(movies: List<Movie>, isLoading: Boolean) {
+            if (movies.isNotEmpty()) adapter.submitList(movies)
+        }
+    }
+
     class EmptyViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
     class HomeItemDiffCallback : DiffUtil.ItemCallback<HomeItem>() {
@@ -238,6 +260,7 @@ class HomeMultiAdapter(
                 oldItem is HomeItem.PromoSection && newItem is HomeItem.PromoSection -> true
                 oldItem is HomeItem.ServiceSection && newItem is HomeItem.ServiceSection -> true
                 oldItem is HomeItem.MovieNewsSection && newItem is HomeItem.MovieNewsSection -> true
+                oldItem is HomeItem.VideosSection && newItem is HomeItem.VideosSection -> true
                 oldItem is HomeItem.EmptyState && newItem is HomeItem.EmptyState -> true
                 else -> false
             }

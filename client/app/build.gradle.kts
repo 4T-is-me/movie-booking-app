@@ -97,6 +97,9 @@ dependencies {
     // Unit Test
     testImplementation(libs.junit)
 
+    // YouTube Player SDK
+    implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:13.0.0")
+
     // Android Test
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -18,6 +18,7 @@ import com.example.movie_booking_app.view.activity.MainActivity
 import com.example.movie_booking_app.view.activity.LoginActivity
 import com.example.movie_booking_app.view.activity.MovieDetailActivity
 import com.example.movie_booking_app.view.activity.NotificationActivity
+import com.example.movie_booking_app.view.activity.VideoListActivity
 import com.example.movie_booking_app.data.local.NotificationLocalStorage
 import com.example.movie_booking_app.view.adapter.HomeMultiAdapter
 import com.example.movie_booking_app.viewmodel.MovieViewModel
@@ -107,7 +108,12 @@ class HomeFragment : Fragment() {
     private fun setupRecyclerView() {
         homeAdapter = HomeMultiAdapter(
             onSeeAllClicked = { sectionName ->
-                (activity as? MainActivity)?.navigateToSection(sectionName)
+                if (sectionName == "Videos") {
+                    val intent = Intent(context, VideoListActivity::class.java)
+                    startActivity(intent)
+                } else {
+                    (activity as? MainActivity)?.navigateToSection(sectionName)
+                }
             },
             onMovieClicked = { movie ->
                 val intent = Intent(context, MovieDetailActivity::class.java)
