@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingVertical="8dp">
+
+    <!-- Day Label (VD: Mon, Tue) -->
+    <TextView
+        android:id="@+id/tvDayName"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:text="Mon"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <!-- Shift Box -->
+    <LinearLayout
+        android:id="@+id/layoutShiftBox"
+        android:layout_width="0dp"
+        android:layout_height="36dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_shift_box_gold"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="12dp"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/tvShiftDetail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Morning (08-14)"
+            android:textColor="@color/text_light_gray"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <!-- Day Off Label  -->
+    <TextView
+        android:id="@+id/tvDayOff"
+        android:layout_width="0dp"
+        android:layout_height="36dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical|end"
+        android:paddingEnd="12dp"
+        android:text="Day Off"
+        android:textColor="#FF9800"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+</LinearLayout>

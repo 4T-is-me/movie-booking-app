@@ -63,15 +63,23 @@ const generateShift = async (req, res, next) => {
     next(error);
   }
 }
-const deleteShift = async (req, res, next) => {
+
+export const getStaffDetail = async (req, res, next) => {
   try {
-      const accountId = req.user.accountIds; 
-      const { id } = req.params;
-      const result = await ManagerStaffShiftService.deleteShift(accountId, id);
+    const accountId = req.user.accountId; 
+    const { id } = req.params;
+
+    const result = await ManagerStaffShiftService.getStaffDetailService(accountId, id);
+
+    return res.status(StatusCodes.OK).json({
+      statusCode: StatusCodes.OK,
+      message: "Successfully retrieved employee details.",
+      data: result
+    });
   } catch (error) {
     next(error);
   }
-}
+};
 
 
 export const StaffShiftController = {
@@ -79,5 +87,5 @@ export const StaffShiftController = {
   createShift,
   updateShifts,
   generateShift,
-  deleteShift
+  getStaffDetail
 };

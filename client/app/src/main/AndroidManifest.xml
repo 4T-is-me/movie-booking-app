@@ -83,12 +83,6 @@
             android:windowSoftInputMode="adjustPan|stateHidden" />
 
         <activity
-            android:name=".view.activity.AdminPromotionActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Moviebookingapp"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
-
-        <activity
             android:name=".view.activity.AdminEditPromotionActivity"
             android:exported="false"
             android:theme="@style/Theme.Moviebookingapp"
@@ -127,9 +121,13 @@
             android:name=".view.activity.manager.ManagerReportActivity"
             android:exported="false"
             android:theme="@style/Theme.Moviebookingapp" />
-
         <activity
             android:name=".view.activity.manager.ManagerStaffActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp" />
+
+        <activity
+            android:name=".view.activity.manager.ManagerShiftDetailActivity"
             android:exported="false"
             android:theme="@style/Theme.Moviebookingapp" />
     </application>
