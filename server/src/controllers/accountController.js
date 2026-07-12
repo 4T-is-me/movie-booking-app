@@ -101,6 +101,20 @@ const verifyOtp = async (req, res, next) => {
     }
 }
 
+const registerFcmToken = async (req, res, next) => {
+    try {
+        const accountId = req.user.accountId
+        const { fcmToken } = req.body
+        const result = await accountService.registerFcmToken(accountId, fcmToken)
+        res.status(StatusCodes.OK).json(result)
+    } catch (error) {
+        if (error.statusCode) {
+            return res.status(error.statusCode).json({ success: false, message: error.message })
+        }
+        next(error)
+    }
+}
+
 export const accountController = {
     register,
     login,
@@ -109,5 +123,6 @@ export const accountController = {
     updateProfile,
     changePassword,
     sendOtp,
-    verifyOtp
+    verifyOtp,
+    registerFcmToken
 }

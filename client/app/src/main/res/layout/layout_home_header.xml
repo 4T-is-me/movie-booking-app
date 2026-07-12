@@ -54,6 +54,39 @@
             app:layout_constraintBottom_toBottomOf="@id/tvWelcome"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <!-- Notification Bell with Unread Badge indicator -->
+        <FrameLayout
+            android:id="@+id/layoutNotificationBell"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageView
+                android:id="@+id/ivNotificationBell"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_notifications"
+                app:tint="@color/white"
+                android:contentDescription="Notifications" />
+
+            <View
+                android:id="@+id/viewBellBadge"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_gravity="top|end"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_circle_green"
+                android:visibility="gone" />
+        </FrameLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout

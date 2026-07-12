@@ -24,6 +24,12 @@ const accountSchema = new mongoose.Schema({
         type: String
     },
 
+    // FCM token for push notification delivery (Android / iOS)
+    fcmToken: {
+        type: String,
+        default: null
+    },
+
     // 2. Personal information group has been moved to members collection
 
     // 3. System management group

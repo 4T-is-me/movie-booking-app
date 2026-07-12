@@ -8,6 +8,7 @@ import { OAuth2Client } from 'google-auth-library'
 import { Otp } from '../models/otpModel.js'
 import { sendEmail } from '../utils/sendEmail.js'
 import '../models/rolesModel.js'
+import { notificationService } from './notificationService.js'
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID || 'PLACEHOLDER_CLIENT_ID')
 
@@ -348,6 +349,41 @@ const sendOtp = async (reqBody) => {
     return { success: true, message: 'OTP sent' };
 }
 
+/**
+ * Saves or updates the FCM device token for the given account.
+ * Called after every successful login so the token stays fresh.
+ *
+ * @param {string} accountId - MongoDB ObjectId of the authenticated account.
+ * @param {string} fcmToken  - FCM registration token from the Android/iOS client.
+ */
+const registerFcmToken = async (accountId, fcmToken) => {
+    if (!fcmToken || typeof fcmToken !== 'string' || fcmToken.trim() === '') {
+        throw new ApiError(StatusCodes.BAD_REQUEST, 'FCM token is required')
+    }
+
+    // Disassociate this token from any other accounts to enforce a strict 1-to-1 mapping
+    // This prevents notifications meant for user A from being delivered to user B on shared devices.
+    await Account.updateMany(
+        { fcmToken: fcmToken.trim(), _id: { $ne: accountId } },
+        { fcmToken: null }
+    )
+
+    const account = await Account.findByIdAndUpdate(
+        accountId,
+        { fcmToken: fcmToken.trim() },
+        { new: true, runValidators: false }
+    ).select('_id username fcmToken')
+
+    if (!account) {
+        throw new ApiError(StatusCodes.NOT_FOUND, 'Account not found')
+    }
+
+    // Auto-subscribe the registered token to the 'promotions' topic for broadcasting
+    await notificationService.subscribeToPromotions(fcmToken.trim())
+
+    return { success: true, message: 'FCM token registered successfully' }
+}
+
 export const accountService = {
     register,
     login,
@@ -356,5 +392,6 @@ export const accountService = {
     updateProfile,
     changePassword,
     verifyOtp,
-    sendOtp
+    sendOtp,
+    registerFcmToken
 }

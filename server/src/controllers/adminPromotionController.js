@@ -1,4 +1,5 @@
 import * as adminPromotionService from '../services/adminPromotionService.js';
+import { notificationService } from '../services/notificationService.js';
 
 export const getPromotions = async (req, res) => {
     try {
@@ -25,6 +26,19 @@ export const createPromotion = async (req, res) => {
         req.body.endTime = new Date(endDate);
 
         const promotion = await adminPromotionService.createPromotion(req.body);
+
+        // Broadcast to 'promotions' topic asynchronously
+        const formattedDate = new Date(endDate).toLocaleDateString('en-US');
+        const notifTitle = `New Promotion: ${title}!`;
+        const notifBody = `Get amazing offers: ${detail}. Enter coupon code "${couponCode}" when booking. Valid until ${formattedDate}.`;
+        
+        notificationService.sendToTopic('promotions', notifTitle, notifBody, {
+            type: 'promotion',
+            referenceId: promotion._id.toString()
+        }).catch(err => {
+            console.error('Failed to broadcast promotion notification:', err.message);
+        });
+
         return res.status(201).json({ success: true, data: promotion, message: 'Promotion created successfully.' });
     } catch (error) {
         if (error.code === 11000) { // MongoDB duplicate key error
@@ -73,5 +87,26 @@ export const deletePromotion = async (req, res) => {
         return res.status(200).json({ success: true, message: 'Promotion deleted successfully.' });
     } catch (error) {
         return res.status(500).json({ success: false, message: 'Internal server error.', error: error.message });
+    }
+};
+
+export const broadcastPushNotification = async (req, res) => {
+    try {
+        const { title, body, type, referenceId } = req.body;
+
+        if (!title || !body) {
+            return res.status(400).json({ success: false, message: 'Title and body are required for broadcasting.' });
+        }
+
+        const dataPayload = {};
+        if (type) dataPayload.type = type;
+        if (referenceId) dataPayload.referenceId = referenceId;
+
+        // Send to topic promotions so everyone subscribed gets it
+        await notificationService.sendToTopic('promotions', title, body, dataPayload);
+
+        return res.status(200).json({ success: true, message: 'Custom broadcast notification sent successfully.' });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: 'Failed to send broadcast.', error: error.message });
     }
 };

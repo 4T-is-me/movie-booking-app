@@ -16,6 +16,7 @@ sealed class HomeItem {
     data class PromoSection(val promos: List<Promo>?, val isLoading: Boolean = false) : HomeItem()
     data class ServiceSection(val services: List<Service>?, val isLoading: Boolean = false) : HomeItem()
     data class MovieNewsSection(val news: List<MovieNews>?, val isLoading: Boolean = false) : HomeItem()
+    data class VideosSection(val videos: List<Movie>?, val isLoading: Boolean = false) : HomeItem()
 
     object EmptyState : HomeItem()
 }

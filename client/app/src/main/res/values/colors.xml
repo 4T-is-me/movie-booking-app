@@ -129,7 +129,7 @@
     <color name="status_complete_bg">#1AF5C518</color>
     <color name="status_complete_text">#F5C518</color>
 
-
-
+    <!-- FCM Notification accent color (shown in notification shade on Android 5+) -->
+    <color name="notification_color">#F5C518</color>
 
 </resources>

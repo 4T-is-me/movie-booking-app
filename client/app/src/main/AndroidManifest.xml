@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Required on Android 13+ (API 33) to show push notifications -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".MyApplication"
@@ -19,6 +21,7 @@
 
         <activity
             android:name=".view.activity.MainActivity"
+            android:launchMode="singleTop"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -125,11 +128,38 @@
             android:name=".view.activity.manager.ManagerStaffActivity"
             android:exported="false"
             android:theme="@style/Theme.Moviebookingapp" />
-
         <activity
             android:name=".view.activity.manager.ManagerShiftDetailActivity"
             android:exported="false"
             android:theme="@style/Theme.Moviebookingapp" />
+     
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification_small" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/notification_color" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="movie_booking_channel" />
+        <service
+            android:name=".data.local.MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter android:priority="-500">
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <activity
+            android:name=".view.activity.NotificationActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp" />
+
+        <activity
+            android:name=".view.activity.VideoListActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp" />
+
     </application>
 
 </manifest>

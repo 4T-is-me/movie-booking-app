@@ -17,6 +17,9 @@ import com.example.movie_booking_app.databinding.FragmentMovieListBinding
 import com.example.movie_booking_app.view.activity.MainActivity
 import com.example.movie_booking_app.view.activity.LoginActivity
 import com.example.movie_booking_app.view.activity.MovieDetailActivity
+import com.example.movie_booking_app.view.activity.NotificationActivity
+import com.example.movie_booking_app.view.activity.VideoListActivity
+import com.example.movie_booking_app.data.local.NotificationLocalStorage
 import com.example.movie_booking_app.view.adapter.HomeMultiAdapter
 import com.example.movie_booking_app.viewmodel.MovieViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -58,6 +61,7 @@ class HomeFragment : Fragment() {
         val headerView = binding.layoutHeader.root
         val edtSearch = headerView.findViewById<EditText>(R.id.edtSearch)
         val btnLogin = headerView.findViewById<View>(R.id.btnLogin)
+        val layoutNotificationBell = headerView.findViewById<View>(R.id.layoutNotificationBell)
 
         edtSearch.addTextChangedListener { text ->
             viewModel.searchMovies(text?.toString() ?: "")
@@ -67,26 +71,49 @@ class HomeFragment : Fragment() {
             startActivity(Intent(context, LoginActivity::class.java))
         }
 
+        layoutNotificationBell.setOnClickListener {
+            startActivity(Intent(context, NotificationActivity::class.java))
+        }
+
         updateHeaderUI()
     }
 
     private fun updateHeaderUI() {
-        val sharedPref = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val context = context ?: return
+        val sharedPref = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val name = sharedPref.getString("username", "User") ?: "User"
         val isLoggedIn = !sharedPref.getString("auth_token", null).isNullOrEmpty()
 
         val headerView = binding.layoutHeader.root
         val tvHi = headerView.findViewById<TextView>(R.id.tvHi)
         val btnLogin = headerView.findViewById<View>(R.id.btnLogin)
+        val layoutNotificationBell = headerView.findViewById<View>(R.id.layoutNotificationBell)
+        val viewBellBadge = headerView.findViewById<View>(R.id.viewBellBadge)
 
         tvHi.text = "Hi, $name 👋"
-        btnLogin.visibility = if (isLoggedIn) View.GONE else View.VISIBLE
+
+        if (isLoggedIn) {
+            btnLogin.visibility = View.GONE
+            layoutNotificationBell.visibility = View.VISIBLE
+            
+            // Check for unread notifications to show green badge dot
+            val hasUnread = NotificationLocalStorage.getAll(context).any { !it.isRead }
+            viewBellBadge.visibility = if (hasUnread) View.VISIBLE else View.GONE
+        } else {
+            btnLogin.visibility = View.VISIBLE
+            layoutNotificationBell.visibility = View.GONE
+        }
     }
 
     private fun setupRecyclerView() {
         homeAdapter = HomeMultiAdapter(
             onSeeAllClicked = { sectionName ->
-                (activity as? MainActivity)?.navigateToSection(sectionName)
+                if (sectionName == "Videos") {
+                    val intent = Intent(context, VideoListActivity::class.java)
+                    startActivity(intent)
+                } else {
+                    (activity as? MainActivity)?.navigateToSection(sectionName)
+                }
             },
             onMovieClicked = { movie ->
                 val intent = Intent(context, MovieDetailActivity::class.java)

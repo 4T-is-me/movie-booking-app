@@ -101,7 +101,8 @@ class MovieViewModel @Inject constructor(
         HomeItem.ComingSoonSection(null, isLoading = true),
         HomeItem.PromoSection(null, isLoading = true),
         HomeItem.ServiceSection(null, isLoading = true),
-        HomeItem.MovieNewsSection(null, isLoading = true)
+        HomeItem.MovieNewsSection(null, isLoading = true),
+        HomeItem.VideosSection(null, isLoading = true)
     )
 
     fun loadHomeData() {
@@ -138,6 +139,7 @@ class MovieViewModel @Inject constructor(
                 list.add(HomeItem.PromoSection(if (promos.isEmpty()) null else promos, isLoading = promos.isEmpty()))
                 list.add(HomeItem.ServiceSection(if (services.isEmpty()) null else services, isLoading = services.isEmpty()))
                 list.add(HomeItem.MovieNewsSection(if (news.isEmpty()) null else news, isLoading = news.isEmpty()))
+                list.add(HomeItem.VideosSection(if (movies.isEmpty()) null else movies.take(5), isLoading = movies.isEmpty()))
                 list
             }.collect {
                 _homeItems.value = it

@@ -19,4 +19,7 @@ router.put('/:id', adminPromotionController.updatePromotion);
 // DELETE /api/admin/promotions/:id - Soft delete a promotion
 router.delete('/:id', adminPromotionController.deletePromotion);
 
+// POST /api/admin/promotions/broadcast-push - Send a custom push broadcast to all users (topic promotions)
+router.post('/broadcast-push', adminPromotionController.broadcastPushNotification);
+
 export default router;
