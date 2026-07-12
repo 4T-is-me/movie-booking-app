@@ -136,7 +136,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val pendingIntent = buildPendingIntent(type, referenceId, itemId)
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.drawable.ic_notification_small)
             .setContentTitle(title)
             .setContentText(body)
             .setStyle(NotificationCompat.BigTextStyle().bigText(body))
