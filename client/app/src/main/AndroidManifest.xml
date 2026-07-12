@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Required on Android 13+ (API 33) to show push notifications -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".MyApplication"
@@ -132,6 +134,15 @@
             android:name=".view.activity.manager.ManagerStaffActivity"
             android:exported="false"
             android:theme="@style/Theme.Moviebookingapp" />
+
+        <!-- Firebase Cloud Messaging Service -->
+        <service
+            android:name=".data.local.MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
