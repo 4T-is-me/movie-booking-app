@@ -348,6 +348,31 @@ const sendOtp = async (reqBody) => {
     return { success: true, message: 'OTP sent' };
 }
 
+/**
+ * Saves or updates the FCM device token for the given account.
+ * Called after every successful login so the token stays fresh.
+ *
+ * @param {string} accountId - MongoDB ObjectId of the authenticated account.
+ * @param {string} fcmToken  - FCM registration token from the Android/iOS client.
+ */
+const registerFcmToken = async (accountId, fcmToken) => {
+    if (!fcmToken || typeof fcmToken !== 'string' || fcmToken.trim() === '') {
+        throw new ApiError(StatusCodes.BAD_REQUEST, 'FCM token is required')
+    }
+
+    const account = await Account.findByIdAndUpdate(
+        accountId,
+        { fcmToken: fcmToken.trim() },
+        { new: true, runValidators: false }
+    ).select('_id username fcmToken')
+
+    if (!account) {
+        throw new ApiError(StatusCodes.NOT_FOUND, 'Account not found')
+    }
+
+    return { success: true, message: 'FCM token registered successfully' }
+}
+
 export const accountService = {
     register,
     login,
@@ -356,5 +381,6 @@ export const accountService = {
     updateProfile,
     changePassword,
     verifyOtp,
-    sendOtp
+    sendOtp,
+    registerFcmToken
 }
