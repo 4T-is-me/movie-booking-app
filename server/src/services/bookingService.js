@@ -16,6 +16,7 @@ import { StatusCodes } from "http-status-codes";
 import ApiError from "../utils/ApiError.js";
 import { formatDate } from "../utils/formatters.js";
 import { format } from "path";
+import { notificationService } from "./notificationService.js";
 
 //handle hold-seats
 const handleHoldSeats = async ({ accountId, showtimeId, seatIds }) => {
@@ -291,6 +292,11 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
 
     await session.commitTransaction();
     console.log(`[DEBUG] Transaction committed successfully for booking ${booking[0]._id}. commitTransaction() executed.`);
+
+    // Trigger FCM notification asynchronously so it does not delay checkout response
+    notificationService.sendBookingSuccessNotification(accountId, booking[0]).catch(err => {
+        console.error('Failed to send booking success notification:', err.message)
+    })
 
     return result;
   } catch (error) {
