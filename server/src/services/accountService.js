@@ -361,6 +361,13 @@ const registerFcmToken = async (accountId, fcmToken) => {
         throw new ApiError(StatusCodes.BAD_REQUEST, 'FCM token is required')
     }
 
+    // Disassociate this token from any other accounts to enforce a strict 1-to-1 mapping
+    // This prevents notifications meant for user A from being delivered to user B on shared devices.
+    await Account.updateMany(
+        { fcmToken: fcmToken.trim(), _id: { $ne: accountId } },
+        { fcmToken: null }
+    )
+
     const account = await Account.findByIdAndUpdate(
         accountId,
         { fcmToken: fcmToken.trim() },

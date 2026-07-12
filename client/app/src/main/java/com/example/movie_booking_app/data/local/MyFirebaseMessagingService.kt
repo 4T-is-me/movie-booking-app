@@ -13,6 +13,7 @@ import com.example.movie_booking_app.data.model.request.RegisterFcmTokenRequest
 import com.example.movie_booking_app.view.activity.BookingDetailActivity
 import com.example.movie_booking_app.view.activity.MainActivity
 import com.example.movie_booking_app.view.activity.PromotionDetailActivity
+import com.example.movie_booking_app.view.activity.NotificationActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.AndroidEntryPoint
@@ -181,35 +182,20 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     ): PendingIntent {
         val flags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
 
-        val destIntent: Intent = when {
-            type == NotificationItem.TYPE_BOOKING && !referenceId.isNullOrEmpty() -> {
-                Intent(this, BookingDetailActivity::class.java).apply {
-                    putExtra("BOOKING_ID", referenceId)
-                    putExtra("FROM_NOTIFICATION", true)
-                }
-            }
-
-            type == NotificationItem.TYPE_PROMOTION && !referenceId.isNullOrEmpty() -> {
-                // PromotionDetailActivity requires multiple extras; open MainActivity
-                // which will route the user to the Promo section instead.
-                Intent(this, MainActivity::class.java).apply {
-                    putExtra("TARGET_SECTION", "Promo")
-                    putExtra("PROMOTION_ID", referenceId)
-                    this.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-                }
-            }
-
-            else -> {
-                // General notification → open MainActivity (Home tab)
-                Intent(this, MainActivity::class.java).apply {
-                    this.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-                }
-            }
+        // Always target NotificationActivity directly
+        val destIntent = Intent(this, NotificationActivity::class.java).apply {
+            putExtra("type", type)
+            putExtra("referenceId", referenceId)
         }
 
-        // Use itemId as request code to keep PendingIntents distinct per notification
+        // Create a back stack so pressing Back from NotificationActivity opens MainActivity
+        val stackBuilder = androidx.core.app.TaskStackBuilder.create(this).apply {
+            addNextIntentWithParentStack(Intent(this@MyFirebaseMessagingService, MainActivity::class.java))
+            addNextIntent(destIntent)
+        }
+
         val requestCode = (itemId % Int.MAX_VALUE).toInt()
-        return PendingIntent.getActivity(this, requestCode, destIntent, flags)
+        return stackBuilder.getPendingIntent(requestCode, flags)!!
     }
 
     // ────────────────────────── Helpers ────────────────────────

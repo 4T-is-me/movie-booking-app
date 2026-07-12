@@ -71,15 +71,46 @@ class MainActivity : BaseActivity() {
             windowInsets
         }
         
-        // Handle explicit section requests from other activities (like Profile)
-        val target = intent.getStringExtra("TARGET_SECTION") ?: "Home"
-        navigateToSection(target, force = true)
+        // Handle explicit section requests from other activities or notifications
+        handleIncomingIntent(intent)
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        intent.getStringExtra("TARGET_SECTION")?.let { target ->
+        handleIncomingIntent(intent)
+    }
+
+    /**
+     * Processes intent extras for deep-linking.
+     * Handles both local navigation intents (e.g. TARGET_SECTION="Promo")
+     * and Firebase push notification data payloads (e.g. type="booking", referenceId="xxx").
+     */
+    private fun handleIncomingIntent(intent: Intent?) {
+        if (intent == null) {
+            navigateToSection("Home", force = true)
+            return
+        }
+
+        // 1. Get requested target section, fallback to Home on standard launch
+        val target = intent.getStringExtra("TARGET_SECTION") ?: "Home"
+
+        // 2. Deep-linking from background/killed push notifications
+        val type = intent.getStringExtra("type")
+        val referenceId = intent.getStringExtra("referenceId")
+
+        if (!type.isNullOrEmpty() || !referenceId.isNullOrEmpty()) {
+            // First load the home/target section so the backstack has a valid parent
+            navigateToSection(target, force = true)
+            
+            // Then navigate directly to NotificationActivity
+            val destIntent = Intent(this, NotificationActivity::class.java).apply {
+                putExtra("type", type)
+                putExtra("referenceId", referenceId)
+            }
+            startActivity(destIntent)
+        } else {
+            // Standard launch or local section request
             navigateToSection(target, force = true)
         }
     }
