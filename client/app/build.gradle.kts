@@ -77,6 +77,8 @@ dependencies {
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
+    // Enables .await() on Firebase / Google Play Services Task<T>
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
 
     // Image Loading
     implementation(libs.coil)

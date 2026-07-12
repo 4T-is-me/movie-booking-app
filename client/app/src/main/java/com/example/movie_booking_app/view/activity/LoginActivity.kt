@@ -9,23 +9,29 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
+import com.example.movie_booking_app.data.local.FcmTokenHelper
 import com.example.movie_booking_app.data.model.request.LoginRequest
 import com.example.movie_booking_app.databinding.ActivityLoginBinding
 import com.example.movie_booking_app.viewmodel.LoginUiState
 import com.example.movie_booking_app.viewmodel.LoginViewModel
-import dagger.hilt.android.AndroidEntryPoint
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import androidx.activity.result.contract.ActivityResultContracts
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
     private val viewModel: LoginViewModel by viewModels()
+
+    @Inject
+    lateinit var fcmTokenHelper: FcmTokenHelper
     private lateinit var googleSignInClient: GoogleSignInClient
 
     private val googleSignInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -121,11 +127,15 @@ class LoginActivity : AppCompatActivity() {
                         binding.btnLogin.isEnabled = true
                         binding.pbLoading.visibility = View.GONE
                         Toast.makeText(this@LoginActivity, "Login successful", Toast.LENGTH_SHORT).show()
-                        
+
                         val username = binding.edtUsername.text.toString().trim()
                         val enteredOrDbUser = state.username
+
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            fcmTokenHelper.registerCurrentToken("LoginActivity")
+                        }
                         val roleName = state.role ?: ""
-                        
+
                         if (roleName.equals("Admin", ignoreCase = true)) {
                             val intent = Intent(this@LoginActivity, AdminActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
