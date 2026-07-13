@@ -32,15 +32,24 @@ const createReview = async (accountId, movieId, rating, comment) => {
     const showtimes = await Showtime.find({ movieId, isDeleted: false }).select('_id');
     const showtimeIds = showtimes.map(st => st._id);
 
-    // Find any successful booking for these showtimes
-    const booking = await Booking.findOne({
+    // Find any successful booking count for these showtimes
+    const bookingCount = await Booking.countDocuments({
         memberId: member._id,
         showtimeId: { $in: showtimeIds },
         paymentStatus: { $in: ['paid', 'completed', 'successful'] }
     });
 
-    if (!booking) {
+    if (bookingCount === 0) {
         throw new ApiError(StatusCodes.FORBIDDEN, 'You must have purchased a successful ticket for this movie to submit a review.');
+    }
+
+    const reviewCount = await Review.countDocuments({
+        accountId,
+        movieId
+    });
+
+    if (reviewCount >= bookingCount) {
+        throw new ApiError(StatusCodes.FORBIDDEN, 'Review count limit reached. You can only submit one review per purchase/booking.');
     }
 
     // 3. Validate input constraints
@@ -59,9 +68,7 @@ const createReview = async (accountId, movieId, rating, comment) => {
         accountId,
         movieId,
         rating: numericRating,
-        comment: trimmedComment,
-        likes: [],
-        replies: []
+        comment: trimmedComment
     });
 
     await review.save();

@@ -10,6 +10,7 @@ import { jwtProvider } from '../utils/jwtProvider.js';
 import { Member } from '../models/memberModel.js';
 import { Showtime } from '../models/showTimeModel.js';
 import { Booking } from '../models/bookingModel.js';
+import { Review } from '../models/reviewModel.js';
 
 // GET /api/movies
 export const handleGetMovies = async (req, res) => {
@@ -55,12 +56,16 @@ export const handleGetMovieById = async (req, res) => {
                     if (member) {
                         const showtimes = await Showtime.find({ movieId: id, isDeleted: false }).select('_id');
                         const showtimeIds = showtimes.map(st => st._id);
-                        const booking = await Booking.findOne({
+                        const bookingCount = await Booking.countDocuments({
                             memberId: member._id,
                             showtimeId: { $in: showtimeIds },
                             paymentStatus: { $in: ['paid', 'completed', 'successful'] }
                         });
-                        if (booking) {
+                        const reviewCount = await Review.countDocuments({
+                            accountId: decoded.accountId,
+                            movieId: id
+                        });
+                        if (bookingCount > 0 && reviewCount < bookingCount) {
                             hasWatched = true;
                         }
                     }
