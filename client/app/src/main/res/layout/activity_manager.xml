@@ -19,7 +19,7 @@
             android:id="@+id/headerLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#D9111827"
+            android:background="@color/auto_color_D9111827"
             android:paddingHorizontal="16dp"
             android:paddingTop="32dp"
             android:paddingBottom="12dp"
@@ -32,7 +32,7 @@
                 android:background="@drawable/bg_circle_glass"
                 android:padding="8dp"
                 android:src="@drawable/ic_menu"
-                app:tint="#FFFFFF"
+                app:tint="@color/auto_color_FFFFFF"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
@@ -49,16 +49,16 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Dashboard"
-                    android:textColor="#FFFFFF"
+                    android:text="@string/auto_str_dashboard"
+                    android:textColor="@color/auto_color_FFFFFF"
                     android:textSize="20sp"
                     android:textStyle="bold"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="LUMINA Landmark 81"
-                    android:textColor="#94A3B8"
+                    android:text="@string/auto_str_lumina_landmark_81"
+                    android:textColor="@color/auto_color_94A3B8"
                     android:textSize="11sp"/>
             </LinearLayout>
 
@@ -69,7 +69,7 @@
                 android:background="@drawable/bg_circle_glass"
                 android:padding="8dp"
                 android:src="@drawable/ic_notifications"
-                app:tint="#CBD5E1"
+                app:tint="@color/auto_color_CBD5E1"
                 android:layout_marginEnd="12dp"
                 app:layout_constraintEnd_toStartOf="@id/ivAvatar"
                 app:layout_constraintTop_toTopOf="parent"
@@ -80,9 +80,9 @@
                 android:layout_width="34dp"
                 android:layout_height="34dp"
                 android:background="@drawable/bg_badge_gold"
-                android:text="TB"
+                android:text="@string/auto_str_tb"
                 android:gravity="center"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/auto_color_FFFFFF"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -117,17 +117,17 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical">
-                        <TextView android:id="@+id/tvGreeting" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Good evening 🌙" android:textColor="#94A3B8" android:textSize="12sp"/>
-                        <TextView android:id="@+id/tvManagerName" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Trần Thị Bình" android:textColor="#FFFFFF" android:textSize="18sp" android:textStyle="bold" android:layout_marginTop="2dp"/>
-                        <TextView android:id="@+id/tvDate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Wednesday, 20/06/2024" android:textColor="#94A3B8" android:textSize="11sp" android:layout_marginTop="2dp"/>
+                        <TextView android:id="@+id/tvGreeting" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_good_evening" android:textColor="@color/auto_color_94A3B8" android:textSize="12sp"/>
+                        <TextView android:id="@+id/tvManagerName" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_tr_n_th_b_nh" android:textColor="@color/auto_color_FFFFFF" android:textSize="18sp" android:textStyle="bold" android:layout_marginTop="2dp"/>
+                        <TextView android:id="@+id/tvDate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_wednesday_20_06_2024" android:textColor="@color/auto_color_94A3B8" android:textSize="11sp" android:layout_marginTop="2dp"/>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:gravity="end">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="● Branch Online" android:textColor="#10B981" android:background="@drawable/bg_status_operating" android:paddingHorizontal="10dp" android:paddingVertical="4dp" android:textSize="11sp" android:textStyle="bold"/>
-                        <TextView android:id="@+id/tvAllRoom" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="MGR-001 · 5 rooms" android:textColor="#94A3B8" android:textSize="10sp" android:layout_marginTop="4dp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_branch_online" android:textColor="@color/auto_color_10B981" android:background="@drawable/bg_status_operating" android:paddingHorizontal="10dp" android:paddingVertical="4dp" android:textSize="11sp" android:textStyle="bold"/>
+                        <TextView android:id="@+id/tvAllRoom" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_mgr_001_5_rooms" android:textColor="@color/auto_color_94A3B8" android:textSize="10sp" android:layout_marginTop="4dp"/>
                     </LinearLayout>
                 </LinearLayout>
 
@@ -141,33 +141,33 @@
 
                     <!-- Card 1 -->
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:layout_margin="4dp" android:background="@drawable/bg_card_dark" android:orientation="vertical" android:padding="12dp">
-                        <TextView android:id="@+id/tvRevenue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="45.2M" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Revenue" android:textColor="#94A3B8" android:textSize="10sp"/>
+                        <TextView android:id="@+id/tvRevenue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_45_2m" android:textColor="@color/auto_color_FFFFFF" android:textSize="13sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_revenue" android:textColor="@color/auto_color_94A3B8" android:textSize="10sp"/>
                     </LinearLayout>
                     <!-- Card 2 -->
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:layout_margin="4dp" android:background="@drawable/bg_card_dark" android:orientation="vertical" android:padding="12dp">
-                        <TextView android:id="@+id/tvTicketsSold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="387" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Tickets" android:textColor="#94A3B8" android:textSize="10sp"/>
+                        <TextView android:id="@+id/tvTicketsSold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_387" android:textColor="@color/auto_color_FFFFFF" android:textSize="13sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_tickets" android:textColor="@color/auto_color_94A3B8" android:textSize="10sp"/>
                     </LinearLayout>
                     <!-- Card 3 -->
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:layout_margin="4dp" android:background="@drawable/bg_card_dark" android:orientation="vertical" android:padding="12dp">
-                        <TextView android:id="@+id/tvOccupancyRate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="78%" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Occupancy" android:textColor="#94A3B8" android:textSize="10sp"/>
+                        <TextView android:id="@+id/tvOccupancyRate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_78" android:textColor="@color/auto_color_FFFFFF" android:textSize="13sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_occupancy" android:textColor="@color/auto_color_94A3B8" android:textSize="10sp"/>
                     </LinearLayout>
                     <!-- Card 4 -->
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:layout_margin="4dp" android:background="@drawable/bg_card_dark" android:orientation="vertical" android:padding="12dp">
-                        <TextView android:id="@+id/tvFoodRevenue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="12.3M" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="F&amp;B Rev" android:textColor="#94A3B8" android:textSize="10sp"/>
+                        <TextView android:id="@+id/tvFoodRevenue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_12_3m" android:textColor="@color/auto_color_FFFFFF" android:textSize="13sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_f_amp_b_rev" android:textColor="@color/auto_color_94A3B8" android:textSize="10sp"/>
                     </LinearLayout>
                     <!-- Card 5 -->
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:layout_margin="4dp" android:background="@drawable/bg_card_dark" android:orientation="vertical" android:padding="12dp">
-                        <TextView android:id="@+id/tvRunningMovies" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="6" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Movies" android:textColor="#94A3B8" android:textSize="10sp"/>
+                        <TextView android:id="@+id/tvRunningMovies" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_6" android:textColor="@color/auto_color_FFFFFF" android:textSize="13sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_movies" android:textColor="@color/auto_color_94A3B8" android:textSize="10sp"/>
                     </LinearLayout>
                     <!-- Card 6 -->
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:layout_margin="4dp" android:background="@drawable/bg_card_dark" android:orientation="vertical" android:padding="12dp">
-                        <TextView android:id="@+id/tvActiveScreens" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="4/5" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Screens" android:textColor="#94A3B8" android:textSize="10sp"/>
+                        <TextView android:id="@+id/tvActiveScreens" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_4_5" android:textColor="@color/auto_color_FFFFFF" android:textSize="13sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_screens" android:textColor="@color/auto_color_94A3B8" android:textSize="10sp"/>
                     </LinearLayout>
                 </GridLayout>
 
@@ -178,10 +178,10 @@
                     android:columnCount="2"
                     android:rowCount="2"
                     android:layout_marginBottom="16dp">
-                    <Button android:id="@+id/layoutSchedule" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:layout_margin="4dp" android:text="Schedule" android:backgroundTint="#1AA855F7" android:textColor="#FFFFFF" app:icon="@drawable/ic_calendar_month_24" app:iconTint="#A855F7" android:textAlignment="textStart"/>
-                    <Button android:id="@+id/layoutRooms" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:layout_margin="4dp" android:text="Rooms" android:backgroundTint="#1A60A5FA" android:textColor="#FFFFFF" app:iconTint="#60A5FA"  app:icon="@drawable/ic_room" android:textAlignment="textStart"/>
-                    <Button android:id="@+id/layoutStaff" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:layout_margin="4dp" android:text="Staff" android:backgroundTint="#1A10B981" android:textColor="#FFFFFF" app:iconTint="#10B981" app:icon="@drawable/ic_staff" android:textAlignment="textStart"/>
-                    <Button android:id="@+id/layoutReports" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:layout_margin="4dp" android:text="Reports" android:backgroundTint="#1AD4AF37" android:textColor="#FFFFFF" app:iconTint="#D4AF37" app:icon="@drawable/ic_report" android:textAlignment="textStart"/>
+                    <Button android:id="@+id/layoutSchedule" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:layout_margin="4dp" android:text="@string/auto_str_schedule" android:backgroundTint="#1AA855F7" android:textColor="@color/auto_color_FFFFFF" app:icon="@drawable/ic_calendar_month_24" app:iconTint="#A855F7" android:textAlignment="textStart"/>
+                    <Button android:id="@+id/layoutRooms" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:layout_margin="4dp" android:text="@string/auto_str_rooms" android:backgroundTint="#1A60A5FA" android:textColor="@color/auto_color_FFFFFF" app:iconTint="#60A5FA"  app:icon="@drawable/ic_room" android:textAlignment="textStart"/>
+                    <Button android:id="@+id/layoutStaff" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:layout_margin="4dp" android:text="@string/auto_str_staff" android:backgroundTint="#1A10B981" android:textColor="@color/auto_color_FFFFFF" app:iconTint="#10B981" app:icon="@drawable/ic_staff" android:textAlignment="textStart"/>
+                    <Button android:id="@+id/layoutReports" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:layout_margin="4dp" android:text="@string/auto_str_reports" android:backgroundTint="#1AD4AF37" android:textColor="@color/auto_color_FFFFFF" app:iconTint="#D4AF37" app:icon="@drawable/ic_report" android:textAlignment="textStart"/>
                 </GridLayout>
 
                 <!-- Today's Showtimes Placeholder -->
@@ -201,7 +201,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Today's Showtimes"
+                            android:text="@string/auto_str_today_s_showtimes"
                             android:textColor="@color/text_primary"
                             android:textSize="15sp"
                             android:textStyle="bold"/>
@@ -212,7 +212,7 @@
                             android:layout_height="wrap_content"
                             android:layout_alignParentEnd="true"
                             android:layout_centerInParent="true"
-                            android:text="View all ›"
+                            android:text="@string/auto_str_view_all"
                             android:textColor="@color/yellow"
                             android:textSize="12sp"
                             android:textStyle="bold"/>
@@ -233,7 +233,7 @@
                         android:layout_height="wrap_content"
                         android:paddingVertical="24dp"
                         android:gravity="center"
-                        android:text="No showtimes scheduled for today!"
+                        android:text="@string/auto_str_no_showtimes_scheduled_for_tod"
                         android:textColor="@color/text_secondary"
                         android:textSize="13sp"
                         android:visibility="gone" />
@@ -250,7 +250,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Weekly Revenue"
+                        android:text="@string/auto_str_weekly_revenue"
                         android:textColor="@color/white"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -258,8 +258,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Revenue from the last 7 days"
-                        android:textColor="#8A8A8F"
+                        android:text="@string/auto_str_revenue_from_the_last_7_days"
+                        android:textColor="@color/auto_color_8A8A8F"
                         android:textSize="12sp"
                         android:layout_marginTop="2dp"/>
 

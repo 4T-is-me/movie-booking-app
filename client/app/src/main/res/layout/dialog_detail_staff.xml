@@ -4,7 +4,7 @@
     android:layout_width="340dp"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    app:cardBackgroundColor="#1A1B23"
+    app:cardBackgroundColor="@color/auto_color_1A1B23"
     app:cardCornerRadius="24dp"
     app:cardElevation="8dp"
     app:strokeWidth="0dp">
@@ -19,8 +19,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Employee Details"
-            android:textColor="#FFFFFF"
+            android:text="@string/auto_str_employee_details"
+            android:textColor="@color/auto_color_FFFFFF"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_gravity="center_horizontal"
@@ -47,14 +47,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Username"
-                        android:textColor="#8E8E93"
+                        android:text="@string/auto_str_username"
+                        android:textColor="@color/auto_color_8E8E93"
                         android:textSize="12sp" />
                     <TextView
                         android:id="@+id/tvDetailUsername"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="#FFFFFF"
+                        android:textColor="@color/auto_color_FFFFFF"
                         android:textSize="14sp"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -68,14 +68,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Full Name"
-                        android:textColor="#8E8E93"
+                        android:text="@string/auto_str_full_name"
+                        android:textColor="@color/auto_color_8E8E93"
                         android:textSize="12sp" />
                     <TextView
                         android:id="@+id/tvDetailFullName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="#FFFFFF"
+                        android:textColor="@color/auto_color_FFFFFF"
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -88,14 +88,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Position"
-                        android:textColor="#8E8E93"
+                        android:text="@string/auto_str_position"
+                        android:textColor="@color/auto_color_8E8E93"
                         android:textSize="12sp" />
                     <TextView
                         android:id="@+id/tvDetailPosition"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="#FFFFFF"
+                        android:textColor="@color/auto_color_FFFFFF"
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -108,14 +108,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Email"
-                        android:textColor="#8E8E93"
+                        android:text="@string/auto_str_email"
+                        android:textColor="@color/auto_color_8E8E93"
                         android:textSize="12sp" />
                     <TextView
                         android:id="@+id/tvDetailEmail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="#FFFFFF"
+                        android:textColor="@color/auto_color_FFFFFF"
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -128,14 +128,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Phone Number"
-                        android:textColor="#8E8E93"
+                        android:text="@string/auto_str_phone_number"
+                        android:textColor="@color/auto_color_8E8E93"
                         android:textSize="12sp" />
                     <TextView
                         android:id="@+id/tvDetailPhone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="#FFFFFF"
+                        android:textColor="@color/auto_color_FFFFFF"
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -154,14 +154,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Date of Birth"
-                            android:textColor="#8E8E93"
+                            android:text="@string/auto_str_date_of_birth"
+                            android:textColor="@color/auto_color_8E8E93"
                             android:textSize="12sp" />
                         <TextView
                             android:id="@+id/tvDetailDob"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColor="#FFFFFF"
+                            android:textColor="@color/auto_color_FFFFFF"
                             android:textSize="14sp" />
                     </LinearLayout>
                     <LinearLayout
@@ -172,14 +172,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Gender"
-                            android:textColor="#8E8E93"
+                            android:text="@string/auto_str_gender"
+                            android:textColor="@color/auto_color_8E8E93"
                             android:textSize="12sp" />
                         <TextView
                             android:id="@+id/tvDetailGender"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColor="#FFFFFF"
+                            android:textColor="@color/auto_color_FFFFFF"
                             android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
@@ -193,14 +193,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Identity Card"
-                        android:textColor="#8E8E93"
+                        android:text="@string/auto_str_identity_card"
+                        android:textColor="@color/auto_color_8E8E93"
                         android:textSize="12sp" />
                     <TextView
                         android:id="@+id/tvDetailIdentityCard"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="#FFFFFF"
+                        android:textColor="@color/auto_color_FFFFFF"
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -213,14 +213,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Address"
-                        android:textColor="#8E8E93"
+                        android:text="@string/auto_str_address_1"
+                        android:textColor="@color/auto_color_8E8E93"
                         android:textSize="12sp" />
                     <TextView
                         android:id="@+id/tvDetailAddress"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="#FFFFFF"
+                        android:textColor="@color/auto_color_FFFFFF"
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -233,14 +233,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Salary"
-                        android:textColor="#8E8E93"
+                        android:text="@string/auto_str_salary"
+                        android:textColor="@color/auto_color_8E8E93"
                         android:textSize="12sp" />
                     <TextView
                         android:id="@+id/tvDetailSalary"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="#FFFFFF"
+                        android:textColor="@color/auto_color_FFFFFF"
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -253,14 +253,14 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Start Date"
-                        android:textColor="#8E8E93"
+                        android:text="@string/auto_str_start_date"
+                        android:textColor="@color/auto_color_8E8E93"
                         android:textSize="12sp" />
                     <TextView
                         android:id="@+id/tvDetailStartDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="#FFFFFF"
+                        android:textColor="@color/auto_color_FFFFFF"
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -279,14 +279,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="KPI"
-                            android:textColor="#8E8E93"
+                            android:text="@string/auto_str_kpi"
+                            android:textColor="@color/auto_color_8E8E93"
                             android:textSize="12sp" />
                         <TextView
                             android:id="@+id/tvDetailKpi"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColor="#FFFFFF"
+                            android:textColor="@color/auto_color_FFFFFF"
                             android:textSize="14sp" />
                     </LinearLayout>
                     <LinearLayout
@@ -297,14 +297,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Tickets Sold"
-                            android:textColor="#8E8E93"
+                            android:text="@string/auto_str_tickets_sold"
+                            android:textColor="@color/auto_color_8E8E93"
                             android:textSize="12sp" />
                         <TextView
                             android:id="@+id/tvDetailTicketSold"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColor="#FFFFFF"
+                            android:textColor="@color/auto_color_FFFFFF"
                             android:textSize="14sp" />
                     </LinearLayout>
                     <LinearLayout
@@ -315,14 +315,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Rating"
-                            android:textColor="#8E8E93"
+                            android:text="@string/auto_str_rating"
+                            android:textColor="@color/auto_color_8E8E93"
                             android:textSize="12sp" />
                         <TextView
                             android:id="@+id/tvDetailRating"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColor="#FFFFFF"
+                            android:textColor="@color/auto_color_FFFFFF"
                             android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
@@ -335,8 +335,8 @@
             android:id="@+id/btnCloseDetail"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:text="Close"
-            android:textColor="#000000"
+            android:text="@string/auto_str_close"
+            android:textColor="@color/auto_color_000000"
             android:textSize="14sp"
             android:textStyle="bold"
             app:backgroundTint="@color/yellow"

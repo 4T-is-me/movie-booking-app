@@ -7,7 +7,7 @@
     android:layout_margin="6dp"
     app:cardCornerRadius="14dp"
     app:cardElevation="0dp"
-    app:cardBackgroundColor="#2C2C2C"
+    app:cardBackgroundColor="@color/auto_color_2C2C2C"
     app:strokeWidth="0dp"
     app:strokeColor="@android:color/transparent">
 
@@ -29,8 +29,8 @@
                 android:id="@+id/txtFname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Joe"
-                android:textColor="#FFFFFF"
+                android:text="@string/auto_str_joe"
+                android:textColor="@color/auto_color_FFFFFF"
                 android:textStyle="bold"
                 android:textSize="17sp"/>
 
@@ -38,8 +38,8 @@
                 android:id="@+id/txtLname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Russo"
-                android:textColor="#B0B0B0"
+                android:text="@string/auto_str_russo"
+                android:textColor="@color/auto_color_B0B0B0"
                 android:textSize="14sp"/>
 
         </LinearLayout>

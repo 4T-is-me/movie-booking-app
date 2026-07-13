@@ -7,7 +7,7 @@
     android:layout_marginBottom="16dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="0dp"
-    app:cardBackgroundColor="#111827"
+    app:cardBackgroundColor="@color/auto_color_111827"
     app:cardMaxElevation="0dp">
 
     <!-- Stroke/Border cho CardView (sử dụng background của LinearLayout con nếu cần, hoặc CardView stroke nếu dùng MaterialCardView) -->
@@ -39,7 +39,7 @@
                     android:layout_height="24dp"
                     android:layout_gravity="center"
                     android:src="@drawable/ic_movie"
-                    app:tint="#10B981" />
+                    app:tint="@color/auto_color_10B981" />
             </FrameLayout>
 
             <LinearLayout
@@ -54,8 +54,8 @@
                     android:id="@+id/tvRoomName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Hall A - Premium"
-                    android:textColor="#FFFFFF"
+                    android:text="@string/auto_str_hall_a_premium"
+                    android:textColor="@color/auto_color_FFFFFF"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -64,8 +64,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="120 seats · Standard"
-                    android:textColor="#94A3B8"
+                    android:text="@string/auto_str_120_seats_standard"
+                    android:textColor="@color/auto_color_94A3B8"
                     android:textSize="14sp" />
             </LinearLayout>
 
@@ -78,8 +78,8 @@
                 android:background="@drawable/bg_label_operating"
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="4dp"
-                android:text="Operating"
-                android:textColor="#10B981"
+                android:text="@string/auto_str_operating_2"
+                android:textColor="@color/auto_color_10B981"
                 android:textSize="12sp"
                 android:textStyle="bold" />
         </RelativeLayout>
@@ -91,8 +91,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:layout_marginStart="64dp"
-            android:text="⚠️ Room unavailable · Tap to manage"
-            android:textColor="#F59E0B"
+            android:text="@string/auto_str_room_unavailable_tap_to_manage"
+            android:textColor="@color/auto_color_F59E0B"
             android:textSize="14sp"
             android:visibility="gone" />
 
@@ -102,7 +102,7 @@
             android:layout_height="1dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
-            android:background="#33FFFFFF" />
+            android:background="@color/auto_color_33FFFFFF" />
 
         <!-- Stats & Manage -->
         <LinearLayout
@@ -122,16 +122,16 @@
                     android:id="@+id/tvStdCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="90"
-                    android:textColor="#60A5FA"
+                    android:text="@string/auto_str_90"
+                    android:textColor="@color/auto_color_60A5FA"
                     android:textSize="16sp"
                     android:textStyle="bold" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:text="Std"
-                    android:textColor="#94A3B8"
+                    android:text="@string/auto_str_std"
+                    android:textColor="@color/auto_color_94A3B8"
                     android:textSize="12sp" />
             </LinearLayout>
 
@@ -146,16 +146,16 @@
                     android:id="@+id/tvVipCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="20"
-                    android:textColor="#FACC15"
+                    android:text="@string/auto_str_20_1"
+                    android:textColor="@color/auto_color_FACC15"
                     android:textSize="16sp"
                     android:textStyle="bold" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:text="VIP"
-                    android:textColor="#94A3B8"
+                    android:text="@string/auto_str_vip_4"
+                    android:textColor="@color/auto_color_94A3B8"
                     android:textSize="12sp" />
             </LinearLayout>
 
@@ -170,16 +170,16 @@
                     android:id="@+id/tvCoupleCount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="10"
-                    android:textColor="#A78BFA"
+                    android:text="@string/auto_str_10_2"
+                    android:textColor="@color/auto_color_A78BFA"
                     android:textSize="16sp"
                     android:textStyle="bold" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:text="Couple"
-                    android:textColor="#94A3B8"
+                    android:text="@string/auto_str_couple_2"
+                    android:textColor="@color/auto_color_94A3B8"
                     android:textSize="12sp" />
             </LinearLayout>
 
@@ -188,7 +188,7 @@
                 android:layout_width="1dp"
                 android:layout_height="24dp"
                 android:layout_marginHorizontal="8dp"
-                android:background="#33FFFFFF" />
+                android:background="@color/auto_color_33FFFFFF" />
 
             <!-- Manage Button -->
             <LinearLayout
@@ -201,8 +201,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Manage"
-                    android:textColor="#A78BFA"
+                    android:text="@string/auto_str_manage"
+                    android:textColor="@color/auto_color_A78BFA"
                     android:textSize="14sp"
                     android:textStyle="bold" />
                 <ImageView
@@ -210,7 +210,7 @@
                     android:layout_height="16dp"
                     android:layout_marginStart="4dp"
                     android:src="@android:drawable/ic_media_play"
-                    app:tint="#A78BFA" />
+                    app:tint="@color/auto_color_A78BFA" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

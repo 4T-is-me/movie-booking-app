@@ -13,12 +13,12 @@
         android:layout_height="4dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="16dp"
-        android:background="#40FFFFFF" />
+        android:background="@color/auto_color_40FFFFFF" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Advanced Filter"
+        android:text="@string/auto_str_advanced_filter"
         android:textColor="@color/text_primary"
         android:textSize="18sp"
         android:textStyle="bold" />
@@ -28,7 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Time period"
+        android:text="@string/auto_str_time_period"
         android:textColor="@color/text_secondary"
         android:textSize="13sp" />
 
@@ -46,7 +46,7 @@
             android:layout_weight="1"
             android:background="@drawable/bg_tab_container"
             android:gravity="center"
-            android:text="From..."
+            android:text="@string/auto_str_from"
             android:textColor="@color/color_gold"
             android:textSize="13sp" />
 
@@ -58,7 +58,7 @@
             android:layout_weight="1"
             android:background="@drawable/bg_tab_container"
             android:gravity="center"
-            android:text="To..."
+            android:text="@string/auto_str_to"
             android:textColor="@color/color_gold"
             android:textSize="13sp" />
     </LinearLayout>
@@ -77,7 +77,7 @@
             android:layout_height="48dp"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:text="Reset"
+            android:text="@string/auto_str_reset_1"
             android:textColor="@color/text_secondary" />
 
         <Button
@@ -86,7 +86,7 @@
             android:layout_height="48dp"
             android:layout_weight="2"
             android:backgroundTint="@color/color_gold"
-            android:text="Apply filter"
+            android:text="@string/auto_str_apply_filter"
             android:textColor="@color/bg_primary"
             android:textStyle="bold" />
     </LinearLayout>

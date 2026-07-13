@@ -4,12 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#151A2C">
+    android:background="@color/auto_color_151A2C">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#151A2C"
+        android:background="@color/auto_color_151A2C"
         app:elevation="0dp">
 
         <LinearLayout
@@ -23,7 +23,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="#151A2C">
+        android:background="@color/auto_color_151A2C">
 
         <ImageView
             android:id="@+id/ivBack"
@@ -37,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Weekly timetable"
+            android:text="@string/auto_str_weekly_timetable"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -77,7 +77,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="#4285F4"
             android:paddingHorizontal="32dp"
-            android:text="Generate Schedule"
+            android:text="@string/auto_str_generate_schedule"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="16sp" />
@@ -87,8 +87,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Selected week: 31/08/2026 – 06/09/2026"
-            android:textColor="#666666"
+            android:text="@string/auto_str_selected_week_31_08_2026_06_09"
+            android:textColor="@color/auto_color_666666"
             android:textStyle="bold" />
     </LinearLayout>
     
@@ -113,15 +113,15 @@
                 android:layout_height="24dp"
                 android:layout_alignParentStart="true"
                 android:src="@drawable/ic_previous"
-                app:tint="#333333" />
+                app:tint="@color/auto_color_333333" />
 
             <TextView
                 android:id="@+id/tvMonthYear"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="August 2026"
-                android:textColor="#151A2C"
+                android:text="@string/auto_str_august_2026"
+                android:textColor="@color/auto_color_151A2C"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -131,7 +131,7 @@
                 android:layout_height="24dp"
                 android:layout_alignParentEnd="true"
                 android:src="@drawable/ic_next"
-                app:tint="#333333" />
+                app:tint="@color/auto_color_333333" />
         </RelativeLayout>
 
         <LinearLayout
@@ -153,16 +153,16 @@
                     android:id="@+id/tvDay1Label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Mon"
-                    android:textColor="#999999" />
+                    android:text="@string/auto_str_mon"
+                    android:textColor="@color/auto_color_999999" />
                 <TextView
                     android:id="@+id/tvDay1Date"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_marginTop="4dp"
                     android:gravity="center"
-                    android:text="31"
-                    android:textColor="#333333" />
+                    android:text="@string/auto_str_31"
+                    android:textColor="@color/auto_color_333333" />
             </LinearLayout>
 
             <!-- Day 2 -->
@@ -177,16 +177,16 @@
                     android:id="@+id/tvDay2Label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tue"
-                    android:textColor="#999999" />
+                    android:text="@string/auto_str_tue"
+                    android:textColor="@color/auto_color_999999" />
                 <TextView
                     android:id="@+id/tvDay2Date"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_marginTop="4dp"
                     android:gravity="center"
-                    android:text="1"
-                    android:textColor="#333333" />
+                    android:text="@string/auto_str_1"
+                    android:textColor="@color/auto_color_333333" />
             </LinearLayout>
 
             <!-- Day 3 (Selected) -->
@@ -201,16 +201,16 @@
                     android:id="@+id/tvDay3Label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Wed"
-                    android:textColor="#999999" />
+                    android:text="@string/auto_str_wed"
+                    android:textColor="@color/auto_color_999999" />
                 <TextView
                     android:id="@+id/tvDay3Date"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_marginTop="4dp"
                     android:gravity="center"
-                    android:text="2"
-                    android:textColor="#333333" />
+                    android:text="@string/auto_str_2"
+                    android:textColor="@color/auto_color_333333" />
             </LinearLayout>
 
             <!-- Day 4 -->
@@ -225,16 +225,16 @@
                     android:id="@+id/tvDay4Label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Thu"
-                    android:textColor="#999999" />
+                    android:text="@string/auto_str_thu"
+                    android:textColor="@color/auto_color_999999" />
                 <TextView
                     android:id="@+id/tvDay4Date"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_marginTop="4dp"
                     android:gravity="center"
-                    android:text="3"
-                    android:textColor="#333333" />
+                    android:text="@string/auto_str_3"
+                    android:textColor="@color/auto_color_333333" />
             </LinearLayout>
 
             <!-- Day 5 -->
@@ -249,16 +249,16 @@
                     android:id="@+id/tvDay5Label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Fri"
-                    android:textColor="#999999" />
+                    android:text="@string/auto_str_fri"
+                    android:textColor="@color/auto_color_999999" />
                 <TextView
                     android:id="@+id/tvDay5Date"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_marginTop="4dp"
                     android:gravity="center"
-                    android:text="4"
-                    android:textColor="#333333" />
+                    android:text="@string/auto_str_4"
+                    android:textColor="@color/auto_color_333333" />
             </LinearLayout>
 
             <!-- Day 6 -->
@@ -273,16 +273,16 @@
                     android:id="@+id/tvDay6Label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sat"
-                    android:textColor="#999999" />
+                    android:text="@string/auto_str_sat"
+                    android:textColor="@color/auto_color_999999" />
                 <TextView
                     android:id="@+id/tvDay6Date"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_marginTop="4dp"
                     android:gravity="center"
-                    android:text="5"
-                    android:textColor="#333333" />
+                    android:text="@string/auto_str_5"
+                    android:textColor="@color/auto_color_333333" />
             </LinearLayout>
 
             <!-- Day 7 -->
@@ -297,16 +297,16 @@
                     android:id="@+id/tvDay7Label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sun"
-                    android:textColor="#999999" />
+                    android:text="@string/auto_str_sun"
+                    android:textColor="@color/auto_color_999999" />
                 <TextView
                     android:id="@+id/tvDay7Date"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_marginTop="4dp"
                     android:gravity="center"
-                    android:text="6"
-                    android:textColor="#333333" />
+                    android:text="@string/auto_str_6_1"
+                    android:textColor="@color/auto_color_333333" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
@@ -315,7 +315,7 @@
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#333333" />
+        android:background="@color/auto_color_333333" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <!-- Schedule List (Mock) -->
@@ -339,7 +339,7 @@
         android:layout_margin="16dp"
         android:layout_gravity="bottom"
         android:backgroundTint="#00C853"
-        android:text="Save Schedule"
+        android:text="@string/auto_str_save_schedule"
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="18sp"
@@ -351,7 +351,7 @@
         android:id="@+id/layoutLoading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#80000000"
+        android:background="@color/auto_color_80000000"
         android:elevation="10dp"
         android:visibility="gone"
         android:clickable="true"
@@ -384,15 +384,15 @@
                     android:layout_height="48dp"
                     android:src="@drawable/baseline_check_circle_24"
                     android:visibility="gone"
-                    app:tint="#00C853" />
+                    app:tint="@color/auto_color_00C853" />
 
                 <TextView
                     android:id="@+id/tvLoadingText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="Generating..."
-                    android:textColor="#333333"
+                    android:text="@string/auto_str_generating"
+                    android:textColor="@color/auto_color_333333"
                     android:textSize="16sp"
                     android:textStyle="bold" />
             </LinearLayout>

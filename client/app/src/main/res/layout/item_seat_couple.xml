@@ -13,7 +13,7 @@
         android:layout_height="26dp"
         android:background="@drawable/bg_seat_couple"
         android:gravity="center"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/auto_color_FFFFFF"
         android:textSize="9sp"
         android:textStyle="bold" />
 
@@ -29,7 +29,7 @@
         android:layout_height="26dp"
         android:background="@drawable/bg_seat_couple"
         android:gravity="center"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/auto_color_FFFFFF"
         android:textSize="9sp"
         android:textStyle="bold" />
 

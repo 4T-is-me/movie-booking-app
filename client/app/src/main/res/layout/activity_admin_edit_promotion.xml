@@ -17,7 +17,7 @@
             android:id="@+id/tvFormTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add New Promotion"
+            android:text="@string/auto_str_add_new_promotion"
             android:textColor="@color/white"
             android:textSize="22sp"
             android:textStyle="bold"
@@ -163,7 +163,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
                 android:inputType="number"
-                android:text="0" />
+                android:text="@string/auto_str_0" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Max Usage -->
@@ -186,7 +186,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
                 android:inputType="numberSigned"
-                android:text="-1" />
+                android:text="@string/auto_str_1" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Date Range Selection -->
@@ -249,7 +249,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Promotion Banner"
+            android:text="@string/auto_str_promotion_banner"
             android:textColor="@color/white"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -288,7 +288,7 @@
                 android:id="@+id/btnChooseImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Choose file"
+                android:text="@string/auto_str_choose_file"
                 android:textColor="@color/black"
                 app:backgroundTint="@color/yellow"
                 app:cornerRadius="8dp" />
@@ -353,7 +353,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="12dp"
-                android:text="Cancel"
+                android:text="@string/auto_str_cancel"
                 android:textColor="@color/white"
                 app:strokeColor="@color/admin_text_secondary"
                 app:cornerRadius="8dp" />
@@ -362,7 +362,7 @@
                 android:id="@+id/btnSave"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Save"
+                android:text="@string/auto_str_save"
                 android:textColor="@color/black"
                 app:backgroundTint="@color/yellow"
                 app:cornerRadius="8dp" />

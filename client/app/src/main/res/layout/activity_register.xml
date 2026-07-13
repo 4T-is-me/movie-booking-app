@@ -9,7 +9,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#000000"
+        android:background="@color/auto_color_000000"
         android:fillViewport="true">
 
 
@@ -25,7 +25,7 @@
                 android:layout_height="32dp"
                 android:src="@drawable/ic_chevron_right"
                 android:rotation="180"
-                app:tint="#FFFFFF"
+                app:tint="@color/auto_color_FFFFFF"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
@@ -38,7 +38,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/sign_up"
-                android:textColor="#FFC107"
+                android:textColor="@color/auto_color_FFC107"
                 android:textSize="32sp"
                 android:textStyle="bold"
                 android:layout_marginTop="8dp"
@@ -51,7 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/register_subtitle"
-                android:textColor="#808080"
+                android:textColor="@color/auto_color_808080"
                 android:textSize="14sp"
                 android:layout_marginTop="8dp"
                 app:layout_constraintTop_toBottomOf="@id/tvRegisterTitle"
@@ -64,7 +64,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/username_reg_label"
-                android:textColor="#808080"
+                android:textColor="@color/auto_color_808080"
                 android:textStyle="bold"
                 android:layout_marginTop="24dp"
                 app:layout_constraintTop_toBottomOf="@id/tvRegisterSubtitle"
@@ -97,7 +97,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/username_reg_hint"
                     android:textColorHint="#808080"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/auto_color_FFFFFF"
                     android:inputType="textPersonName" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -107,7 +107,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/full_name_label"
-                android:textColor="#808080"
+                android:textColor="@color/auto_color_808080"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"
                 app:layout_constraintTop_toBottomOf="@id/tilUsernameReg"
@@ -140,7 +140,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/full_name_hint"
                     android:textColorHint="#808080"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/auto_color_FFFFFF"
                     android:inputType="textPersonName" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -159,7 +159,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/dob_label"
-                    android:textColor="#808080"
+                    android:textColor="@color/auto_color_808080"
                     android:textStyle="bold"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -193,7 +193,7 @@
                         android:layout_height="wrap_content"
                         android:hint="@string/dob_hint"
                         android:textColorHint="#808080"
-                        android:textColor="#FFFFFF"
+                        android:textColor="@color/auto_color_FFFFFF"
                         android:focusable="true"
                         android:clickable="true"
                         android:inputType="date"
@@ -206,7 +206,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/gender_label"
-                    android:textColor="#808080"
+                    android:textColor="@color/auto_color_808080"
                     android:textStyle="bold"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="@id/rgGender" />
@@ -228,10 +228,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:buttonTint="#FFC107"
+                        android:buttonTint="@color/auto_color_FFC107"
                         android:checked="true"
                         android:text="@string/male"
-                        android:textColor="#FFFFFF"
+                        android:textColor="@color/auto_color_FFFFFF"
                         android:textSize="12sp" />
 
                     <RadioButton
@@ -241,8 +241,8 @@
                         android:layout_weight="1"
                         android:text="@string/female"
                         android:textSize="12sp"
-                        android:textColor="#FFFFFF"
-                        android:buttonTint="#FFC107" />
+                        android:textColor="@color/auto_color_FFFFFF"
+                        android:buttonTint="@color/auto_color_FFC107" />
                 </RadioGroup>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -252,7 +252,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/email_label"
-                android:textColor="#808080"
+                android:textColor="@color/auto_color_808080"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"
                 app:layout_constraintTop_toBottomOf="@id/clDobGender"
@@ -285,7 +285,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/email_hint"
                     android:textColorHint="#808080"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/auto_color_FFFFFF"
                     android:inputType="textEmailAddress" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -295,7 +295,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/phone_label"
-                android:textColor="#808080"
+                android:textColor="@color/auto_color_808080"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"
                 app:layout_constraintTop_toBottomOf="@id/tilEmail"
@@ -328,7 +328,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/phone_hint"
                     android:textColorHint="#808080"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/auto_color_FFFFFF"
                     android:inputType="phone" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -338,7 +338,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/id_card_label"
-                android:textColor="#808080"
+                android:textColor="@color/auto_color_808080"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"
                 app:layout_constraintTop_toBottomOf="@id/tilPhone"
@@ -371,7 +371,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/id_card_hint"
                     android:textColorHint="#808080"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/auto_color_FFFFFF"
                     android:inputType="number" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -381,7 +381,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/password_label_required"
-                android:textColor="#808080"
+                android:textColor="@color/auto_color_808080"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"
                 app:layout_constraintTop_toBottomOf="@id/tilIdCard"
@@ -416,7 +416,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/password_hint"
                     android:textColorHint="#808080"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/auto_color_FFFFFF"
                     android:inputType="textPassword" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -426,7 +426,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/confirm_password_label"
-                android:textColor="#808080"
+                android:textColor="@color/auto_color_808080"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"
                 app:layout_constraintTop_toBottomOf="@id/tilPassword"
@@ -461,7 +461,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/confirm_password_hint"
                     android:textColorHint="#808080"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/auto_color_FFFFFF"
                     android:inputType="textPassword" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -471,7 +471,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/address_label"
-                android:textColor="#808080"
+                android:textColor="@color/auto_color_808080"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"
                 app:layout_constraintTop_toBottomOf="@id/tilConfirmPassword"
@@ -504,7 +504,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/address_hint"
                     android:textColorHint="#808080"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/auto_color_FFFFFF"
                     android:inputType="textPostalAddress" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -514,11 +514,11 @@
                 android:layout_width="0dp"
                 android:layout_height="60dp"
                 android:text="@string/register"
-                android:textColor="#000000"
+                android:textColor="@color/auto_color_000000"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_marginTop="32dp"
-                app:backgroundTint="#FFC107"
+                app:backgroundTint="@color/auto_color_FFC107"
                 app:cornerRadius="30dp"
                 app:layout_constraintTop_toBottomOf="@id/tilAddress"
                 app:layout_constraintStart_toStartOf="parent"
@@ -552,13 +552,13 @@
                     android:layout_width="0dp"
                     android:layout_height="1dp"
                     android:layout_weight="1"
-                    android:background="#333333" />
+                    android:background="@color/auto_color_333333" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/or_sign_up_with"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/auto_color_FFFFFF"
                     android:layout_marginHorizontal="16dp"
                     android:textStyle="bold" />
 
@@ -566,7 +566,7 @@
                     android:layout_width="0dp"
                     android:layout_height="1dp"
                     android:layout_weight="1"
-                    android:background="#333333" />
+                    android:background="@color/auto_color_333333" />
             </LinearLayout>
 
             <!-- Google Register Button -->
@@ -575,12 +575,12 @@
                 android:layout_width="0dp"
                 android:layout_height="60dp"
                 android:text="@string/google"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/auto_color_FFFFFF"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="32dp"
-                app:backgroundTint="#1A1A1A"
+                app:backgroundTint="@color/auto_color_1A1A1A"
                 app:cornerRadius="30dp"
                 app:icon="@drawable/ic_google"
                 app:iconGravity="textStart"
@@ -617,7 +617,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@android:drawable/ic_dialog_info"
-                app:tint="#FFFFFF" />
+                app:tint="@color/auto_color_FFFFFF" />
 
             <TextView
                 android:id="@+id/tvNotificationMessage"
@@ -625,7 +625,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="16dp"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/auto_color_FFFFFF"
                 android:textSize="14sp"
                 android:textStyle="bold" />
         </LinearLayout>
