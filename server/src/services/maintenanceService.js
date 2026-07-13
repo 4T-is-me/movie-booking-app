@@ -23,7 +23,7 @@ export const MaintenanceService = {
       const showtimes = await Showtime.find({
         roomId: room._id,
         startTime: { $gt: now },
-        status: { $in: ['published', 'draft'] }
+        status: { $nin: ['suspended', 'cancelled'] }
       }).session(session);
 
       for (const showtime of showtimes) {
@@ -31,10 +31,10 @@ export const MaintenanceService = {
         showtime.status = 'suspended';
         await showtime.save({ session });
 
-        // Tìm các booking hợp lệ của suất chiếu này
+        // 2. Lấy danh sách booking của suất chiếu này (đã thanh toán)
         const bookings = await Booking.find({
           showtimeId: showtime._id,
-          paymentStatus: 'successful'
+          paymentStatus: 'paid'
         }).session(session);
 
         if (bookings.length === 0) {
@@ -144,6 +144,9 @@ export const MaintenanceService = {
           }).session(session);
 
           await booking.save({ session });
+          
+          // Gửi thông báo hủy vé hoàn điểm cho Cách C
+          await this.createCancelNotification(booking.memberId, booking._id, booking.finalAmount, session);
         }
       }
 
@@ -159,15 +162,74 @@ export const MaintenanceService = {
 
   async createNotification(memberId, bookingId, newRoomId, newShowtimeId, endTime, session) {
     const expireAt = new Date(endTime.getTime() + 24 * 60 * 60 * 1000); // 24h sau suất chiếu
+    
+    const title = "Sự cố phòng chiếu - Cần xác nhận dời vé";
+    const message = "Rạp đang bảo trì phòng chiếu. Chúng tôi đã chuẩn bị suất chiếu mới cho bạn. Vui lòng xác nhận hoặc hủy để hoàn điểm.";
+    
     const notification = new Notification({
       recipientId: memberId,
-      title: "Sự cố phòng chiếu - Cần xác nhận dời vé",
-      message: "Rạp đang bảo trì phòng chiếu. Chúng tôi đã chuẩn bị suất chiếu mới cho bạn. Vui lòng xác nhận hoặc hủy để hoàn điểm.",
+      title: title,
+      message: message,
       type: "ACTION_REQUIRED",
       metadata: { bookingId, newRoomId, newShowtimeId },
       expireAt
     });
     await notification.save({ session });
+    
+    // Gửi Push Notification thực tế qua Firebase
+    try {
+      const { notificationService } = await import('./notificationService.js');
+      const { Account } = await import('../models/accountModel.js');
+      
+      const member = await Member.findById(memberId).session(session);
+      if (member && member.accountId) {
+        const account = await Account.findById(member.accountId).select('fcmToken').session(session);
+        if (account && account.fcmToken) {
+           await notificationService.sendToDevice(account.fcmToken, title, message, {
+             type: 'MAINTENANCE_ACTION_REQUIRED',
+             bookingId: bookingId.toString()
+           });
+        }
+      }
+    } catch (err) {
+      console.error("Error sending push notification for maintenance:", err);
+    }
+  },
+
+  async createCancelNotification(memberId, bookingId, refundAmount, session) {
+    const expireAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 ngày
+    
+    const title = "Hủy vé & Hoàn điểm tự động";
+    const message = `Suất chiếu của bạn đã bị hủy do rạp bảo trì phòng. Hệ thống không tìm thấy suất chiếu thay thế phù hợp. Chúng tôi đã hoàn lại ${refundAmount} điểm vào tài khoản của bạn. Cáo lỗi vì sự bất tiện này.`;
+    
+    const notification = new Notification({
+      recipientId: memberId,
+      title: title,
+      message: message,
+      type: "SYSTEM_ALERT",
+      metadata: { bookingId },
+      expireAt
+    });
+    await notification.save({ session });
+    
+    // Gửi Push Notification thực tế qua Firebase
+    try {
+      const { notificationService } = await import('./notificationService.js');
+      const { Account } = await import('../models/accountModel.js');
+      
+      const member = await Member.findById(memberId).session(session);
+      if (member && member.accountId) {
+        const account = await Account.findById(member.accountId).select('fcmToken').session(session);
+        if (account && account.fcmToken) {
+           await notificationService.sendToDevice(account.fcmToken, title, message, {
+             type: 'MAINTENANCE_CANCELLED',
+             bookingId: bookingId.toString()
+           });
+        }
+      }
+    } catch (err) {
+      console.error("Error sending cancel push notification:", err);
+    }
   },
 
   // Module 2: User Action

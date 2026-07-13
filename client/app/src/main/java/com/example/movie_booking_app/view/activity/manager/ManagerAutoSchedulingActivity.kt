@@ -298,6 +298,21 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                     
                     for (apiItem in apiShowtimes) {
                         if (apiItem.movieId != null && apiItem.roomId != null) {
+                            
+                            val startLocal = try {
+                                java.time.ZonedDateTime.parse(apiItem.startTime)
+                                    .withZoneSameInstant(java.time.ZoneId.systemDefault())
+                                    .toLocalDateTime()
+                                    .format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                            } catch (e: Exception) { apiItem.startTime }
+                            
+                            val endLocal = try {
+                                java.time.ZonedDateTime.parse(apiItem.endTime)
+                                    .withZoneSameInstant(java.time.ZoneId.systemDefault())
+                                    .toLocalDateTime()
+                                    .format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                            } catch (e: Exception) { apiItem.endTime }
+
                             allGeneratedShowtimes.add(ShowtimeDraft(
                                 show_date = apiItem.showDate.substring(0, 10),
                                 room_id = apiItem.roomId._id,
@@ -305,8 +320,8 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                                 movie_id = apiItem.movieId._id,
                                 movie_name = apiItem.movieId.movieName,
                                 cinema_id = "", // Not strictly needed for UI display
-                                start_time = apiItem.startTime,
-                                end_time = apiItem.endTime,
+                                start_time = startLocal,
+                                end_time = endLocal,
                                 status = apiItem.status
                             ))
                         }
@@ -325,7 +340,7 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
     private fun filterAndDisplaySchedule() {
         val filtered = allGeneratedShowtimes.filter {
             it.show_date == selectedDate.toString() && (selectedRoomId == null || it.room_id == selectedRoomId)
-        }
+        }.sortedBy { it.start_time }
         adapter.submitList(filtered)
     }
 
