@@ -13,6 +13,7 @@ object RetrofitClient {
     // private const val BASE_URL = "http://192.168.9.49:5000/"
     private const val BASE_URL = "http://10.88.54.88:5000/"
 
+
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
     }
