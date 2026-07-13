@@ -16,15 +16,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:background="#333333" />
+            android:background="@color/auto_color_333333" />
     </androidx.cardview.widget.CardView>
 
     <TextView
         android:id="@+id/tvServiceName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Imax"
-        android:textColor="#FFFFFF"
+        android:text="@string/auto_str_imax"
+        android:textColor="@color/auto_color_FFFFFF"
         android:textSize="14sp"
         android:textStyle="bold"
         android:layout_marginTop="8dp" />

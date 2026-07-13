@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import * as showtimeAdminService from '../services/adminShowtimeService.js';
+import { Manager } from '../models/managerModel.js';
 
 // POST /api/admin/showtimes
 export const createShowtime = async (req, res) => {
@@ -30,15 +31,64 @@ export const createShowtime = async (req, res) => {
     }
 };
 
+// POST /api/admin/showtimes/bulk
+export const createBulkShowtimes = async (req, res) => {
+    try {
+        const { showtimes } = req.body;
+
+        if (!showtimes || !Array.isArray(showtimes) || showtimes.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please provide an array of showtimes.'
+            });
+        }
+
+        let defaultCinemaId = null;
+        if (req.user && req.user.role === 'Manager') {
+            const manager = await Manager.findOne({ accountId: req.user.accountId });
+            if (manager) {
+                defaultCinemaId = manager.cinemaId;
+            }
+        }
+
+        // Thay thế cinemaId ảo từ Frontend (ví dụ "c1") thành cinemaId thật của Manager
+        const formattedShowtimes = showtimes.map(st => {
+            if (defaultCinemaId && (!st.cinemaId || st.cinemaId === 'c1')) {
+                return { ...st, cinemaId: defaultCinemaId };
+            }
+            return st;
+        });
+
+        const createdShowtimes = await showtimeAdminService.createBulkShowtimes(formattedShowtimes);
+        return res.status(201).json({
+            success: true,
+            data: createdShowtimes,
+            message: `Successfully bulk inserted ${createdShowtimes.length} showtimes.`
+        });
+    } catch (error) {
+        console.error("Bulk insert error:", error);
+        return res.status(500).json({ success: false, message: 'Internal server error.', error: error.message });
+    }
+};
+
 // GET /api/admin/showtimes
 export const getShowtimesAdmin = async (req, res) => {
     try {
-        const { movieId, cinemaId, showDate, page = 1, limit = 20 } = req.query;
+        const { movieId, cinemaId, showDate, startDate, endDate, page = 1, limit = 20 } = req.query;
+
+        // If manager, auto-restrict to their cinema
+        let filterCinemaId = cinemaId;
+        if (req.user && req.user.role === 'Manager') {
+            const manager = await Manager.findOne({ accountId: req.user.accountId });
+            if (manager) filterCinemaId = manager.cinemaId;
+        }
 
         const result = await showtimeAdminService.getShowtimesAdmin({
             movieId,
-            cinemaId,
+            cinemaId: filterCinemaId,
             showDate,
+            startDate,
+            endDate,
             page: Number(page),
             limit: Number(limit)
         });

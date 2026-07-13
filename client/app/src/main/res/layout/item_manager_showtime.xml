@@ -47,7 +47,7 @@
             android:id="@+id/tvMovieName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Oppenheimer"
+            android:text="@string/auto_str_oppenheimer"
             android:textColor="@color/text_primary"
             android:textSize="14sp"
             android:textStyle="bold" />
@@ -56,7 +56,7 @@
             android:id="@+id/tvRoomAndTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hall A · 13:45 - 16:45"
+            android:text="@string/auto_str_hall_a_13_45_16_45"
             android:textColor="@color/text_secondary"
             android:textSize="12sp"
             android:layout_marginTop="2dp" />
@@ -70,7 +70,7 @@
                 android:id="@+id/tvSeatsCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="98/120 seats"
+                android:text="@string/auto_str_98_120_seats"
                 android:textColor="@color/text_secondary"
                 android:textSize="11sp"/>
 
@@ -91,7 +91,7 @@
             android:id="@+id/tvStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Live"
+            android:text="@string/auto_str_live"
             android:textColor="@color/seat_selected"
             android:textSize="11sp"
             android:textStyle="bold"/>
@@ -115,7 +115,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="4dp"
-        android:text="82%"
+        android:text="@string/auto_str_82"
         android:textColor="@color/seat_selected"
         android:textSize="11sp"
         android:textStyle="bold"

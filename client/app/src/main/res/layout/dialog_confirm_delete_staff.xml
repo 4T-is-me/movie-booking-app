@@ -4,7 +4,7 @@
     android:layout_width="320dp"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    app:cardBackgroundColor="#1A1B23"
+    app:cardBackgroundColor="@color/auto_color_1A1B23"
     app:cardCornerRadius="24dp"
     app:cardElevation="8dp"
     app:strokeWidth="0dp">
@@ -36,8 +36,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Delete Account"
-            android:textColor="#FFFFFF"
+            android:text="@string/auto_str_delete_account"
+            android:textColor="@color/auto_color_FFFFFF"
             android:textSize="22sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
@@ -48,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textColor="#BDBDBD"
+            android:textColor="@color/auto_color_BDBDBD"
             android:textSize="15sp"
             android:layout_marginBottom="24dp"
             android:lineSpacingMultiplier="1.2" />
@@ -67,11 +67,11 @@
                 android:layout_height="48dp"
                 android:layout_weight="1"
                 android:layout_marginEnd="6dp"
-                android:text="Cancel"
-                android:textColor="#FFFFFF"
+                android:text="@string/auto_str_cancel_1"
+                android:textColor="@color/auto_color_FFFFFF"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                app:backgroundTint="#2D303E"
+                app:backgroundTint="@color/auto_color_2D303E"
                 app:cornerRadius="24dp"
                 style="@style/Widget.Material3.Button.TextButton" />
 
@@ -82,8 +82,8 @@
                 android:layout_height="48dp"
                 android:layout_weight="1"
                 android:layout_marginStart="6dp"
-                android:text="Delete"
-                android:textColor="#000000"
+                android:text="@string/auto_str_delete_1"
+                android:textColor="@color/auto_color_000000"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 app:backgroundTint="@color/yellow"

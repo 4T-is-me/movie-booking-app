@@ -132,6 +132,10 @@
             android:name=".view.activity.manager.ManagerShiftDetailActivity"
             android:exported="false"
             android:theme="@style/Theme.Moviebookingapp" />
+        <activity
+            android:name=".view.activity.manager.ManagerAutoSchedulingActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp" />
      
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"

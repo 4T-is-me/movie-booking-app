@@ -84,7 +84,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:textColor="#BDBDBD"
+                    android:textColor="@color/auto_color_BDBDBD"
                     android:textSize="14sp"
                     android:lineSpacingExtra="4dp"
                     tools:text="Tết Trung Thu ấm áp, giảm 30.000 VND cho mỗi hóa đơn đặt vé có mua kèm Combo bắp nước." />
@@ -94,7 +94,7 @@
                     android:layout_height="1dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginBottom="16dp"
-                    android:background="#22FFFFFF" />
+                    android:background="@color/auto_color_22FFFFFF" />
 
                 <!-- Valid date & Min Spend requirements info -->
                 <LinearLayout
@@ -107,14 +107,14 @@
                         android:layout_width="18dp"
                         android:layout_height="18dp"
                         android:src="@drawable/ic_calendar_month_24"
-                        app:tint="#8E8E93" />
+                        app:tint="@color/auto_color_8E8E93" />
 
                     <TextView
                         android:id="@+id/tvPromoDateRange"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:textColor="#8E8E93"
+                        android:textColor="@color/auto_color_8E8E93"
                         android:textSize="13sp"
                         tools:text="Hạn sử dụng: 01/10/2026" />
                 </LinearLayout>
@@ -130,14 +130,14 @@
                         android:layout_width="18dp"
                         android:layout_height="18dp"
                         android:src="@drawable/ic_ticket"
-                        app:tint="#8E8E93" />
+                        app:tint="@color/auto_color_8E8E93" />
 
                     <TextView
                         android:id="@+id/tvMinOrderValue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:textColor="#8E8E93"
+                        android:textColor="@color/auto_color_8E8E93"
                         android:textSize="13sp"
                         tools:text="Áp dụng tối thiểu: 120.000 VND" />
                 </LinearLayout>
@@ -147,13 +147,13 @@
                     android:layout_height="1dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginBottom="16dp"
-                    android:background="#22FFFFFF" />
+                    android:background="@color/auto_color_22FFFFFF" />
 
                 <!-- Dotted Coupon Card area -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Mã ưu đãi của bạn"
+                    android:text="@string/auto_str_m_u_i_c_a_b_n"
                     android:textColor="@color/white"
                     android:textSize="15sp"
                     android:textStyle="bold"
@@ -177,8 +177,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="MÃ KHUYẾN MÃI"
-                            android:textColor="#8E8E93"
+                            android:text="@string/auto_str_m_khuy_n_m_i"
+                            android:textColor="@color/auto_color_8E8E93"
                             android:textSize="11sp"
                             android:textStyle="bold" />
 
@@ -198,7 +198,7 @@
                         style="@style/Widget.Material3.Button.TextButton"
                         android:layout_width="wrap_content"
                         android:layout_height="40dp"
-                        android:text="Copy"
+                        android:text="@string/auto_str_copy"
                         android:textColor="@color/yellow"
                         android:textSize="14sp"
                         android:textStyle="bold"
@@ -212,13 +212,13 @@
                     android:layout_height="1dp"
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="20dp"
-                    android:background="#22FFFFFF" />
+                    android:background="@color/auto_color_22FFFFFF" />
 
                 <!-- Terms and conditions detail -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Điều kiện &amp; Quy định áp dụng"
+                    android:text="@string/auto_str_i_u_ki_n_amp_quy_nh_p_d_ng"
                     android:textColor="@color/white"
                     android:textSize="15sp"
                     android:textStyle="bold"
@@ -228,10 +228,10 @@
                     android:id="@+id/tvPromoConditions"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="#9E9E9E"
+                    android:textColor="@color/auto_color_9E9E9E"
                     android:textSize="13sp"
                     android:lineSpacingExtra="6dp"
-                    android:text="• Mỗi khách hàng chỉ được áp dụng mã ưu đãi này 1 lần duy nhất trong suốt thời gian diễn ra chương trình.\n• Chỉ áp dụng cho các giao dịch đặt vé trực tuyến thông qua ứng dụng chính thức.\n• Không áp dụng đồng thời với các hình thức thẻ quà tặng, ưu đãi đối tác hoặc các chương trình khuyến mãi khác.\n• Không có giá trị quy đổi thành tiền mặt hoặc hoàn lại tiền thừa.\n• Đơn hàng hợp lệ phải thỏa mãn giá trị chi tiêu tối thiểu được yêu cầu ở trên.\n• Ban quản lý rạp chiếu phim có quyền thay đổi điều khoản áp dụng mà không cần báo trước." />
+                    android:text="@string/auto_str_m_i_kh_ch_h_ng_ch_c_p_d_ng_m_u" />
 
             </LinearLayout>
         </LinearLayout>
@@ -244,7 +244,7 @@
         android:layout_height="40dp"
         android:layout_margin="16dp"
         app:cardCornerRadius="20dp"
-        app:cardBackgroundColor="#CC1E2130"
+        app:cardBackgroundColor="@color/auto_color_CC1E2130"
         app:strokeWidth="0dp"
         app:cardElevation="4dp"
         app:layout_constraintTop_toTopOf="parent"
@@ -266,7 +266,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="#12131C"
+        android:background="@color/auto_color_12131C"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -276,7 +276,7 @@
             android:id="@+id/btnBookNow"
             android:layout_width="match_parent"
             android:layout_height="52dp"
-            android:text="ĐẶT VÉ NGAY"
+            android:text="@string/auto_str_t_v_ngay"
             android:textColor="@color/black"
             android:textSize="15sp"
             android:textStyle="bold"
