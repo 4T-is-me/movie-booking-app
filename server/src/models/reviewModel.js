@@ -1,23 +1,5 @@
 import mongoose from 'mongoose';
 
-const replySchema = new mongoose.Schema({
-    accountId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Account',
-        required: true
-    },
-    comment: {
-        type: String,
-        required: true,
-        minlength: 1,
-        maxlength: 500
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
-    }
-}, { _id: true });
-
 const reviewSchema = new mongoose.Schema({
     accountId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -41,11 +23,6 @@ const reviewSchema = new mongoose.Schema({
         minlength: 5,
         maxlength: 1000
     },
-    likes: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Account'
-    }],
-    replies: [replySchema],
     createdAt: {
         type: Date,
         default: Date.now

@@ -3,6 +3,7 @@ package com.example.movie_booking_app.data.api
 import com.example.movie_booking_app.data.model.request.AddMovieRequest
 import com.example.movie_booking_app.data.model.response.MovieListResponse
 import com.example.movie_booking_app.data.model.response.MovieResponse
+import com.example.movie_booking_app.data.model.response.ReviewListResponse
 import com.example.movie_booking_app.data.model.response.ShowtimeResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -43,6 +44,13 @@ interface MovieApi {
         @Path("id") movieId: String,
         @Body request: ReviewRequest
     ): Response<ReviewSubmitResponse>
+
+    @GET("api/movies/{id}/reviews")
+    suspend fun getMovieReviews(
+        @Path("id") movieId: String,
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 5
+    ): Response<ReviewListResponse>
 }
 
 data class ReviewRequest(

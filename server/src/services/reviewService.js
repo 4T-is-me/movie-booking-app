@@ -113,7 +113,7 @@ const getMovieReviews = async (movieId, page = 1, limit = 10) => {
             select: 'username',
             populate: {
                 path: 'memberInfo',
-                select: 'fullName'
+                select: 'fullName image'
             }
         })
         .sort({ createdAt: -1 })
@@ -132,70 +132,7 @@ const getMovieReviews = async (movieId, page = 1, limit = 10) => {
     };
 };
 
-const toggleLikeReview = async (reviewId, accountId) => {
-    const review = await Review.findById(reviewId);
-    if (!review) {
-        throw new ApiError(StatusCodes.NOT_FOUND, 'Review not found.');
-    }
-
-    const isAlreadyLiked = review.likes.some(id => id.toString() === accountId.toString());
-    let isLiked = false;
-
-    if (isAlreadyLiked) {
-        review.likes = review.likes.filter(id => id.toString() !== accountId.toString());
-        isLiked = false;
-    } else {
-        review.likes.push(accountId);
-        isLiked = true;
-    }
-
-    await review.save();
-
-    return {
-        isLiked,
-        likesCount: review.likes.length
-    };
-};
-
-const createReply = async (reviewId, accountId, comment) => {
-    const review = await Review.findById(reviewId);
-    if (!review) {
-        throw new ApiError(StatusCodes.NOT_FOUND, 'Review not found.');
-    }
-
-    const trimmedComment = String(comment).trim();
-    if (trimmedComment.length < 1 || trimmedComment.length > 500) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, 'Reply comment must be between 1 and 500 characters.');
-    }
-
-    const reply = {
-        accountId,
-        comment: trimmedComment,
-        createdAt: new Date()
-    };
-
-    review.replies.push(reply);
-    await review.save();
-
-    const newReply = review.replies[review.replies.length - 1];
-
-    const populatedReview = await Review.findById(reviewId)
-        .populate({
-            path: 'replies.accountId',
-            select: 'username',
-            populate: {
-                path: 'memberInfo',
-                select: 'fullName'
-            }
-        });
-
-    const populatedReply = populatedReview.replies.find(r => r._id.toString() === newReply._id.toString());
-    return populatedReply;
-};
-
 export const reviewService = {
     createReview,
-    getMovieReviews,
-    toggleLikeReview,
-    createReply
+    getMovieReviews
 };

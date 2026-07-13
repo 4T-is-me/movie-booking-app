@@ -246,6 +246,12 @@ class MovieViewModel @Inject constructor(
     private val _reviewActionSuccess = MutableSharedFlow<Boolean>()
     val reviewActionSuccess = _reviewActionSuccess.asSharedFlow()
 
+    private val _movieReviews = MutableStateFlow<List<com.example.movie_booking_app.data.model.response.ReviewItem>>(emptyList())
+    val movieReviews: StateFlow<List<com.example.movie_booking_app.data.model.response.ReviewItem>> = _movieReviews.asStateFlow()
+
+    private val _reviewsTotalCount = MutableStateFlow(0)
+    val reviewsTotalCount: StateFlow<Int> = _reviewsTotalCount.asStateFlow()
+
     fun submitReview(movieId: String, rating: Int, comment: String) {
         viewModelScope.launch {
             try {
@@ -253,9 +259,21 @@ class MovieViewModel @Inject constructor(
                 _reviewActionSuccess.emit(success)
                 if (success) {
                     fetchMovieDetail(movieId)
+                    fetchMovieReviews(movieId)
                 }
             } catch (e: Exception) {
                 _reviewActionSuccess.emit(false)
+            }
+        }
+    }
+
+    fun fetchMovieReviews(movieId: String, page: Int = 1, limit: Int = 5) {
+        viewModelScope.launch {
+            try {
+                val reviews = repository.getMovieReviews(movieId, page, limit)
+                _movieReviews.value = reviews
+            } catch (e: Exception) {
+                _movieReviews.value = emptyList()
             }
         }
     }
