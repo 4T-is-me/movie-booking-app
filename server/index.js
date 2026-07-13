@@ -27,6 +27,8 @@ import managerReportRoutes from './src/routes/managerReportRoute.js';
 import managerStaffShiftRoutes from './src/routes/managerStaffShiftRoutes.js';
 import { errorHandlingMiddleware } from './src/middlewares/errorHandlingMiddleware.js'
 import './src/config/firebaseAdmin.js'  // Initialize Firebase Admin SDK at startup;
+import { ShowtimeReminderJob } from './src/jobs/showtimeReminderJob.js';
+
 
 
 const app = express();
@@ -76,7 +78,8 @@ app.use(errorHandlingMiddleware);
 const startServer = async () => {
     await connectDB();
     CleanUpJobs.startSeatCleanupJob();
-    CleanUpJobs.updateMovieStatus()
+    CleanUpJobs.updateMovieStatus();
+    ShowtimeReminderJob.startShowtimeReminderJob();
     app.listen(PORT, () => {
         console.log(`🚀 ES Modules Server is running at: http://localhost:${PORT}`);
     });
