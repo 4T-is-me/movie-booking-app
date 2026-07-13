@@ -37,4 +37,20 @@ interface MovieApi {
 
     @GET("api/promotions")
     suspend fun getPromotions(): Response<com.example.movie_booking_app.data.model.response.AdminPromotionsResponse>
+
+    @POST("api/movies/{id}/reviews")
+    suspend fun submitReview(
+        @Path("id") movieId: String,
+        @Body request: ReviewRequest
+    ): Response<ReviewSubmitResponse>
 }
+
+data class ReviewRequest(
+    val rating: Int,
+    val comment: String
+)
+
+data class ReviewSubmitResponse(
+    val success: Boolean,
+    val message: String?
+)

@@ -302,13 +302,30 @@
             android:visibility="gone"
             android:padding="16dp"/>
 
+        <!-- Write Review Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnWriteReview"
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="24dp"
+            android:visibility="gone"
+            android:text="Write Review"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            app:backgroundTint="#2F2F2F"
+            app:strokeColor="#FFC107"
+            app:strokeWidth="1.5dp"
+            app:cornerRadius="30dp" />
+
         <!-- Continue Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnBookTicket"
             android:layout_width="match_parent"
             android:layout_height="58dp"
             android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="16dp"
             android:layout_marginBottom="40dp"
             android:text="Continue"
             android:textAllCaps="false"

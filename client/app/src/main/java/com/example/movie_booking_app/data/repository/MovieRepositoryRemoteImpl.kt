@@ -225,4 +225,13 @@ class MovieRepositoryRemoteImpl @Inject constructor(
             false
         }
     }
+
+    override suspend fun submitReview(movieId: String, rating: Int, comment: String): Boolean {
+        return try {
+            val response = api.submitReview(movieId, com.example.movie_booking_app.data.api.ReviewRequest(rating, comment))
+            response.isSuccessful
+        } catch (e: Exception) {
+            false
+        }
+    }
 }

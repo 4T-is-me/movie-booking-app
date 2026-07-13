@@ -242,4 +242,21 @@ class MovieViewModel @Inject constructor(
             }
         }
     }
+
+    private val _reviewActionSuccess = MutableSharedFlow<Boolean>()
+    val reviewActionSuccess = _reviewActionSuccess.asSharedFlow()
+
+    fun submitReview(movieId: String, rating: Int, comment: String) {
+        viewModelScope.launch {
+            try {
+                val success = repository.submitReview(movieId, rating, comment)
+                _reviewActionSuccess.emit(success)
+                if (success) {
+                    fetchMovieDetail(movieId)
+                }
+            } catch (e: Exception) {
+                _reviewActionSuccess.emit(false)
+            }
+        }
+    }
 }

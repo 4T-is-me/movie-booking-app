@@ -32,6 +32,7 @@ class MovieDetailActivity : AppCompatActivity() {
 
     private lateinit var movieId: String
     private var selectedCinema: Cinema? = null
+    private var currentReviewDialog: com.google.android.material.bottomsheet.BottomSheetDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -117,6 +118,15 @@ class MovieDetailActivity : AppCompatActivity() {
 
                             binding.rvActors.layoutManager = LinearLayoutManager(this@MovieDetailActivity, LinearLayoutManager.HORIZONTAL, false)
                             binding.rvActors.adapter = CardItemAdapter(movie.actors ?: emptyList())
+
+                             if (movie.hasWatched == true) {
+                                 binding.btnWriteReview.visibility = View.VISIBLE
+                                 binding.btnWriteReview.setOnClickListener {
+                                     showWriteReviewDialog()
+                                 }
+                             } else {
+                                 binding.btnWriteReview.visibility = View.GONE
+                             }
                         }
 
                     }
@@ -164,6 +174,18 @@ class MovieDetailActivity : AppCompatActivity() {
                         }
                     }
                 }
+
+                launch {
+                    viewModel.reviewActionSuccess.collect { success ->
+                        if (success) {
+                            Toast.makeText(this@MovieDetailActivity, "Review submitted successfully!", Toast.LENGTH_SHORT).show()
+                            currentReviewDialog?.dismiss()
+                            currentReviewDialog = null
+                        } else {
+                            Toast.makeText(this@MovieDetailActivity, "Failed to submit review.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
             }
         }
     }
@@ -179,6 +201,28 @@ class MovieDetailActivity : AppCompatActivity() {
             h > 0 -> "${h}h"
             else -> "${m}m"
         }
+    }
+
+    private fun showWriteReviewDialog() {
+        val dialog = com.google.android.material.bottomsheet.BottomSheetDialog(this)
+        val dialogBinding = com.example.movie_booking_app.databinding.DialogWriteReviewBinding.inflate(layoutInflater)
+        dialog.setContentView(dialogBinding.root)
+
+        dialogBinding.btnSubmitReview.setOnClickListener {
+            val rating = dialogBinding.ratingBarReview.rating.toInt()
+            val comment = dialogBinding.etComment.text.toString().trim()
+
+            if (comment.length < 5 || comment.length > 1000) {
+                dialogBinding.layoutComment.error = "Comment must be between 5 and 1000 characters."
+                return@setOnClickListener
+            }
+            dialogBinding.layoutComment.error = null
+
+            viewModel.submitReview(movieId, rating, comment)
+            currentReviewDialog = dialog
+        }
+
+        dialog.show()
     }
 
 }

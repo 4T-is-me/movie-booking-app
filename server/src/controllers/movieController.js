@@ -6,6 +6,10 @@ import {
 } from '../services/movieService.js';
 
 import { StatusCodes } from 'http-status-codes';
+import { jwtProvider } from '../utils/jwtProvider.js';
+import { Member } from '../models/memberModel.js';
+import { Showtime } from '../models/showTimeModel.js';
+import { Booking } from '../models/bookingModel.js';
 
 // GET /api/movies
 export const handleGetMovies = async (req, res) => {
@@ -39,6 +43,35 @@ export const handleGetMovieById = async (req, res) => {
         if (!movie) {
             return res.status(StatusCodes.NOT_FOUND).json({ message: 'Movie not found.' });
         }
+
+        let hasWatched = false;
+        try {
+            const authHeader = req.headers.authorization;
+            if (authHeader && authHeader.startsWith('Bearer ')) {
+                const token = authHeader.substring(7).trim();
+                const decoded = jwtProvider.verifyAccessToken(token);
+                if (decoded && decoded.accountId) {
+                    const member = await Member.findOne({ accountId: decoded.accountId });
+                    if (member) {
+                        const showtimes = await Showtime.find({ movieId: id, isDeleted: false }).select('_id');
+                        const showtimeIds = showtimes.map(st => st._id);
+                        const booking = await Booking.findOne({
+                            memberId: member._id,
+                            showtimeId: { $in: showtimeIds },
+                            paymentStatus: { $in: ['paid', 'completed', 'successful'] }
+                        });
+                        if (booking) {
+                            hasWatched = true;
+                        }
+                    }
+                }
+            }
+        } catch (err) {
+            // Silence token verification errors (user may be guest or token expired/invalid)
+            console.log('Token check skipped in getMovieById:', err.message);
+        }
+
+        movie.hasWatched = hasWatched;
         return res.status(StatusCodes.OK).json({ data: movie });
     } catch (error) {
         console.error('handleGetMovieById error:', error);

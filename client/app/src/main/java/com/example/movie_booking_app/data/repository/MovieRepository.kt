@@ -23,4 +23,5 @@ interface MovieRepository {
     suspend fun deleteMovie(id: String): Boolean
     fun getMovieDetailsById(id: String): Flow<Movie>
     fun getMovieShowtimes(movieId: String): Flow<List<Showtime>>
+    suspend fun submitReview(movieId: String, rating: Int, comment: String): Boolean
 }
