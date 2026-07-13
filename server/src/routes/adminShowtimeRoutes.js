@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 import {
     createShowtime,
+    createBulkShowtimes,
     getShowtimesAdmin,
     getShowtimeDetail,
     softDeleteShowtime
@@ -11,6 +12,9 @@ const router = Router();
 
 // All routes in this router are protected and require the user to be authenticated and authorized as either an Admin or Manager.
 router.use(authMiddleware.isAuthorized, authMiddleware.authorizeRoles('Admin', 'Manager'));
+
+// POST   /api/admin/showtimes/bulk   — bulk create showtimes (for auto-scheduling)
+router.post('/bulk', createBulkShowtimes);
 
 // POST   /api/admin/showtimes        — create a new showtime
 router.post('/', createShowtime);

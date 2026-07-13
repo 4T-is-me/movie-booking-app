@@ -48,8 +48,55 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
         }
 
         binding.btnSave.setOnClickListener {
-            Toast.makeText(this, "Schedule Saved Successfully!", Toast.LENGTH_SHORT).show()
-            finish()
+            if (allGeneratedShowtimes.isEmpty()) {
+                Toast.makeText(this, "Chưa có lịch chiếu nào được tạo!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Map ShowtimeDraft -> ShowtimeBulkItem
+            val bulkItems = allGeneratedShowtimes.map {
+                com.example.movie_booking_app.data.model.request.ShowtimeBulkItem(
+                    movieId = it.movie_id,
+                    cinemaId = it.cinema_id,
+                    roomId = it.room_id,
+                    showDate = it.show_date,
+                    startTime = it.start_time,
+                    endTime = it.end_time,
+                    status = it.status,
+                    ticketPrice = 85000
+                )
+            }
+            val requestBody = com.example.movie_booking_app.data.model.request.ShowtimeBulkRequest(bulkItems)
+
+            lifecycleScope.launch {
+                try {
+                    // Start loading animation or block UI if needed
+                    binding.pbLoading.visibility = android.view.View.VISIBLE
+                    binding.layoutLoading.visibility = android.view.View.VISIBLE
+                    binding.tvLoadingText.text = "Đang lưu vào Database..."
+
+                    val response = com.example.movie_booking_app.data.api.RetrofitClient.managerApi.createBulkShowtimes(requestBody)
+
+                    if (response.isSuccessful) {
+                        binding.pbLoading.visibility = android.view.View.GONE
+                        binding.ivResultIcon.visibility = android.view.View.VISIBLE
+                        binding.ivResultIcon.setImageResource(com.example.movie_booking_app.R.drawable.baseline_check_circle_24)
+                        binding.tvLoadingText.text = "Lưu thành công!"
+                        kotlinx.coroutines.delay(1500)
+                        binding.layoutLoading.visibility = android.view.View.GONE
+                        
+                        Toast.makeText(this@ManagerAutoSchedulingActivity, "Lịch chiếu đã được lưu vào Database!", Toast.LENGTH_SHORT).show()
+                        finish()
+                    } else {
+                        binding.layoutLoading.visibility = android.view.View.GONE
+                        Toast.makeText(this@ManagerAutoSchedulingActivity, "Lỗi server: ${response.message()}", Toast.LENGTH_LONG).show()
+                    }
+                } catch (e: Exception) {
+                    binding.layoutLoading.visibility = android.view.View.GONE
+                    e.printStackTrace()
+                    Toast.makeText(this@ManagerAutoSchedulingActivity, "Lỗi kết nối mạng: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
         }
 
         // Setup Calendar Navigation
@@ -57,15 +104,18 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
             currentWeekStart = currentWeekStart.minusWeeks(1)
             selectedDate = currentWeekStart
             updateCalendarUI()
+            fetchExistingShowtimes(currentWeekStart, currentWeekStart.plusDays(6))
         }
         
         binding.ivNextWeek.setOnClickListener {
             currentWeekStart = currentWeekStart.plusWeeks(1)
             selectedDate = currentWeekStart
             updateCalendarUI()
+            fetchExistingShowtimes(currentWeekStart, currentWeekStart.plusDays(6))
         }
 
         fetchRoomsAndPopulateTabs()
+        fetchExistingShowtimes(currentWeekStart, currentWeekStart.plusDays(6))
     }
 
     private fun fetchRoomsAndPopulateTabs() {
@@ -129,13 +179,9 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
             }
 
             tv.setOnClickListener {
-                if (room.status != "active") {
-                    Toast.makeText(this@ManagerAutoSchedulingActivity, "Phòng này đang bảo trì, không thể xếp lịch!", Toast.LENGTH_SHORT).show()
-                } else {
-                    selectedRoomId = room._id
-                    renderRoomTabs()
-                    filterAndDisplaySchedule()
-                }
+                selectedRoomId = room._id
+                renderRoomTabs()
+                filterAndDisplaySchedule()
             }
 
             binding.layoutRoomTabs.addView(tv)
@@ -150,6 +196,16 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
         val monthFormatter = java.time.format.DateTimeFormatter.ofPattern("MMMM yyyy", java.util.Locale.ENGLISH)
         binding.tvMonthYear.text = currentWeekStart.format(monthFormatter)
         
+        // Disable generating and saving if the week is in the past
+        val thisWeekStart = LocalDate.now().minusDays(LocalDate.now().dayOfWeek.value.toLong() - 1)
+        if (currentWeekStart.isBefore(thisWeekStart)) {
+            binding.btnGenerate.visibility = android.view.View.GONE
+            binding.btnSave.visibility = android.view.View.GONE
+        } else {
+            binding.btnGenerate.visibility = android.view.View.VISIBLE
+            binding.btnSave.visibility = android.view.View.VISIBLE
+        }
+
         // Update days
         val layouts = listOf(binding.layoutDay1, binding.layoutDay2, binding.layoutDay3, binding.layoutDay4, binding.layoutDay5, binding.layoutDay6, binding.layoutDay7)
         val labels = listOf(binding.tvDay1Label, binding.tvDay2Label, binding.tvDay3Label, binding.tvDay4Label, binding.tvDay5Label, binding.tvDay6Label, binding.tvDay7Label)
@@ -227,6 +283,44 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
 
     private var allGeneratedShowtimes = mutableListOf<ShowtimeDraft>()
     private var currentWeekHolidays = listOf<String>()
+
+    private fun fetchExistingShowtimes(startDate: LocalDate, endDate: LocalDate) {
+        lifecycleScope.launch {
+            try {
+                binding.pbLoading.visibility = android.view.View.VISIBLE
+                val startStr = startDate.toString()
+                val endStr = endDate.toString()
+                
+                val response = com.example.movie_booking_app.data.api.RetrofitClient.managerApi.getShowtimes(startStr, endStr)
+                if (response.isSuccessful) {
+                    val apiShowtimes = response.body()?.data ?: emptyList()
+                    allGeneratedShowtimes.clear()
+                    
+                    for (apiItem in apiShowtimes) {
+                        if (apiItem.movieId != null && apiItem.roomId != null) {
+                            allGeneratedShowtimes.add(ShowtimeDraft(
+                                show_date = apiItem.showDate.substring(0, 10),
+                                room_id = apiItem.roomId._id,
+                                room_name = apiItem.roomId.roomName,
+                                movie_id = apiItem.movieId._id,
+                                movie_name = apiItem.movieId.movieName,
+                                cinema_id = "", // Not strictly needed for UI display
+                                start_time = apiItem.startTime,
+                                end_time = apiItem.endTime,
+                                status = apiItem.status
+                            ))
+                        }
+                    }
+                    filterAndDisplaySchedule()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(this@ManagerAutoSchedulingActivity, "Lỗi tải lịch chiếu: ${e.message}", Toast.LENGTH_SHORT).show()
+            } finally {
+                binding.pbLoading.visibility = android.view.View.GONE
+            }
+        }
+    }
 
     private fun filterAndDisplaySchedule() {
         val filtered = allGeneratedShowtimes.filter {
