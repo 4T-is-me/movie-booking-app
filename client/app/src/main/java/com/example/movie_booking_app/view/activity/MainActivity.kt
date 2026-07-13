@@ -23,10 +23,16 @@ import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
 import dagger.hilt.android.AndroidEntryPoint
+import com.example.movie_booking_app.data.local.FcmTokenHelper
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity() {
+
+    @Inject
+    lateinit var fcmTokenHelper: FcmTokenHelper
 
     private lateinit var binding: ActivityMainBinding
     private var currentSection: String = ""
@@ -55,6 +61,11 @@ class MainActivity : BaseActivity() {
                 startActivity(intent)
                 finish()
                 return
+            } else {
+                // If it is a Member/User who auto-logins, register/refresh the FCM token on startup
+                lifecycleScope.launch(Dispatchers.IO) {
+                    fcmTokenHelper.registerCurrentToken("MainActivity")
+                }
             }
         }
 

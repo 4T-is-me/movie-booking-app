@@ -20,13 +20,21 @@ const sendToDevice = async (token, title, body, data = {}) => {
     if (!token) return
 
     try {
+        // Ensure all values in the data payload are strings to prevent Firebase validation errors
+        const stringData = {}
+        for (const [key, val] of Object.entries(data)) {
+            if (val !== undefined && val !== null) {
+                stringData[key] = String(val)
+            }
+        }
+
         const message = {
             token: token,
-            notification: {
-                title: title,
-                body: body
-            },
-            data: data
+            data: {
+                title: String(title),
+                body: String(body),
+                ...stringData
+            }
         }
         const response = await messaging.send(message)
         console.log(`Successfully sent message to device: ${response}`)
@@ -50,13 +58,21 @@ const sendToTopic = async (topic, title, body, data = {}) => {
     }
 
     try {
+        // Ensure all values in the data payload are strings to prevent Firebase validation errors
+        const stringData = {}
+        for (const [key, val] of Object.entries(data)) {
+            if (val !== undefined && val !== null) {
+                stringData[key] = String(val)
+            }
+        }
+
         const message = {
             topic: topic,
-            notification: {
-                title: title,
-                body: body
-            },
-            data: data
+            data: {
+                title: String(title),
+                body: String(body),
+                ...stringData
+            }
         }
         const response = await messaging.send(message)
         console.log(`Successfully sent message to topic [${topic}]: ${response}`)
