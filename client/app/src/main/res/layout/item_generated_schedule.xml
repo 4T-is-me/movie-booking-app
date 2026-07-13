@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingVertical="8dp">
+
+    <!-- Timeline Line -->
+    <View
+        android:id="@+id/viewTimeline"
+        android:layout_width="2dp"
+        android:layout_height="0dp"
+        android:background="#333333"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/viewDot"
+        app:layout_constraintStart_toStartOf="@id/viewDot"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Timeline Dot -->
+    <View
+        android:id="@+id/viewDot"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/bg_timeline_dot"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:background="@drawable/bg_timeline_inner_dot"
+        app:layout_constraintBottom_toBottomOf="@id/viewDot"
+        app:layout_constraintEnd_toEndOf="@id/viewDot"
+        app:layout_constraintStart_toStartOf="@id/viewDot"
+        app:layout_constraintTop_toTopOf="@id/viewDot" />
+
+    <!-- Content Card/Layout -->
+    <TextView
+        android:id="@+id/tvMovieTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:text="Puss in Boots: The Last Wish"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@id/tvGenerated"
+        app:layout_constraintStart_toEndOf="@id/viewDot"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Phòng chiếu 1 · 08:00 - 09:42"
+        android:textColor="#999999"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="@id/tvMovieTitle"
+        app:layout_constraintTop_toBottomOf="@id/tvMovieTitle" />
+
+    <TextView
+        android:id="@+id/tvGenerated"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_generated_tag"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="4dp"
+        android:text="Generated"
+        android:textColor="#999999"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/tvMovieTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvMovieTitle" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="#333333"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/tvMovieTitle"
+        app:layout_constraintTop_toBottomOf="@id/tvSubtitle" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

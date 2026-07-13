@@ -96,7 +96,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("1042352766201-25ddh24aoqt74h069sqinlhn1lhn4rlh.apps.googleusercontent.com")
+            .requestIdToken(com.example.movie_booking_app.BuildConfig.GOOGLE_CLIENT_ID)
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(this, gso)

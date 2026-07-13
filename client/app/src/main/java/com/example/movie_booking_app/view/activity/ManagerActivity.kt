@@ -196,7 +196,7 @@ class ManagerActivity : AppCompatActivity() {
             Toast.makeText(this, "No showtimes available to view", Toast.LENGTH_SHORT).show()
         }
         binding.layoutSchedule.setOnClickListener {
-            Toast.makeText(this, "Feature coming soon", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, com.example.movie_booking_app.view.activity.manager.ManagerAutoSchedulingActivity::class.java))
         }
         binding.layoutRooms.setOnClickListener {
             startActivity(Intent(this, ManagerRoomListActivity::class.java))
@@ -223,6 +223,9 @@ class ManagerActivity : AppCompatActivity() {
                 }
                 R.id.nav_staff -> {
                     startActivity(Intent(this, ManagerStaffActivity::class.java))
+                }
+                R.id.nav_schedule -> {
+                    startActivity(Intent(this, com.example.movie_booking_app.view.activity.manager.ManagerAutoSchedulingActivity::class.java))
                 }
                 else -> Toast.makeText(this, "Feature coming soon", Toast.LENGTH_SHORT).show()
             }
