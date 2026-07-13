@@ -2,9 +2,11 @@ package com.example.movie_booking_app.data.api
 
 import com.example.movie_booking_app.data.model.response.ManagerDashboardResponse
 import com.example.movie_booking_app.data.model.response.ManagerReportsResponse
+import com.example.movie_booking_app.data.model.response.ShiftDetailResponse
 import com.example.movie_booking_app.data.model.response.ShiftResponse
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ManagerApi {
@@ -19,4 +21,7 @@ interface ManagerApi {
         @Query("startDate") startDate: String? = null,
         @Query("endDate") endDate: String? = null
     ) : Response<ShiftResponse>
+
+    @GET("api/manager/staff-shifts/{id}")
+    suspend fun getShiftDetail(@Path("id") shiftId: String): Response<ShiftDetailResponse>
 }

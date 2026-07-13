@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.activity.manager
 
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -34,7 +35,7 @@ class ManagerStaffActivity : AppCompatActivity() {
     private var originalShiftList: List<ShiftItemResponse> = emptyList()
 
     private var currentTab = "staff_list"
-    private val staffShiftAdapter = ManagerStaffShiftAdapter()
+    private lateinit var staffShiftAdapter: ManagerStaffShiftAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityManagerStaffBinding.inflate(layoutInflater)
@@ -53,6 +54,14 @@ class ManagerStaffActivity : AppCompatActivity() {
     }
 
     private fun setUpRecyclerView () {
+        staffShiftAdapter = ManagerStaffShiftAdapter(
+            onItemClick = { shift ->
+                val intent = Intent(this, ManagerShiftDetailActivity::class.java)
+                intent.putExtra("shiftId", shift.shiftId)
+                startActivity(intent)
+            }
+        )
+
         binding.rvStaffList.apply {
             layoutManager = LinearLayoutManager(this@ManagerStaffActivity)
             adapter = staffShiftAdapter

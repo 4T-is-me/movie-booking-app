@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.response.ManagerDashboardResponse
 import com.example.movie_booking_app.data.model.response.ManagerReportsResponse
+import com.example.movie_booking_app.data.model.response.ShiftDetailResponse
 import com.example.movie_booking_app.data.model.response.ShiftResponse
 import com.example.movie_booking_app.data.repository.manager.ManagerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,8 +24,11 @@ class ManagerViewModel @Inject constructor(private val repository: ManagerReposi
 
     private val _shiftDate = MutableStateFlow<ShiftResponse?>(null)
     val shiftData : StateFlow<ShiftResponse?> = _shiftDate.asStateFlow()
+
+    private val _shiftDetailData = MutableStateFlow<ShiftDetailResponse?>(null)
+    val shiftDetailData: StateFlow<ShiftDetailResponse?> = _shiftDetailData.asStateFlow()
     init {
-        // Mặc định là week
+        // default = week
         loadReport("week")
     }
     fun loadDashboard() {
@@ -47,6 +51,14 @@ class ManagerViewModel @Inject constructor(private val repository: ManagerReposi
         viewModelScope.launch {
             repository.getStaffShifts(startDate, endDate).collect { response ->
                 _shiftDate.value = response
+            }
+        }
+    }
+
+    fun loadShiftDetail(id: String) {
+        viewModelScope.launch {
+            repository.getShiftDetail(id).collect { response ->
+                _shiftDetailData.value = response
             }
         }
     }

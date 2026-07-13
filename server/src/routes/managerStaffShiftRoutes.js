@@ -16,9 +16,8 @@ managerStaffShiftRouter.post('/generate', authMiddleware.isAuthorized, authMiddl
 // PUT /api/manager/staff-shifts/:id
 managerStaffShiftRouter.put('/:id', authMiddleware.isAuthorized, authMiddleware.authorizeRoles('Manager'), StaffShiftController.updateShifts)
 
-// DELETE /api/manager/staff-shifts/:id
-managerStaffShiftRouter.delete('/:id', authMiddleware.isAuthorized, authMiddleware.authorizeRoles('Manager'), StaffShiftController.deleteShift)
-
+// GET /api/manager/staff-shifts/:id
+managerStaffShiftRouter.get('/:id', authMiddleware.isAuthorized, authMiddleware.authorizeRoles('Manager'), StaffShiftController.getStaffDetail)
 
 
 export default managerStaffShiftRouter

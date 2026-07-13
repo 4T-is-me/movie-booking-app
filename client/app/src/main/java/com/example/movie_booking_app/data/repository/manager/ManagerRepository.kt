@@ -3,6 +3,7 @@ package com.example.movie_booking_app.data.repository.manager
 import com.example.movie_booking_app.data.api.ManagerApi
 import com.example.movie_booking_app.data.model.response.ManagerDashboardResponse
 import com.example.movie_booking_app.data.model.response.ManagerReportsResponse
+import com.example.movie_booking_app.data.model.response.ShiftDetailResponse
 import com.example.movie_booking_app.data.model.response.ShiftResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -42,6 +43,18 @@ class ManagerRepository @Inject constructor(private val api: ManagerApi) {
     fun getStaffShifts(startDate: String? = null, endDate: String? = null): Flow<ShiftResponse?> = flow {
         try {
             val response = api.getStaffShift(startDate, endDate)
+            if (response.isSuccessful) {
+                emit(response.body())
+            } else {
+                emit(null)
+            }
+        } catch (e: Exception) {
+            emit(null)
+        }
+    }
+    fun getShiftDetail(shiftId: String): Flow<ShiftDetailResponse?> = flow {
+        try {
+            val response = api.getShiftDetail(shiftId)
             if (response.isSuccessful) {
                 emit(response.body())
             } else {

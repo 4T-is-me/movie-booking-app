@@ -7,6 +7,7 @@ import { constants} from "../utils/Constants.js";
 import ApiError from "../utils/ApiError.js";
 import mongoose from "mongoose";
 
+
 const getShifts = async (accountId, query) => {
     const { staffId, workDate, startDate, endDate, shift } = query;
 
@@ -42,9 +43,23 @@ const getShifts = async (accountId, query) => {
         select: 'fullName position phone rating kpiPoints'
     })
     .sort({
-        workDate: 1,
-        shift: 1
+        workDate: 1
     })
+
+    const shiftOrder = {
+    Morning: 1,
+    Afternoon: 2,
+    Evening: 3,
+    Night: 4
+    };
+
+    shifts.sort((a, b) => {
+        if (a.workDate.getTime() !== b.workDate.getTime()) {
+            return a.workDate - b.workDate;
+        }
+
+        return shiftOrder[a.shift] - shiftOrder[b.shift];
+    });
     
     return shifts.map(item => ({
         shiftId: item._id,
@@ -64,7 +79,7 @@ const getShifts = async (accountId, query) => {
 }
 
 
-
+// unfinished
 const createShift = async (accountId, shiftData) => {
     const {staffId, workDate, shift} = shiftData;
 
@@ -158,6 +173,7 @@ const createShift = async (accountId, shiftData) => {
     }
 }
 
+//unfinished
 const updateShifts = async (accountId, shiftId, updateData) => {
     const { staffId, workDate, shift, status } = updateData;
     
@@ -262,7 +278,7 @@ const updateShifts = async (accountId, shiftId, updateData) => {
 
 }
 
-//gom các ca làm hiện tại của ngày trong rạp
+//aggregate current shifts for the day at the cinema
 const getExistingShiftsOfDay = async (cinemaId, workDate) => {
     const exsitingShifts = await StaffShift.find({
         cinemaId: new mongoose.Types.ObjectId(cinemaId),
@@ -287,7 +303,7 @@ const getExistingShiftsOfDay = async (cinemaId, workDate) => {
 }
 
 
-//lọc danh sách nghỉ phép có điều kiện(rạp) by populate staff
+// Filter leave list based on conditions (cinema) when populating staff
 const getAvailableStaffForDay = async (allStaffs, cinemaId, workDate) => {
     // chỉ tìm những leave request status = approved
     const approvedLeaves = await LeaveRequest.find({
@@ -300,18 +316,18 @@ const getAvailableStaffForDay = async (allStaffs, cinemaId, workDate) => {
         select: "cinemaId"
     })
     .lean();
-    // lọc staff trong rạp đang xin nghỉ
+    // Filter cinema staff currently requesting time off
     const absentStaffIds = approvedLeaves.filter(leave =>
         leave.staffId.cinemaId.toString() === cinemaId.toString()
     ).map(leave => leave.staffId._id.toString());
     
-    // list staff đi làm hôm đó
+    // List of staff working that day
     return allStaffs.filter(staff => !absentStaffIds.includes(staff._id.toString()));
 }
 
 //  
 const pickNextStaffRoundRobin = (dayStaffs, currentShift, shiftOccupancy, staffDailyCount, context) => {
-    // Định nghĩa bảng ca liền kề trước đó
+    // Define the table for the immediately preceding shift
     const previousShiftMap = {
         'Afternoon': 'Morning',
         'Night': 'Evening'
@@ -357,7 +373,7 @@ const pickNextStaffRoundRobin = (dayStaffs, currentShift, shiftOccupancy, staffD
     return null;
 }
 
-//main generate shift
+//main generate shift - unfinished
 const generateShift = async (accountId, dateRange) => {
     const {startDate, endDate} = dateRange;
 
@@ -381,7 +397,7 @@ const generateShift = async (accountId, dateRange) => {
     //check manager
     const manager = await Manager.findOne({ accountId });
     if (!manager) {
-        throw new ApiError(StatusCodes.FORBIDDEN, "Bạn không có quyền thực hiện chức năng này.");
+        throw new ApiError(StatusCodes.FORBIDDEN, "You do not have permission to perform this function.");
     }
     const cinemaId = manager.cinemaId;
 
@@ -467,41 +483,147 @@ const generateShift = async (accountId, dateRange) => {
         generated: generatedCount,
         startDate: startDate,
         endDate: endDate,
-        message: `Hệ thống đã tự động phân bổ thành công ${generatedCount} ca làm việc từ ngày ${startDate} đến ngày ${endDate}.`
+        message: `The system has successfully and automatically allocated ${generatedCount} shifts from ${startDate} to ${endDate}.`
     };
     
 }
 
-
-const deleteShift = async (accountId, shiftId) => {
-    const manager = await Manager.findOne({ accountId });
-    if (!manager) {
-        throw new ApiError(StatusCodes.FORBIDDEN, "Bạn không có quyền thực hiện chức năng này.");
+const getWeekRange = (inputDate) => {
+    // Ensure we have a valid Date object
+    let date = new Date(inputDate);
+    
+    // Defensive check if input is invalid or undefined
+    if (!inputDate || isNaN(date.getTime())) {
+        date = new Date();
     }
 
-    //find shift
-    const shift = await StaffShift.findById(shiftId);
-    if (!shift) {
-        throw new ApiError(StatusCodes.NOT_FOUND, "Work shift not found.");
+    // Clone date object to prevent side-effects
+    const utcDate = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+
+    // UTC Day: 0 (Sun), 1 (Mon), ..., 6 (Sat)
+    const dayOfWeek = utcDate.getUTCDay(); 
+    const distanceToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+
+    const monday = new Date(utcDate);
+    monday.setUTCDate(utcDate.getUTCDate() - distanceToMonday);
+
+    const sunday = new Date(monday);
+    sunday.setUTCDate(monday.getUTCDate() + 6);
+
+    return { monday, sunday };
+};
+const formatDateString = (dateInput) => {
+    if (!dateInput) return '';
+    const d = new Date(dateInput);
+    if (isNaN(d.getTime())) return '';
+    return d.toISOString().split('T')[0];
+};
+
+
+const getStaffDetailService = async (accountId, shiftId) => {
+    //check manager
+    const manager = await Manager.findOne({accountId})
+    if(!manager) {
+        throw new ApiError(StatusCodes.FORBIDDEN, "You do not have permission to perform this function.");
+    }
+    //find the staff
+    const targetShift = await StaffShift.findById(shiftId)
+    .populate({
+      path: 'staffId',
+      populate: { path: 'accountId', select: 'status' } // get status from account
+    })
+    .lean();
+
+    if (!targetShift) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Shift information not found.");
     }
 
-    //block permission
-    if (shift.cinemaId.toString() !== manager.cinemaId.toString()) {
-        throw new ApiError(StatusCodes.FORBIDDEN, "You can only delete shifts for staff members belonging to your own cinema.");
+    // Check xem ca này có thuộc Cinema của Manager không
+    if (targetShift.cinemaId.toString() !== manager.cinemaId.toString()) {
+        throw new ApiError(StatusCodes.FORBIDDEN, "You can only view shifts at your own cinema.");
     }
-    //avoid delete shift in the past
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const shiftDate = new Date(shift.workDate);
-    shiftDate.setHours(0, 0, 0, 0);
 
-    if (shiftDate < today) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "Không thể xóa ca làm việc đã diễn ra trong quá khứ.");
+    const staff = targetShift.staffId;
+    if (!staff) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "There is no staff member assigned to this shift yet.");
     }
-    await StaffShift.findByIdAndDelete(shiftId);
+
+    const shiftDate = new Date(targetShift.workDate);
+    const { monday, sunday } = getWeekRange(shiftDate);
+
+    const shiftsInWeek = await StaffShift.find({
+        staffId: staff._id,
+        workDate: { $gte: monday, $lte: sunday }
+    }).lean();
+
+    
+    // Map data 7 day
+    const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const weekSchedule = daysOfWeek.map((dayName, index) => {
+        const currentDate = new Date(monday);
+        currentDate.setUTCDate(monday.getUTCDate() + index);
+        const dateStr = formatDateString(currentDate);
+        const shiftOrder = {
+        Morning: 1,
+        Afternoon: 2,
+        Evening: 3,
+        Night: 4
+        };
+
+        shiftsInWeek.sort((a, b) => {
+            if (a.workDate.getTime() !== b.workDate.getTime()) {
+                return a.workDate - b.workDate;
+            }
+
+            return shiftOrder[a.shift] - shiftOrder[b.shift];
+        });
+    
+
+        const matchedShifts = shiftsInWeek.filter(
+            s => formatDateString(new Date(s.workDate)) === dateStr
+        );
+        const shiftNames = matchedShifts.map(s => s.shift);
+
+        return {
+        day: dayName,
+        date: dateStr,
+        shift: shiftNames.length > 0 ? shiftNames.join(" - ") : null
+        };
+    });
+
+    //cal Attendance Rate
+    const [completedCount, absentCount] = await Promise.all([
+        StaffShift.countDocuments({ staffId: staff._id, status: 'Completed' }),
+        StaffShift.countDocuments({ staffId: staff._id, status: 'Absent' })
+    ]);
+
+    const totalEvaluated = completedCount + absentCount;
+    const attendanceRate = totalEvaluated > 0
+        ? Number(((completedCount / totalEvaluated) * 100).toFixed(1))
+        : 100.0; // Defaults to 100% if no shifts have ended yet
+
     return {
-        shiftId: shiftId,
-        message: "Shift successfully deleted."
+        // Information on the current shift
+        shiftId: targetShift._id,
+        workDate: formatDateString(new Date(targetShift.workDate)),
+        shift: targetShift.shift,
+        shiftStatus: targetShift.status,
+
+        // Information about the employee working that shift
+        staffInfo: {
+        staffId: staff._id,
+        fullName: staff.fullName,
+        position: staff.position,
+        phone: staff.phone,
+        status: staff.accountId?.status === 1 ? 'Active' : 'Inactive',
+        rating: staff.rating || 0,
+        kpiPoints: staff.kpiPoints || 0,
+        ticketSold: staff.ticketSold || 0,
+        attendanceRate
+        },
+
+        //That employee's weekly schedule
+        weekSchedule
     };
 }
 
@@ -510,6 +632,6 @@ export const ManagerStaffShiftService = {
   createShift, 
   updateShifts,
   generateShift,
-  deleteShift,
-  getShifts
+  getShifts,
+  getStaffDetailService
 };
