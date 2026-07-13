@@ -33,7 +33,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="LUMINA"
+                android:text="@string/auto_str_lumina"
                 android:textColor="@color/gold_selected"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -41,7 +41,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ADMIN CONSOLE"
+                android:text="@string/auto_str_admin_console"
                 android:textColor="@color/admin_text_secondary"
                 android:textSize="10sp"
                 android:letterSpacing="0.15" />

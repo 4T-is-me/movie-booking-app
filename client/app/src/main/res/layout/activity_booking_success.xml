@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="ĐẶT VÉ THÀNH CÔNG!"
+        android:text="@string/auto_str_t_v_th_nh_c_ng"
         android:textColor="@color/black"
         android:textSize="24sp"
         android:textStyle="bold"

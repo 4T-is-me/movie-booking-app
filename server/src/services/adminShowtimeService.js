@@ -62,27 +62,101 @@ export const createShowtime = async (showtimeData) => {
     return savedShowtime;
 };
 
-export const getShowtimesAdmin = async ({ movieId, cinemaId, showDate, page = 1, limit = 20 }) => {
+// Hàm dành riêng cho việc lưu lịch auto-scheduling (Lưu hàng loạt)
+export const createBulkShowtimes = async (showtimesData) => {
+    const createdShowtimes = [];
+    const allScheduleSeats = [];
+    const seatsCache = {};
+
+    for (const data of showtimesData) {
+        const { movie_id, cinema_id, room_id, show_date, start_time, end_time, status, ticketPrice } = data;
+        
+        // Theo chuẩn frontend JSON có thể truyền snake_case, ta parse lại
+        const movieId = data.movieId || movie_id;
+        const cinemaId = data.cinemaId || cinema_id;
+        const roomId = data.roomId || room_id;
+        const showDate = data.showDate || show_date;
+        const startTime = data.startTime || start_time;
+        const endTime = data.endTime || end_time;
+
+        const showtime = new Showtime({
+            movieId,
+            cinemaId,
+            roomId,
+            showDate,
+            startTime,
+            endTime,
+            ticketPrice: ticketPrice || 80000, // Giá vé mặc định
+            status: status || 'draft', // Auto schedule thường lưu dưới dạng draft
+            isDeleted: false
+        });
+        
+        const savedShowtime = await showtime.save();
+        createdShowtimes.push(savedShowtime);
+
+        // Cache ghế để tối ưu tốc độ khi có nhiều suất trong cùng 1 phòng
+        if (!seatsCache[roomId]) {
+            seatsCache[roomId] = await Seat.find({ roomId });
+        }
+        
+        const seats = seatsCache[roomId];
+        const scheduleSeats = seats.map(seat => ({
+            showtimeId: savedShowtime._id,
+            seatId: seat._id,
+            status: 1 // 1 = empty
+        }));
+        
+        allScheduleSeats.push(...scheduleSeats);
+    }
+    
+    // Batch insert schedule seats để không quá tải DB
+    if (allScheduleSeats.length > 0) {
+        // Chia nhỏ chunk 1000 records nếu mảng quá lớn
+        const chunkSize = 1000;
+        for (let i = 0; i < allScheduleSeats.length; i += chunkSize) {
+            const chunk = allScheduleSeats.slice(i, i + chunkSize);
+            await ScheduleSeat.insertMany(chunk);
+        }
+    }
+    
+    return createdShowtimes;
+};
+
+
+export const getShowtimesAdmin = async ({ movieId, cinemaId, showDate, startDate, endDate, page = 1, limit = 20 }) => {
     const filter = { isDeleted: false };
     if (movieId) filter.movieId = movieId;
     if (cinemaId) filter.cinemaId = cinemaId;
+    
+    // Support specific date or date range
     if (showDate) {
-        const target = new Date(showDate);
-        const nextDay = new Date(showDate);
-        nextDay.setDate(nextDay.getDate() + 1);
-        filter.showDate = { $gte: target, $lt: nextDay };
+        const date = new Date(showDate);
+        filter.showDate = {
+            $gte: new Date(date.setHours(0, 0, 0, 0)),
+            $lt: new Date(date.setHours(23, 59, 59, 999))
+        };
+    } else if (startDate && endDate) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        filter.showDate = {
+            $gte: new Date(start.setHours(0, 0, 0, 0)),
+            $lt: new Date(end.setHours(23, 59, 59, 999))
+        };
     }
 
     const skip = (page - 1) * limit;
-    const total = await Showtime.countDocuments(filter);
-    const showtimes = await Showtime.find(filter)
-        .populate('movieId', 'movieName poster')
-        .populate('cinemaId', 'cinemaName')
-        .populate('roomId', 'roomName')
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .lean();
+
+    const [showtimes, total] = await Promise.all([
+        Showtime.find(filter)
+            .populate('movieId', 'movieName duration')
+            .populate('cinemaId', 'cinemaName')
+            .populate('roomId', 'roomName')
+            .sort({ showDate: -1, startTime: -1 }) // Sort by newest date, then newest time
+            .skip(skip)
+            .limit(limit)
+            .lean(),
+        Showtime.countDocuments(filter)
+    ]);
 
     return {
         page: Number(page),

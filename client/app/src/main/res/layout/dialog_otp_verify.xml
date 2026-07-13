@@ -13,12 +13,12 @@
         android:layout_gravity="center"
         android:src="@android:drawable/ic_dialog_email"
         android:layout_marginBottom="16dp"
-        app:tint="#6200EE" />
+        app:tint="@color/auto_color_6200EE" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Xác thực OTP"
+        android:text="@string/auto_str_x_c_th_c_otp_1"
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="22sp"
@@ -29,9 +29,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Nhập mã 6 số đã gửi tới email"
+        android:text="@string/auto_str_nh_p_m_6_s_g_i_t_i_email"
         android:textAlignment="center"
-        android:textColor="#757575"
+        android:textColor="@color/auto_color_757575"
         android:textSize="14sp" />
 
     <com.google.android.material.textfield.TextInputLayout
@@ -67,7 +67,7 @@
         android:layout_height="56dp"
         android:layout_marginTop="32dp"
         android:backgroundTint="#6200EE"
-        android:text="Xác nhận"
+        android:text="@string/auto_str_x_c_nh_n_1"
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="16sp"
@@ -80,9 +80,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:padding="8dp"
-        android:text="Hủy"
+        android:text="@string/auto_str_h_y_1"
         android:textAlignment="center"
-        android:textColor="#757575"
+        android:textColor="@color/auto_color_757575"
         android:textSize="14sp"
         android:textStyle="bold" />
 

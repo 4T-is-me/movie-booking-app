@@ -6,6 +6,15 @@ plugins {
     alias(libs.plugins.google.services)
 }
 
+import java.util.Properties
+
+val properties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    properties.load(localPropertiesFile.inputStream())
+}
+val googleClientId = properties.getProperty("GOOGLE_CLIENT_ID") ?: ""
+
 android {
     namespace = "com.example.movie_booking_app"
     compileSdk = 35
@@ -17,6 +26,8 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        
+        buildConfigField("String", "GOOGLE_CLIENT_ID", "\"$googleClientId\"")
     }
 
     buildTypes {
@@ -40,6 +51,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 
