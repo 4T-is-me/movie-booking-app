@@ -38,6 +38,27 @@ class NotificationActivity : AppCompatActivity() {
 
         setupToolbar()
         setupRecyclerView()
+
+        // If launched via notification click from background, extract the payload and persist it
+        val title = intent.getStringExtra("title")
+        val body = intent.getStringExtra("body") ?: ""
+        val type = intent.getStringExtra("type") ?: NotificationItem.TYPE_GENERAL
+        val referenceId = intent.getStringExtra("referenceId")
+
+        if (!title.isNullOrEmpty()) {
+            val loaded = NotificationLocalStorage.getAll(this)
+            val alreadyExists = loaded.any { it.title == title && it.body == body }
+            if (!alreadyExists) {
+                val item = NotificationItem(
+                    title = title,
+                    body = body,
+                    type = type,
+                    referenceId = referenceId
+                )
+                NotificationLocalStorage.save(this, item)
+            }
+        }
+
         loadNotifications()
     }
 

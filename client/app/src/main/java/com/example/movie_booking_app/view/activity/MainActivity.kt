@@ -109,8 +109,10 @@ class MainActivity : BaseActivity() {
         // 2. Deep-linking from background/killed push notifications
         val type = intent.getStringExtra("type")
         val referenceId = intent.getStringExtra("referenceId")
+        val title = intent.getStringExtra("title")
+        val body = intent.getStringExtra("body")
 
-        if (!type.isNullOrEmpty() || !referenceId.isNullOrEmpty()) {
+        if (!type.isNullOrEmpty() || !referenceId.isNullOrEmpty() || !title.isNullOrEmpty()) {
             // First load the home/target section so the backstack has a valid parent
             navigateToSection(target, force = true)
             
@@ -118,6 +120,8 @@ class MainActivity : BaseActivity() {
             val destIntent = Intent(this, NotificationActivity::class.java).apply {
                 putExtra("type", type)
                 putExtra("referenceId", referenceId)
+                putExtra("title", title)
+                putExtra("body", body)
             }
             startActivity(destIntent)
         } else {

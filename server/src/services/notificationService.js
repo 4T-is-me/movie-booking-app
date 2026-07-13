@@ -30,6 +30,10 @@ const sendToDevice = async (token, title, body, data = {}) => {
 
         const message = {
             token: token,
+            notification: {
+                title: title,
+                body: body
+            },
             data: {
                 title: String(title),
                 body: String(body),
@@ -68,6 +72,10 @@ const sendToTopic = async (topic, title, body, data = {}) => {
 
         const message = {
             topic: topic,
+            notification: {
+                title: title,
+                body: body
+            },
             data: {
                 title: String(title),
                 body: String(body),
