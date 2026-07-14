@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_staff_checkin"
+            android:icon="@android:drawable/ic_menu_camera"
+            android:title="Ticket Validator" />
+        <item
+            android:id="@+id/nav_staff_sales"
+            android:icon="@android:drawable/ic_menu_add"
+            android:title="Ticket Sales" />
+        <item
+            android:id="@+id/nav_staff_schedule"
+            android:icon="@android:drawable/ic_menu_today"
+            android:title="Work Schedule" />
+        <item
+            android:id="@+id/nav_staff_requests"
+            android:icon="@android:drawable/ic_menu_edit"
+            android:title="Leave Requests" />
+        <item
+            android:id="@+id/nav_staff_logout"
+            android:icon="@android:drawable/ic_lock_power_off"
+            android:title="Logout" />
+    </group>
+</menu>
