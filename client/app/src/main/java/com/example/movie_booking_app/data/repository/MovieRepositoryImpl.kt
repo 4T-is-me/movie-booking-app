@@ -70,4 +70,6 @@ class MovieRepositoryImpl : MovieRepository {
     override suspend fun postMovie(movie: Movie): Boolean = true
     override suspend fun updateMovie(id: String, request: com.example.movie_booking_app.data.model.request.UpdateMovieRequest, posterFile: java.io.File?): Boolean = true
     override suspend fun deleteMovie(id: String): Boolean = true
+    override suspend fun submitReview(movieId: String, rating: Int, comment: String): Boolean = true
+    override suspend fun getMovieReviews(movieId: String, page: Int, limit: Int): List<com.example.movie_booking_app.data.model.response.ReviewItem> = emptyList()
 }

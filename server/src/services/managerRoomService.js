@@ -124,9 +124,20 @@ const handleUpdateRoom = async (roomId, cinemaId, data) => {
         throw new ApiError(StatusCodes.NOT_FOUND, "Room not found or does not belong to your cinema");
     }
 
-    if (data.status) {
+    if (data.status && room.status !== data.status) {
+        const oldStatus = room.status;
         room.status = data.status;
         await room.save();
+        
+        // Trigger maintenance workflow if status changed to maintenance
+        if (data.status === 'maintenance') {
+            try {
+                const { MaintenanceService } = await import('./maintenanceService.js');
+                await MaintenanceService.handleRoomMaintenance(roomId);
+            } catch (err) {
+                console.error("Error running maintenance workflow:", err);
+            }
+        }
     }
 
     if (data.regularPrice !== undefined) {

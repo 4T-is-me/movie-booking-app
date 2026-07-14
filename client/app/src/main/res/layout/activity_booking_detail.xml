@@ -11,7 +11,7 @@
         android:id="@+id/layoutHeader"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="#151515"
+        android:background="@color/auto_color_151515"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -26,7 +26,7 @@
             android:focusable="true"
             android:padding="8dp"
             android:src="@drawable/ic_back"
-            app:tint="#F5C542"
+            app:tint="@color/auto_color_F5C542"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -35,7 +35,7 @@
             android:id="@+id/tvHeaderTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Booking Detail"
+            android:text="@string/auto_str_booking_detail"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -73,7 +73,7 @@
                     android:layout_width="84dp"
                     android:layout_height="120dp"
                     android:scaleType="centerCrop"
-                    android:background="#2C2C2C"
+                    android:background="@color/auto_color_2C2C2C"
                     app:shapeAppearanceOverlay="@style/RoundedImageView"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -98,7 +98,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="4dp"
-                    android:textColor="#88FFFFFF"
+                    android:textColor="@color/auto_color_88FFFFFF"
                     android:textSize="13sp"
                     app:layout_constraintStart_toEndOf="@id/ivPoster"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -111,9 +111,9 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
                     app:cardCornerRadius="4dp"
-                    app:cardBackgroundColor="#000000"
+                    app:cardBackgroundColor="@color/auto_color_000000"
                     app:strokeWidth="1dp"
-                    app:strokeColor="#F5C542"
+                    app:strokeColor="@color/auto_color_F5C542"
                     app:cardElevation="0dp"
                     app:layout_constraintStart_toEndOf="@id/ivPoster"
                     app:layout_constraintTop_toBottomOf="@id/tvDurationGenre">
@@ -124,7 +124,7 @@
                         android:layout_height="wrap_content"
                         android:paddingHorizontal="8dp"
                         android:paddingVertical="4dp"
-                        android:textColor="#F5C542"
+                        android:textColor="@color/auto_color_F5C542"
                         android:textSize="11sp"
                         android:textStyle="bold"
                         tools:text="GOLD MEMBER" />
@@ -139,7 +139,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="16dp"
-                app:cardBackgroundColor="#1E1E1E"
+                app:cardBackgroundColor="@color/auto_color_1E1E1E"
                 app:strokeWidth="0dp"
                 app:cardElevation="2dp">
 
@@ -152,8 +152,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="SHOWTIME INFO"
-                        android:textColor="#F5C542"
+                        android:text="@string/auto_str_showtime_info"
+                        android:textColor="@color/auto_color_F5C542"
                         android:textSize="12sp"
                         android:textStyle="bold"
                         android:layout_marginBottom="12dp" />
@@ -167,8 +167,8 @@
                         <TextView
                             android:layout_width="120dp"
                             android:layout_height="wrap_content"
-                            android:text="Cinema"
-                            android:textColor="#88FFFFFF"
+                            android:text="@string/auto_str_cinema"
+                            android:textColor="@color/auto_color_88FFFFFF"
                             android:textSize="14sp" />
                         <TextView
                             android:id="@+id/tvCinema"
@@ -189,8 +189,8 @@
                         <TextView
                             android:layout_width="120dp"
                             android:layout_height="wrap_content"
-                            android:text="Room"
-                            android:textColor="#88FFFFFF"
+                            android:text="@string/auto_str_room"
+                            android:textColor="@color/auto_color_88FFFFFF"
                             android:textSize="14sp" />
                         <TextView
                             android:id="@+id/tvRoom"
@@ -211,8 +211,8 @@
                         <TextView
                             android:layout_width="120dp"
                             android:layout_height="wrap_content"
-                            android:text="Date"
-                            android:textColor="#88FFFFFF"
+                            android:text="@string/auto_str_date"
+                            android:textColor="@color/auto_color_88FFFFFF"
                             android:textSize="14sp" />
                         <TextView
                             android:id="@+id/tvDate"
@@ -233,8 +233,8 @@
                         <TextView
                             android:layout_width="120dp"
                             android:layout_height="wrap_content"
-                            android:text="Time"
-                            android:textColor="#88FFFFFF"
+                            android:text="@string/auto_str_time"
+                            android:textColor="@color/auto_color_88FFFFFF"
                             android:textSize="14sp" />
                         <TextView
                             android:id="@+id/tvTime"
@@ -254,8 +254,8 @@
                         <TextView
                             android:layout_width="120dp"
                             android:layout_height="wrap_content"
-                            android:text="Seats"
-                            android:textColor="#88FFFFFF"
+                            android:text="@string/auto_str_seats"
+                            android:textColor="@color/auto_color_88FFFFFF"
                             android:textSize="14sp" />
                         <TextView
                             android:id="@+id/tvSeats"
@@ -277,7 +277,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="16dp"
-                app:cardBackgroundColor="#1E1E1E"
+                app:cardBackgroundColor="@color/auto_color_1E1E1E"
                 app:strokeWidth="0dp"
                 app:cardElevation="2dp">
 
@@ -290,8 +290,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="FOOD &amp; DRINKS"
-                        android:textColor="#F5C542"
+                        android:text="@string/auto_str_food_amp_drinks"
+                        android:textColor="@color/auto_color_F5C542"
                         android:textSize="12sp"
                         android:textStyle="bold"
                         android:layout_marginBottom="12dp" />
@@ -312,7 +312,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
                 app:cardCornerRadius="16dp"
-                app:cardBackgroundColor="#1E1E1E"
+                app:cardBackgroundColor="@color/auto_color_1E1E1E"
                 app:strokeWidth="0dp"
                 app:cardElevation="2dp">
 
@@ -325,8 +325,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="PAYMENT DETAILS"
-                        android:textColor="#F5C542"
+                        android:text="@string/auto_str_payment_details"
+                        android:textColor="@color/auto_color_F5C542"
                         android:textSize="12sp"
                         android:textStyle="bold"
                         android:layout_marginBottom="12dp" />
@@ -340,8 +340,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Tickets Subtotal"
-                            android:textColor="#88FFFFFF"
+                            android:text="@string/auto_str_tickets_subtotal"
+                            android:textColor="@color/auto_color_88FFFFFF"
                             android:textSize="14sp" />
                         <TextView
                             android:id="@+id/tvTicketPrice"
@@ -365,8 +365,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Combos Subtotal"
-                            android:textColor="#88FFFFFF"
+                            android:text="@string/auto_str_combos_subtotal"
+                            android:textColor="@color/auto_color_88FFFFFF"
                             android:textSize="14sp" />
                         <TextView
                             android:id="@+id/tvComboPrice"
@@ -391,14 +391,14 @@
                             android:id="@+id/tvPromotionLabel"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Discount (PROMO50)"
-                            android:textColor="#88FFFFFF"
+                            android:text="@string/auto_str_discount_promo50"
+                            android:textColor="@color/auto_color_88FFFFFF"
                             android:textSize="14sp" />
                         <TextView
                             android:id="@+id/tvPromotionDiscount"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColor="#FF4A4A"
+                            android:textColor="@color/auto_color_FF4A4A"
                             android:textSize="14sp"
                             android:gravity="end"
                             tools:text="-50,000 ₫" />
@@ -413,14 +413,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Reward Points Earned"
-                            android:textColor="#88FFFFFF"
+                            android:text="@string/auto_str_reward_points_earned"
+                            android:textColor="@color/auto_color_88FFFFFF"
                             android:textSize="14sp" />
                         <TextView
                             android:id="@+id/tvEarnedPoints"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColor="#34C759"
+                            android:textColor="@color/auto_color_34C759"
                             android:textSize="14sp"
                             android:gravity="end"
                             tools:text="+18 Points" />
@@ -435,8 +435,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Payment Method"
-                            android:textColor="#88FFFFFF"
+                            android:text="@string/auto_str_payment_method"
+                            android:textColor="@color/auto_color_88FFFFFF"
                             android:textSize="14sp" />
                         <TextView
                             android:id="@+id/tvPaymentMethod"
@@ -451,7 +451,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="#22FFFFFF"
+                        android:background="@color/auto_color_22FFFFFF"
                         android:layout_marginBottom="12dp" />
 
                     <!-- Total Amount -->
@@ -462,7 +462,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Total Paid"
+                            android:text="@string/auto_str_total_paid"
                             android:textColor="@color/white"
                             android:textSize="16sp"
                             android:textStyle="bold" />
@@ -470,7 +470,7 @@
                             android:id="@+id/tvTotalPaid"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColor="#F5C542"
+                            android:textColor="@color/auto_color_F5C542"
                             android:textSize="20sp"
                             android:textStyle="bold"
                             android:gravity="end"
@@ -537,8 +537,8 @@
             android:id="@+id/tvErrorMsg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Failed to load booking details."
-            android:textColor="#FF4A4A"
+            android:text="@string/auto_str_failed_to_load_booking_details"
+            android:textColor="@color/auto_color_FF4A4A"
             android:textSize="14sp" />
 
         <com.google.android.material.button.MaterialButton
@@ -546,9 +546,9 @@
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_marginTop="12dp"
-            android:text="Retry"
-            android:textColor="#000000"
-            app:backgroundTint="#F5C542"
+            android:text="@string/auto_str_retry"
+            android:textColor="@color/auto_color_000000"
+            app:backgroundTint="@color/auto_color_F5C542"
             app:cornerRadius="20dp" />
     </LinearLayout>
 

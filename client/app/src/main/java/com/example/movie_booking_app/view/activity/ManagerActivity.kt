@@ -97,16 +97,19 @@ class ManagerActivity : AppCompatActivity() {
 
 
                     val listShowtime = data.todayShowtimes.orEmpty()
-                    //Log.d("CheckShowtime", "Showtimes List: $listShowtime")
-                    //send data to the adapter
-                    if (listShowtime.isEmpty()) {
+
+                    val upcomingShowtimes = listShowtime.filter { showtime ->
+                        !showtime.status.equals("DONE", ignoreCase = true)
+                    }
+
+                    if (upcomingShowtimes.isEmpty()) {
                         binding.rvTodayShowtimes.visibility = android.view.View.GONE
                         binding.tvNoShowtimes.visibility = android.view.View.VISIBLE
                     } else {
-
-                        val previewShowtimes = listShowtime.take(5)
+                       // get 5 showtime
+                        val previewShowtimes = upcomingShowtimes.take(5)
                         showtimeAdapter.submitList(previewShowtimes)
-                       // Log.d("CheckShowtime", "Danh sách lịch chiếu: $previewShowtimes")
+
                         binding.rvTodayShowtimes.visibility = android.view.View.VISIBLE
                         binding.tvNoShowtimes.visibility = android.view.View.GONE
                     }
@@ -196,7 +199,7 @@ class ManagerActivity : AppCompatActivity() {
             Toast.makeText(this, "No showtimes available to view", Toast.LENGTH_SHORT).show()
         }
         binding.layoutSchedule.setOnClickListener {
-            Toast.makeText(this, "Feature coming soon", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, com.example.movie_booking_app.view.activity.manager.ManagerAutoSchedulingActivity::class.java))
         }
         binding.layoutRooms.setOnClickListener {
             startActivity(Intent(this, ManagerRoomListActivity::class.java))
@@ -223,6 +226,9 @@ class ManagerActivity : AppCompatActivity() {
                 }
                 R.id.nav_staff -> {
                     startActivity(Intent(this, ManagerStaffActivity::class.java))
+                }
+                R.id.nav_schedule -> {
+                    startActivity(Intent(this, com.example.movie_booking_app.view.activity.manager.ManagerAutoSchedulingActivity::class.java))
                 }
                 else -> Toast.makeText(this, "Feature coming soon", Toast.LENGTH_SHORT).show()
             }

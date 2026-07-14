@@ -32,7 +32,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Score History"
+            android:text="@string/auto_str_score_history"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -98,8 +98,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="No history found"
-            android:textColor="#88FFFFFF"
+            android:text="@string/auto_str_no_history_found"
+            android:textColor="@color/auto_color_88FFFFFF"
             android:textSize="16sp" />
     </LinearLayout>
 

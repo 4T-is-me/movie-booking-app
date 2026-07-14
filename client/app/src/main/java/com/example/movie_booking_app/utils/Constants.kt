@@ -16,9 +16,13 @@ object Constants {
     const val RANK_GOLD = 10000000L
     const val RANK_SILVER = 5000000L
 
-    const val MORNING = "08–12"
-    const val AFTERNOON = "12–17"
-    const val EVENING = "17–21"
-    const val NIGHT = "21–02"
-    const val FULLTIME = "08–22"
+    const val MORNING = "08:00 - 12:00"
+    const val AFTERNOON = "12:00 - 16:00"
+    const val EVENING = "16:00 - 20:00"
+    const val NIGHT = "20:00 - 00:00"
+    const val FULLTIME = "08h–22h"
+    val SHIFTS = listOf("Morning", "Afternoon", "Evening", "Night")
+    val STATUS_SHIFT = listOf("Assigned", "Completed", "Absent")
+
 }
+

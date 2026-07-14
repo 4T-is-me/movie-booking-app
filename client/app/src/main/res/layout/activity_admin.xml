@@ -46,7 +46,7 @@
                     android:id="@+id/tvHeaderTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Dashboard"
+                    android:text="@string/auto_str_dashboard"
                     android:textColor="@color/white"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -54,7 +54,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="LUMINA CINEMA · Admin"
+                    android:text="@string/auto_str_lumina_cinema_admin"
                     android:textColor="@color/admin_text_secondary"
                     android:textSize="11sp" />
             </LinearLayout>
@@ -72,7 +72,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
-                    android:text="Live"
+                    android:text="@string/auto_str_live"
                     android:textColor="@color/admin_live_indicator"
                     android:textSize="11sp"
                     android:textStyle="bold" />
