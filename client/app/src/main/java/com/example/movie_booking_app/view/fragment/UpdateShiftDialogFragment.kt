@@ -75,7 +75,7 @@ class UpdateShiftDialogFragment(
     }
     override fun onStart() {
         super.onStart()
-        // Cấu hình window dialog: Làm trong suốt viền ngoài để hiện bo góc drawable
+        //Make the outer border transparent to display the rounded-corner drawable.
         dialog?.window?.apply {
             val displayMetrics = resources.displayMetrics
             val width = (displayMetrics.widthPixels * 0.9).toInt() // 90%

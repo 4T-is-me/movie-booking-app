@@ -106,7 +106,7 @@ class ManagerActivity : AppCompatActivity() {
                         binding.rvTodayShowtimes.visibility = android.view.View.GONE
                         binding.tvNoShowtimes.visibility = android.view.View.VISIBLE
                     } else {
-                        // Chỉ lấy tối đa 5 suất chiếu CHƯA DONE để hiển thị preview
+                       // get 5 showtime
                         val previewShowtimes = upcomingShowtimes.take(5)
                         showtimeAdapter.submitList(previewShowtimes)
 

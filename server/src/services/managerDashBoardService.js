@@ -654,7 +654,7 @@ const getChartDataByRange = async (cinemaId, start, end, types) => {
   return [];
 };
 /**
- * hàm lấy 5 bộ phim có số lượng vé bán nhiều nhất(day, week, month, year)
+ * lấy bộ phim có số lượng vé bán nhiều nhất(day, week, month, year)
  */
 const getTopMoviesByRange = async (cinemaId, start, end) => {
     const topMovies = await Showtime.aggregate([
