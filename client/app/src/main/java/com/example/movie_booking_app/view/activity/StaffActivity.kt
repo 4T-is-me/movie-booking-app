@@ -11,6 +11,9 @@ import com.example.movie_booking_app.view.fragment.staff.StaffRequestsFragment
 import com.example.movie_booking_app.view.fragment.staff.StaffSalesFragment
 import com.example.movie_booking_app.view.fragment.staff.StaffScheduleFragment
 import com.example.movie_booking_app.view.fragment.staff.StaffValidatorFragment
+import com.example.movie_booking_app.view.fragment.staff.StaffNotificationsFragment
+import com.example.movie_booking_app.view.fragment.staff.StaffProfileFragment
+import com.example.movie_booking_app.view.fragment.staff.StaffSettingsFragment
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -51,6 +54,18 @@ class StaffActivity : BaseActivity() {
                 R.id.nav_staff_requests -> {
                     tvHeaderTitle.text = "Leave Requests"
                     loadFragment(StaffRequestsFragment())
+                }
+                R.id.nav_staff_notifications -> {
+                    tvHeaderTitle.text = "Notifications"
+                    loadFragment(StaffNotificationsFragment())
+                }
+                R.id.nav_staff_profile -> {
+                    tvHeaderTitle.text = "My Profile"
+                    loadFragment(StaffProfileFragment())
+                }
+                R.id.nav_staff_settings -> {
+                    tvHeaderTitle.text = "Settings"
+                    loadFragment(StaffSettingsFragment())
                 }
                 R.id.nav_staff_logout -> {
                     com.example.movie_booking_app.utils.AuthUtils.showLogoutConfirmationDialog(this)
