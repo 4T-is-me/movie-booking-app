@@ -111,6 +111,8 @@ class StaffFilterBottomSheetFragment(private val onApplyFilter: (startDate: Stri
             onApplyFilter(selectedStartDate, selectedEndDate)
             dismiss()
         }
+
+
     }
 
     private fun showDatePicker(

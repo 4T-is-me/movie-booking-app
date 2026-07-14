@@ -656,7 +656,7 @@ const getChartDataByRange = async (cinemaId, start, end, types) => {
 /**
  * hàm lấy 5 bộ phim có số lượng vé bán nhiều nhất(day, week, month, year)
  */
-const getTopMoviesByRange = async (cinemaId, start, end, limit = 5) => {
+const getTopMoviesByRange = async (cinemaId, start, end) => {
     const topMovies = await Showtime.aggregate([
       {
         $match: {
@@ -703,8 +703,7 @@ const getTopMoviesByRange = async (cinemaId, start, end, limit = 5) => {
           totalTickets: 1,
         },
       },
-      { $sort: { totalTickets: -1 } },
-      { $limit: limit }
+      { $sort: { totalTickets: -1 } }
     ])
     return topMovies;
 }

@@ -97,16 +97,19 @@ class ManagerActivity : AppCompatActivity() {
 
 
                     val listShowtime = data.todayShowtimes.orEmpty()
-                    //Log.d("CheckShowtime", "Showtimes List: $listShowtime")
-                    //send data to the adapter
-                    if (listShowtime.isEmpty()) {
+
+                    val upcomingShowtimes = listShowtime.filter { showtime ->
+                        !showtime.status.equals("DONE", ignoreCase = true)
+                    }
+
+                    if (upcomingShowtimes.isEmpty()) {
                         binding.rvTodayShowtimes.visibility = android.view.View.GONE
                         binding.tvNoShowtimes.visibility = android.view.View.VISIBLE
                     } else {
-
-                        val previewShowtimes = listShowtime.take(5)
+                        // Chỉ lấy tối đa 5 suất chiếu CHƯA DONE để hiển thị preview
+                        val previewShowtimes = upcomingShowtimes.take(5)
                         showtimeAdapter.submitList(previewShowtimes)
-                       // Log.d("CheckShowtime", "Danh sách lịch chiếu: $previewShowtimes")
+
                         binding.rvTodayShowtimes.visibility = android.view.View.VISIBLE
                         binding.tvNoShowtimes.visibility = android.view.View.GONE
                     }

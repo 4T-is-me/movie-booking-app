@@ -259,7 +259,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false"
-                    android:minHeight="350dp"
+                    android:minHeight="370dp"
                     tools:itemCount="7"
                     tools:listitem="@layout/item_day_schedule" />
 

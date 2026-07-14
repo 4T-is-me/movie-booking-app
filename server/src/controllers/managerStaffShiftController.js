@@ -41,9 +41,19 @@ const updateShifts = async (req, res, next) => {
   try {
       const accountId = req.user.accountId; 
       const { id } = req.params;
-      const updateData = req.body;
+      const { staffId, shift, status } = req.body;
 
-      const result = await ManagerStaffShiftService.updateShifts(accountId, id, updateData);
+      const result = await ManagerStaffShiftService.updateShifts(accountId, id, {
+          staffId,
+          shift,
+          status
+        });
+
+      return res.status(StatusCodes.OK).json({
+          success: true,
+          message: "Update shift successfully.",
+          data: result
+      });
   } catch (error) {
     next(error);
   }
