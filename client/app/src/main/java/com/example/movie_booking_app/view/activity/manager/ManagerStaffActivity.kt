@@ -184,11 +184,11 @@ class ManagerStaffActivity : AppCompatActivity() {
                 viewModel.updateShiftResult.collectLatest { response ->
                     if (response != null) {
                         if (response.success) {
-                            // Trường hợp success
+                            // success
                             Toast.makeText(this@ManagerStaffActivity, response.message ?: "Update successful", Toast.LENGTH_SHORT).show()
-                            viewModel.loadStaffShifts() // Tải lại danh sách ca
+                            viewModel.loadStaffShifts() // reload list shift
                         } else {
-                            // Trường hợp failed (hiển thị đúng lỗi từ Backend ví dụ: Trùng ca, lịch nghỉ)
+                            //  failed (display error )
                             showErrorDialog(response.message ?: "Unknown backend error")
                         }
                         viewModel.clearUpdateState()
@@ -238,9 +238,9 @@ class ManagerStaffActivity : AppCompatActivity() {
 
     private fun showUpdateShiftDialog(shiftItem: ShiftItemResponse) {
         val staffListPair = originalShiftList
-            .filter { !it.staffId.isNullOrEmpty() && !it.staffName.isNullOrEmpty() } // Lọc loại bỏ null/rỗng
+            .filter { !it.staffId.isNullOrEmpty() && !it.staffName.isNullOrEmpty() }
             .map { Pair(it.staffId!!, it.staffName!!) }
-            .distinctBy { it.first } // Loại bỏ các nhân viên trùng ID
+            .distinctBy { it.first } //get distinct Id
 
         val dialog = UpdateShiftDialogFragment(shiftItem, staffListPair) { staffId, shift, status ->
             viewModel.updateShift(shiftItem.shiftId ?: "", staffId, shift, status)
