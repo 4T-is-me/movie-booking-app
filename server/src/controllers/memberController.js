@@ -12,6 +12,17 @@ const getScoreHistory = async (req, res, next) => {
     }
 }
 
+const verifyMember = async (req, res, next) => {
+    try {
+        const { identity } = req.params
+        const result = await memberService.getMemberByIdentity(identity)
+        res.status(StatusCodes.OK).json(result)
+    } catch (error) {
+        next(error)
+    }
+}
+
 export const memberController = {
-    getScoreHistory
+    getScoreHistory,
+    verifyMember
 }

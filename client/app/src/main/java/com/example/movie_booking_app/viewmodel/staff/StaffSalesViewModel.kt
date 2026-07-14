@@ -3,8 +3,10 @@ package com.example.movie_booking_app.viewmodel.staff
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.entity.*
+import com.example.movie_booking_app.data.model.response.MemberVerifyData
 import com.example.movie_booking_app.data.repository.BookingRepository
 import com.example.movie_booking_app.data.repository.MovieRepository
+import com.example.movie_booking_app.data.repository.MemberRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -13,7 +15,8 @@ import javax.inject.Inject
 @HiltViewModel
 class StaffSalesViewModel @Inject constructor(
     private val movieRepository: MovieRepository,
-    private val bookingRepository: BookingRepository
+    private val bookingRepository: BookingRepository,
+    private val memberRepository: MemberRepository
 ) : ViewModel() {
 
     private val _movies = MutableStateFlow<List<Movie>>(emptyList())
@@ -37,8 +40,25 @@ class StaffSalesViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
+    // Step state: 1 = Movie & Seat Map, 2 = Member Verification, 3 = Promo, 4 = Complete
+    private val _currentStep = MutableStateFlow(1)
+    val currentStep: StateFlow<Int> = _currentStep.asStateFlow()
+
+    // Member Verification state
+    private val _verifiedMember = MutableStateFlow<MemberVerifyData?>(null)
+    val verifiedMember: StateFlow<MemberVerifyData?> = _verifiedMember.asStateFlow()
+
+    private val _memberVerificationError = MutableStateFlow<String?>(null)
+    val memberVerificationError: StateFlow<String?> = _memberVerificationError.asStateFlow()
+
+    private val _isVerifyingMember = MutableStateFlow(false)
+    val isVerifyingMember: StateFlow<Boolean> = _isVerifyingMember.asStateFlow()
+
     fun selectMovie(movie: Movie?) {
         _selectedMovie.value = movie
+        _currentStep.value = 1
+        _verifiedMember.value = null
+        _memberVerificationError.value = null
         if (movie != null) {
             loadShowtimes(movie.id ?: "")
         } else {
@@ -105,5 +125,52 @@ class StaffSalesViewModel @Inject constructor(
         val selected = _seats.value.filter { it.displayStatus == SeatStatus.SELECTED }
         _selectedSeats.value = selected
         _totalPrice.value = selected.fold(0) { acc, seat -> acc + seat.price }
+    }
+
+    fun verifyMember(identity: String) {
+        if (identity.trim().isEmpty()) {
+            _memberVerificationError.value = "Vui lòng nhập thông tin xác thực"
+            _verifiedMember.value = null
+            return
+        }
+
+        viewModelScope.launch {
+            _isVerifyingMember.value = true
+            _memberVerificationError.value = null
+            _verifiedMember.value = null
+            try {
+                memberRepository.verifyMember(identity).collect { response ->
+                    if (response.success && response.data != null) {
+                        _verifiedMember.value = response.data
+                        _memberVerificationError.value = null
+                    } else {
+                        _verifiedMember.value = null
+                        _memberVerificationError.value = "Tài khoản thành viên không tồn tại"
+                    }
+                }
+            } catch (e: Exception) {
+                _verifiedMember.value = null
+                _memberVerificationError.value = e.message ?: "Lỗi hệ thống khi xác thực"
+            } finally {
+                _isVerifyingMember.value = false
+            }
+        }
+    }
+
+    fun clearMemberVerification() {
+        _verifiedMember.value = null
+        _memberVerificationError.value = null
+    }
+
+    fun nextStep() {
+        if (_currentStep.value < 4) {
+            _currentStep.value += 1
+        }
+    }
+
+    fun prevStep() {
+        if (_currentStep.value > 1) {
+            _currentStep.value -= 1
+        }
     }
 }

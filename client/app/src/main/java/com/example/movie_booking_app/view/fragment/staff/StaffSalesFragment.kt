@@ -74,7 +74,39 @@ class StaffSalesFragment : Fragment() {
 
     private fun setupListeners() {
         binding.btnBack.setOnClickListener {
-            viewModel.selectMovie(null)
+            if (viewModel.currentStep.value > 1) {
+                viewModel.prevStep()
+            } else {
+                viewModel.selectMovie(null)
+            }
+        }
+
+        binding.btnNext.setOnClickListener {
+            val step = viewModel.currentStep.value
+            if (step == 1) {
+                // Populate order details for step 2
+                val movie = viewModel.selectedMovie.value
+                val selectedShowtime = viewModel.showtimes.value.find { it.isSelected }
+                val showtimeStr = selectedShowtime?.showTime ?: "N/A"
+                val dateStr = selectedShowtime?.showDate ?: "N/A"
+                val seatLabels = viewModel.selectedSeats.value.joinToString(", ") { it.label }
+                val price = viewModel.totalPrice.value
+                val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
+                val formattedPrice = formatter.format(price)
+
+                binding.tvOrderMovieTitle.text = movie?.movieName ?: "N/A"
+                binding.tvOrderDetails.text = "Suất chiếu: $showtimeStr • Ngày: $dateStr • Ghế đã chọn: $seatLabels"
+                binding.tvOrderPrice.text = "Tạm tính: $formattedPrice"
+
+                viewModel.nextStep()
+            } else if (step == 2) {
+                viewModel.nextStep()
+            }
+        }
+
+        binding.btnVerifyMember.setOnClickListener {
+            val identity = binding.edtMemberIdentity.text.toString()
+            viewModel.verifyMember(identity)
         }
     }
 
@@ -97,12 +129,12 @@ class StaffSalesFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.selectedMovie.collectLatest { selectedMovie ->
                 if (selectedMovie != null) {
-                    // Show seat selection view, hide movie grid
                     binding.rvMoviesGrid.visibility = View.GONE
-                    binding.layoutSeatSelection.visibility = View.VISIBLE
+                    val step = viewModel.currentStep.value
+                    binding.layoutSeatSelection.visibility = if (step == 1) View.VISIBLE else View.GONE
+                    binding.layoutMemberVerification.visibility = if (step == 2) View.VISIBLE else View.GONE
                     binding.btnBack.visibility = View.VISIBLE
 
-                    // Bind movie details
                     binding.tvSelectedMovieTitle.text = selectedMovie.movieName
                     val genreStr = selectedMovie.movieGenre?.joinToString(", ") ?: ""
                     val durationStr = if (selectedMovie.duration != null) "${selectedMovie.duration}m" else "N/A"
@@ -115,9 +147,9 @@ class StaffSalesFragment : Fragment() {
                         .transition(DrawableTransitionOptions.withCrossFade())
                         .into(binding.imgSelectedMoviePoster)
                 } else {
-                    // Show movie grid, hide seat selection
                     binding.rvMoviesGrid.visibility = View.VISIBLE
                     binding.layoutSeatSelection.visibility = View.GONE
+                    binding.layoutMemberVerification.visibility = View.GONE
                     binding.btnBack.visibility = View.GONE
                 }
             }
@@ -160,12 +192,16 @@ class StaffSalesFragment : Fragment() {
                 if (selected.isNotEmpty()) {
                     val seatLabels = selected.joinToString(", ") { it.label }
                     binding.tvSelectedSeats.text = "Ghế đã chọn: $seatLabels"
-                    binding.btnNext.isEnabled = true
-                    binding.btnNext.alpha = 1.0f
+                    if (viewModel.currentStep.value == 1) {
+                        binding.btnNext.isEnabled = true
+                        binding.btnNext.alpha = 1.0f
+                    }
                 } else {
                     binding.tvSelectedSeats.text = "Ghế đã chọn: Chưa chọn"
-                    binding.btnNext.isEnabled = false
-                    binding.btnNext.alpha = 0.5f
+                    if (viewModel.currentStep.value == 1) {
+                        binding.btnNext.isEnabled = false
+                        binding.btnNext.alpha = 0.5f
+                    }
                 }
             }
         }
@@ -177,6 +213,86 @@ class StaffSalesFragment : Fragment() {
                 binding.tvTotalPrice.text = "Tạm tính: $formattedPrice"
             }
         }
+
+        // Observe Current Step
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.currentStep.collectLatest { step ->
+                binding.tvStepText.text = "$step of 4"
+
+                val isMovieSelected = viewModel.selectedMovie.value != null
+                binding.btnBack.visibility = if (isMovieSelected || step > 1) View.VISIBLE else View.GONE
+
+                updateStepIndicators(step)
+
+                when (step) {
+                    1 -> {
+                        val isMovieSelected = viewModel.selectedMovie.value != null
+                        binding.layoutSeatSelection.visibility = if (isMovieSelected) View.VISIBLE else View.GONE
+                        binding.layoutMemberVerification.visibility = View.GONE
+                        val seatsSelected = viewModel.selectedSeats.value.isNotEmpty()
+                        binding.btnNext.isEnabled = seatsSelected
+                        binding.btnNext.alpha = if (seatsSelected) 1.0f else 0.5f
+                    }
+                    2 -> {
+                        binding.layoutSeatSelection.visibility = View.GONE
+                        binding.layoutMemberVerification.visibility = View.VISIBLE
+                        binding.btnNext.isEnabled = true
+                        binding.btnNext.alpha = 1.0f
+                    }
+                }
+            }
+        }
+
+        // Observe Member Verification Results
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.verifiedMember.collectLatest { member ->
+                if (member != null) {
+                    binding.cardMemberResult.visibility = View.VISIBLE
+                    binding.tvMemberName.text = "Họ tên: ${member.memberName}"
+                    binding.tvMemberPhone.text = "Số điện thoại: ${member.phoneNumber}"
+                    binding.tvMemberScore.text = "Điểm tích luỹ: ${member.currentScore} điểm"
+                    binding.cardWalkInAlert.visibility = View.GONE
+                } else {
+                    binding.cardMemberResult.visibility = View.GONE
+                    binding.cardWalkInAlert.visibility = View.VISIBLE
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.memberVerificationError.collectLatest { error ->
+                if (error != null) {
+                    binding.tvMemberError.text = error
+                    binding.tvMemberError.visibility = View.VISIBLE
+                } else {
+                    binding.tvMemberError.visibility = View.GONE
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.isVerifyingMember.collectLatest { isVerifying ->
+                binding.btnVerifyMember.isEnabled = !isVerifying
+                binding.btnVerifyMember.text = if (isVerifying) "ĐANG XÁC THỰC..." else "KIỂM TRA (VERIFY)"
+            }
+        }
+    }
+
+    private fun updateStepIndicators(step: Int) {
+        val activeDrawable = R.drawable.bg_selected_item
+        val inactiveColor = android.graphics.Color.parseColor("#232A45")
+
+        binding.viewStep1.setBackgroundResource(if (step >= 1) activeDrawable else 0)
+        if (step < 1) binding.viewStep1.setBackgroundColor(inactiveColor)
+
+        binding.viewStep2.setBackgroundResource(if (step >= 2) activeDrawable else 0)
+        if (step < 2) binding.viewStep2.setBackgroundColor(inactiveColor)
+
+        binding.viewStep3.setBackgroundResource(if (step >= 3) activeDrawable else 0)
+        if (step < 3) binding.viewStep3.setBackgroundColor(inactiveColor)
+
+        binding.viewStep4.setBackgroundResource(if (step >= 4) activeDrawable else 0)
+        if (step < 4) binding.viewStep4.setBackgroundColor(inactiveColor)
     }
 
     override fun onDestroyView() {

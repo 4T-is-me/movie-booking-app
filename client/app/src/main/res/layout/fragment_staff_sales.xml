@@ -338,6 +338,274 @@
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
+        <!-- 3. Member Verification View (Step 2 - Hidden initially) -->
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/layoutMemberVerification"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Selected Movie Detail Summary Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardBackgroundColor="#0D1120"
+                    app:strokeColor="@color/admin_gold_transparent"
+                    app:strokeWidth="1dp"
+                    app:cardCornerRadius="12dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="THÔNG TIN ĐƠN HÀNG"
+                            android:textColor="@color/admin_text_secondary"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvOrderMovieTitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:textColor="@color/white"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            tools:text="Puss in Boots: The Last Wish" />
+
+                        <TextView
+                            android:id="@+id/tvOrderDetails"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:textColor="@color/admin_text_secondary"
+                            android:textSize="12sp"
+                            tools:text="Suất chiếu: 10:00 • Ghế đã chọn: E4" />
+
+                        <TextView
+                            android:id="@+id/tvOrderPrice"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:textColor="@color/gold_selected"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            tools:text="Tạm tính: 60.000 đ" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Member Verification Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="#0D1120"
+                    app:strokeColor="@color/admin_gold_transparent"
+                    app:strokeWidth="1dp"
+                    app:cardCornerRadius="12dp"
+                    android:layout_marginBottom="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="XÁC THỰC THÀNH VIÊN"
+                            android:textColor="@color/gold_selected"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:hint="Nhập Mã TV / Số điện thoại / CCCD"
+                            app:hintTextColor="@color/admin_text_secondary"
+                            app:boxStrokeColor="@color/gold_selected"
+                            app:placeholderText="Ví dụ: 0987654321"
+                            app:placeholderTextColor="@color/admin_text_secondary">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/edtMemberIdentity"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:inputType="text" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnVerifyMember"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:layout_marginTop="16dp"
+                            android:text="KIỂM TRA (VERIFY)"
+                            android:textColor="#0D1120"
+                            android:textStyle="bold"
+                            app:backgroundTint="@color/gold_selected"
+                            app:cornerRadius="8dp" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Member Detail Result Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardMemberResult"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="#0D1120"
+                    app:strokeColor="#2E7D32"
+                    app:strokeWidth="1.5dp"
+                    app:cardCornerRadius="12dp"
+                    android:layout_marginBottom="16dp"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@android:drawable/checkbox_on_background"
+                                app:tint="#2E7D32" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:text="ĐÃ XÁC THỰC THÀNH VIÊN"
+                                android:textColor="#2E7D32"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#2E7D32"
+                            android:alpha="0.3"
+                            android:layout_marginVertical="12dp" />
+
+                        <TextView
+                            android:id="@+id/tvMemberName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            tools:text="Họ tên: Nguyễn Văn A" />
+
+                        <TextView
+                            android:id="@+id/tvMemberPhone"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:textColor="@color/admin_text_secondary"
+                            android:textSize="13sp"
+                            tools:text="Số điện thoại: 0987654321" />
+
+                        <TextView
+                            android:id="@+id/tvMemberScore"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:textColor="@color/gold_selected"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            tools:text="Điểm tích luỹ: 150 điểm" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Verification Error text -->
+                <TextView
+                    android:id="@+id/tvMemberError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#C62828"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    tools:text="Tài khoản thành viên không tồn tại" />
+
+                <!-- Walk-in Customer Alert Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardWalkInAlert"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="#1F1A0F"
+                    app:strokeColor="#FF8F00"
+                    app:strokeWidth="1dp"
+                    app:cardCornerRadius="12dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="16dp"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:src="@android:drawable/ic_dialog_info"
+                            app:tint="#FF8F00" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Bán vé cho khách vãng lai"
+                                android:textColor="#FF8F00"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="Đơn đặt vé này sẽ được lưu ở chế độ khách vãng lai, không được tích luỹ điểm thưởng."
+                                android:textColor="@color/admin_text_secondary"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
     </FrameLayout>
 
     <!-- Bottom Bar (Progress Indicators & Next Button) -->
@@ -363,6 +631,7 @@
 
             <!-- Step 1 line (Active) -->
             <View
+                android:id="@+id/viewStep1"
                 android:layout_width="0dp"
                 android:layout_height="4dp"
                 android:layout_weight="1"
@@ -371,6 +640,7 @@
 
             <!-- Step 2 line -->
             <View
+                android:id="@+id/viewStep2"
                 android:layout_width="0dp"
                 android:layout_height="4dp"
                 android:layout_weight="1"
@@ -379,6 +649,7 @@
 
             <!-- Step 3 line -->
             <View
+                android:id="@+id/viewStep3"
                 android:layout_width="0dp"
                 android:layout_height="4dp"
                 android:layout_weight="1"
@@ -387,6 +658,7 @@
 
             <!-- Step 4 line -->
             <View
+                android:id="@+id/viewStep4"
                 android:layout_width="0dp"
                 android:layout_height="4dp"
                 android:layout_weight="1"
