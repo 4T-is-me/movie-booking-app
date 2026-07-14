@@ -75,11 +75,11 @@ class StaffActivity : BaseActivity() {
             true
         }
 
-        // Set default selection to Ticket Validator
+        // Set default selection to Work Schedule
         if (savedInstanceState == null) {
-            navigationView.setCheckedItem(R.id.nav_staff_checkin)
-            tvHeaderTitle.text = "Ticket Validator"
-            loadFragment(StaffValidatorFragment())
+            navigationView.setCheckedItem(R.id.nav_staff_schedule)
+            tvHeaderTitle.text = "Work Schedule"
+            loadFragment(StaffScheduleFragment())
         }
     }
 
