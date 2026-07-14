@@ -126,6 +126,10 @@
             android:exported="false"
             android:theme="@style/Theme.Moviebookingapp" />
         <activity
+            android:name=".view.activity.StaffActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp" />
+        <activity
             android:name=".view.activity.manager.ManagerReportActivity"
             android:exported="false"
             android:theme="@style/Theme.Moviebookingapp" />
