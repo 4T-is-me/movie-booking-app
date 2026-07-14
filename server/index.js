@@ -83,7 +83,9 @@ const startServer = async () => {
     await connectDB();
     CleanUpJobs.startSeatCleanupJob();
     CleanUpJobs.updateMovieStatus();
+    CleanUpJobs.updateStaffShiftStatus();
     ShowtimeReminderJob.startShowtimeReminderJob();
+
     app.listen(PORT, () => {
         console.log(`🚀 ES Modules Server is running at: http://localhost:${PORT}`);
     });

@@ -33,7 +33,7 @@
 
     <!--  Replace/Edit button -->
     <ImageButton
-        android:id="@+id/btnReplaceStaff"
+        android:id="@+id/btnEditShift"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:background="@drawable/bg_circle_glass"
@@ -55,7 +55,7 @@
         android:textColor="@color/text_primary"
         android:textSize="15sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@id/btnReplaceStaff"
+        app:layout_constraintEnd_toStartOf="@id/btnEditShift"
         app:layout_constraintStart_toEndOf="@id/avatarFrame"
         app:layout_constraintTop_toTopOf="@id/avatarFrame"
         tools:text="Nguyễn Văn Thanh" />
@@ -68,7 +68,7 @@
         android:layout_marginTop="2dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        app:layout_constraintEnd_toStartOf="@id/btnReplaceStaff"
+        app:layout_constraintEnd_toStartOf="@id/btnEditShift"
         app:layout_constraintStart_toStartOf="@id/tvStaffName"
         app:layout_constraintTop_toBottomOf="@id/tvStaffName">
 

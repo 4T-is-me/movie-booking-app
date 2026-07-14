@@ -18,7 +18,8 @@ import com.example.movie_booking_app.utils.NameFormatter
 
 class ManagerStaffShiftAdapter(
     private var list: List<ShiftItemResponse> = emptyList(),
-    private val onItemClick: ((ShiftItemResponse) -> Unit)? = null
+    private val onItemClick: ((ShiftItemResponse) -> Unit)? = null ,
+    private val onEditClick: ((ShiftItemResponse) -> Unit)? = null
 ): RecyclerView.Adapter<ManagerStaffShiftAdapter.ShiftViewHolder>() {
     inner class ShiftViewHolder(val binding: ItemStaffCardBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -84,8 +85,8 @@ class ManagerStaffShiftAdapter(
         binding.root.setOnClickListener {
             onItemClick?.invoke(shiftItem)
         }
-        binding.btnReplaceStaff.setOnClickListener {
-            Toast.makeText(binding.root.context, "Feature coming soon", Toast.LENGTH_SHORT).show()
+        binding.btnEditShift.setOnClickListener {
+            onEditClick?.invoke(shiftItem)
         }
     }
 

@@ -2,10 +2,16 @@ package com.example.movie_booking_app.viewmodel.manager
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bumptech.glide.load.engine.Resource
+import com.example.movie_booking_app.data.model.request.UpdateShiftRequest
+
+import com.example.movie_booking_app.data.model.response.GenerateShiftApiResponse
 import com.example.movie_booking_app.data.model.response.ManagerDashboardResponse
 import com.example.movie_booking_app.data.model.response.ManagerReportsResponse
 import com.example.movie_booking_app.data.model.response.ShiftDetailResponse
+import com.example.movie_booking_app.data.model.response.ShiftItemResponse
 import com.example.movie_booking_app.data.model.response.ShiftResponse
+import com.example.movie_booking_app.data.model.response.UpdateShiftResponse
 import com.example.movie_booking_app.data.repository.manager.ManagerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +33,13 @@ class ManagerViewModel @Inject constructor(private val repository: ManagerReposi
 
     private val _shiftDetailData = MutableStateFlow<ShiftDetailResponse?>(null)
     val shiftDetailData: StateFlow<ShiftDetailResponse?> = _shiftDetailData.asStateFlow()
+
+    private val _generateShiftData = MutableStateFlow<GenerateShiftApiResponse?>(null)
+    val generateShiftData : StateFlow<GenerateShiftApiResponse?> = _generateShiftData.asStateFlow()
+
+    private val _updateShiftResult = MutableStateFlow<UpdateShiftResponse?>(null)
+    val updateShiftResult: StateFlow<UpdateShiftResponse?> = _updateShiftResult.asStateFlow()
+
     init {
         // default = week
         loadReport("week")
@@ -59,6 +72,30 @@ class ManagerViewModel @Inject constructor(private val repository: ManagerReposi
         viewModelScope.launch {
             repository.getShiftDetail(id).collect { response ->
                 _shiftDetailData.value = response
+            }
+        }
+    }
+
+    fun loadGenerateShiftData(startDate: String?, endDate: String?) {
+        viewModelScope.launch {
+            repository.generateShift(startDate, endDate).collect { response ->
+                _generateShiftData.value = response
+            }
+        }
+    }
+    fun clearGenerateShiftState() {
+        _generateShiftData.value = null
+    }
+
+    fun clearUpdateState() {
+        _updateShiftResult.value = null
+    }
+
+    fun updateShift(shiftId: String, staffId: String, shift: String, status: String) {
+        viewModelScope.launch {
+            val request = UpdateShiftRequest(staffId, shift, status)
+            repository.updateShift(shiftId, request).collect { response ->
+                _updateShiftResult.value = response
             }
         }
     }

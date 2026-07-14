@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_tab_container"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <!-- Success Icon -->
+    <ImageView
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:src="@android:drawable/checkbox_on_background"
+        app:tint="@color/yellow" />
+
+    <TextView
+        android:id="@+id/tvSuccessTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Shifts Generated!"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <!-- Number of generated shifts badge -->
+    <TextView
+        android:id="@+id/tvGeneratedCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_tab_active_gold"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="4dp"
+        android:text="0 Shifts Created"
+        android:textColor="@color/bg_primary"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <!-- Detail Message -->
+    <TextView
+        android:id="@+id/tvSuccessMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:gravity="center"
+        android:text="The system has successfully allocated shifts."
+        android:textColor="@color/text_secondary"
+        android:textSize="13sp" />
+
+    <Button
+        android:id="@+id/btnDone"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_tab_active_gold"
+        android:text="Done"
+        android:textColor="@color/bg_primary"
+        android:textStyle="bold" />
+
+</LinearLayout>

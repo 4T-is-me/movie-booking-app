@@ -6,6 +6,7 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -19,8 +20,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.ShiftItemResponse
 import com.example.movie_booking_app.databinding.ActivityManagerStaffBinding
+import com.example.movie_booking_app.databinding.DialogErrorCustomBinding
 import com.example.movie_booking_app.view.adapter.manager.ManagerStaffShiftAdapter
+import com.example.movie_booking_app.view.fragment.GenerateShiftDialogFragment
+import com.example.movie_booking_app.view.fragment.GenerateShiftSuccessDialogFragment
 import com.example.movie_booking_app.view.fragment.StaffFilterBottomSheetFragment
+import com.example.movie_booking_app.view.fragment.UpdateShiftDialogFragment
 import com.example.movie_booking_app.viewmodel.manager.ManagerViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -48,6 +53,8 @@ class ManagerStaffActivity : AppCompatActivity() {
         setUpClickListeners()
         setUpRecyclerView()
         observeShiftData()
+        observeGenerateShiftResult()
+        observeUpdateShiftResult()
         setUpSearchListener()
 
         setActiveTab(binding.tabStaffList, "staff_list")
@@ -59,6 +66,9 @@ class ManagerStaffActivity : AppCompatActivity() {
                 val intent = Intent(this, ManagerShiftDetailActivity::class.java)
                 intent.putExtra("shiftId", shift.shiftId)
                 startActivity(intent)
+            },
+            onEditClick = { shiftItem ->
+                showUpdateShiftDialog(shiftItem)
             }
         )
 
@@ -82,7 +92,7 @@ class ManagerStaffActivity : AppCompatActivity() {
             showAdvancedFilterBottomSheet()
         }
         binding.btnGenerateShift.setOnClickListener {
-            Toast.makeText(this,"Feature Generate Shift coming soon", Toast.LENGTH_SHORT).show()
+            showGenerateShiftDialog()
         }
     }
 
@@ -107,6 +117,33 @@ class ManagerStaffActivity : AppCompatActivity() {
         }
     }
 
+    private fun showGenerateShiftDialog() {
+        val dialog = GenerateShiftDialogFragment {startDate, endDate ->
+            viewModel.loadGenerateShiftData(startDate, endDate)
+        }
+        dialog.show(supportFragmentManager, "GenerateShiftDialogFragment")
+    }
+
+    private fun observeGenerateShiftResult() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.generateShiftData.collectLatest { response ->
+                    if(response != null) {
+                        if (response.success) {
+                            val successDialog = GenerateShiftSuccessDialogFragment(response.data) {
+                                viewModel.loadStaffShifts() // Reload shift list
+                            }
+                            successDialog.show(supportFragmentManager, "GenerateShiftSuccessDialogFragment")
+                        }else {
+                            Toast.makeText(this@ManagerStaffActivity, response.message, Toast.LENGTH_SHORT).show()
+                        }
+                        // Reset state
+                        viewModel.clearGenerateShiftState()
+                    }
+                }
+            }
+        }
+    }
     private fun setUpShiftList(shifts: List<ShiftItemResponse>) {
         val shiftItems = shifts.orEmpty()
         if (shiftItems.isEmpty()) {
@@ -141,6 +178,26 @@ class ManagerStaffActivity : AppCompatActivity() {
         }
     }
 
+    private fun observeUpdateShiftResult() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.updateShiftResult.collectLatest { response ->
+                    if (response != null) {
+                        if (response.success) {
+                            // Trường hợp success
+                            Toast.makeText(this@ManagerStaffActivity, response.message ?: "Update successful", Toast.LENGTH_SHORT).show()
+                            viewModel.loadStaffShifts() // Tải lại danh sách ca
+                        } else {
+                            // Trường hợp failed (hiển thị đúng lỗi từ Backend ví dụ: Trùng ca, lịch nghỉ)
+                            showErrorDialog(response.message ?: "Unknown backend error")
+                        }
+                        viewModel.clearUpdateState()
+                    }
+                }
+            }
+        }
+    }
+
     //Function to filter the RAM list based on a query (name, location, shift)
     private fun applySearchFilter(query: String) {
         val trimmedQuery = query.trim().lowercase()
@@ -151,8 +208,8 @@ class ManagerStaffActivity : AppCompatActivity() {
                 val nameMatch = item.staffName?.lowercase()?.contains(trimmedQuery) == true
                 val positionMatch = item.position?.lowercase()?.contains(trimmedQuery) == true
                 val shiftMatch = item.shift?.lowercase()?.contains(trimmedQuery) == true
-
-                nameMatch || positionMatch || shiftMatch
+                val statusMatch = item.status?.lowercase()?.contains(trimmedQuery) == true
+                nameMatch || positionMatch || shiftMatch || statusMatch
             }
             setUpShiftList(filteredList)
         }
@@ -178,5 +235,34 @@ class ManagerStaffActivity : AppCompatActivity() {
         }
         filterFragment.show(supportFragmentManager, "StaffFilterBottomSheet")
     }
+
+    private fun showUpdateShiftDialog(shiftItem: ShiftItemResponse) {
+        val staffListPair = originalShiftList
+            .filter { !it.staffId.isNullOrEmpty() && !it.staffName.isNullOrEmpty() } // Lọc loại bỏ null/rỗng
+            .map { Pair(it.staffId!!, it.staffName!!) }
+            .distinctBy { it.first } // Loại bỏ các nhân viên trùng ID
+
+        val dialog = UpdateShiftDialogFragment(shiftItem, staffListPair) { staffId, shift, status ->
+            viewModel.updateShift(shiftItem.shiftId ?: "", staffId, shift, status)
+        }
+        dialog.show(supportFragmentManager, "UpdateShiftDialogFragment")
+    }
+
+    private fun showErrorDialog(backendErrorMessage: String) {
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+        //inflate
+        val dialogBinding = DialogErrorCustomBinding.inflate(layoutInflater)
+        builder.setView(dialogBinding.root)
+        val dialog = builder.create()
+
+        //delete background default
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialogBinding.tvDialogMessage.text = backendErrorMessage
+        dialogBinding.btnDialogOk.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
+
 
 }
