@@ -24,5 +24,6 @@ data class Movie(
     val updatedAt : String?,
     val totalStars: Int?,
     val isDeleted: Boolean? = false,
-    val tier: Int? = null
+    val tier: Int? = null,
+    val hasWatched: Boolean? = false
 ): Serializable

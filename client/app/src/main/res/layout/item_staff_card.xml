@@ -84,7 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="6dp"
-            android:text="•"
+            android:text="@string/auto_str_str_auto_10"
             android:textColor="@color/text_secondary"
             android:textSize="12sp" />
 
@@ -104,7 +104,7 @@
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:layout_marginTop="12dp"
-        android:background="#1AFFFFFF"
+        android:background="@color/auto_color_1AFFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/tvStaffName"
         app:layout_constraintTop_toBottomOf="@id/layoutSubInfo" />
@@ -123,7 +123,7 @@
             android:id="@+id/tvWorkDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#B0B0B0"
+            android:textColor="@color/auto_color_B0B0B0"
             android:textSize="12sp"
             tools:text="Date: 15/07/2026" />
 
@@ -132,7 +132,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/auto_color_FFFFFF"
             android:textSize="12sp"
             android:textStyle="bold"
             tools:text="Afternoon (12:00 - 17:00)" />
@@ -146,7 +146,7 @@
         android:background="@drawable/status_active_bg"
         android:paddingHorizontal="10dp"
         android:paddingVertical="4dp"
-        android:textColor="#34C759"
+        android:textColor="@color/auto_color_34C759"
         android:textSize="11sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@id/layoutShiftDetails"

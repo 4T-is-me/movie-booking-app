@@ -36,8 +36,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:text="Staff Detail"
-                android:textColor="#FFFFFF"
+                android:text="@string/auto_str_staff_detail"
+                android:textColor="@color/auto_color_FFFFFF"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -47,7 +47,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#1AD4AF37"
+                android:background="@color/auto_color_1AD4AF37"
                 app:layout_constraintBottom_toBottomOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -73,7 +73,7 @@
                     android:id="@+id/cvAvatar"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    app:cardBackgroundColor="#26D4AF37"
+                    app:cardBackgroundColor="@color/auto_color_26D4AF37"
                     app:cardCornerRadius="30dp"
                     app:cardElevation="0dp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -84,7 +84,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="NC"
+                        android:text="@string/auto_str_nc"
                         android:textColor="@color/yellow"
                         android:textSize="20sp"
                         android:textStyle="bold" />
@@ -96,8 +96,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:text="Nguyễn Văn Cường"
-                    android:textColor="#FFFFFF"
+                    android:text="@string/auto_str_nguy_n_v_n_c_ng"
+                    android:textColor="@color/auto_color_FFFFFF"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -109,7 +109,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Cashier · E001"
+                    android:text="@string/auto_str_cashier_e001"
                     android:textColor="@color/text_secondary"
                     android:textSize="14sp"
                     app:layout_constraintStart_toStartOf="@id/tvStaffName"
@@ -124,8 +124,8 @@
                     android:background="@drawable/bg_tab_container"
                     android:paddingHorizontal="10dp"
                     android:paddingVertical="4dp"
-                    android:text="Active"
-                    android:textColor="#00E676"
+                    android:text="@string/auto_str_active"
+                    android:textColor="@color/auto_color_00E676"
                     android:textSize="12sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="@id/tvStaffName"
@@ -144,7 +144,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Current Shift"
+                        android:text="@string/auto_str_current_shift"
                         android:textColor="@color/text_secondary"
                         android:textSize="12sp" />
 
@@ -153,7 +153,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Morning (08:00 - 14:00)"
+                        android:text="@string/auto_str_morning_08_00_14_00"
                         android:textColor="@color/text_light_gray"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -183,7 +183,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="PERFORMANCE METRICS"
+                    android:text="@string/auto_str_performance_metrics"
                     android:textColor="@color/text_secondary"
                     android:textSize="12sp"
                     android:textStyle="bold" />
@@ -196,8 +196,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Attendance Rate"
-                        android:textColor="#FFFFFF"
+                        android:text="@string/auto_str_attendance_rate"
+                        android:textColor="@color/auto_color_FFFFFF"
                         android:textSize="14sp" />
 
                     <TextView
@@ -205,8 +205,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
-                        android:text="95%"
-                        android:textColor="#00E676"
+                        android:text="@string/auto_str_95"
+                        android:textColor="@color/auto_color_00E676"
                         android:textSize="14sp"
                         android:textStyle="bold" />
                 </RelativeLayout>
@@ -248,7 +248,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
-                    android:text="THIS WEEK'S SCHEDULE"
+                    android:text="@string/auto_str_this_week_s_schedule"
                     android:textColor="@color/text_secondary"
                     android:textSize="12sp"
                     android:textStyle="bold" />

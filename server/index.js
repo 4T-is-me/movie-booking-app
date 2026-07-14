@@ -25,8 +25,12 @@ import managerRoomRoutes from './src/routes/managerRoomRoutes.js';
 import managerDashboardRoutes from './src/routes/managerDashboardRoute.js';
 import managerReportRoutes from './src/routes/managerReportRoute.js';
 import managerStaffShiftRoutes from './src/routes/managerStaffShiftRoutes.js';
+import maintenanceRoutes from './src/routes/maintenanceRoutes.js';
+import notificationRoutes from './src/routes/notificationRoutes.js';
 import { errorHandlingMiddleware } from './src/middlewares/errorHandlingMiddleware.js'
 import './src/config/firebaseAdmin.js'  // Initialize Firebase Admin SDK at startup;
+import { ShowtimeReminderJob } from './src/jobs/showtimeReminderJob.js';
+
 
 
 const app = express();
@@ -60,6 +64,8 @@ app.use('/api/manager/rooms', managerRoomRoutes);
 app.use('/api/manager/dashboard', managerDashboardRoutes);
 app.use('/api/manager/reports', managerReportRoutes);
 app.use('/api/manager/staff-shifts', managerStaffShiftRoutes);
+app.use('/api/maintenance', maintenanceRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 app.get('/api/cinemas', async (req, res) => {
     try {
@@ -78,6 +84,8 @@ const startServer = async () => {
     CleanUpJobs.startSeatCleanupJob();
     CleanUpJobs.updateMovieStatus();
     CleanUpJobs.updateStaffShiftStatus();
+    ShowtimeReminderJob.startShowtimeReminderJob();
+
     app.listen(PORT, () => {
         console.log(`🚀 ES Modules Server is running at: http://localhost:${PORT}`);
     });

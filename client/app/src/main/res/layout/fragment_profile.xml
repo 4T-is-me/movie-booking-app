@@ -34,7 +34,7 @@
                     app:cardCornerRadius="20dp"
                     app:cardElevation="4dp"
                     app:strokeWidth="1.5dp"
-                    app:strokeColor="#F5C542"
+                    app:strokeColor="@color/auto_color_F5C542"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent">
@@ -68,7 +68,7 @@
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:shapeAppearanceOverlay="@style/CircleImageView"
                                 app:strokeWidth="2.5dp"
-                                app:strokeColor="#F5C542" />
+                                app:strokeColor="@color/auto_color_F5C542" />
 
                             <!-- Camera Badge (Static Gold) -->
                             <com.google.android.material.card.MaterialCardView
@@ -76,7 +76,7 @@
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 app:cardCornerRadius="12dp"
-                                app:cardBackgroundColor="#F5C542"
+                                app:cardBackgroundColor="@color/auto_color_F5C542"
                                 app:cardElevation="2dp"
                                 app:strokeWidth="0dp"
                                 app:layout_constraintBottom_toBottomOf="@id/ivAvatar"
@@ -89,7 +89,7 @@
                                     android:layout_height="14dp"
                                     android:layout_gravity="center"
                                     android:src="@drawable/ic_camera"
-                                    app:tint="#000000" />
+                                    app:tint="@color/auto_color_000000" />
                             </com.google.android.material.card.MaterialCardView>
 
                         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -145,15 +145,15 @@
                                 android:layout_width="14dp"
                                 android:layout_height="14dp"
                                 android:src="@drawable/ic_crown"
-                                app:tint="#F5C542" />
+                                app:tint="@color/auto_color_F5C542" />
 
                             <TextView
                                 android:id="@+id/tvRank"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="6dp"
-                                android:text="Gold Member"
-                                android:textColor="#F5C542"
+                                android:text="@string/auto_str_gold_member_1"
+                                android:textColor="@color/auto_color_F5C542"
                                 android:textSize="15sp"
                                 android:fontFamily="sans-serif-medium" />
                         </LinearLayout>
@@ -164,7 +164,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="0.5dp"
                             android:layout_marginTop="20dp"
-                            android:background="#22FFFFFF"
+                            android:background="@color/auto_color_22FFFFFF"
                             app:layout_constraintTop_toBottomOf="@id/avatarContainer"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintEnd_toEndOf="parent" />
@@ -184,7 +184,7 @@
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:src="@drawable/ic_gift"
-                                app:tint="#F5C542"
+                                app:tint="@color/auto_color_F5C542"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:layout_constraintBottom_toBottomOf="parent" />
@@ -194,8 +194,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="8dp"
-                                android:text="Reward Points"
-                                android:textColor="#88FFFFFF"
+                                android:text="@string/auto_str_reward_points_1"
+                                android:textColor="@color/auto_color_88FFFFFF"
                                 android:textSize="13sp"
                                 app:layout_constraintStart_toEndOf="@id/imgPointsIcon"
                                 app:layout_constraintTop_toTopOf="parent" />
@@ -205,8 +205,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="0 pts"
-                                android:textColor="#F5C542"
+                                android:text="@string/auto_str_0_pts"
+                                android:textColor="@color/auto_color_F5C542"
                                 android:textSize="18sp"
                                 android:textStyle="bold"
                                 app:layout_constraintStart_toStartOf="@id/tvPointsLabel"
@@ -219,7 +219,7 @@
                             android:id="@+id/dividerCardVertical"
                             android:layout_width="0.5dp"
                             android:layout_height="40dp"
-                            android:background="#22FFFFFF"
+                            android:background="@color/auto_color_22FFFFFF"
                             app:layout_constraintTop_toTopOf="@id/layoutRewardPoints"
                             app:layout_constraintBottom_toBottomOf="@id/layoutRewardPoints"
                             app:layout_constraintStart_toStartOf="parent"
@@ -241,7 +241,7 @@
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:src="@drawable/ic_wallet"
-                                app:tint="#F5C542"
+                                app:tint="@color/auto_color_F5C542"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:layout_constraintBottom_toBottomOf="parent" />
@@ -251,8 +251,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="8dp"
-                                android:text="Total Spent"
-                                android:textColor="#88FFFFFF"
+                                android:text="@string/auto_str_total_spent"
+                                android:textColor="@color/auto_color_88FFFFFF"
                                 android:textSize="13sp"
                                 app:layout_constraintStart_toEndOf="@id/imgWalletIcon"
                                 app:layout_constraintTop_toTopOf="parent" />
@@ -262,8 +262,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="0 ₫"
-                                android:textColor="#F5C542"
+                                android:text="@string/auto_str_0_13"
+                                android:textColor="@color/auto_color_F5C542"
                                 android:textSize="18sp"
                                 android:textStyle="bold"
                                 app:layout_constraintStart_toStartOf="@id/tvTotalSpentLabel"
@@ -350,7 +350,7 @@
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     app:cardCornerRadius="18dp"
-                    app:cardBackgroundColor="#151515"
+                    app:cardBackgroundColor="@color/auto_color_151515"
                     app:strokeWidth="0dp"
                     app:layout_constraintTop_toBottomOf="@id/divider1"
                     app:layout_constraintStart_toStartOf="parent"
@@ -377,7 +377,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:src="@drawable/ic_star"
-                            app:tint="#F5C542"
+                            app:tint="@color/auto_color_F5C542"
                             app:layout_constraintStart_toStartOf="@id/iconContainerReward"
                             app:layout_constraintEnd_toEndOf="@id/iconContainerReward"
                             app:layout_constraintTop_toTopOf="@id/iconContainerReward"
@@ -397,7 +397,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Reward Points"
+                                android:text="@string/auto_str_reward_points_2"
                                 android:textColor="@color/white"
                                 android:textSize="15sp"
                                 android:textStyle="bold" />
@@ -407,8 +407,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="Check and redeem your loyalty points"
-                                android:textColor="#88FFFFFF"
+                                android:text="@string/auto_str_check_and_redeem_your_loyalty"
+                                android:textColor="@color/auto_color_88FFFFFF"
                                 android:textSize="12sp" />
                         </LinearLayout>
 
@@ -417,7 +417,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@drawable/ic_chevron_right"
-                            app:tint="#F5C542"
+                            app:tint="@color/auto_color_F5C542"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintBottom_toBottomOf="parent" />
@@ -436,7 +436,7 @@
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     app:cardCornerRadius="18dp"
-                    app:cardBackgroundColor="#151515"
+                    app:cardBackgroundColor="@color/auto_color_151515"
                     app:strokeWidth="0dp"
                     app:layout_constraintTop_toBottomOf="@id/layoutMenuRewardPoints"
                     app:layout_constraintStart_toStartOf="parent"
@@ -462,7 +462,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:src="@drawable/ic_language"
-                            app:tint="#F5C542"
+                            app:tint="@color/auto_color_F5C542"
                             app:layout_constraintStart_toStartOf="@id/iconContainerLanguage"
                             app:layout_constraintEnd_toEndOf="@id/iconContainerLanguage"
                             app:layout_constraintTop_toTopOf="@id/iconContainerLanguage"
@@ -482,7 +482,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Change language"
+                                android:text="@string/auto_str_change_language"
                                 android:textColor="@color/white"
                                 android:textSize="15sp"
                                 android:textStyle="bold" />
@@ -491,8 +491,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="Select your preferred language"
-                                android:textColor="#88FFFFFF"
+                                android:text="@string/auto_str_select_your_preferred_language"
+                                android:textColor="@color/auto_color_88FFFFFF"
                                 android:textSize="12sp" />
                         </LinearLayout>
 
@@ -501,7 +501,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@drawable/ic_chevron_right"
-                            app:tint="#F5C542"
+                            app:tint="@color/auto_color_F5C542"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintBottom_toBottomOf="parent" />
@@ -520,7 +520,7 @@
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     app:cardCornerRadius="18dp"
-                    app:cardBackgroundColor="#151515"
+                    app:cardBackgroundColor="@color/auto_color_151515"
                     app:strokeWidth="0dp"
                     app:layout_constraintTop_toBottomOf="@id/layoutChangeLanguage"
                     app:layout_constraintStart_toStartOf="parent"
@@ -546,7 +546,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:src="@drawable/ic_lock"
-                            app:tint="#F5C542"
+                            app:tint="@color/auto_color_F5C542"
                             app:layout_constraintStart_toStartOf="@id/iconContainerPassword"
                             app:layout_constraintEnd_toEndOf="@id/iconContainerPassword"
                             app:layout_constraintTop_toTopOf="@id/iconContainerPassword"
@@ -566,7 +566,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Change password"
+                                android:text="@string/auto_str_change_password_1"
                                 android:textColor="@color/white"
                                 android:textSize="15sp"
                                 android:textStyle="bold" />
@@ -575,8 +575,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="Update your password securely"
-                                android:textColor="#88FFFFFF"
+                                android:text="@string/auto_str_update_your_password_securely"
+                                android:textColor="@color/auto_color_88FFFFFF"
                                 android:textSize="12sp" />
                         </LinearLayout>
 
@@ -585,7 +585,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@drawable/ic_chevron_right"
-                            app:tint="#F5C542"
+                            app:tint="@color/auto_color_F5C542"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintBottom_toBottomOf="parent" />
@@ -604,7 +604,7 @@
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     app:cardCornerRadius="18dp"
-                    app:cardBackgroundColor="#151515"
+                    app:cardBackgroundColor="@color/auto_color_151515"
                     app:strokeWidth="0dp"
                     app:layout_constraintTop_toBottomOf="@id/layoutChangePassword"
                     app:layout_constraintStart_toStartOf="parent"
@@ -630,7 +630,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:src="@drawable/ic_ticket"
-                            app:tint="#F5C542"
+                            app:tint="@color/auto_color_F5C542"
                             app:layout_constraintStart_toStartOf="@id/iconContainerHistory"
                             app:layout_constraintEnd_toEndOf="@id/iconContainerHistory"
                             app:layout_constraintTop_toTopOf="@id/iconContainerHistory"
@@ -650,7 +650,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Purchase History"
+                                android:text="@string/auto_str_purchase_history"
                                 android:textColor="@color/white"
                                 android:textSize="15sp"
                                 android:textStyle="bold" />
@@ -659,8 +659,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="View your booked tickets and payment history"
-                                android:textColor="#88FFFFFF"
+                                android:text="@string/auto_str_view_your_booked_tickets_and_p"
+                                android:textColor="@color/auto_color_88FFFFFF"
                                 android:textSize="12sp" />
                         </LinearLayout>
 
@@ -669,7 +669,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@drawable/ic_chevron_right"
-                            app:tint="#F5C542"
+                            app:tint="@color/auto_color_F5C542"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintBottom_toBottomOf="parent" />
@@ -688,7 +688,7 @@
                     android:focusable="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     app:cardCornerRadius="18dp"
-                    app:cardBackgroundColor="#151515"
+                    app:cardBackgroundColor="@color/auto_color_151515"
                     app:strokeWidth="0dp"
                     app:layout_constraintTop_toBottomOf="@id/layoutPurchaseHistory"
                     app:layout_constraintStart_toStartOf="parent"
@@ -714,7 +714,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:src="@drawable/ic_logout"
-                            app:tint="#F5C542"
+                            app:tint="@color/auto_color_F5C542"
                             app:layout_constraintStart_toStartOf="@id/iconContainerLogout"
                             app:layout_constraintEnd_toEndOf="@id/iconContainerLogout"
                             app:layout_constraintTop_toTopOf="@id/iconContainerLogout"
@@ -734,7 +734,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Logout"
+                                android:text="@string/auto_str_logout"
                                 android:textColor="@color/white"
                                 android:textSize="15sp"
                                 android:textStyle="bold" />
@@ -743,8 +743,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="Sign out of your account"
-                                android:textColor="#88FFFFFF"
+                                android:text="@string/auto_str_sign_out_of_your_account"
+                                android:textColor="@color/auto_color_88FFFFFF"
                                 android:textSize="12sp" />
                         </LinearLayout>
 
@@ -753,7 +753,7 @@
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             android:src="@drawable/ic_chevron_right"
-                            app:tint="#F5C542"
+                            app:tint="@color/auto_color_F5C542"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintBottom_toBottomOf="parent" />

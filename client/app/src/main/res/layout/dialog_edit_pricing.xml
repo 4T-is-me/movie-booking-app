@@ -4,13 +4,13 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="24dp"
-    android:background="#111827">
+    android:background="@color/auto_color_111827">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Edit Pricing"
-        android:textColor="#FFFFFF"
+        android:text="@string/auto_str_edit_pricing"
+        android:textColor="@color/auto_color_FFFFFF"
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_marginBottom="16dp"/>
@@ -18,45 +18,45 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Standard Price"
-        android:textColor="#94A3B8"
+        android:text="@string/auto_str_standard_price"
+        android:textColor="@color/auto_color_94A3B8"
         android:textSize="12sp" />
     <EditText
         android:id="@+id/etStdPrice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="number"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/auto_color_FFFFFF"
         android:backgroundTint="#60A5FA"
         android:layout_marginBottom="12dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="VIP Price"
-        android:textColor="#94A3B8"
+        android:text="@string/auto_str_vip_price"
+        android:textColor="@color/auto_color_94A3B8"
         android:textSize="12sp" />
     <EditText
         android:id="@+id/etVipPrice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="number"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/auto_color_FFFFFF"
         android:backgroundTint="#FACC15"
         android:layout_marginBottom="12dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Couple Price"
-        android:textColor="#94A3B8"
+        android:text="@string/auto_str_couple_price"
+        android:textColor="@color/auto_color_94A3B8"
         android:textSize="12sp" />
     <EditText
         android:id="@+id/etCouplePrice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="number"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/auto_color_FFFFFF"
         android:backgroundTint="#A78BFA"
         android:layout_marginBottom="24dp"/>
 
@@ -69,17 +69,17 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Cancel"
+            android:text="@string/auto_str_cancel_3"
             android:backgroundTint="#334155"
-            android:textColor="#FFFFFF" />
+            android:textColor="@color/auto_color_FFFFFF" />
         <View android:layout_width="16dp" android:layout_height="match_parent" />
         <Button
             android:id="@+id/btnSavePricing"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Save Temporary"
+            android:text="@string/auto_str_save_temporary"
             android:backgroundTint="#10B981"
-            android:textColor="#FFFFFF" />
+            android:textColor="@color/auto_color_FFFFFF" />
     </LinearLayout>
 </LinearLayout>

@@ -16,8 +16,8 @@
             android:layout_height="24dp"
             android:background="@drawable/bg_circle_glass"
             android:backgroundTint="#EAB308"
-            android:text="1"
-            android:textColor="#0B0F19"
+            android:text="@string/auto_str_1_1"
+            android:textColor="@color/auto_color_0B0F19"
             android:textStyle="bold"
             android:textSize="12sp"
             android:gravity="center"
@@ -31,8 +31,8 @@
             android:layout_toEndOf="@id/txtRank"
             android:layout_marginStart="12dp"
             android:layout_centerVertical="true"
-            android:text="Dune: Part Two"
-            android:textColor="#FFFFFF"
+            android:text="@string/auto_str_dune_part_two"
+            android:textColor="@color/auto_color_FFFFFF"
             android:textSize="15sp"
             android:textStyle="bold" />
 
@@ -42,8 +42,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:text="1,240 tkts"
-            android:textColor="#94A3B8"
+            android:text="@string/auto_str_1_240_tkts"
+            android:textColor="@color/auto_color_94A3B8"
             android:textSize="13sp" />
     </RelativeLayout>
 

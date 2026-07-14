@@ -16,7 +16,7 @@
             android:id="@+id/tvFormTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Create New Movie"
+            android:text="@string/auto_str_create_new_movie"
             android:textColor="@color/white"
             android:textSize="22sp"
             android:textStyle="bold"
@@ -135,7 +135,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Movie Genres (Select multiple)"
+            android:text="@string/auto_str_movie_genres_select_multiple"
             android:textColor="@color/admin_text_secondary"
             android:textSize="14sp"
             android:layout_marginBottom="8dp" />
@@ -153,7 +153,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Default Show Times"
+            android:text="@string/auto_str_default_show_times"
             android:textColor="@color/admin_text_secondary"
             android:textSize="14sp"
             android:layout_marginBottom="8dp" />
@@ -301,7 +301,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Choose Poster"
+            android:text="@string/auto_str_choose_poster"
             android:textColor="@color/white"
             app:strokeColor="@color/gold_selected"
             android:layout_marginBottom="16dp" />
@@ -338,7 +338,7 @@
             android:id="@+id/btnSubmitMovie"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:text="SAVE MOVIE"
+            android:text="@string/auto_str_save_movie"
             android:textColor="@color/black"
             android:textStyle="bold"
             android:backgroundTint="@color/gold_selected"

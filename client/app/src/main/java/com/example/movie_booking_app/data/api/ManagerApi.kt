@@ -39,4 +39,16 @@ interface ManagerApi {
 
     @PUT("api/manager/staff-shifts/{id}")
     suspend fun updateShift(@Path("id") shiftId: String, @Body request: UpdateShiftRequest): Response<UpdateShiftResponse>
+
+    @GET("api/admin/showtimes")
+    suspend fun getShowtimes(
+        @Query("startDate") startDate: String,
+        @Query("endDate") endDate: String,
+        @Query("limit") limit: Int = 1000
+    ): Response<com.example.movie_booking_app.data.model.response.ManagerShowtimesResponse>
+
+    @retrofit2.http.POST("api/admin/showtimes/bulk")
+    suspend fun createBulkShowtimes(
+        @retrofit2.http.Body request: com.example.movie_booking_app.data.model.request.ShowtimeBulkRequest
+    ): Response<Unit>
 }

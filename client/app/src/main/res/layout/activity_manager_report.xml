@@ -47,7 +47,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Branch Reports"
+                    android:text="@string/auto_str_branch_reports"
                     android:textColor="@color/text_primary"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -59,7 +59,7 @@
             android:id="@+id/headerDivider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#1AFFFFFF"
+            android:background="@color/auto_color_1AFFFFFF"
             app:layout_constraintTop_toBottomOf="@id/headerLayoutReport"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -84,7 +84,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/bg_tab_active_gold"
-                android:text="Day"
+                android:text="@string/auto_str_day"
                 android:textColor="@color/bg_primary"
                 android:textStyle="bold"
                 android:textSize="13sp"
@@ -96,7 +96,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:text="Week"
+                android:text="@string/auto_str_week"
                 android:textColor="@color/text_secondary"
                 android:textStyle="bold"
                 android:textSize="13sp"
@@ -108,7 +108,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:text="Month"
+                android:text="@string/auto_str_month"
                 android:textColor="@color/text_secondary"
                 android:textStyle="bold"
                 android:textSize="13sp"
@@ -120,7 +120,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:text="Year"
+                android:text="@string/auto_str_year"
                 android:textColor="@color/text_secondary"
                 android:textStyle="bold"
                 android:textSize="13sp"
@@ -185,8 +185,8 @@
                                 android:backgroundTint="#1A10B981"
                                 android:paddingHorizontal="8dp"
                                 android:paddingVertical="4dp"
-                                android:text="+0%"
-                                android:textColor="#10B981"
+                                android:text="@string/auto_str_0"
+                                android:textColor="@color/auto_color_10B981"
                                 android:textSize="13sp"
                                 android:textStyle="bold"/>
                         </RelativeLayout>
@@ -195,7 +195,7 @@
                             android:id="@+id/txtTicketRevenue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0đ"
+                            android:text="@string/auto_str_0_1"
                             android:textColor="@color/text_primary"
                             android:textSize="18sp"
                             android:textStyle="bold"
@@ -203,7 +203,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Ticket Revenue"
+                            android:text="@string/auto_str_ticket_revenue"
                             android:textColor="@color/text_secondary"
                             android:textSize="12sp"
                             android:layout_marginTop="4dp"/>
@@ -243,8 +243,8 @@
                                 android:backgroundTint="#1A10B981"
                                 android:paddingHorizontal="8dp"
                                 android:paddingVertical="4dp"
-                                android:text="+0%"
-                                android:textColor="#10B981"
+                                android:text="@string/auto_str_0_2"
+                                android:textColor="@color/auto_color_10B981"
                                 android:textSize="13sp"
                                 android:textStyle="bold"/>
                         </RelativeLayout>
@@ -253,7 +253,7 @@
                             android:id="@+id/txtFbRevenue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0đ"
+                            android:text="@string/auto_str_0_3"
                             android:textColor="@color/text_primary"
                             android:textSize="18sp"
                             android:textStyle="bold"
@@ -261,7 +261,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="F&amp;B Revenue"
+                            android:text="@string/auto_str_f_amp_b_revenue"
                             android:textColor="@color/text_secondary"
                             android:textSize="12sp"
                             android:layout_marginTop="4dp"/>
@@ -301,8 +301,8 @@
                                 android:backgroundTint="#1A10B981"
                                 android:paddingHorizontal="8dp"
                                 android:paddingVertical="4dp"
-                                android:text="+0%"
-                                android:textColor="#10B981"
+                                android:text="@string/auto_str_0_4"
+                                android:textColor="@color/auto_color_10B981"
                                 android:textSize="13sp"
                                 android:textStyle="bold"/>
                         </RelativeLayout>
@@ -311,7 +311,7 @@
                             android:id="@+id/txtTotalTickets"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0"
+                            android:text="@string/auto_str_0_5"
                             android:textColor="@color/text_primary"
                             android:textSize="18sp"
                             android:textStyle="bold"
@@ -319,7 +319,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Total Tickets"
+                            android:text="@string/auto_str_total_tickets"
                             android:textColor="@color/text_secondary"
                             android:textSize="12sp"
                             android:layout_marginTop="4dp"/>
@@ -359,8 +359,8 @@
                                 android:backgroundTint="#1A10B981"
                                 android:paddingHorizontal="8dp"
                                 android:paddingVertical="4dp"
-                                android:text="+0%"
-                                android:textColor="#10B981"
+                                android:text="@string/auto_str_0_6"
+                                android:textColor="@color/auto_color_10B981"
                                 android:textSize="13sp"
                                 android:textStyle="bold"/>
                         </RelativeLayout>
@@ -369,7 +369,7 @@
                             android:id="@+id/txtAvgTicket"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0đ"
+                            android:text="@string/auto_str_0_7"
                             android:textColor="@color/text_primary"
                             android:textSize="18sp"
                             android:textStyle="bold"
@@ -377,7 +377,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Avg Ticket Price"
+                            android:text="@string/auto_str_avg_ticket_price"
                             android:textColor="@color/text_secondary"
                             android:textSize="12sp"
                             android:layout_marginTop="4dp"/>
@@ -398,7 +398,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Revenue Trend"
+                        android:text="@string/auto_str_revenue_trend"
                         android:textColor="@color/text_primary"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -406,7 +406,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Visualized analysis of ticket vs concessions"
+                        android:text="@string/auto_str_visualized_analysis_of_ticket"
                         android:textColor="@color/text_secondary"
                         android:textSize="11sp"
                         android:layout_marginTop="2dp" />
@@ -432,7 +432,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Top Movies This Period"
+                        android:text="@string/auto_str_top_movies_this_period"
                         android:textColor="@color/text_primary"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -443,7 +443,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
                         android:layout_marginBottom="10dp"
-                        android:text="No movie data available for this period"
+                        android:text="@string/auto_str_no_movie_data_available_for_th"
                         android:textColor="@color/text_secondary"
                         android:textSize="14sp"
                         android:gravity="center"

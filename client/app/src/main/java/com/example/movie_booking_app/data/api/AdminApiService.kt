@@ -19,6 +19,7 @@ interface AdminApiService {
 
     @POST("api/admin/movies")
     suspend fun createMovie(@Body request: AddMovieRequest): Response<Unit>
+
 //    val movieName: String,
 //    val duration: Int,
 //    val releaseDate: String,

@@ -122,8 +122,42 @@ cron.schedule("0 0 * * * *", updateStaffShiftStatus);
 
 
 
+// Xử lý Hết hạn Phản hồi Bảo trì phòng (Timeout Cronjob)
+const resolveMaintenanceTimeouts = async () => {
+  try {
+    const { Notification } = await import('../models/notificationModel.js');
+    const { MaintenanceService } = await import('../services/maintenanceService.js');
+    
+    // Tìm các thông báo yêu cầu hành động
+    const notifications = await Notification.find({ type: "ACTION_REQUIRED" });
+    const now = new Date();
+    
+    for (const notif of notifications) {
+      const createdAt = notif._id.getTimestamp();
+      const diffMins = (now - createdAt) / (1000 * 60);
+      
+      if (diffMins >= 30) {
+        // Đã quá 30 phút, tự động decline
+        try {
+          await MaintenanceService.resolveUserAction(notif.metadata.bookingId, 'decline');
+          console.log(`Auto-declined maintenance transfer for booking ${notif.metadata.bookingId}`);
+        } catch (e) {
+          console.error("Error auto-declining maintenance transfer:", e);
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Error in resolveMaintenanceTimeouts job:", error);
+  }
+};
+
+cron.schedule("*/5 * * * *", resolveMaintenanceTimeouts); // Chạy mỗi 5 phút
+
+
 export const CleanUpJobs = {
   startSeatCleanupJob,
   updateMovieStatus,
-  updateStaffShiftStatus
+  updateStaffShiftStatus,
+  resolveMaintenanceTimeouts
+
 };

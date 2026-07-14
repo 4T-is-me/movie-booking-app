@@ -51,7 +51,7 @@
                     android:paddingVertical="4dp"
                     android:textSize="11sp"
                     android:textStyle="bold"
-                    android:textColor="#10B981"
+                    android:textColor="@color/auto_color_10B981"
                     android:background="@drawable/bg_label_operating"
                     tools:text="Active" />
             </LinearLayout>

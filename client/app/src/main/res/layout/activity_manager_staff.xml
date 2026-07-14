@@ -23,7 +23,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="#FFFFFF" />
+            app:tint="@color/auto_color_FFFFFF" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -37,8 +37,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Staff Management"
-                android:textColor="#FFFFFF"
+                android:text="@string/auto_str_staff_management"
+                android:textColor="@color/auto_color_FFFFFF"
                 android:textSize="20sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -46,7 +46,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#1AFFFFFF"
+            android:background="@color/auto_color_1AFFFFFF"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -71,7 +71,7 @@
             android:layout_weight="1"
             android:background="@drawable/bg_tab_active_gold"
             android:gravity="center"
-            android:text="Staff List"
+            android:text="@string/auto_str_staff_list"
             android:textColor="@color/bg_primary"
             android:textSize="14sp"
             android:textStyle="bold" />
@@ -83,7 +83,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="Leave Requests (2)"
+            android:text="@string/auto_str_leave_requests_2"
             android:textColor="@color/text_secondary"
             android:textSize="14sp"
             android:textStyle="bold" />
@@ -124,7 +124,7 @@
                 android:inputType="text"
                 android:maxLines="1"
                 android:paddingStart="8dp"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/auto_color_FFFFFF"
                 android:textColorHint="@color/text_secondary"
                 android:textSize="13sp" />
         </LinearLayout>
@@ -150,7 +150,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:text="Filter"
+                android:text="@string/auto_str_filter"
                 android:textColor="@color/text_secondary"
                 android:textSize="13sp"
                 android:textStyle="bold" />
@@ -179,7 +179,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="No shifts have been assigned yet!"
+            android:text="@string/auto_str_no_shifts_have_been_assigned_y"
             android:textColor="@color/text_secondary"
             android:textSize="14sp"
             android:visibility="gone" />
