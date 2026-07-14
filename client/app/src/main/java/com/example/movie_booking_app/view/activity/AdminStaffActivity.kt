@@ -7,16 +7,13 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.example.movie_booking_app.data.model.entity.Cinema
-import com.example.movie_booking_app.data.model.entity.Staff
+import com.example.movie_booking_app.data.model.response.EmployeeItem
 import com.example.movie_booking_app.data.model.request.CreateStaffRequest
 import com.example.movie_booking_app.data.model.request.UpdateStaffRequest
 import com.example.movie_booking_app.databinding.ActivityAdminStaffBinding
 import com.example.movie_booking_app.viewmodel.admin.AdminStaffViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -27,7 +24,7 @@ class AdminStaffActivity : BaseActivity() {
     private lateinit var binding: ActivityAdminStaffBinding
     private val viewModel: AdminStaffViewModel by viewModels()
 
-    private var currentStaff: Staff? = null
+    private var currentStaff: EmployeeItem? = null
     private var isEditMode = false
 
     private var cinemasList: List<Cinema> = emptyList()
@@ -39,7 +36,12 @@ class AdminStaffActivity : BaseActivity() {
         binding = ActivityAdminStaffBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        currentStaff = intent.getSerializableExtra("staff") as? Staff
+        currentStaff = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            intent.getSerializableExtra("staff", EmployeeItem::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getSerializableExtra("staff") as? EmployeeItem
+        }
         isEditMode = currentStaff != null
 
         setupUI()
@@ -53,21 +55,17 @@ class AdminStaffActivity : BaseActivity() {
             binding.layoutUsername.visibility = View.GONE
             binding.layoutPassword.visibility = View.GONE
             binding.layoutAddress.visibility = View.VISIBLE
-            binding.layoutStatus.visibility = View.VISIBLE
  
             // Pre-populate fields
             currentStaff?.let { staff ->
                 binding.edtFullName.setText(staff.fullName)
-                binding.edtEmail.setText(staff.email)
+                binding.edtEmail.setText(staff.account?.email)
                 binding.edtPhone.setText(staff.phone)
                 binding.edtIdentityCard.setText(staff.identityCard)
                 binding.edtPosition.setText(staff.position)
                 binding.edtSalary.setText(staff.salary?.toString() ?: "")
                 binding.edtStartDate.setText(staff.startDate?.take(10) ?: "")
                 binding.edtAddress.setText(staff.address)
-                
-                val statusText = if (staff.status != 0) "Active" else "Inactive"
-                binding.actvStatus.setText(statusText, false)
 
                 // Set identity card non-editable in edit mode
                 binding.edtIdentityCard.isEnabled = false
@@ -78,18 +76,12 @@ class AdminStaffActivity : BaseActivity() {
             binding.layoutUsername.visibility = View.VISIBLE
             binding.layoutPassword.visibility = View.VISIBLE
             binding.layoutAddress.visibility = View.VISIBLE
-            binding.layoutStatus.visibility = View.GONE
         }
 
         // Setup Role autocomplete dropdown
         val roles = arrayOf("Employee", "Manager")
         val roleAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, roles)
         binding.actvRole.setAdapter(roleAdapter)
-
-        // Setup Status autocomplete dropdown
-        val statuses = arrayOf("Active", "Inactive")
-        val statusAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, statuses)
-        binding.actvStatus.setAdapter(statusAdapter)
 
         // Set default role selection if adding
         if (!isEditMode) {
@@ -137,36 +129,34 @@ class AdminStaffActivity : BaseActivity() {
     }
 
     private fun observeViewModel() {
-        lifecycleScope.launch {
-            viewModel.cinemas.collectLatest { cinemas ->
-                cinemasList = cinemas
-                val cinemaNames = cinemas.map { it.cinemaName ?: "Unknown" }
-                val cinemaAdapter = ArrayAdapter(this@AdminStaffActivity, android.R.layout.simple_dropdown_item_1line, cinemaNames)
-                binding.actvCinema.setAdapter(cinemaAdapter)
+        viewModel.cinemas.observe(this) { cinemas ->
+            cinemasList = cinemas
+            val cinemaNames = cinemas.map { it.cinemaName ?: "Unknown" }
+            val cinemaAdapter = ArrayAdapter(this@AdminStaffActivity, android.R.layout.simple_dropdown_item_1line, cinemaNames)
+            binding.actvCinema.setAdapter(cinemaAdapter)
 
-                // Select current staff's cinema if editing
-                if (isEditMode && currentStaff != null) {
-                    val matchingIndex = cinemas.indexOfFirst { it.id == currentStaff?.cinemaId }
-                    if (matchingIndex != -1) {
-                        binding.actvCinema.setText(cinemas[matchingIndex].cinemaName, false)
-                        selectedCinemaId = cinemas[matchingIndex].id
-                    }
+            // Select current staff's cinema if editing
+            if (isEditMode && currentStaff != null) {
+                val matchingIndex = cinemas.indexOfFirst { it.id == currentStaff?.cinemaId }
+                if (matchingIndex != -1) {
+                    binding.actvCinema.setText(cinemas[matchingIndex].cinemaName, false)
+                    selectedCinemaId = cinemas[matchingIndex].id
                 }
             }
         }
 
-        lifecycleScope.launch {
-            viewModel.actionSuccess.collectLatest { success ->
-                if (success) {
-                    finish()
-                }
+        viewModel.actionSuccess.observe(this) { success ->
+            if (success) {
+                finish()
             }
         }
 
-        lifecycleScope.launch {
-            viewModel.actionMessage.collectLatest { message ->
-                Toast.makeText(this@AdminStaffActivity, message, Toast.LENGTH_LONG).show()
-            }
+        viewModel.actionMessage.observe(this) { message ->
+            Toast.makeText(this@AdminStaffActivity, message, Toast.LENGTH_LONG).show()
+        }
+
+        viewModel.error.observe(this) { error ->
+            Toast.makeText(this@AdminStaffActivity, error, Toast.LENGTH_LONG).show()
         }
     }
 
@@ -215,8 +205,7 @@ class AdminStaffActivity : BaseActivity() {
                 return
             }
             val address = binding.edtAddress.text.toString().trim()
-            val statusText = binding.actvStatus.text.toString()
-            val statusVal = if (statusText.contains("Active") || statusText.contains("Hoạt động")) 1 else 0
+
             val request = UpdateStaffRequest(
                 fullName = fullName,
                 email = email,
@@ -226,7 +215,7 @@ class AdminStaffActivity : BaseActivity() {
                 position = position,
                 salary = salary,
                 startDate = startDate,
-                status = statusVal
+                status = null // Do not change status from edit screen
             )
             viewModel.updateStaff(staffId, request)
         } else {

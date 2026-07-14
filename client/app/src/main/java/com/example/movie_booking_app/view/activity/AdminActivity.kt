@@ -16,6 +16,7 @@ import com.example.movie_booking_app.view.fragment.admin.AdminRoomListFragment
 import com.example.movie_booking_app.view.fragment.admin.CinemaRoomsFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminStatsFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminStaffFragment
+import com.example.movie_booking_app.view.fragment.admin.AdminStaffTabsFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminPromotionFragment
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
@@ -61,8 +62,8 @@ class AdminActivity : BaseActivity() {
                     loadFragment(AdminStatsFragment())
                 }
                 R.id.nav_employees -> {
-                    tvHeaderTitle.text = "Employees"
-                    loadFragment(AdminStaffFragment())
+                    tvHeaderTitle.text = "Staff Management"
+                    loadFragment(AdminStaffTabsFragment())
                 }
                 R.id.nav_rooms -> {
                     tvHeaderTitle.text = "Cinema Rooms"
@@ -73,8 +74,8 @@ class AdminActivity : BaseActivity() {
                     loadFragment(AdminPromotionFragment())
                 }
                 R.id.nav_members -> {
-                    tvHeaderTitle.text = "Members"
-                    loadFragment(BlankFragment())
+                    tvHeaderTitle.text = "Staff Management"
+                    loadFragment(AdminStaffTabsFragment())
                 }
                 R.id.nav_settings -> {
                     tvHeaderTitle.text = "Settings"

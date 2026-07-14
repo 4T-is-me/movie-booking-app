@@ -159,7 +159,7 @@ export const createStaff = async (accountData, staffData) => {
         roleId: targetRoleId,
         status: 1
     });
-    
+
     const savedAccount = await newAccount.save();
 
     // 2. Create Staff linked with Account
@@ -167,9 +167,9 @@ export const createStaff = async (accountData, staffData) => {
         ...staffData,
         accountId: savedAccount._id
     });
-    
+
     const savedStaff = await newStaff.save();
-    
+
     // Return record populated with full information
     return await Staff.findById(savedStaff._id).populate({
         path: 'accountId',
@@ -230,11 +230,11 @@ export const softDeleteStaff = async (staffId) => {
 
     // Lock login account (Account status = 0)
     const updatedAccount = await Account.findByIdAndUpdate(
-        staffInfo.accountId, 
-        { status: 0 }, 
+        staffInfo.accountId,
+        { status: 0 },
         { new: true }
     );
-    
+
     return updatedAccount;
 };
 
