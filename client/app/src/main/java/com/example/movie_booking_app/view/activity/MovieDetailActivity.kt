@@ -34,6 +34,8 @@ class MovieDetailActivity : AppCompatActivity() {
     private lateinit var movieId: String
     private var selectedCinema: Cinema? = null
     private lateinit var reviewAdapter: ReviewAdapter
+    private var isReviewsExpanded = false
+    private var currentReviewsList = emptyList<com.example.movie_booking_app.data.model.response.ReviewItem>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +60,11 @@ class MovieDetailActivity : AppCompatActivity() {
         // Setup ReviewAdapter
         reviewAdapter = ReviewAdapter(emptyList())
         binding.rvReviews.adapter = reviewAdapter
+
+        binding.tvSeeAllReviews.setOnClickListener {
+            isReviewsExpanded = !isReviewsExpanded
+            updateReviewsDisplay()
+        }
 
         binding.btnBookTicket.setOnClickListener {
             val movie = viewModel.movieDetail.value?.data
@@ -128,10 +135,8 @@ class MovieDetailActivity : AppCompatActivity() {
                             binding.tvReviewCount.text = "$total review${if (total != 1) "s" else ""}"
                             if (total > 0) {
                                 binding.layoutRatingSummary.visibility = View.VISIBLE
-                                binding.tvSeeAllReviews.visibility = View.VISIBLE
                             } else {
                                 binding.layoutRatingSummary.visibility = View.GONE
-                                binding.tvSeeAllReviews.visibility = View.GONE
                             }
 
                             val posterUrl = movie.poster
@@ -227,16 +232,34 @@ class MovieDetailActivity : AppCompatActivity() {
                 launch {
                     viewModel.movieReviews.collect { reviews ->
                         binding.swipeRefresh.isRefreshing = false
-                        if (reviews.isEmpty()) {
-                            binding.tvNoReviews.visibility = View.VISIBLE
-                            binding.rvReviews.visibility = View.GONE
-                        } else {
-                            binding.tvNoReviews.visibility = View.GONE
-                            binding.rvReviews.visibility = View.VISIBLE
-                            reviewAdapter.submitList(reviews)
-                        }
+                        currentReviewsList = reviews
+                        updateReviewsDisplay()
                     }
                 }
+            }
+        }
+    }
+
+    private fun updateReviewsDisplay() {
+        if (currentReviewsList.isEmpty()) {
+            binding.tvNoReviews.visibility = View.VISIBLE
+            binding.rvReviews.visibility = View.GONE
+            binding.tvSeeAllReviews.visibility = View.GONE
+        } else {
+            binding.tvNoReviews.visibility = View.GONE
+            binding.rvReviews.visibility = View.VISIBLE
+            if (currentReviewsList.size > 2) {
+                binding.tvSeeAllReviews.visibility = View.VISIBLE
+                if (isReviewsExpanded) {
+                    binding.tvSeeAllReviews.text = "Show less"
+                    reviewAdapter.submitList(currentReviewsList)
+                } else {
+                    binding.tvSeeAllReviews.text = "See all"
+                    reviewAdapter.submitList(currentReviewsList.take(2))
+                }
+            } else {
+                binding.tvSeeAllReviews.visibility = View.GONE
+                reviewAdapter.submitList(currentReviewsList)
             }
         }
     }
