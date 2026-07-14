@@ -4,17 +4,32 @@ import { StaffShift } from "../models/staffShiftModel.js";
 import { LeaveRequest } from "../models/leaveRequestModel.js";
 import { StatusCodes } from "http-status-codes";
 import { constants} from "../utils/Constants.js";
+import { LeaveRequest } from "../models/leaveRequestModel.js";
 import ApiError from "../utils/ApiError.js";
+import {formatDate} from "../utils/formatters.js";
 import mongoose from "mongoose";
+
+const checkManager = async (accountId) => {
+    const manager = await Manager.findOne({ accountId})
+    if(!manager) {
+        throw new ApiError(StatusCodes.FORBIDDEN, "You do not have permission to perform this function.");
+    }
+    return manager;
+}
+
+const checkCinemaPermission = (managerCinemaId, objectCinemaId) => {
+    if (objectCinemaId.toString() !== managerCinemaId.toString()) {
+        throw new ApiError(StatusCodes.FORBIDDEN, "You can only perform actions for staff members or shifts belonging to your own cinema.");
+    }
+}
+
 
 
 const getShifts = async (accountId, query) => {
     const { staffId, workDate, startDate, endDate, shift } = query;
 
-    const manager = await Manager.findOne({ accountId})
-    if(!manager) {
-        throw new ApiError(StatusCodes.FORBIDDEN, "You do not have permission to perform this function.");
-    }
+    const manager = await checkManager(accountId);
+    
     const filter = {
         cinemaId: manager.cinemaId,
     }
@@ -47,10 +62,10 @@ const getShifts = async (accountId, query) => {
     })
 
     const shiftOrder = {
-    Morning: 1,
-    Afternoon: 2,
-    Evening: 3,
-    Night: 4
+        Morning: 1,
+        Afternoon: 2,
+        Evening: 3,
+        Night: 4
     };
 
     // Sắp xếp lại danh sách: Ưu tiên trạng thái trước, rồi mới tới ngày và ca làm
@@ -90,109 +105,13 @@ const getShifts = async (accountId, query) => {
 }
 
 
-// unfinished
-const createShift = async (accountId, shiftData) => {
-    const {staffId, workDate, shift} = shiftData;
-
-    //check manager
-    const manager = await Manager.findOne({ accountId });
-    if (!manager) {
-        throw new ApiError(StatusCodes.FORBIDDEN, "You do not have permission to perform this function.");
-        
-    }
-
-    //get managerCinemaId
-    const managerCinemaId = manager.cinemaId;
-
-    //check staff
-    const staff = await Staff.findById(staffId);
-    if (!staff) {
-        throw new ApiError(StatusCodes.NOT_FOUND, "The staff does not exist.");
-    }
-
-    //check staff is the same cinema with manager
-    if (staff.cinemaId.toString() !== managerCinemaId.toString()) {
-        throw new ApiError(StatusCodes.FORBIDDEN, "You can only schedule shifts for staff members belonging to your own cinema.");
-    }
-
-    //(Range Query 00:00:00 - 23:59:59)
-    const startOfDay = new Date(workDate);
-    startOfDay.setUTCHours(0, 0, 0, 0);
-
-    const endOfDay = new Date(workDate);
-    endOfDay.setUTCHours(23, 59, 59, 999);
-
-    const dateQuery = { $gte: startOfDay, $lte: endOfDay };
-
-    // Chặn tạo ca cho ngày trong quá khứ
-    const todayStart = new Date();
-
-    todayStart.setUTCHours(0, 0, 0, 0);
-    if (startOfDay < todayStart) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "Cannot create a shift for a past date.");
-    }
-
-    //check duplicate
-    const isDuplicate = await StaffShift.findOne({ staffId, workDate: dateQuery, shift });
-    if (isDuplicate) {
-        throw new ApiError(StatusCodes.CONFLICT, "This staff has already been assigned this shift for the day.");
-    }
-
-    // check the shift scheduling date falls within the range from FromDate to ToDate of an Approved order
-    const hasApprovedLeave = await LeaveRequest.findOne({
-        staffId,
-        status: "Approved",
-        fromDate: { $lte: endOfDay },
-        toDate: { $gte: startOfDay },
-    })
-
-    if(hasApprovedLeave) {
-        throw new ApiError(StatusCodes.CONFLICT, "Unable to schedule. The staff has already been approved for leave on this day.");
-    }
-
-    //check maximum shift/day
-    const currentStaffShiftCount = await StaffShift.countDocuments({ staffId, workDate: dateQuery });
-    if (currentStaffShiftCount >= constants.MAX_SHIFT_PER_DAY) {
-        throw new ApiError(StatusCodes.CONFLICT, `This staff has reached the maximum limit of ${constants.MAX_SHIFT_PER_DAY} shifts per day.`);
-    }
-
-    //check xem Ca đó trong ngày đã đủ số lượng người chưa
-    const currentShiftPeopleCount = await StaffShift.countDocuments({ 
-        cinemaId: managerCinemaId, 
-        workDate: dateQuery, 
-        shift 
-    });
-
-    if (currentShiftPeopleCount >= constants.STAFF_PER_SHIFT) {
-        throw new ApiError(StatusCodes.CONFLICT, `The ${shift} shift on this day already has the required ${constants.STAFF_PER_SHIFT} staff members.`);
-    }
-
-    const newShift =  await StaffShift.create({ staffId, cinemaId: managerCinemaId, workDate: startOfDay, shift, status: 'Assigned' });
-    
-    //join the shift to staff
-    const populatedShift = await StaffShift.findById(newShift._id).populate({ path: 'staffId', select: 'fullName position phone' 
-
-    })
-    return {
-        shiftId: populatedShift._id,
-        staffName: populatedShift.staffId?.fullName || "",
-        position: populatedShift.staffId?.position || "",
-        cinemaId: populatedShift.cinemaId,
-        workDate: populatedShift.workDate,
-        shift: populatedShift.shift,
-        status: populatedShift.status
-    }
-}
-
 //unfinished
 const updateShifts = async (accountId, shiftId, updateData) => {
     console.log(updateData);
     const { staffId, shift, status } = updateData;
     console.log(shiftId);
-    const manager = await Manager.findOne({accountId})
-    if(!manager) {
-        throw new ApiError(StatusCodes.FORBIDDEN, "You do not have permission to perform this function.");
-    }
+
+    const manager = await checkManager(accountId);
     
     const currentShift = await StaffShift.findById(shiftId);
     if(!currentShift) {
@@ -202,6 +121,7 @@ const updateShifts = async (accountId, shiftId, updateData) => {
     if(currentShift.cinemaId.toString() !== manager.cinemaId.toString()) {
         throw new ApiError(StatusCodes.FORBIDDEN, "You can only update shifts for staff members belonging to your own cinema.");
     }
+    checkCinemaPermission(manager.cinemaId, currentShift.cinemaId);
     
     const fixedWorkDate = currentShift.workDate;
 
@@ -329,8 +249,7 @@ const getAvailableStaffForDay = async (allStaffs, cinemaId, workDate) => {
     })
     .lean();
     // Filter cinema staff currently requesting time off
-    const absentStaffIds = approvedLeaves.filter(leave =>
-        leave.staffId.cinemaId.toString() === cinemaId.toString()
+    const absentStaffIds = approvedLeaves.filter(leave =>leave.staffId.cinemaId.toString() === cinemaId.toString()
     ).map(leave => leave.staffId._id.toString());
     
     // List of staff working that day
@@ -415,10 +334,8 @@ const generateShift = async (accountId, dateRange) => {
     }
 
     // 3. Check Manager & Cinema
-    const manager = await Manager.findOne({ accountId });
-    if (!manager) {
-        throw new ApiError(StatusCodes.FORBIDDEN, "You do not have permission to perform this function.");
-    }
+    const manager = await checkManager(accountId);
+
     const cinemaId = manager.cinemaId;
 
     const allStaff = await Staff.find({ cinemaId }).lean();
@@ -505,7 +422,7 @@ const generateShift = async (accountId, dateRange) => {
             if (neededPairs <= 0) continue;
 
             for (let p = 0; p < neededPairs; p++) {
-                // ⛔ ĐIỀU KIỆN CỨNG: Bắt buộc chưa làm ca nào hôm nay VÀ chưa đi làm quá 5 ngày (để chắc chắn có 1 ngày nghỉ)
+                //  Bắt buộc chưa làm ca nào hôm nay VÀ chưa đi làm quá 5 ngày (để chắc chắn có 1 ngày nghỉ)
                 const eligibleForPair = dayStaff.filter(staff => {
                     const id = staff._id.toString();
                     const dailyCount = staffDailyCount[id] || 0;
@@ -526,7 +443,7 @@ const generateShift = async (accountId, dateRange) => {
                     );
                 }
 
-                // ⚡ SẮP XẾP: Ưu tiên nhân viên có số ngày đi làm (workedDays) ít nhất
+                //SẮP XẾP: Ưu tiên nhân viên có số ngày đi làm (workedDays) ít nhất
                 eligibleForPair.sort((a, b) => {
                     const idA = a._id.toString();
                     const idB = b._id.toString();
@@ -573,7 +490,7 @@ const generateShift = async (accountId, dateRange) => {
         dayIndex++;
     }
 
-    // 6. Lưu Database
+    // Lưu Database
     if (newShiftsToInsert.length === 0) {
         return {
             generated: 0,
@@ -626,11 +543,7 @@ const formatDateString = (dateInput) => {
 
 const getStaffDetailService = async (accountId, shiftId) => {
     //check manager
-    const manager = await Manager.findOne({accountId})
-    if(!manager) {
-        throw new ApiError(StatusCodes.FORBIDDEN, "You do not have permission to perform this function.");
-    }
-    //find the staff
+    const manager = await checkManager(accountId);
     const targetShift = await StaffShift.findById(shiftId)
     .populate({
       path: 'staffId',
@@ -643,9 +556,7 @@ const getStaffDetailService = async (accountId, shiftId) => {
     }
 
     // Check xem ca này có thuộc Cinema của Manager không
-    if (targetShift.cinemaId.toString() !== manager.cinemaId.toString()) {
-        throw new ApiError(StatusCodes.FORBIDDEN, "You can only view shifts at your own cinema.");
-    }
+    checkCinemaPermission(manager.cinemaId, targetShift.cinemaId);
 
     const staff = targetShift.staffId;
     if (!staff) {
@@ -730,12 +641,146 @@ const getStaffDetailService = async (accountId, shiftId) => {
         weekSchedule
     };
 }
+const getLeaveRequestForManager = async (accountId, {status}) => {
+    const manager = await checkManager(accountId);
+    const cinemaId = manager.cinemaId
+
+    //Dựng filter cơ bản (nếu client truyền status: Pending, Approved, Rejected)
+    const filter = {}
+    if(status) {
+        filter.status = status
+    }
+
+    //query + populate correct cinemaId of manager
+    const leaveRequests = await LeaveRequest.find(filter)
+    .populate({
+        path: "staffId",
+        select: "fullname phone position"
+    })
+    .populate({
+        path: "staffShiftId",
+        match:{cinemaId: cinemaId},
+        select: "workDate shift status cinemaId"
+    })
+    .sort({createdAt: -1})
+    .lean()
+    
+    // filter requests have null staffShiftId(because not belong to cinema of manager)
+    const filteredRequests = leaveRequests.filter(request => request.staffShiftId !== null)
+
+    //Sort: Pending -> Approved -> Rejected (createdAt DESC in every group)
+    const statusPriority = { Pending: 1, Approved: 2, Rejected: 3 };
+
+    filteredRequests.sort((a, b) => {
+    const priorityA = statusPriority[a.status] || 99;
+    const priorityB = statusPriority[b.status] || 99;
+
+    if (priorityA !== priorityB) {
+      return priorityA - priorityB; // Pending display first
+    }
+    // the same status => display newest first
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
+    return filteredRequests.map(item => ({
+        leaveRequestId: item._id,
+        staffId: item.staffId?._id,
+        staffName: item.staffId?.fullName || "N/A",
+        staffPosition: item.staffId?.position || "Staff",
+        staffShiftId: item.staffShiftId?._id,
+        shift: item.staffShiftId?.shift,
+        workDate: formatDate(item.staffShiftId?.workDate),
+        reason: item.reason,
+        status: item.status,
+        createdAt: item.createdAt
+    }));
+
+}
+
+
+const approveLeaveRequest = async (accountId, leaveRequestId) => {
+    const manager = await checkManager(accountId);
+
+    const leaveRequest = await LeaveRequest.findById(leaveRequestId).populate("staffShiftId");
+    if (!leaveRequest) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Leave request not found");
+    }
+    const shift = leaveRequest.staffShiftId
+    if(!shift) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Shift not found!");
+    }
+    //Check cinema permission
+    checkCinemaPermission(manager.cinemaId, shift.cinemaId);
+    //Check  LeaveRequest status(only approve pending request)
+    if(leaveRequest.status !== "Pending") {
+        throw new ApiError(StatusCodes.CONFLICT, `Cannot approve a request with status '${leaveRequest.status}'!`);
+    }
+
+    //check staffShift status
+    if(shift.status !== "Assigned") {
+        throw new ApiError(StatusCodes.CONFLICT, `Shift is already in '${shift.status}' status.`);
+    }
+
+    //transaction
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+        //update leaveRequest status
+        leaveRequest.status = "Approved";
+        leaveRequest.managerId = manager._id;
+        leaveRequest.approvedAt = new Date();
+        await leaveRequest.save({session});
+
+        //update leaveRequest
+        shift.status = "NeedReplacement";
+        await shift.save({session});
+
+        //commit Transaction
+        await session.commitTransaction();
+        
+    } catch (error) {
+        await session.abortTransaction();
+        throw error;
+    } finally {
+        // close session
+        session.endSession();
+  }
+
+}
+//reject leaveRequest - manager
+const rejectLeaveRequest = async (accountId, leaveRequestId, rejectReason) => {
+
+    const manager = await checkManager(accountId);
+    const leaveRequest = await LeaveRequest.findById(leaveRequestId).populate("staffShiftId");
+    if(!leaveRequest) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Leave request not found!");
+    }
+
+    const shift = leaveRequest.staffShiftId
+    if(!shift) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Associated shift not found!");
+    }
+    //check permission
+    checkCinemaPermission(manager.cinemaId, shift.cinemaId);
+    //check status
+    if(leaveRequest.status !== "Pending") {
+        throw new ApiError(StatusCodes.CONFLICT, `This leave request has already been ${leaveRequest.status.toLowerCase()}!`);
+    }
+
+    leaveRequest.status = "Rejected";
+    leaveRequest.managerId = manager._id;
+    leaveRequest.rejectReason = rejectReason || "No specific reason provided.";
+    leaveRequest.approvedAt = new Date();
+    await leaveRequest.save();
+
+    return { success: true };
+}
 
 
 export const ManagerStaffShiftService = {
-  createShift, 
   updateShifts,
   generateShift,
   getShifts,
-  getStaffDetailService
+  getStaffDetailService,
+  getLeaveRequestForManager,
+  approveLeaveRequest
 };
