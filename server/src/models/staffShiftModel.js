@@ -5,7 +5,8 @@ const staffShiftSchema = new mongoose.Schema({
     cinemaId: {type: mongoose.Schema.Types.ObjectId, ref: 'Cinema', required: true},
     workDate: { type: Date, required: true },
     shift: { type: String, required: true },//'Morning', 'Afternoon', 'Evening', 'Night'
-    status: { type: String, default: 'Assigned' } //'Assigned', 'Completed', 'Absent',
+    status: { type: String, default: 'Assigned' }, //'Assigned', 'Completed', 'Absent', 'NeedReplacement'
+    originalStaffId: { type: mongoose.Schema.Types.ObjectId, ref: 'Staff' }
 }, {
     timestamps: true,
     versionKey: false,

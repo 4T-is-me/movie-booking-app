@@ -2,13 +2,13 @@ import mongoose from "mongoose";
 
 const leaveRequestSchema = new mongoose.Schema(
   {
-    staffId: { type: mongoose.Schema.Types.ObjectId, ref: "Staff", required: true },
-    managerId: { type: mongoose.Schema.Types.ObjectId, ref: "Manager" },
-    workDate: { type: Date, required: true },//Nghỉ đích danh ngày nào, ca nào
-    shift: { type: String, required: true }, // 'Morning', 'Afternoon', 'Evening', 'Night'
+    staffId: { type: mongoose.Schema.Types.ObjectId,   ref: "Staff",  required: true },
+    staffShiftId: {  type: mongoose.Schema.Types.ObjectId,  ref: "StaffShift",  required: true  },
+    managerId: {  type: mongoose.Schema.Types.ObjectId,  ref: "Manager"  },
     reason: { type: String, required: true },
-    status: { type: String, default: "Pending" }, // "Pending", "Approved", "Rejected"
+    status: { type: String, default: "Pending" },
     approvedAt: { type: Date, default: null },
+    rejectReason: { type: String, default: null }
   },
   {
     versionKey: false,
@@ -17,7 +17,9 @@ const leaveRequestSchema = new mongoose.Schema(
   }
 );
 
-// Thêm index để tối ưu việc check trùng lịch xin nghỉ
-leaveRequestSchema.index({ staffId: 1, workDate: 1, shift: 1 });
+
+// Index tối ưu performance cho việc query đơn nghỉ theo ca và nhân viên
+leaveRequestSchema.index({ staffShiftId: 1 });
+leaveRequestSchema.index({ staffId: 1, status: 1 });
 
 export const LeaveRequest = mongoose.model("LeaveRequest", leaveRequestSchema);
