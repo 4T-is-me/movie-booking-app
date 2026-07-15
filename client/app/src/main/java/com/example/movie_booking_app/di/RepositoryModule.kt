@@ -34,4 +34,10 @@ abstract class RepositoryModule {
     abstract fun bindBookingRepository(
         impl: BookingRepositoryRemoteImpl // Phải là RemoteImpl để gọi API thật
     ): BookingRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindMemberRepository(
+        impl: MemberRepositoryImpl
+    ): MemberRepository
 }

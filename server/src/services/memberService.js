@@ -45,6 +45,31 @@ const getScoreHistory = async (accountId, page = 1, limit = 10) => {
     }
 }
 
+import mongoose from 'mongoose'
+
+const getMemberByIdentity = async (identity) => {
+    let query = {};
+    if (mongoose.Types.ObjectId.isValid(identity)) {
+        query = { $or: [{ _id: identity }, { phoneNumber: identity }, { identityCard: identity }] };
+    } else {
+        query = { $or: [{ phoneNumber: identity }, { identityCard: identity }] };
+    }
+    const member = await Member.findOne(query).lean();
+    if (!member) {
+        throw new ApiError(StatusCodes.NOT_FOUND, 'Member not found');
+    }
+    return {
+        success: true,
+        data: {
+            memberId: member._id,
+            memberName: member.fullName,
+            phoneNumber: member.phoneNumber,
+            currentScore: member.rewardPoints
+        }
+    };
+}
+
 export const memberService = {
-    getScoreHistory
+    getScoreHistory,
+    getMemberByIdentity
 }

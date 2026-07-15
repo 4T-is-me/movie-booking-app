@@ -25,7 +25,7 @@ const handleHoldSeats = async (req, res, next) => {
 const handleConfirmBooking = async (req, res, next) => {
     try {
 
-        const { showtimeId, seatIds, useScore, useRewardPoints, paymentMethod, couponCode, promotionId, combos } = req.body;
+        const { showtimeId, seatIds, useScore, useRewardPoints, paymentMethod, couponCode, promotionId, combos, scoreToRedeem } = req.body;
 
         const activeUseScore = useRewardPoints !== undefined ? useRewardPoints : useScore;
 
@@ -37,7 +37,8 @@ const handleConfirmBooking = async (req, res, next) => {
             paymentMethod,
             couponCode,
             promotionId,
-            combos
+            combos,
+            scoreToRedeem
         });
 
         return res.status(StatusCodes.OK).json({
