@@ -106,8 +106,8 @@ class StaffSalesFragment : Fragment() {
                 val formattedPrice = formatter.format(price)
 
                 binding.tvOrderMovieTitle.text = movie?.movieName ?: "N/A"
-                binding.tvOrderDetails.text = "Suất chiếu: $showtimeStr • Ngày: $dateStr • Ghế đã chọn: $seatLabels"
-                binding.tvOrderPrice.text = "Tạm tính: $formattedPrice"
+                binding.tvOrderDetails.text = "Showtime: $showtimeStr • Date: $dateStr • Seats: $seatLabels"
+                binding.tvOrderPrice.text = "Subtotal: $formattedPrice"
 
                 viewModel.nextStep()
             } else if (step == 2) {
@@ -122,8 +122,8 @@ class StaffSalesFragment : Fragment() {
                 val formattedPrice = formatter.format(price)
 
                 binding.tvPromoOrderMovieTitle.text = movie?.movieName ?: "N/A"
-                binding.tvPromoOrderDetails.text = "Suất chiếu: $showtimeStr • Ngày: $dateStr • Ghế đã chọn: $seatLabels"
-                binding.tvPromoOrderPrice.text = "Tạm tính: $formattedPrice"
+                binding.tvPromoOrderDetails.text = "Showtime: $showtimeStr • Date: $dateStr • Seats: $seatLabels"
+                binding.tvPromoOrderPrice.text = "Subtotal: $formattedPrice"
 
                 viewModel.loadAvailablePromotions()
                 viewModel.nextStep()
@@ -137,12 +137,12 @@ class StaffSalesFragment : Fragment() {
                 val member = viewModel.verifiedMember.value
 
                 binding.tvFinalMovie.text = movie?.movieName ?: "N/A"
-                binding.tvFinalShowtime.text = "Suất chiếu: $showtimeStr • Ngày: $dateStr"
-                binding.tvFinalSeats.text = "Ghế đã chọn: $seatLabels"
+                binding.tvFinalShowtime.text = "Showtime: $showtimeStr • Date: $dateStr"
+                binding.tvFinalSeats.text = "Seats: $seatLabels"
                 binding.tvFinalMember.text = if (member != null) {
-                    "Thành viên: ${member.memberName} (${member.phoneNumber})"
+                    "Member: ${member.memberName} (${member.phoneNumber})"
                 } else {
-                    "Khách hàng: Khách vãng lai"
+                    "Customer: Walk-in"
                 }
 
                 viewModel.nextStep()
@@ -265,13 +265,13 @@ class StaffSalesFragment : Fragment() {
             viewModel.selectedSeats.collectLatest { selected ->
                 if (selected.isNotEmpty()) {
                     val seatLabels = selected.joinToString(", ") { it.label }
-                    binding.tvSelectedSeats.text = "Ghế đã chọn: $seatLabels"
+                    binding.tvSelectedSeats.text = "Selected seats: $seatLabels"
                     if (viewModel.currentStep.value == 1) {
                         binding.btnNext.isEnabled = true
                         binding.btnNext.alpha = 1.0f
                     }
                 } else {
-                    binding.tvSelectedSeats.text = "Ghế đã chọn: Chưa chọn"
+                    binding.tvSelectedSeats.text = "Selected seats: None"
                     if (viewModel.currentStep.value == 1) {
                         binding.btnNext.isEnabled = false
                         binding.btnNext.alpha = 0.5f
@@ -284,7 +284,7 @@ class StaffSalesFragment : Fragment() {
             viewModel.totalPrice.collectLatest { price ->
                 val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
                 val formattedPrice = formatter.format(price)
-                binding.tvTotalPrice.text = "Tạm tính: $formattedPrice"
+                binding.tvTotalPrice.text = "Subtotal: $formattedPrice"
             }
         }
 
@@ -342,14 +342,14 @@ class StaffSalesFragment : Fragment() {
             viewModel.verifiedMember.collectLatest { member ->
                 if (member != null) {
                     binding.cardMemberResult.visibility = View.VISIBLE
-                    binding.tvMemberName.text = "Họ tên: ${member.memberName}"
-                    binding.tvMemberPhone.text = "Số điện thoại: ${member.phoneNumber}"
-                    binding.tvMemberScore.text = "Điểm tích luỹ: ${member.currentScore} điểm"
+                    binding.tvMemberName.text = "Full name: ${member.memberName}"
+                    binding.tvMemberPhone.text = "Phone number: ${member.phoneNumber}"
+                    binding.tvMemberScore.text = "Accumulated points: ${member.currentScore} pts"
                     binding.cardWalkInAlert.visibility = View.GONE
 
                     // Step 3 points redemption
                     binding.cardPointsRedemption.visibility = View.VISIBLE
-                    binding.tvPromoMemberPoints.text = "Điểm khả dụng: ${member.currentScore} điểm"
+                    binding.tvPromoMemberPoints.text = "Available points: ${member.currentScore} pts"
                 } else {
                     binding.cardMemberResult.visibility = View.GONE
                     binding.cardWalkInAlert.visibility = View.VISIBLE
@@ -374,7 +374,7 @@ class StaffSalesFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.isVerifyingMember.collectLatest { isVerifying ->
                 binding.btnVerifyMember.isEnabled = !isVerifying
-                binding.btnVerifyMember.text = if (isVerifying) "ĐANG XÁC THỰC..." else "KIỂM TRA (VERIFY)"
+                binding.btnVerifyMember.text = if (isVerifying) "VERIFYING..." else "VERIFY"
             }
         }
 
@@ -390,7 +390,7 @@ class StaffSalesFragment : Fragment() {
             viewModel.appliedPromotion.collectLatest { promo ->
                 if (promo != null) {
                     binding.tvFinalPromoApplied.visibility = View.VISIBLE
-                    binding.tvFinalPromoApplied.text = "Khuyến mãi: ${promo.title}"
+                    binding.tvFinalPromoApplied.text = "Promotion: ${promo.title}"
                 } else {
                     binding.tvFinalPromoApplied.visibility = View.GONE
                 }
@@ -423,7 +423,7 @@ class StaffSalesFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.isApplyingPromo.collectLatest { isApplying ->
                 binding.btnApplyPromo.isEnabled = !isApplying
-                binding.btnApplyPromo.text = if (isApplying) "ĐANG ÁP..." else "ÁP DỤNG"
+                binding.btnApplyPromo.text = if (isApplying) "APPLYING..." else "APPLY"
             }
         }
 
@@ -454,7 +454,7 @@ class StaffSalesFragment : Fragment() {
                     val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
                     binding.tvSummaryPointDiscount.text = "-${formatter.format(discount)}"
                     binding.tvFinalPointsUsed.visibility = View.VISIBLE
-                    binding.tvFinalPointsUsed.text = "Dùng điểm: Có (Giảm ${formatter.format(discount)})"
+                    binding.tvFinalPointsUsed.text = "Use points: Yes (Discount ${formatter.format(discount)})"
                 } else {
                     binding.layoutSummaryPointDiscount.visibility = View.GONE
                     binding.tvFinalPointsUsed.visibility = View.GONE
@@ -474,7 +474,7 @@ class StaffSalesFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.isCheckingOut.collectLatest { isChecking ->
                 binding.btnConfirmBooking.isEnabled = !isChecking
-                binding.btnConfirmBooking.text = if (isChecking) "ĐANG BÁN VÉ..." else "XÁC NHẬN BÁN VÉ"
+                binding.btnConfirmBooking.text = if (isChecking) "CHECKING OUT..." else "CONFIRM CHECKOUT"
             }
         }
 
@@ -489,7 +489,8 @@ class StaffSalesFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.checkoutSuccess.collectLatest { success ->
                 if (success) {
-                    showSuccessDialog("Bán vé thành công!")
+                    val code = viewModel.checkoutCode.value ?: "N/A"
+                    showSuccessDialog("Ticket sold successfully!\nBooking ID: $code\n\nPrinting receipt and ticket...")
                 }
             }
         }

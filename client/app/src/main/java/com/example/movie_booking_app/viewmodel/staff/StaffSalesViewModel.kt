@@ -83,6 +83,9 @@ class StaffSalesViewModel @Inject constructor(
     private val _checkoutSuccess = MutableStateFlow(false)
     val checkoutSuccess: StateFlow<Boolean> = _checkoutSuccess.asStateFlow()
 
+    private val _checkoutCode = MutableStateFlow<String?>(null)
+    val checkoutCode: StateFlow<String?> = _checkoutCode.asStateFlow()
+
     private val _checkoutError = MutableStateFlow<String?>(null)
     val checkoutError: StateFlow<String?> = _checkoutError.asStateFlow()
 
@@ -114,6 +117,7 @@ class StaffSalesViewModel @Inject constructor(
         _promoError.value = null
         _promoSuccessMessage.value = null
         _checkoutSuccess.value = false
+        _checkoutCode.value = null
         _checkoutError.value = null
         if (movie != null) {
             loadShowtimes(movie.id ?: "")
@@ -196,7 +200,7 @@ class StaffSalesViewModel @Inject constructor(
 
     fun verifyMember(identity: String) {
         if (identity.trim().isEmpty()) {
-            _memberVerificationError.value = "Vui lòng nhập thông tin xác thực"
+            _memberVerificationError.value = "Please enter verification info"
             _verifiedMember.value = null
             return
         }
@@ -212,14 +216,14 @@ class StaffSalesViewModel @Inject constructor(
                         _memberVerificationError.value = null
                     } else {
                         _verifiedMember.value = null
-                        _memberVerificationError.value = "Tài khoản thành viên không tồn tại"
+                        _memberVerificationError.value = "Member account does not exist"
                     }
                     _useScore.value = false
                     recalculateTotals()
                 }
             } catch (e: Exception) {
                 _verifiedMember.value = null
-                _memberVerificationError.value = e.message ?: "Lỗi hệ thống khi xác thực"
+                _memberVerificationError.value = e.message ?: "System error during verification"
                 _useScore.value = false
                 recalculateTotals()
             } finally {
@@ -279,7 +283,7 @@ class StaffSalesViewModel @Inject constructor(
         val member = _verifiedMember.value
         if (member != null) {
             if (score > member.currentScore) {
-                _scoreError.value = "Điểm tích luỹ không đủ để quy đổi (Khả dụng: ${member.currentScore} điểm)"
+                _scoreError.value = "Insufficient reward points (Available: ${member.currentScore} pts)"
             } else {
                 _scoreError.value = null
             }
@@ -302,7 +306,7 @@ class StaffSalesViewModel @Inject constructor(
 
     fun applyPromoCode(code: String) {
         if (code.trim().isEmpty()) {
-            _promoError.value = "Vui lòng nhập mã khuyến mãi"
+            _promoError.value = "Please enter promotion code"
             return
         }
 
@@ -314,7 +318,7 @@ class StaffSalesViewModel @Inject constructor(
             paymentRepository.applyPromotion(code)
                 .catch { exception ->
                     _isApplyingPromo.value = false
-                    _promoError.value = exception.message ?: "Mã khuyến mãi không hợp lệ hoặc đã hết hạn"
+                    _promoError.value = exception.message ?: "Invalid or expired promotion code"
                     _appliedPromotion.value = null
                     recalculateTotals()
                 }
@@ -322,11 +326,11 @@ class StaffSalesViewModel @Inject constructor(
                     _isApplyingPromo.value = false
                     if (response.success && response.data != null) {
                         _appliedPromotion.value = response.data
-                        _promoSuccessMessage.value = response.message ?: "Áp dụng mã thành công!"
+                        _promoSuccessMessage.value = response.message ?: "Promotion applied successfully!"
                         _promoError.value = null
                     } else {
                         _appliedPromotion.value = null
-                        _promoError.value = response.message ?: "Mã khuyến mãi không hợp lệ"
+                        _promoError.value = response.message ?: "Invalid coupon code"
                     }
                     recalculateTotals()
                 }
@@ -376,13 +380,13 @@ class StaffSalesViewModel @Inject constructor(
     fun confirmBooking(paymentMethod: String) {
         val showtime = _showtimes.value.find { it.isSelected }
         if (showtime == null) {
-            _checkoutError.value = "Vui lòng chọn suất chiếu"
+            _checkoutError.value = "Please select a showtime"
             return
         }
 
         val selectedSeatsList = _selectedSeats.value
         if (selectedSeatsList.isEmpty()) {
-            _checkoutError.value = "Vui lòng chọn ghế"
+            _checkoutError.value = "Please select a seat"
             return
         }
 
@@ -396,7 +400,7 @@ class StaffSalesViewModel @Inject constructor(
             bookingRepository.holdSeats(showtime.id, seatIds)
                 .catch { exception ->
                     _isCheckingOut.value = false
-                    _checkoutError.value = "Giữ ghế thất bại: ${exception.message}"
+                    _checkoutError.value = "Hold seat failed: ${exception.message}"
                 }
                 .collect {
                     // Seats held successfully, proceed with booking checkout
@@ -407,19 +411,36 @@ class StaffSalesViewModel @Inject constructor(
                         useRewardPoints = _useScore.value,
                         paymentMethod = paymentMethod,
                         promotionId = _appliedPromotion.value?.id,
-                        combos = emptyList() // Staff tickets sales combo not added in this flow
+                        combos = emptyList(), // Staff tickets sales combo not added in this flow
+                        scoreToRedeem = if (_useScore.value) _scoreToRedeem.value else null
                     )
 
                     paymentRepository.confirmBooking(request)
                         .catch { checkoutException ->
                             _isCheckingOut.value = false
-                            _checkoutError.value = checkoutException.message ?: "Thanh toán thất bại"
+                            _checkoutError.value = checkoutException.message ?: "Checkout failed"
                             // Release held seats on failure
                             bookingRepository.releaseSeats(showtime.id, seatIds).collectLatest {}
                         }
-                        .collect {
+                        .collect { responseBody ->
                             _isCheckingOut.value = false
-                            _checkoutSuccess.value = true
+                            try {
+                                val responseString = responseBody.string()
+                                val jsonObject = org.json.JSONObject(responseString)
+                                val success = jsonObject.optBoolean("success", false)
+                                if (success) {
+                                    val data = jsonObject.optJSONObject("data")
+                                    val bookingCode = data?.optString("bookingCode") ?: "N/A"
+                                    _checkoutCode.value = bookingCode
+                                    _checkoutSuccess.value = true
+                                } else {
+                                    val message = jsonObject.optString("message", "Checkout failed")
+                                    _checkoutError.value = message
+                                    bookingRepository.releaseSeats(showtime.id, seatIds).collectLatest {}
+                                }
+                            } catch (e: Exception) {
+                                _checkoutSuccess.value = true
+                            }
                         }
                 }
         }

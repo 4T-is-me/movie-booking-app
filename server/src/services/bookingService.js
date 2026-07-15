@@ -73,7 +73,7 @@ const handleHoldSeats = async ({ accountId, showtimeId, seatIds }) => {
 };
 
 // handle confirm booking
-const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore = false, paymentMethod, couponCode, promotionId: requestPromotionId, combos = [] }) => {
+const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore = false, paymentMethod, couponCode, promotionId: requestPromotionId, combos = [], scoreToRedeem }) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
@@ -145,17 +145,19 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
       if (!member.rewardPoints || member.rewardPoints <= 0) {
         throw new ApiError(StatusCodes.BAD_REQUEST, "Not enough reward points");
       }
-      pointUsed = Math.min(member.rewardPoints, Math.ceil(afterPromotion / 10));
+      const maxPointsNeeded = Math.ceil(afterPromotion / 10);
+      const targetScore = (scoreToRedeem !== undefined && scoreToRedeem !== null) ? scoreToRedeem : maxPointsNeeded;
+      pointUsed = Math.min(member.rewardPoints, targetScore);
       pointDiscount = pointUsed * 10;
       finalAmount = afterPromotion - pointDiscount;
-      member.rewardPoints -= pointUsed;
-    } else {
-      earnedPoints = Math.floor((afterPromotion * 0.01) / 10);
-      member.rewardPoints += earnedPoints;
     }
 
+    // ADD_SCORE = 5% * TOTAL_MONEY (finalAmount) in terms of points (1 point = 10 VND)
+    earnedPoints = Math.floor((finalAmount * 0.05) / 10);
+    member.rewardPoints = member.rewardPoints - pointUsed + earnedPoints;
+
     const prevTotalSpent = member.totalSpent;
-    const prevRewardPoints = useScore ? member.rewardPoints + pointUsed : member.rewardPoints - earnedPoints;
+    const prevRewardPoints = member.rewardPoints + pointUsed - earnedPoints;
 
     member.totalSpent += finalAmount;
 
