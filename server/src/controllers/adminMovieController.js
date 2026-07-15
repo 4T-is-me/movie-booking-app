@@ -78,11 +78,7 @@ const getMoviesAdmin = async (req, res, next) => {
     try {
         const result = await adminMovieService.getMoviesAdmin(req.query);
         
-        return res.status(StatusCodes.OK).json({ 
-            success: true, 
-            data: result, 
-            message: 'Get movies for admin successfully.' 
-        });
+        return res.status(StatusCodes.OK).json(result);
     } catch (error) {
         next(error);
     }

@@ -51,15 +51,19 @@ const createMovie = async (movieData) => {
 };
     // update movie
     const updateMovie = async (movieId, updateData) => {
-        const movie = await Movie.findOne({ _id: movieId, isDeleted: false });
+        const movie = await Movie.findById(movieId);
         if (!movie) {
-            throw new ApiError(StatusCodes.NOT_FOUND, 'Movie not found or has been deleted!');
+            throw new ApiError(StatusCodes.NOT_FOUND, 'Movie not found!');
         }
 
-        // update
+        const updatePayload = { ...updateData };
+        if (updatePayload.isDeleted === undefined) {
+            updatePayload.isDeleted = movie.isDeleted ?? true;
+        }
+
         const updatedMovie = await Movie.findByIdAndUpdate(
             movieId,
-            { $set: updateData },
+            { $set: updatePayload },
             { new: true, runValidators: true }
         );
 
@@ -116,7 +120,7 @@ const createMovie = async (movieData) => {
         return assignedCinemas;
     };
 
-    const getMoviesAdmin = async (query) => {
+    const getMoviesAdmin = async (query = {}) => {
         const { status, page = 1, limit = 10, search } = query;
         const parsedPage = parseInt(page, 10);
         const parsedLimit = parseInt(limit, 10);
@@ -127,15 +131,14 @@ const createMovie = async (movieData) => {
             q.movieName = { $regex: search, $options: 'i' };
         }
 
-        if (status == 'deleted') {
-            // Retrieve only soft-deleted movies
+        if (status === 'deleted') {
             q.isDeleted = true;
-        } else {
-            if (status === 'showing') {
-                q.status = 'showing';
-            } else if (status === 'coming-soon' || status === 'coming_soon') {
-                q.status = 'coming_soon';
-            }
+        } else if (status === 'active') {
+            q.isDeleted = false;
+        } else if (status === 'showing') {
+            q.status = 'showing';
+        } else if (status === 'coming-soon' || status === 'coming_soon') {
+            q.status = 'coming_soon';
         }
 
         const [totalCount, movies] = await Promise.all([
@@ -144,12 +147,12 @@ const createMovie = async (movieData) => {
         ]);
         const totalPages = Math.ceil(totalCount / parsedLimit);
         return {
-            data: movies,
-            totalCount,
+            page: parsedPage,
+            limit: parsedLimit,
+            total: totalCount,
             totalPages,
-            currentPage: parsedPage
+            data: movies
         }
-
     }
 
 export const adminMovieService = {
