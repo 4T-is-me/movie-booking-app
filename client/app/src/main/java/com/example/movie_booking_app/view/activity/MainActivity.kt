@@ -61,6 +61,12 @@ class MainActivity : BaseActivity() {
                 startActivity(intent)
                 finish()
                 return
+            } else if (role.equals("Staff", ignoreCase = true) || role.equals("Employee", ignoreCase = true)) {
+                val intent = Intent(this, StaffActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
+                return
             } else {
                 // If it is a Member/User who auto-logins, register/refresh the FCM token on startup
                 lifecycleScope.launch(Dispatchers.IO) {

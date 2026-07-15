@@ -22,21 +22,6 @@ const getShifts = async (req, res, next) => {
 }
 
 
-const createShift = async (req, res, next) => {
-    try {
-    const accountId = req.user.accountId; 
-    const result = await ManagerStaffShiftService.createShift(accountId, req.body);
-    
-    return res.status(StatusCodes.CREATED).json({
-      success: true,
-      message: "Successfully schedule staff shifts.",
-      data: result
-    });
-  } catch (error) {
-    next(error);
-  }
-}
-
 const updateShifts = async (req, res, next) => {
   try {
       const accountId = req.user.accountId; 
@@ -59,6 +44,7 @@ const updateShifts = async (req, res, next) => {
   }
 }
 
+// Generate staff shifts
 const generateShift = async (req, res, next) => {
   try {
     const accountId = req.user.accountId;
@@ -74,6 +60,8 @@ const generateShift = async (req, res, next) => {
   }
 }
 
+
+// Get staff detail - Manager
 export const getStaffDetail = async (req, res, next) => {
   try {
     const accountId = req.user.accountId; 
@@ -91,11 +79,64 @@ export const getStaffDetail = async (req, res, next) => {
   }
 };
 
+// Get leave request - Manager
+const getLeaveRequestForManager = async (req, res, next) => {
+    try {
+        const accountId = req.user.accountId
+        const {status} = req.query // Query params: ?status=Pending (Optional)
+
+        const data = await ManagerStaffShiftService.getLeaveRequestForManager(accountId, { status });
+
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            message: "Successfully get leave requests.",
+            data
+        })
+        
+    } catch (error) {
+        next(error);
+    }
+}
+
+// Approve leave request - Manager
+const approveLeaveRequest = async(req, res, next) => {
+    try {
+      const accountId = req.user.accountId
+      const leaveRequestId = req.params.id
+
+      await ManagerStaffShiftService.approveLeaveRequest(accountId, leaveRequestId)
+
+      return res.status(StatusCodes.OK).json({
+        success: true,
+        message: "Successfully approve leave request."
+      })
+      
+    } catch (error) {
+      next(error);
+    }
+}
+const rejectLeaveRequest = async(req, res, next) => {
+  try {
+    const accountId = req.user.accountId
+    const leaveRequestId = req.params.id
+    const { reason } = req.body;
+
+    await ManagerStaffShiftService.rejectLeaveRequest(accountId, leaveRequestId, reason)
+    return res.status(StatusCodes.OK).json({
+      success: true,
+      message: "Leave request rejected successfully."
+    })
+  }catch (error) {
+    next(error);
+  }
+}
 
 export const StaffShiftController = {
   getShifts,
-  createShift,
   updateShifts,
   generateShift,
-  getStaffDetail
+  getStaffDetail,
+  getLeaveRequestForManager,
+  approveLeaveRequest,
+  rejectLeaveRequest
 };
