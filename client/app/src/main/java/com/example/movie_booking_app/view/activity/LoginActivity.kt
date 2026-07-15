@@ -95,16 +95,25 @@ class LoginActivity : AppCompatActivity() {
             viewModel.login(LoginRequest(username, password))
         }
 
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(com.example.movie_booking_app.BuildConfig.GOOGLE_CLIENT_ID)
-            .requestEmail()
-            .build()
-        googleSignInClient = GoogleSignIn.getClient(this, gso)
+        val googleClientId = com.example.movie_booking_app.BuildConfig.GOOGLE_CLIENT_ID
+        if (googleClientId.isNotEmpty()) {
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(googleClientId)
+                .requestEmail()
+                .build()
+            googleSignInClient = GoogleSignIn.getClient(this, gso)
+        } else {
+            Log.e("LOGIN_DEBUG", "GOOGLE_CLIENT_ID is missing in local.properties or .env")
+        }
 
         binding.btnGoogleLogin.setOnClickListener {
-            googleSignInClient.signOut().addOnCompleteListener {
-                val signInIntent = googleSignInClient.signInIntent
-                googleSignInLauncher.launch(signInIntent)
+            if (::googleSignInClient.isInitialized) {
+                googleSignInClient.signOut().addOnCompleteListener {
+                    val signInIntent = googleSignInClient.signInIntent
+                    googleSignInLauncher.launch(signInIntent)
+                }
+            } else {
+                Toast.makeText(this, "Google Sign-In is not available", Toast.LENGTH_SHORT).show()
             }
         }
 
