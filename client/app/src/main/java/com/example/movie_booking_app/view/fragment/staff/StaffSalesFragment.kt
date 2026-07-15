@@ -1,9 +1,11 @@
 package com.example.movie_booking_app.view.fragment.staff
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +17,7 @@ import com.example.movie_booking_app.databinding.FragmentStaffSalesBinding
 import com.example.movie_booking_app.view.adapter.SeatAdapter
 import com.example.movie_booking_app.view.adapter.StaffMovieAdapter
 import com.example.movie_booking_app.view.adapter.TimeAdapter
+import com.example.movie_booking_app.view.adapter.StaffPromotionAdapter
 import com.example.movie_booking_app.viewmodel.staff.StaffSalesViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -33,6 +36,7 @@ class StaffSalesFragment : Fragment() {
     private lateinit var movieAdapter: StaffMovieAdapter
     private lateinit var timeAdapter: TimeAdapter
     private lateinit var seatAdapter: SeatAdapter
+    private lateinit var promotionAdapter: StaffPromotionAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -70,6 +74,13 @@ class StaffSalesFragment : Fragment() {
             viewModel.toggleSeatSelection(seat.id)
         }
         binding.rvSeatMap.adapter = seatAdapter
+
+        // Promotion Adapter
+        promotionAdapter = StaffPromotionAdapter { promo ->
+            viewModel.applyPromoCode(promo.discountCode)
+            binding.edtPromoCode.setText(promo.discountCode)
+        }
+        binding.rvAvailablePromotions.adapter = promotionAdapter
     }
 
     private fun setupListeners() {
@@ -100,6 +111,40 @@ class StaffSalesFragment : Fragment() {
 
                 viewModel.nextStep()
             } else if (step == 2) {
+                // Populate Step 3 order details
+                val movie = viewModel.selectedMovie.value
+                val selectedShowtime = viewModel.showtimes.value.find { it.isSelected }
+                val showtimeStr = selectedShowtime?.showTime ?: "N/A"
+                val dateStr = selectedShowtime?.showDate ?: "N/A"
+                val seatLabels = viewModel.selectedSeats.value.joinToString(", ") { it.label }
+                val price = viewModel.totalPrice.value
+                val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
+                val formattedPrice = formatter.format(price)
+
+                binding.tvPromoOrderMovieTitle.text = movie?.movieName ?: "N/A"
+                binding.tvPromoOrderDetails.text = "Suất chiếu: $showtimeStr • Ngày: $dateStr • Ghế đã chọn: $seatLabels"
+                binding.tvPromoOrderPrice.text = "Tạm tính: $formattedPrice"
+
+                viewModel.loadAvailablePromotions()
+                viewModel.nextStep()
+            } else if (step == 3) {
+                // Populate Step 4 (Confirmation details)
+                val movie = viewModel.selectedMovie.value
+                val selectedShowtime = viewModel.showtimes.value.find { it.isSelected }
+                val showtimeStr = selectedShowtime?.showTime ?: "N/A"
+                val dateStr = selectedShowtime?.showDate ?: "N/A"
+                val seatLabels = viewModel.selectedSeats.value.joinToString(", ") { it.label }
+                val member = viewModel.verifiedMember.value
+
+                binding.tvFinalMovie.text = movie?.movieName ?: "N/A"
+                binding.tvFinalShowtime.text = "Suất chiếu: $showtimeStr • Ngày: $dateStr"
+                binding.tvFinalSeats.text = "Ghế đã chọn: $seatLabels"
+                binding.tvFinalMember.text = if (member != null) {
+                    "Thành viên: ${member.memberName} (${member.phoneNumber})"
+                } else {
+                    "Khách hàng: Khách vãng lai"
+                }
+
                 viewModel.nextStep()
             }
         }
@@ -107,6 +152,20 @@ class StaffSalesFragment : Fragment() {
         binding.btnVerifyMember.setOnClickListener {
             val identity = binding.edtMemberIdentity.text.toString()
             viewModel.verifyMember(identity)
+        }
+
+        binding.btnApplyPromo.setOnClickListener {
+            val code = binding.edtPromoCode.text.toString()
+            viewModel.applyPromoCode(code)
+        }
+
+        binding.swUseScore.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.toggleUseScore(isChecked)
+        }
+
+        binding.btnConfirmBooking.setOnClickListener {
+            val paymentMethod = if (binding.rbCash.isChecked) "cash" else "credit_card"
+            viewModel.confirmBooking(paymentMethod)
         }
     }
 
@@ -133,6 +192,8 @@ class StaffSalesFragment : Fragment() {
                     val step = viewModel.currentStep.value
                     binding.layoutSeatSelection.visibility = if (step == 1) View.VISIBLE else View.GONE
                     binding.layoutMemberVerification.visibility = if (step == 2) View.VISIBLE else View.GONE
+                    binding.layoutPromotionAndScore.visibility = if (step == 3) View.VISIBLE else View.GONE
+                    binding.layoutConfirmOrder.visibility = if (step == 4) View.VISIBLE else View.GONE
                     binding.btnBack.visibility = View.VISIBLE
 
                     binding.tvSelectedMovieTitle.text = selectedMovie.movieName
@@ -150,6 +211,8 @@ class StaffSalesFragment : Fragment() {
                     binding.rvMoviesGrid.visibility = View.VISIBLE
                     binding.layoutSeatSelection.visibility = View.GONE
                     binding.layoutMemberVerification.visibility = View.GONE
+                    binding.layoutPromotionAndScore.visibility = View.GONE
+                    binding.layoutConfirmOrder.visibility = View.GONE
                     binding.btnBack.visibility = View.GONE
                 }
             }
@@ -221,6 +284,7 @@ class StaffSalesFragment : Fragment() {
 
                 val isMovieSelected = viewModel.selectedMovie.value != null
                 binding.btnBack.visibility = if (isMovieSelected || step > 1) View.VISIBLE else View.GONE
+                binding.btnNext.visibility = if (step < 4) View.VISIBLE else View.GONE
 
                 updateStepIndicators(step)
 
@@ -229,6 +293,8 @@ class StaffSalesFragment : Fragment() {
                         val isMovieSelected = viewModel.selectedMovie.value != null
                         binding.layoutSeatSelection.visibility = if (isMovieSelected) View.VISIBLE else View.GONE
                         binding.layoutMemberVerification.visibility = View.GONE
+                        binding.layoutPromotionAndScore.visibility = View.GONE
+                        binding.layoutConfirmOrder.visibility = View.GONE
                         val seatsSelected = viewModel.selectedSeats.value.isNotEmpty()
                         binding.btnNext.isEnabled = seatsSelected
                         binding.btnNext.alpha = if (seatsSelected) 1.0f else 0.5f
@@ -236,14 +302,30 @@ class StaffSalesFragment : Fragment() {
                     2 -> {
                         binding.layoutSeatSelection.visibility = View.GONE
                         binding.layoutMemberVerification.visibility = View.VISIBLE
+                        binding.layoutPromotionAndScore.visibility = View.GONE
+                        binding.layoutConfirmOrder.visibility = View.GONE
                         binding.btnNext.isEnabled = true
                         binding.btnNext.alpha = 1.0f
+                    }
+                    3 -> {
+                        binding.layoutSeatSelection.visibility = View.GONE
+                        binding.layoutMemberVerification.visibility = View.GONE
+                        binding.layoutPromotionAndScore.visibility = View.VISIBLE
+                        binding.layoutConfirmOrder.visibility = View.GONE
+                        binding.btnNext.isEnabled = true
+                        binding.btnNext.alpha = 1.0f
+                    }
+                    4 -> {
+                        binding.layoutSeatSelection.visibility = View.GONE
+                        binding.layoutMemberVerification.visibility = View.GONE
+                        binding.layoutPromotionAndScore.visibility = View.GONE
+                        binding.layoutConfirmOrder.visibility = View.VISIBLE
                     }
                 }
             }
         }
 
-        // Observe Member Verification Results
+        // Observe Member Verification Results to update Points redemption UI
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.verifiedMember.collectLatest { member ->
                 if (member != null) {
@@ -252,9 +334,16 @@ class StaffSalesFragment : Fragment() {
                     binding.tvMemberPhone.text = "Số điện thoại: ${member.phoneNumber}"
                     binding.tvMemberScore.text = "Điểm tích luỹ: ${member.currentScore} điểm"
                     binding.cardWalkInAlert.visibility = View.GONE
+
+                    // Step 3 points redemption
+                    binding.cardPointsRedemption.visibility = View.VISIBLE
+                    binding.tvPromoMemberPoints.text = "Điểm khả dụng: ${member.currentScore} điểm"
                 } else {
                     binding.cardMemberResult.visibility = View.GONE
                     binding.cardWalkInAlert.visibility = View.VISIBLE
+
+                    // Step 3 points redemption
+                    binding.cardPointsRedemption.visibility = View.GONE
                 }
             }
         }
@@ -276,6 +365,144 @@ class StaffSalesFragment : Fragment() {
                 binding.btnVerifyMember.text = if (isVerifying) "ĐANG XÁC THỰC..." else "KIỂM TRA (VERIFY)"
             }
         }
+
+        // Observe Promotions List
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.availablePromotions.collectLatest { list ->
+                promotionAdapter.submitList(list)
+            }
+        }
+
+        // Observe Applied Promotion & Price Breakdown
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.appliedPromotion.collectLatest { promo ->
+                if (promo != null) {
+                    binding.tvFinalPromoApplied.visibility = View.VISIBLE
+                    binding.tvFinalPromoApplied.text = "Khuyến mãi: ${promo.title}"
+                } else {
+                    binding.tvFinalPromoApplied.visibility = View.GONE
+                }
+            }
+        }
+
+        // Observe Promotion Errors & Messages
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.promoError.collectLatest { error ->
+                if (error != null) {
+                    binding.tvPromoError.text = error
+                    binding.tvPromoError.visibility = View.VISIBLE
+                } else {
+                    binding.tvPromoError.visibility = View.GONE
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.promoSuccessMessage.collectLatest { successMsg ->
+                if (successMsg != null) {
+                    binding.tvPromoMessage.text = successMsg
+                    binding.tvPromoMessage.visibility = View.VISIBLE
+                } else {
+                    binding.tvPromoMessage.visibility = View.GONE
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.isApplyingPromo.collectLatest { isApplying ->
+                binding.btnApplyPromo.isEnabled = !isApplying
+                binding.btnApplyPromo.text = if (isApplying) "ĐANG ÁP..." else "ÁP DỤNG"
+            }
+        }
+
+        // Observe Calculations for Step 3 Summary
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.totalPrice.collectLatest { price ->
+                val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
+                binding.tvSummaryOriginalPrice.text = formatter.format(price)
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.promoDiscount.collectLatest { discount ->
+                if (discount > 0) {
+                    binding.layoutSummaryPromoDiscount.visibility = View.VISIBLE
+                    val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
+                    binding.tvSummaryPromoDiscount.text = "-${formatter.format(discount)}"
+                } else {
+                    binding.layoutSummaryPromoDiscount.visibility = View.GONE
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.pointDiscount.collectLatest { discount ->
+                if (discount > 0) {
+                    binding.layoutSummaryPointDiscount.visibility = View.VISIBLE
+                    val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
+                    binding.tvSummaryPointDiscount.text = "-${formatter.format(discount)}"
+                    binding.tvFinalPointsUsed.visibility = View.VISIBLE
+                    binding.tvFinalPointsUsed.text = "Dùng điểm: Có (Giảm ${formatter.format(discount)})"
+                } else {
+                    binding.layoutSummaryPointDiscount.visibility = View.GONE
+                    binding.tvFinalPointsUsed.visibility = View.GONE
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.grandTotal.collectLatest { total ->
+                val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
+                binding.tvSummaryGrandTotal.text = formatter.format(total)
+                binding.tvFinalGrandTotal.text = formatter.format(total)
+            }
+        }
+
+        // Observe Checkout States
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.isCheckingOut.collectLatest { isChecking ->
+                binding.btnConfirmBooking.isEnabled = !isChecking
+                binding.btnConfirmBooking.text = if (isChecking) "ĐANG BÁN VÉ..." else "XÁC NHẬN BÁN VÉ"
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.checkoutError.collectLatest { error ->
+                if (error != null) {
+                    Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.checkoutSuccess.collectLatest { success ->
+                if (success) {
+                    showSuccessDialog("Bán vé thành công!")
+                }
+            }
+        }
+    }
+
+    private fun showSuccessDialog(message: String) {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_success, null)
+        val tvMessage = dialogView.findViewById<android.widget.TextView>(R.id.tvDialogMessage)
+        val btnOk = dialogView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnDialogOk)
+
+        tvMessage.text = message
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        btnOk.setOnClickListener {
+            dialog.dismiss()
+            viewModel.selectMovie(null)
+        }
+
+        dialog.show()
     }
 
     private fun updateStepIndicators(step: Int) {
