@@ -3,15 +3,15 @@ import { Staff } from "../models/staffModel.js";
 import { StaffShift } from "../models/staffShiftModel.js";
 import { LeaveRequest } from "../models/leaveRequestModel.js";
 import { StatusCodes } from "http-status-codes";
-import { constants} from "../utils/Constants.js";
-import { LeaveRequest } from "../models/leaveRequestModel.js";
+import { constants } from "../utils/Constants.js";
+// import { LeaveRequest } from "../models/leaveRequestModel.js";
 import ApiError from "../utils/ApiError.js";
-import {formatDate} from "../utils/formatters.js";
+import { formatDate } from "../utils/formatters.js";
 import mongoose from "mongoose";
 
 const checkManager = async (accountId) => {
-    const manager = await Manager.findOne({ accountId})
-    if(!manager) {
+    const manager = await Manager.findOne({ accountId })
+    if (!manager) {
         throw new ApiError(StatusCodes.FORBIDDEN, "You do not have permission to perform this function.");
     }
     return manager;
@@ -29,14 +29,14 @@ const getShifts = async (accountId, query) => {
     const { staffId, workDate, startDate, endDate, shift } = query;
 
     const manager = await checkManager(accountId);
-    
+
     const filter = {
         cinemaId: manager.cinemaId,
     }
-    if(staffId) {
+    if (staffId) {
         filter.staffId = staffId;
     }
-    if(shift) {
+    if (shift) {
         filter.shift = shift;
     }
     if (startDate && endDate) {
@@ -53,13 +53,13 @@ const getShifts = async (accountId, query) => {
     }
 
     const shifts = await StaffShift.find(filter)
-    .populate({
-        path: 'staffId',
-        select: 'fullName position phone rating kpiPoints'
-    })
-    .sort({
-        workDate: 1
-    })
+        .populate({
+            path: 'staffId',
+            select: 'fullName position phone rating kpiPoints'
+        })
+        .sort({
+            workDate: 1
+        })
 
     const shiftOrder = {
         Morning: 1,
@@ -70,12 +70,12 @@ const getShifts = async (accountId, query) => {
 
     // Sắp xếp lại danh sách: Ưu tiên trạng thái trước, rồi mới tới ngày và ca làm
     shifts.sort((a, b) => {
-    
+
         const isACompleted = a.status === "Completed" ? 1 : 0;
         const isBCompleted = b.status === "Completed" ? 1 : 0;
 
         if (isACompleted !== isBCompleted) {
-            return isACompleted - isBCompleted; 
+            return isACompleted - isBCompleted;
         }
 
         const dateA = new Date(a.workDate).getTime();
@@ -88,7 +88,7 @@ const getShifts = async (accountId, query) => {
         const orderB = shiftOrder[b.shift] || 99;
         return orderA - orderB;
     });
-    
+
     return shifts.map(item => ({
         shiftId: item._id,
         staffId: item.staffId?._id,
@@ -112,17 +112,17 @@ const updateShifts = async (accountId, shiftId, updateData) => {
     console.log(shiftId);
 
     const manager = await checkManager(accountId);
-    
+
     const currentShift = await StaffShift.findById(shiftId);
-    if(!currentShift) {
+    if (!currentShift) {
         throw new ApiError(StatusCodes.NOT_FOUND, "Shift not found!");
     }
 
-    if(currentShift.cinemaId.toString() !== manager.cinemaId.toString()) {
+    if (currentShift.cinemaId.toString() !== manager.cinemaId.toString()) {
         throw new ApiError(StatusCodes.FORBIDDEN, "You can only update shifts for staff members belonging to your own cinema.");
     }
     checkCinemaPermission(manager.cinemaId, currentShift.cinemaId);
-    
+
     const fixedWorkDate = currentShift.workDate;
 
     let newStaffId = currentShift.staffId
@@ -142,13 +142,13 @@ const updateShifts = async (accountId, shiftId, updateData) => {
     }
 
     //update shift
-    if(shift) {
+    if (shift) {
         newShift = shift;
     }
 
     //Validate nếu có sự thay đổi về Người hoặc Ca
     if (staffId || shift) {
-        
+
         // Check: Kiểm tra trùng lặp (Nhân viên đã làm ca này trong ngày này chưa)
         const duplicate = await StaffShift.findOne({
             _id: { $ne: shiftId },
@@ -202,7 +202,7 @@ const updateShifts = async (accountId, shiftId, updateData) => {
         fullName: populatedShift.staffId?.fullName || "",
         position: populatedShift.staffId?.position || "",
         phone: populatedShift.staffId?.phone || "",
-        workDate: populatedShift.workDate.toISOString().split('T')[0], 
+        workDate: populatedShift.workDate.toISOString().split('T')[0],
         shift: populatedShift.shift,
         status: populatedShift.status
     };
@@ -216,18 +216,18 @@ const getExistingShiftsOfDay = async (cinemaId, workDate) => {
         cinemaId: new mongoose.Types.ObjectId(cinemaId),
         workDate: workDate
     }).lean();
-    
-    const shiftOccupancy = {Morning: [], Afternoon: [], Evening: [], Night: []};
+
+    const shiftOccupancy = { Morning: [], Afternoon: [], Evening: [], Night: [] };
     const staffDailyCount = {}
-    
+
     exsitingShifts.forEach(shift => {
-        if(shiftOccupancy[shift.shift]) {
+        if (shiftOccupancy[shift.shift]) {
             shiftOccupancy[shift.shift].push(shift.staffId.toString());
         }
         const staffIdStr = shift.staffId.toString();
-        staffDailyCount[staffIdStr] = (staffDailyCount[staffIdStr] ||0) + 1
+        staffDailyCount[staffIdStr] = (staffDailyCount[staffIdStr] || 0) + 1
     })
-    
+
     return {
         shiftOccupancy,
         staffDailyCount
@@ -243,15 +243,15 @@ const getAvailableStaffForDay = async (allStaffs, cinemaId, workDate) => {
         fromDate: { $lte: workDate },
         toDate: { $gte: workDate }
     })
-    .populate({
-        path: "staffId",
-        select: "cinemaId"
-    })
-    .lean();
+        .populate({
+            path: "staffId",
+            select: "cinemaId"
+        })
+        .lean();
     // Filter cinema staff currently requesting time off
-    const absentStaffIds = approvedLeaves.filter(leave =>leave.staffId.cinemaId.toString() === cinemaId.toString()
+    const absentStaffIds = approvedLeaves.filter(leave => leave.staffId.cinemaId.toString() === cinemaId.toString()
     ).map(leave => leave.staffId._id.toString());
-    
+
     // List of staff working that day
     return allStaffs.filter(staff => !absentStaffIds.includes(staff._id.toString()));
 }
@@ -285,10 +285,10 @@ const pickNextStaffRoundRobin = (dayStaffs, currentShift, shiftOccupancy, staffD
 
     //ROUND ROBIN CHUẨN
     const totalStaff = dayStaffs.length;
-    if(totalStaff === 0) {
+    if (totalStaff === 0) {
         return null;
     }
-    for(let i = 0; i < totalStaff; i++) {
+    for (let i = 0; i < totalStaff; i++) {
         const currentIndex = (context.staffIndex + i) % totalStaff;
         const staff = dayStaffs[currentIndex];
         const staffIdStr = staff._id.toString();
@@ -297,7 +297,7 @@ const pickNextStaffRoundRobin = (dayStaffs, currentShift, shiftOccupancy, staffD
         const currentCount = staffDailyCount[staffIdStr] || 0;
 
         if (!alreadyInshift && currentCount < constants.MAX_SHIFT_PER_DAY) {
-            context.staffIndex = (currentIndex +  1) % totalStaff;
+            context.staffIndex = (currentIndex + 1) % totalStaff;
             return staffIdStr;
         }
     }
@@ -413,7 +413,7 @@ const generateShift = async (accountId, dateRange) => {
 
             const occ1 = (shiftOccupancy[shift1] || []).length;
             const occ2 = (shiftOccupancy[shift2] || []).length;
-            
+
             const neededPairs = Math.min(
                 constants.STAFF_PER_SHIFT - occ1,
                 constants.STAFF_PER_SHIFT - occ2
@@ -451,7 +451,7 @@ const generateShift = async (accountId, dateRange) => {
                     const daysA = weeklyWorkDaysCount[idA] || 0;
                     const daysB = weeklyWorkDaysCount[idB] || 0;
 
-                    if (daysA !== daysB) return daysA - daysB; 
+                    if (daysA !== daysB) return daysA - daysB;
 
                     const totalA = overallStaffCount[idA] || 0;
                     const totalB = overallStaffCount[idB] || 0;
@@ -512,7 +512,7 @@ const generateShift = async (accountId, dateRange) => {
 const getWeekRange = (inputDate) => {
     // Ensure we have a valid Date object
     let date = new Date(inputDate);
-    
+
     // Defensive check if input is invalid or undefined
     if (!inputDate || isNaN(date.getTime())) {
         date = new Date();
@@ -522,7 +522,7 @@ const getWeekRange = (inputDate) => {
     const utcDate = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
 
     // UTC Day: 0 (Sun), 1 (Mon), ..., 6 (Sat)
-    const dayOfWeek = utcDate.getUTCDay(); 
+    const dayOfWeek = utcDate.getUTCDay();
     const distanceToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
 
     const monday = new Date(utcDate);
@@ -545,11 +545,11 @@ const getStaffDetailService = async (accountId, shiftId) => {
     //check manager
     const manager = await checkManager(accountId);
     const targetShift = await StaffShift.findById(shiftId)
-    .populate({
-      path: 'staffId',
-      populate: { path: 'accountId', select: 'status' } // get status from account
-    })
-    .lean();
+        .populate({
+            path: 'staffId',
+            populate: { path: 'accountId', select: 'status' } // get status from account
+        })
+        .lean();
 
     if (!targetShift) {
         throw new ApiError(StatusCodes.NOT_FOUND, "Shift information not found.");
@@ -571,7 +571,7 @@ const getStaffDetailService = async (accountId, shiftId) => {
         workDate: { $gte: monday, $lte: sunday }
     }).lean();
 
-    
+
     // Map data 7 day
     const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     const weekSchedule = daysOfWeek.map((dayName, index) => {
@@ -579,10 +579,10 @@ const getStaffDetailService = async (accountId, shiftId) => {
         currentDate.setUTCDate(monday.getUTCDate() + index);
         const dateStr = formatDateString(currentDate);
         const shiftOrder = {
-        Morning: 1,
-        Afternoon: 2,
-        Evening: 3,
-        Night: 4
+            Morning: 1,
+            Afternoon: 2,
+            Evening: 3,
+            Night: 4
         };
 
         shiftsInWeek.sort((a, b) => {
@@ -592,7 +592,7 @@ const getStaffDetailService = async (accountId, shiftId) => {
 
             return shiftOrder[a.shift] - shiftOrder[b.shift];
         });
-    
+
 
         const matchedShifts = shiftsInWeek.filter(
             s => formatDateString(new Date(s.workDate)) === dateStr
@@ -600,9 +600,9 @@ const getStaffDetailService = async (accountId, shiftId) => {
         const shiftNames = matchedShifts.map(s => s.shift);
 
         return {
-        day: dayName,
-        date: dateStr,
-        shift: shiftNames.length > 0 ? shiftNames.join(" - ") : null
+            day: dayName,
+            date: dateStr,
+            shift: shiftNames.length > 0 ? shiftNames.join(" - ") : null
         };
     });
 
@@ -626,45 +626,45 @@ const getStaffDetailService = async (accountId, shiftId) => {
 
         // Information about the employee working that shift
         staffInfo: {
-        staffId: staff._id,
-        fullName: staff.fullName,
-        position: staff.position,
-        phone: staff.phone,
-        status: staff.accountId?.status === 1 ? 'Active' : 'Inactive',
-        rating: staff.rating || 0,
-        kpiPoints: staff.kpiPoints || 0,
-        ticketSold: staff.ticketSold || 0,
-        attendanceRate
+            staffId: staff._id,
+            fullName: staff.fullName,
+            position: staff.position,
+            phone: staff.phone,
+            status: staff.accountId?.status === 1 ? 'Active' : 'Inactive',
+            rating: staff.rating || 0,
+            kpiPoints: staff.kpiPoints || 0,
+            ticketSold: staff.ticketSold || 0,
+            attendanceRate
         },
 
         //That employee's weekly schedule
         weekSchedule
     };
 }
-const getLeaveRequestForManager = async (accountId, {status}) => {
+const getLeaveRequestForManager = async (accountId, { status }) => {
     const manager = await checkManager(accountId);
     const cinemaId = manager.cinemaId
 
     //Dựng filter cơ bản (nếu client truyền status: Pending, Approved, Rejected)
     const filter = {}
-    if(status) {
+    if (status) {
         filter.status = status
     }
 
     //query + populate correct cinemaId of manager
     const leaveRequests = await LeaveRequest.find(filter)
-    .populate({
-        path: "staffId",
-        select: "fullname phone position"
-    })
-    .populate({
-        path: "staffShiftId",
-        match:{cinemaId: cinemaId},
-        select: "workDate shift status cinemaId"
-    })
-    .sort({createdAt: -1})
-    .lean()
-    
+        .populate({
+            path: "staffId",
+            select: "fullname phone position"
+        })
+        .populate({
+            path: "staffShiftId",
+            match: { cinemaId: cinemaId },
+            select: "workDate shift status cinemaId"
+        })
+        .sort({ createdAt: -1 })
+        .lean()
+
     // filter requests have null staffShiftId(because not belong to cinema of manager)
     const filteredRequests = leaveRequests.filter(request => request.staffShiftId !== null)
 
@@ -672,15 +672,15 @@ const getLeaveRequestForManager = async (accountId, {status}) => {
     const statusPriority = { Pending: 1, Approved: 2, Rejected: 3 };
 
     filteredRequests.sort((a, b) => {
-    const priorityA = statusPriority[a.status] || 99;
-    const priorityB = statusPriority[b.status] || 99;
+        const priorityA = statusPriority[a.status] || 99;
+        const priorityB = statusPriority[b.status] || 99;
 
-    if (priorityA !== priorityB) {
-      return priorityA - priorityB; // Pending display first
-    }
-    // the same status => display newest first
-    return new Date(b.createdAt) - new Date(a.createdAt);
-  });
+        if (priorityA !== priorityB) {
+            return priorityA - priorityB; // Pending display first
+        }
+        // the same status => display newest first
+        return new Date(b.createdAt) - new Date(a.createdAt);
+    });
     return filteredRequests.map(item => ({
         leaveRequestId: item._id,
         staffId: item.staffId?._id,
@@ -705,18 +705,18 @@ const approveLeaveRequest = async (accountId, leaveRequestId) => {
         throw new ApiError(StatusCodes.NOT_FOUND, "Leave request not found");
     }
     const shift = leaveRequest.staffShiftId
-    if(!shift) {
+    if (!shift) {
         throw new ApiError(StatusCodes.NOT_FOUND, "Shift not found!");
     }
     //Check cinema permission
     checkCinemaPermission(manager.cinemaId, shift.cinemaId);
     //Check  LeaveRequest status(only approve pending request)
-    if(leaveRequest.status !== "Pending") {
+    if (leaveRequest.status !== "Pending") {
         throw new ApiError(StatusCodes.CONFLICT, `Cannot approve a request with status '${leaveRequest.status}'!`);
     }
 
     //check staffShift status
-    if(shift.status !== "Assigned") {
+    if (shift.status !== "Assigned") {
         throw new ApiError(StatusCodes.CONFLICT, `Shift is already in '${shift.status}' status.`);
     }
 
@@ -728,22 +728,22 @@ const approveLeaveRequest = async (accountId, leaveRequestId) => {
         leaveRequest.status = "Approved";
         leaveRequest.managerId = manager._id;
         leaveRequest.approvedAt = new Date();
-        await leaveRequest.save({session});
+        await leaveRequest.save({ session });
 
         //update leaveRequest
         shift.status = "NeedReplacement";
-        await shift.save({session});
+        await shift.save({ session });
 
         //commit Transaction
         await session.commitTransaction();
-        
+
     } catch (error) {
         await session.abortTransaction();
         throw error;
     } finally {
         // close session
         session.endSession();
-  }
+    }
 
 }
 //reject leaveRequest - manager
@@ -751,18 +751,18 @@ const rejectLeaveRequest = async (accountId, leaveRequestId, rejectReason) => {
 
     const manager = await checkManager(accountId);
     const leaveRequest = await LeaveRequest.findById(leaveRequestId).populate("staffShiftId");
-    if(!leaveRequest) {
+    if (!leaveRequest) {
         throw new ApiError(StatusCodes.NOT_FOUND, "Leave request not found!");
     }
 
     const shift = leaveRequest.staffShiftId
-    if(!shift) {
+    if (!shift) {
         throw new ApiError(StatusCodes.NOT_FOUND, "Associated shift not found!");
     }
     //check permission
     checkCinemaPermission(manager.cinemaId, shift.cinemaId);
     //check status
-    if(leaveRequest.status !== "Pending") {
+    if (leaveRequest.status !== "Pending") {
         throw new ApiError(StatusCodes.CONFLICT, `This leave request has already been ${leaveRequest.status.toLowerCase()}!`);
     }
 
@@ -777,10 +777,10 @@ const rejectLeaveRequest = async (accountId, leaveRequestId, rejectReason) => {
 
 
 export const ManagerStaffShiftService = {
-  updateShifts,
-  generateShift,
-  getShifts,
-  getStaffDetailService,
-  getLeaveRequestForManager,
-  approveLeaveRequest
+    updateShifts,
+    generateShift,
+    getShifts,
+    getStaffDetailService,
+    getLeaveRequestForManager,
+    approveLeaveRequest
 };

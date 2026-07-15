@@ -200,7 +200,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:gravity="center"
-                    android:text="MÀN HÌNH"
+                    android:text="SCREEN"
                     android:textColor="@color/white"
                     android:textSize="13sp"
                     android:textStyle="bold"
@@ -257,7 +257,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
-                            android:text="Trống"
+                            android:text="Available"
                             android:textColor="@color/white"
                             android:textSize="10sp" />
                     </LinearLayout>
@@ -276,7 +276,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
-                            android:text="Đang chọn"
+                            android:text="Selected"
                             android:textColor="@color/white"
                             android:textSize="10sp" />
                     </LinearLayout>
@@ -295,7 +295,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
-                            android:text="Đã bán"
+                            android:text="Sold"
                             android:textColor="@color/white"
                             android:textSize="10sp" />
                     </LinearLayout>
@@ -320,7 +320,7 @@
                         android:id="@+id/tvSelectedSeats"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Ghế đã chọn: Chưa chọn"
+                        android:text="Selected seats: None"
                         android:textColor="@color/white"
                         android:textSize="13sp" />
 
@@ -329,7 +329,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Tạm tính: 0 đ"
+                        android:text="Subtotal: 0 đ"
                         android:textColor="@color/gold_selected"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -371,7 +371,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="THÔNG TIN ĐƠN HÀNG"
+                            android:text="ORDER SUMMARY"
                             android:textColor="@color/admin_text_secondary"
                             android:textSize="11sp"
                             android:textStyle="bold" />
@@ -426,7 +426,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="XÁC THỰC THÀNH VIÊN"
+                            android:text="MEMBER VERIFICATION"
                             android:textColor="@color/gold_selected"
                             android:textSize="13sp"
                             android:textStyle="bold" />
@@ -436,10 +436,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
-                            android:hint="Nhập Mã TV / Số điện thoại / CCCD"
+                            android:hint="Enter Member ID / Phone number / ID"
                             app:hintTextColor="@color/admin_text_secondary"
                             app:boxStrokeColor="@color/gold_selected"
-                            app:placeholderText="Ví dụ: 0987654321"
+                            app:placeholderText="Example: 0987654321"
                             app:placeholderTextColor="@color/admin_text_secondary">
 
                             <com.google.android.material.textfield.TextInputEditText
@@ -498,7 +498,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="8dp"
-                                android:text="ĐÃ XÁC THỰC THÀNH VIÊN"
+                                android:text="MEMBER VERIFIED"
                                 android:textColor="#2E7D32"
                                 android:textSize="12sp"
                                 android:textStyle="bold" />
@@ -587,7 +587,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Bán vé cho khách vãng lai"
+                                android:text="Walk-in Customer Checkout"
                                 android:textColor="#FF8F00"
                                 android:textSize="13sp"
                                 android:textStyle="bold" />
@@ -596,7 +596,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="Đơn đặt vé này sẽ được lưu ở chế độ khách vãng lai, không được tích luỹ điểm thưởng."
+                                android:text="This order will be processed as a walk-in check-out. No reward points will be accumulated."
                                 android:textColor="@color/admin_text_secondary"
                                 android:textSize="11sp" />
                         </LinearLayout>
@@ -639,7 +639,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="THÔNG TIN ĐƠN HÀNG"
+                            android:text="ORDER SUMMARY"
                             android:textColor="@color/admin_text_secondary"
                             android:textSize="11sp"
                             android:textStyle="bold" />
@@ -696,7 +696,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="QUY ĐỔI ĐIỂM THƯỞNG"
+                            android:text="REWARD POINTS REDEMPTION"
                             android:textColor="@color/gold_selected"
                             android:textSize="13sp"
                             android:textStyle="bold" />
@@ -731,7 +731,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:hint="Số điểm muốn đổi"
+                            android:hint="Points to redeem"
                             android:visibility="gone"
                             app:hintTextColor="@color/admin_text_secondary"
                             app:boxStrokeColor="@color/gold_selected"
@@ -778,7 +778,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="MÃ KHUYẾN MÃI"
+                            android:text="PROMOTION COUPON"
                             android:textColor="@color/gold_selected"
                             android:textSize="13sp"
                             android:textStyle="bold" />
@@ -795,7 +795,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:hint="Nhập mã khuyến mãi"
+                                android:hint="Enter coupon code"
                                 app:hintTextColor="@color/admin_text_secondary"
                                 app:boxStrokeColor="@color/gold_selected"
                                 app:placeholderText="SUMMER20"
@@ -814,7 +814,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="52dp"
                                 android:layout_marginStart="8dp"
-                                android:text="ÁP DỤNG"
+                                android:text="APPLY"
                                 android:textColor="#0D1120"
                                 android:textStyle="bold"
                                 app:backgroundTint="@color/gold_selected"
@@ -851,7 +851,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:text="KHUYẾN MÃI KHẢ DỤNG"
+                    android:text="AVAILABLE PROMOTIONS"
                     android:textColor="@color/white"
                     android:textSize="13sp"
                     android:textStyle="bold" />
@@ -882,7 +882,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="CHI TIẾT THANH TOÁN"
+                            android:text="PRICE BREAKDOWN"
                             android:textColor="@color/white"
                             android:textSize="12sp"
                             android:textStyle="bold" />
@@ -901,7 +901,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Tiền vé gốc"
+                                android:text="Original ticket price"
                                 android:textColor="@color/admin_text_secondary"
                                 android:textSize="13sp" />
                             <TextView
@@ -925,7 +925,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Giảm giá Promotion"
+                                android:text="Promotion discount"
                                 android:textColor="#E5484D"
                                 android:textSize="13sp" />
                             <TextView
@@ -949,7 +949,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Quy đổi điểm"
+                                android:text="Points discount"
                                 android:textColor="#E5484D"
                                 android:textSize="13sp" />
                             <TextView
@@ -975,7 +975,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="TỔNG CỘNG"
+                                android:text="GRAND TOTAL"
                                 android:textColor="@color/white"
                                 android:textSize="14sp"
                                 android:textStyle="bold" />
@@ -1010,7 +1010,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="XÁC NHẬN ĐƠN HÀNG"
+                    android:text="CONFIRM BOOKING"
                     android:textColor="@color/white"
                     android:textSize="15sp"
                     android:textStyle="bold"
@@ -1116,7 +1116,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="PHƯƠNG THỨC THANH TOÁN"
+                            android:text="PAYMENT METHOD"
                             android:textColor="@color/gold_selected"
                             android:textSize="13sp"
                             android:textStyle="bold"
@@ -1132,7 +1132,7 @@
                                 android:id="@+id/rbCash"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Tiền mặt (Cash)"
+                                android:text="Cash"
                                 android:textColor="@color/white"
                                 android:textSize="14sp"
                                 android:checked="true"
@@ -1143,7 +1143,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
-                                android:text="Chuyển khoản (Bank QR)"
+                                android:text="Bank Transfer (QR)"
                                 android:textColor="@color/white"
                                 android:textSize="14sp"
                                 android:buttonTint="@color/gold_selected" />
@@ -1171,7 +1171,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="TỔNG TIỀN CẦN THANH TOÁN"
+                            android:text="TOTAL PAYMENT AMOUNT"
                             android:textColor="@color/admin_text_secondary"
                             android:textSize="11sp"
                             android:textStyle="bold" />
@@ -1191,7 +1191,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="54dp"
                             android:layout_marginTop="16dp"
-                            android:text="XÁC NHẬN BÁN VÉ"
+                            android:text="CONFIRM CHECKOUT"
                             android:textColor="#0D1120"
                             android:textSize="15sp"
                             android:textStyle="bold"

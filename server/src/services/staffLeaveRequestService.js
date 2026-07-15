@@ -1,4 +1,4 @@
-import {LeaveRequest} from "../models/leaveRequest.js";
+import {LeaveRequest} from "../models/leaveRequestModel.js";
 import {Staff} from "../models/staffModel.js";
 import {StaffShift} from "../models/staffShiftModel.js";
 import ApiError from "../utils/ApiError.js";

@@ -301,6 +301,7 @@ class StaffSalesFragment : Fragment() {
 
                 when (step) {
                     1 -> {
+                        binding.tvHeaderTitle.text = "SELECT MOVIE & SHOWTIME"
                         val isMovieSelected = viewModel.selectedMovie.value != null
                         binding.layoutSeatSelection.visibility = if (isMovieSelected) View.VISIBLE else View.GONE
                         binding.layoutMemberVerification.visibility = View.GONE
@@ -311,6 +312,7 @@ class StaffSalesFragment : Fragment() {
                         binding.btnNext.alpha = if (seatsSelected) 1.0f else 0.5f
                     }
                     2 -> {
+                        binding.tvHeaderTitle.text = "MEMBER VERIFICATION"
                         binding.layoutSeatSelection.visibility = View.GONE
                         binding.layoutMemberVerification.visibility = View.VISIBLE
                         binding.layoutPromotionAndScore.visibility = View.GONE
@@ -319,6 +321,7 @@ class StaffSalesFragment : Fragment() {
                         binding.btnNext.alpha = 1.0f
                     }
                     3 -> {
+                        binding.tvHeaderTitle.text = "PROMOTIONS & REWARDS"
                         binding.layoutSeatSelection.visibility = View.GONE
                         binding.layoutMemberVerification.visibility = View.GONE
                         binding.layoutPromotionAndScore.visibility = View.VISIBLE
@@ -328,6 +331,7 @@ class StaffSalesFragment : Fragment() {
                         binding.btnNext.alpha = if (hasScoreError) 0.5f else 1.0f
                     }
                     4 -> {
+                        binding.tvHeaderTitle.text = "CONFIRM & CHECKOUT"
                         binding.layoutSeatSelection.visibility = View.GONE
                         binding.layoutMemberVerification.visibility = View.GONE
                         binding.layoutPromotionAndScore.visibility = View.GONE
