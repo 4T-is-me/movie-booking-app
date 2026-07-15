@@ -161,7 +161,18 @@ class StaffSalesFragment : Fragment() {
 
         binding.swUseScore.setOnCheckedChangeListener { _, isChecked ->
             viewModel.toggleUseScore(isChecked)
+            binding.layoutScoreInput.visibility = if (isChecked) View.VISIBLE else View.GONE
         }
+
+        binding.edtScoreToRedeem.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: android.text.Editable?) {
+                val input = s.toString()
+                val score = if (input.isEmpty()) 0 else input.toIntOrNull() ?: 0
+                viewModel.setScoreToRedeem(score)
+            }
+        })
 
         binding.btnConfirmBooking.setOnClickListener {
             val paymentMethod = if (binding.rbCash.isChecked) "cash" else "credit_card"
@@ -312,8 +323,9 @@ class StaffSalesFragment : Fragment() {
                         binding.layoutMemberVerification.visibility = View.GONE
                         binding.layoutPromotionAndScore.visibility = View.VISIBLE
                         binding.layoutConfirmOrder.visibility = View.GONE
-                        binding.btnNext.isEnabled = true
-                        binding.btnNext.alpha = 1.0f
+                        val hasScoreError = viewModel.scoreError.value != null
+                        binding.btnNext.isEnabled = !hasScoreError
+                        binding.btnNext.alpha = if (hasScoreError) 0.5f else 1.0f
                     }
                     4 -> {
                         binding.layoutSeatSelection.visibility = View.GONE
@@ -478,6 +490,37 @@ class StaffSalesFragment : Fragment() {
             viewModel.checkoutSuccess.collectLatest { success ->
                 if (success) {
                     showSuccessDialog("Bán vé thành công!")
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.scoreToRedeem.collectLatest { score ->
+                val currentText = binding.edtScoreToRedeem.text.toString()
+                val parsedVal = currentText.toIntOrNull() ?: 0
+                if (parsedVal != score) {
+                    binding.edtScoreToRedeem.setText(score.toString())
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.scoreError.collectLatest { error ->
+                if (error != null) {
+                    binding.tvScoreError.text = error
+                    binding.tvScoreError.visibility = View.VISIBLE
+                    if (viewModel.currentStep.value == 3) {
+                        binding.btnNext.isEnabled = false
+                        binding.btnNext.alpha = 0.5f
+                    }
+                    binding.btnConfirmBooking.isEnabled = false
+                } else {
+                    binding.tvScoreError.visibility = View.GONE
+                    if (viewModel.currentStep.value == 3) {
+                        binding.btnNext.isEnabled = true
+                        binding.btnNext.alpha = 1.0f
+                    }
+                    binding.btnConfirmBooking.isEnabled = !viewModel.isCheckingOut.value
                 }
             }
         }

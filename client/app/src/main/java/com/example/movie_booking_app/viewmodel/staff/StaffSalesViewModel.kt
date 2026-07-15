@@ -55,6 +55,12 @@ class StaffSalesViewModel @Inject constructor(
     private val _useScore = MutableStateFlow(false)
     val useScore: StateFlow<Boolean> = _useScore.asStateFlow()
 
+    private val _scoreToRedeem = MutableStateFlow(0)
+    val scoreToRedeem: StateFlow<Int> = _scoreToRedeem.asStateFlow()
+
+    private val _scoreError = MutableStateFlow<String?>(null)
+    val scoreError: StateFlow<String?> = _scoreError.asStateFlow()
+
     private val _promoDiscount = MutableStateFlow(0)
     val promoDiscount: StateFlow<Int> = _promoDiscount.asStateFlow()
 
@@ -100,6 +106,8 @@ class StaffSalesViewModel @Inject constructor(
         _memberVerificationError.value = null
         _appliedPromotion.value = null
         _useScore.value = false
+        _scoreToRedeem.value = 0
+        _scoreError.value = null
         _promoDiscount.value = 0
         _pointDiscount.value = 0
         _grandTotal.value = 0
@@ -135,6 +143,8 @@ class StaffSalesViewModel @Inject constructor(
             _totalPrice.value = 0
             _appliedPromotion.value = null
             _useScore.value = false
+            _scoreToRedeem.value = 0
+            _scoreError.value = null
             recalculateTotals()
             movieRepository.getMovieShowtimes(movieId).collect { list ->
                 _showtimes.value = list
@@ -153,6 +163,8 @@ class StaffSalesViewModel @Inject constructor(
             _totalPrice.value = 0
             _appliedPromotion.value = null
             _useScore.value = false
+            _scoreToRedeem.value = 0
+            _scoreError.value = null
             recalculateTotals()
             bookingRepository.getSeats(showtimeId).collect { list ->
                 _seats.value = list
@@ -252,12 +264,7 @@ class StaffSalesViewModel @Inject constructor(
 
         var currentPointDiscount = 0
         if (_useScore.value) {
-            val member = _verifiedMember.value
-            if (member != null) {
-                val availablePoints = member.currentScore
-                val pointsNeeded = Math.min(availablePoints, Math.ceil(afterPromo / 10.0).toInt())
-                currentPointDiscount = pointsNeeded * 10
-            }
+            currentPointDiscount = _scoreToRedeem.value * 10
         }
 
         if (currentPointDiscount > afterPromo) {
@@ -266,6 +273,21 @@ class StaffSalesViewModel @Inject constructor(
         _pointDiscount.value = currentPointDiscount
 
         _grandTotal.value = afterPromo - currentPointDiscount
+    }
+
+    fun setScoreToRedeem(score: Int) {
+        val member = _verifiedMember.value
+        if (member != null) {
+            if (score > member.currentScore) {
+                _scoreError.value = "Điểm tích luỹ không đủ để quy đổi (Khả dụng: ${member.currentScore} điểm)"
+            } else {
+                _scoreError.value = null
+            }
+        } else {
+            _scoreError.value = null
+        }
+        _scoreToRedeem.value = score
+        recalculateTotals()
     }
 
     fun loadAvailablePromotions() {
@@ -320,7 +342,35 @@ class StaffSalesViewModel @Inject constructor(
 
     fun toggleUseScore(use: Boolean) {
         _useScore.value = use
-        recalculateTotals()
+        if (use) {
+            val originalPrice = _totalPrice.value
+            var currentPromoDiscount = 0
+            val promo = _appliedPromotion.value
+
+            if (promo != null) {
+                currentPromoDiscount = when (promo.discountType) {
+                    "percentage" -> {
+                        val discountVal = promo.discountValue ?: 0.0
+                        Math.floor(originalPrice * (discountVal / 100.0)).toInt()
+                    }
+                    "fixed" -> {
+                        (promo.discountValue ?: 0.0).toInt()
+                    }
+                    else -> {
+                        Math.floor(originalPrice * (promo.discountLevel / 100.0)).toInt()
+                    }
+                }
+            }
+            if (currentPromoDiscount > originalPrice) {
+                currentPromoDiscount = originalPrice
+            }
+            val afterPromo = originalPrice - currentPromoDiscount
+            val maxPointsNeeded = Math.ceil(afterPromo / 10.0).toInt()
+            val defaultScore = Math.min(_verifiedMember.value?.currentScore ?: 0, maxPointsNeeded)
+            setScoreToRedeem(defaultScore)
+        } else {
+            setScoreToRedeem(0)
+        }
     }
 
     fun confirmBooking(paymentMethod: String) {

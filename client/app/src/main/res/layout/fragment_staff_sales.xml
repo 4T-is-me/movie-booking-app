@@ -723,6 +723,39 @@
                                 android:layout_height="wrap_content"
                                 app:useMaterialThemeColors="true" />
                         </LinearLayout>
+
+                        <!-- Manually enter score input field -->
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/layoutScoreInput"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:hint="Số điểm muốn đổi"
+                            android:visibility="gone"
+                            app:hintTextColor="@color/admin_text_secondary"
+                            app:boxStrokeColor="@color/gold_selected"
+                            tools:visibility="visible">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/edtScoreToRedeem"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:inputType="number" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <!-- Score error message text -->
+                        <TextView
+                            android:id="@+id/tvScoreError"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:textColor="#C62828"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:visibility="gone"
+                            tools:text="Điểm tích luỹ không đủ để quy đổi" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
