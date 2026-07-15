@@ -38,7 +38,7 @@ data class BookingDetailRoom(
 
 data class BookingDetailShowtime(
     @SerializedName("showDate") val showDate: String,
-    @SerializedName("showTime") val showtime: String
+    @SerializedName("showtime") val showtime: String
 )
 
 data class BookingDetailSeat(

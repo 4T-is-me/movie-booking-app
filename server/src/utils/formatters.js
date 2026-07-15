@@ -36,3 +36,30 @@ export const formatDate = (date, includeTime = false) => {
     // default return date
     return `${day}/${month}/${year}`;
 };
+
+export const getShowtimeTimeRange = (showtime) => {
+    if (!showtime) return "";
+    
+    const formatLocalTime = (date) => {
+        if (!date) return "";
+        const d = new Date(date);
+        if (isNaN(d.getTime())) return "";
+        // Adjust UTC to Vietnam local time (+07:00 offset):
+        const localDate = new Date(d.getTime() + 7 * 60 * 60 * 1000);
+        const hours = String(localDate.getUTCHours()).padStart(2, '0');
+        const minutes = String(localDate.getUTCMinutes()).padStart(2, '0');
+        return `${hours}:${minutes}`;
+    };
+
+    if (showtime.startTime) {
+        const startStr = formatLocalTime(showtime.startTime);
+        const endStr = showtime.endTime ? formatLocalTime(showtime.endTime) : "";
+        if (startStr && endStr) {
+            return `${startStr} - ${endStr}`;
+        } else if (startStr) {
+            return startStr;
+        }
+    }
+    
+    return showtime.showTime || "";
+};
