@@ -16,6 +16,9 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -23,6 +26,7 @@ import javax.inject.Inject
 data class AdminStaffUiState(
     val isLoading: Boolean = false,
     val staffList: List<Staff> = emptyList(),
+    val memberList: List<com.example.movie_booking_app.data.model.response.MemberItem> = emptyList(),
     val error: String? = null
 )
 
@@ -43,8 +47,12 @@ class AdminStaffViewModel @Inject constructor(
     private val _actionMessage = MutableSharedFlow<String>()
     val actionMessage: SharedFlow<String> = _actionMessage.asSharedFlow()
 
+    private val _scoreAdjustState = MutableSharedFlow<com.example.movie_booking_app.data.model.response.ScoreAdjustState>()
+    val scoreAdjustState: SharedFlow<com.example.movie_booking_app.data.model.response.ScoreAdjustState> = _scoreAdjustState.asSharedFlow()
+
     init {
         loadStaff()
+        loadMembers()
         loadCinemas()
     }
 
@@ -79,8 +87,8 @@ class AdminStaffViewModel @Inject constructor(
                                     id = dbStaff.id,
                                     username = dbStaff.account?.username ?: "",
                                     fullName = dbStaff.fullName ?: "",
-                                    dob = "15/06/1996", // Sensible placeholder since DB Staff schema doesn't store dob
-                                    gender = "Nam",      // Sensible placeholder since DB Staff schema doesn't store gender
+                                    dob = "15/06/1996",
+                                    gender = "Nam",
                                     email = dbStaff.account?.email ?: "",
                                     identityCard = dbStaff.identityCard ?: "",
                                     phone = dbStaff.phone ?: "",
@@ -97,7 +105,7 @@ class AdminStaffViewModel @Inject constructor(
                                     status = dbStaff.account?.status
                                 )
                             }
-                            _uiState.value = AdminStaffUiState(
+                            _uiState.value = _uiState.value.copy(
                                 isLoading = false,
                                 staffList = mappedStaffs,
                                 error = null
@@ -236,6 +244,62 @@ class AdminStaffViewModel @Inject constructor(
                     }
                 }
             }
+        }
+    }
+
+    // Member Management Methods
+    fun loadMembers(searchQuery: String? = null, status: Int? = null) {
+        viewModelScope.launch {
+            repository.getMemberListFlow(search = searchQuery, status = status)
+                .onStart {
+                    _uiState.update { it.copy(isLoading = true, error = null) }
+                }
+                .catch { e ->
+                    _uiState.update { it.copy(isLoading = false, error = e.message) }
+                }
+                .collect { members ->
+                    _uiState.update { it.copy(isLoading = false, memberList = members) }
+                }
+        }
+    }
+
+    fun adjustMemberScore(memberId: String, currentPoints: Int, adjustment: Int, reason: String) {
+        if (currentPoints + adjustment < 0) {
+            viewModelScope.launch { _actionMessage.emit("Total points cannot be less than 0") }
+            return
+        }
+        viewModelScope.launch {
+            repository.adjustMemberScoreFlow(memberId, adjustment, reason)
+                .onStart {
+                    _uiState.update { it.copy(isLoading = true) }
+                }
+                .catch { e ->
+                    _uiState.update { it.copy(isLoading = false) }
+                    _actionMessage.emit(e.message ?: "Error")
+                }
+                .collect {
+                    _uiState.update { it.copy(isLoading = false) }
+                    _scoreAdjustState.emit(com.example.movie_booking_app.data.model.response.ScoreAdjustState(isSuccess = true, message = "Points adjusted!"))
+                    loadMembers()
+                }
+        }
+    }
+
+    fun updateMemberStatus(memberId: String, status: Int) {
+        viewModelScope.launch {
+            repository.updateMemberStatusFlow(memberId, status)
+                .onStart {
+                    _uiState.update { it.copy(isLoading = true) }
+                }
+                .catch { e ->
+                    _uiState.update { it.copy(isLoading = false) }
+                    _actionMessage.emit(e.message ?: "Error")
+                }
+                .collect {
+                    _uiState.update { it.copy(isLoading = false) }
+                    _actionMessage.emit(if (status == 1) "Member activated!" else "Member locked!")
+                    loadMembers()
+                }
         }
     }
 }

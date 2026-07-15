@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    app:cardBackgroundColor="#1A1A1A"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivMemberAvatar"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_profile"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeAppearanceOverlay="@style/CircleImageView"
+            app:strokeColor="@color/yellow"
+            app:strokeWidth="2dp" />
+
+        <TextView
+            android:id="@+id/tvMemberName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Member Name"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/tvMemberScore"
+            app:layout_constraintStart_toEndOf="@id/ivMemberAvatar"
+            app:layout_constraintTop_toTopOf="@id/ivMemberAvatar" />
+
+        <TextView
+            android:id="@+id/tvMemberEmail"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="email@example.com"
+            android:textColor="@color/text_gray"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toStartOf="@id/tvMemberScore"
+            app:layout_constraintStart_toEndOf="@id/ivMemberAvatar"
+            app:layout_constraintTop_toBottomOf="@id/tvMemberName" />
+
+        <TextView
+            android:id="@+id/tvMemberScoreLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Points: "
+            android:textColor="@color/text_gray"
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="@id/tvMemberEmail"
+            app:layout_constraintTop_toBottomOf="@id/tvMemberEmail" />
+
+        <TextView
+            android:id="@+id/tvMemberScore"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1,250"
+            android:textColor="@color/yellow"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/tvMemberScoreLabel"
+            app:layout_constraintStart_toEndOf="@id/tvMemberScoreLabel"
+            app:layout_constraintTop_toTopOf="@id/tvMemberScoreLabel" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipMemberStatus"
+            style="@style/Widget.MaterialComponents.Chip.Action"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:text="Active"
+            android:textColor="@color/white"
+            android:textSize="10sp"
+            app:chipBackgroundColor="#2E7D32"
+            app:chipCornerRadius="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAdjustScore"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Adjust Score"
+                android:textColor="@color/yellow"
+                android:textSize="10sp"
+                app:rippleColor="@color/yellow" />
+
+            <ImageButton
+                android:id="@+id/btnToggleMemberStatus"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Toggle Status"
+                android:padding="8dp"
+                android:src="@android:drawable/ic_lock_power_off"
+                app:tint="@color/white" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

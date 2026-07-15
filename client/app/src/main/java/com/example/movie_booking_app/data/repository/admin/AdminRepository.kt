@@ -34,6 +34,52 @@ class AdminRepository @Inject constructor(
     suspend fun updateStaffStatus(id: String, status: Int) = 
         api.updateStaffStatus(id, com.example.movie_booking_app.data.model.request.UpdateStaffStatusRequest(status))
 
+    suspend fun getMemberList(
+        page: Int? = null,
+        limit: Int? = null,
+        search: String? = null,
+        status: Int? = null
+    ): Response<AdminMemberResponse> = api.getMemberList(page, limit, search, status)
+
+    suspend fun adjustMemberScore(id: String, adjustment: Int, reason: String): Response<Unit> =
+        api.adjustMemberScore(id, com.example.movie_booking_app.data.model.request.AdjustScoreRequest(adjustment, reason))
+
+    suspend fun updateMemberStatus(id: String, status: Int): Response<Unit> =
+        api.updateMemberStatus(id, com.example.movie_booking_app.data.model.request.UpdateMemberStatusRequest(status))
+
+    // Member Management Flow-based methods (Refactored for Clean Code)
+    fun getMemberListFlow(
+        page: Int? = null,
+        limit: Int? = null,
+        search: String? = null,
+        status: Int? = null
+    ) = kotlinx.coroutines.flow.flow {
+        val response = api.getMemberList(page, limit, search, status)
+        if (response.isSuccessful && response.body() != null) {
+            emit(response.body()!!.data?.members ?: emptyList())
+        } else {
+            throw Exception(response.errorBody()?.string() ?: "Failed to load members")
+        }
+    }
+
+    fun adjustMemberScoreFlow(id: String, adjustment: Int, reason: String) = kotlinx.coroutines.flow.flow {
+        val response = api.adjustMemberScore(id, com.example.movie_booking_app.data.model.request.AdjustScoreRequest(adjustment, reason))
+        if (response.isSuccessful) {
+            emit(Unit)
+        } else {
+            throw Exception(response.errorBody()?.string() ?: "Failed to adjust score")
+        }
+    }
+
+    fun updateMemberStatusFlow(id: String, status: Int) = kotlinx.coroutines.flow.flow {
+        val response = api.updateMemberStatus(id, com.example.movie_booking_app.data.model.request.UpdateMemberStatusRequest(status))
+        if (response.isSuccessful) {
+            emit(Unit)
+        } else {
+            throw Exception(response.errorBody()?.string() ?: "Failed to update member status")
+        }
+    }
+
     suspend fun getCinemas() = api.getCinemas()
 
     suspend fun getPromotions(): Response<AdminPromotionsResponse> = api.getPromotions()

@@ -123,6 +123,26 @@ interface AdminApiService {
         @Body request: com.example.movie_booking_app.data.model.request.UpdateStaffStatusRequest
     ): Response<Unit>
 
+    @GET("api/admin/members")
+    suspend fun getMemberList(
+        @Query("page") page: Int? = null,
+        @Query("limit") limit: Int? = null,
+        @Query("search") search: String? = null,
+        @Query("status") status: Int? = null
+    ): Response<AdminMemberResponse>
+
+    @PATCH("api/admin/members/{id}/score")
+    suspend fun adjustMemberScore(
+        @Path("id") id: String,
+        @Body request: com.example.movie_booking_app.data.model.request.AdjustScoreRequest
+    ): Response<Unit>
+
+    @PATCH("api/admin/members/{id}/status")
+    suspend fun updateMemberStatus(
+        @Path("id") id: String,
+        @Body request: com.example.movie_booking_app.data.model.request.UpdateMemberStatusRequest
+    ): Response<Unit>
+
     @GET("api/admin/promotions")
     suspend fun getPromotions(): Response<AdminPromotionsResponse>
 
