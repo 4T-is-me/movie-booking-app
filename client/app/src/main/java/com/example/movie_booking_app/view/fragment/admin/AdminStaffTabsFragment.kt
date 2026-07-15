@@ -27,7 +27,7 @@ class AdminStaffTabsFragment : Fragment() {
         val adapter = object : FragmentStateAdapter(this) {
             override fun getItemCount(): Int = 2
             override fun createFragment(position: Int): Fragment {
-                return if (position == 0) EmployeeListFragment() else MemberListFragment()
+                return if (position == 0) AdminStaffFragment() else MemberListFragment()
             }
         }
 

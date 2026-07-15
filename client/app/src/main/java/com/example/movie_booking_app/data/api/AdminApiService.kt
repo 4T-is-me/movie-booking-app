@@ -102,14 +102,6 @@ interface AdminApiService {
         @Query("search") search: String? = null
     ): Response<AdminStaffListResponse>
 
-    @GET("api/admin/members")
-    suspend fun getMemberList(
-        @Query("page") page: Int? = null,
-        @Query("limit") limit: Int? = null,
-        @Query("search") search: String? = null,
-        @Query("status") status: Int? = null
-    ): Response<AdminMemberResponse>
-
     @GET("api/cinemas")
     suspend fun getCinemas(): Response<CinemaResponse>
 
@@ -131,11 +123,13 @@ interface AdminApiService {
         @Body request: com.example.movie_booking_app.data.model.request.UpdateStaffStatusRequest
     ): Response<Unit>
 
-    @PATCH("api/admin/staff/{id}/role")
-    suspend fun updateStaffRole(
-        @Path("id") id: String,
-        @Body request: com.example.movie_booking_app.data.model.request.UpdateStaffRoleRequest
-    ): Response<Unit>
+    @GET("api/admin/members")
+    suspend fun getMemberList(
+        @Query("page") page: Int? = null,
+        @Query("limit") limit: Int? = null,
+        @Query("search") search: String? = null,
+        @Query("status") status: Int? = null
+    ): Response<AdminMemberResponse>
 
     @PATCH("api/admin/members/{id}/score")
     suspend fun adjustMemberScore(

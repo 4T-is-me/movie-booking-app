@@ -10,13 +10,16 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.movie_booking_app.data.model.response.EmployeeItem
+import com.example.movie_booking_app.data.model.entity.Staff
 import com.example.movie_booking_app.databinding.FragmentAdminStaffBinding
 import com.example.movie_booking_app.view.activity.AdminStaffActivity
 import com.example.movie_booking_app.view.adapter.AdminStaffAdapter
 import com.example.movie_booking_app.viewmodel.admin.AdminStaffViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class AdminStaffFragment : Fragment() {
@@ -72,7 +75,7 @@ class AdminStaffFragment : Fragment() {
                 }
                 startActivity(intent)
             },
-            onToggleStatusClick = { staff ->
+            onDeleteClick = { staff ->
                 showDeleteConfirmationDialog(staff)
             }
         )
@@ -87,7 +90,7 @@ class AdminStaffFragment : Fragment() {
         }
     }
 
-    private fun showDeleteConfirmationDialog(staff: EmployeeItem) {
+    private fun showDeleteConfirmationDialog(staff: Staff) {
         val dialog = android.app.Dialog(requireContext())
         dialog.setContentView(com.example.movie_booking_app.R.layout.dialog_confirm_delete_staff)
         dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
@@ -111,7 +114,7 @@ class AdminStaffFragment : Fragment() {
         dialog.show()
     }
 
-    private fun showStaffDetailDialog(staff: EmployeeItem) {
+    private fun showStaffDetailDialog(staff: Staff) {
         val dialog = android.app.Dialog(requireContext())
         dialog.setContentView(com.example.movie_booking_app.R.layout.dialog_detail_staff)
         dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
@@ -133,13 +136,13 @@ class AdminStaffFragment : Fragment() {
         val tvDetailRating = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailRating)
         val btnClose = dialog.findViewById<com.google.android.material.button.MaterialButton>(com.example.movie_booking_app.R.id.btnCloseDetail)
 
-        tvDetailUsername.text = staff.account?.username ?: "-"
+        tvDetailUsername.text = staff.username ?: "-"
         tvDetailFullName.text = staff.fullName ?: "-"
         tvDetailPosition.text = staff.position ?: "-"
-        tvDetailEmail.text = staff.account?.email ?: "-"
+        tvDetailEmail.text = staff.email ?: "-"
         tvDetailPhone.text = staff.phone ?: "-"
-        tvDetailDob.text = "-" // EmployeeItem doesn't have dob in response yet
-        tvDetailGender.text = "-" // EmployeeItem doesn't have gender in response yet
+        tvDetailDob.text = staff.dob?.take(10) ?: "-"
+        tvDetailGender.text = staff.gender ?: "-"
         tvDetailIdentityCard.text = staff.identityCard ?: "-"
         tvDetailAddress.text = staff.address ?: "-"
         tvDetailSalary.text = staff.salary?.let { String.format("%,.0f đ", it) } ?: "-"
@@ -156,29 +159,30 @@ class AdminStaffFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        viewModel.isLoadingStaff.observe(viewLifecycleOwner) { isLoading ->
-            binding.swipeRefreshLayout.isRefreshing = isLoading
-        }
-
-        viewModel.staffList.observe(viewLifecycleOwner) { staffList ->
-            // Since adapter expects Staff, we might need to map EmployeeItem back to Staff 
-            // or update adapter to use EmployeeItem. 
-            // For now, let's update adapter to use EmployeeItem to follow the plan.
-            adapter.submitList(getFilteredStaffList(staffList))
-        }
-
-        viewModel.error.observe(viewLifecycleOwner) { error ->
-            Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
-        }
-
-        viewModel.actionSuccess.observe(viewLifecycleOwner) { success ->
-            if (success) {
-                viewModel.loadStaff()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.uiState.collectLatest { state ->
+                binding.swipeRefreshLayout.isRefreshing = state.isLoading
+                // Show loading state if needed, here we submit the list
+                adapter.submitList(getFilteredStaffList(state.staffList))
+                
+                state.error?.let { err ->
+                    Toast.makeText(context, err, Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
-        viewModel.actionMessage.observe(viewLifecycleOwner) { message ->
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.actionSuccess.collectLatest { success ->
+                if (success) {
+                    viewModel.loadStaff()
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.actionMessage.collectLatest { message ->
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -195,7 +199,7 @@ class AdminStaffFragment : Fragment() {
         updateTabStyle(binding.tabActiveStaff, isActive)
         updateTabStyle(binding.tabInactiveStaff, !isActive)
         
-        val fullList = viewModel.staffList.value ?: emptyList()
+        val fullList = viewModel.uiState.value.staffList
         adapter.submitList(getFilteredStaffList(fullList))
     }
 
@@ -209,11 +213,11 @@ class AdminStaffFragment : Fragment() {
         }
     }
 
-    private fun getFilteredStaffList(fullList: List<EmployeeItem>): List<EmployeeItem> {
+    private fun getFilteredStaffList(fullList: List<Staff>): List<Staff> {
         return if (selectedTab == TAB_ACTIVE) {
-            fullList.filter { it.account?.status != 0 }
+            fullList.filter { it.status != 0 }
         } else {
-            fullList.filter { it.account?.status == 0 }
+            fullList.filter { it.status == 0 }
         }
     }
 

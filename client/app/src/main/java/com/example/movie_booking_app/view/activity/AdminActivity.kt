@@ -62,7 +62,7 @@ class AdminActivity : BaseActivity() {
                     loadFragment(AdminStatsFragment())
                 }
                 R.id.nav_employees -> {
-                    tvHeaderTitle.text = "Staff Management"
+                    tvHeaderTitle.text = "Staff & Members"
                     loadFragment(AdminStaffTabsFragment())
                 }
                 R.id.nav_rooms -> {
@@ -74,7 +74,7 @@ class AdminActivity : BaseActivity() {
                     loadFragment(AdminPromotionFragment())
                 }
                 R.id.nav_members -> {
-                    tvHeaderTitle.text = "Staff Management"
+                    tvHeaderTitle.text = "Staff & Members"
                     loadFragment(AdminStaffTabsFragment())
                 }
                 R.id.nav_settings -> {

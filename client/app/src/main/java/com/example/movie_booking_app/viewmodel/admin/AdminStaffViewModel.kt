@@ -1,57 +1,54 @@
 package com.example.movie_booking_app.viewmodel.admin
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.entity.Cinema
-import com.example.movie_booking_app.data.model.request.*
-import com.example.movie_booking_app.data.model.response.*
-import com.example.movie_booking_app.data.repository.admin.StaffAdminRepository
-import com.example.movie_booking_app.utils.SingleLiveEvent
+import com.example.movie_booking_app.data.model.entity.Staff
+import com.example.movie_booking_app.data.model.request.CreateStaffRequest
+import com.example.movie_booking_app.data.model.request.UpdateStaffRequest
+import com.example.movie_booking_app.data.repository.admin.AdminRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+data class AdminStaffUiState(
+    val isLoading: Boolean = false,
+    val staffList: List<Staff> = emptyList(),
+    val memberList: List<com.example.movie_booking_app.data.model.response.MemberItem> = emptyList(),
+    val error: String? = null
+)
+
 @HiltViewModel
 class AdminStaffViewModel @Inject constructor(
-    private val repository: StaffAdminRepository
+    private val repository: AdminRepository
 ) : ViewModel() {
 
-    // LiveData for Staff
-    private val _staffList = MutableLiveData<List<EmployeeItem>>()
-    val staffList: LiveData<List<EmployeeItem>> = _staffList
+    private val _uiState = MutableStateFlow(AdminStaffUiState())
+    val uiState: StateFlow<AdminStaffUiState> = _uiState.asStateFlow()
 
-    // LiveData for Members
-    private val _memberList = MutableLiveData<List<MemberItem>>()
-    val memberList: LiveData<List<MemberItem>> = _memberList
+    private val _cinemas = MutableStateFlow<List<Cinema>>(emptyList())
+    val cinemas: StateFlow<List<Cinema>> = _cinemas.asStateFlow()
 
-    // Common State
-    private val _isLoadingStaff = MutableLiveData<Boolean>()
-    val isLoadingStaff: LiveData<Boolean> = _isLoadingStaff
+    private val _actionSuccess = MutableSharedFlow<Boolean>()
+    val actionSuccess: SharedFlow<Boolean> = _actionSuccess.asSharedFlow()
 
-    private val _isLoadingMembers = MutableLiveData<Boolean>()
-    val isLoadingMembers: LiveData<Boolean> = _isLoadingMembers
+    private val _actionMessage = MutableSharedFlow<String>()
+    val actionMessage: SharedFlow<String> = _actionMessage.asSharedFlow()
 
-    private val _error = SingleLiveEvent<String>()
-    val error: LiveData<String> = _error
-
-    private val _cinemas = MutableLiveData<List<Cinema>>()
-    val cinemas: LiveData<List<Cinema>> = _cinemas
-
-    private val _actionSuccess = SingleLiveEvent<Boolean>()
-    val actionSuccess: LiveData<Boolean> = _actionSuccess
-
-    private val _actionMessage = SingleLiveEvent<String>()
-    val actionMessage: LiveData<String> = _actionMessage
-
-    private val _scoreAdjustState = MutableLiveData<ScoreAdjustState>()
-    val scoreAdjustState: LiveData<ScoreAdjustState> = _scoreAdjustState
-
-    private var currentSearchQuery: String? = null
+    private val _scoreAdjustState = MutableSharedFlow<com.example.movie_booking_app.data.model.response.ScoreAdjustState>()
+    val scoreAdjustState: SharedFlow<com.example.movie_booking_app.data.model.response.ScoreAdjustState> = _scoreAdjustState.asSharedFlow()
 
     init {
         loadStaff()
@@ -60,219 +57,249 @@ class AdminStaffViewModel @Inject constructor(
     }
 
     fun loadCinemas() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val response = repository.getCinemas()
-                if (response.isSuccessful) {
-                    _cinemas.postValue(response.body()?.data ?: emptyList())
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                try {
+                    val response = repository.getCinemas()
+                    withContext(Dispatchers.Main) {
+                        if (response.isSuccessful && response.body() != null) {
+                            _cinemas.value = response.body()?.data ?: emptyList()
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e("AdminStaffVM", "Error loading cinemas", e)
                 }
-            } catch (e: Exception) {
-                Log.e("AdminStaffVM", "Error loading cinemas", e)
             }
         }
     }
 
     fun loadStaff(searchQuery: String? = null) {
-        currentSearchQuery = searchQuery
-        viewModelScope.launch(Dispatchers.IO) {
-            _isLoadingStaff.postValue(true)
-            try {
-                val response = repository.getStaffList(page = 1, limit = 100, search = searchQuery)
-                if (response.isSuccessful && response.body() != null) {
-                    _staffList.postValue(response.body()?.data?.staffs ?: emptyList())
-                } else {
-                    _error.postValue(parseErrorMessage(response.errorBody()?.string()))
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
+            withContext(Dispatchers.IO) {
+                try {
+                    val response = repository.getStaffList(page = 1, limit = 100, search = searchQuery)
+                    withContext(Dispatchers.Main) {
+                        if (response.isSuccessful && response.body() != null) {
+                            val dbStaffItems = response.body()?.data?.staffs ?: emptyList()
+                            val mappedStaffs = dbStaffItems.map { dbStaff ->
+                                Staff(
+                                    id = dbStaff.id,
+                                    username = dbStaff.account?.username ?: "",
+                                    fullName = dbStaff.fullName ?: "",
+                                    dob = "15/06/1996",
+                                    gender = "Nam",
+                                    email = dbStaff.account?.email ?: "",
+                                    identityCard = dbStaff.identityCard ?: "",
+                                    phone = dbStaff.phone ?: "",
+                                    address = dbStaff.address ?: "",
+                                    position = dbStaff.position ?: "",
+                                    salary = dbStaff.salary ?: 0.0,
+                                    cinemaId = dbStaff.cinemaId ?: "",
+                                    startDate = dbStaff.startDate ?: "",
+                                    kpiPoints = dbStaff.kpiPoints ?: 0,
+                                    ticketSold = dbStaff.ticketSold ?: 0,
+                                    rating = dbStaff.rating ?: 0.0,
+                                    totalRatings = dbStaff.totalRatings ?: 0,
+                                    totalStars = dbStaff.totalStars ?: 0,
+                                    status = dbStaff.account?.status
+                                )
+                            }
+                            _uiState.value = _uiState.value.copy(
+                                isLoading = false,
+                                staffList = mappedStaffs,
+                                error = null
+                            )
+                        } else {
+                            _uiState.value = _uiState.value.copy(
+                                isLoading = false,
+                                error = "Failed to load employee list"
+                            )
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e("AdminStaffVM", "Error loading staff list", e)
+                    withContext(Dispatchers.Main) {
+                        _uiState.value = _uiState.value.copy(
+                            isLoading = false,
+                            error = e.localizedMessage ?: "Network connection error"
+                        )
+                    }
                 }
-            } catch (e: Exception) {
-                Log.e("AdminStaffVM", "Error loading staff", e)
-                _error.postValue(e.localizedMessage ?: "Network connection error")
-            } finally {
-                _isLoadingStaff.postValue(false)
             }
         }
     }
 
     fun createStaff(request: CreateStaffRequest) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _isLoadingStaff.postValue(true)
-            try {
-                val response = repository.createStaff(request)
-                if (response.isSuccessful) {
-                    _actionSuccess.postValue(true)
-                    _actionMessage.postValue("Employee added successfully!")
-                    loadStaff(currentSearchQuery)
-                } else {
-                    _error.postValue(parseErrorMessage(response.errorBody()?.string()))
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            withContext(Dispatchers.IO) {
+                try {
+                    val response = repository.createStaff(request)
+                    withContext(Dispatchers.Main) {
+                        _uiState.value = _uiState.value.copy(isLoading = false)
+                        if (response.isSuccessful) {
+                            _actionSuccess.emit(true)
+                            _actionMessage.emit("Employee added successfully!")
+                            loadStaff()
+                        } else {
+                            _actionSuccess.emit(false)
+                            _actionMessage.emit(response.errorBody()?.string() ?: "Failed to add employee")
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e("AdminStaffVM", "Error creating staff", e)
+                    withContext(Dispatchers.Main) {
+                        _uiState.value = _uiState.value.copy(isLoading = false)
+                        _actionSuccess.emit(false)
+                        _actionMessage.emit(e.localizedMessage ?: "Network connection error")
+                    }
                 }
-            } catch (e: Exception) {
-                _error.postValue(e.localizedMessage ?: "Network error")
-            } finally {
-                _isLoadingStaff.postValue(false)
             }
         }
     }
 
     fun updateStaff(id: String, request: UpdateStaffRequest) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _isLoadingStaff.postValue(true)
-            try {
-                // 1. Update general staff info
-                val response = repository.updateStaff(id, request)
-                
-                // 2. If general update success AND status is provided, update status separately 
-                // because current backend 'updateStaff' might not handle 'status' field in Account table
-                if (response.isSuccessful && request.status != null) {
-                    repository.updateStaffStatus(id, request.status)
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            withContext(Dispatchers.IO) {
+                try {
+                    val response = repository.updateStaff(id, request)
+                    withContext(Dispatchers.Main) {
+                        _uiState.value = _uiState.value.copy(isLoading = false)
+                        if (response.isSuccessful) {
+                            _actionSuccess.emit(true)
+                            _actionMessage.emit("Employee updated successfully!")
+                            loadStaff()
+                        } else {
+                            _actionSuccess.emit(false)
+                            _actionMessage.emit(response.errorBody()?.string() ?: "Failed to update employee")
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e("AdminStaffVM", "Error updating staff", e)
+                    withContext(Dispatchers.Main) {
+                        _uiState.value = _uiState.value.copy(isLoading = false)
+                        _actionSuccess.emit(false)
+                        _actionMessage.emit(e.localizedMessage ?: "Network connection error")
+                    }
                 }
-
-                if (response.isSuccessful) {
-                    _actionSuccess.postValue(true)
-                    _actionMessage.postValue("Employee updated successfully!")
-                    loadStaff(currentSearchQuery)
-                } else {
-                    _error.postValue(parseErrorMessage(response.errorBody()?.string()))
-                }
-            } catch (e: Exception) {
-                _error.postValue(e.localizedMessage ?: "Network error")
-            } finally {
-                _isLoadingStaff.postValue(false)
             }
         }
     }
 
     fun deleteStaff(id: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            // Bỏ _isLoadingStaff.postValue(true) để tránh gây cảm giác reload trang
-            try {
-                Log.d("DeleteStaff", "Starting delete for ID: $id")
-                val response = repository.deleteStaff(id)
-                
-                if (response.isSuccessful) {
-                    // Cập nhật UI ngay lập tức trong danh sách hiện tại
-                    val currentList = _staffList.value?.toMutableList() ?: mutableListOf()
-                    val index = currentList.indexOfFirst { it.id == id }
-                    if (index != -1) {
-                        val currentStaff = currentList[index]
-                        val updatedAccount = (currentStaff.account ?: DbStaffAccount(id = id)).copy(status = 0)
-                        currentList[index] = currentStaff.copy(account = updatedAccount)
-                        _staffList.postValue(currentList)
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            withContext(Dispatchers.IO) {
+                try {
+                    val response = repository.deleteStaff(id)
+                    withContext(Dispatchers.Main) {
+                        _uiState.value = _uiState.value.copy(isLoading = false)
+                        if (response.isSuccessful) {
+                            _actionSuccess.emit(true)
+                            _actionMessage.emit("Employee account disabled!")
+                            loadStaff()
+                        } else {
+                            _actionSuccess.emit(false)
+                            _actionMessage.emit(response.errorBody()?.string() ?: "Failed to disable account")
+                        }
                     }
-                    _actionMessage.postValue("Account locked!")
-                } else {
-                    _error.postValue(parseErrorMessage(response.errorBody()?.string()))
+                } catch (e: Exception) {
+                    Log.e("AdminStaffVM", "Error deleting staff", e)
+                    withContext(Dispatchers.Main) {
+                        _uiState.value = _uiState.value.copy(isLoading = false)
+                        _actionSuccess.emit(false)
+                        _actionMessage.emit(e.localizedMessage ?: "Network connection error")
+                    }
                 }
-            } catch (e: Exception) {
-                _error.postValue(e.localizedMessage ?: "Network error")
             }
         }
     }
 
     fun updateStaffStatus(id: String, status: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            // Bỏ loading spinner cho Toggle
-            try {
-                val response = repository.updateStaffStatus(id, status)
-                if (response.isSuccessful) {
-                    val currentList = _staffList.value?.toMutableList() ?: mutableListOf()
-                    val index = currentList.indexOfFirst { it.id == id }
-                    if (index != -1) {
-                        val updatedStaff = currentList[index].copy(
-                            account = currentList[index].account?.copy(status = status)
-                        )
-                        currentList[index] = updatedStaff
-                        _staffList.postValue(currentList)
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            withContext(Dispatchers.IO) {
+                try {
+                    val response = repository.updateStaffStatus(id, status)
+                    withContext(Dispatchers.Main) {
+                        _uiState.value = _uiState.value.copy(isLoading = false)
+                        if (response.isSuccessful) {
+                            _actionSuccess.emit(true)
+                            val statusMsg = if (status != 0) "Employee account reactivated!" else "Employee account disabled!"
+                            _actionMessage.emit(statusMsg)
+                            loadStaff()
+                        } else {
+                            _actionSuccess.emit(false)
+                            _actionMessage.emit(response.errorBody()?.string() ?: "Failed to update account status")
+                        }
                     }
-                    _actionMessage.postValue(if (status == 1) "Account activated!" else "Account locked!")
-                } else {
-                    _error.postValue("Failed to update status")
+                } catch (e: Exception) {
+                    Log.e("AdminStaffVM", "Error updating staff status", e)
+                    withContext(Dispatchers.Main) {
+                        _uiState.value = _uiState.value.copy(isLoading = false)
+                        _actionSuccess.emit(false)
+                        _actionMessage.emit(e.localizedMessage ?: "Network connection error")
+                    }
                 }
-            } catch (e: Exception) {
-                _error.postValue(e.localizedMessage ?: "Network error")
             }
         }
     }
 
-    // Member Methods
+    // Member Management Methods
     fun loadMembers(searchQuery: String? = null, status: Int? = null) {
-        viewModelScope.launch(Dispatchers.IO) {
-            _isLoadingMembers.postValue(true)
-            try {
-                val response = repository.getMemberList(search = searchQuery, status = status)
-                if (response.isSuccessful && response.body() != null) {
-                    _memberList.postValue(response.body()?.data?.members ?: emptyList())
-                } else {
-                    _error.postValue("Failed to load members")
+        viewModelScope.launch {
+            repository.getMemberListFlow(search = searchQuery, status = status)
+                .onStart {
+                    _uiState.update { it.copy(isLoading = true, error = null) }
                 }
-            } catch (e: Exception) {
-                _error.postValue(e.localizedMessage ?: "Network error")
-            } finally {
-                _isLoadingMembers.postValue(false)
-            }
+                .catch { e ->
+                    _uiState.update { it.copy(isLoading = false, error = e.message) }
+                }
+                .collect { members ->
+                    _uiState.update { it.copy(isLoading = false, memberList = members) }
+                }
         }
     }
 
     fun adjustMemberScore(memberId: String, currentPoints: Int, adjustment: Int, reason: String) {
         if (currentPoints + adjustment < 0) {
-            _error.postValue("Total points cannot be less than 0")
+            viewModelScope.launch { _actionMessage.emit("Total points cannot be less than 0") }
             return
         }
-
-        viewModelScope.launch(Dispatchers.IO) {
-            // Bỏ loading spinner cho Adjustment
-            try {
-                val response = repository.adjustMemberScore(memberId, adjustment, reason)
-                if (response.isSuccessful) {
-                    val currentList = _memberList.value?.toMutableList() ?: mutableListOf()
-                    val index = currentList.indexOfFirst { it.id == memberId }
-                    if (index != -1) {
-                        val updatedMember = currentList[index].copy(
-                            rewardPoints = (currentList[index].rewardPoints ?: 0) + adjustment
-                        )
-                        currentList[index] = updatedMember
-                        _memberList.postValue(currentList)
-                    }
-                    _scoreAdjustState.postValue(ScoreAdjustState(isSuccess = true, message = "Points adjusted!"))
-                } else {
-                    _error.postValue(parseErrorMessage(response.errorBody()?.string()))
+        viewModelScope.launch {
+            repository.adjustMemberScoreFlow(memberId, adjustment, reason)
+                .onStart {
+                    _uiState.update { it.copy(isLoading = true) }
                 }
-            } catch (e: Exception) {
-                _error.postValue(e.localizedMessage ?: "Network error")
-            }
+                .catch { e ->
+                    _uiState.update { it.copy(isLoading = false) }
+                    _actionMessage.emit(e.message ?: "Error")
+                }
+                .collect {
+                    _uiState.update { it.copy(isLoading = false) }
+                    _scoreAdjustState.emit(com.example.movie_booking_app.data.model.response.ScoreAdjustState(isSuccess = true, message = "Points adjusted!"))
+                    loadMembers()
+                }
         }
     }
 
     fun updateMemberStatus(memberId: String, status: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            // Bỏ loading spinner cho Toggle
-            try {
-                val response = repository.updateMemberStatus(memberId, status)
-                if (response.isSuccessful) {
-                    val currentList = _memberList.value?.toMutableList() ?: mutableListOf()
-                    val index = currentList.indexOfFirst { it.id == memberId }
-                    if (index != -1) {
-                        val updatedMember = currentList[index].copy(
-                            account = currentList[index].account?.copy(status = status)
-                        )
-                        currentList[index] = updatedMember
-                        _memberList.postValue(currentList)
-                    }
-                    _actionMessage.postValue(if (status == 1) "Member activated!" else "Member locked!")
-                } else {
-                    _error.postValue("Failed to update member status")
+        viewModelScope.launch {
+            repository.updateMemberStatusFlow(memberId, status)
+                .onStart {
+                    _uiState.update { it.copy(isLoading = true) }
                 }
-            } catch (e: Exception) {
-                _error.postValue(e.localizedMessage ?: "Network error")
-            }
-        }
-    }
-
-    private fun parseErrorMessage(errorBody: String?): String {
-        if (errorBody == null) return "Unknown error occurred"
-        return try {
-            val jsonObject = org.json.JSONObject(errorBody)
-            jsonObject.optString("message", "An error occurred")
-        } catch (e: Exception) {
-            errorBody ?: "Unknown error occurred"
+                .catch { e ->
+                    _uiState.update { it.copy(isLoading = false) }
+                    _actionMessage.emit(e.message ?: "Error")
+                }
+                .collect {
+                    _uiState.update { it.copy(isLoading = false) }
+                    _actionMessage.emit(if (status == 1) "Member activated!" else "Member locked!")
+                    loadMembers()
+                }
         }
     }
 }

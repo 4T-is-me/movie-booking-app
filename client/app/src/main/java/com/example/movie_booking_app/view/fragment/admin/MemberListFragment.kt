@@ -18,6 +18,12 @@ import com.example.movie_booking_app.view.adapter.admin.MemberAdapter
 import com.example.movie_booking_app.viewmodel.admin.AdminStaffViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+
 @AndroidEntryPoint
 class MemberListFragment : Fragment() {
 
@@ -137,16 +143,33 @@ class MemberListFragment : Fragment() {
     }
 
     private fun observeViewModel() {
-        viewModel.memberList.observe(viewLifecycleOwner) { list ->
-            adapter.submitList(list)
-            binding.swipeRefresh.isRefreshing = false
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collectLatest { state ->
+                    adapter.submitList(state.memberList)
+                    binding.swipeRefresh.isRefreshing = state.isLoading
+                    state.error?.let {
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         }
-        viewModel.isLoadingMembers.observe(viewLifecycleOwner) { loading ->
-            binding.swipeRefresh.isRefreshing = loading
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.scoreAdjustState.collectLatest { state ->
+                    if (state.isSuccess) {
+                        Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         }
-        viewModel.scoreAdjustState.observe(viewLifecycleOwner) { state ->
-            if (state.isSuccess) {
-                Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.actionMessage.collectLatest { message ->
+                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
