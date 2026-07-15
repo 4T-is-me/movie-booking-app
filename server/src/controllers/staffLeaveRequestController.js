@@ -1,5 +1,5 @@
 import { StaffLeaveRequestService } from "../services/staffLeaveRequestService.js";
-
+import { StatusCodes } from "http-status-codes";
 const createLeaveRequest = async(req, res, next) => {
     try {
         const accountId = req.user.accountId
@@ -43,9 +43,9 @@ const getReplacementShifts = async (req, res, next) => {
 const acceptReplacementShift = async (req, res, next) => {
     try {
         const accountId = req.user.accountId;
-        const {shiftId} = req.params;
+        const {id} = req.params;
 
-        const data = await StaffLeaveRequestService.acceptReplacementShift(accountId, shiftId);
+        const data = await StaffLeaveRequestService.acceptReplacementShift(accountId, id);
         return res.status(StatusCodes.OK).json({
             success: true,
             message: "Successfully accept replacement shift."

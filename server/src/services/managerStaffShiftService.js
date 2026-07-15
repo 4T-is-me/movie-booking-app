@@ -655,7 +655,7 @@ const getLeaveRequestForManager = async (accountId, { status }) => {
     const leaveRequests = await LeaveRequest.find(filter)
         .populate({
             path: "staffId",
-            select: "fullname phone position"
+            select: "fullName phone position"
         })
         .populate({
             path: "staffShiftId",
@@ -724,18 +724,27 @@ const approveLeaveRequest = async (accountId, leaveRequestId) => {
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
-        //update leaveRequest status
-        leaveRequest.status = "Approved";
-        leaveRequest.managerId = manager._id;
-        leaveRequest.approvedAt = new Date();
-        await leaveRequest.save({ session });
+        await LeaveRequest.updateOne(
+            { _id: leaveRequestId },
+            { 
+                $set: { 
+                    status: "Approved",
+                    managerId: manager._id,
+                    approvedAt: new Date()
+                } 
+            },
+            { session }
+        );
 
-        //update leaveRequest
-        shift.status = "NeedReplacement";
-        await shift.save({ session });
+        await StaffShift.updateOne(
+            { _id: shift._id },
+            { $set: { status: "NeedReplacement" } },
+            { session }
+        );
 
-        //commit Transaction
+        // commit Transaction
         await session.commitTransaction();
+        return { success: true };
 
     } catch (error) {
         await session.abortTransaction();
@@ -747,7 +756,7 @@ const approveLeaveRequest = async (accountId, leaveRequestId) => {
 
 }
 //reject leaveRequest - manager
-const rejectLeaveRequest = async (accountId, leaveRequestId, rejectReason) => {
+const rejectLeaveRequest = async (accountId, leaveRequestId,{ rejectReason }) => {
 
     const manager = await checkManager(accountId);
     const leaveRequest = await LeaveRequest.findById(leaveRequestId).populate("staffShiftId");
@@ -782,5 +791,6 @@ export const ManagerStaffShiftService = {
     getShifts,
     getStaffDetailService,
     getLeaveRequestForManager,
-    approveLeaveRequest
+    approveLeaveRequest,
+    rejectLeaveRequest
 };
