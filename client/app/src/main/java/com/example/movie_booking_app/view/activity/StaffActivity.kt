@@ -16,6 +16,13 @@ import com.example.movie_booking_app.view.fragment.staff.StaffProfileFragment
 import com.example.movie_booking_app.view.fragment.staff.StaffSettingsFragment
 import com.google.android.material.navigation.NavigationView
 import dagger.hilt.android.AndroidEntryPoint
+import android.content.Intent
+import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
+import com.example.movie_booking_app.viewmodel.AuthViewModel
+import com.example.movie_booking_app.data.api.AuthEvent
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class StaffActivity : BaseActivity() {
@@ -23,6 +30,7 @@ class StaffActivity : BaseActivity() {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
     private lateinit var tvHeaderTitle: TextView
+    private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,11 +89,26 @@ class StaffActivity : BaseActivity() {
             tvHeaderTitle.text = "Work Schedule"
             loadFragment(StaffScheduleFragment())
         }
+
+        observeAuthEvents()
     }
 
     private fun loadFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.staff_container, fragment)
             .commit()
+    }
+
+    private fun observeAuthEvents() {
+        lifecycleScope.launch {
+            authViewModel.authEvents.collectLatest { event ->
+                if (event is AuthEvent.SessionExpired) {
+                    val intent = Intent(this@StaffActivity, LoginActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                    finish()
+                }
+            }
+        }
     }
 }
