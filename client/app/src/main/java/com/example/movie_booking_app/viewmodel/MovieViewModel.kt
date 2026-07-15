@@ -88,11 +88,12 @@ class MovieViewModel @Inject constructor(
         }
     }
 
-    fun loadAdminMovies() {
+    fun loadAdminMovies(status: String? = null) {
         viewModelScope.launch {
-            repository.getAdminMovies().collect { movies ->
-                _adminMovies.value = movies
-            }
+            repository.getAdminMovies(status)
+                .collect { movies ->
+                    _adminMovies.value = movies
+                }
         }
     }
 
@@ -187,13 +188,13 @@ class MovieViewModel @Inject constructor(
         }
     }
 
-    fun deleteMovie(id: String) {
+    fun deleteMovie(id: String, status: String? = null) {
         viewModelScope.launch {
             try {
                 val success = repository.deleteMovie(id)
                 _movieActionSuccess.emit(success)
                 if (success) {
-                    loadAdminMovies()
+                    loadAdminMovies(status)
                     _movieActionMessage.emit("Movie deleted successfully")
                 } else {
                     _movieActionMessage.emit("Failed to delete movie")
@@ -224,13 +225,13 @@ class MovieViewModel @Inject constructor(
         }
     }
 
-    fun updateMovie(id: String, request: com.example.movie_booking_app.data.model.request.UpdateMovieRequest, posterFile: File? = null) {
+    fun updateMovie(id: String, request: com.example.movie_booking_app.data.model.request.UpdateMovieRequest, posterFile: File? = null, status: String? = null) {
         viewModelScope.launch {
             try {
                 val success = repository.updateMovie(id, request, posterFile)
                 _movieActionSuccess.emit(success)
                 if (success) {
-                    loadAdminMovies()
+                    loadAdminMovies(status)
                     loadHomeData()
                     _movieActionMessage.emit("Movie updated successfully")
                 } else {

@@ -1,4 +1,5 @@
 import { Movie } from '../models/movieModel.js';
+import { getShowtimeTimeRange } from '../utils/formatters.js';
 
 // GET /api/movies
 // Support filtering by status (now_showing / coming_soon), search by name (q), and pagination
@@ -172,7 +173,7 @@ export const getMovieShowtimes = async (movieId, date) => {
         return {
             showtimeId:     showtime._id,
             showDate:       showtime.showDate,
-            showTime:       showtime.showTime,
+            showTime:       showtime.showTime || getShowtimeTimeRange(showtime),
             startTime:      showtime.startTime,
             endTime:        showtime.endTime,
             cinemaId:       showtime.cinemaId,

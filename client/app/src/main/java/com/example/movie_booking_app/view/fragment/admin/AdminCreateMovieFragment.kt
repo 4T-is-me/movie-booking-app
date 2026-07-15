@@ -267,12 +267,13 @@ class AdminCreateMovieFragment : Fragment() {
                     actors = actors,
                     description = description,
                     country = country,
-
                     language = language,
-                    censorship = censorshipCode
+                    censorship = censorshipCode,
+                    isDeleted = editingMovie?.isDeleted ?: true
                 )
                 editingMovie?.id?.let { id ->
-                    viewModel.updateMovie(id, request, posterFile)
+                    val currentStatus = if (editingMovie?.isDeleted == true) "deleted" else "active"
+                    viewModel.updateMovie(id, request, posterFile, currentStatus)
                 }
                 Toast.makeText(requireContext(), "Updating movie...", Toast.LENGTH_SHORT).show()
             } else {

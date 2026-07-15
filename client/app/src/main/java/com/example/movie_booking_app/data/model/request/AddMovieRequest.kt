@@ -29,5 +29,5 @@ data class UpdateMovieRequest(
     val actors: List<String>? = null,
     val country: String? = null,
     val status: String? = null,
-
+    val isDeleted: Boolean? = null
 )
