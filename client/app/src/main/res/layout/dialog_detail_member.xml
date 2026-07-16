@@ -19,7 +19,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Member Details"
+            android:text="@string/admin_member_details"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -47,7 +47,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Username"
+                        android:text="@string/auto_str_username"
                         android:textColor="@color/text_gray"
                         android:textSize="12sp" />
                     <TextView
@@ -68,7 +68,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Full Name"
+                        android:text="@string/auto_str_full_name"
                         android:textColor="@color/text_gray"
                         android:textSize="12sp" />
                     <TextView
@@ -88,7 +88,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Email"
+                        android:text="@string/auto_str_email"
                         android:textColor="@color/text_gray"
                         android:textSize="12sp" />
                     <TextView
@@ -108,7 +108,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Phone Number"
+                        android:text="@string/auto_str_phone_number"
                         android:textColor="@color/text_gray"
                         android:textSize="12sp" />
                     <TextView
@@ -128,7 +128,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Identity Card"
+                        android:text="@string/auto_str_identity_card"
                         android:textColor="@color/text_gray"
                         android:textSize="12sp" />
                     <TextView
@@ -148,7 +148,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Address"
+                        android:text="@string/auto_str_address_1"
                         android:textColor="@color/text_gray"
                         android:textSize="12sp" />
                     <TextView
@@ -174,7 +174,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Rank"
+                            android:text="@string/admin_rank_label"
                             android:textColor="@color/text_gray"
                             android:textSize="12sp" />
                         <TextView
@@ -193,7 +193,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Reward Points"
+                            android:text="@string/admin_reward_points_label"
                             android:textColor="@color/text_gray"
                             android:textSize="12sp" />
                         <TextView
@@ -214,7 +214,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Total Spent"
+                        android:text="@string/admin_total_spent_label"
                         android:textColor="@color/text_gray"
                         android:textSize="12sp" />
                     <TextView
@@ -234,7 +234,7 @@
             android:id="@+id/btnCloseDetail"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:text="Close"
+            android:text="@string/auto_str_close"
             android:textColor="@color/black"
             android:textSize="14sp"
             android:textStyle="bold"

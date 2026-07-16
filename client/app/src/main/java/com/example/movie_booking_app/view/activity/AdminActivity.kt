@@ -54,31 +54,31 @@ class AdminActivity : BaseActivity() {
         navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_movies -> {
-                    tvHeaderTitle.text = "Movies"
+                    tvHeaderTitle.text = getString(R.string.auto_str_movies)
                     loadFragment(AdminMovieListFragment())
                 }
                 R.id.nav_dashboard -> {
-                    tvHeaderTitle.text = "Dashboard"
+                    tvHeaderTitle.text = getString(R.string.auto_str_dashboard)
                     loadFragment(AdminStatsFragment())
                 }
                 R.id.nav_employees -> {
-                    tvHeaderTitle.text = "Staff & Members"
+                    tvHeaderTitle.text = getString(R.string.admin_staff_members_title)
                     loadFragment(AdminStaffTabsFragment.newInstance(0))
                 }
                 R.id.nav_rooms -> {
-                    tvHeaderTitle.text = "Cinema Rooms"
+                    tvHeaderTitle.text = getString(R.string.auto_str_cinema_rooms)
                     loadFragment(CinemaRoomsFragment())
                 }
                 R.id.nav_promotions -> {
-                    tvHeaderTitle.text = "Promotions"
+                    tvHeaderTitle.text = getString(R.string.auto_str_promotions)
                     loadFragment(AdminPromotionFragment())
                 }
                 R.id.nav_members -> {
-                    tvHeaderTitle.text = "Staff & Members"
+                    tvHeaderTitle.text = getString(R.string.admin_staff_members_title)
                     loadFragment(AdminStaffTabsFragment.newInstance(1))
                 }
                 R.id.nav_settings -> {
-                    tvHeaderTitle.text = "Settings"
+                    tvHeaderTitle.text = getString(R.string.admin_settings_title)
                     loadFragment(BlankFragment())
                 }
                 R.id.nav_logout -> {
@@ -92,7 +92,7 @@ class AdminActivity : BaseActivity() {
         // Set default selection to Dashboard (AdminStatsFragment)
         if (savedInstanceState == null) {
             navigationView.setCheckedItem(R.id.nav_dashboard)
-            tvHeaderTitle.text = "Dashboard"
+            tvHeaderTitle.text = getString(R.string.auto_str_dashboard)
             loadFragment(AdminStatsFragment())
         }
     }

@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.FragmentAdminStaffTabsBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,7 +47,7 @@ class AdminStaffTabsFragment : Fragment() {
         binding.viewPager.adapter = adapter
 
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            tab.text = if (position == 0) "Employees" else "Members"
+            tab.text = if (position == 0) getString(R.string.admin_tab_employees) else getString(R.string.admin_tab_members)
         }.attach()
 
         // Select the initial tab passed via arguments

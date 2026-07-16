@@ -2,6 +2,8 @@ package com.example.movie_booking_app.viewmodel.admin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.movie_booking_app.MyApplication
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Cinema
 import com.example.movie_booking_app.data.model.entity.Staff
 import com.example.movie_booking_app.data.model.request.CreateStaffRequest
@@ -53,10 +55,14 @@ class AdminStaffViewModel @Inject constructor(
         loadCinemas()
     }
 
+    private fun getString(resId: Int): String {
+        return MyApplication.getContext().getString(resId)
+    }
+
     fun loadCinemas() {
         viewModelScope.launch {
             repository.getCinemasFlow()
-                .catch { e -> _actionMessage.emit(e.message ?: "Error loading cinemas") }
+                .catch { e -> _actionMessage.emit(e.message ?: getString(R.string.auto_str_failed_to_load_cinema_rooms)) }
                 .collect { _cinemas.value = it }
         }
     }
@@ -74,15 +80,15 @@ class AdminStaffViewModel @Inject constructor(
                     val mappedStaffs = staffItems.map { dbStaff ->
                         Staff(
                             id = dbStaff.id,
-                            username = dbStaff.account?.username ?: "",
-                            fullName = dbStaff.fullName ?: "",
-                            dob = "15/06/1996",
-                            gender = "Nam",
-                            email = dbStaff.account?.email ?: "",
-                            identityCard = dbStaff.identityCard ?: "",
-                            phone = dbStaff.phone ?: "",
-                            address = dbStaff.address ?: "",
-                            position = dbStaff.position ?: "",
+                            username = dbStaff.account?.username ?: getString(R.string.user_name_placeholder),
+                            fullName = dbStaff.fullName ?: getString(R.string.user_name_placeholder),
+                            dob = getString(R.string.user_name_placeholder),
+                            gender = getString(R.string.user_name_placeholder),
+                            email = dbStaff.account?.email ?: getString(R.string.user_name_placeholder),
+                            identityCard = dbStaff.identityCard ?: getString(R.string.user_name_placeholder),
+                            phone = dbStaff.phone ?: getString(R.string.user_name_placeholder),
+                            address = dbStaff.address ?: getString(R.string.user_name_placeholder),
+                            position = dbStaff.position ?: getString(R.string.user_name_placeholder),
                             salary = dbStaff.salary ?: 0.0,
                             cinemaId = dbStaff.cinemaId ?: "",
                             startDate = dbStaff.startDate ?: "",
@@ -105,11 +111,11 @@ class AdminStaffViewModel @Inject constructor(
                 .onStart { _uiState.update { it.copy(isLoading = true) } }
                 .catch { e ->
                     _uiState.update { it.copy(isLoading = false) }
-                    _actionMessage.emit(e.message ?: "Error")
+                    _actionMessage.emit(e.message ?: getString(R.string.admin_error_failed_add_employee))
                 }
                 .collect {
                     _actionSuccess.emit(true)
-                    _actionMessage.emit("Employee added successfully!")
+                    _actionMessage.emit(getString(R.string.admin_success_employee_added))
                     loadStaff(showLoading = false)
                 }
         }
@@ -121,11 +127,11 @@ class AdminStaffViewModel @Inject constructor(
                 .onStart { _uiState.update { it.copy(isLoading = true) } }
                 .catch { e ->
                     _uiState.update { it.copy(isLoading = false) }
-                    _actionMessage.emit(e.message ?: "Error")
+                    _actionMessage.emit(e.message ?: getString(R.string.admin_error_failed_update_employee))
                 }
                 .collect {
                     _actionSuccess.emit(true)
-                    _actionMessage.emit("Employee updated successfully!")
+                    _actionMessage.emit(getString(R.string.admin_success_employee_updated))
                     loadStaff(showLoading = false)
                 }
         }
@@ -137,11 +143,11 @@ class AdminStaffViewModel @Inject constructor(
                 .onStart { _uiState.update { it.copy(isLoading = true) } }
                 .catch { e ->
                     _uiState.update { it.copy(isLoading = false) }
-                    _actionMessage.emit(e.message ?: "Error")
+                    _actionMessage.emit(e.message ?: getString(R.string.admin_error_failed_disable_account))
                 }
                 .collect {
                     _actionSuccess.emit(true)
-                    _actionMessage.emit("Employee account disabled!")
+                    _actionMessage.emit(getString(R.string.admin_success_employee_disabled))
                     loadStaff(showLoading = false)
                 }
         }
@@ -165,7 +171,7 @@ class AdminStaffViewModel @Inject constructor(
 
     fun adjustMemberScore(memberId: String, currentPoints: Int, adjustment: Int, reason: String) {
         if (currentPoints + adjustment < 0) {
-            viewModelScope.launch { _actionMessage.emit("Total points cannot be less than 0") }
+            viewModelScope.launch { _actionMessage.emit(getString(R.string.admin_error_points_negative)) }
             return
         }
         viewModelScope.launch {
@@ -173,10 +179,10 @@ class AdminStaffViewModel @Inject constructor(
                 .onStart { _uiState.update { it.copy(isLoading = true) } }
                 .catch { e ->
                     _uiState.update { it.copy(isLoading = false) }
-                    _actionMessage.emit(e.message ?: "Error")
+                    _actionMessage.emit(e.message ?: getString(R.string.admin_error_network))
                 }
                 .collect {
-                    _scoreAdjustState.emit(com.example.movie_booking_app.data.model.response.ScoreAdjustState(isSuccess = true, message = "Points adjusted!"))
+                    _scoreAdjustState.emit(com.example.movie_booking_app.data.model.response.ScoreAdjustState(isSuccess = true, message = getString(R.string.admin_success_points_adjusted)))
                     loadMembers(showLoading = false)
                 }
         }
@@ -188,10 +194,10 @@ class AdminStaffViewModel @Inject constructor(
                 .onStart { _uiState.update { it.copy(isLoading = true) } }
                 .catch { e ->
                     _uiState.update { it.copy(isLoading = false) }
-                    _actionMessage.emit(e.message ?: "Error")
+                    _actionMessage.emit(e.message ?: getString(R.string.admin_error_network))
                 }
                 .collect {
-                    _actionMessage.emit(if (status == 1) "Member activated!" else "Member locked!")
+                    _actionMessage.emit(if (status == 1) getString(R.string.admin_success_member_activated) else getString(R.string.admin_success_member_deleted))
                     loadMembers(showLoading = false)
                 }
         }

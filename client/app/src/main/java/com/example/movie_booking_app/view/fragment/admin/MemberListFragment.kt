@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -21,9 +22,11 @@ import com.example.movie_booking_app.databinding.DialogAdjustScoreBinding
 import com.example.movie_booking_app.databinding.FragmentAdminUserListBinding
 import com.example.movie_booking_app.view.adapter.admin.MemberAdapter
 import com.example.movie_booking_app.viewmodel.admin.AdminStaffViewModel
+import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 @AndroidEntryPoint
 class MemberListFragment : Fragment() {
@@ -75,7 +78,7 @@ class MemberListFragment : Fragment() {
     private fun showMemberDetailDialog(member: MemberItem) {
         val dialog = android.app.Dialog(requireContext())
         dialog.setContentView(R.layout.dialog_detail_member)
-        dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
+        dialog.window?.setBackgroundDrawable(ContextCompat.getDrawable(requireContext(), android.R.color.transparent))
         dialog.setCancelable(true)
 
         val tvDetailUsername = dialog.findViewById<TextView>(R.id.tvDetailUsername)
@@ -87,17 +90,17 @@ class MemberListFragment : Fragment() {
         val tvDetailRank = dialog.findViewById<TextView>(R.id.tvDetailRank)
         val tvDetailPoints = dialog.findViewById<TextView>(R.id.tvDetailPoints)
         val tvDetailTotalSpent = dialog.findViewById<TextView>(R.id.tvDetailTotalSpent)
-        val btnClose = dialog.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnCloseDetail)
+        val btnClose = dialog.findViewById<MaterialButton>(R.id.btnCloseDetail)
 
-        tvDetailUsername.text = member.account?.username ?: "-"
-        tvDetailFullName.text = member.fullName ?: "-"
-        tvDetailEmail.text = member.account?.email ?: "-"
-        tvDetailPhone.text = member.phoneNumber ?: "-"
-        tvDetailIdentityCard.text = member.identityCard ?: "-"
-        tvDetailAddress.text = member.address ?: "-"
-        tvDetailRank.text = member.membershipRank ?: "Bronze"
-        tvDetailPoints.text = String.format("%,d", member.rewardPoints ?: 0)
-        tvDetailTotalSpent.text = String.format("%,.0f đ", member.totalSpent ?: 0.0)
+        tvDetailUsername.text = member.account?.username ?: getString(R.string.user_name_placeholder)
+        tvDetailFullName.text = member.fullName ?: getString(R.string.user_name_placeholder)
+        tvDetailEmail.text = member.account?.email ?: getString(R.string.user_name_placeholder)
+        tvDetailPhone.text = member.phoneNumber ?: getString(R.string.user_name_placeholder)
+        tvDetailIdentityCard.text = member.identityCard ?: getString(R.string.user_name_placeholder)
+        tvDetailAddress.text = member.address ?: getString(R.string.user_name_placeholder)
+        tvDetailRank.text = member.membershipRank ?: getString(R.string.admin_default_rank)
+        tvDetailPoints.text = String.format(Locale.getDefault(), "%,d", member.rewardPoints ?: 0)
+        tvDetailTotalSpent.text = String.format(Locale.getDefault(), "%,.0f đ", member.totalSpent ?: 0.0)
 
         btnClose.setOnClickListener { dialog.dismiss() }
         dialog.show()
@@ -140,21 +143,39 @@ class MemberListFragment : Fragment() {
 
     private fun showConfirmToggleStatusDialog(member: MemberItem) {
         val isActive = member.account?.status != 0
-        val title = if (isActive) "Lock Member" else "Unlock Member"
-        val message = if (isActive) 
-            "Are you sure you want to lock the account for \"${member.fullName}\"?" 
-            else "Are you sure you want to reactivate the account for \"${member.fullName}\"?"
-        val buttonText = if (isActive) "Lock" else "Unlock"
-        val newStatus = if (isActive) 0 else 1
+        val dialog = android.app.Dialog(requireContext())
+        dialog.setContentView(R.layout.dialog_confirm_toggle_member)
+        dialog.window?.setBackgroundDrawable(ContextCompat.getDrawable(requireContext(), android.R.color.transparent))
+        dialog.setCancelable(true)
 
-        AlertDialog.Builder(requireContext())
-            .setTitle(title)
-            .setMessage(message)
-            .setPositiveButton(buttonText) { _, _ ->
-                member.id?.let { viewModel.updateMemberStatus(it, newStatus) }
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
+        val ivIcon = dialog.findViewById<ImageView>(R.id.ivConfirmIcon)
+        val tvTitle = dialog.findViewById<TextView>(R.id.tvConfirmTitle)
+        val tvMessage = dialog.findViewById<TextView>(R.id.tvConfirmMessage)
+        val btnCancel = dialog.findViewById<MaterialButton>(R.id.btnCancelToggle)
+        val btnConfirm = dialog.findViewById<MaterialButton>(R.id.btnConfirmToggle)
+
+        if (isActive) {
+            ivIcon.setImageResource(android.R.drawable.ic_menu_delete)
+            ivIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.yellow))
+            tvTitle.text = getString(R.string.admin_delete_member)
+            tvMessage.text = getString(R.string.admin_confirm_delete_member_msg, member.fullName ?: "")
+            btnConfirm.text = getString(R.string.admin_delete)
+        } else {
+            ivIcon.setImageResource(android.R.drawable.ic_menu_rotate)
+            ivIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.color_green_status))
+            tvTitle.text = getString(R.string.admin_reactivate_member)
+            tvMessage.text = getString(R.string.admin_confirm_unlock_msg, member.fullName ?: "")
+            btnConfirm.text = getString(R.string.admin_reactivate)
+        }
+
+        btnCancel.setOnClickListener { dialog.dismiss() }
+        btnConfirm.setOnClickListener {
+            dialog.dismiss()
+            val newStatus = if (isActive) 0 else 1
+            member.id?.let { viewModel.updateMemberStatus(it, newStatus) }
+        }
+
+        dialog.show()
     }
 
     private fun setupListeners() {
@@ -173,7 +194,7 @@ class MemberListFragment : Fragment() {
             .create()
 
         val currentPoints = member.rewardPoints ?: 0
-        dialogBinding.tvCurrentPoints.text = "Current Points: ${String.format("%,d", currentPoints)}"
+        dialogBinding.tvCurrentPoints.text = getString(R.string.admin_current_points_preview, String.format(Locale.getDefault(), "%,d", currentPoints))
 
         val validate = {
             val adjStr = dialogBinding.edtAdjustment.text.toString()
@@ -185,13 +206,13 @@ class MemberListFragment : Fragment() {
             
             // Validate Adjustment
             if (adjStr.isEmpty()) {
-                dialogBinding.tilAdjustment.error = "Enter adjustment"
+                dialogBinding.tilAdjustment.error = getString(R.string.admin_error_enter_adjustment)
                 isValid = false
             } else if (adj == 0) {
-                dialogBinding.tilAdjustment.error = "Cannot be 0"
+                dialogBinding.tilAdjustment.error = getString(R.string.admin_error_cannot_be_zero)
                 isValid = false
             } else if (newTotal < 0) {
-                dialogBinding.tilAdjustment.error = "New total < 0"
+                dialogBinding.tilAdjustment.error = getString(R.string.admin_error_total_less_than_zero)
                 isValid = false
             } else {
                 dialogBinding.tilAdjustment.error = null
@@ -199,7 +220,7 @@ class MemberListFragment : Fragment() {
             
             // Validate Reason
             if (reason.isEmpty()) {
-                dialogBinding.tilReason.error = "Reason required"
+                dialogBinding.tilReason.error = getString(R.string.admin_error_reason_required)
                 isValid = false
             } else {
                 dialogBinding.tilReason.error = null
@@ -210,9 +231,9 @@ class MemberListFragment : Fragment() {
             // Update New Points Preview
             if (adjStr.isNotEmpty()) {
                 dialogBinding.tvNewPoints.visibility = View.VISIBLE
-                dialogBinding.tvNewPoints.text = "New Points: ${String.format("%,d", newTotal)}"
+                dialogBinding.tvNewPoints.text = getString(R.string.admin_new_points_preview, String.format(Locale.getDefault(), "%,d", newTotal))
                 dialogBinding.tvNewPoints.setTextColor(
-                    if (newTotal < 0) android.graphics.Color.RED 
+                    if (newTotal < 0) ContextCompat.getColor(requireContext(), android.R.color.holo_red_dark)
                     else ContextCompat.getColor(requireContext(), R.color.yellow)
                 )
             } else {

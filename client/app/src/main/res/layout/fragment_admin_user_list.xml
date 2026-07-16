@@ -38,6 +38,7 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:src="@android:drawable/ic_menu_search"
+                        android:contentDescription="@string/search_hint"
                         app:tint="@color/admin_text_secondary" />
 
                     <EditText
@@ -45,14 +46,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@android:color/transparent"
-                        android:hint="Search by name or email..."
+                        android:hint="@string/admin_search_staff_hint"
                         android:textColorHint="@color/admin_text_secondary"
                         android:textColor="@color/white"
                         android:textSize="14sp"
                         android:paddingStart="8dp"
                         android:paddingEnd="8dp"
                         android:maxLines="1"
-                        android:inputType="text"/>
+                        android:inputType="text"
+                        android:importantForAutofill="no"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
         </LinearLayout>
@@ -74,7 +76,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Active"
+                android:text="@string/admin_tab_active"
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 android:background="@drawable/bg_tab_active" />
@@ -85,7 +87,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Locked"
+                android:text="@string/admin_tab_inactive"
                 android:textColor="@color/text_gray"
                 android:textSize="14sp" />
         </LinearLayout>
@@ -112,7 +114,7 @@
                     android:layout_weight="1.8"
                     android:paddingStart="12dp"
                     android:paddingEnd="4dp"
-                    android:text="Full Name"
+                    android:text="@string/admin_full_name"
                     android:textColor="@color/yellow"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -124,7 +126,7 @@
                     android:layout_weight="1.0"
                     android:paddingStart="4dp"
                     android:paddingEnd="4dp"
-                    android:text="Points"
+                    android:text="@string/admin_points_label"
                     android:textColor="@color/yellow"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -136,7 +138,7 @@
                     android:layout_weight="1.2"
                     android:paddingStart="4dp"
                     android:paddingEnd="12dp"
-                    android:text="Actions"
+                    android:text="@string/admin_actions"
                     android:textColor="@color/yellow"
                     android:textSize="14sp"
                     android:textStyle="bold"
@@ -173,6 +175,7 @@
         android:layout_margin="24dp"
         android:src="@android:drawable/ic_input_add"
         android:visibility="gone"
+        android:contentDescription="@string/sign_up"
         app:backgroundTint="@color/yellow"
         app:tint="@color/black" />
 </RelativeLayout>
