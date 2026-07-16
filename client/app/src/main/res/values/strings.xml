@@ -71,6 +71,28 @@
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
 
+    <!-- Registration Validation Errors -->
+    <string name="error_username_required">Username is required</string>
+    <string name="error_username_length">Username must be 3-30 characters</string>
+    <string name="error_fullname_required">Full Name is required</string>
+    <string name="error_dob_required">Date of birth is required</string>
+    <string name="error_dob_future">Date of birth cannot be in the future</string>
+    <string name="error_dob_min_age">You must be at least 15 years old</string>
+    <string name="error_dob_max_age">Age cannot exceed 80 years</string>
+    <string name="error_dob_invalid">Invalid date format (dd/MM/yyyy)</string>
+    <string name="error_email_required">Email is required</string>
+    <string name="error_email_invalid">Invalid email format</string>
+    <string name="error_phone_required">Phone is required</string>
+    <string name="error_phone_invalid">Must be 10 digits starting with 0</string>
+    <string name="error_password_required">Password is required</string>
+    <string name="error_password_length">At least 6 characters</string>
+    <string name="error_confirm_password_required">Please confirm password</string>
+    <string name="error_confirm_password_mismatch">Passwords do not match</string>
+    <string name="error_address_required">Address is required</string>
+    <string name="error_idcard_required">Identify card is required</string>
+    <string name="error_idcard_invalid">Identity card must be 9 or 12 digits</string>
+
+
     <!-- Select Seat Activity Strings -->
     <string name="legend_available">Available</string>
     <string name="legend_vip">VIP</string>
@@ -656,9 +678,10 @@
     <string name="auto_str_save_1">Save</string>
 
     <!-- Admin Staff & Member Management Strings -->
-    <string name="admin_staff_members_title">Staff &amp; Members</string>
+    <string name="admin_staff_members_title">Employees</string>
     <string name="admin_settings_title">Settings</string>
-    <string name="admin_tab_employees">Employees</string>
+    <string name="admin_tab_employees">Managers</string>
+    <string name="admin_tab_staff">Staff</string>
     <string name="admin_tab_members">Members</string>
     <string name="admin_tab_active">Active</string>
     <string name="admin_tab_inactive">Inactive</string>
@@ -671,7 +694,7 @@
     <string name="admin_close">Close</string>
     <string name="admin_confirm_unlock_msg">Are you sure you want to reactivate the account for \"%1$s\"?</string>
     <string name="admin_confirm_delete_member_msg">Are you sure you want to delete member \"%1$s\"?</string>
-    <string name="admin_confirm_delete_staff_msg">Are you sure you want to delete employee \"%1$s\"?</string>
+    <string name="admin_confirm_delete_staff_msg">Are you sure you want to delete %1$s \"%2$s\"?</string>
     <string name="admin_currency_format">%,.0f đ</string>
     <string name="admin_current_points_preview">Current Points: %1$s</string>
     <string name="admin_new_points_preview">New Points: %1$s</string>
@@ -692,10 +715,10 @@
     <string name="admin_rank_label">Rank</string>
     <string name="admin_reward_points_label">Reward Points</string>
     <string name="admin_total_spent_label">Total Spent</string>
-    <string name="admin_success_employee_added">Employee added successfully!</string>
-    <string name="admin_success_employee_updated">Employee updated successfully!</string>
-    <string name="admin_success_employee_disabled">Employee account disabled!</string>
-    <string name="admin_success_employee_reactivated">Employee account reactivated!</string>
+    <string name="admin_success_employee_added">Account added successfully!</string>
+    <string name="admin_success_employee_updated">Account updated successfully!</string>
+    <string name="admin_success_employee_disabled">Account disabled!</string>
+    <string name="admin_success_employee_reactivated">Account reactivated!</string>
     <string name="admin_success_points_adjusted">Points adjusted!</string>
     <string name="admin_success_member_activated">Member activated!</string>
     <string name="admin_success_member_deleted">Member deleted!</string>

@@ -35,7 +35,21 @@ class RegisterViewModel @Inject constructor(
                     _uiState.value = RegisterUiState.Success("Registration successful!")
                 } else {
                     val errorMsg = response.errorBody()?.string() ?: "Registration failed"
-                    _uiState.value = RegisterUiState.Error(errorMsg)
+                    var displayMsg = errorMsg
+                    try {
+                        val jsonObject = org.json.JSONObject(errorMsg)
+                        if (jsonObject.has("errors")) {
+                            val errorsArray = jsonObject.getJSONArray("errors")
+                            if (errorsArray.length() > 0) {
+                                displayMsg = errorsArray.getJSONObject(0).getString("message")
+                            }
+                        } else if (jsonObject.has("message")) {
+                            displayMsg = jsonObject.getString("message")
+                        }
+                    } catch (e: Exception) {
+                        // Ignore and use raw errorMsg
+                    }
+                    _uiState.value = RegisterUiState.Error(displayMsg)
                 }
             } catch (e: Exception) {
                 _uiState.value = RegisterUiState.Error("Error: ${e.message}")

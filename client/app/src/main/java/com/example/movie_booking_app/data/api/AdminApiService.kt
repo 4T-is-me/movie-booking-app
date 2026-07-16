@@ -105,7 +105,8 @@ interface AdminApiService {
     suspend fun getStaffList(
         @Query("page") page: Int? = null,
         @Query("limit") limit: Int? = null,
-        @Query("search") search: String? = null
+        @Query("search") search: String? = null,
+        @Query("role") role: String? = null
     ): Response<AdminStaffListResponse>
 
     @GET("api/cinemas")

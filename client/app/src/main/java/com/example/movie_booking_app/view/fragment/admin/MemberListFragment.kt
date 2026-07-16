@@ -33,7 +33,7 @@ class MemberListFragment : Fragment() {
 
     private var _binding: FragmentAdminUserListBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: AdminStaffViewModel by viewModels({ requireParentFragment() })
+    private val viewModel: AdminStaffViewModel by viewModels()
     private lateinit var adapter: MemberAdapter
 
     private var selectedTab = TAB_ACTIVE

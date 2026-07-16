@@ -14,14 +14,24 @@ import { notificationService } from './notificationService.js'
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID || 'PLACEHOLDER_CLIENT_ID')
 
 const register = async (reqBody) => {
-    const existedUser = await Account.findOne({ $or: [{ email: reqBody.email }, { username: reqBody.username }] })
-    if (existedUser) {
-        throw new ApiError(StatusCodes.CONFLICT, 'Email or username already exists')
+    const existedEmail = await Account.findOne({ email: reqBody.email })
+    if (existedEmail) {
+        throw new ApiError(StatusCodes.CONFLICT, 'Email already exists')
     }
 
-    const existedMember = await Member.findOne({ $or: [{ identityCard: reqBody.identityCard }, { phoneNumber: reqBody.phoneNumber }] })
-    if (existedMember) {
-        throw new ApiError(StatusCodes.CONFLICT, 'Identity card or phone number already exists')
+    const existedUsername = await Account.findOne({ username: reqBody.username })
+    if (existedUsername) {
+        throw new ApiError(StatusCodes.CONFLICT, 'Username already exists')
+    }
+
+    const existedPhone = await Member.findOne({ phoneNumber: reqBody.phoneNumber })
+    if (existedPhone) {
+        throw new ApiError(StatusCodes.CONFLICT, 'Phone number already exists')
+    }
+
+    const existedIdCard = await Member.findOne({ identityCard: reqBody.identityCard })
+    if (existedIdCard) {
+        throw new ApiError(StatusCodes.CONFLICT, 'Identity card already exists')
     }
 
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();

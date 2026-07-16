@@ -196,17 +196,17 @@ class RegisterActivity : AppCompatActivity() {
 
         val username = binding.edtUsername.text.toString().trim()
         if (username.isEmpty()) {
-            binding.tilUsernameReg.error = "Username is required"
+            binding.tilUsernameReg.error = getString(R.string.error_username_required)
             isValid = false
         } else if (username.length !in 3..30) {
-            binding.tilUsernameReg.error = "Username must be 3-30 characters"
+            binding.tilUsernameReg.error = getString(R.string.error_username_length)
             isValid = false
         } else {
             binding.tilUsernameReg.error = null
         }
 
         if (binding.edtFullName.text.toString().trim().isEmpty()) {
-            binding.tilFullName.error = "Full Name is required"
+            binding.tilFullName.error = getString(R.string.error_fullname_required)
             isValid = false
         } else {
             binding.tilFullName.error = null
@@ -218,10 +218,10 @@ class RegisterActivity : AppCompatActivity() {
 
         val email = binding.edtEmail.text.toString().trim()
         if (email.isEmpty()) {
-            binding.tilEmail.error = "Email is required"
+            binding.tilEmail.error = getString(R.string.error_email_required)
             isValid = false
         } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            binding.tilEmail.error = "Invalid email format"
+            binding.tilEmail.error = getString(R.string.error_email_invalid)
             isValid = false
         } else {
             binding.tilEmail.error = null
@@ -229,10 +229,10 @@ class RegisterActivity : AppCompatActivity() {
 
         val phone = binding.edtPhone.text.toString().trim()
         if (phone.isEmpty()) {
-            binding.tilPhone.error = "Phone is required"
+            binding.tilPhone.error = getString(R.string.error_phone_required)
             isValid = false
         } else if (!phone.matches(Regex("^0\\d{9}$"))) {
-            binding.tilPhone.error = "Must be 10 digits starting with 0"
+            binding.tilPhone.error = getString(R.string.error_phone_invalid)
             isValid = false
         } else {
             binding.tilPhone.error = null
@@ -240,10 +240,10 @@ class RegisterActivity : AppCompatActivity() {
 
         val password = binding.edtPassword.text.toString()
         if (password.isEmpty()) {
-            binding.tilPassword.error = "Password is required"
+            binding.tilPassword.error = getString(R.string.error_password_required)
             isValid = false
         } else if (password.length < 6) {
-            binding.tilPassword.error = "At least 6 characters"
+            binding.tilPassword.error = getString(R.string.error_password_length)
             isValid = false
         } else {
             binding.tilPassword.error = null
@@ -251,17 +251,17 @@ class RegisterActivity : AppCompatActivity() {
 
         val confirmPassword = binding.edtConfirmPassword.text.toString()
         if (confirmPassword.isEmpty()) {
-            binding.tilConfirmPassword.error = "Please confirm password"
+            binding.tilConfirmPassword.error = getString(R.string.error_confirm_password_required)
             isValid = false
         } else if (confirmPassword != password) {
-            binding.tilConfirmPassword.error = "Passwords do not match"
+            binding.tilConfirmPassword.error = getString(R.string.error_confirm_password_mismatch)
             isValid = false
         } else {
             binding.tilConfirmPassword.error = null
         }
 
         if (binding.edtAddress.text.toString().trim().isEmpty()) {
-            binding.tilAddress.error = "Address is required"
+            binding.tilAddress.error = getString(R.string.error_address_required)
             isValid = false
         } else {
             binding.tilAddress.error = null
@@ -269,10 +269,10 @@ class RegisterActivity : AppCompatActivity() {
 
         val idCard = binding.edtIdCard.text.toString().trim()
         if (idCard.isEmpty()) {
-            binding.tilIdCard.error = "Identify card is required"
+            binding.tilIdCard.error = getString(R.string.error_idcard_required)
             isValid = false
         } else if (idCard.length != 9 && idCard.length != 12) {
-            binding.tilIdCard.error = "Identity card must be 9 or 12 digits"
+            binding.tilIdCard.error = getString(R.string.error_idcard_invalid)
             isValid = false
         } else {
             binding.tilIdCard.error = null
@@ -300,8 +300,20 @@ class RegisterActivity : AppCompatActivity() {
                 today.set(Calendar.SECOND, 0)
                 today.set(Calendar.MILLISECOND, 0)
 
+                val maxValidDate = Calendar.getInstance()
+                maxValidDate.add(Calendar.YEAR, -15)
+
+                val minValidDate = Calendar.getInstance()
+                minValidDate.add(Calendar.YEAR, -80)
+
                 if (selectedCalendar.after(today)) {
-                    tilDob.error = "Date of birth cannot be in the future"
+                    tilDob.error = getString(R.string.error_dob_future)
+                    edtDob.setText("")
+                } else if (selectedCalendar.after(maxValidDate)) {
+                    tilDob.error = getString(R.string.error_dob_min_age)
+                    edtDob.setText("")
+                } else if (selectedCalendar.before(minValidDate)) {
+                    tilDob.error = getString(R.string.error_dob_max_age)
                     edtDob.setText("")
                 } else {
                     val formattedDate = String.format(Locale.US, "%02d/%02d/%04d", selectedDay, selectedMonth + 1, selectedYear)
@@ -313,13 +325,23 @@ class RegisterActivity : AppCompatActivity() {
             month,
             day
         )
+        
+        val maxValidDate = Calendar.getInstance()
+        maxValidDate.add(Calendar.YEAR, -15)
+        
+        val minValidDate = Calendar.getInstance()
+        minValidDate.add(Calendar.YEAR, -80)
+        
+        datePickerDialog.datePicker.maxDate = maxValidDate.timeInMillis
+        datePickerDialog.datePicker.minDate = minValidDate.timeInMillis
+        
         datePickerDialog.show()
     }
 
     private fun validateDobField(edtDob: TextInputEditText, tilDob: TextInputLayout): Boolean {
         val dob = edtDob.text.toString().trim()
         if (dob.isEmpty()) {
-            tilDob.error = "Date of birth is required"
+            tilDob.error = getString(R.string.error_dob_required)
             return false
         }
 
@@ -341,15 +363,35 @@ class RegisterActivity : AppCompatActivity() {
             selectedCalendar.set(Calendar.SECOND, 0)
             selectedCalendar.set(Calendar.MILLISECOND, 0)
 
+            val maxValidDate = Calendar.getInstance()
+            maxValidDate.set(Calendar.HOUR_OF_DAY, 0)
+            maxValidDate.set(Calendar.MINUTE, 0)
+            maxValidDate.set(Calendar.SECOND, 0)
+            maxValidDate.set(Calendar.MILLISECOND, 0)
+            maxValidDate.add(Calendar.YEAR, -15)
+
+            val minValidDate = Calendar.getInstance()
+            minValidDate.set(Calendar.HOUR_OF_DAY, 0)
+            minValidDate.set(Calendar.MINUTE, 0)
+            minValidDate.set(Calendar.SECOND, 0)
+            minValidDate.set(Calendar.MILLISECOND, 0)
+            minValidDate.add(Calendar.YEAR, -80)
+
             if (selectedCalendar.after(today)) {
-                tilDob.error = "Date of birth cannot be in the future"
+                tilDob.error = getString(R.string.error_dob_future)
+                false
+            } else if (selectedCalendar.after(maxValidDate)) {
+                tilDob.error = getString(R.string.error_dob_min_age)
+                false
+            } else if (selectedCalendar.before(minValidDate)) {
+                tilDob.error = getString(R.string.error_dob_max_age)
                 false
             } else {
                 tilDob.error = null
                 true
             }
         } catch (_: Exception) {
-            tilDob.error = "Invalid date format (dd/MM/yyyy)"
+            tilDob.error = getString(R.string.error_dob_invalid)
             false
         }
     }

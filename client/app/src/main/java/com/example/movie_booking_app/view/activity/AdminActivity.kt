@@ -74,8 +74,8 @@ class AdminActivity : BaseActivity() {
                     loadFragment(AdminPromotionFragment())
                 }
                 R.id.nav_members -> {
-                    tvHeaderTitle.text = getString(R.string.admin_staff_members_title)
-                    loadFragment(AdminStaffTabsFragment.newInstance(1))
+                    tvHeaderTitle.text = getString(R.string.admin_tab_members)
+                    loadFragment(com.example.movie_booking_app.view.fragment.admin.MemberListFragment())
                 }
                 R.id.nav_settings -> {
                     tvHeaderTitle.text = getString(R.string.admin_settings_title)
