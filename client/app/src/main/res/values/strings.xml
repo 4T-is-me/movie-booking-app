@@ -176,6 +176,9 @@
     <string name="total_paid_label">Total Paid</string>
     <string name="failed_load_booking_details">Failed to load booking details.</string>
     <string name="retry_btn">Retry</string>
+    <string name="booking_detail_selected_combo">SELECTED COMBO</string>
+    <string name="booking_detail_combo_none">None</string>
+    <string name="booking_detail_combo_total">Combo Total</string>
 
     <!-- My Ticket Fragment -->
     <string name="my_ticket_title">My Ticket</string>
@@ -225,7 +228,7 @@
     <string name="auto_str_for_your_security_avoid_using">For your security, avoid using easy-to-guess password like your birthday or name</string>
     <string name="error_current_password_required">Current password is required.</string>
     <string name="error_new_password_required">New password is required.</string>
-    <string name="error_confirm_password_required">Confirm password is required.</string>
+    <string name="error_change_confirm_password_required">Confirm password is required.</string>
     <string name="error_current_password_incorrect">Current password is incorrect.</string>
     <string name="error_new_password_min_length">New password must be at least 6 characters.</string>
     <string name="error_new_password_uppercase">New password must contain at least one uppercase letter.</string>

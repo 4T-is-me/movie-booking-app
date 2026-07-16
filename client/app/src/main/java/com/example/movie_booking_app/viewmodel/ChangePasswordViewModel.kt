@@ -95,7 +95,7 @@ class ChangePasswordViewModel @Inject constructor(
             confirmPasswordError = R.string.error_passwords_do_not_match
         } else if (showAll || confirmPasswordTouched) {
             if (isConfirmPasswordEmpty) {
-                confirmPasswordError = R.string.error_confirm_password_required
+                confirmPasswordError = R.string.error_change_confirm_password_required
             } else if (confirmPassword != newPassword) {
                 confirmPasswordError = R.string.error_passwords_do_not_match
             }
