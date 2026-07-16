@@ -91,6 +91,12 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideStaffApi(): com.example.movie_booking_app.data.api.StaffApi {
+        return RetrofitClient.staffApi
+    }
+    
+    @Provides
+    @Singleton
     fun provideLeaveRequestApi(): LeaveRequestApi {
         return RetrofitClient.leaveRequestApi
     }
