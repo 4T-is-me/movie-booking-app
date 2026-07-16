@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.FragmentStaffSalesBinding
+import com.example.movie_booking_app.view.adapter.DateAdapter
 import com.example.movie_booking_app.view.adapter.SeatAdapter
 import com.example.movie_booking_app.view.adapter.StaffMovieAdapter
 import com.example.movie_booking_app.view.adapter.TimeAdapter
@@ -34,6 +35,7 @@ class StaffSalesFragment : Fragment() {
     private val viewModel: StaffSalesViewModel by viewModels()
 
     private lateinit var movieAdapter: StaffMovieAdapter
+    private lateinit var dateAdapter: DateAdapter
     private lateinit var timeAdapter: TimeAdapter
     private lateinit var seatAdapter: SeatAdapter
     private lateinit var promotionAdapter: StaffPromotionAdapter
@@ -62,6 +64,12 @@ class StaffSalesFragment : Fragment() {
             viewModel.selectMovie(movie)
         }
         binding.rvMoviesGrid.adapter = movieAdapter
+
+        // Date Adapter
+        dateAdapter = DateAdapter { date ->
+            viewModel.selectDate(date.id)
+        }
+        binding.rvDates.adapter = dateAdapter
 
         // Showtime Adapter
         timeAdapter = TimeAdapter { showtime ->
@@ -192,6 +200,13 @@ class StaffSalesFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.movies.collectLatest { movies ->
                 movieAdapter.submitList(movies)
+            }
+        }
+
+        // Observe Dates Flow
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.dates.collectLatest { dates ->
+                dateAdapter.submitList(dates)
             }
         }
 
