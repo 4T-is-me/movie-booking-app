@@ -175,6 +175,25 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
+                <!-- Date Selector -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Select Date"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvDates"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_show_date" />
+
                 <!-- Showtime Selector -->
                 <TextView
                     android:layout_width="wrap_content"
@@ -234,72 +253,18 @@
                 </HorizontalScrollView>
 
                 <!-- Seat Map Legends -->
-                <LinearLayout
+                <com.google.android.material.chip.ChipGroup
                     android:id="@+id/layoutLegends"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:orientation="horizontal"
-                    android:gravity="center"
                     android:visibility="gone">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginEnd="12dp">
-                        <View
-                            android:layout_width="12dp"
-                            android:layout_height="12dp"
-                            android:background="@drawable/bg_seat_available" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="4dp"
-                            android:text="Available"
-                            android:textColor="@color/white"
-                            android:textSize="10sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:layout_marginEnd="12dp">
-                        <View
-                            android:layout_width="12dp"
-                            android:layout_height="12dp"
-                            android:background="@drawable/bg_seat_selected" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="4dp"
-                            android:text="Selected"
-                            android:textColor="@color/white"
-                            android:textSize="10sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-                        <View
-                            android:layout_width="12dp"
-                            android:layout_height="12dp"
-                            android:background="@drawable/bg_seat_available"
-                            android:alpha="0.5"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="4dp"
-                            android:text="Sold"
-                            android:textColor="@color/white"
-                            android:textSize="10sp" />
-                    </LinearLayout>
-                </LinearLayout>
+                    <include layout="@layout/view_legend_item" android:id="@+id/legendAvailable" />
+                    <include layout="@layout/view_legend_item" android:id="@+id/legendVip" />
+                    <include layout="@layout/view_legend_item" android:id="@+id/legendCouple" />
+                    <include layout="@layout/view_legend_item" android:id="@+id/legendSold" />
+                    <include layout="@layout/view_legend_item" android:id="@+id/legendSelected" />
+                </com.google.android.material.chip.ChipGroup>
 
                 <!-- Summary Selected Seats and Gross Price -->
                 <LinearLayout
