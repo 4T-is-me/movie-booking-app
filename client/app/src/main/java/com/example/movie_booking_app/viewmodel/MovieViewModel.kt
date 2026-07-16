@@ -88,11 +88,12 @@ class MovieViewModel @Inject constructor(
         }
     }
 
-    fun loadAdminMovies() {
+    fun loadAdminMovies(status: String? = null) {
         viewModelScope.launch {
-            repository.getAdminMovies().collect { movies ->
-                _adminMovies.value = movies
-            }
+            repository.getAdminMovies(status)
+                .collect { movies ->
+                    _adminMovies.value = movies
+                }
         }
     }
 
@@ -177,13 +178,13 @@ class MovieViewModel @Inject constructor(
         }
     }
 
-    fun deleteMovie(id: String) {
+    fun deleteMovie(id: String, status: String? = null) {
         viewModelScope.launch {
             try {
                 val success = repository.deleteMovie(id)
                 _movieActionSuccess.emit(success)
                 if (success) {
-                    loadAdminMovies()
+                    loadAdminMovies(status)
                     _movieActionMessage.emit("Movie deleted successfully")
                 } else {
                     _movieActionMessage.emit("Failed to delete movie")
@@ -214,13 +215,13 @@ class MovieViewModel @Inject constructor(
         }
     }
 
-    fun updateMovie(id: String, request: com.example.movie_booking_app.data.model.request.UpdateMovieRequest, posterFile: File? = null) {
+    fun updateMovie(id: String, request: com.example.movie_booking_app.data.model.request.UpdateMovieRequest, posterFile: File? = null, status: String? = null) {
         viewModelScope.launch {
             try {
                 val success = repository.updateMovie(id, request, posterFile)
                 _movieActionSuccess.emit(success)
                 if (success) {
-                    loadAdminMovies()
+                    loadAdminMovies(status)
                     loadHomeData()
                     _movieActionMessage.emit("Movie updated successfully")
                 } else {
@@ -229,6 +230,41 @@ class MovieViewModel @Inject constructor(
             } catch (e: Exception) {
                 _movieActionSuccess.emit(false)
                 _movieActionMessage.emit("Failed to update movie: ${e.message ?: "Unknown error"}")
+            }
+        }
+    }
+
+    private val _reviewActionSuccess = MutableSharedFlow<Boolean>()
+    val reviewActionSuccess = _reviewActionSuccess.asSharedFlow()
+
+    private val _movieReviews = MutableStateFlow<List<com.example.movie_booking_app.data.model.response.ReviewItem>>(emptyList())
+    val movieReviews: StateFlow<List<com.example.movie_booking_app.data.model.response.ReviewItem>> = _movieReviews.asStateFlow()
+
+    private val _reviewsTotalCount = MutableStateFlow(0)
+    val reviewsTotalCount: StateFlow<Int> = _reviewsTotalCount.asStateFlow()
+
+    fun submitReview(movieId: String, rating: Int, comment: String) {
+        viewModelScope.launch {
+            try {
+                val success = repository.submitReview(movieId, rating, comment)
+                _reviewActionSuccess.emit(success)
+                if (success) {
+                    fetchMovieDetail(movieId)
+                    fetchMovieReviews(movieId)
+                }
+            } catch (e: Exception) {
+                _reviewActionSuccess.emit(false)
+            }
+        }
+    }
+
+    fun fetchMovieReviews(movieId: String, page: Int = 1, limit: Int = 5) {
+        viewModelScope.launch {
+            try {
+                val reviews = repository.getMovieReviews(movieId, page, limit)
+                _movieReviews.value = reviews
+            } catch (e: Exception) {
+                _movieReviews.value = emptyList()
             }
         }
     }

@@ -1,0 +1,1261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://tools.android.com/apk/res/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#090B13">
+
+    <!-- Header Toolbar -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/headerToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:paddingHorizontal="16dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone"
+            android:paddingEnd="12dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_back"
+                app:tint="@color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="Back"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvHeaderTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="SELECT MOVIE &amp; SHOWTIME"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btnBack"
+            app:layout_constraintEnd_toStartOf="@+id/tvStepText" />
+
+        <TextView
+            android:id="@+id/tvStepText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1 of 4"
+            android:textColor="@color/gold_selected"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Main Content Container -->
+    <FrameLayout
+        android:id="@+id/mainContentFrame"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/headerToolbar"
+        app:layout_constraintBottom_toTopOf="@id/bottomBar">
+
+        <!-- 1. Movies Grid View (Visible initially) -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvMoviesGrid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp"
+            android:scrollbars="vertical"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+            app:spanCount="2"
+            tools:listitem="@layout/item_staff_movie_card" />
+
+        <!-- 2. Showtime & Seat Map View (Hidden initially) -->
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/layoutSeatSelection"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Selected Movie Card Detail Summary -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardBackgroundColor="#0D1120"
+                    app:strokeColor="@color/admin_gold_transparent"
+                    app:strokeWidth="1dp"
+                    app:cardCornerRadius="12dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="12dp"
+                        android:gravity="center_vertical">
+
+                        <com.google.android.material.imageview.ShapeableImageView
+                            android:id="@+id/imgSelectedMoviePoster"
+                            android:layout_width="60dp"
+                            android:layout_height="80dp"
+                            android:scaleType="centerCrop"
+                            app:shapeAppearanceOverlay="@style/RoundedImageView16dp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tvSelectedMovieTitle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvSelectedMovieInfo"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:textColor="@color/admin_text_secondary"
+                                android:textSize="11sp" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical">
+
+                                <ImageView
+                                    android:layout_width="12dp"
+                                    android:layout_height="12dp"
+                                    android:src="@android:drawable/btn_star_big_on"
+                                    app:tint="@color/gold_selected" />
+
+                                <TextView
+                                    android:id="@+id/tvSelectedMovieRating"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="4dp"
+                                    android:textColor="@color/gold_selected"
+                                    android:textSize="11sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Date Selector -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Select Date"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvDates"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_show_date" />
+
+                <!-- Showtime Selector -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Select Showtime"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvShowtimes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_time" />
+
+                <!-- Screen Label Indicator -->
+                <TextView
+                    android:id="@+id/tvScreenLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center"
+                    android:text="SCREEN"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"/>
+
+                <View
+                    android:id="@+id/viewScreenLine"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginHorizontal="24dp"
+                    android:background="@color/gold_selected"
+                    android:visibility="gone"/>
+
+                <!-- Seat Map Scroll Container -->
+                <HorizontalScrollView
+                    android:id="@+id/svSeatMapContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:scrollbars="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:clipToPadding="false"
+                    android:visibility="gone">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvSeatMap"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scrollbars="none" />
+                </HorizontalScrollView>
+
+                <!-- Seat Map Legends -->
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/layoutLegends"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:visibility="gone">
+                    <include layout="@layout/view_legend_item" android:id="@+id/legendAvailable" />
+                    <include layout="@layout/view_legend_item" android:id="@+id/legendVip" />
+                    <include layout="@layout/view_legend_item" android:id="@+id/legendCouple" />
+                    <include layout="@layout/view_legend_item" android:id="@+id/legendSold" />
+                    <include layout="@layout/view_legend_item" android:id="@+id/legendSelected" />
+                </com.google.android.material.chip.ChipGroup>
+
+                <!-- Summary Selected Seats and Gross Price -->
+                <LinearLayout
+                    android:id="@+id/layoutSummary"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/admin_gold_transparent"
+                        android:layout_marginBottom="12dp"/>
+
+                    <TextView
+                        android:id="@+id/tvSelectedSeats"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Selected seats: None"
+                        android:textColor="@color/white"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvTotalPrice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Subtotal: 0 đ"
+                        android:textColor="@color/gold_selected"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <!-- 3. Member Verification View (Step 2 - Hidden initially) -->
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/layoutMemberVerification"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Selected Movie Detail Summary Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardBackgroundColor="#0D1120"
+                    app:strokeColor="@color/admin_gold_transparent"
+                    app:strokeWidth="1dp"
+                    app:cardCornerRadius="12dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ORDER SUMMARY"
+                            android:textColor="@color/admin_text_secondary"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvOrderMovieTitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:textColor="@color/white"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            tools:text="Puss in Boots: The Last Wish" />
+
+                        <TextView
+                            android:id="@+id/tvOrderDetails"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:textColor="@color/admin_text_secondary"
+                            android:textSize="12sp"
+                            tools:text="Suất chiếu: 10:00 • Ghế đã chọn: E4" />
+
+                        <TextView
+                            android:id="@+id/tvOrderPrice"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:textColor="@color/gold_selected"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            tools:text="Tạm tính: 60.000 đ" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Member Verification Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="#0D1120"
+                    app:strokeColor="@color/admin_gold_transparent"
+                    app:strokeWidth="1dp"
+                    app:cardCornerRadius="12dp"
+                    android:layout_marginBottom="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="MEMBER VERIFICATION"
+                            android:textColor="@color/gold_selected"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:hint="Enter Member ID / Phone number / ID"
+                            app:hintTextColor="@color/admin_text_secondary"
+                            app:boxStrokeColor="@color/gold_selected"
+                            app:placeholderText="Example: 0987654321"
+                            app:placeholderTextColor="@color/admin_text_secondary">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/edtMemberIdentity"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:inputType="text" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnVerifyMember"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:layout_marginTop="16dp"
+                            android:text="KIỂM TRA (VERIFY)"
+                            android:textColor="#0D1120"
+                            android:textStyle="bold"
+                            app:backgroundTint="@color/gold_selected"
+                            app:cornerRadius="8dp" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Member Detail Result Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardMemberResult"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="#0D1120"
+                    app:strokeColor="#2E7D32"
+                    app:strokeWidth="1.5dp"
+                    app:cardCornerRadius="12dp"
+                    android:layout_marginBottom="16dp"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@android:drawable/checkbox_on_background"
+                                app:tint="#2E7D32" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:text="MEMBER VERIFIED"
+                                android:textColor="#2E7D32"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="#2E7D32"
+                            android:alpha="0.3"
+                            android:layout_marginVertical="12dp" />
+
+                        <TextView
+                            android:id="@+id/tvMemberName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            tools:text="Họ tên: Nguyễn Văn A" />
+
+                        <TextView
+                            android:id="@+id/tvMemberPhone"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:textColor="@color/admin_text_secondary"
+                            android:textSize="13sp"
+                            tools:text="Số điện thoại: 0987654321" />
+
+                        <TextView
+                            android:id="@+id/tvMemberScore"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:textColor="@color/gold_selected"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            tools:text="Điểm tích luỹ: 150 điểm" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Verification Error text -->
+                <TextView
+                    android:id="@+id/tvMemberError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#C62828"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    tools:text="Tài khoản thành viên không tồn tại" />
+
+                <!-- Walk-in Customer Alert Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardWalkInAlert"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="#1F1A0F"
+                    app:strokeColor="#FF8F00"
+                    app:strokeWidth="1dp"
+                    app:cardCornerRadius="12dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="16dp"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:src="@android:drawable/ic_dialog_info"
+                            app:tint="#FF8F00" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Walk-in Customer Checkout"
+                                android:textColor="#FF8F00"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="This order will be processed as a walk-in check-out. No reward points will be accumulated."
+                                android:textColor="@color/admin_text_secondary"
+                                android:textSize="11sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <!-- 4. Promotion & Score Selection View (Step 3 - Hidden initially) -->
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/layoutPromotionAndScore"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Selected Movie Detail Summary Card (Same as step 2) -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardBackgroundColor="#0D1120"
+                    app:strokeColor="@color/admin_gold_transparent"
+                    app:strokeWidth="1dp"
+                    app:cardCornerRadius="12dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ORDER SUMMARY"
+                            android:textColor="@color/admin_text_secondary"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvPromoOrderMovieTitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:textColor="@color/white"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            tools:text="Puss in Boots: The Last Wish" />
+
+                        <TextView
+                            android:id="@+id/tvPromoOrderDetails"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:textColor="@color/admin_text_secondary"
+                            android:textSize="12sp"
+                            tools:text="Suất chiếu: 10:00 • Ghế đã chọn: E4" />
+
+                        <TextView
+                            android:id="@+id/tvPromoOrderPrice"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:textColor="@color/gold_selected"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            tools:text="Tạm tính: 60.000 đ" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Points Redemption Card (Only active if member verified) -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardPointsRedemption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="#0D1120"
+                    app:strokeColor="@color/admin_gold_transparent"
+                    app:strokeWidth="1dp"
+                    app:cardCornerRadius="12dp"
+                    android:layout_marginBottom="16dp"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="REWARD POINTS REDEMPTION"
+                            android:textColor="@color/gold_selected"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginTop="12dp">
+
+                            <TextView
+                                android:id="@+id/tvPromoMemberPoints"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textColor="@color/white"
+                                android:textSize="14sp"
+                                tools:text="Điểm khả dụng: 150 điểm" />
+
+                            <com.google.android.material.switchmaterial.SwitchMaterial
+                                android:id="@+id/swUseScore"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:useMaterialThemeColors="true" />
+                        </LinearLayout>
+
+                        <!-- Manually enter score input field -->
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/layoutScoreInput"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:hint="Points to redeem"
+                            android:visibility="gone"
+                            app:hintTextColor="@color/admin_text_secondary"
+                            app:boxStrokeColor="@color/gold_selected"
+                            tools:visibility="visible">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/edtScoreToRedeem"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:inputType="number" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <!-- Score error message text -->
+                        <TextView
+                            android:id="@+id/tvScoreError"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:textColor="#C62828"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:visibility="gone"
+                            tools:text="Điểm tích luỹ không đủ để quy đổi" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Promotion Coupon Input Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="#0D1120"
+                    app:strokeColor="@color/admin_gold_transparent"
+                    app:strokeWidth="1dp"
+                    app:cardCornerRadius="12dp"
+                    android:layout_marginBottom="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="PROMOTION COUPON"
+                            android:textColor="@color/gold_selected"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginTop="12dp">
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:hint="Enter coupon code"
+                                app:hintTextColor="@color/admin_text_secondary"
+                                app:boxStrokeColor="@color/gold_selected"
+                                app:placeholderText="SUMMER20"
+                                app:placeholderTextColor="@color/admin_text_secondary">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/edtPromoCode"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/white"
+                                    android:inputType="textCapCharacters" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnApplyPromo"
+                                android:layout_width="wrap_content"
+                                android:layout_height="52dp"
+                                android:layout_marginStart="8dp"
+                                android:text="APPLY"
+                                android:textColor="#0D1120"
+                                android:textStyle="bold"
+                                app:backgroundTint="@color/gold_selected"
+                                app:cornerRadius="8dp" />
+                        </LinearLayout>
+
+                        <!-- Promo Success / Error Text -->
+                        <TextView
+                            android:id="@+id/tvPromoMessage"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:textColor="#2E7D32"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:visibility="gone"
+                            tools:text="Áp dụng mã thành công!" />
+
+                        <TextView
+                            android:id="@+id/tvPromoError"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:textColor="#C62828"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:visibility="gone"
+                            tools:text="Mã khuyến mãi không hợp lệ!" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Available Promotions List -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="AVAILABLE PROMOTIONS"
+                    android:textColor="@color/white"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvAvailablePromotions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="vertical"
+                    android:layout_marginBottom="16dp"
+                    tools:listitem="@layout/item_staff_promotion" />
+
+                <!-- Calculation Summary -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="#1A2D303E"
+                    app:strokeColor="@color/admin_gold_transparent"
+                    app:strokeWidth="1dp"
+                    app:cardCornerRadius="12dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="PRICE BREAKDOWN"
+                            android:textColor="@color/white"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/divider_gray"
+                            android:layout_marginVertical="8dp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Original ticket price"
+                                android:textColor="@color/admin_text_secondary"
+                                android:textSize="13sp" />
+                            <TextView
+                                android:id="@+id/tvSummaryOriginalPrice"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:textSize="13sp"
+                                tools:text="120.000 đ" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/layoutSummaryPromoDiscount"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="6dp"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Promotion discount"
+                                android:textColor="#E5484D"
+                                android:textSize="13sp" />
+                            <TextView
+                                android:id="@+id/tvSummaryPromoDiscount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="#E5484D"
+                                android:textSize="13sp"
+                                tools:text="-20.000 đ" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/layoutSummaryPointDiscount"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="6dp"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Points discount"
+                                android:textColor="#E5484D"
+                                android:textSize="13sp" />
+                            <TextView
+                                android:id="@+id/tvSummaryPointDiscount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="#E5484D"
+                                android:textSize="13sp"
+                                tools:text="-10.000 đ" />
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/divider_gray"
+                            android:layout_marginVertical="8dp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="GRAND TOTAL"
+                                android:textColor="@color/white"
+                                android:textSize="14sp"
+                                android:textStyle="bold" />
+                            <TextView
+                                android:id="@+id/tvSummaryGrandTotal"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/gold_selected"
+                                android:textSize="16sp"
+                                android:textStyle="bold"
+                                tools:text="90.000 đ" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <!-- 5. Final Confirmation View (Step 4 - Hidden initially) -->
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/layoutConfirmOrder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CONFIRM BOOKING"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Booking Summary Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="#0D1120"
+                    app:strokeColor="@color/admin_gold_transparent"
+                    app:strokeWidth="1dp"
+                    app:cardCornerRadius="12dp"
+                    android:layout_marginBottom="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:id="@+id/tvFinalMovie"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            tools:text="Puss in Boots: The Last Wish" />
+
+                        <TextView
+                            android:id="@+id/tvFinalShowtime"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:textColor="@color/admin_text_secondary"
+                            android:textSize="13sp"
+                            tools:text="Suất chiếu: 10:00 • Ngày 15/07/2026" />
+
+                        <TextView
+                            android:id="@+id/tvFinalSeats"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:textColor="@color/admin_text_secondary"
+                            android:textSize="13sp"
+                            tools:text="Ghế đã chọn: E4, E5" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/divider_gray"
+                            android:layout_marginVertical="12dp" />
+
+                        <TextView
+                            android:id="@+id/tvFinalMember"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:textSize="13sp"
+                            tools:text="Thành viên: Nguyễn Văn A (0987654321)" />
+
+                        <TextView
+                            android:id="@+id/tvFinalPointsUsed"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:textColor="@color/admin_text_secondary"
+                            android:textSize="13sp"
+                            android:visibility="gone"
+                            tools:text="Dùng điểm: Có (Sử dụng 50 điểm)"
+                            tools:visibility="visible" />
+
+                        <TextView
+                            android:id="@+id/tvFinalPromoApplied"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:textColor="@color/admin_text_secondary"
+                            android:textSize="13sp"
+                            android:visibility="gone"
+                            tools:text="Khuyến mãi: SUMMER20"
+                            tools:visibility="visible" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Payment Method Selection -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="#0D1120"
+                    app:strokeColor="@color/admin_gold_transparent"
+                    app:strokeWidth="1dp"
+                    app:cardCornerRadius="12dp"
+                    android:layout_marginBottom="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="PAYMENT METHOD"
+                            android:textColor="@color/gold_selected"
+                            android:textSize="13sp"
+                            android:textStyle="bold"
+                            android:layout_marginBottom="12dp" />
+
+                        <RadioGroup
+                            android:id="@+id/rgPaymentMethod"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <RadioButton
+                                android:id="@+id/rbCash"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Cash"
+                                android:textColor="@color/white"
+                                android:textSize="14sp"
+                                android:checked="true"
+                                android:buttonTint="@color/gold_selected" />
+
+                            <RadioButton
+                                android:id="@+id/rbBankTransfer"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="Bank Transfer (QR)"
+                                android:textColor="@color/white"
+                                android:textSize="14sp"
+                                android:buttonTint="@color/gold_selected" />
+                        </RadioGroup>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Final Price and Checkout Action -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="#1A2D303E"
+                    app:strokeColor="@color/admin_gold_transparent"
+                    app:strokeWidth="1dp"
+                    app:cardCornerRadius="12dp"
+                    android:layout_marginBottom="24dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="TOTAL PAYMENT AMOUNT"
+                            android:textColor="@color/admin_text_secondary"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvFinalGrandTotal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="6dp"
+                            android:textColor="@color/gold_selected"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            tools:text="90.000 đ" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnConfirmBooking"
+                            android:layout_width="match_parent"
+                            android:layout_height="54dp"
+                            android:layout_marginTop="16dp"
+                            android:text="CONFIRM CHECKOUT"
+                            android:textColor="#0D1120"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            app:backgroundTint="@color/gold_selected"
+                            app:cornerRadius="8dp" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+    </FrameLayout>
+
+    <!-- Bottom Bar (Progress Indicators & Next Button) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:background="#0D1120"
+        android:paddingHorizontal="16dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <!-- Progress Steps Indicators -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnNext">
+
+            <!-- Step 1 line (Active) -->
+            <View
+                android:id="@+id/viewStep1"
+                android:layout_width="0dp"
+                android:layout_height="4dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_selected_item" />
+
+            <!-- Step 2 line -->
+            <View
+                android:id="@+id/viewStep2"
+                android:layout_width="0dp"
+                android:layout_height="4dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:background="#232A45" />
+
+            <!-- Step 3 line -->
+            <View
+                android:id="@+id/viewStep3"
+                android:layout_width="0dp"
+                android:layout_height="4dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:background="#232A45" />
+
+            <!-- Step 4 line -->
+            <View
+                android:id="@+id/viewStep4"
+                android:layout_width="0dp"
+                android:layout_height="4dp"
+                android:layout_weight="1"
+                android:background="#232A45" />
+        </LinearLayout>
+
+        <!-- Gold Next Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnNext"
+            android:layout_width="120dp"
+            android:layout_height="48dp"
+            android:text="NEXT"
+            android:textColor="#0D1120"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:icon="@drawable/ic_chevron_right"
+            app:iconTint="#0D1120"
+            app:iconGravity="textEnd"
+            app:backgroundTint="@color/nav_item_colors"
+            app:cornerRadius="24dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- Progress Indicator -->
+    <ProgressBar
+        android:id="@+id/pbLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

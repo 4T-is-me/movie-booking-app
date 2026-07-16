@@ -1,130 +1,157 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardShiftItem"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
     android:background="@drawable/bg_card_dark"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:foreground="?android:attr/selectableItemBackground">
 
-    <!-- Avatar Text -->
+    <!--  Avatar Text -->
     <FrameLayout
         android:id="@+id/avatarFrame"
         android:layout_width="44dp"
         android:layout_height="44dp"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        android:background="@drawable/bg_tab_active">
+        android:background="@drawable/bg_tab_active"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/tvAvatarText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="NT"
             android:textColor="@color/bg_primary"
             android:textSize="15sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:text="NT" />
     </FrameLayout>
 
-    <!-- Status Badge (Active / Assigned / Absent) -->
+    <!--  Replace/Edit button -->
+    <ImageButton
+        android:id="@+id/btnEditShift"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="@drawable/bg_circle_glass"
+        android:padding="7dp"
+        android:src="@android:drawable/ic_menu_edit"
+        app:tint="@color/color_gold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- 3. Tên Nhân Viên -->
     <TextView
-        android:id="@+id/tvStatusBadge"
-        android:layout_width="wrap_content"
+        android:id="@+id/tvStaffName"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:background="@drawable/status_active_bg"
-        android:paddingHorizontal="10dp"
-        android:paddingVertical="4dp"
-        android:text="Assigned"
-        android:textColor="#34C759"
-        android:textSize="11sp"
-        android:textStyle="bold" />
-
-   <!-- Name, Position & Rating Information -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/avatarFrame"
-        android:layout_toStartOf="@id/tvStatusBadge"
-        android:layout_marginStart="14dp"
+        android:layout_marginStart="12dp"
         android:layout_marginEnd="8dp"
-        android:layout_centerVertical="true"
-        android:orientation="vertical">
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/text_primary"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@id/btnEditShift"
+        app:layout_constraintStart_toEndOf="@id/avatarFrame"
+        app:layout_constraintTop_toTopOf="@id/avatarFrame"
+        tools:text="Nguyễn Văn Thanh" />
 
-        <!-- name + Rating -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+    <!-- Rating & Position -->
+    <LinearLayout
+        android:id="@+id/layoutSubInfo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toStartOf="@id/btnEditShift"
+        app:layout_constraintStart_toStartOf="@id/tvStaffName"
+        app:layout_constraintTop_toBottomOf="@id/tvStaffName">
 
-            <TextView
-                android:id="@+id/tvStaffName"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="@color/text_primary"
-                tools:text="Nguyễn Văn Thanh" />
-
-    
-            <TextView
-                android:id="@+id/tvStaffRating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/color_gold"
-                android:textStyle="bold"
-                android:textSize="13sp"
-                android:gravity="center_vertical"
-                tools:text="⭐ 4.8" />
-        </LinearLayout>
-
-        <!-- Position -->
         <TextView
             android:id="@+id/tvPosition"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:textSize="13sp"
             android:textColor="@color/text_secondary"
+            android:textSize="13sp"
             tools:text="Thu ngân tại quầy" />
 
-        <!-- Work Date -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="6dp"
+            android:text="@string/auto_str_str_auto_10"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tvStaffRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color_gold"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            tools:text="⭐ 4.8" />
+    </LinearLayout>
+
+    <!-- Subtle divider to separate information -->
+    <View
+        android:id="@+id/divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:background="@color/auto_color_1AFFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/tvStaffName"
+        app:layout_constraintTop_toBottomOf="@id/layoutSubInfo" />
+
+    <LinearLayout
+        android:id="@+id/layoutShiftDetails"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toStartOf="@id/tvStatusBadge"
+        app:layout_constraintStart_toStartOf="@id/tvStaffName"
+        app:layout_constraintTop_toBottomOf="@id/divider">
+
         <TextView
             android:id="@+id/tvWorkDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:textColor="@color/auto_color_B0B0B0"
             android:textSize="12sp"
-            android:textColor="#B0B0B0"
-            tools:text="Schedule: 15/07/2026" />
+            tools:text="Date: 15/07/2026" />
 
-        <!-- Shift -->
         <TextView
             android:id="@+id/tvShift"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
+            android:textColor="@color/auto_color_FFFFFF"
             android:textSize="12sp"
-            android:textColor="#B0B0B0"
-            tools:text="Shift: Afternoon (12:00 - 17:00)" />
-
-        <!-- Attendance -->
-        <TextView
-            android:id="@+id/tvAttendance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:textSize="11sp"
-            android:textColor="#8A8A8A"
-            tools:text="Attendance: 90% (450 pts)" />
-
+            android:textStyle="bold"
+            tools:text="Afternoon (12:00 - 17:00)" />
     </LinearLayout>
 
-</RelativeLayout>
+    <!--  Status Badge-->
+    <TextView
+        android:id="@+id/tvStatusBadge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/status_active_bg"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="4dp"
+        android:textColor="@color/auto_color_34C759"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/layoutShiftDetails"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/layoutShiftDetails"
+        tools:text="Assigned" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

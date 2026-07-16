@@ -23,10 +23,16 @@ import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
 import dagger.hilt.android.AndroidEntryPoint
+import com.example.movie_booking_app.data.local.FcmTokenHelper
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity() {
+
+    @Inject
+    lateinit var fcmTokenHelper: FcmTokenHelper
 
     private lateinit var binding: ActivityMainBinding
     private var currentSection: String = ""
@@ -55,6 +61,17 @@ class MainActivity : BaseActivity() {
                 startActivity(intent)
                 finish()
                 return
+            } else if (role.equals("Staff", ignoreCase = true) || role.equals("Employee", ignoreCase = true)) {
+                val intent = Intent(this, StaffActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
+                return
+            } else {
+                // If it is a Member/User who auto-logins, register/refresh the FCM token on startup
+                lifecycleScope.launch(Dispatchers.IO) {
+                    fcmTokenHelper.registerCurrentToken("MainActivity")
+                }
             }
         }
 
@@ -98,8 +115,10 @@ class MainActivity : BaseActivity() {
         // 2. Deep-linking from background/killed push notifications
         val type = intent.getStringExtra("type")
         val referenceId = intent.getStringExtra("referenceId")
+        val title = intent.getStringExtra("title")
+        val body = intent.getStringExtra("body")
 
-        if (!type.isNullOrEmpty() || !referenceId.isNullOrEmpty()) {
+        if (!type.isNullOrEmpty() || !referenceId.isNullOrEmpty() || !title.isNullOrEmpty()) {
             // First load the home/target section so the backstack has a valid parent
             navigateToSection(target, force = true)
             
@@ -107,6 +126,8 @@ class MainActivity : BaseActivity() {
             val destIntent = Intent(this, NotificationActivity::class.java).apply {
                 putExtra("type", type)
                 putExtra("referenceId", referenceId)
+                putExtra("title", title)
+                putExtra("body", body)
             }
             startActivity(destIntent)
         } else {

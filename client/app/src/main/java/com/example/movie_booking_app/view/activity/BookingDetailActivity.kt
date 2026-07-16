@@ -19,6 +19,9 @@ import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.viewmodel.BookingDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Locale
@@ -34,6 +37,11 @@ class BookingDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityBookingDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Hide status bar using WindowInsetsControllerCompat (Android 11+ compatible)
+        val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
+        windowInsetsController.hide(WindowInsetsCompat.Type.statusBars())
+        windowInsetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
         bookingId = intent.getStringExtra("BOOKING_ID") ?: ""
         if (bookingId.isEmpty()) {

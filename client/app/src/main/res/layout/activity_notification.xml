@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Notifications"
+            android:text="@string/auto_str_notifications"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -71,7 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="No notifications yet"
+            android:text="@string/auto_str_no_notifications_yet"
             android:textColor="@color/text_secondary"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -80,7 +80,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Any promotions or updates will show up here."
+            android:text="@string/auto_str_any_promotions_or_updates_will"
             android:textColor="@color/text_muted"
             android:textSize="14sp" />
     </LinearLayout>

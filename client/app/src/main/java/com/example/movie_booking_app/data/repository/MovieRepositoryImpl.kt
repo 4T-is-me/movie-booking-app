@@ -6,6 +6,7 @@ import com.example.movie_booking_app.data.model.entity.Showtime
 import com.example.movie_booking_app.data.model.entity.MovieNews
 import com.example.movie_booking_app.data.model.entity.Promo
 import com.example.movie_booking_app.data.model.entity.Service
+import com.example.movie_booking_app.data.model.response.ReviewItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -44,7 +45,13 @@ class MovieRepositoryImpl : MovieRepository {
         emit(finalResult)
     }
 
-    override fun getAdminMovies(): Flow<List<Movie>> = flow { emit(mockMovies) }
+    override fun getAdminMovies(status: String?): Flow<List<Movie>> = flow {
+        var filtered = mockMovies
+        if (status != null) {
+            filtered = filtered.filter { it.status == status }
+        }
+        emit(filtered)
+    }
 
     override fun searchMovies(query: String): Flow<List<Movie>> = flow {
         val filtered = mockMovies.filter {
@@ -84,4 +91,6 @@ class MovieRepositoryImpl : MovieRepository {
     override suspend fun postMovie(movie: Movie): Boolean = true
     override suspend fun updateMovie(id: String, request: com.example.movie_booking_app.data.model.request.UpdateMovieRequest, posterFile: java.io.File?): Boolean = true
     override suspend fun deleteMovie(id: String): Boolean = true
+    override suspend fun submitReview(movieId: String, rating: Int, comment: String): Boolean = true
+    override suspend fun getMovieReviews(movieId: String, page: Int, limit: Int): List<ReviewItem> = emptyList()
 }

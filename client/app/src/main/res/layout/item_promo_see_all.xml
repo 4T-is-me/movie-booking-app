@@ -7,10 +7,10 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
     android:layout_marginVertical="8dp"
-    app:cardBackgroundColor="#1A1B23"
+    app:cardBackgroundColor="@color/auto_color_1A1B23"
     app:cardCornerRadius="16dp"
     app:cardElevation="4dp"
-    app:strokeColor="#2D303E"
+    app:strokeColor="@color/auto_color_2D303E"
     app:strokeWidth="1dp">
 
     <LinearLayout
@@ -66,7 +66,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:textColor="#BDBDBD"
+                android:textColor="@color/auto_color_BDBDBD"
                 android:textSize="13sp"
                 android:ellipsize="end"
                 android:maxLines="2"
@@ -81,7 +81,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:textColor="#8E8E93"
+                android:textColor="@color/auto_color_8E8E93"
                 android:textSize="11sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -93,7 +93,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="12dp"
-                android:background="#2D303E"
+                android:background="@color/auto_color_2D303E"
                 app:layout_constraintTop_toBottomOf="@+id/tvMinOrderValue" />
 
             <!-- Coupon Code Dotted Tag -->
@@ -113,8 +113,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="CODE: "
-                    android:textColor="#8E8E93"
+                    android:text="@string/auto_str_code_1"
+                    android:textColor="@color/auto_color_8E8E93"
                     android:textSize="12sp"
                     android:textStyle="bold" />
 
@@ -134,7 +134,7 @@
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
-                android:text="Copy"
+                android:text="@string/auto_str_copy_1"
                 android:textColor="@color/yellow"
                 android:textSize="12sp"
                 android:insetTop="0dp"
@@ -160,14 +160,14 @@
                     android:layout_width="14dp"
                     android:layout_height="14dp"
                     android:src="@android:drawable/ic_menu_my_calendar"
-                    app:tint="#8E8E93" />
+                    app:tint="@color/auto_color_8E8E93" />
 
                 <TextView
                     android:id="@+id/tvPromoDateRange"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="6dp"
-                    android:textColor="#8E8E93"
+                    android:textColor="@color/auto_color_8E8E93"
                     android:textSize="11sp"
                     tools:text="Valid: 01/07/2026 - 31/12/2026" />
             </LinearLayout>

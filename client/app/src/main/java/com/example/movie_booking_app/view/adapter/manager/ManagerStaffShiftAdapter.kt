@@ -4,6 +4,7 @@ import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
@@ -13,10 +14,12 @@ import com.example.movie_booking_app.utils.Constants
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
+import com.example.movie_booking_app.utils.NameFormatter
 
 class ManagerStaffShiftAdapter(
     private var list: List<ShiftItemResponse> = emptyList(),
-    private val onItemClick: ((ShiftItemResponse) -> Unit)? = null
+    private val onItemClick: ((ShiftItemResponse) -> Unit)? = null ,
+    private val onEditClick: ((ShiftItemResponse) -> Unit)? = null
 ): RecyclerView.Adapter<ManagerStaffShiftAdapter.ShiftViewHolder>() {
     inner class ShiftViewHolder(val binding: ItemStaffCardBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -31,7 +34,7 @@ class ManagerStaffShiftAdapter(
         val context = binding.root.context
 
         binding.tvStaffName.text = shiftItem.staffName ?: ""
-        binding.tvAvatarText.text = getAvatarInitials(shiftItem.staffName ?: "")
+        binding.tvAvatarText.text = NameFormatter.getAvatarInitials(shiftItem.staffName ?: "")
 
         val positionText = shiftItem.position ?: "Staff"
         val shiftName = shiftItem.shift ?: ""
@@ -44,14 +47,14 @@ class ManagerStaffShiftAdapter(
         binding.tvShift.text = "Shift: $shiftName ($shiftTime)"
 
         val rating = shiftItem.rating ?: 0.0
-        if (rating > 0) {
+        if (rating >= 0) {
             binding.tvStaffRating.visibility = View.VISIBLE
             binding.tvStaffRating.text = "⭐ ${String.format("%.1f", rating)}"
         } else {
             binding.tvStaffRating.visibility = View.GONE
         }
 
-        // 4. Status Badge (Active / Assigned / Completed / Absent)
+        //  Status Badge (Active / Assigned / Completed / Absent)
         when(shiftItem.status) {
             "Assigned" -> {
                 binding.tvStatusBadge.text = "Assigned"
@@ -82,6 +85,9 @@ class ManagerStaffShiftAdapter(
         binding.root.setOnClickListener {
             onItemClick?.invoke(shiftItem)
         }
+        binding.btnEditShift.setOnClickListener {
+            onEditClick?.invoke(shiftItem)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -93,16 +99,6 @@ class ManagerStaffShiftAdapter(
         notifyDataSetChanged()
     }
 
-    fun getAvatarInitials(staffName: String) : String {
-        val name = staffName.trim()
-        if (name.isEmpty()) return "NV"
-
-        val parts = name.split("\\s+".toRegex())
-        return when {
-            parts.size >= 2 -> "${parts.first().take(1)}${parts.last().take(1)}".uppercase()
-            else -> name.take(2).uppercase()
-        }
-    }
 
     private fun getShiftTimeDisplay(shift: String): String {
         return when (shift) {

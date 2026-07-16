@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -5,6 +7,32 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.google.services)
 }
+
+
+val properties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    val stream = localPropertiesFile.inputStream()
+    properties.load(stream)
+    stream.close()
+}
+
+// Also try loading from .env if GOOGLE_CLIENT_ID is not in local.properties
+if (properties.getProperty("GOOGLE_CLIENT_ID") == null) {
+    val envFile = rootProject.file(".env")
+    if (envFile.exists()) {
+        val stream = envFile.inputStream()
+        val envProperties = Properties()
+        envProperties.load(stream)
+        stream.close()
+        val envGoogleClientId = envProperties.getProperty("GOOGLE_CLIENT_ID")
+        if (envGoogleClientId != null) {
+            properties.setProperty("GOOGLE_CLIENT_ID", envGoogleClientId)
+        }
+    }
+}
+
+val googleClientId = properties.getProperty("GOOGLE_CLIENT_ID") ?: ""
 
 android {
     namespace = "com.example.movie_booking_app"
@@ -17,6 +45,8 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        
+        buildConfigField("String", "GOOGLE_CLIENT_ID", "\"$googleClientId\"")
     }
 
     buildTypes {
@@ -40,6 +70,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 

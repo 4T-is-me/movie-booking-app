@@ -7,6 +7,7 @@ import com.example.movie_booking_app.data.model.request.AdminPromotionRequest
 import com.example.movie_booking_app.data.model.request.CreateStaffRequest
 import com.example.movie_booking_app.data.model.request.UpdateStaffRequest
 import com.example.movie_booking_app.data.model.response.*
+import kotlinx.coroutines.flow.flow
 import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -25,16 +26,64 @@ class AdminRepository @Inject constructor(
     suspend fun getMonthlyRevenue(year: Int) = api.getMonthlyRevenue(year)
     suspend fun getMovieRevenue() = api.getMovieRevenue()
 
-    suspend fun getStaffList(page: Int? = null, limit: Int? = null, search: String? = null) = 
-        api.getStaffList(page, limit, search)
-    
-    suspend fun createStaff(request: CreateStaffRequest) = api.createStaff(request)
-    suspend fun updateStaff(id: String, request: UpdateStaffRequest) = api.updateStaff(id, request)
-    suspend fun deleteStaff(id: String) = api.deleteStaff(id)
-    suspend fun updateStaffStatus(id: String, status: Int) = 
-        api.updateStaffStatus(id, com.example.movie_booking_app.data.model.request.UpdateStaffStatusRequest(status))
+    // Staff Management Flow-based
+    fun getStaffListFlow(page: Int? = null, limit: Int? = null, search: String? = null) = flow {
+        val response = api.getStaffList(page, limit, search)
+        if (response.isSuccessful && response.body() != null) {
+            emit(response.body()!!.data?.staffs ?: emptyList())
+        } else {
+            throw Exception(response.errorBody()?.string() ?: "Failed to load staff list")
+        }
+    }
 
-    suspend fun getCinemas() = api.getCinemas()
+    fun createStaffFlow(request: CreateStaffRequest) = flow {
+        val response = api.createStaff(request)
+        if (response.isSuccessful) emit(Unit)
+        else throw Exception(response.errorBody()?.string() ?: "Failed to create staff")
+    }
+
+    fun updateStaffFlow(id: String, request: UpdateStaffRequest) = flow {
+        val response = api.updateStaff(id, request)
+        if (response.isSuccessful) emit(Unit)
+        else throw Exception(response.errorBody()?.string() ?: "Failed to update staff")
+    }
+
+    fun deleteStaffFlow(id: String) = flow {
+        val response = api.deleteStaff(id)
+        if (response.isSuccessful) emit(Unit)
+        else throw Exception(response.errorBody()?.string() ?: "Failed to delete staff")
+    }
+
+    // Member Management Flow-based
+    fun getMemberListFlow(page: Int? = null, limit: Int? = null, search: String? = null, status: Int? = null) = flow {
+        val response = api.getMemberList(page, limit, search, status)
+        if (response.isSuccessful && response.body() != null) {
+            emit(response.body()!!.data?.members ?: emptyList())
+        } else {
+            throw Exception(response.errorBody()?.string() ?: "Failed to load members")
+        }
+    }
+
+    fun adjustMemberScoreFlow(id: String, adjustment: Int, reason: String) = flow {
+        val response = api.adjustMemberScore(id, com.example.movie_booking_app.data.model.request.AdjustScoreRequest(adjustment, reason))
+        if (response.isSuccessful) emit(Unit)
+        else throw Exception(response.errorBody()?.string() ?: "Failed to adjust score")
+    }
+
+    fun updateMemberStatusFlow(id: String, status: Int) = flow {
+        val response = api.updateMemberStatus(id, com.example.movie_booking_app.data.model.request.UpdateMemberStatusRequest(status))
+        if (response.isSuccessful) emit(Unit)
+        else throw Exception(response.errorBody()?.string() ?: "Failed to update member status")
+    }
+
+    fun getCinemasFlow() = flow {
+        val response = api.getCinemas()
+        if (response.isSuccessful && response.body() != null) {
+            emit(response.body()!!.data ?: emptyList())
+        } else {
+            throw Exception("Failed to load cinemas")
+        }
+    }
 
     suspend fun getPromotions(): Response<AdminPromotionsResponse> = api.getPromotions()
     suspend fun createPromotion(request: AdminPromotionRequest) = api.createPromotion(request)

@@ -68,4 +68,9 @@ class ManagerRoomListActivity : AppCompatActivity() {
 
         viewModel.loadRooms()
     }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadRooms()
+    }
 }

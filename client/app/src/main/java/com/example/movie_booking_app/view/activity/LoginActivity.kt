@@ -95,16 +95,25 @@ class LoginActivity : AppCompatActivity() {
             viewModel.login(LoginRequest(username, password))
         }
 
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("1042352766201-25ddh24aoqt74h069sqinlhn1lhn4rlh.apps.googleusercontent.com")
-            .requestEmail()
-            .build()
-        googleSignInClient = GoogleSignIn.getClient(this, gso)
+        val googleClientId = com.example.movie_booking_app.BuildConfig.GOOGLE_CLIENT_ID
+        if (googleClientId.isNotEmpty()) {
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(googleClientId)
+                .requestEmail()
+                .build()
+            googleSignInClient = GoogleSignIn.getClient(this, gso)
+        } else {
+            Log.e("LOGIN_DEBUG", "GOOGLE_CLIENT_ID is missing in local.properties or .env")
+        }
 
         binding.btnGoogleLogin.setOnClickListener {
-            googleSignInClient.signOut().addOnCompleteListener {
-                val signInIntent = googleSignInClient.signInIntent
-                googleSignInLauncher.launch(signInIntent)
+            if (::googleSignInClient.isInitialized) {
+                googleSignInClient.signOut().addOnCompleteListener {
+                    val signInIntent = googleSignInClient.signInIntent
+                    googleSignInLauncher.launch(signInIntent)
+                }
+            } else {
+                Toast.makeText(this, "Google Sign-In is not available", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -143,6 +152,11 @@ class LoginActivity : AppCompatActivity() {
                             finish()
                         } else if (roleName.equals("Manager", ignoreCase = true) || roleName.equals("Cinema Manager", ignoreCase = true)) {
                             val intent = Intent(this@LoginActivity, ManagerActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
+                            finish()
+                        } else if (roleName.equals("Staff", ignoreCase = true) || roleName.equals("Employee", ignoreCase = true)) {
+                            val intent = Intent(this@LoginActivity, StaffActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(intent)
                             finish()

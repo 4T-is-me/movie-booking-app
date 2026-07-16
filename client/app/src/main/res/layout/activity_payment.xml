@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000">
+    android:background="@color/auto_color_000000">
 
     <!-- Toolbar -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="#000000"
+        android:background="@color/auto_color_000000"
         android:paddingHorizontal="16dp"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -26,13 +26,13 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="#FFFFFF" />
+            app:tint="@color/auto_color_FFFFFF" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Payment"
-            android:textColor="#FFFFFF"
+            android:text="@string/auto_str_payment"
+            android:textColor="@color/auto_color_FFFFFF"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -62,10 +62,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="#1A1A1A"
+                app:cardBackgroundColor="@color/auto_color_1A1A1A"
                 app:cardCornerRadius="12dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="#33FFFFFF">
+                app:strokeColor="@color/auto_color_33FFFFFF">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -78,22 +78,22 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:src="@drawable/ic_calendar_month_24"
-                        app:tint="#F5C542"
+                        app:tint="@color/auto_color_F5C542"
                         android:layout_marginEnd="8dp"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Complete booking in "
-                        android:textColor="#9A9A9A"
+                        android:text="@string/auto_str_complete_booking_in"
+                        android:textColor="@color/auto_color_9A9A9A"
                         android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/tvCountdown"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="14:59"
-                        android:textColor="#F5C542"
+                        android:text="@string/auto_str_14_59"
+                        android:textColor="@color/auto_color_F5C542"
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
@@ -105,8 +105,8 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Booking Summary"
-                android:textColor="#FFFFFF"
+                android:text="@string/auto_str_booking_summary"
+                android:textColor="@color/auto_color_FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="12dp"/>
@@ -115,7 +115,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="#1E1E1E"
+                app:cardBackgroundColor="@color/auto_color_1E1E1E"
                 app:cardCornerRadius="16dp"
                 app:strokeWidth="0dp">
 
@@ -129,7 +129,7 @@
                         android:layout_width="80dp"
                         android:layout_height="110dp"
                         android:scaleType="centerCrop"
-                        android:background="#33FFFFFF"
+                        android:background="@color/auto_color_33FFFFFF"
                         app:shapeAppearanceOverlay="@style/RoundedImageView"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"/>
@@ -139,8 +139,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:text="Movie Title"
-                        android:textColor="#FFFFFF"
+                        android:text="@string/auto_str_movie_title"
+                        android:textColor="@color/auto_color_FFFFFF"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -152,8 +152,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Action, Adventure"
-                        android:textColor="#9A9A9A"
+                        android:text="@string/auto_str_action_adventure"
+                        android:textColor="@color/auto_color_9A9A9A"
                         android:textSize="13sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@id/tvMovieName"
@@ -164,8 +164,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Cinema Center"
-                        android:textColor="#F5C542"
+                        android:text="@string/auto_str_cinema_center"
+                        android:textColor="@color/auto_color_F5C542"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -177,8 +177,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:text="Cinema Address Details"
-                        android:textColor="#9A9A9A"
+                        android:text="@string/auto_str_cinema_address_details"
+                        android:textColor="@color/auto_color_9A9A9A"
                         android:textSize="12sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@id/tvMovieName"
@@ -189,7 +189,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
                         android:layout_marginTop="16dp"
-                        android:background="#22FFFFFF"
+                        android:background="@color/auto_color_22FFFFFF"
                         app:layout_constraintTop_toBottomOf="@id/imgMoviePoster"/>
 
                     <!-- Grid Info -->
@@ -205,8 +205,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:orientation="vertical">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Room" android:textColor="#5C5C5C" android:textSize="12sp" />
-                            <TextView android:id="@+id/tvRoom" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Room 1" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="14sp" />
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_room_1" android:textColor="@color/auto_color_5C5C5C" android:textSize="12sp" />
+                            <TextView android:id="@+id/tvRoom" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_room_1_1" android:textColor="@color/auto_color_FFFFFF" android:textStyle="bold" android:textSize="14sp" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -214,8 +214,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1.2"
                             android:orientation="vertical">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Date" android:textColor="#5C5C5C" android:textSize="12sp" />
-                            <TextView android:id="@+id/tvShowDate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="30/06/2026" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="14sp" />
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_date_1" android:textColor="@color/auto_color_5C5C5C" android:textSize="12sp" />
+                            <TextView android:id="@+id/tvShowDate" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_30_06_2026" android:textColor="@color/auto_color_FFFFFF" android:textStyle="bold" android:textSize="14sp" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -223,8 +223,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="0.8"
                             android:orientation="vertical">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Time" android:textColor="#5C5C5C" android:textSize="12sp" />
-                            <TextView android:id="@+id/tvShowTime" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="18:30" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="14sp" />
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_time_1" android:textColor="@color/auto_color_5C5C5C" android:textSize="12sp" />
+                            <TextView android:id="@+id/tvShowTime" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_18_30" android:textColor="@color/auto_color_FFFFFF" android:textStyle="bold" android:textSize="14sp" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -237,8 +237,8 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Booking Details"
-                android:textColor="#FFFFFF"
+                android:text="@string/auto_str_booking_details"
+                android:textColor="@color/auto_color_FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="12dp"/>
@@ -247,7 +247,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="#1E1E1E"
+                app:cardBackgroundColor="@color/auto_color_1E1E1E"
                 app:cardCornerRadius="16dp"
                 app:strokeWidth="0dp">
 
@@ -262,8 +262,8 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_marginBottom="8dp">
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Order ID" android:textColor="#9A9A9A" android:textSize="14sp" />
-                        <TextView android:id="@+id/tvOrderId" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="BK-XXXX-XXXX" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="14sp" />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/auto_str_order_id" android:textColor="@color/auto_color_9A9A9A" android:textSize="14sp" />
+                        <TextView android:id="@+id/tvOrderId" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_bk_xxxx_xxxx" android:textColor="@color/auto_color_FFFFFF" android:textStyle="bold" android:textSize="14sp" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -271,8 +271,8 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_marginBottom="8dp">
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Selected Seats" android:textColor="#9A9A9A" android:textSize="14sp" />
-                        <TextView android:id="@+id/tvSeats" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="H7, H8" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="14sp" />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/auto_str_selected_seats" android:textColor="@color/auto_color_9A9A9A" android:textSize="14sp" />
+                        <TextView android:id="@+id/tvSeats" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_h7_h8" android:textColor="@color/auto_color_FFFFFF" android:textStyle="bold" android:textSize="14sp" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -280,16 +280,16 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_marginBottom="8dp">
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Seat Count" android:textColor="#9A9A9A" android:textSize="14sp" />
-                        <TextView android:id="@+id/tvSeatCount" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="2 seats" android:textColor="#FFFFFF" android:textSize="14sp" />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/auto_str_seat_count" android:textColor="@color/auto_color_9A9A9A" android:textSize="14sp" />
+                        <TextView android:id="@+id/tvSeatCount" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_2_seats" android:textColor="@color/auto_color_FFFFFF" android:textSize="14sp" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ticket Type" android:textColor="#9A9A9A" android:textSize="14sp" />
-                        <TextView android:id="@+id/tvTicketType" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Adult x2" android:textColor="#FFFFFF" android:textSize="14sp" />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/auto_str_ticket_type" android:textColor="@color/auto_color_9A9A9A" android:textSize="14sp" />
+                        <TextView android:id="@+id/tvTicketType" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_adult_x2" android:textColor="@color/auto_color_FFFFFF" android:textSize="14sp" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -300,8 +300,8 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Select Combo &amp; Snacks"
-                android:textColor="#FFFFFF"
+                android:text="@string/auto_str_select_combo_amp_snacks"
+                android:textColor="@color/auto_color_FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="12dp"/>
@@ -311,7 +311,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                app:cardBackgroundColor="#1E1E1E"
+                app:cardBackgroundColor="@color/auto_color_1E1E1E"
                 app:cardCornerRadius="12dp"
                 app:strokeWidth="0dp">
 
@@ -324,8 +324,8 @@
                         android:id="@+id/tvCombo1Title"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Single Combo"
-                        android:textColor="#FFFFFF"
+                        android:text="@string/auto_str_single_combo"
+                        android:textColor="@color/auto_color_FFFFFF"
                         android:textSize="15sp"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toStartOf="@id/layoutCombo1Quantity"
@@ -337,8 +337,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:text="1 Popcorn + 1 Soft Drink"
-                        android:textColor="#9A9A9A"
+                        android:text="@string/auto_str_1_popcorn_1_soft_drink"
+                        android:textColor="@color/auto_color_9A9A9A"
                         android:textSize="12sp"
                         app:layout_constraintEnd_toStartOf="@id/layoutCombo1Quantity"
                         app:layout_constraintStart_toStartOf="parent"
@@ -349,8 +349,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
-                        android:text="80.000 VND"
-                        android:textColor="#F5C542"
+                        android:text="@string/auto_str_80_000_vnd"
+                        android:textColor="@color/auto_color_F5C542"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
@@ -370,8 +370,8 @@
                             android:id="@+id/btnCombo1Minus"
                             android:layout_width="32dp"
                             android:layout_height="32dp"
-                            android:text="-"
-                            android:textColor="#FFFFFF"
+                            android:text="@string/auto_str_str_auto_3"
+                            android:textColor="@color/auto_color_FFFFFF"
                             android:textSize="18sp"
                             android:textStyle="bold"
                             android:padding="0dp"
@@ -380,7 +380,7 @@
                             android:insetLeft="0dp"
                             android:insetRight="0dp"
                             android:gravity="center"
-                            app:backgroundTint="#3A3A3A"
+                            app:backgroundTint="@color/auto_color_3A3A3A"
                             app:cornerRadius="8dp"/>
 
                         <TextView
@@ -388,8 +388,8 @@
                             android:layout_width="28dp"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="0"
-                            android:textColor="#FFFFFF"
+                            android:text="@string/auto_str_0_8"
+                            android:textColor="@color/auto_color_FFFFFF"
                             android:textSize="15sp"
                             android:textStyle="bold" />
 
@@ -397,8 +397,8 @@
                             android:id="@+id/btnCombo1Plus"
                             android:layout_width="32dp"
                             android:layout_height="32dp"
-                            android:text="+"
-                            android:textColor="#FFFFFF"
+                            android:text="@string/auto_str_str_auto_4"
+                            android:textColor="@color/auto_color_FFFFFF"
                             android:textSize="18sp"
                             android:textStyle="bold"
                             android:padding="0dp"
@@ -407,7 +407,7 @@
                             android:insetLeft="0dp"
                             android:insetRight="0dp"
                             android:gravity="center"
-                            app:backgroundTint="#3A3A3A"
+                            app:backgroundTint="@color/auto_color_3A3A3A"
                             app:cornerRadius="8dp"/>
 
                     </LinearLayout>
@@ -421,7 +421,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="#1E1E1E"
+                app:cardBackgroundColor="@color/auto_color_1E1E1E"
                 app:cardCornerRadius="12dp"
                 app:strokeWidth="0dp">
 
@@ -434,8 +434,8 @@
                         android:id="@+id/tvCombo2Title"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Double Combo"
-                        android:textColor="#FFFFFF"
+                        android:text="@string/auto_str_double_combo"
+                        android:textColor="@color/auto_color_FFFFFF"
                         android:textSize="15sp"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toStartOf="@id/layoutCombo2Quantity"
@@ -447,8 +447,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:text="1 Large Popcorn + 2 Soft Drinks"
-                        android:textColor="#9A9A9A"
+                        android:text="@string/auto_str_1_large_popcorn_2_soft_drinks"
+                        android:textColor="@color/auto_color_9A9A9A"
                         android:textSize="12sp"
                         app:layout_constraintEnd_toStartOf="@id/layoutCombo2Quantity"
                         app:layout_constraintStart_toStartOf="parent"
@@ -459,8 +459,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="6dp"
-                        android:text="120.000 VND"
-                        android:textColor="#F5C542"
+                        android:text="@string/auto_str_120_000_vnd"
+                        android:textColor="@color/auto_color_F5C542"
                         android:textSize="14sp"
                         android:textStyle="bold"
                         app:layout_constraintStart_toStartOf="parent"
@@ -480,8 +480,8 @@
                             android:id="@+id/btnCombo2Minus"
                             android:layout_width="32dp"
                             android:layout_height="32dp"
-                            android:text="-"
-                            android:textColor="#FFFFFF"
+                            android:text="@string/auto_str_str_auto_5"
+                            android:textColor="@color/auto_color_FFFFFF"
                             android:textSize="18sp"
                             android:textStyle="bold"
                             android:padding="0dp"
@@ -490,7 +490,7 @@
                             android:insetLeft="0dp"
                             android:insetRight="0dp"
                             android:gravity="center"
-                            app:backgroundTint="#3A3A3A"
+                            app:backgroundTint="@color/auto_color_3A3A3A"
                             app:cornerRadius="8dp"/>
 
                         <TextView
@@ -498,8 +498,8 @@
                             android:layout_width="28dp"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="0"
-                            android:textColor="#FFFFFF"
+                            android:text="@string/auto_str_0_9"
+                            android:textColor="@color/auto_color_FFFFFF"
                             android:textSize="15sp"
                             android:textStyle="bold" />
 
@@ -507,8 +507,8 @@
                             android:id="@+id/btnCombo2Plus"
                             android:layout_width="32dp"
                             android:layout_height="32dp"
-                            android:text="+"
-                            android:textColor="#FFFFFF"
+                            android:text="@string/auto_str_str_auto_6"
+                            android:textColor="@color/auto_color_FFFFFF"
                             android:textSize="18sp"
                             android:textStyle="bold"
                             android:padding="0dp"
@@ -517,7 +517,7 @@
                             android:insetLeft="0dp"
                             android:insetRight="0dp"
                             android:gravity="center"
-                            app:backgroundTint="#3A3A3A"
+                            app:backgroundTint="@color/auto_color_3A3A3A"
                             app:cornerRadius="8dp"/>
 
                     </LinearLayout>
@@ -530,8 +530,8 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Promotions"
-                android:textColor="#FFFFFF"
+                android:text="@string/auto_str_promotions"
+                android:textColor="@color/auto_color_FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="12dp"/>
@@ -552,7 +552,7 @@
                     android:hint="Enter coupon code"
                     android:inputType="textCapCharacters"
                     android:paddingHorizontal="16dp"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/auto_color_FFFFFF"
                     android:textColorHint="#5C5C5C"
                     android:textSize="14sp" />
 
@@ -560,10 +560,10 @@
                     android:id="@+id/btnApplyCoupon"
                     android:layout_width="wrap_content"
                     android:layout_height="48dp"
-                    android:text="Apply"
-                    android:textColor="#000000"
+                    android:text="@string/auto_str_apply"
+                    android:textColor="@color/auto_color_000000"
                     android:textStyle="bold"
-                    app:backgroundTint="#F5C542"
+                    app:backgroundTint="@color/auto_color_F5C542"
                     app:cornerRadius="8dp" />
 
             </LinearLayout>
@@ -574,7 +574,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="#1E1E1E"
+                app:cardBackgroundColor="@color/auto_color_1E1E1E"
                 app:cardCornerRadius="12dp"
                 app:strokeWidth="0dp">
 
@@ -588,7 +588,7 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:src="@drawable/ic_gift"
-                        app:tint="#F5C542"
+                        app:tint="@color/auto_color_F5C542"
                         android:layout_alignParentStart="true"
                         android:layout_centerVertical="true" />
 
@@ -604,8 +604,8 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Use Reward Points"
-                            android:textColor="#FFFFFF"
+                            android:text="@string/auto_str_use_reward_points"
+                            android:textColor="@color/auto_color_FFFFFF"
                             android:textSize="15sp"
                             android:textStyle="bold" />
 
@@ -613,8 +613,8 @@
                             android:id="@+id/tvAvailablePoints"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Available: 0 pts"
-                            android:textColor="#808080"
+                            android:text="@string/auto_str_available_0_pts"
+                            android:textColor="@color/auto_color_808080"
                             android:textSize="12sp"
                             android:layout_marginTop="2dp" />
 
@@ -638,8 +638,8 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Price Breakdown"
-                android:textColor="#FFFFFF"
+                android:text="@string/auto_str_price_breakdown"
+                android:textColor="@color/auto_color_FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="12dp"/>
@@ -648,7 +648,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardBackgroundColor="#1E1E1E"
+                app:cardBackgroundColor="@color/auto_color_1E1E1E"
                 app:cardCornerRadius="16dp"
                 app:strokeWidth="0dp">
 
@@ -663,8 +663,8 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_marginBottom="8dp">
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Ticket Subtotal" android:textColor="#9A9A9A" android:textSize="14sp" />
-                        <TextView android:id="@+id/tvTicketSubtotal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="160.000 VND" android:textColor="#FFFFFF" android:textSize="14sp" />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/auto_str_ticket_subtotal" android:textColor="@color/auto_color_9A9A9A" android:textSize="14sp" />
+                        <TextView android:id="@+id/tvTicketSubtotal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_160_000_vnd" android:textColor="@color/auto_color_FFFFFF" android:textSize="14sp" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -672,8 +672,8 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_marginBottom="8dp">
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Combo Subtotal" android:textColor="#9A9A9A" android:textSize="14sp" />
-                        <TextView android:id="@+id/tvComboSubtotal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0 VND" android:textColor="#FFFFFF" android:textSize="14sp" />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/auto_str_combo_subtotal" android:textColor="@color/auto_color_9A9A9A" android:textSize="14sp" />
+                        <TextView android:id="@+id/tvComboSubtotal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_0_vnd" android:textColor="@color/auto_color_FFFFFF" android:textSize="14sp" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -681,8 +681,8 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:layout_marginBottom="8dp">
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Discount" android:textColor="#9A9A9A" android:textSize="14sp" />
-                        <TextView android:id="@+id/tvDiscount" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-0 VND" android:textColor="#34C759" android:textSize="14sp" />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/auto_str_discount" android:textColor="@color/auto_color_9A9A9A" android:textSize="14sp" />
+                        <TextView android:id="@+id/tvDiscount" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_0_vnd_1" android:textColor="@color/auto_color_34C759" android:textSize="14sp" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -692,8 +692,8 @@
                         android:orientation="horizontal"
                         android:visibility="gone"
                         android:layout_marginBottom="8dp">
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Reward Points" android:textColor="#9A9A9A" android:textSize="14sp" />
-                        <TextView android:id="@+id/tvRewardDiscount" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-0 VND" android:textColor="#34C759" android:textSize="14sp" />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/auto_str_reward_points" android:textColor="@color/auto_color_9A9A9A" android:textSize="14sp" />
+                        <TextView android:id="@+id/tvRewardDiscount" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_0_vnd_2" android:textColor="@color/auto_color_34C759" android:textSize="14sp" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -703,22 +703,22 @@
                         android:orientation="horizontal"
                         android:visibility="gone"
                         android:layout_marginBottom="12dp">
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Booking Fee" android:textColor="#9A9A9A" android:textSize="14sp" />
-                        <TextView android:id="@+id/tvBookingFee" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="10.000 VND" android:textColor="#FFFFFF" android:textSize="14sp" />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/auto_str_booking_fee" android:textColor="@color/auto_color_9A9A9A" android:textSize="14sp" />
+                        <TextView android:id="@+id/tvBookingFee" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_10_000_vnd" android:textColor="@color/auto_color_FFFFFF" android:textSize="14sp" />
                     </LinearLayout>
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="#22FFFFFF"
+                        android:background="@color/auto_color_22FFFFFF"
                         android:layout_marginBottom="12dp"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
-                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Grand Total" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="16sp" />
-                        <TextView android:id="@+id/tvGrandTotal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="170.000 VND" android:textColor="#F5C542" android:textStyle="bold" android:textSize="17sp" />
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/auto_str_grand_total" android:textColor="@color/auto_color_FFFFFF" android:textStyle="bold" android:textSize="16sp" />
+                        <TextView android:id="@+id/tvGrandTotal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_170_000_vnd" android:textColor="@color/auto_color_F5C542" android:textStyle="bold" android:textSize="17sp" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -729,8 +729,8 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Payment Method"
-                android:textColor="#FFFFFF"
+                android:text="@string/auto_str_payment_method_1"
+                android:textColor="@color/auto_color_FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="12dp"/>
@@ -743,10 +743,10 @@
                 android:layout_marginBottom="8dp"
                 android:clickable="true"
                 android:focusable="true"
-                app:cardBackgroundColor="#1E1E1E"
+                app:cardBackgroundColor="@color/auto_color_1E1E1E"
                 app:cardCornerRadius="12dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="#00000000">
+                app:strokeColor="@color/auto_color_00000000">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -755,8 +755,8 @@
                     android:orientation="horizontal"
                     android:paddingHorizontal="16dp">
                     <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/momo" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="16dp" android:text="MoMo" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="15sp" />
-                    <RadioButton android:id="@+id/rbMoMo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:clickable="false" android:buttonTint="#F5C542"/>
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="16dp" android:text="@string/auto_str_momo" android:textColor="@color/auto_color_FFFFFF" android:textStyle="bold" android:textSize="15sp" />
+                    <RadioButton android:id="@+id/rbMoMo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:clickable="false" android:buttonTint="@color/auto_color_F5C542"/>
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
@@ -769,10 +769,10 @@
                 android:layout_marginBottom="8dp"
                 android:clickable="true"
                 android:focusable="true"
-                app:cardBackgroundColor="#1E1E1E"
+                app:cardBackgroundColor="@color/auto_color_1E1E1E"
                 app:cardCornerRadius="12dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="#00000000">
+                app:strokeColor="@color/auto_color_00000000">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -781,8 +781,8 @@
                     android:orientation="horizontal"
                     android:paddingHorizontal="16dp">
                     <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/zalopay" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="16dp" android:text="ZaloPay" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="15sp" />
-                    <RadioButton android:id="@+id/rbZaloPay" android:layout_width="wrap_content" android:layout_height="wrap_content" android:clickable="false" android:buttonTint="#F5C542"/>
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="16dp" android:text="@string/auto_str_zalopay" android:textColor="@color/auto_color_FFFFFF" android:textStyle="bold" android:textSize="15sp" />
+                    <RadioButton android:id="@+id/rbZaloPay" android:layout_width="wrap_content" android:layout_height="wrap_content" android:clickable="false" android:buttonTint="@color/auto_color_F5C542"/>
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
@@ -795,10 +795,10 @@
                 android:layout_marginBottom="8dp"
                 android:clickable="true"
                 android:focusable="true"
-                app:cardBackgroundColor="#1E1E1E"
+                app:cardBackgroundColor="@color/auto_color_1E1E1E"
                 app:cardCornerRadius="12dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="#00000000">
+                app:strokeColor="@color/auto_color_00000000">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -807,8 +807,8 @@
                     android:orientation="horizontal"
                     android:paddingHorizontal="16dp">
                     <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/shoppepay" />
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="16dp" android:text="ShopeePay" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="15sp" />
-                    <RadioButton android:id="@+id/rbShopeePay" android:layout_width="wrap_content" android:layout_height="wrap_content" android:clickable="false" android:buttonTint="#F5C542"/>
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="16dp" android:text="@string/auto_str_shopeepay" android:textColor="@color/auto_color_FFFFFF" android:textStyle="bold" android:textSize="15sp" />
+                    <RadioButton android:id="@+id/rbShopeePay" android:layout_width="wrap_content" android:layout_height="wrap_content" android:clickable="false" android:buttonTint="@color/auto_color_F5C542"/>
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
@@ -821,10 +821,10 @@
                 android:layout_marginBottom="8dp"
                 android:clickable="true"
                 android:focusable="true"
-                app:cardBackgroundColor="#1E1E1E"
+                app:cardBackgroundColor="@color/auto_color_1E1E1E"
                 app:cardCornerRadius="12dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="#00000000">
+                app:strokeColor="@color/auto_color_00000000">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -832,9 +832,9 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:paddingHorizontal="16dp">
-                    <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_id_card" app:tint="#F5C542"/>
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="16dp" android:text="ATM Card" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="15sp" />
-                    <RadioButton android:id="@+id/rbATM" android:layout_width="wrap_content" android:layout_height="wrap_content" android:clickable="false" android:buttonTint="#F5C542"/>
+                    <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_id_card" app:tint="@color/auto_color_F5C542"/>
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="16dp" android:text="@string/auto_str_atm_card" android:textColor="@color/auto_color_FFFFFF" android:textStyle="bold" android:textSize="15sp" />
+                    <RadioButton android:id="@+id/rbATM" android:layout_width="wrap_content" android:layout_height="wrap_content" android:clickable="false" android:buttonTint="@color/auto_color_F5C542"/>
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
@@ -847,10 +847,10 @@
                 android:layout_marginBottom="24dp"
                 android:clickable="true"
                 android:focusable="true"
-                app:cardBackgroundColor="#1E1E1E"
+                app:cardBackgroundColor="@color/auto_color_1E1E1E"
                 app:cardCornerRadius="12dp"
                 app:strokeWidth="1dp"
-                app:strokeColor="#00000000">
+                app:strokeColor="@color/auto_color_00000000">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -858,9 +858,9 @@
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:paddingHorizontal="16dp">
-                    <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_id_card" app:tint="#F5C542"/>
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="16dp" android:text="International Card" android:textColor="#FFFFFF" android:textStyle="bold" android:textSize="15sp" />
-                    <RadioButton android:id="@+id/rbInternational" android:layout_width="wrap_content" android:layout_height="wrap_content" android:clickable="false" android:buttonTint="#F5C542"/>
+                    <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/ic_id_card" app:tint="@color/auto_color_F5C542"/>
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="16dp" android:text="@string/auto_str_international_card" android:textColor="@color/auto_color_FFFFFF" android:textStyle="bold" android:textSize="15sp" />
+                    <RadioButton android:id="@+id/rbInternational" android:layout_width="wrap_content" android:layout_height="wrap_content" android:clickable="false" android:buttonTint="@color/auto_color_F5C542"/>
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
@@ -873,7 +873,7 @@
         android:id="@+id/layoutCheckoutFooter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#161616"
+        android:background="@color/auto_color_161616"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
@@ -890,16 +890,16 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Grand Total"
-                android:textColor="#9A9A9A"
+                android:text="@string/auto_str_grand_total_1"
+                android:textColor="@color/auto_color_9A9A9A"
                 android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/tvFooterGrandTotal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="170.000 VND"
-                android:textColor="#F5C542"
+                android:text="@string/auto_str_170_000_vnd_1"
+                android:textColor="@color/auto_color_F5C542"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -909,10 +909,10 @@
             android:id="@+id/btnContinue"
             android:layout_width="160dp"
             android:layout_height="48dp"
-            android:text="Continue"
-            android:textColor="#000000"
+            android:text="@string/auto_str_continue_1"
+            android:textColor="@color/auto_color_000000"
             android:textStyle="bold"
-            app:backgroundTint="#F5C542"
+            app:backgroundTint="@color/auto_color_F5C542"
             app:cornerRadius="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -925,7 +925,7 @@
         android:id="@+id/layoutLoading"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#80000000"
+        android:background="@color/auto_color_80000000"
         android:clickable="true"
         android:focusable="true"
         android:visibility="gone">

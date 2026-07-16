@@ -12,7 +12,8 @@ object RetrofitClient {
 
     // private const val BASE_URL = "http://192.168.9.49:5000/"
     private const val BASE_URL = "http://10.0.2.2:5000/"
-    //private const val BASE_URL = "http://192.168.32.129:5000/"
+    // private const val BASE_URL = "http://10.88.54.59:5000/"
+    // private const val BASE_URL = "http://192.168.32.129:5000/"
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
@@ -76,5 +77,9 @@ object RetrofitClient {
 
     val fcmApi: FcmApi by lazy {
         instance.create(FcmApi::class.java)
+    }
+
+    val memberApi: MemberApi by lazy {
+        instance.create(MemberApi::class.java)
     }
 }

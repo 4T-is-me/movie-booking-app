@@ -24,7 +24,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Quản lý phòng chiếu"
+                android:text="@string/auto_str_qu_n_l_ph_ng_chi_u"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -33,7 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Danh sách phòng và tổng số ghế đang được quản lý"
+                android:text="@string/auto_str_danh_s_ch_ph_ng_v_t_ng_s_gh_an"
                 android:textColor="@color/text_gray"
                 android:textSize="13sp" />
 
@@ -53,7 +53,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tổng số phòng"
+                        android:text="@string/auto_str_t_ng_s_ph_ng"
                         android:textColor="@color/text_gray"
                         android:textSize="12sp" />
 
@@ -61,7 +61,7 @@
                         android:id="@+id/tvTotalRoomsCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0 phòng"
+                        android:text="@string/auto_str_0_ph_ng"
                         android:textColor="@color/yellow"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -76,7 +76,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
-                    android:text="Tap để chỉnh sửa"
+                    android:text="@string/auto_str_tap_ch_nh_s_a"
                     android:textColor="@color/white"
                     android:textSize="13sp" />
             </LinearLayout>

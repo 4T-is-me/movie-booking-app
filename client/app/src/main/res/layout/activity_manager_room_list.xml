@@ -3,13 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#090B13"
+    android:background="@color/auto_color_090B13"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#D9111827"
+        android:background="@color/auto_color_D9111827"
         android:padding="16dp"
         android:orientation="horizontal"
         android:gravity="center_vertical">
@@ -25,8 +25,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Cinema Rooms"
-            android:textColor="#FFFFFF"
+            android:text="@string/auto_str_cinema_rooms"
+            android:textColor="@color/auto_color_FFFFFF"
             android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -40,14 +40,14 @@
         android:gravity="center"
         android:baselineAligned="false">
 
-        <View android:layout_width="8dp" android:layout_height="8dp" android:background="#10B981" />
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Operating (3)" android:textColor="#94A3B8" android:textSize="12sp" android:layout_marginStart="4dp" />
+        <View android:layout_width="8dp" android:layout_height="8dp" android:background="@color/auto_color_10B981" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_operating_3" android:textColor="@color/auto_color_94A3B8" android:textSize="12sp" android:layout_marginStart="4dp" />
 
-        <View android:layout_width="8dp" android:layout_height="8dp" android:background="#FACC15" android:layout_marginStart="16dp" />
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Maintenance (1)" android:textColor="#94A3B8" android:textSize="12sp" android:layout_marginStart="4dp" />
+        <View android:layout_width="8dp" android:layout_height="8dp" android:background="@color/auto_color_FACC15" android:layout_marginStart="16dp" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_maintenance_1" android:textColor="@color/auto_color_94A3B8" android:textSize="12sp" android:layout_marginStart="4dp" />
 
-        <View android:layout_width="8dp" android:layout_height="8dp" android:background="#EF4444" android:layout_marginStart="16dp" />
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Closed (0)" android:textColor="#94A3B8" android:textSize="12sp" android:layout_marginStart="4dp" />
+        <View android:layout_width="8dp" android:layout_height="8dp" android:background="@color/auto_color_EF4444" android:layout_marginStart="16dp" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_closed_0" android:textColor="@color/auto_color_94A3B8" android:textSize="12sp" android:layout_marginStart="4dp" />
     </LinearLayout>
 
     <!-- Divider -->
@@ -55,7 +55,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginHorizontal="16dp"
-        android:background="#33FFFFFF" />
+        android:background="@color/auto_color_33FFFFFF" />
 
     <ProgressBar
         android:id="@+id/progressBar"

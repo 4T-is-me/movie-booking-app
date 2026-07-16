@@ -4,7 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -24,6 +28,13 @@ class AdminMovieListFragment : Fragment() {
 
     private val viewModel: MovieViewModel by activityViewModels()
     private lateinit var adapter: AdminMovieAdapter
+    private var allMovies: List<Movie> = emptyList()
+    private var selectedTab = TAB_ACTIVE
+
+    companion object {
+        private const val TAB_ACTIVE = "active"
+        private const val TAB_INACTIVE = "inactive"
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,6 +48,9 @@ class AdminMovieListFragment : Fragment() {
 
         val rvAdminMovies = view.findViewById<RecyclerView>(R.id.rvAdminMovies)
         val fabAddMovie = view.findViewById<FloatingActionButton>(R.id.fabAddMovie)
+        val etSearchMovie = view.findViewById<EditText>(R.id.etSearchMovie)
+        val tabActiveMovie = view.findViewById<TextView>(R.id.tabActiveMovie)
+        val tabInactiveMovie = view.findViewById<TextView>(R.id.tabInactiveMovie)
 
         adapter = AdminMovieAdapter(
             onEditClick = { movie ->
@@ -57,6 +71,19 @@ class AdminMovieListFragment : Fragment() {
 
         rvAdminMovies.layoutManager = LinearLayoutManager(context)
         rvAdminMovies.adapter = adapter
+
+        etSearchMovie.addTextChangedListener { text ->
+            adapter.submitList(getFilteredMovies(allMovies, text?.toString().orEmpty()))
+        }
+
+        tabActiveMovie.setOnClickListener {
+            switchTab(TAB_ACTIVE)
+            viewModel.loadAdminMovies("active")
+        }
+        tabInactiveMovie.setOnClickListener {
+            switchTab(TAB_INACTIVE)
+            viewModel.loadAdminMovies("deleted")
+        }
 
         fabAddMovie.setOnClickListener {
             // TODO: Open Add Movie Fragment
@@ -84,7 +111,8 @@ class AdminMovieListFragment : Fragment() {
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.adminMovies.collect { movies ->
-                adapter.submitList(movies)
+                allMovies = movies
+                refreshMovieList()
             }
         }
 
@@ -99,6 +127,42 @@ class AdminMovieListFragment : Fragment() {
             viewModel.movieActionMessage.collect { message ->
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    private fun switchTab(tab: String) {
+        if (selectedTab == tab) return
+        selectedTab = tab
+        refreshMovieList()
+    }
+
+    private fun refreshMovieList() {
+        val isActive = selectedTab == TAB_ACTIVE
+        updateTabStyle(requireView().findViewById(R.id.tabActiveMovie), isActive)
+        updateTabStyle(requireView().findViewById(R.id.tabInactiveMovie), !isActive)
+        adapter.submitList(getFilteredMovies(allMovies, requireView().findViewById<EditText>(R.id.etSearchMovie).text.toString().trim()))
+    }
+
+    private fun updateTabStyle(tabView: TextView, isActive: Boolean) {
+        if (isActive) {
+            tabView.setBackgroundResource(R.drawable.bg_tab_active)
+            tabView.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+        } else {
+            tabView.background = null
+            tabView.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_gray))
+        }
+    }
+
+    private fun getFilteredMovies(fullList: List<Movie>, searchQuery: String): List<Movie> {
+        val query = searchQuery.trim().lowercase()
+        return fullList.filter { movie ->
+            val matchesSearch = query.isEmpty() || movie.movieName?.lowercase()?.contains(query) == true
+            val matchesTab = if (selectedTab == TAB_ACTIVE) {
+                movie.isDeleted != true
+            } else {
+                movie.isDeleted == true
+            }
+            matchesSearch && matchesTab
         }
     }
 }

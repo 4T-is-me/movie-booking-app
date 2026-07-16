@@ -14,8 +14,12 @@ const bookingSchema = new mongoose.Schema({
     paymentStatus: { type: String, default: 'pending' }, // 'pending', 'successful', 'cancel'
     paymentMethod: { type: String, required: true },
     qrCodeData: { type: String },
+    checkedIn: { type: Boolean, default: false },
+    checkedInAt: { type: Date },
+    checkedInBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Staff' },
     disCountAmount: { type: Number, default: 0 },
     finalAmount: { type: Number, required: true }, // after discount
+    reminded30M: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now }
 }, {
     // Timestamps configuration: only create createdAt, disable updatedAt if not used in DB

@@ -2,6 +2,8 @@ package com.example.movie_booking_app.data.model.response
 
 import com.google.gson.annotations.SerializedName
 
+import java.io.Serializable
+
 data class AdminStaffListResponse(
     @SerializedName("success") val success: Boolean? = null,
     @SerializedName("data") val data: StaffListData? = null,
@@ -9,28 +11,10 @@ data class AdminStaffListResponse(
 )
 
 data class StaffListData(
-    @SerializedName("staffs") val staffs: List<DbStaffItem>? = null,
+    @SerializedName("staffs") val staffs: List<EmployeeItem>? = null,
     @SerializedName("total") val total: Int? = null,
     @SerializedName("totalPages") val totalPages: Int? = null,
     @SerializedName("currentPage") val currentPage: Int? = null
-)
-
-data class DbStaffItem(
-    @SerializedName("_id") val id: String? = null,
-    @SerializedName("fullName") val fullName: String? = null,
-    @SerializedName("phone") val phone: String? = null,
-    @SerializedName("identityCard") val identityCard: String? = null,
-    @SerializedName("position") val position: String? = null,
-    @SerializedName("salary") val salary: Double? = null,
-    @SerializedName("cinemaId") val cinemaId: String? = null,
-    @SerializedName("startDate") val startDate: String? = null,
-    @SerializedName("address") val address: String? = null,
-    @SerializedName("kpiPoints") val kpiPoints: Int? = null,
-    @SerializedName("ticketSold") val ticketSold: Int? = null,
-    @SerializedName("rating") val rating: Double? = null,
-    @SerializedName("totalRatings") val totalRatings: Int? = null,
-    @SerializedName("totalStars") val totalStars: Int? = null,
-    @SerializedName("accountId") val account: DbStaffAccount? = null
 )
 
 data class DbStaffAccount(
@@ -38,4 +22,4 @@ data class DbStaffAccount(
     @SerializedName("username") val username: String? = null,
     @SerializedName("email") val email: String? = null,
     @SerializedName("status") val status: Int? = null
-)
+) : Serializable

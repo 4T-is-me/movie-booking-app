@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="?attr/selectableItemBackground"
+    android:paddingVertical="12dp"
+    android:weightSum="4"
+    android:gravity="center_vertical">
+
+    <!-- Avatar + Name -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.8"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="12dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/ivMemberAvatar"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/CircleImageView"
+            app:strokeColor="@color/yellow"
+            app:strokeWidth="1dp"
+            android:src="@drawable/ic_profile" />
+
+        <TextView
+            android:id="@+id/tvMemberName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:paddingEnd="4dp"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:ellipsize="end"
+            android:maxLines="1" />
+    </LinearLayout>
+
+    <!-- Points -->
+    <TextView
+        android:id="@+id/tvMemberPoints"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.0"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:ellipsize="end"
+        android:maxLines="1" />
+
+    <!-- Actions -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.2"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingStart="4dp"
+        android:paddingEnd="12dp">
+
+        <ImageView
+            android:id="@+id/btnDetailMember"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginEnd="8dp"
+            android:src="@android:drawable/ic_menu_info_details"
+            android:contentDescription="@string/admin_member_detail_desc"
+            app:tint="@color/yellow"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <ImageView
+            android:id="@+id/btnAdjustScore"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginEnd="8dp"
+            android:src="@android:drawable/ic_menu_edit"
+            android:contentDescription="@string/admin_adjust_score_desc"
+            app:tint="@color/yellow"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <ImageView
+            android:id="@+id/btnToggleMemberStatus"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@android:drawable/ic_menu_delete"
+            android:contentDescription="@string/admin_toggle_status_desc"
+            app:tint="@color/deduct"
+            android:clickable="true"
+            android:focusable="true" />
+    </LinearLayout>
+</LinearLayout>
