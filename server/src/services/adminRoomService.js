@@ -67,7 +67,7 @@ const handleCreateRoom = async ({ cinemaId, roomName, roomType, screenType, rows
             for (const s of seatsInput) {
                 const name = s.seatName; // e.g. "A1"
                 const inputType = s.seatType || "standard";
-                
+
                 // Parse row and col from seatName
                 const rowLetter = name.charAt(0);
                 const colNumber = parseInt(name.substring(1), 10);
@@ -155,14 +155,14 @@ const handleGetAllRoom = async (cinemaId) => {
 
         const rooms = await CinemaRoom.aggregate([
             // Filter rooms that have not been deleted.
-            {   
+            {
                 $match: matchStage
             },
             // Join with the Cinema table(CinemaRoom join Cinema) 
             // from: name collection, cinemaId: CinemaRoom table, _id: Cinema table
             {
                 $lookup: {
-                    from: 'cinemas', 
+                    from: 'cinemas',
                     localField: 'cinemaId',
                     foreignField: '_id',
                     as: 'cinemaInfo'
@@ -172,10 +172,10 @@ const handleGetAllRoom = async (cinemaId) => {
             {
                 $unwind: {
                     path: '$cinemaInfo',
-                    preserveNullAndEmptyArrays: true 
+                    preserveNullAndEmptyArrays: true
                 }
             },
-            
+
             // Join with the Seat table(CinemaRoom join Seat)
             {
                 $lookup: {
@@ -195,16 +195,16 @@ const handleGetAllRoom = async (cinemaId) => {
             {
                 $group: {
                     _id: '$_id',
-                    roomName: {$first: '$roomName'},
-                    roomType: {$first: '$roomType'},
-                    screenType: {$first: '$screenType'},
-                    status: {$first: '$status'},
-                    rowsCount: {$first: '$rowsCount'},
-                    colsCount: {$first: '$colsCount'},
-                    cinemaName: {$first: '$cinemaInfo.cinemaName'},
+                    roomName: { $first: '$roomName' },
+                    roomType: { $first: '$roomType' },
+                    screenType: { $first: '$screenType' },
+                    status: { $first: '$status' },
+                    rowsCount: { $first: '$rowsCount' },
+                    colsCount: { $first: '$colsCount' },
+                    cinemaName: { $first: '$cinemaInfo.cinemaName' },
                     totalSeats: {
                         //$cond: [{ if : [true, false]}, 1, 0]
-                        $sum: {$cond: [{ $ifNull: ['$seats', false]}, 1, 0]} 
+                        $sum: { $cond: [{ $ifNull: ['$seats', false] }, 1, 0] }
                     },
                     // count VIP 
                     vipSeats: {
@@ -239,38 +239,38 @@ const handleGetAllRoom = async (cinemaId) => {
         ])
 
         return rooms
-        
+
     } catch (error) {
         throw new ApiError(StatusCodes.INTERNAL_SERVER_ERROR, error.message);
     }
 }
 const handleGetRoomSeats = async (roomId) => {
     //check room exists
-    const room = await CinemaRoom.findOne({_id: roomId, isDeleted: false, status: "active"});
-    if(!room) {
+    const room = await CinemaRoom.findOne({ _id: roomId, isDeleted: false, status: "active" });
+    if (!room) {
         throw new ApiError(StatusCodes.NOT_FOUND, "Room not found");
     }
     //get all Seat of a Room + sort by row and col
-    const seats = await Seat.find({roomId: roomId, status: "active", isDeleted: false}).sort({row: 1, col: 1});
-    
+    const seats = await Seat.find({ roomId: roomId, status: "active", isDeleted: false }).sort({ row: 1, col: 1 });
+
     const groupObject = seats.reduce((acc, seat) => {
-    // Create new row if it doest not exist
-    if(!acc[seat.row]) {
-        acc[seat.row] = {
-            row: seat.row,
-            seats: [] 
-        };
-    }
+        // Create new row if it doest not exist
+        if (!acc[seat.row]) {
+            acc[seat.row] = {
+                row: seat.row,
+                seats: []
+            };
+        }
         // Push seat in the same row
         acc[seat.row].seats.push({
-        _id: seat._id,
-        seatName: seat.seatName, // VD: "A1", "A2"
-        seatType: seat.seatType, // VD: "Regular", "VIP", "Couple"
-        row: seat.row,
-        col: seat.col,
-        status: seat.status 
-    });
-    return acc;
+            _id: seat._id,
+            seatName: seat.seatName, // VD: "A1", "A2"
+            seatType: seat.seatType, // VD: "Regular", "VIP", "Couple"
+            row: seat.row,
+            col: seat.col,
+            status: seat.status
+        });
+        return acc;
     }, {});
     //Convert object to array
     const finalResult = Object.values(groupObject);
@@ -279,26 +279,26 @@ const handleGetRoomSeats = async (roomId) => {
 
 const handleUpdateSeatTypes = async (roomId, seatType) => {
     //check room exists
-    const room = await CinemaRoom.findOne({_id: roomId, isDeleted: false, status: "active"});
-    if(!room) {
+    const room = await CinemaRoom.findOne({ _id: roomId, isDeleted: false, status: "active" });
+    if (!room) {
         throw new ApiError(StatusCodes.NOT_FOUND, "Room not found");
     }
     //Validate body
-    if(!Array.isArray(seatType) || seatType.length === 0) {
+    if (!Array.isArray(seatType) || seatType.length === 0) {
         throw new ApiError(StatusCodes.BAD_REQUEST, "The updated seat list must not be left blank!");
     }
     //type seat :
     const allowSeatType = ['Regular', 'VIP', 'Couple'];
 
-    for(const item of seatType) {
+    for (const item of seatType) {
         //check seatId
-        if(!item.seatId) {
+        if (!item.seatId) {
             throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid seat type!");
         }
         //check seatType
-        if( !allowSeatType.includes(item.seatType)) {
+        if (!allowSeatType.includes(item.seatType)) {
             throw new ApiError(StatusCodes.BAD_REQUEST, `Seat type "${item.seatType}" is invalid! Only the following are accepted: ${allowedSeatTypes.join(', ')}`);
-        }   
+        }
     }
     //Create operations array for bulkWrite 
     // Enforce a filter matching the roomId => prevent accidentally updating a different room
@@ -316,19 +316,19 @@ const handleUpdateSeatTypes = async (roomId, seatType) => {
     return bulkWriteResult;
 }
 
-const handleSoftDeleteRoom = async(roomId) => {
-    const room = await CinemaRoom.findOne({_id: roomId, isDeleted: false, status: "active"});
-    if(!room) {
+const handleSoftDeleteRoom = async (roomId) => {
+    const room = await CinemaRoom.findOne({ _id: roomId, isDeleted: false, status: "active" });
+    if (!room) {
         throw new ApiError(StatusCodes.NOT_FOUND, "Room not found");
     }
     //to day
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     // Check if room has any scheduled screenings from today onward
-    const futureShowtime = await Showtime.findOne({roomId: roomId, showDate: { $gte: today }, isDeleted: false});
+    const futureShowtime = await Showtime.findOne({ roomId: roomId, showDate: { $gte: today }, isDeleted: false });
 
     //if has
-    if(futureShowtime) {
+    if (futureShowtime) {
         throw new ApiError(StatusCodes.CONFLICT, "This room cannot be deleted because there are scheduled screenings in the future!");
     }
 
@@ -337,11 +337,24 @@ const handleSoftDeleteRoom = async(roomId) => {
     return result
 }
 
+const handleToggleRoomStatus = async (roomId, status) => {
+    const room = await CinemaRoom.findOne({ _id: roomId, isDeleted: false });
+    if (!room) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Room not found!");
+    }
+    if (status !== 'active' && status !== 'inactive') {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid status! Must be 'active' or 'inactive'.");
+    }
+    room.status = status;
+    const result = await room.save();
+    return result;
+}
 
 export const adminRoomService = {
     handleCreateRoom,
     handleGetAllRoom,
     handleGetRoomSeats,
     handleUpdateSeatTypes,
-    handleSoftDeleteRoom
+    handleSoftDeleteRoom,
+    handleToggleRoomStatus
 };

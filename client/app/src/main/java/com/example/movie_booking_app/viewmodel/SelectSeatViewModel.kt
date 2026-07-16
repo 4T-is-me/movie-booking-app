@@ -45,6 +45,12 @@ class SelectSeatViewModel @Inject constructor(
     private val _seats = MutableStateFlow<List<Seat>>(emptyList())
     val seats: StateFlow<List<Seat>> = _seats.asStateFlow()
 
+    private val _cinemaRoomName = MutableStateFlow<String?>(null)
+    val cinemaRoomName: StateFlow<String?> = _cinemaRoomName.asStateFlow()
+
+    private val _cinemaName = MutableStateFlow<String?>(null)
+    val cinemaName: StateFlow<String?> = _cinemaName.asStateFlow()
+
     private val _selectedSeats = MutableStateFlow<List<Seat>>(emptyList())
     val selectedSeats: StateFlow<List<Seat>> = _selectedSeats.asStateFlow()
 
@@ -138,8 +144,11 @@ class SelectSeatViewModel @Inject constructor(
         
         viewModelScope.launch {
             _isLoading.value = true
-            repository.getSeats(showtimeId).collect { seatList ->
+            repository.getSeats(showtimeId).collect { seatMapData ->
+                val seatList = seatMapData.seats ?: emptyList()
                 _seats.value = seatList
+                _cinemaRoomName.value = seatMapData.cinemaRoomName
+                _cinemaName.value = seatMapData.cinemaName
                 _selectedSeats.value = emptyList()
                 _isLoading.value = false
                 if (seatList.isEmpty()) {

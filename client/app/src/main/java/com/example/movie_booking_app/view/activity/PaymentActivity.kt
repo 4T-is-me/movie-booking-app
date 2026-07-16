@@ -21,6 +21,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
+import com.example.movie_booking_app.utils.DateUtils
 
 @AndroidEntryPoint
 class PaymentActivity : AppCompatActivity() {
@@ -156,15 +157,13 @@ class PaymentActivity : AppCompatActivity() {
                         binding.tvCinemaName.text = booking.cinemaName ?: "Cinema Center"
                         binding.tvCinemaAddress.text = booking.cinemaAddress ?: "Address details"
                         binding.tvRoom.text = booking.roomName ?: "Room 1"
-                        binding.tvShowDate.text = booking.showDate ?: ""
-                        binding.tvShowTime.text = booking.showTime ?: ""
+                        binding.tvShowDate.text = DateUtils.formatMovieDate(booking.showDate)
+                        binding.tvShowTime.text = DateUtils.formatMovieTime(booking.showTime)
 
                         binding.tvOrderId.text = booking.orderId
                         binding.tvSeats.text = booking.seatNames.joinToString(", ")
                         binding.tvSeatCount.text = "${booking.seatIds.size} seats"
-                        binding.tvTicketType.text = booking.ticketTypeDetails.joinToString("\n") { detail ->
-                            "${detail.name} ×${detail.count}"
-                        }
+                        binding.tvSeatType.text = booking.seatTypes.joinToString(", ")
 
                         // Load Movie Poster
                         booking.moviePoster?.let { poster ->

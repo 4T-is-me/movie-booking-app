@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.example.movie_booking_app.utils.Constants
 
 @HiltViewModel
 class PaymentViewModel @Inject constructor(
@@ -105,7 +106,7 @@ class PaymentViewModel @Inject constructor(
 
     private fun recalculateTotals() {
         val ticketSub = _uiState.value.ticketSubtotal
-        val comboSub = (combo1Quantity * 80000) + (combo2Quantity * 120000)
+        val comboSub = (combo1Quantity * Constants.ComboPrice.SINGLE_COMBO) + (combo2Quantity * Constants.ComboPrice.DOUBLE_COMBO)
         
         val subtotal = ticketSub + comboSub
         val promotionDiscount = when (discountType) {
@@ -196,10 +197,10 @@ class PaymentViewModel @Inject constructor(
 
         val requestCombos = mutableListOf<ComboRequest>()
         if (combo1Quantity > 0) {
-            requestCombos.add(ComboRequest("combo1", "Single Combo", combo1Quantity, 80000))
+            requestCombos.add(ComboRequest("combo1", "Single Combo", combo1Quantity, Constants.ComboPrice.SINGLE_COMBO))
         }
         if (combo2Quantity > 0) {
-            requestCombos.add(ComboRequest("combo2", "Double Combo", combo2Quantity, 120000))
+            requestCombos.add(ComboRequest("combo2", "Double Combo", combo2Quantity, Constants.ComboPrice.DOUBLE_COMBO))
         }
 
         viewModelScope.launch {
@@ -234,6 +235,11 @@ class PaymentViewModel @Inject constructor(
                     }
                 }
                 .collect {
+                    try {
+                        profileRepository.getUserProfile().collect {}
+                    } catch (e: Exception) {
+                        android.util.Log.e("PaymentViewModel", "Failed to refresh profile after checkout", e)
+                    }
                     _uiState.value = _uiState.value.copy(
                         isCheckingOut = false,
                         checkoutSuccess = true
