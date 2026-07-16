@@ -158,8 +158,13 @@ class StaffScheduleFragment : Fragment() {
             binding.tvStatusBadge.setBackgroundResource(com.example.movie_booking_app.R.drawable.bg_glass_badge)
         } else {
             android.util.Log.d("StaffSchedule", "No matching shift found for $selectedDateId")
-            binding.cardTodayShift.visibility = View.GONE
-            binding.tvTodayHeader.visibility = View.GONE
+            binding.cardTodayShift.visibility = View.VISIBLE
+            binding.tvTodayHeader.visibility = View.VISIBLE
+            binding.tvShiftTitle.text = "No Shift Scheduled"
+            binding.tvShiftHours.text = "You have no shift scheduled for this day"
+            binding.tvShiftLocation.text = "Enjoy your day off!"
+            binding.tvStatusBadge.text = "Off"
+            binding.tvStatusBadge.setBackgroundResource(com.example.movie_booking_app.R.drawable.bg_glass_badge)
         }
     }
 
