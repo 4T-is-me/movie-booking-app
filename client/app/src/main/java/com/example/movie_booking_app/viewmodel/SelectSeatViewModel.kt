@@ -124,6 +124,11 @@ class SelectSeatViewModel @Inject constructor(
     }
 
     fun selectDate(dateId: String) {
+        // If user is holding seats, release them before switching date
+        if (_uiState.value == SeatingUiState.HELD) {
+            releaseCurrentHold()
+        }
+
         _dates.update { list -> list.map { it.copy(isSelected = it.id == dateId) } }
         
         val filteredTimes = _allShowtimes.value.filter { it.showDate?.startsWith(dateId) == true }
@@ -140,6 +145,15 @@ class SelectSeatViewModel @Inject constructor(
     }
 
     fun selectTime(showtimeId: String) {
+        // If user is holding seats, release them before switching showtime
+        // Check if the showtime actually changed to avoid redundant releases
+        val currentShowtime = _showTimes.value.find { it.isSelected }
+        if (currentShowtime != null && currentShowtime.id != showtimeId) {
+            if (_uiState.value == SeatingUiState.HELD) {
+                releaseCurrentHold()
+            }
+        }
+
         _showTimes.update { list -> list.map { it.copy(isSelected = it.id == showtimeId) } }
         
         viewModelScope.launch {

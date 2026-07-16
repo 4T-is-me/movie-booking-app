@@ -152,19 +152,31 @@ class BookingDetailActivity : AppCompatActivity() {
         }
         val formatter = DecimalFormat("#,###", symbols)
 
-        // Combos List Setup
+        // Selected Combos List Setup
         binding.layoutComboItems.removeAllViews()
         val combos = detail.combos ?: emptyList()
+        binding.cardCombos.visibility = View.VISIBLE
+
         if (combos.isEmpty()) {
-            binding.cardCombos.visibility = View.GONE
+            binding.tvNoCombo.visibility = View.VISIBLE
+            binding.layoutComboItems.visibility = View.GONE
+            binding.dividerCombo.visibility = View.GONE
+            binding.layoutComboTotal.visibility = View.GONE
             binding.layoutComboPrice.visibility = View.GONE
         } else {
-            binding.cardCombos.visibility = View.VISIBLE
+            binding.tvNoCombo.visibility = View.GONE
+            binding.layoutComboItems.visibility = View.VISIBLE
+            binding.dividerCombo.visibility = View.VISIBLE
+            binding.layoutComboTotal.visibility = View.VISIBLE
             binding.layoutComboPrice.visibility = View.VISIBLE
+
+            var totalComboPrice = 0
             val dp4 = (4 * resources.displayMetrics.density).toInt()
             combos.forEach { combo ->
-                val rowLayout = LinearLayout(this).apply {
-                    orientation = LinearLayout.HORIZONTAL
+                totalComboPrice += combo.subtotal
+
+                val itemLayout = LinearLayout(this).apply {
+                    orientation = LinearLayout.VERTICAL
                     layoutParams = LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT
@@ -174,44 +186,43 @@ class BookingDetailActivity : AppCompatActivity() {
                 }
 
                 val nameTv = TextView(this).apply {
-                    text = "${combo.name} × ${combo.quantity}"
+                    text = "• ${combo.name} × ${combo.quantity}"
                     setTextColor(Color.WHITE)
                     textSize = 14f
                     layoutParams = LinearLayout.LayoutParams(
-                        0,
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        1f
-                    )
-                }
-
-                val priceTv = TextView(this).apply {
-                    text = "${formatter.format(combo.price * combo.quantity)} ₫"
-                    setTextColor(Color.parseColor("#88FFFFFF"))
-                    textSize = 14f
-                    gravity = Gravity.END
-                    layoutParams = LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT
                     )
                 }
 
-                rowLayout.addView(nameTv)
-                rowLayout.addView(priceTv)
-                binding.layoutComboItems.addView(rowLayout)
+                val priceTv = TextView(this).apply {
+                    text = "  ${formatter.format(combo.subtotal)} VND"
+                    setTextColor(Color.parseColor("#88FFFFFF"))
+                    textSize = 14f
+                    layoutParams = LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    )
+                }
+
+                itemLayout.addView(nameTv)
+                itemLayout.addView(priceTv)
+                binding.layoutComboItems.addView(itemLayout)
             }
+            binding.tvComboTotal.text = "${formatter.format(totalComboPrice)} VND"
         }
 
         // Payment info
         val pay = detail.payment
         if (pay != null) {
-            binding.tvTicketPrice.text = "${formatter.format(pay.ticketPrice)} ₫"
-            binding.tvComboPrice.text = "${formatter.format(pay.comboPrice)} ₫"
+            binding.tvTicketPrice.text = "${formatter.format(pay.ticketPrice)} VND"
+            binding.tvComboPrice.text = "${formatter.format(pay.comboPrice)} VND"
 
             // Promotion discount
             val discount = pay.disCountAmount
             if (discount > 0) {
                 binding.layoutPromotion.visibility = View.VISIBLE
-                binding.tvPromotionDiscount.text = "-${formatter.format(discount)} ₫"
+                binding.tvPromotionDiscount.text = "-${formatter.format(discount)} VND"
             } else {
                 binding.layoutPromotion.visibility = View.GONE
             }
@@ -223,7 +234,7 @@ class BookingDetailActivity : AppCompatActivity() {
             binding.tvPaymentMethod.text = "Paid via ${pay.paymentMethod}"
 
             // Total Paid
-            binding.tvTotalPaid.text = "${formatter.format(pay.finalAmount)} ₫"
+            binding.tvTotalPaid.text = "${formatter.format(pay.finalAmount)} VND"
         }
     }
 }

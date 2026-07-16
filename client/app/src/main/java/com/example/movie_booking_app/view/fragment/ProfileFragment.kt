@@ -31,6 +31,7 @@ class ProfileFragment : Fragment() {
 
     private val viewModel: ProfileViewModel by viewModels()
     private var progressDialog: android.app.Dialog? = null
+    private var lastLoadedAvatarUrl: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -174,11 +175,15 @@ class ProfileFragment : Fragment() {
                         url.startsWith("http") -> url
                         else -> "${com.example.movie_booking_app.utils.Constants.BASE_URL.removeSuffix("/")}$url"
                     }
-                    Glide.with(this@ProfileFragment)
-                        .load(finalUrl.ifEmpty { null })
-                        .placeholder(R.drawable.ic_profile)
-                        .error(R.drawable.ic_profile)
-                        .into(binding.ivAvatar)
+                    if (finalUrl != lastLoadedAvatarUrl) {
+                        lastLoadedAvatarUrl = finalUrl
+                        Glide.with(this@ProfileFragment)
+                            .load(finalUrl.ifEmpty { null })
+                            .signature(com.bumptech.glide.signature.ObjectKey(System.currentTimeMillis().toString()))
+                            .placeholder(R.drawable.ic_profile)
+                            .error(R.drawable.ic_profile)
+                            .into(binding.ivAvatar)
+                    }
                 }
             }
         }

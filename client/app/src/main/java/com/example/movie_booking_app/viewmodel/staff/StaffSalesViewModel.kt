@@ -478,7 +478,8 @@ class StaffSalesViewModel @Inject constructor(
                         paymentMethod = paymentMethod,
                         promotionId = _appliedPromotion.value?.id,
                         combos = emptyList(), // Staff tickets sales combo not added in this flow
-                        scoreToRedeem = if (_useScore.value) _scoreToRedeem.value else null
+                        scoreToRedeem = if (_useScore.value) _scoreToRedeem.value else null,
+                        memberId = _verifiedMember.value?.memberId
                     )
 
                     paymentRepository.confirmBooking(request)
@@ -505,7 +506,9 @@ class StaffSalesViewModel @Inject constructor(
                                     bookingRepository.releaseSeats(showtime.id, seatIds).collectLatest {}
                                 }
                             } catch (e: Exception) {
-                                _checkoutSuccess.value = true
+                                _checkoutSuccess.value = false
+                                _checkoutError.value = "Response format error: ${e.message}"
+                                bookingRepository.releaseSeats(showtime.id, seatIds).collectLatest {}
                             }
                         }
                 }
