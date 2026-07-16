@@ -52,6 +52,7 @@ class StaffSalesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupAdapters()
+        setupLegend()
         setupListeners()
         observeViewModel()
 
@@ -89,6 +90,23 @@ class StaffSalesFragment : Fragment() {
             binding.edtPromoCode.setText(promo.discountCode)
         }
         binding.rvAvailablePromotions.adapter = promotionAdapter
+    }
+
+    private fun setupLegend() {
+        binding.legendAvailable.tvLegendLabel.text = getString(R.string.legend_available)
+        binding.legendAvailable.viewSwatch.setBackgroundResource(R.drawable.bg_seat_available)
+
+        binding.legendVip.tvLegendLabel.text = getString(R.string.legend_vip)
+        binding.legendVip.viewSwatch.setBackgroundResource(R.drawable.bg_seat_vip)
+
+        binding.legendCouple.tvLegendLabel.text = getString(R.string.legend_couple)
+        binding.legendCouple.viewSwatch.setBackgroundResource(R.drawable.bg_seat_couple)
+
+        binding.legendSold.tvLegendLabel.text = getString(R.string.legend_sold)
+        binding.legendSold.viewSwatch.setBackgroundResource(R.drawable.bg_seat_sold)
+
+        binding.legendSelected.tvLegendLabel.text = getString(R.string.legend_selected)
+        binding.legendSelected.viewSwatch.setBackgroundResource(R.drawable.bg_seat_selected)
     }
 
     private fun setupListeners() {
