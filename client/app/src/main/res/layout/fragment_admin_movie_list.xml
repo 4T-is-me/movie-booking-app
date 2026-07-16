@@ -42,7 +42,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@android:color/transparent"
-                        android:hint="Search movie..."
+                        android:hint="@string/auto_str_search_movie"
                         android:textColorHint="@color/text_gray"
                         android:textColor="@color/white"
                         android:textSize="14sp"

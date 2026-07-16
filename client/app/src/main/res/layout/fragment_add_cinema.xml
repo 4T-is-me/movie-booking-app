@@ -78,7 +78,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:hint="Cinema Name *"
+                        android:hint="@string/auto_str_cinema_name"
                         app:hintTextColor="@color/cinema_primary"
                         app:boxStrokeColor="@color/cinema_primary"
                         android:textColorHint="@color/cinema_text_secondary">
@@ -94,7 +94,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:hint="Address *"
+                        android:hint="@string/auto_str_address_1"
                         app:hintTextColor="@color/cinema_primary"
                         app:boxStrokeColor="@color/cinema_primary"
                         android:textColorHint="@color/cinema_text_secondary">
@@ -110,7 +110,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:hint="City *"
+                        android:hint="@string/auto_str_city"
                         app:hintTextColor="@color/cinema_primary"
                         app:boxStrokeColor="@color/cinema_primary"
                         android:textColorHint="@color/cinema_text_secondary">
@@ -126,7 +126,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:hint="Hotline *"
+                        android:hint="@string/auto_str_hotline"
                         app:hintTextColor="@color/cinema_primary"
                         app:boxStrokeColor="@color/cinema_primary"
                         android:textColorHint="@color/cinema_text_secondary">
@@ -179,7 +179,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:hint="Status *"
+                        android:hint="@string/auto_str_status_2"
                         app:hintTextColor="@color/cinema_primary"
                         app:boxStrokeColor="@color/cinema_primary"
                         android:textColorHint="@color/cinema_text_secondary">

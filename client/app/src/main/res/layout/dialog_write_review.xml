@@ -59,7 +59,7 @@
         android:id="@+id/layoutComment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Share your thoughts..."
+        android:hint="@string/auto_str_share_your_thoughts"
         app:hintTextColor="@color/auto_color_FFC107"
         app:boxStrokeColor="@color/auto_color_FFC107"
         app:boxStrokeWidth="1.5dp"

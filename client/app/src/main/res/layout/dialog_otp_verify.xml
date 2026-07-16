@@ -52,7 +52,7 @@
             android:layout_height="56dp"
             android:background="@null"
             android:gravity="center"
-            android:hint="------"
+            android:hint="@string/auto_str_str_auto"
             android:inputType="number"
             android:letterSpacing="0.5"
             android:maxLength="6"

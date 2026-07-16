@@ -82,7 +82,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:hint="Room Name *"
+                        android:hint="@string/auto_str_room_name"
                         app:hintTextColor="@color/cinema_primary"
                         app:boxStrokeColor="@color/cinema_primary"
                         android:textColorHint="@color/cinema_text_secondary">
@@ -101,7 +101,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:hint="Room Type *"
+                        android:hint="@string/auto_str_room_type"
                         app:hintTextColor="@color/cinema_primary"
                         app:boxStrokeColor="@color/cinema_primary"
                         android:textColorHint="@color/cinema_text_secondary">
@@ -120,7 +120,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:hint="Screen Type *"
+                        android:hint="@string/auto_str_screen_type"
                         app:hintTextColor="@color/cinema_primary"
                         app:boxStrokeColor="@color/cinema_primary"
                         android:textColorHint="@color/cinema_text_secondary">
@@ -139,7 +139,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:hint="Status *"
+                        android:hint="@string/auto_str_status_3"
                         app:hintTextColor="@color/cinema_primary"
                         app:boxStrokeColor="@color/cinema_primary"
                         android:textColorHint="@color/cinema_text_secondary">
@@ -157,7 +157,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:hint="Capacity *"
+                        android:hint="@string/auto_str_capacity"
                         app:hintTextColor="@color/cinema_primary"
                         app:boxStrokeColor="@color/cinema_primary"
                         android:textColorHint="@color/cinema_text_secondary">
@@ -210,7 +210,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginEnd="8dp"
-                            android:hint="Rows (1-26)"
+                            android:hint="@string/auto_str_rows_1_26"
                             app:hintTextColor="@color/cinema_primary"
                             app:boxStrokeColor="@color/cinema_primary"
                             android:textColorHint="@color/cinema_text_secondary">
@@ -229,7 +229,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:layout_marginStart="8dp"
-                            android:hint="Columns (1-30)"
+                            android:hint="@string/auto_str_columns_1_30"
                             app:hintTextColor="@color/cinema_primary"
                             app:boxStrokeColor="@color/cinema_primary"
                             android:textColorHint="@color/cinema_text_secondary">
