@@ -26,6 +26,11 @@ class StaffSalesViewModel @Inject constructor(
     private val _selectedMovie = MutableStateFlow<Movie?>(null)
     val selectedMovie: StateFlow<Movie?> = _selectedMovie.asStateFlow()
 
+    private val _allShowtimes = MutableStateFlow<List<Showtime>>(emptyList())
+
+    private val _dates = MutableStateFlow<List<ShowDate>>(emptyList())
+    val dates: StateFlow<List<ShowDate>> = _dates.asStateFlow()
+
     private val _showtimes = MutableStateFlow<List<Showtime>>(emptyList())
     val showtimes: StateFlow<List<Showtime>> = _showtimes.asStateFlow()
 
@@ -122,6 +127,8 @@ class StaffSalesViewModel @Inject constructor(
         if (movie != null) {
             loadShowtimes(movie.id ?: "")
         } else {
+            _allShowtimes.value = emptyList()
+            _dates.value = emptyList()
             _showtimes.value = emptyList()
             _seats.value = emptyList()
             _selectedSeats.value = emptyList()
@@ -142,6 +149,9 @@ class StaffSalesViewModel @Inject constructor(
     fun loadShowtimes(movieId: String) {
         viewModelScope.launch {
             _isLoading.value = true
+            _allShowtimes.value = emptyList()
+            _dates.value = emptyList()
+            _showtimes.value = emptyList()
             _seats.value = emptyList()
             _selectedSeats.value = emptyList()
             _totalPrice.value = 0
@@ -151,9 +161,65 @@ class StaffSalesViewModel @Inject constructor(
             _scoreError.value = null
             recalculateTotals()
             movieRepository.getMovieShowtimes(movieId).collect { list ->
-                _showtimes.value = list
-                _isLoading.value = false
+                _allShowtimes.value = list
+                
+                val dateMap = mutableMapOf<String, ShowDate>()
+                val isoFormat = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
+                val dayFormat = java.text.SimpleDateFormat("dd", java.util.Locale.getDefault())
+                val monthFormat = java.text.SimpleDateFormat("MMM", java.util.Locale.getDefault())
+                val dowFormat = java.text.SimpleDateFormat("EEE", java.util.Locale.getDefault())
+                val yearFormat = java.text.SimpleDateFormat("yyyy", java.util.Locale.getDefault())
+
+                list.forEach { showtime ->
+                    val dateStr = showtime.showDate?.take(10) ?: return@forEach
+                    if (!dateMap.containsKey(dateStr)) {
+                        val dateObj = try { isoFormat.parse(dateStr) } catch (e: Exception) { null }
+                        if (dateObj != null) {
+                            dateMap[dateStr] = ShowDate(
+                                id = dateStr,
+                                day = dayFormat.format(dateObj),
+                                month = monthFormat.format(dateObj),
+                                dayOfWeek = dowFormat.format(dateObj),
+                                year = yearFormat.format(dateObj),
+                                isSelected = false
+                            )
+                        }
+                    }
+                }
+
+                val sortedDates = dateMap.values.toList().sortedBy { it.id }
+                _dates.value = sortedDates
+                
+                if (sortedDates.isNotEmpty()) {
+                    selectDate(sortedDates[0].id)
+                } else {
+                    _showtimes.value = emptyList()
+                    _isLoading.value = false
+                }
             }
+        }
+    }
+
+    fun selectDate(dateId: String) {
+        _dates.update { list -> list.map { it.copy(isSelected = it.id == dateId) } }
+        
+        val filteredTimes = _allShowtimes.value.filter { it.showDate?.startsWith(dateId) == true }
+        _showtimes.value = filteredTimes.map { showtime ->
+            showtime.copy(isSelected = false)
+        }
+        
+        if (filteredTimes.isNotEmpty()) {
+            loadSeats(filteredTimes[0].id)
+        } else {
+            _seats.value = emptyList()
+            _selectedSeats.value = emptyList()
+            _totalPrice.value = 0
+            _appliedPromotion.value = null
+            _useScore.value = false
+            _scoreToRedeem.value = 0
+            _scoreError.value = null
+            recalculateTotals()
+            _isLoading.value = false
         }
     }
 

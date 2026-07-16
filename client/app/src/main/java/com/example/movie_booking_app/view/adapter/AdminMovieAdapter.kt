@@ -38,12 +38,16 @@ class AdminMovieAdapter(
         fun bind(movie: Movie) {
             tvTitle.text = movie.movieName
             tvDuration.text = "${movie.duration ?: 0} mins"
-            
+
             Glide.with(itemView.context)
                 .load(movie.poster)
                 .placeholder(R.color.card_dark)
                 .error(android.R.drawable.ic_menu_report_image)
                 .into(ivPoster)
+
+            val isInactive = movie.isDeleted == true
+            btnDelete.visibility = if (isInactive) View.GONE else View.VISIBLE
+            btnDelete.isEnabled = !isInactive
 
             btnEdit.setOnClickListener { onEditClick(movie) }
             btnDelete.setOnClickListener { onDeleteClick(movie) }

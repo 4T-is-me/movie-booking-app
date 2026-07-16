@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Staff
 import com.example.movie_booking_app.databinding.FragmentAdminStaffBinding
 import com.example.movie_booking_app.view.activity.AdminStaffActivity
@@ -20,6 +21,7 @@ import com.example.movie_booking_app.viewmodel.admin.AdminStaffViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 @AndroidEntryPoint
 class AdminStaffFragment : Fragment() {
@@ -92,15 +94,15 @@ class AdminStaffFragment : Fragment() {
 
     private fun showDeleteConfirmationDialog(staff: Staff) {
         val dialog = android.app.Dialog(requireContext())
-        dialog.setContentView(com.example.movie_booking_app.R.layout.dialog_confirm_delete_staff)
+        dialog.setContentView(R.layout.dialog_confirm_delete_staff)
         dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
         dialog.setCancelable(true)
 
-        val tvDeleteMessage = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDeleteMessage)
-        val btnCancel = dialog.findViewById<com.google.android.material.button.MaterialButton>(com.example.movie_booking_app.R.id.btnCancelDelete)
-        val btnConfirm = dialog.findViewById<com.google.android.material.button.MaterialButton>(com.example.movie_booking_app.R.id.btnConfirmDelete)
+        val tvDeleteMessage = dialog.findViewById<android.widget.TextView>(R.id.tvDeleteMessage)
+        val btnCancel = dialog.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnCancelDelete)
+        val btnConfirm = dialog.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnConfirmDelete)
 
-        tvDeleteMessage.text = "Are you sure you want to delete employee \"${staff.fullName}\"?"
+        tvDeleteMessage.text = getString(R.string.admin_confirm_delete_staff_msg, staff.fullName ?: "")
 
         btnCancel.setOnClickListener {
             dialog.dismiss()
@@ -116,37 +118,37 @@ class AdminStaffFragment : Fragment() {
 
     private fun showStaffDetailDialog(staff: Staff) {
         val dialog = android.app.Dialog(requireContext())
-        dialog.setContentView(com.example.movie_booking_app.R.layout.dialog_detail_staff)
+        dialog.setContentView(R.layout.dialog_detail_staff)
         dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
         dialog.setCancelable(true)
 
-        val tvDetailUsername = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailUsername)
-        val tvDetailFullName = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailFullName)
-        val tvDetailPosition = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailPosition)
-        val tvDetailEmail = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailEmail)
-        val tvDetailPhone = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailPhone)
-        val tvDetailDob = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailDob)
-        val tvDetailGender = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailGender)
-        val tvDetailIdentityCard = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailIdentityCard)
-        val tvDetailAddress = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailAddress)
-        val tvDetailSalary = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailSalary)
-        val tvDetailStartDate = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailStartDate)
-        val tvDetailKpi = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailKpi)
-        val tvDetailTicketSold = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailTicketSold)
-        val tvDetailRating = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDetailRating)
-        val btnClose = dialog.findViewById<com.google.android.material.button.MaterialButton>(com.example.movie_booking_app.R.id.btnCloseDetail)
+        val tvDetailUsername = dialog.findViewById<android.widget.TextView>(R.id.tvDetailUsername)
+        val tvDetailFullName = dialog.findViewById<android.widget.TextView>(R.id.tvDetailFullName)
+        val tvDetailPosition = dialog.findViewById<android.widget.TextView>(R.id.tvDetailPosition)
+        val tvDetailEmail = dialog.findViewById<android.widget.TextView>(R.id.tvDetailEmail)
+        val tvDetailPhone = dialog.findViewById<android.widget.TextView>(R.id.tvDetailPhone)
+        val tvDetailDob = dialog.findViewById<android.widget.TextView>(R.id.tvDetailDob)
+        val tvDetailGender = dialog.findViewById<android.widget.TextView>(R.id.tvDetailGender)
+        val tvDetailIdentityCard = dialog.findViewById<android.widget.TextView>(R.id.tvDetailIdentityCard)
+        val tvDetailAddress = dialog.findViewById<android.widget.TextView>(R.id.tvDetailAddress)
+        val tvDetailSalary = dialog.findViewById<android.widget.TextView>(R.id.tvDetailSalary)
+        val tvDetailStartDate = dialog.findViewById<android.widget.TextView>(R.id.tvDetailStartDate)
+        val tvDetailKpi = dialog.findViewById<android.widget.TextView>(R.id.tvDetailKpi)
+        val tvDetailTicketSold = dialog.findViewById<android.widget.TextView>(R.id.tvDetailTicketSold)
+        val tvDetailRating = dialog.findViewById<android.widget.TextView>(R.id.tvDetailRating)
+        val btnClose = dialog.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnCloseDetail)
 
-        tvDetailUsername.text = staff.username ?: "-"
-        tvDetailFullName.text = staff.fullName ?: "-"
-        tvDetailPosition.text = staff.position ?: "-"
-        tvDetailEmail.text = staff.email ?: "-"
-        tvDetailPhone.text = staff.phone ?: "-"
-        tvDetailDob.text = staff.dob?.take(10) ?: "-"
-        tvDetailGender.text = staff.gender ?: "-"
-        tvDetailIdentityCard.text = staff.identityCard ?: "-"
-        tvDetailAddress.text = staff.address ?: "-"
-        tvDetailSalary.text = staff.salary?.let { String.format("%,.0f đ", it) } ?: "-"
-        tvDetailStartDate.text = staff.startDate?.take(10) ?: "-"
+        tvDetailUsername.text = staff.username ?: getString(R.string.user_name_placeholder)
+        tvDetailFullName.text = staff.fullName ?: getString(R.string.user_name_placeholder)
+        tvDetailPosition.text = staff.position ?: getString(R.string.user_name_placeholder)
+        tvDetailEmail.text = staff.email ?: getString(R.string.user_name_placeholder)
+        tvDetailPhone.text = staff.phone ?: getString(R.string.user_name_placeholder)
+        tvDetailDob.text = staff.dob?.take(10) ?: getString(R.string.user_name_placeholder)
+        tvDetailGender.text = staff.gender ?: getString(R.string.user_name_placeholder)
+        tvDetailIdentityCard.text = staff.identityCard ?: getString(R.string.user_name_placeholder)
+        tvDetailAddress.text = staff.address ?: getString(R.string.user_name_placeholder)
+        tvDetailSalary.text = staff.salary?.let { String.format(Locale.getDefault(), getString(R.string.admin_currency_format), it) } ?: getString(R.string.user_name_placeholder)
+        tvDetailStartDate.text = staff.startDate?.take(10) ?: getString(R.string.user_name_placeholder)
         tvDetailKpi.text = staff.kpiPoints?.toString() ?: "0"
         tvDetailTicketSold.text = staff.ticketSold?.toString() ?: "0"
         tvDetailRating.text = staff.rating?.toString() ?: "0.0"
@@ -205,11 +207,11 @@ class AdminStaffFragment : Fragment() {
 
     private fun updateTabStyle(tabView: android.widget.TextView, isActive: Boolean) {
         if (isActive) {
-            tabView.setBackgroundResource(com.example.movie_booking_app.R.drawable.bg_tab_active)
-            tabView.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), com.example.movie_booking_app.R.color.black))
+            tabView.setBackgroundResource(R.drawable.bg_tab_active)
+            tabView.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.black))
         } else {
             tabView.background = null
-            tabView.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), com.example.movie_booking_app.R.color.text_gray))
+            tabView.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.text_gray))
         }
     }
 

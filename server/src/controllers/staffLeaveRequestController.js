@@ -1,5 +1,5 @@
 import { StaffLeaveRequestService } from "../services/staffLeaveRequestService.js";
-
+import { StatusCodes } from "http-status-codes";
 const createLeaveRequest = async(req, res, next) => {
     try {
         const accountId = req.user.accountId
@@ -43,9 +43,9 @@ const getReplacementShifts = async (req, res, next) => {
 const acceptReplacementShift = async (req, res, next) => {
     try {
         const accountId = req.user.accountId;
-        const {shiftId} = req.params;
+        const {id} = req.params;
 
-        const data = await StaffLeaveRequestService.acceptReplacementShift(accountId, shiftId);
+        const data = await StaffLeaveRequestService.acceptReplacementShift(accountId, id);
         return res.status(StatusCodes.OK).json({
             success: true,
             message: "Successfully accept replacement shift."
@@ -56,9 +56,28 @@ const acceptReplacementShift = async (req, res, next) => {
     }
 }
 
+const getStaffShifts = async (req, res, next) => {
+    try {
+        const accountId = req.user.accountId;
+        const filter = req.query; // { startDate, endDate }
+        console.log(`[API GET Shifts] Request from accountId: ${accountId}, query:`, filter);
+        const data = await StaffLeaveRequestService.getStaffShifts(accountId, filter);
+        console.log(`[API GET Shifts] Found ${data ? data.length : 0} shifts for accountId: ${accountId}`);
+
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            message: "Successfully get staff shifts.",
+            data
+        })
+    } catch (error) {
+        console.error(`[API GET Shifts] Error:`, error);
+        next(error);
+    }
+}
 
 export const staffLeaveRequestController = {
     createLeaveRequest,
     getReplacementShifts,
-    acceptReplacementShift
+    acceptReplacementShift,
+    getStaffShifts
 }

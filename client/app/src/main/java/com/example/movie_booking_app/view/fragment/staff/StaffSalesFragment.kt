@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.FragmentStaffSalesBinding
+import com.example.movie_booking_app.view.adapter.DateAdapter
 import com.example.movie_booking_app.view.adapter.SeatAdapter
 import com.example.movie_booking_app.view.adapter.StaffMovieAdapter
 import com.example.movie_booking_app.view.adapter.TimeAdapter
@@ -34,6 +35,7 @@ class StaffSalesFragment : Fragment() {
     private val viewModel: StaffSalesViewModel by viewModels()
 
     private lateinit var movieAdapter: StaffMovieAdapter
+    private lateinit var dateAdapter: DateAdapter
     private lateinit var timeAdapter: TimeAdapter
     private lateinit var seatAdapter: SeatAdapter
     private lateinit var promotionAdapter: StaffPromotionAdapter
@@ -50,6 +52,7 @@ class StaffSalesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupAdapters()
+        setupLegend()
         setupListeners()
         observeViewModel()
 
@@ -62,6 +65,12 @@ class StaffSalesFragment : Fragment() {
             viewModel.selectMovie(movie)
         }
         binding.rvMoviesGrid.adapter = movieAdapter
+
+        // Date Adapter
+        dateAdapter = DateAdapter { date ->
+            viewModel.selectDate(date.id)
+        }
+        binding.rvDates.adapter = dateAdapter
 
         // Showtime Adapter
         timeAdapter = TimeAdapter { showtime ->
@@ -81,6 +90,23 @@ class StaffSalesFragment : Fragment() {
             binding.edtPromoCode.setText(promo.discountCode)
         }
         binding.rvAvailablePromotions.adapter = promotionAdapter
+    }
+
+    private fun setupLegend() {
+        binding.legendAvailable.tvLegendLabel.text = getString(R.string.legend_available)
+        binding.legendAvailable.viewSwatch.setBackgroundResource(R.drawable.bg_seat_available)
+
+        binding.legendVip.tvLegendLabel.text = getString(R.string.legend_vip)
+        binding.legendVip.viewSwatch.setBackgroundResource(R.drawable.bg_seat_vip)
+
+        binding.legendCouple.tvLegendLabel.text = getString(R.string.legend_couple)
+        binding.legendCouple.viewSwatch.setBackgroundResource(R.drawable.bg_seat_couple)
+
+        binding.legendSold.tvLegendLabel.text = getString(R.string.legend_sold)
+        binding.legendSold.viewSwatch.setBackgroundResource(R.drawable.bg_seat_sold)
+
+        binding.legendSelected.tvLegendLabel.text = getString(R.string.legend_selected)
+        binding.legendSelected.viewSwatch.setBackgroundResource(R.drawable.bg_seat_selected)
     }
 
     private fun setupListeners() {
@@ -192,6 +218,13 @@ class StaffSalesFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.movies.collectLatest { movies ->
                 movieAdapter.submitList(movies)
+            }
+        }
+
+        // Observe Dates Flow
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.dates.collectLatest { dates ->
+                dateAdapter.submitList(dates)
             }
         }
 

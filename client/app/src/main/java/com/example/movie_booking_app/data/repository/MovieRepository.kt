@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
     fun getMovies(): Flow<List<Movie>>
-    fun getAdminMovies(): Flow<List<Movie>>
+    fun getAdminMovies(status: String? = null): Flow<List<Movie>>
     fun searchMovies(query: String): Flow<List<Movie>>
     fun getPromos(): Flow<List<Promo>>
     fun getServices(): Flow<List<Service>>
