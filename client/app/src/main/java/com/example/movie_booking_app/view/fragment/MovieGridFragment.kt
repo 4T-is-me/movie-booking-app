@@ -101,7 +101,7 @@ class MovieGridFragment : Fragment() {
             binding.shimmerGrid.startShimmer()
             binding.rvFullList.visibility = View.GONE
             
-            // Lấy tất cả phim (mặc định 100 phim từ Repository) và lọc tại Client để đảm bảo hiển thị đúng
+            // Fetch all movies (default 100 from Repository) and filter on Client side to ensure correct display
             movieRepository.getMovies().collect { allMovies ->
                 val filtered = allMovies.filter {
                     val s = it.status?.lowercase() ?: ""

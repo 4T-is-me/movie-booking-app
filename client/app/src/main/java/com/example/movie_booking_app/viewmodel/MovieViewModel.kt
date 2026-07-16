@@ -117,7 +117,7 @@ class MovieViewModel @Inject constructor(
             ) { movies, promos, services, news ->
                 val list = mutableListOf<HomeItem>()
                 
-                // Now Playing Section: Lọc linh hoạt tại Client
+                // Now Playing Section: Flexible filtering on Client side
                 val nowPlaying = movies.filter {
                     val s = it.status?.lowercase() ?: ""
                     (s.contains("showing") || s == "active" || s == "now_showing")
@@ -127,7 +127,7 @@ class MovieViewModel @Inject constructor(
                     isLoading = nowPlaying.isEmpty() && promos.isEmpty()
                 ))
                 
-                // Coming Soon Section: Lọc linh hoạt tại Client
+                // Coming Soon Section: Flexible filtering on Client side
                 val comingSoon = movies.filter {
                     val s = it.status?.lowercase() ?: ""
                     (s.contains("coming") || s.contains("soon") || s == "upcoming" || s == "inactive")

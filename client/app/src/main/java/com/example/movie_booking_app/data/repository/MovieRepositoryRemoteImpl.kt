@@ -29,7 +29,7 @@ class MovieRepositoryRemoteImpl @Inject constructor(
 
     override fun getMovies(status: String?, page: Int?, limit: Int?): Flow<List<Movie>> = flow {
         try {
-            // Sử dụng 100 làm limit mặc định để đảm bảo lấy đủ phim cho cả Now Playing và Coming Soon
+            // Use 100 as default limit to ensure enough movies for both Now Playing and Coming Soon sections
             val response = api.getMovies(status, page, limit ?: 100)
             if (response.isSuccessful) {
                 val data = response.body()?.data ?: emptyList()
