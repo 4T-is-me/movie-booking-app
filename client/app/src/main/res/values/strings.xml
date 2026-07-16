@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name">MovieBookingApp</string>
     <string name="hi_user">Hi, %1$s 👋</string>
     <string name="welcome_back">Welcome back</string>
@@ -652,6 +652,63 @@
     <string name="auto_str_save">Save</string>
     <string name="auto_str_add_new_employee">Add New Employee</string>
     <string name="auto_str_save_1">Save</string>
+
+    <!-- Admin Staff & Member Management Strings -->
+    <string name="admin_staff_members_title">Staff &amp; Members</string>
+    <string name="admin_settings_title">Settings</string>
+    <string name="admin_tab_employees">Employees</string>
+    <string name="admin_tab_members">Members</string>
+    <string name="admin_tab_active">Active</string>
+    <string name="admin_tab_inactive">Inactive</string>
+    <string name="admin_search_staff_hint">Search by name or email...</string>
+    <string name="admin_delete_member">Delete Member</string>
+    <string name="admin_reactivate_member">Reactivate Member</string>
+    <string name="admin_delete">Delete</string>
+    <string name="admin_reactivate">Reactivate</string>
+    <string name="admin_cancel">Cancel</string>
+    <string name="admin_close">Close</string>
+    <string name="admin_confirm_unlock_msg">Are you sure you want to reactivate the account for \"%1$s\"?</string>
+    <string name="admin_confirm_delete_member_msg">Are you sure you want to delete member \"%1$s\"?</string>
+    <string name="admin_confirm_delete_staff_msg">Are you sure you want to delete employee \"%1$s\"?</string>
+    <string name="admin_currency_format">%,.0f đ</string>
+    <string name="admin_current_points_preview">Current Points: %1$s</string>
+    <string name="admin_new_points_preview">New Points: %1$s</string>
+    <string name="admin_error_enter_adjustment">Enter adjustment</string>
+    <string name="admin_error_cannot_be_zero">Cannot be 0</string>
+    <string name="admin_error_total_less_than_zero">New total &lt; 0</string>
+    <string name="admin_error_reason_required">Reason required</string>
+    <string name="admin_default_rank">Bronze</string>
+    <string name="admin_member_details">Member Details</string>
+    <string name="admin_points_label">Points</string>
+    <string name="admin_adjust_loyalty_points">Adjust Loyalty Points</string>
+    <string name="admin_adjustment_label">Adjustment (+/-)</string>
+    <string name="admin_reason_label">Reason</string>
+    <string name="admin_confirm_label">Confirm</string>
+    <string name="admin_member_detail_desc">Member Detail</string>
+    <string name="admin_adjust_score_desc">Adjust Score</string>
+    <string name="admin_toggle_status_desc">Toggle Status</string>
+    <string name="admin_rank_label">Rank</string>
+    <string name="admin_reward_points_label">Reward Points</string>
+    <string name="admin_total_spent_label">Total Spent</string>
+    <string name="admin_success_employee_added">Employee added successfully!</string>
+    <string name="admin_success_employee_updated">Employee updated successfully!</string>
+    <string name="admin_success_employee_disabled">Employee account disabled!</string>
+    <string name="admin_success_employee_reactivated">Employee account reactivated!</string>
+    <string name="admin_success_points_adjusted">Points adjusted!</string>
+    <string name="admin_success_member_activated">Member activated!</string>
+    <string name="admin_success_member_deleted">Member deleted!</string>
+    <string name="admin_error_points_negative">Total points cannot be less than 0</string>
+    <string name="admin_error_failed_add_employee">Failed to add employee</string>
+    <string name="admin_error_failed_update_employee">Failed to update employee</string>
+    <string name="admin_error_failed_disable_account">Failed to disable account</string>
+    <string name="admin_error_network">Network connection error</string>
+    <string name="admin_username">Username</string>
+    <string name="admin_full_name">Full Name</string>
+    <string name="admin_email">Email</string>
+    <string name="admin_phone_number">Phone Number</string>
+    <string name="admin_identity_card">Identity Card</string>
+    <string name="admin_address">Address</string>
+    <string name="admin_actions">Actions</string>
 
     <string name="status_pending">PENDING</string>
     <string name="status_approved">APPROVED</string>
