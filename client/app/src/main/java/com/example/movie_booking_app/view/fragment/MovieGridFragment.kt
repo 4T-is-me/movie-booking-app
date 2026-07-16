@@ -101,8 +101,9 @@ class MovieGridFragment : Fragment() {
             binding.shimmerGrid.startShimmer()
             binding.rvFullList.visibility = View.GONE
             
+            // Fetch all movies (default 100 from Repository) and filter on Client side to ensure correct display
             movieRepository.getMovies().collect { allMovies ->
-                val filtered = allMovies.filter { 
+                val filtered = allMovies.filter {
                     val s = it.status?.lowercase() ?: ""
                     if (isNowPlaying) {
                         s.contains("showing") || s == "active" || s == "now_showing"

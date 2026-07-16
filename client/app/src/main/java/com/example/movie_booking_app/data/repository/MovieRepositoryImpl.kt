@@ -1,11 +1,12 @@
-//package com.example.movie_booking_app.data.repository
-//
+package com.example.movie_booking_app.data.repository
+
 //import com.example.movie_booking_app.data.model.entity.Cinema
 //import com.example.movie_booking_app.data.model.entity.Movie
 //import com.example.movie_booking_app.data.model.entity.Showtime
 //import com.example.movie_booking_app.data.model.entity.MovieNews
 //import com.example.movie_booking_app.data.model.entity.Promo
 //import com.example.movie_booking_app.data.model.entity.Service
+//import com.example.movie_booking_app.data.model.response.ReviewItem
 //import kotlinx.coroutines.flow.Flow
 //import kotlinx.coroutines.flow.flow
 //
@@ -28,9 +29,29 @@
 //        Showtime("s3", "2", mockCinemas[0], "R1", "2026-07-25", "2026-07-25T10:00:00.000Z", "2026-07-25T12:00:00.000Z")
 //    )
 //
-//    override fun getMovies(): Flow<List<Movie>> = flow { emit(mockMovies) }
+//    override fun getMovies(status: String?, page: Int?, limit: Int?): Flow<List<Movie>> = flow {
+//        var filtered = mockMovies
+//        if (status != null) {
+//            filtered = filtered.filter {
+//                val s = it.status?.lowercase() ?: ""
+//                when (status) {
+//                    "now_showing" -> s.contains("showing") || s == "active" || s == "now_showing"
+//                    "coming_soon" -> s.contains("coming") || s.contains("soon") || s == "upcoming" || s == "inactive"
+//                    else -> true
+//                }
+//            }
+//        }
+//        val finalResult = if (limit != null) filtered.take(limit) else filtered
+//        emit(finalResult)
+//    }
 //
-//    override fun getAdminMovies(): Flow<List<Movie>> = flow { emit(mockMovies) }
+//    override fun getAdminMovies(status: String?): Flow<List<Movie>> = flow {
+//        var filtered = mockMovies
+//        if (status != null) {
+//            filtered = filtered.filter { it.status == status }
+//        }
+//        emit(filtered)
+//    }
 //
 //    override fun searchMovies(query: String): Flow<List<Movie>> = flow {
 //        val filtered = mockMovies.filter {
@@ -71,5 +92,5 @@
 //    override suspend fun updateMovie(id: String, request: com.example.movie_booking_app.data.model.request.UpdateMovieRequest, posterFile: java.io.File?): Boolean = true
 //    override suspend fun deleteMovie(id: String): Boolean = true
 //    override suspend fun submitReview(movieId: String, rating: Int, comment: String): Boolean = true
-//    override suspend fun getMovieReviews(movieId: String, page: Int, limit: Int): List<com.example.movie_booking_app.data.model.response.ReviewItem> = emptyList()
+//    override suspend fun getMovieReviews(movieId: String, page: Int, limit: Int): List<ReviewItem> = emptyList()
 //}
