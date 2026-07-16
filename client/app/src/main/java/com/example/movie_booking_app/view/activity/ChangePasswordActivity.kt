@@ -108,20 +108,23 @@ class ChangePasswordActivity : AppCompatActivity() {
                     updateValidationCard(state)
                     updateInlineErrors(state)
                     
-                    binding.btnUpdatePassword.isEnabled = !state.isLoading
+                    binding.btnUpdatePassword.isEnabled = !state.isLoading && state.confirmMatches
 
                     if (state.isSuccess) {
-                        Toast.makeText(this@ChangePasswordActivity, "Password changed successfully.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@ChangePasswordActivity, getString(R.string.success_password_updated), Toast.LENGTH_SHORT).show()
                         binding.edtCurrentPassword.setText("")
                         binding.edtNewPassword.setText("")
                         binding.edtConfirmPassword.setText("")
+                        binding.edtCurrentPassword.clearFocus()
+                        binding.edtNewPassword.clearFocus()
+                        binding.edtConfirmPassword.clearFocus()
                         hideKeyboard()
                         viewModel.resetState()
                         finish()
                     }
 
                     if (state.error != null) {
-                        showError(state.error)
+                        showError(getString(state.error))
                     }
 
                     if (state.isUnauthorized) {
@@ -141,7 +144,7 @@ class ChangePasswordActivity : AppCompatActivity() {
             binding.btnUpdatePassword.text = ""
             binding.progressLoading.visibility = View.VISIBLE
         } else {
-            binding.btnUpdatePassword.text = "Update password"
+            binding.btnUpdatePassword.text = getString(R.string.auto_str_update_password)
             binding.progressLoading.visibility = View.GONE
         }
     }
@@ -195,8 +198,8 @@ class ChangePasswordActivity : AppCompatActivity() {
     private fun updateRequirementItem(isValid: Boolean, iconView: android.widget.ImageView, textView: android.widget.TextView) {
         if (isValid) {
             iconView.setImageResource(R.drawable.ic_check_circle_gold)
-            iconView.imageTintList = null // Use default drawable gold color
-            textView.setTextColor(Color.parseColor("#F5C542"))
+            iconView.imageTintList = ColorStateList.valueOf(Color.parseColor("#34C759"))
+            textView.setTextColor(Color.parseColor("#34C759"))
         } else {
             iconView.setImageResource(R.drawable.ic_circle_gray)
             iconView.imageTintList = ColorStateList.valueOf(Color.parseColor("#808080"))
@@ -205,9 +208,9 @@ class ChangePasswordActivity : AppCompatActivity() {
     }
 
     private fun updateInlineErrors(state: com.example.movie_booking_app.viewmodel.ChangePasswordUiState) {
-        binding.tilCurrentPassword.error = state.currentPasswordError
-        binding.tilNewPassword.error = state.newPasswordError
-        binding.tilConfirmPassword.error = state.confirmPasswordError
+        binding.tilCurrentPassword.error = state.currentPasswordError?.let { getString(it) }
+        binding.tilNewPassword.error = state.newPasswordError?.let { getString(it) }
+        binding.tilConfirmPassword.error = state.confirmPasswordError?.let { getString(it) }
     }
 
     private fun showError(message: String) {
@@ -223,7 +226,7 @@ class ChangePasswordActivity : AppCompatActivity() {
     }
 
     private fun handleSessionExpired() {
-        Toast.makeText(this, "Your session has expired. Please log in again.", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, getString(R.string.error_session_expired), Toast.LENGTH_LONG).show()
         TokenManager.clearTokens(this)
         val sharedPref = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         with(sharedPref.edit()) {
