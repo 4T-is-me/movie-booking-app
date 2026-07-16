@@ -61,7 +61,11 @@ class AdminCinemasFragment : Fragment() {
 
         adapter = CinemasAdapter(
             onCinemaClick = { cinema ->
-                // Future: Navigate to AdminCinemaDetailFragment
+                val fragment = CinemaRoomsFragment.newInstance(cinema.id)
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainer, fragment)
+                    .addToBackStack(null)
+                    .commit()
             }
         )
         rvCinemas.layoutManager = LinearLayoutManager(context)

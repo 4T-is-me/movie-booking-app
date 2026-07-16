@@ -11,7 +11,7 @@ import retrofit2.http.Path
 
 interface CinemaRoomApi {
     @GET("api/admin/rooms")
-    suspend fun getRooms(): Response<CinemaRoomListResponse>
+    suspend fun getRooms(@retrofit2.http.Query("cinemaId") cinemaId: String? = null): Response<CinemaRoomListResponse>
 
     @GET("api/admin/rooms/{roomId}/seats")
     suspend fun getRoomSeats(@Path("roomId") roomId: String): Response<SeatListResponse>
