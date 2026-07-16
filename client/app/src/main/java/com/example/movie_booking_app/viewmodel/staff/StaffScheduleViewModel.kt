@@ -32,7 +32,17 @@ class StaffScheduleViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             repository.getStaffShifts(startDate, endDate).collect { response ->
-                _shifts.value = response?.data ?: emptyList()
+                val unsortedList = response?.data ?: emptyList()
+                val sortedList = unsortedList.sortedWith(compareBy<ShiftItemResponse> { it.workDate }.thenBy { 
+                    when (it.shift) {
+                        "Morning" -> 1
+                        "Afternoon" -> 2
+                        "Evening" -> 3
+                        "Night" -> 4
+                        else -> 5
+                    }
+                })
+                _shifts.value = sortedList
                 _isLoading.value = false
             }
         }
