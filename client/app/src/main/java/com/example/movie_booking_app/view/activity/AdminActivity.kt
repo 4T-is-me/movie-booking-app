@@ -63,7 +63,7 @@ class AdminActivity : BaseActivity() {
                 }
                 R.id.nav_employees -> {
                     tvHeaderTitle.text = "Staff & Members"
-                    loadFragment(AdminStaffTabsFragment())
+                    loadFragment(AdminStaffTabsFragment.newInstance(0))
                 }
                 R.id.nav_rooms -> {
                     tvHeaderTitle.text = "Cinema Rooms"
@@ -75,7 +75,7 @@ class AdminActivity : BaseActivity() {
                 }
                 R.id.nav_members -> {
                     tvHeaderTitle.text = "Staff & Members"
-                    loadFragment(AdminStaffTabsFragment())
+                    loadFragment(AdminStaffTabsFragment.newInstance(1))
                 }
                 R.id.nav_settings -> {
                     tvHeaderTitle.text = "Settings"
