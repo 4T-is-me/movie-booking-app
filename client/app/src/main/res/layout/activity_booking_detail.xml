@@ -292,7 +292,7 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Food & Drinks Card -->
+            <!-- Food & Drinks / Selected Combo Card -->
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardCombos"
                 android:layout_width="match_parent"
@@ -312,11 +312,22 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/auto_str_food_amp_drinks"
+                        android:text="@string/booking_detail_selected_combo"
                         android:textColor="@color/auto_color_F5C542"
                         android:textSize="12sp"
                         android:textStyle="bold"
                         android:layout_marginBottom="12dp" />
+
+                    <!-- None State -->
+                    <TextView
+                        android:id="@+id/tvNoCombo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/booking_detail_combo_none"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
 
                     <!-- Combo Container -->
                     <LinearLayout
@@ -324,6 +335,43 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical" />
+
+                    <!-- Divider -->
+                    <View
+                        android:id="@+id/dividerCombo"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/auto_color_22FFFFFF"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="12dp"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+
+                    <!-- Combo Total Layout -->
+                    <LinearLayout
+                        android:id="@+id/layoutComboTotal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:visibility="gone"
+                        tools:visibility="visible">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/booking_detail_combo_total"
+                            android:textColor="@color/white"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/tvComboTotal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/auto_color_F5C542"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:gravity="end"
+                            tools:text="280,000 VND" />
+                    </LinearLayout>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

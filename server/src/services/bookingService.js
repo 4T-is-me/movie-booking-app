@@ -524,6 +524,12 @@ const handleGetbookingDetail = async (bookingId, accountId) => {
       seatType: seat.seatType || "",
       price: seat.price || 0
     })),
+    combos: (booking.combos || []).map(combo => ({
+      name: combo.name || "",
+      quantity: combo.quantity || 0,
+      price: combo.price || 0,
+      subtotal: (combo.price || 0) * (combo.quantity || 0)
+    })),
     payment: {
       ticketPrice: booking.ticketPrice || 0,
       comboPrice: booking.comboPrice || 0,
