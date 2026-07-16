@@ -178,10 +178,10 @@
                     android:columnCount="2"
                     android:rowCount="2"
                     android:layout_marginBottom="16dp">
-                    <Button android:id="@+id/layoutSchedule" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:layout_margin="4dp" android:text="@string/auto_str_schedule" android:backgroundTint="#1AA855F7" android:textColor="@color/auto_color_FFFFFF" app:icon="@drawable/ic_calendar_month_24" app:iconTint="#A855F7" android:textAlignment="textStart"/>
-                    <Button android:id="@+id/layoutRooms" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:layout_margin="4dp" android:text="@string/auto_str_rooms" android:backgroundTint="#1A60A5FA" android:textColor="@color/auto_color_FFFFFF" app:iconTint="#60A5FA"  app:icon="@drawable/ic_room" android:textAlignment="textStart"/>
-                    <Button android:id="@+id/layoutStaff" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:layout_margin="4dp" android:text="@string/auto_str_staff" android:backgroundTint="#1A10B981" android:textColor="@color/auto_color_FFFFFF" app:iconTint="#10B981" app:icon="@drawable/ic_staff" android:textAlignment="textStart"/>
-                    <Button android:id="@+id/layoutReports" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:layout_margin="4dp" android:text="@string/auto_str_reports" android:backgroundTint="#1AD4AF37" android:textColor="@color/auto_color_FFFFFF" app:iconTint="#D4AF37" app:icon="@drawable/ic_report" android:textAlignment="textStart"/>
+                    <Button android:id="@+id/layoutSchedule" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:layout_margin="4dp" android:text="@string/auto_str_schedule" android:backgroundTint="@color/auto_color_1AA855F7" android:textColor="@color/auto_color_FFFFFF" app:icon="@drawable/ic_calendar_month_24" app:iconTint="@color/auto_color_A855F7" android:textAlignment="textStart"/>
+                    <Button android:id="@+id/layoutRooms" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:layout_margin="4dp" android:text="@string/auto_str_rooms" android:backgroundTint="@color/auto_color_1A60A5FA" android:textColor="@color/auto_color_FFFFFF" app:iconTint="@color/auto_color_60A5FA"  app:icon="@drawable/ic_room" android:textAlignment="textStart"/>
+                    <Button android:id="@+id/layoutStaff" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:layout_margin="4dp" android:text="@string/auto_str_staff" android:backgroundTint="@color/auto_color_1A10B981" android:textColor="@color/auto_color_FFFFFF" app:iconTint="@color/auto_color_10B981" app:icon="@drawable/ic_staff" android:textAlignment="textStart"/>
+                    <Button android:id="@+id/layoutReports" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_columnWeight="1" android:layout_margin="4dp" android:text="@string/auto_str_reports" android:backgroundTint="@color/auto_color_1AD4AF37" android:textColor="@color/auto_color_FFFFFF" app:iconTint="@color/auto_color_D4AF37" app:icon="@drawable/ic_report" android:textAlignment="textStart"/>
                 </GridLayout>
 
                 <!-- Today's Showtimes Placeholder -->
@@ -284,8 +284,8 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="@color/admin_bg"
-        app:itemTextColor="#CBD5E1"
-        app:itemIconTint="#CBD5E1"
+        app:itemTextColor="@color/auto_color_CBD5E1"
+        app:itemIconTint="@color/auto_color_CBD5E1"
         app:headerLayout="@layout/nav_manager_header"
         app:menu="@menu/manager_drawer_menu" />
 

@@ -4,7 +4,7 @@
     xmlns:tools="http://tools.android.com/apk/res/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#090B13">
+    android:background="@color/auto_color_090B13">
 
     <!-- Header Toolbar -->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -38,7 +38,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:text="Back"
+                android:text="@string/auto_str_back"
                 android:textColor="@color/white"
                 android:textSize="16sp" />
         </LinearLayout>
@@ -47,7 +47,7 @@
             android:id="@+id/tvHeaderTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="SELECT MOVIE &amp; SHOWTIME"
+            android:text="@string/auto_str_select_movie_amp_showtime"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -61,7 +61,7 @@
             android:id="@+id/tvStepText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1 of 4"
+            android:text="@string/auto_str_1_of_4"
             android:textColor="@color/gold_selected"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -108,7 +108,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    app:cardBackgroundColor="#0D1120"
+                    app:cardBackgroundColor="@color/auto_color_0D1120"
                     app:strokeColor="@color/admin_gold_transparent"
                     app:strokeWidth="1dp"
                     app:cardCornerRadius="12dp">
@@ -179,7 +179,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Select Date"
+                    android:text="@string/auto_str_select_date"
                     android:textColor="@color/white"
                     android:textSize="13sp"
                     android:textStyle="bold" />
@@ -198,7 +198,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Select Showtime"
+                    android:text="@string/auto_str_select_showtime"
                     android:textColor="@color/white"
                     android:textSize="13sp"
                     android:textStyle="bold" />
@@ -219,7 +219,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:gravity="center"
-                    android:text="SCREEN"
+                    android:text="@string/auto_str_screen"
                     android:textColor="@color/white"
                     android:textSize="13sp"
                     android:textStyle="bold"
@@ -285,7 +285,7 @@
                         android:id="@+id/tvSelectedSeats"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Selected seats: None"
+                        android:text="@string/auto_str_selected_seats_none"
                         android:textColor="@color/white"
                         android:textSize="13sp" />
 
@@ -294,7 +294,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Subtotal: 0 đ"
+                        android:text="@string/auto_str_subtotal_0"
                         android:textColor="@color/gold_selected"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -322,7 +322,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    app:cardBackgroundColor="#0D1120"
+                    app:cardBackgroundColor="@color/auto_color_0D1120"
                     app:strokeColor="@color/admin_gold_transparent"
                     app:strokeWidth="1dp"
                     app:cardCornerRadius="12dp">
@@ -336,7 +336,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="ORDER SUMMARY"
+                            android:text="@string/auto_str_order_summary"
                             android:textColor="@color/admin_text_secondary"
                             android:textSize="11sp"
                             android:textStyle="bold" />
@@ -376,7 +376,7 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardBackgroundColor="#0D1120"
+                    app:cardBackgroundColor="@color/auto_color_0D1120"
                     app:strokeColor="@color/admin_gold_transparent"
                     app:strokeWidth="1dp"
                     app:cardCornerRadius="12dp"
@@ -391,7 +391,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="MEMBER VERIFICATION"
+                            android:text="@string/auto_str_member_verification"
                             android:textColor="@color/gold_selected"
                             android:textSize="13sp"
                             android:textStyle="bold" />
@@ -401,7 +401,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
-                            android:hint="Enter Member ID / Phone number / ID"
+                            android:hint="@string/auto_str_enter_member_id_phone_number_i"
                             app:hintTextColor="@color/admin_text_secondary"
                             app:boxStrokeColor="@color/gold_selected"
                             app:placeholderText="Example: 0987654321"
@@ -420,8 +420,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="48dp"
                             android:layout_marginTop="16dp"
-                            android:text="KIỂM TRA (VERIFY)"
-                            android:textColor="#0D1120"
+                            android:text="@string/auto_str_ki_m_tra_verify"
+                            android:textColor="@color/auto_color_0D1120"
                             android:textStyle="bold"
                             app:backgroundTint="@color/gold_selected"
                             app:cornerRadius="8dp" />
@@ -434,8 +434,8 @@
                     android:id="@+id/cardMemberResult"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardBackgroundColor="#0D1120"
-                    app:strokeColor="#2E7D32"
+                    app:cardBackgroundColor="@color/auto_color_0D1120"
+                    app:strokeColor="@color/auto_color_2E7D32"
                     app:strokeWidth="1.5dp"
                     app:cardCornerRadius="12dp"
                     android:layout_marginBottom="16dp"
@@ -457,14 +457,14 @@
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:src="@android:drawable/checkbox_on_background"
-                                app:tint="#2E7D32" />
+                                app:tint="@color/auto_color_2E7D32" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="8dp"
-                                android:text="MEMBER VERIFIED"
-                                android:textColor="#2E7D32"
+                                android:text="@string/auto_str_member_verified"
+                                android:textColor="@color/auto_color_2E7D32"
                                 android:textSize="12sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
@@ -472,7 +472,7 @@
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:background="#2E7D32"
+                            android:background="@color/auto_color_2E7D32"
                             android:alpha="0.3"
                             android:layout_marginVertical="12dp" />
 
@@ -512,7 +512,7 @@
                     android:id="@+id/tvMemberError"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="#C62828"
+                    android:textColor="@color/auto_color_C62828"
                     android:textSize="13sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="16dp"
@@ -525,8 +525,8 @@
                     android:id="@+id/cardWalkInAlert"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardBackgroundColor="#1F1A0F"
-                    app:strokeColor="#FF8F00"
+                    app:cardBackgroundColor="@color/auto_color_1F1A0F"
+                    app:strokeColor="@color/auto_color_FF8F00"
                     app:strokeWidth="1dp"
                     app:cardCornerRadius="12dp">
 
@@ -541,7 +541,7 @@
                             android:layout_width="28dp"
                             android:layout_height="28dp"
                             android:src="@android:drawable/ic_dialog_info"
-                            app:tint="#FF8F00" />
+                            app:tint="@color/auto_color_FF8F00" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -552,8 +552,8 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Walk-in Customer Checkout"
-                                android:textColor="#FF8F00"
+                                android:text="@string/auto_str_walk_in_customer_checkout"
+                                android:textColor="@color/auto_color_FF8F00"
                                 android:textSize="13sp"
                                 android:textStyle="bold" />
 
@@ -561,7 +561,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="This order will be processed as a walk-in check-out. No reward points will be accumulated."
+                                android:text="@string/auto_str_this_order_will_be_processed_a"
                                 android:textColor="@color/admin_text_secondary"
                                 android:textSize="11sp" />
                         </LinearLayout>
@@ -590,7 +590,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    app:cardBackgroundColor="#0D1120"
+                    app:cardBackgroundColor="@color/auto_color_0D1120"
                     app:strokeColor="@color/admin_gold_transparent"
                     app:strokeWidth="1dp"
                     app:cardCornerRadius="12dp">
@@ -604,7 +604,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="ORDER SUMMARY"
+                            android:text="@string/auto_str_order_summary_1"
                             android:textColor="@color/admin_text_secondary"
                             android:textSize="11sp"
                             android:textStyle="bold" />
@@ -645,7 +645,7 @@
                     android:id="@+id/cardPointsRedemption"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardBackgroundColor="#0D1120"
+                    app:cardBackgroundColor="@color/auto_color_0D1120"
                     app:strokeColor="@color/admin_gold_transparent"
                     app:strokeWidth="1dp"
                     app:cardCornerRadius="12dp"
@@ -661,7 +661,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="REWARD POINTS REDEMPTION"
+                            android:text="@string/auto_str_reward_points_redemption"
                             android:textColor="@color/gold_selected"
                             android:textSize="13sp"
                             android:textStyle="bold" />
@@ -696,7 +696,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:hint="Points to redeem"
+                            android:hint="@string/auto_str_points_to_redeem"
                             android:visibility="gone"
                             app:hintTextColor="@color/admin_text_secondary"
                             app:boxStrokeColor="@color/gold_selected"
@@ -716,7 +716,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="6dp"
-                            android:textColor="#C62828"
+                            android:textColor="@color/auto_color_C62828"
                             android:textSize="12sp"
                             android:textStyle="bold"
                             android:visibility="gone"
@@ -728,7 +728,7 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardBackgroundColor="#0D1120"
+                    app:cardBackgroundColor="@color/auto_color_0D1120"
                     app:strokeColor="@color/admin_gold_transparent"
                     app:strokeWidth="1dp"
                     app:cardCornerRadius="12dp"
@@ -743,7 +743,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="PROMOTION COUPON"
+                            android:text="@string/auto_str_promotion_coupon"
                             android:textColor="@color/gold_selected"
                             android:textSize="13sp"
                             android:textStyle="bold" />
@@ -760,7 +760,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:hint="Enter coupon code"
+                                android:hint="@string/auto_str_enter_coupon_code_1"
                                 app:hintTextColor="@color/admin_text_secondary"
                                 app:boxStrokeColor="@color/gold_selected"
                                 app:placeholderText="SUMMER20"
@@ -779,8 +779,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="52dp"
                                 android:layout_marginStart="8dp"
-                                android:text="APPLY"
-                                android:textColor="#0D1120"
+                                android:text="@string/auto_str_apply"
+                                android:textColor="@color/auto_color_0D1120"
                                 android:textStyle="bold"
                                 app:backgroundTint="@color/gold_selected"
                                 app:cornerRadius="8dp" />
@@ -792,7 +792,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:textColor="#2E7D32"
+                            android:textColor="@color/auto_color_2E7D32"
                             android:textSize="12sp"
                             android:textStyle="bold"
                             android:visibility="gone"
@@ -803,7 +803,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:textColor="#C62828"
+                            android:textColor="@color/auto_color_C62828"
                             android:textSize="12sp"
                             android:textStyle="bold"
                             android:visibility="gone"
@@ -816,7 +816,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:text="AVAILABLE PROMOTIONS"
+                    android:text="@string/auto_str_available_promotions"
                     android:textColor="@color/white"
                     android:textSize="13sp"
                     android:textStyle="bold" />
@@ -833,7 +833,7 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardBackgroundColor="#1A2D303E"
+                    app:cardBackgroundColor="@color/auto_color_1A2D303E"
                     app:strokeColor="@color/admin_gold_transparent"
                     app:strokeWidth="1dp"
                     app:cardCornerRadius="12dp">
@@ -847,7 +847,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="PRICE BREAKDOWN"
+                            android:text="@string/auto_str_price_breakdown"
                             android:textColor="@color/white"
                             android:textSize="12sp"
                             android:textStyle="bold" />
@@ -866,7 +866,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Original ticket price"
+                                android:text="@string/auto_str_original_ticket_price"
                                 android:textColor="@color/admin_text_secondary"
                                 android:textSize="13sp" />
                             <TextView
@@ -890,14 +890,14 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Promotion discount"
-                                android:textColor="#E5484D"
+                                android:text="@string/auto_str_promotion_discount"
+                                android:textColor="@color/auto_color_E5484D"
                                 android:textSize="13sp" />
                             <TextView
                                 android:id="@+id/tvSummaryPromoDiscount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textColor="#E5484D"
+                                android:textColor="@color/auto_color_E5484D"
                                 android:textSize="13sp"
                                 tools:text="-20.000 đ" />
                         </LinearLayout>
@@ -914,14 +914,14 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Points discount"
-                                android:textColor="#E5484D"
+                                android:text="@string/auto_str_points_discount"
+                                android:textColor="@color/auto_color_E5484D"
                                 android:textSize="13sp" />
                             <TextView
                                 android:id="@+id/tvSummaryPointDiscount"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textColor="#E5484D"
+                                android:textColor="@color/auto_color_E5484D"
                                 android:textSize="13sp"
                                 tools:text="-10.000 đ" />
                         </LinearLayout>
@@ -940,7 +940,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="GRAND TOTAL"
+                                android:text="@string/auto_str_grand_total"
                                 android:textColor="@color/white"
                                 android:textSize="14sp"
                                 android:textStyle="bold" />
@@ -975,7 +975,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="CONFIRM BOOKING"
+                    android:text="@string/auto_str_confirm_booking"
                     android:textColor="@color/white"
                     android:textSize="15sp"
                     android:textStyle="bold"
@@ -985,7 +985,7 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardBackgroundColor="#0D1120"
+                    app:cardBackgroundColor="@color/auto_color_0D1120"
                     app:strokeColor="@color/admin_gold_transparent"
                     app:strokeWidth="1dp"
                     app:cardCornerRadius="12dp"
@@ -1066,7 +1066,7 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardBackgroundColor="#0D1120"
+                    app:cardBackgroundColor="@color/auto_color_0D1120"
                     app:strokeColor="@color/admin_gold_transparent"
                     app:strokeWidth="1dp"
                     app:cardCornerRadius="12dp"
@@ -1081,7 +1081,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="PAYMENT METHOD"
+                            android:text="@string/auto_str_payment_method"
                             android:textColor="@color/gold_selected"
                             android:textSize="13sp"
                             android:textStyle="bold"
@@ -1097,7 +1097,7 @@
                                 android:id="@+id/rbCash"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Cash"
+                                android:text="@string/auto_str_cash"
                                 android:textColor="@color/white"
                                 android:textSize="14sp"
                                 android:checked="true"
@@ -1108,7 +1108,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
-                                android:text="Bank Transfer (QR)"
+                                android:text="@string/auto_str_bank_transfer_qr"
                                 android:textColor="@color/white"
                                 android:textSize="14sp"
                                 android:buttonTint="@color/gold_selected" />
@@ -1120,7 +1120,7 @@
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:cardBackgroundColor="#1A2D303E"
+                    app:cardBackgroundColor="@color/auto_color_1A2D303E"
                     app:strokeColor="@color/admin_gold_transparent"
                     app:strokeWidth="1dp"
                     app:cardCornerRadius="12dp"
@@ -1136,7 +1136,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="TOTAL PAYMENT AMOUNT"
+                            android:text="@string/auto_str_total_payment_amount"
                             android:textColor="@color/admin_text_secondary"
                             android:textSize="11sp"
                             android:textStyle="bold" />
@@ -1156,8 +1156,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="54dp"
                             android:layout_marginTop="16dp"
-                            android:text="CONFIRM CHECKOUT"
-                            android:textColor="#0D1120"
+                            android:text="@string/auto_str_confirm_checkout"
+                            android:textColor="@color/auto_color_0D1120"
                             android:textSize="15sp"
                             android:textStyle="bold"
                             app:backgroundTint="@color/gold_selected"
@@ -1175,7 +1175,7 @@
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:background="#0D1120"
+        android:background="@color/auto_color_0D1120"
         android:paddingHorizontal="16dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
@@ -1207,7 +1207,7 @@
                 android:layout_height="4dp"
                 android:layout_weight="1"
                 android:layout_marginEnd="6dp"
-                android:background="#232A45" />
+                android:background="@color/auto_color_232A45" />
 
             <!-- Step 3 line -->
             <View
@@ -1216,7 +1216,7 @@
                 android:layout_height="4dp"
                 android:layout_weight="1"
                 android:layout_marginEnd="6dp"
-                android:background="#232A45" />
+                android:background="@color/auto_color_232A45" />
 
             <!-- Step 4 line -->
             <View
@@ -1224,7 +1224,7 @@
                 android:layout_width="0dp"
                 android:layout_height="4dp"
                 android:layout_weight="1"
-                android:background="#232A45" />
+                android:background="@color/auto_color_232A45" />
         </LinearLayout>
 
         <!-- Gold Next Button -->
@@ -1232,12 +1232,12 @@
             android:id="@+id/btnNext"
             android:layout_width="120dp"
             android:layout_height="48dp"
-            android:text="NEXT"
-            android:textColor="#0D1120"
+            android:text="@string/auto_str_next"
+            android:textColor="@color/auto_color_0D1120"
             android:textSize="14sp"
             android:textStyle="bold"
             app:icon="@drawable/ic_chevron_right"
-            app:iconTint="#0D1120"
+            app:iconTint="@color/auto_color_0D1120"
             app:iconGravity="textEnd"
             app:backgroundTint="@color/nav_item_colors"
             app:cornerRadius="24dp"

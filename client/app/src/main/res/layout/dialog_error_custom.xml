@@ -17,8 +17,8 @@
         android:id="@+id/tvDialogTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Update Failed"
-        android:textColor="#FF4D4D"
+        android:text="@string/auto_str_update_failed"
+        android:textColor="@color/auto_color_FF4D4D"
         android:textSize="18sp"
         android:textStyle="bold"
         android:layout_marginBottom="8dp" />
@@ -27,8 +27,8 @@
         android:id="@+id/tvDialogMessage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="This staff has already been assigned this shift for the day."
-        android:textColor="#FFFFFF"
+        android:text="@string/auto_str_this_staff_has_already_been_as"
+        android:textColor="@color/auto_color_FFFFFF"
         android:textSize="14sp"
         android:gravity="center"
         android:lineSpacingMultiplier="1.2"
@@ -38,8 +38,8 @@
         android:id="@+id/btnDialogOk"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:text="OK"
+        android:text="@string/auto_str_ok"
         android:textAllCaps="false"
         android:textStyle="bold"
-        android:textColor="#000000"
-        android:backgroundTint="#FFCC00" /> </LinearLayout>
+        android:textColor="@color/auto_color_000000"
+        android:backgroundTint="@color/auto_color_FFCC00" /> </LinearLayout>

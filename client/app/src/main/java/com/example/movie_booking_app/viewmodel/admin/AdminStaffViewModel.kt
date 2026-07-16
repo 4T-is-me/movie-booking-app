@@ -40,6 +40,9 @@ class AdminStaffViewModel @Inject constructor(
     private val _cinemas = MutableStateFlow<List<Cinema>>(emptyList())
     val cinemas: StateFlow<List<Cinema>> = _cinemas.asStateFlow()
 
+    private val _managers = MutableStateFlow<List<Staff>>(emptyList())
+    val managers: StateFlow<List<Staff>> = _managers.asStateFlow()
+
     private val _actionSuccess = MutableSharedFlow<Boolean>()
     val actionSuccess: SharedFlow<Boolean> = _actionSuccess.asSharedFlow()
 
@@ -49,10 +52,17 @@ class AdminStaffViewModel @Inject constructor(
     private val _scoreAdjustState = MutableSharedFlow<com.example.movie_booking_app.data.model.response.ScoreAdjustState>()
     val scoreAdjustState: SharedFlow<com.example.movie_booking_app.data.model.response.ScoreAdjustState> = _scoreAdjustState.asSharedFlow()
 
+    private var currentRole: String = "Manager"
+
     init {
-        loadStaff()
         loadMembers()
         loadCinemas()
+        loadManagers()
+    }
+
+    fun setRole(role: String) {
+        currentRole = role
+        loadStaff()
     }
 
     private fun getString(resId: Int): String {
@@ -67,9 +77,25 @@ class AdminStaffViewModel @Inject constructor(
         }
     }
 
+    private fun loadManagers() {
+        viewModelScope.launch {
+            repository.getStaffListFlow(page = 1, limit = 100, search = null, role = "Manager")
+                .catch { }
+                .collect { staffItems ->
+                    val mappedStaffs = staffItems.map { dbStaff ->
+                        Staff(
+                            id = dbStaff.id,
+                            cinemaId = dbStaff.cinemaId ?: ""
+                        )
+                    }
+                    _managers.value = mappedStaffs
+                }
+        }
+    }
+
     fun loadStaff(searchQuery: String? = null, showLoading: Boolean = true) {
         viewModelScope.launch {
-            repository.getStaffListFlow(page = 1, limit = 100, search = searchQuery)
+            repository.getStaffListFlow(page = 1, limit = 100, search = searchQuery, role = currentRole)
                 .onStart {
                     if (showLoading) _uiState.update { it.copy(isLoading = true, error = null) }
                 }

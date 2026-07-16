@@ -76,14 +76,47 @@ export const createBulkShowtimes = async (showtimesData) => {
         const cinemaId = data.cinemaId || cinema_id;
         const roomId = data.roomId || room_id;
         const showDate = data.showDate || show_date;
-        const startTime = data.startTime || start_time;
-        const endTime = data.endTime || end_time;
+        const startTimeRaw = data.startTime || start_time;
+        const endTimeRaw = data.endTime || end_time;
+
+        // Bổ sung múi giờ +07:00 nếu chưa có để NodeJS trên server (UTC) parse thời gian chính xác
+        let startTime = new Date(startTimeRaw);
+        if (typeof startTimeRaw === 'string' && !startTimeRaw.includes('Z') && !startTimeRaw.includes('+')) {
+            startTime = new Date(`${startTimeRaw}+07:00`);
+        }
+
+        let endTime = new Date(endTimeRaw);
+        if (typeof endTimeRaw === 'string' && !endTimeRaw.includes('Z') && !endTimeRaw.includes('+')) {
+            endTime = new Date(`${endTimeRaw}+07:00`);
+        }
+
+        // Tự động tạo showTime dạng "HH:mm" từ startTimeRaw
+        let showTime = "";
+        if (typeof startTimeRaw === 'string') {
+            const timePart = startTimeRaw.split('T')[1];
+            if (timePart) {
+                showTime = timePart.substring(0, 5); // Lấy "08:30"
+            }
+        }
+
+        // Kiểm tra xem suất chiếu đã tồn tại chưa để tránh tạo trùng lặp
+        const existingShowtime = await Showtime.findOne({
+            roomId: roomId,
+            startTime: startTime,
+            isDeleted: false
+        });
+
+        if (existingShowtime) {
+            console.log(`Showtime already exists for room ${roomId} at ${startTime}. Skipping.`);
+            continue; // Bỏ qua suất chiếu bị trùng
+        }
 
         const showtime = new Showtime({
             movieId,
             cinemaId,
             roomId,
             showDate,
+            showTime,
             startTime,
             endTime,
             ticketPrice: ticketPrice || 80000, // Giá vé mặc định

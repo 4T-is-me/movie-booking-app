@@ -83,7 +83,7 @@
         android:background="@drawable/status_active_bg"
         android:paddingHorizontal="10dp"
         android:paddingVertical="4dp"
-        android:textColor="#FFA500"
+        android:textColor="@color/auto_color_FFA500"
         android:textSize="11sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -133,7 +133,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:textColor="#E0E0E0"
+        android:textColor="@color/auto_color_E0E0E0"
         android:textSize="13sp"
         android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"
@@ -168,13 +168,13 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:src="@drawable/ic_thumb_up"
-                app:tint="#10B981" />
+                app:tint="@color/auto_color_10B981" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/btn_approve"
-                android:textColor="#10B981"
+                android:textColor="@color/auto_color_10B981"
                 android:textStyle="bold"
                 android:textSize="13sp"
                 android:layout_marginStart="6dp"/>
@@ -196,13 +196,13 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:src="@drawable/ic_thumb_down"
-                app:tint="#EF4444" />
+                app:tint="@color/auto_color_EF4444" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/btn_reject"
-                android:textColor="#EF4444"
+                android:textColor="@color/auto_color_EF4444"
                 android:textStyle="bold"
                 android:textSize="13sp"
                 android:layout_marginStart="6dp"/>
@@ -215,7 +215,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:padding="10dp"
-        android:background="#1A2D24"
+        android:background="@color/auto_color_1A2D24"
         android:visibility="gone"
         android:orientation="horizontal"
         android:gravity="center_vertical"
@@ -230,7 +230,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/undo_message_default"
-            android:textColor="#10B981"
+            android:textColor="@color/auto_color_10B981"
             android:textSize="12sp" />
 
         <TextView
@@ -238,7 +238,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/btn_undo"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/auto_color_FFFFFF"
             android:textStyle="bold"
             android:textSize="13sp"
             android:paddingStart="16dp"/>

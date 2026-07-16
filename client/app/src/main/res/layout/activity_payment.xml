@@ -549,11 +549,11 @@
                     android:layout_weight="1"
                     android:layout_marginEnd="12dp"
                     android:background="@drawable/bg_profile_field"
-                    android:hint="Enter coupon code"
+                    android:hint="@string/auto_str_enter_coupon_code"
                     android:inputType="textCapCharacters"
                     android:paddingHorizontal="16dp"
                     android:textColor="@color/auto_color_FFFFFF"
-                    android:textColorHint="#5C5C5C"
+                    android:textColorHint="@color/auto_color_5C5C5C"
                     android:textSize="14sp" />
 
                 <com.google.android.material.button.MaterialButton
@@ -933,7 +933,7 @@
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:indeterminateTint="#F5C542"
+            android:indeterminateTint="@color/auto_color_F5C542"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

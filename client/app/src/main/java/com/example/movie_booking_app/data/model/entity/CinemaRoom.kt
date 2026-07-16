@@ -11,5 +11,8 @@ data class CinemaRoom(
     @SerializedName("roomType") val roomType: String? = null,
     @SerializedName("screenType") val screenType: String? = null,
     @SerializedName("status") val status: String? = null,
-    @SerializedName("roomImage") val roomImage: String? = null
+    @SerializedName("roomImage") val roomImage: String? = null,
+    @SerializedName("regularSeats") val regularSeats: Int = 0,
+    @SerializedName("vipSeats") val vipSeats: Int = 0,
+    @SerializedName("coupleSeats") val coupleSeats: Int = 0
 )

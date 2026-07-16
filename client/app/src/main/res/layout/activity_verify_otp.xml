@@ -96,7 +96,7 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:elevation="4dp"
-        android:indeterminateTint="#000000"
+        android:indeterminateTint="@color/auto_color_000000"
         app:layout_constraintTop_toTopOf="@id/btnVerifyOtp"
         app:layout_constraintBottom_toBottomOf="@id/btnVerifyOtp"
         app:layout_constraintEnd_toEndOf="@id/btnVerifyOtp"

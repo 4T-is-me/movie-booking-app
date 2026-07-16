@@ -95,7 +95,7 @@ class AddCinemaRoomViewModel @Inject constructor(
         }
     }
 
-    fun saveRoom() {
+    fun saveRoom(cinemaId: String) {
         val name = roomName.value.trim()
         val r = rowsStr.value.toIntOrNull()
         val c = columnsStr.value.toIntOrNull()
@@ -129,6 +129,7 @@ class AddCinemaRoomViewModel @Inject constructor(
                     SeatInput(seatName = it.seatName, seatType = it.seatType)
                 }
                 val request = AddRoomRequest(
+                    cinemaId = cinemaId,
                     roomName = name,
                     roomType = type,
                     screenType = screen,

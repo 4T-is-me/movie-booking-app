@@ -27,8 +27,8 @@ class AdminRepository @Inject constructor(
     suspend fun getMovieRevenue() = api.getMovieRevenue()
 
     // Staff Management Flow-based
-    fun getStaffListFlow(page: Int? = null, limit: Int? = null, search: String? = null) = flow {
-        val response = api.getStaffList(page, limit, search)
+    fun getStaffListFlow(page: Int? = null, limit: Int? = null, search: String? = null, role: String? = null) = flow {
+        val response = api.getStaffList(page, limit, search, role)
         if (response.isSuccessful && response.body() != null) {
             emit(response.body()!!.data?.staffs ?: emptyList())
         } else {

@@ -48,7 +48,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@android:color/transparent"
-                        android:hint="Search title or coupon code..."
+                        android:hint="@string/auto_str_search_title_or_coupon_code"
                         android:textColorHint="@color/admin_text_secondary"
                         android:textColor="@color/white"
                         android:textSize="14sp"

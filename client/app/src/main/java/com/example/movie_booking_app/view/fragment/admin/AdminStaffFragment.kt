@@ -37,7 +37,18 @@ class AdminStaffFragment : Fragment() {
     companion object {
         private const val TAB_ACTIVE = "active"
         private const val TAB_INACTIVE = "inactive"
+        private const val ARG_ROLE = "arg_role"
+
+        fun newInstance(role: String): AdminStaffFragment {
+            val fragment = AdminStaffFragment()
+            val args = Bundle()
+            args.putString(ARG_ROLE, role)
+            fragment.arguments = args
+            return fragment
+        }
     }
+
+    private var currentRole: String = "Manager"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,6 +61,9 @@ class AdminStaffFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
+        currentRole = arguments?.getString(ARG_ROLE) ?: "Manager"
+        viewModel.setRole(currentRole)
+
         setupRecyclerView()
         setupSearch()
         setupTabs()
@@ -61,7 +75,9 @@ class AdminStaffFragment : Fragment() {
         }
 
         binding.fabAddStaff.setOnClickListener {
-            val intent = Intent(requireContext(), AdminStaffActivity::class.java)
+            val intent = Intent(requireContext(), AdminStaffActivity::class.java).apply {
+                putExtra("role", currentRole)
+            }
             startActivity(intent)
         }
     }
@@ -102,7 +118,7 @@ class AdminStaffFragment : Fragment() {
         val btnCancel = dialog.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnCancelDelete)
         val btnConfirm = dialog.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnConfirmDelete)
 
-        tvDeleteMessage.text = getString(R.string.admin_confirm_delete_staff_msg, staff.fullName ?: "")
+        tvDeleteMessage.text = getString(R.string.admin_confirm_delete_staff_msg, currentRole, staff.fullName ?: "")
 
         btnCancel.setOnClickListener {
             dialog.dismiss()

@@ -1,4 +1,5 @@
 import { StatusCodes } from 'http-status-codes'
+import mongoose from 'mongoose'
 import ApiError from '../utils/ApiError.js'
 import { Account } from '../models/accountModel.js'
 import { Member } from '../models/memberModel.js'
@@ -7,20 +8,30 @@ import bcryptjs from 'bcryptjs'
 import { OAuth2Client } from 'google-auth-library'
 import { Otp } from '../models/otpModel.js'
 import { sendEmail } from '../utils/sendEmail.js'
-import '../models/rolesModel.js'
+import { Role } from '../models/rolesModel.js'
 import { notificationService } from './notificationService.js'
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID || 'PLACEHOLDER_CLIENT_ID')
 
 const register = async (reqBody) => {
-    const existedUser = await Account.findOne({ $or: [{ email: reqBody.email }, { username: reqBody.username }] })
-    if (existedUser) {
-        throw new ApiError(StatusCodes.CONFLICT, 'Email or username already exists')
+    const existedEmail = await Account.findOne({ email: reqBody.email })
+    if (existedEmail) {
+        throw new ApiError(StatusCodes.CONFLICT, 'Email already exists')
     }
 
-    const existedMember = await Member.findOne({ $or: [{ identityCard: reqBody.identityCard }, { phoneNumber: reqBody.phoneNumber }] })
-    if (existedMember) {
-        throw new ApiError(StatusCodes.CONFLICT, 'Identity card or phone number already exists')
+    const existedUsername = await Account.findOne({ username: reqBody.username })
+    if (existedUsername) {
+        throw new ApiError(StatusCodes.CONFLICT, 'Username already exists')
+    }
+
+    const existedPhone = await Member.findOne({ phoneNumber: reqBody.phoneNumber })
+    if (existedPhone) {
+        throw new ApiError(StatusCodes.CONFLICT, 'Phone number already exists')
+    }
+
+    const existedIdCard = await Member.findOne({ identityCard: reqBody.identityCard })
+    if (existedIdCard) {
+        throw new ApiError(StatusCodes.CONFLICT, 'Identity card already exists')
     }
 
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
@@ -224,24 +235,34 @@ const googleLogin = async (idToken) => {
         let account = await Account.findOne({ email }).populate('roleId');
 
         if (!account) {
-            // Register new account
-            const passwordHash = await bcryptjs.hash(Math.random().toString(36).slice(-8), 10);
-            const newAccount = new Account({
-                username: email.split('@')[0] + Math.floor(Math.random() * 1000),
-                email: email,
-                passwordHash: passwordHash,
-                roleId: '6a38d663cf6b5ffdb33166f5', // Default Role: Member
-                status: 1,
-                registerDate: new Date()
-            });
-            account = await newAccount.save();
+            let roleId = '6a38d663cf6b5ffdb33166f5';
+            const defaultRole = await Role.findOne({ roleName: 'Member' });
+            if (defaultRole) roleId = defaultRole._id;
 
-            const newMember = new Member({
-                accountId: account._id,
-                fullName: name,
-                image: picture
-            });
-            await newMember.save();
+            const session = await mongoose.startSession();
+            try {
+                await session.withTransaction(async () => {
+                    const passwordHash = await bcryptjs.hash(Math.random().toString(36).slice(-8), 10);
+                    const newAccount = new Account({
+                        username: email.split('@')[0] + Math.floor(Math.random() * 1000),
+                        email: email,
+                        passwordHash: passwordHash,
+                        roleId: roleId,
+                        status: 1,
+                        registerDate: new Date()
+                    });
+                    account = await newAccount.save({ session });
+
+                    const newMember = new Member({
+                        accountId: account._id,
+                        fullName: name,
+                        image: picture
+                    });
+                    await newMember.save({ session });
+                });
+            } finally {
+                session.endSession();
+            }
             
             // Re-fetch to populate role
             account = await Account.findById(account._id).populate('roleId');
@@ -277,7 +298,10 @@ const googleLogin = async (idToken) => {
             refreshToken
         };
     } catch (error) {
-        throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid Google token');
+        if (error.statusCode) {
+            throw error;
+        }
+        throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid Google token or account creation failed: ' + error.message);
     }
 }
 
@@ -292,28 +316,39 @@ const verifyOtp = async (reqBody) => {
         const payload = otpRecord.payload;
         if (!payload) throw new ApiError(StatusCodes.BAD_REQUEST, 'Dữ liệu đăng ký không hợp lệ');
 
-        const passwordHash = await bcryptjs.hash(payload.password, 10);
-        const newAccount = new Account({
-            username: payload.username,
-            email: payload.email,
-            passwordHash: passwordHash,
-            roleId: '6a38d663cf6b5ffdb33166f5', // Default Role: Member
-            status: 1,
-            registerDate: new Date()
-        });
-        const savedAccount = await newAccount.save();
+        let roleId = '6a38d663cf6b5ffdb33166f5';
+        const defaultRole = await Role.findOne({ roleName: 'Member' });
+        if (defaultRole) roleId = defaultRole._id;
 
-        const newMember = new Member({
-            accountId: savedAccount._id,
-            fullName: payload.fullName,
-            gender: payload.gender,
-            dateOfBirth: payload.dateOfBirth,
-            phoneNumber: payload.phoneNumber,
-            identityCard: payload.identityCard,
-            address: payload.address,
-            image: payload.image || null
-        });
-        await newMember.save();
+        const session = await mongoose.startSession();
+        try {
+            await session.withTransaction(async () => {
+                const passwordHash = await bcryptjs.hash(payload.password, 10);
+                const newAccount = new Account({
+                    username: payload.username,
+                    email: payload.email,
+                    passwordHash: passwordHash,
+                    roleId: roleId,
+                    status: 1,
+                    registerDate: new Date()
+                });
+                const savedAccount = await newAccount.save({ session });
+
+                const newMember = new Member({
+                    accountId: savedAccount._id,
+                    fullName: payload.fullName,
+                    gender: payload.gender,
+                    dateOfBirth: payload.dateOfBirth,
+                    phoneNumber: payload.phoneNumber,
+                    identityCard: payload.identityCard,
+                    address: payload.address,
+                    image: payload.image || null
+                });
+                await newMember.save({ session });
+            });
+        } finally {
+            session.endSession();
+        }
     } else {
         const account = await Account.findOne({ email });
         if (!account) {
