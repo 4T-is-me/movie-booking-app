@@ -117,39 +117,36 @@ class MovieViewModel @Inject constructor(
             ) { movies, promos, services, news ->
                 val list = mutableListOf<HomeItem>()
                 
-                // Now Playing Section
-                val nowPlaying = movies.filter { 
+                // Now Playing Section: Flexible filtering on Client side
+                val nowPlaying = movies.filter {
                     val s = it.status?.lowercase() ?: ""
-                    s.contains("showing") || s == "active" || s == "now_showing"
+                    (s.contains("showing") || s == "active" || s == "now_showing")
                 }
                 list.add(HomeItem.NowPlayingSection(
-                    if (movies.isEmpty()) null else nowPlaying, 
-                    isLoading = movies.isEmpty()
+                    nowPlaying.ifEmpty { null },
+                    isLoading = nowPlaying.isEmpty() && promos.isEmpty()
                 ))
                 
-                // Coming Soon Section
-                val comingSoon = movies.filter { 
+                // Coming Soon Section: Flexible filtering on Client side
+                val comingSoon = movies.filter {
                     val s = it.status?.lowercase() ?: ""
-                    s.contains("coming") || s.contains("soon") || s == "upcoming" || s == "inactive"
+                    (s.contains("coming") || s.contains("soon") || s == "upcoming" || s == "inactive")
                 }
                 list.add(HomeItem.ComingSoonSection(
-                    if (movies.isEmpty()) null else comingSoon, 
-                    isLoading = movies.isEmpty()
+                    comingSoon.ifEmpty { null },
+                    isLoading = comingSoon.isEmpty() && promos.isEmpty()
                 ))
                 
-                list.add(HomeItem.PromoSection(if (promos.isEmpty()) null else promos, isLoading = promos.isEmpty()))
-                list.add(HomeItem.ServiceSection(if (services.isEmpty()) null else services, isLoading = services.isEmpty()))
-                list.add(HomeItem.MovieNewsSection(if (news.isEmpty()) null else news, isLoading = news.isEmpty()))
-                list.add(HomeItem.VideosSection(if (movies.isEmpty()) null else movies.take(5), isLoading = movies.isEmpty()))
+                list.add(HomeItem.PromoSection(promos.ifEmpty { null }, isLoading = promos.isEmpty()))
+                list.add(HomeItem.ServiceSection(services.ifEmpty { null }, isLoading = services.isEmpty()))
+                list.add(HomeItem.MovieNewsSection(news.ifEmpty { null }, isLoading = news.isEmpty()))
+                
+                // Videos Section
+                list.add(HomeItem.VideosSection(nowPlaying.take(5).ifEmpty { null }, isLoading = nowPlaying.isEmpty()))
                 list
             }.collect {
                 _homeItems.value = it
-                if (it.any { item -> 
-                    (item is HomeItem.NowPlayingSection && !item.isLoading) || 
-                    (item is HomeItem.ComingSoonSection && !item.isLoading)
-                }) {
-                    _isLoading.value = false
-                }
+                _isLoading.value = false
             }
         }
     }

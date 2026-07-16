@@ -360,7 +360,7 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
         kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
             try {
                 // Fetch Movies
-                val movieResponse = com.example.movie_booking_app.data.api.RetrofitClient.movieApi.getMovies(100)
+                val movieResponse = com.example.movie_booking_app.data.api.RetrofitClient.movieApi.getMovies()
                 val movies = movieResponse.body()?.data?.map {
                     MovieDraft(it.id ?: "", it.movieName ?: "Unknown Movie", it.duration ?: 120, it.status ?: "showing", it.tier ?: 1)
                 } ?: emptyList()

@@ -11,7 +11,7 @@ import com.example.movie_booking_app.data.model.response.ReviewItem
 import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
-    fun getMovies(): Flow<List<Movie>>
+    fun getMovies(status: String? = null, page: Int? = null, limit: Int? = null): Flow<List<Movie>>
     fun getAdminMovies(status: String? = null): Flow<List<Movie>>
     fun searchMovies(query: String): Flow<List<Movie>>
     fun getPromos(): Flow<List<Promo>>
