@@ -267,6 +267,28 @@
                             tools:text="H7, H8" />
                     </LinearLayout>
 
+                    <!-- Seat Type -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp">
+                        <TextView
+                            android:layout_width="120dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/seat_type_label"
+                            android:textColor="@color/auto_color_88FFFFFF"
+                            android:textSize="14sp" />
+                        <TextView
+                            android:id="@+id/tvSeatType"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:textSize="14sp"
+                            android:gravity="end"
+                            tools:text="Regular, VIP" xmlns:tools="http://schemas.android.com/tools" />
+                    </LinearLayout>
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

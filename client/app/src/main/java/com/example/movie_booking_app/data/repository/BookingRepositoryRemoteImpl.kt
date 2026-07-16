@@ -13,18 +13,18 @@ class BookingRepositoryRemoteImpl @Inject constructor(
     private val movieApi: MovieApi
 ) : BookingRepository {
 
-    override fun getSeats(showtimeId: String): Flow<List<Seat>> = flow {
+    override fun getSeats(showtimeId: String): Flow<com.example.movie_booking_app.data.model.response.SeatMapData> = flow {
         try {
             val response = bookingApi.getSeats(showtimeId)
             if (response.isSuccessful) {
-                val seats = response.body()?.data?.seats ?: emptyList()
-                seats.forEach { it.syncStatus() }
-                emit(seats)
+                val seatMapData = response.body()?.data ?: com.example.movie_booking_app.data.model.response.SeatMapData()
+                seatMapData.seats?.forEach { it.syncStatus() }
+                emit(seatMapData)
             } else {
-                emit(emptyList())
+                emit(com.example.movie_booking_app.data.model.response.SeatMapData())
             }
         } catch (e: Exception) {
-            emit(emptyList())
+            emit(com.example.movie_booking_app.data.model.response.SeatMapData())
         }
     }
 

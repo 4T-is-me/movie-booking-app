@@ -93,7 +93,7 @@ def main():
         if insert_idx != -1:
             new_strings = "\n    <!-- Auto-extracted strings (Script) -->\n"
             for name, val in extracted_strings.items():
-                val_escaped = val.replace("'", "\\'").replace('"', '\\"').replace('&', '&amp;')
+                val_escaped = re.sub(r'&(?!amp;|lt;|gt;|quot;|apos;)', '&amp;', val).replace("'", "\\'").replace('"', '\\"')
                 new_strings += f'    <string name="{name}">{val_escaped}</string>\n'
             s_content = s_content[:insert_idx] + new_strings + s_content[insert_idx:]
             

@@ -142,6 +142,10 @@ class BookingDetailActivity : AppCompatActivity() {
         val seatNames = detail.seats?.map { it.seatName } ?: emptyList()
         binding.tvSeats.text = seatNames.joinToString(", ").ifEmpty { "-" }
 
+        // Seat Type
+        val seatTypes = detail.seats?.mapNotNull { it.seatType }?.distinct() ?: emptyList()
+        binding.tvSeatType.text = seatTypes.joinToString(", ").ifEmpty { "-" }
+
         // Currency Formatter
         val symbols = DecimalFormatSymbols(Locale("vi", "VN")).apply {
             groupingSeparator = ','

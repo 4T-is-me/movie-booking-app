@@ -24,5 +24,9 @@ object Constants {
     val SHIFTS = listOf("Morning", "Afternoon", "Evening", "Night")
     val STATUS_SHIFT = listOf("Assigned", "Completed", "Absent")
 
+    object ComboPrice {
+        const val SINGLE_COMBO = 80_000
+        const val DOUBLE_COMBO = 120_000
+    }
 }
 

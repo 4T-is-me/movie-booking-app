@@ -115,6 +115,7 @@
     <string name="selected_seats_label">Selected Seats</string>
     <string name="seat_count_label">Seat Count</string>
     <string name="ticket_type_label">Ticket Type</string>
+    <string name="seat_type_label">Seat Type</string>
     <string name="select_combo_snacks">Select Combo &amp; Snacks</string>
     <string name="single_combo">Single Combo</string>
     <string name="single_combo_desc">1 Popcorn + 1 Soft Drink</string>
@@ -176,7 +177,7 @@
     <string name="auto_str_date">Date</string>
     <string name="auto_str_time">Time</string>
     <string name="auto_str_seats">Seats</string>
-    <string name="auto_str_food_amp_drinks">FOOD &amp;amp; DRINKS</string>
+    <string name="auto_str_food_amp_drinks">FOOD &amp; DRINKS</string>
     <string name="auto_str_payment_details">PAYMENT DETAILS</string>
     <string name="auto_str_tickets_subtotal">Tickets Subtotal</string>
     <string name="auto_str_combos_subtotal">Combos Subtotal</string>
@@ -224,7 +225,7 @@
     <string name="auto_str_78">78%</string>
     <string name="auto_str_occupancy">Occupancy</string>
     <string name="auto_str_12_3m">12.3M</string>
-    <string name="auto_str_f_amp_b_rev">F&amp;amp;B Rev</string>
+    <string name="auto_str_f_amp_b_rev">F&amp;B Rev</string>
     <string name="auto_str_6">6</string>
     <string name="auto_str_movies">Movies</string>
     <string name="auto_str_4_5">4/5</string>
@@ -268,7 +269,7 @@
     <string name="auto_str_ticket_revenue">Ticket Revenue</string>
     <string name="auto_str_0_2">+0%</string>
     <string name="auto_str_0_3">0đ</string>
-    <string name="auto_str_f_amp_b_revenue">F&amp;amp;B Revenue</string>
+    <string name="auto_str_f_amp_b_revenue">F&amp;B Revenue</string>
     <string name="auto_str_0_4">+0%</string>
     <string name="auto_str_0_5">0</string>
     <string name="auto_str_total_tickets">Total Tickets</string>
@@ -374,8 +375,9 @@
     <string name="auto_str_seat_count">Seat Count</string>
     <string name="auto_str_2_seats">2 seats</string>
     <string name="auto_str_ticket_type">Ticket Type</string>
+    <string name="auto_str_seat_type">Seat Type</string>
     <string name="auto_str_adult_x2">Adult x2</string>
-    <string name="auto_str_select_combo_amp_snacks">Select Combo &amp;amp; Snacks</string>
+    <string name="auto_str_select_combo_amp_snacks">Select Combo &amp; Snacks</string>
     <string name="auto_str_single_combo">Single Combo</string>
     <string name="auto_str_1_popcorn_1_soft_drink">1 Popcorn + 1 Soft Drink</string>
     <string name="auto_str_80_000_vnd">80.000 VND</string>
@@ -417,7 +419,7 @@
     <string name="auto_str_m_u_i_c_a_b_n">Mã ưu đãi của bạn</string>
     <string name="auto_str_m_khuy_n_m_i">MÃ KHUYẾN MÃI</string>
     <string name="auto_str_copy">Copy</string>
-    <string name="auto_str_i_u_ki_n_amp_quy_nh_p_d_ng">Điều kiện &amp;amp; Quy định áp dụng</string>
+    <string name="auto_str_i_u_ki_n_amp_quy_nh_p_d_ng">Điều kiện &amp; Quy định áp dụng</string>
     <string name="auto_str_m_i_kh_ch_h_ng_ch_c_p_d_ng_m_u">• Mỗi khách hàng chỉ được áp dụng mã ưu đãi này 1 lần duy nhất trong suốt thời gian diễn ra chương trình.\n• Chỉ áp dụng cho các giao dịch đặt vé trực tuyến thông qua ứng dụng chính thức.\n• Không áp dụng đồng thời với các hình thức thẻ quà tặng, ưu đãi đối tác hoặc các chương trình khuyến mãi khác.\n• Không có giá trị quy đổi thành tiền mặt hoặc hoàn lại tiền thừa.\n• Đơn hàng hợp lệ phải thỏa mãn giá trị chi tiêu tối thiểu được yêu cầu ở trên.\n• Ban quản lý rạp chiếu phim có quyền thay đổi điều khoản áp dụng mà không cần báo trước.</string>
     <string name="auto_str_t_v_ngay">ĐẶT VÉ NGAY</string>
     <string name="auto_str_membership">Membership</string>
@@ -520,7 +522,7 @@
     <string name="auto_str_standard_3">Standard</string>
     <string name="auto_str_vip_3">VIP</string>
     <string name="auto_str_ch_m_v_o_gh_i_lo_i_gh">* Chạm vào ghế để đổi loại ghế</string>
-    <string name="auto_str_save_amp_back">Save &amp;amp; Back</string>
+    <string name="auto_str_save_amp_back">Save &amp; Back</string>
     <string name="auto_str_qu_n_l_ph_ng_chi_u">Quản lý phòng chiếu</string>
     <string name="auto_str_danh_s_ch_ph_ng_v_t_ng_s_gh_an">Danh sách phòng và tổng số ghế đang được quản lý</string>
     <string name="auto_str_t_ng_s_ph_ng">Tổng số phòng</string>

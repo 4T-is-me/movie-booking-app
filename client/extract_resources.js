@@ -76,7 +76,7 @@ if (extractedStrings.size > 0) {
     if (idx !== -1) {
         let newStrings = "\n    <!-- Auto-extracted strings (Node Script) -->\n";
         for (const [name, val] of extractedStrings.entries()) {
-            const escaped = val.replace(/&/g, '&amp;').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/</g, '&lt;');
+            const escaped = val.replace(/&(?!amp;|lt;|gt;|quot;|apos;)/g, '&amp;').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/</g, '&lt;');
             newStrings += `    <string name="${name}">${escaped}</string>\n`;
         }
         sContent = sContent.slice(0, idx) + newStrings + sContent.slice(idx);
