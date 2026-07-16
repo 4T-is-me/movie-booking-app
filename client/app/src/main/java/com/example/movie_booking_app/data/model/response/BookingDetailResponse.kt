@@ -50,7 +50,8 @@ data class BookingDetailSeat(
 data class BookingDetailCombo(
     @SerializedName("name") val name: String,
     @SerializedName("quantity") val quantity: Int,
-    @SerializedName("price") val price: Int
+    @SerializedName("price") val price: Int,
+    @SerializedName("subtotal") val subtotal: Int
 )
 
 data class BookingDetailPayment(
