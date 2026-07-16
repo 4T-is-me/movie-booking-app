@@ -18,6 +18,8 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -54,45 +56,56 @@ class EditProfileViewModel @Inject constructor(
         }
     }
 
+    fun setUploadingState(isUploading: Boolean) {
+        _uiState.value = _uiState.value.copy(isUploadingAvatar = isUploading)
+    }
+
     fun uploadAvatar(imageFile: File) {
         viewModelScope.launch {
-            val requestFile = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
-            val body = MultipartBody.Part.createFormData("avatar", imageFile.name, requestFile)
+            _uiState.value = _uiState.value.copy(isUploadingAvatar = true, error = null)
+            try {
+                val body = withContext(Dispatchers.IO) {
+                    val requestFile = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
+                    MultipartBody.Part.createFormData("avatar", imageFile.name, requestFile)
+                }
 
-            repository.uploadAvatar(body)
-                .onStart {
-                    _uiState.value = _uiState.value.copy(isUploadingAvatar = true, error = null)
-                }
-                .catch { exception ->
-                    _uiState.value = _uiState.value.copy(
-                        isUploadingAvatar = false,
-                        error = "Failed to upload avatar: ${exception.message}"
-                    )
-                }
-                .collect { response ->
-                    if (response.success) {
-                        val updateReq = UpdateProfileRequest(avatar = response.avatarUrl)
-                        repository.updateProfile(updateReq)
-                            .catch { exception ->
-                                _uiState.value = _uiState.value.copy(
-                                    isUploadingAvatar = false,
-                                    error = "Failed to update profile avatar: ${exception.message}"
-                                )
-                            }
-                            .collect { updatedProfile ->
-                                _uiState.value = _uiState.value.copy(
-                                    isUploadingAvatar = false,
-                                    avatarUrl = response.avatarUrl,
-                                    userProfile = updatedProfile
-                                )
-                            }
-                    } else {
+                repository.uploadAvatar(body)
+                    .catch { exception ->
                         _uiState.value = _uiState.value.copy(
                             isUploadingAvatar = false,
-                            error = "Failed to upload avatar: response success was false"
+                            error = exception.message ?: "Unable to update profile. Please try again."
                         )
                     }
-                }
+                    .collect { response ->
+                        if (response.success) {
+                            val updateReq = UpdateProfileRequest(avatar = response.avatarUrl)
+                            repository.updateProfile(updateReq)
+                                .catch { exception ->
+                                    _uiState.value = _uiState.value.copy(
+                                        isUploadingAvatar = false,
+                                        error = exception.message ?: "Unable to update profile. Please try again."
+                                    )
+                                }
+                                .collect { updatedProfile ->
+                                    _uiState.value = _uiState.value.copy(
+                                        isUploadingAvatar = false,
+                                        avatarUrl = response.avatarUrl,
+                                        userProfile = updatedProfile
+                                    )
+                                }
+                        } else {
+                            _uiState.value = _uiState.value.copy(
+                                isUploadingAvatar = false,
+                                error = "Unable to update profile. Please try again."
+                            )
+                        }
+                    }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    isUploadingAvatar = false,
+                    error = "Unable to update profile. Please try again."
+                )
+            }
         }
     }
 
