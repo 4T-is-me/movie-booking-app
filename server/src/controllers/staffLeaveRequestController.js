@@ -56,9 +56,25 @@ const acceptReplacementShift = async (req, res, next) => {
     }
 }
 
+const getStaffShifts = async (req, res, next) => {
+    try {
+        const accountId = req.user.accountId;
+        const filter = req.query; // { startDate, endDate }
+        const data = await StaffLeaveRequestService.getStaffShifts(accountId, filter);
+
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            message: "Successfully get staff shifts.",
+            data
+        })
+    } catch (error) {
+        next(error);
+    }
+}
 
 export const staffLeaveRequestController = {
     createLeaveRequest,
     getReplacementShifts,
-    acceptReplacementShift
+    acceptReplacementShift,
+    getStaffShifts
 }
