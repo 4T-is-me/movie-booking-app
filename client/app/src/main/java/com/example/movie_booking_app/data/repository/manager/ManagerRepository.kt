@@ -43,9 +43,9 @@ class ManagerRepository @Inject constructor(private val api: ManagerApi) {
         }
     }
 
-    fun getStaffShifts(startDate: String? = null, endDate: String? = null): Flow<ShiftResponse?> = flow {
+    fun getStaffShifts(startDate: String? = null, endDate: String? = null, status: String? = null): Flow<ShiftResponse?> = flow {
         try {
-            val response = api.getStaffShift(startDate, endDate)
+            val response = api.getStaffShift(startDate, endDate, status)
             if (response.isSuccessful) {
                 emit(response.body())
             } else {

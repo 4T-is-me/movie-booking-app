@@ -142,6 +142,18 @@
     <color name="cinema_primary_transparent">#33F5C542</color>
     <color name="seat_vip_transparent">#1A2F6FED</color>
 
+    <!--  Status Badges (Dark Theme) -->
+    <color name="text_gold_orange">#FFA500</color>
+    <color name="color_success_green">#10B981</color>
+    <color name="color_error_red">#EF4444</color>
+    <color name="bg_undo_approved">#1A2D24</color>
+    <color name="bg_undo_rejected">#2D191B</color>
+    <color name="color_stroke">#33D4AF37</color>
+    <color name="bg_badge_pending_dark">#2B1B00</color>
+    <color name="bg_badge_approved_dark">#0F2D24</color>
+    <color name="bg_badge_rejected_dark">#3B191B</color>
+
+
     <!-- Auto-extracted colors (Node Script) -->
     <color name="auto_color_151515">#151515</color>
     <color name="auto_color_F5C542">#F5C542</color>

@@ -7,7 +7,6 @@
     android:padding="20dp"
     android:layout_margin="30dp">
 
-    <!-- BottomSheet handle -->
     <View
         android:layout_width="40dp"
         android:layout_height="4dp"
@@ -23,7 +22,74 @@
         android:textSize="18sp"
         android:textStyle="bold" />
 
-    <!-- Select time range -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/status_title"
+        android:textColor="@color/text_secondary"
+        android:textSize="13sp" />
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvStatusActive"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_tab_container"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:text="@string/status_active_label"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/tvStatusAssigned"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_tab_container"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:text="@string/status_assigned_label"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/tvStatusCompleted"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_tab_container"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:text="@string/status_completed_label"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp" />
+
+            <TextView
+                android:id="@+id/tvStatusNeedReplacement"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:background="@drawable/bg_tab_container"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:text="@string/status_need_replacement_label"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -63,7 +129,6 @@
             android:textSize="13sp" />
     </LinearLayout>
 
-    <!-- Action button row -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
