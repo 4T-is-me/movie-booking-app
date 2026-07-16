@@ -236,8 +236,8 @@ class StaffSalesViewModel @Inject constructor(
             _scoreToRedeem.value = 0
             _scoreError.value = null
             recalculateTotals()
-            bookingRepository.getSeats(showtimeId).collect { list ->
-                _seats.value = list
+            bookingRepository.getSeats(showtimeId).collect { seatMapData ->
+                _seats.value = seatMapData.seats ?: emptyList()
                 _isLoading.value = false
             }
         }

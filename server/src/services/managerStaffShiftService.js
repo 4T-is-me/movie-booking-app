@@ -26,7 +26,7 @@ const checkCinemaPermission = (managerCinemaId, objectCinemaId) => {
 
 
 const getShifts = async (accountId, query) => {
-    const { staffId, workDate, startDate, endDate, shift } = query;
+    const { staffId, workDate, startDate, endDate, shift, status } = query;
 
     const manager = await checkManager(accountId);
 
@@ -39,18 +39,30 @@ const getShifts = async (accountId, query) => {
     if (shift) {
         filter.shift = shift;
     }
+    if (status) {
+        filter.status = status;
+    }
+    let start, end;
+
     if (startDate && endDate) {
-        const start = new Date(startDate);
+        start = new Date(startDate);
         start.setUTCHours(0, 0, 0, 0);
 
-        const end = new Date(endDate);
-        end.setUTCHours(23, 59, 59, 999); // Lấy hết thời gian của ngày kết thúc
+        end = new Date(endDate);
+        end.setUTCHours(23, 59, 59, 999);
+    } else {
+        // Mặc định lấy trọn vẹn ngày hôm nay
+        start = new Date();
+        start.setUTCHours(0, 0, 0, 0);
 
-        filter.workDate = {
-            $gte: start,
-            $lte: end
-        };
+        end = new Date();
+        end.setUTCHours(23, 59, 59, 999);
     }
+
+    filter.workDate = {
+        $gte: start,
+        $lte: end
+    };
 
     const shifts = await StaffShift.find(filter)
         .populate({
@@ -59,7 +71,7 @@ const getShifts = async (accountId, query) => {
         })
         .sort({
             workDate: 1
-        })
+        });
 
     const shiftOrder = {
         Morning: 1,
@@ -70,7 +82,6 @@ const getShifts = async (accountId, query) => {
 
     // Sắp xếp lại danh sách: Ưu tiên trạng thái trước, rồi mới tới ngày và ca làm
     shifts.sort((a, b) => {
-
         const isACompleted = a.status === "Completed" ? 1 : 0;
         const isBCompleted = b.status === "Completed" ? 1 : 0;
 
@@ -101,7 +112,7 @@ const getShifts = async (accountId, query) => {
         status: item.status,
         rating: item.staffId?.rating || 0,
         kpiPoints: item.staffId?.kpiPoints || 0
-    }))
+    }));
 }
 
 

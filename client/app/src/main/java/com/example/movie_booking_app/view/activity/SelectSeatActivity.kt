@@ -117,9 +117,9 @@ class SelectSeatActivity : AppCompatActivity() {
                             movieName = intent.getStringExtra("movieName") ?: getString(R.string.unknown_movie),
                             moviePoster = intent.getStringExtra("moviePoster"),
                             movieGenre = intent.getStringExtra("movieGenre") ?: "",
-                            cinemaName = intent.getStringExtra("cinemaName") ?: getString(R.string.cinema_center),
+                            cinemaName = viewModel.cinemaName.value.takeIf { !it.isNullOrEmpty() } ?: intent.getStringExtra("cinemaName") ?: getString(R.string.cinema_center),
                             cinemaAddress = intent.getStringExtra("cinemaAddress") ?: "",
-                            roomName = getString(R.string.default_room_name),
+                            roomName = viewModel.cinemaRoomName.value.takeIf { !it.isNullOrEmpty() } ?: getString(R.string.default_room_name),
                             showDate = selectedDate?.id ?: "",
                             showTime = selectedTime?.showTime ?: selectedTime?.startTime ?: "",
                             duration = 120,
@@ -127,6 +127,14 @@ class SelectSeatActivity : AppCompatActivity() {
                             subtitle = getString(R.string.default_subtitle),
                             seatIds = selectedSeatsList.map { it.id },
                             seatNames = selectedSeatsList.map { it.label },
+                            seatTypes = selectedSeatsList.map { seat ->
+                                when (seat.type) {
+                                    com.example.movie_booking_app.data.model.entity.SeatType.NORMAL -> "Regular"
+                                    com.example.movie_booking_app.data.model.entity.SeatType.VIP -> "VIP"
+                                    com.example.movie_booking_app.data.model.entity.SeatType.COUPLE -> "Couple"
+                                    else -> "Regular"
+                                }
+                            }.distinct(),
                             ticketTypeDetails = emptyList(),
                             combos = emptyList(),
                             ticketTotal = ticketTotal,

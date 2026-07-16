@@ -33,9 +33,6 @@ import './src/config/firebaseAdmin.js'  // Initialize Firebase Admin SDK at star
 import { ShowtimeReminderJob } from './src/jobs/showtimeReminderJob.js';
 
 
-import dns from 'dns';
-
-dns.setServers(['8.8.8.8', '1.1.1.1']);
 
 const app = express();
 const PORT = env.PORT || 5000;

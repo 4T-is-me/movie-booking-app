@@ -43,6 +43,7 @@ data class BookingDetailShowtime(
 
 data class BookingDetailSeat(
     @SerializedName("seatName") val seatName: String,
+    @SerializedName("seatType") val seatType: String? = null,
     @SerializedName("price") val price: Int
 )
 

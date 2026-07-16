@@ -18,6 +18,7 @@ data class Booking(
     val subtitle: String?,
     val seatIds: List<String>,
     val seatNames: List<String>,
+    val seatTypes: List<String> = emptyList(),
     val ticketTypeDetails: List<TicketTypeDetail>,
     val combos: List<ComboDetail>?,
     val ticketTotal: Int,

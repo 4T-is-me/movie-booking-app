@@ -60,9 +60,9 @@ class ManagerViewModel @Inject constructor(private val repository: ManagerReposi
         }
     }
 
-    fun loadStaffShifts(startDate: String? = null, endDate: String? = null) {
+    fun loadStaffShifts(startDate: String? = null, endDate: String? = null, status: String? = null) {
         viewModelScope.launch {
-            repository.getStaffShifts(startDate, endDate).collect { response ->
+            repository.getStaffShifts(startDate, endDate, status).collect { response ->
                 _shiftDate.value = response
             }
         }

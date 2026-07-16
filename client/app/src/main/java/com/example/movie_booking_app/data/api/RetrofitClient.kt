@@ -11,9 +11,9 @@ object RetrofitClient {
     // Note for LDPlayer: If 10.0.2.2 doesn't work, change this to your PC's current IPv4 address (run ipconfig to check).
 
     // private const val BASE_URL = "http://192.168.9.49:5000/"
-    private const val BASE_URL = "http://10.0.2.2:5000/"
-    // private const val BASE_URL = "http://10.88.54.59:5000/"
-    // private const val BASE_URL = "http://192.168.32.129:5000/"
+    private const val BASE_URL = "http://10.88.55.75:5000/"
+    // private const val BASE_URL = "http://10.88.54.26:5000/"
+
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
@@ -81,5 +81,12 @@ object RetrofitClient {
 
     val memberApi: MemberApi by lazy {
         instance.create(MemberApi::class.java)
+    }
+
+    val staffApi: StaffApi by lazy {
+        instance.create(StaffApi::class.java)
+    }
+    val leaveRequestApi: LeaveRequestApi by lazy {
+        instance.create(LeaveRequestApi::class.java)
     }
 }
