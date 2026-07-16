@@ -34,9 +34,9 @@ class ManagerShowtimeAdapter : ListAdapter<ShowtimeTodayResponse, ManagerShowtim
             binding.pbOccupancy.progress = rateInt
             binding.tvStatus.text = item.status
 
-            // Màu sắc động theo trạng thái (Live: Xanh, Done: Xám/vàng tối)
+            // Dynamic color by status (Live: Green, Done: Grey/dark yellow)
             if (item.status.equals("Live", ignoreCase = true)) {
-                // Đèn xanh cho trạng thái đang chiếu
+                // Green light for now showing status
                 val greenColor = ContextCompat.getColor(context, R.color.color_green_status)
                 val greenBgColor = ContextCompat.getColor(context, R.color.color_green_status_bg)
 
@@ -45,7 +45,7 @@ class ManagerShowtimeAdapter : ListAdapter<ShowtimeTodayResponse, ManagerShowtim
                 binding.tvStatus.setTextColor(greenColor)
                 binding.lineVertical.backgroundTintList = ColorStateList.valueOf(greenColor)
             }else{
-                // Trạng thái Done hoặc trạng thái khác
+                // Done or other status
                 val grayColor = ContextCompat.getColor(context, R.color.color_gray_status)
                 val grayBgColor = ContextCompat.getColor(context, R.color.color_gray_status_bg)
 

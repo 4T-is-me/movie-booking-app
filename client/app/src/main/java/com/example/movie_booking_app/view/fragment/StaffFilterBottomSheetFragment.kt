@@ -79,12 +79,12 @@ class StaffFilterBottomSheetFragment(private val onApplyFilter: (startDate: Stri
     private fun updateStatusUI(statusViews: Map<String, TextView>) {
         statusViews.forEach { (statusName, textView) ->
             if (statusName == selectedStatus) {
-                // Trạng thái được chọn: đổi background màu vàng, chữ màu tối
+                // Selected state: change background to gold, text to dark
                 textView.setBackgroundResource(R.drawable.bg_tab_container)
                 textView.backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.color_gold)
                 textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.bg_primary))
             } else {
-                // Trạng thái không được chọn: trả về mặc định
+                // Unselected state: reset to default
                 textView.backgroundTintList = null
                 textView.setBackgroundResource(R.drawable.bg_tab_container)
                 textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_secondary))

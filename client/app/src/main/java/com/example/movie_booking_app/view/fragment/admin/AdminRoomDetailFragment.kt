@@ -63,7 +63,7 @@ class AdminRoomDetailFragment : Fragment() {
         val tvRoomSummary = view.findViewById<TextView>(R.id.tvRoomSummary)
 
         tvRoomTitle.text = roomName ?: "Seat Layout"
-        tvRoomSummary.text = "Chạm vào ghế để đổi loại ghế"
+        tvRoomSummary.text = "Tap on seat to change type"
 
         adapter = AdminSeatAdapter(
             onSeatClick = { seat ->
@@ -77,7 +77,7 @@ class AdminRoomDetailFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.seats.collect { seats ->
                 adapter.submitList(seats)
-                tvRoomSummary.text = "Sơ đồ ghế · ${seats.size} ghế"
+                tvRoomSummary.text = "Seat layout · ${seats.size} seats"
             }
         }
 

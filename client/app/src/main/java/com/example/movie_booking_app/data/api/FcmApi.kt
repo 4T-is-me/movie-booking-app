@@ -8,8 +8,8 @@ import retrofit2.http.POST
 
 interface FcmApi {
     /**
-     * Đăng ký hoặc cập nhật FCM token của thiết bị lên server.
-     * Token được gửi kèm JWT Bearer trong header (tự động qua AuthInterceptor).
+     * Register or update the device's FCM token on the server.
+     * Token is sent with JWT Bearer in the header (automatically via AuthInterceptor).
      */
     @POST("api/accounts/fcm-token")
     suspend fun registerFcmToken(

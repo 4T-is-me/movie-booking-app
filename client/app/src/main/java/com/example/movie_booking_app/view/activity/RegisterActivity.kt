@@ -171,7 +171,7 @@ class RegisterActivity : AppCompatActivity() {
 
                         // Regular registration: user is redirected to OTP verification first.
                         // No JWT yet, so FCM token will be sent after the first login.
-                        showNotification("Vui lòng kiểm tra email để lấy mã OTP!", true)
+                        showNotification("Please check your email for the OTP!", true)
                         val intent = Intent(this@RegisterActivity, VerifyOtpActivity::class.java)
                         intent.putExtra("email", binding.edtEmail.text.toString().trim())
                         intent.putExtra("type", "register")

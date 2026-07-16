@@ -95,7 +95,7 @@ class ChangePasswordViewModel @Inject constructor(
             confirmPasswordError = R.string.error_passwords_do_not_match
         } else if (showAll || confirmPasswordTouched) {
             if (isConfirmPasswordEmpty) {
-                confirmPasswordError = R.string.error_confirm_password_required
+                confirmPasswordError = R.string.error_change_confirm_password_required
             } else if (confirmPassword != newPassword) {
                 confirmPasswordError = R.string.error_passwords_do_not_match
             }
@@ -164,12 +164,12 @@ class ChangePasswordViewModel @Inject constructor(
                                 rawMessage
                             }
 
-                            if (parsedMessage.contains("Mật khẩu hiện tại không đúng", ignoreCase = true) ||
+                            if (parsedMessage.contains("Current password is incorrect", ignoreCase = true) ||
                                 parsedMessage.contains("current password is incorrect", ignoreCase = true) ||
                                 parsedMessage.contains("incorrect password", ignoreCase = true) ||
                                 parsedMessage.contains("The current password is incorrect", ignoreCase = true)) {
                                 R.string.error_current_password_incorrect
-                            } else if (parsedMessage.contains("Mật khẩu mới không được trùng với mật khẩu hiện tại", ignoreCase = true) ||
+                            } else if (parsedMessage.contains("New password cannot be the same as the current password", ignoreCase = true) ||
                                 parsedMessage.contains("same password", ignoreCase = true) ||
                                 parsedMessage.contains("cannot be the same", ignoreCase = true)) {
                                 R.string.error_new_password_same_as_current

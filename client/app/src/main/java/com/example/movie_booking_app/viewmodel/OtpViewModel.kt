@@ -39,17 +39,17 @@ class OtpViewModel @Inject constructor(
                     val errorStr = response.errorBody()?.string()
                     val message = try {
                         if (errorStr != null && errorStr.trim().startsWith("{")) {
-                            JSONObject(errorStr).optString("message", "Mã OTP sai hoặc đã hết hạn")
+                            JSONObject(errorStr).optString("message", "Invalid or expired OTP code")
                         } else {
-                            "Mã OTP sai hoặc đã hết hạn"
+                            "Invalid or expired OTP code"
                         }
                     } catch (e: Exception) {
-                        "Mã OTP sai hoặc đã hết hạn"
+                        "Invalid or expired OTP code"
                     }
                     _uiState.value = OtpUiState.Error(message)
                 }
             } catch (e: Exception) {
-                _uiState.value = OtpUiState.Error("Lỗi kết nối: ${e.localizedMessage}")
+                _uiState.value = OtpUiState.Error("Connection error: ${e.localizedMessage}")
             }
         }
     }

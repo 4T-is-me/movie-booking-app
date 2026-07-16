@@ -13,11 +13,11 @@ class ManagerTopMoviesAdapter : RecyclerView.Adapter<ManagerTopMoviesAdapter.Top
     private var moviesList: List<TopMoviesResponse> = emptyList()
     private var maxTickets = 1
 
-    // Hàm cập nhật dữ liệu thủ công, clear sạch bộ đếm cũ
+    // Function to update data manually, clear old counters
     fun submitList(newList: List<TopMoviesResponse>?) {
         this.moviesList = newList.orEmpty()
         this.maxTickets = if (moviesList.isNotEmpty()) moviesList[0].totalTickets.coerceAtLeast(1) else 1
-        notifyDataSetChanged() // Ép toàn bộ danh sách phải vẽ lại từ đầu, không giữ cache vị trí
+        notifyDataSetChanged() // Force redrawing the whole list, no position cache
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TopMoviesViewHolder {

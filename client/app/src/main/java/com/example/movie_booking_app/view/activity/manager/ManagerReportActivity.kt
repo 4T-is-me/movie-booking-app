@@ -76,8 +76,8 @@ class ManagerReportActivity : AppCompatActivity() {
     private fun setActiveTab(selectedTab: TextView, type: String) {
         currentReportType = type
 
-        val inactiveTextColor = ContextCompat.getColor(this, R.color.text_secondary) // Màu xám bạc cho tab chưa chọn
-        val activeTextColor = ContextCompat.getColor(this, R.color.bg_primary) // Chữ màu tối để nổi bật trên nền vàng Gold
+        val inactiveTextColor = ContextCompat.getColor(this, R.color.text_secondary) // Silver grey color for unselected tab
+        val activeTextColor = ContextCompat.getColor(this, R.color.bg_primary) // Dark text to stand out on Gold background
 
         for (tab in tabButtons) {
             tab.setBackgroundResource(android.R.color.transparent)
