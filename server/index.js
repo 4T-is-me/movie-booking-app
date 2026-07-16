@@ -28,6 +28,9 @@ import managerStaffShiftRoutes from './src/routes/managerStaffShiftRoutes.js';
 import { errorHandlingMiddleware } from './src/middlewares/errorHandlingMiddleware.js'
 import './src/config/firebaseAdmin.js'  // Initialize Firebase Admin SDK at startup;
 
+import dns from 'dns';
+
+dns.setServers(['8.8.8.8', '1.1.1.1']);
 
 const app = express();
 const PORT = env.PORT || 5000;

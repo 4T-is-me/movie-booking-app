@@ -28,7 +28,21 @@ class MovieRepositoryImpl : MovieRepository {
         Showtime("s3", "2", mockCinemas[0], "R1", "2026-07-25", "2026-07-25T10:00:00.000Z", "2026-07-25T12:00:00.000Z")
     )
 
-    override fun getMovies(): Flow<List<Movie>> = flow { emit(mockMovies) }
+    override fun getMovies(status: String?, page: Int?, limit: Int?): Flow<List<Movie>> = flow {
+        var filtered = mockMovies
+        if (status != null) {
+            filtered = filtered.filter {
+                val s = it.status?.lowercase() ?: ""
+                when (status) {
+                    "now_showing" -> s.contains("showing") || s == "active" || s == "now_showing"
+                    "coming_soon" -> s.contains("coming") || s.contains("soon") || s == "upcoming" || s == "inactive"
+                    else -> true
+                }
+            }
+        }
+        val finalResult = if (limit != null) filtered.take(limit) else filtered
+        emit(finalResult)
+    }
 
     override fun getAdminMovies(): Flow<List<Movie>> = flow { emit(mockMovies) }
 

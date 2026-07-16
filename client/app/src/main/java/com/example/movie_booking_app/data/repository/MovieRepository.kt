@@ -10,7 +10,7 @@ import com.example.movie_booking_app.data.model.entity.Service
 import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
-    fun getMovies(): Flow<List<Movie>>
+    fun getMovies(status: String? = null, page: Int? = null, limit: Int? = null): Flow<List<Movie>>
     fun getAdminMovies(): Flow<List<Movie>>
     fun searchMovies(query: String): Flow<List<Movie>>
     fun getPromos(): Flow<List<Promo>>

@@ -15,7 +15,11 @@ import retrofit2.http.Query
 
 interface MovieApi {
     @GET("api/movies")
-    suspend fun getMovies(@Query("limit") limit: Int = 100): Response<MovieListResponse>
+    suspend fun getMovies(
+        @Query("status") status: String? = null,
+        @Query("page") page: Int? = null,
+        @Query("limit") limit: Int? = null
+    ): Response<MovieListResponse>
 
     @GET("api/movies/search")
     suspend fun searchMovies(@Query("q") query: String): Response<MovieListResponse>
