@@ -1,0 +1,158 @@
+package com.example.movie_booking_app.view.fragment.admin
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.facebook.shimmer.ShimmerFrameLayout
+import com.example.movie_booking_app.R
+import com.example.movie_booking_app.view.adapter.CinemasAdapter
+import com.example.movie_booking_app.viewmodel.AdminCinemasViewModel
+import com.google.android.material.button.MaterialButton
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+
+@AndroidEntryPoint
+class AdminCinemasFragment : Fragment() {
+
+    private val viewModel: AdminCinemasViewModel by viewModels()
+    private lateinit var adapter: CinemasAdapter
+
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var rvCinemas: RecyclerView
+    private lateinit var shimmerContainer: ShimmerFrameLayout
+    private lateinit var layoutEmptyState: View
+    private lateinit var layoutErrorState: View
+    private lateinit var tvTotalCinemas: TextView
+    private lateinit var btnAddCinema: MaterialButton
+    private lateinit var btnEmptyAddCinema: MaterialButton
+    private lateinit var btnRetry: MaterialButton
+    private lateinit var searchView: SearchView
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_admin_cinemas, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout)
+        rvCinemas = view.findViewById(R.id.rvCinemas)
+        shimmerContainer = view.findViewById(R.id.shimmerContainer)
+        layoutEmptyState = view.findViewById(R.id.layoutEmptyState)
+        layoutErrorState = view.findViewById(R.id.layoutErrorState)
+        tvTotalCinemas = view.findViewById(R.id.tvTotalCinemas)
+        btnAddCinema = view.findViewById(R.id.btnAddCinema)
+        btnEmptyAddCinema = view.findViewById(R.id.btnEmptyAddCinema)
+        btnRetry = view.findViewById(R.id.btnRetry)
+        searchView = view.findViewById(R.id.searchView)
+
+        adapter = CinemasAdapter(
+            onCinemaClick = { cinema ->
+                // Future: Navigate to AdminCinemaDetailFragment
+            }
+        )
+        rvCinemas.layoutManager = LinearLayoutManager(context)
+        rvCinemas.adapter = adapter
+
+        swipeRefreshLayout.setOnRefreshListener {
+            viewModel.loadCinemas()
+        }
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel.setSearchQuery(query.orEmpty())
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                viewModel.setSearchQuery(newText.orEmpty())
+                return true
+            }
+        })
+
+        val onAddCinemaClick = View.OnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, AddCinemaFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+        btnAddCinema.setOnClickListener(onAddCinemaClick)
+        btnEmptyAddCinema.setOnClickListener(onAddCinemaClick)
+
+        btnRetry.setOnClickListener {
+            viewModel.loadCinemas()
+        }
+
+        observeViewModel()
+        viewModel.loadCinemas()
+    }
+
+    private fun observeViewModel() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.filteredCinemas.collectLatest { list ->
+                adapter.submitList(list)
+                tvTotalCinemas.text = if (list.size == 1) "1 cinema" else "${list.size} cinemas"
+                updateUiVisibility(list.isEmpty())
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.isLoading.collectLatest { isLoading ->
+                if (isLoading) {
+                    if (!swipeRefreshLayout.isRefreshing) {
+                        shimmerContainer.visibility = View.VISIBLE
+                        shimmerContainer.startShimmer()
+                        swipeRefreshLayout.visibility = View.GONE
+                    }
+                    layoutEmptyState.visibility = View.GONE
+                    layoutErrorState.visibility = View.GONE
+                } else {
+                    shimmerContainer.stopShimmer()
+                    shimmerContainer.visibility = View.GONE
+                    swipeRefreshLayout.isRefreshing = false
+                    swipeRefreshLayout.visibility = View.VISIBLE
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.error.collectLatest { errorMsg ->
+                if (errorMsg != null) {
+                    layoutErrorState.visibility = View.VISIBLE
+                    swipeRefreshLayout.visibility = View.GONE
+                    layoutEmptyState.visibility = View.GONE
+                } else {
+                    layoutErrorState.visibility = View.GONE
+                }
+            }
+        }
+    }
+
+    private fun updateUiVisibility(isListEmpty: Boolean) {
+        val isLoading = viewModel.isLoading.value
+        val hasError = viewModel.error.value != null
+
+        if (isLoading || hasError) return
+
+        if (isListEmpty) {
+            layoutEmptyState.visibility = View.VISIBLE
+            swipeRefreshLayout.visibility = View.GONE
+        } else {
+            layoutEmptyState.visibility = View.GONE
+            swipeRefreshLayout.visibility = View.VISIBLE
+        }
+    }
+}

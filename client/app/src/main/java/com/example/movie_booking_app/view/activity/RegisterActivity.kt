@@ -14,13 +14,8 @@ import com.example.movie_booking_app.data.model.request.RegisterRequest
 import com.example.movie_booking_app.databinding.ActivityRegisterBinding
 import com.example.movie_booking_app.viewmodel.RegisterUiState
 import com.example.movie_booking_app.viewmodel.RegisterViewModel
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import androidx.activity.result.contract.ActivityResultContracts
 import android.content.Intent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -38,23 +33,6 @@ class RegisterActivity : AppCompatActivity() {
 
     @Inject
     lateinit var fcmTokenHelper: FcmTokenHelper
-    private lateinit var googleSignInClient: GoogleSignInClient
-
-    private val googleSignInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-        try {
-            val account = task.getResult(ApiException::class.java)
-            val idToken = account?.idToken
-            if (idToken != null) {
-                viewModel.googleLogin(idToken)
-            } else {
-                showNotification("Google Sign-In failed: No ID token", false)
-            }
-        } catch (e: ApiException) {
-            Log.w("REGISTER_DEBUG", "Google sign in failed", e)
-            showNotification("Google Sign-In failed: ${e.statusCode}", false)
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -171,18 +149,6 @@ class RegisterActivity : AppCompatActivity() {
             }
         }
 
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("1042352766201-25ddh24aoqt74h069sqinlhn1lhn4rlh.apps.googleusercontent.com")
-            .requestEmail()
-            .build()
-        googleSignInClient = GoogleSignIn.getClient(this, gso)
-
-        binding.btnGoogleRegister.setOnClickListener {
-            googleSignInClient.signOut().addOnCompleteListener {
-                val signInIntent = googleSignInClient.signInIntent
-                googleSignInLauncher.launch(signInIntent)
-            }
-        }
 
         observeViewModel()
     }
@@ -203,26 +169,14 @@ class RegisterActivity : AppCompatActivity() {
                         binding.btnRegister.isEnabled = true
                         binding.pbLoading.visibility = View.GONE
 
-                        if (state.message == "GOOGLE_SUCCESS") {
-                            showNotification("Đăng nhập Google thành công!", true)
-                            // User now has a valid JWT – register FCM token immediately
-                            lifecycleScope.launch(Dispatchers.IO) {
-                                fcmTokenHelper.registerCurrentToken("RegisterActivity")
-                            }
-                            val intent = Intent(this@RegisterActivity, MainActivity::class.java)
-                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            startActivity(intent)
-                            finish()
-                        } else {
-                            // Regular registration: user is redirected to OTP verification first.
-                            // No JWT yet, so FCM token will be sent after the first login.
-                            showNotification("Vui lòng kiểm tra email để lấy mã OTP!", true)
-                            val intent = Intent(this@RegisterActivity, VerifyOtpActivity::class.java)
-                            intent.putExtra("email", binding.edtEmail.text.toString().trim())
-                            intent.putExtra("type", "register")
-                            startActivity(intent)
-                            finish()
-                        }
+                        // Regular registration: user is redirected to OTP verification first.
+                        // No JWT yet, so FCM token will be sent after the first login.
+                        showNotification("Vui lòng kiểm tra email để lấy mã OTP!", true)
+                        val intent = Intent(this@RegisterActivity, VerifyOtpActivity::class.java)
+                        intent.putExtra("email", binding.edtEmail.text.toString().trim())
+                        intent.putExtra("type", "register")
+                        startActivity(intent)
+                        finish()
 
                         viewModel.resetState()
                     }

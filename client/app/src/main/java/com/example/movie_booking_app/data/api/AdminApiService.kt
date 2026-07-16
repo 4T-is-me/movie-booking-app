@@ -2,6 +2,7 @@ package com.example.movie_booking_app.data.api
 
 import com.example.movie_booking_app.data.model.request.AddMovieRequest
 import com.example.movie_booking_app.data.model.request.UpdateMovieRequest
+import com.example.movie_booking_app.data.model.request.AddCinemaRequest
 import com.example.movie_booking_app.data.model.response.*
 import com.example.movie_booking_app.data.model.response.DailyRevenueResponse
 import com.example.movie_booking_app.data.model.response.MonthlyRevenueResponse
@@ -109,6 +110,12 @@ interface AdminApiService {
 
     @GET("api/cinemas")
     suspend fun getCinemas(): Response<CinemaResponse>
+
+    @POST("api/admin/cinemas")
+    suspend fun createCinema(@Body request: AddCinemaRequest): Response<Unit>
+
+    @GET("api/admin/cinemas")
+    suspend fun getAdminCinemas(): Response<CinemaResponse>
 
     @POST("api/admin/staff")
     suspend fun createStaff(@Body request: com.example.movie_booking_app.data.model.request.CreateStaffRequest): Response<Unit>
