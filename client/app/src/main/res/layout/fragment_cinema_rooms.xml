@@ -130,7 +130,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cinema Capacity Overview"
+                android:text="@string/auto_str_cinema_capacity_overview"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -149,7 +149,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Total Seats"
+                        android:text="@string/auto_str_total_seats"
                         android:textColor="@color/cinema_text_secondary"
                         android:textSize="12sp" />
                     <TextView
@@ -171,7 +171,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Regular"
+                        android:text="@string/auto_str_regular"
                         android:textColor="@color/cinema_text_secondary"
                         android:textSize="12sp" />
                     <TextView
@@ -193,7 +193,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="VIP"
+                        android:text="@string/auto_str_vip"
                         android:textColor="@color/cinema_text_secondary"
                         android:textSize="12sp" />
                     <TextView
@@ -215,7 +215,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Couple"
+                        android:text="@string/auto_str_couple"
                         android:textColor="@color/cinema_text_secondary"
                         android:textSize="12sp" />
                     <TextView

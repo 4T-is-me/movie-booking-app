@@ -48,7 +48,7 @@
             app:layout_constraintEnd_toStartOf="@id/btnEditPromo"
             android:layout_marginEnd="8dp"
             tools:text="ACTIVE"
-            tools:backgroundTint="#4CAF50" />
+            tools:backgroundTint="@color/auto_color_4CAF50" />
 
         <!-- Nút Sửa -->
         <ImageButton
@@ -107,7 +107,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:background="@drawable/bg_rounded_badge"
-            android:backgroundTint="#262837"
+            android:backgroundTint="@color/auto_color_262837"
             android:paddingHorizontal="8dp"
             android:paddingVertical="4dp"
             android:orientation="horizontal"

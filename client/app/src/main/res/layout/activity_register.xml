@@ -86,7 +86,7 @@
                 app:boxBackgroundMode="outline"
                 app:hintEnabled="false"
                 app:startIconDrawable="@drawable/ic_profile"
-                app:startIconTint="#808080"
+                app:startIconTint="@color/auto_color_808080"
                 app:layout_constraintTop_toBottomOf="@id/tvUsernameRegLabel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
@@ -96,7 +96,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/username_reg_hint"
-                    android:textColorHint="#808080"
+                    android:textColorHint="@color/auto_color_808080"
                     android:textColor="@color/auto_color_FFFFFF"
                     android:inputType="textPersonName" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -129,7 +129,7 @@
                 app:boxBackgroundMode="outline"
                 app:hintEnabled="false"
                 app:startIconDrawable="@drawable/ic_profile"
-                app:startIconTint="#808080"
+                app:startIconTint="@color/auto_color_808080"
                 app:layout_constraintTop_toBottomOf="@id/tvFullNameLabel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
@@ -139,7 +139,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/full_name_hint"
-                    android:textColorHint="#808080"
+                    android:textColorHint="@color/auto_color_808080"
                     android:textColor="@color/auto_color_FFFFFF"
                     android:inputType="textPersonName" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -181,7 +181,7 @@
                     app:boxBackgroundMode="outline"
                     app:hintEnabled="false"
                     app:startIconDrawable="@drawable/ic_calendar_month_24"
-                    app:startIconTint="#808080"
+                    app:startIconTint="@color/auto_color_808080"
                     app:layout_constraintTop_toBottomOf="@id/tvDobLabel"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/rgGender"
@@ -192,7 +192,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/dob_hint"
-                        android:textColorHint="#808080"
+                        android:textColorHint="@color/auto_color_808080"
                         android:textColor="@color/auto_color_FFFFFF"
                         android:focusable="true"
                         android:clickable="true"
@@ -274,7 +274,7 @@
                 app:boxBackgroundMode="outline"
                 app:hintEnabled="false"
                 app:startIconDrawable="@drawable/ic_email"
-                app:startIconTint="#808080"
+                app:startIconTint="@color/auto_color_808080"
                 app:layout_constraintTop_toBottomOf="@id/tvEmailLabel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
@@ -284,7 +284,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/email_hint"
-                    android:textColorHint="#808080"
+                    android:textColorHint="@color/auto_color_808080"
                     android:textColor="@color/auto_color_FFFFFF"
                     android:inputType="textEmailAddress" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -317,7 +317,7 @@
                 app:boxBackgroundMode="outline"
                 app:hintEnabled="false"
                 app:startIconDrawable="@drawable/ic_phone"
-                app:startIconTint="#808080"
+                app:startIconTint="@color/auto_color_808080"
                 app:layout_constraintTop_toBottomOf="@id/tvPhoneLabel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
@@ -327,7 +327,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/phone_hint"
-                    android:textColorHint="#808080"
+                    android:textColorHint="@color/auto_color_808080"
                     android:textColor="@color/auto_color_FFFFFF"
                     android:inputType="phone" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -360,7 +360,7 @@
                 app:boxBackgroundMode="outline"
                 app:hintEnabled="false"
                 app:startIconDrawable="@android:drawable/ic_menu_agenda"
-                app:startIconTint="#808080"
+                app:startIconTint="@color/auto_color_808080"
                 app:layout_constraintTop_toBottomOf="@id/tvIdCardLabel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
@@ -370,7 +370,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/id_card_hint"
-                    android:textColorHint="#808080"
+                    android:textColorHint="@color/auto_color_808080"
                     android:textColor="@color/auto_color_FFFFFF"
                     android:inputType="number" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -403,9 +403,9 @@
                 app:boxBackgroundMode="outline"
                 app:hintEnabled="false"
                 app:endIconMode="password_toggle"
-                app:endIconTint="#808080"
+                app:endIconTint="@color/auto_color_808080"
                 app:startIconDrawable="@android:drawable/ic_lock_idle_lock"
-                app:startIconTint="#808080"
+                app:startIconTint="@color/auto_color_808080"
                 app:layout_constraintTop_toBottomOf="@id/tvPasswordLabel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
@@ -415,7 +415,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/password_hint"
-                    android:textColorHint="#808080"
+                    android:textColorHint="@color/auto_color_808080"
                     android:textColor="@color/auto_color_FFFFFF"
                     android:inputType="textPassword" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -448,9 +448,9 @@
                 app:boxBackgroundMode="outline"
                 app:hintEnabled="false"
                 app:endIconMode="password_toggle"
-                app:endIconTint="#808080"
+                app:endIconTint="@color/auto_color_808080"
                 app:startIconDrawable="@android:drawable/ic_lock_idle_lock"
-                app:startIconTint="#808080"
+                app:startIconTint="@color/auto_color_808080"
                 app:layout_constraintTop_toBottomOf="@id/tvConfirmPasswordLabel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
@@ -460,7 +460,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/confirm_password_hint"
-                    android:textColorHint="#808080"
+                    android:textColorHint="@color/auto_color_808080"
                     android:textColor="@color/auto_color_FFFFFF"
                     android:inputType="textPassword" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -493,7 +493,7 @@
                 app:boxBackgroundMode="outline"
                 app:hintEnabled="false"
                 app:startIconDrawable="@drawable/ic_home"
-                app:startIconTint="#808080"
+                app:startIconTint="@color/auto_color_808080"
                 app:layout_constraintTop_toBottomOf="@id/tvAddressLabel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
@@ -503,7 +503,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/address_hint"
-                    android:textColorHint="#808080"
+                    android:textColorHint="@color/auto_color_808080"
                     android:textColor="@color/auto_color_FFFFFF"
                     android:inputType="textPostalAddress" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -532,7 +532,7 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"
                 android:elevation="4dp"
-                android:indeterminateTint="#000000"
+                android:indeterminateTint="@color/auto_color_000000"
                 app:layout_constraintTop_toTopOf="@id/btnRegister"
                 app:layout_constraintBottom_toBottomOf="@id/btnRegister"
                 app:layout_constraintEnd_toEndOf="@id/btnRegister"

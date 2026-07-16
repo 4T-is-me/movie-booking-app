@@ -27,7 +27,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cinemas Management"
+                android:text="@string/auto_str_cinemas_management"
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -36,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="List of cinemas currently managed"
+                android:text="@string/auto_str_list_of_cinemas_currently_mana"
                 android:textColor="@color/cinema_text_secondary"
                 android:textSize="13sp" />
 
@@ -56,7 +56,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Total Cinemas"
+                        android:text="@string/auto_str_total_cinemas"
                         android:textColor="@color/cinema_text_secondary"
                         android:textSize="12sp" />
 
@@ -76,7 +76,7 @@
                     style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Add Cinema"
+                    android:text="@string/auto_str_add_cinema_1"
                     android:textColor="@color/cinema_primary"
                     app:strokeColor="@color/cinema_primary"
                     app:strokeWidth="1.5dp"
@@ -171,7 +171,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="No cinemas found"
+            android:text="@string/auto_str_no_cinemas_found"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -181,7 +181,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Add Cinema"
+            android:text="@string/auto_str_add_cinema_2"
             android:textColor="@color/black"
             app:backgroundTint="@color/cinema_primary"
             app:cornerRadius="10dp" />
@@ -201,7 +201,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Failed to load cinemas"
+            android:text="@string/auto_str_failed_to_load_cinemas"
             android:textColor="@color/text_error"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -211,7 +211,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Retry"
+            android:text="@string/auto_str_retry"
             android:textColor="@color/black"
             app:backgroundTint="@color/cinema_primary"
             app:cornerRadius="10dp" />

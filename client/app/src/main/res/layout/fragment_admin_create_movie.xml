@@ -37,7 +37,7 @@
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
             app:boxBackgroundMode="outline"
-            app:hintTextColor="#808080">
+            app:hintTextColor="@color/auto_color_808080">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtMovieName"
@@ -61,7 +61,7 @@
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
             app:boxBackgroundMode="outline"
-            app:hintTextColor="#808080">
+            app:hintTextColor="@color/auto_color_808080">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtDuration"
@@ -93,7 +93,7 @@
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusBottomEnd="12dp"
                 app:boxBackgroundMode="outline"
-                app:hintTextColor="#808080">
+                app:hintTextColor="@color/auto_color_808080">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtReleaseDate"
@@ -119,7 +119,7 @@
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusBottomEnd="12dp"
                 app:boxBackgroundMode="outline"
-                app:hintTextColor="#808080">
+                app:hintTextColor="@color/auto_color_808080">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtEndDate"
@@ -179,7 +179,7 @@
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
             app:boxBackgroundMode="outline"
-            app:hintTextColor="#808080">
+            app:hintTextColor="@color/auto_color_808080">
 
             <AutoCompleteTextView
                 android:id="@+id/spnCensorship"
@@ -204,7 +204,7 @@
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
             app:boxBackgroundMode="outline"
-            app:hintTextColor="#808080">
+            app:hintTextColor="@color/auto_color_808080">
 
             <AutoCompleteTextView
                 android:id="@+id/edtCountry"
@@ -229,7 +229,7 @@
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
             app:boxBackgroundMode="outline"
-            app:hintTextColor="#808080">
+            app:hintTextColor="@color/auto_color_808080">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtLanguage"
@@ -253,7 +253,7 @@
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
             app:boxBackgroundMode="outline"
-            app:hintTextColor="#808080">
+            app:hintTextColor="@color/auto_color_808080">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtDirector"
@@ -277,7 +277,7 @@
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
             app:boxBackgroundMode="outline"
-            app:hintTextColor="#808080">
+            app:hintTextColor="@color/auto_color_808080">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtActors"
@@ -321,7 +321,7 @@
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
             app:boxBackgroundMode="outline"
-            app:hintTextColor="#808080">
+            app:hintTextColor="@color/auto_color_808080">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtDescription"

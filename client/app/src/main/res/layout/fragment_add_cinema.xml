@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Add Cinema"
+            android:text="@string/auto_str_add_cinema"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -69,7 +69,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Cinema Information"
+                        android:text="@string/auto_str_cinema_information"
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -142,7 +142,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:text="Cinema Image"
+                        android:text="@string/auto_str_cinema_image"
                         android:textColor="@color/cinema_text_secondary"
                         android:textSize="14sp" />
 
@@ -168,7 +168,7 @@
                             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Select Image"
+                            android:text="@string/auto_str_select_image"
                             android:textColor="@color/cinema_primary"
                             app:strokeColor="@color/cinema_primary"
                             app:cornerRadius="8dp" />
@@ -223,7 +223,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_marginEnd="8dp"
-            android:text="Cancel"
+            android:text="@string/auto_str_cancel_1"
             android:textColor="@color/cinema_primary"
             app:strokeColor="@color/cinema_primary"
             app:strokeWidth="1.5dp"
@@ -239,7 +239,7 @@
                 android:id="@+id/btnSave"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Save Cinema"
+                android:text="@string/auto_str_save_cinema"
                 android:textColor="@color/black"
                 app:backgroundTint="@color/cinema_primary"
                 app:cornerRadius="10dp" />
