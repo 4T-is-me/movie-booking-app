@@ -110,32 +110,39 @@ class MovieViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             combine(
-                repository.getMovies(status = "now_showing", limit = 10).onStart { emit(emptyList()) },
-                repository.getMovies(status = "coming_soon", limit = 10).onStart { emit(emptyList()) },
+                repository.getMovies().onStart { emit(emptyList()) },
                 repository.getPromos().onStart { emit(emptyList()) },
                 repository.getServices().onStart { emit(emptyList()) },
                 repository.getNews().onStart { emit(emptyList()) }
-            ) { nowPlaying, comingSoon, promos, services, news ->
+            ) { movies, promos, services, news ->
                 val list = mutableListOf<HomeItem>()
                 
-                // Now Playing Section
+                // Now Playing Section: Lọc linh hoạt tại Client
+                val nowPlaying = movies.filter {
+                    val s = it.status?.lowercase() ?: ""
+                    (s.contains("showing") || s == "active" || s == "now_showing")
+                }
                 list.add(HomeItem.NowPlayingSection(
-                    if (nowPlaying.isEmpty()) null else nowPlaying, 
-                    isLoading = nowPlaying.isEmpty() && promos.isEmpty() // Giữ loading nếu chưa có gì
+                    nowPlaying.ifEmpty { null },
+                    isLoading = nowPlaying.isEmpty() && promos.isEmpty()
                 ))
                 
-                // Coming Soon Section
+                // Coming Soon Section: Lọc linh hoạt tại Client
+                val comingSoon = movies.filter {
+                    val s = it.status?.lowercase() ?: ""
+                    (s.contains("coming") || s.contains("soon") || s == "upcoming" || s == "inactive")
+                }
                 list.add(HomeItem.ComingSoonSection(
-                    if (comingSoon.isEmpty()) null else comingSoon, 
+                    comingSoon.ifEmpty { null },
                     isLoading = comingSoon.isEmpty() && promos.isEmpty()
                 ))
                 
-                list.add(HomeItem.PromoSection(if (promos.isEmpty()) null else promos, isLoading = promos.isEmpty()))
-                list.add(HomeItem.ServiceSection(if (services.isEmpty()) null else services, isLoading = services.isEmpty()))
-                list.add(HomeItem.MovieNewsSection(if (news.isEmpty()) null else news, isLoading = news.isEmpty()))
+                list.add(HomeItem.PromoSection(promos.ifEmpty { null }, isLoading = promos.isEmpty()))
+                list.add(HomeItem.ServiceSection(services.ifEmpty { null }, isLoading = services.isEmpty()))
+                list.add(HomeItem.MovieNewsSection(news.ifEmpty { null }, isLoading = news.isEmpty()))
                 
-                // Videos Section (Dùng tạm list nowPlaying)
-                list.add(HomeItem.VideosSection(if (nowPlaying.isEmpty()) null else nowPlaying.take(5), isLoading = nowPlaying.isEmpty()))
+                // Videos Section
+                list.add(HomeItem.VideosSection(nowPlaying.take(5).ifEmpty { null }, isLoading = nowPlaying.isEmpty()))
                 list
             }.collect {
                 _homeItems.value = it

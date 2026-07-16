@@ -101,9 +101,17 @@ class MovieGridFragment : Fragment() {
             binding.shimmerGrid.startShimmer()
             binding.rvFullList.visibility = View.GONE
             
-            val status = if (isNowPlaying) "now_showing" else "coming_soon"
-            movieRepository.getMovies(status = status, limit = 50).collect { filteredMovies ->
-                adapter.submitList(filteredMovies)
+            // Lấy tất cả phim (mặc định 100 phim từ Repository) và lọc tại Client để đảm bảo hiển thị đúng
+            movieRepository.getMovies().collect { allMovies ->
+                val filtered = allMovies.filter {
+                    val s = it.status?.lowercase() ?: ""
+                    if (isNowPlaying) {
+                        s.contains("showing") || s == "active" || s == "now_showing"
+                    } else {
+                        s.contains("coming") || s.contains("soon") || s == "upcoming" || s == "inactive"
+                    }
+                }
+                adapter.submitList(filtered)
                 
                 binding.shimmerGrid.stopShimmer()
                 binding.shimmerGrid.visibility = View.GONE
