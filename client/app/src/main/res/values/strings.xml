@@ -327,7 +327,7 @@
     <string name="auto_str_this_week_s_schedule">THIS WEEK\'S SCHEDULE</string>
     <string name="auto_str_staff_management">Staff Management</string>
     <string name="auto_str_staff_list">Staff List</string>
-    <string name="auto_str_leave_requests_2">Leave Requests (2)</string>
+    <string name="auto_str_leave_requests_2">Leave Requests</string>
     <string name="auto_str_filter">Filter</string>
     <string name="auto_str_no_shifts_have_been_assigned_y">No shifts have been assigned yet!</string>
     <string name="auto_str_avengers_infinity_war">Avengers: Infinity War</string>
@@ -709,4 +709,29 @@
     <string name="admin_identity_card">Identity Card</string>
     <string name="admin_address">Address</string>
     <string name="admin_actions">Actions</string>
+
+    <string name="status_pending">PENDING</string>
+    <string name="status_approved">APPROVED</string>
+    <string name="status_rejected">REJECTED</string>
+
+    <string name="undo_message_approved">Request approved · Tap to undo</string>
+    <string name="undo_message_rejected">Request rejected · Tap to undo</string>
+
+    <!-- Manager & Staff Filter Strings -->
+    <string name="find_employees_positions_hint">Find employees, positions...</string>
+    <string name="filter_status_title">Filter Status</string>
+    <string name="select_status_filter_desc">Select a status to filter requests</string>
+    <string name="all_requests">All Requests</string>
+    <string name="status_pending_label">Pending</string>
+    <string name="status_approved_label">Approved</string>
+    <string name="status_rejected_label">Rejected</string>
+    <string name="status_title">Status</string>
+    <string name="status_active_label">Active</string>
+    <string name="status_assigned_label">Assigned</string>
+    <string name="status_completed_label">Completed</string>
+    <string name="status_need_replacement_label">NeedReplacement</string>
+    <string name="btn_approve">Approve</string>
+    <string name="btn_reject">Reject</string>
+    <string name="undo_message_default">Request approved</string>
+    <string name="btn_undo">Undo</string>
 </resources>

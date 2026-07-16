@@ -82,4 +82,8 @@ object RetrofitClient {
     val memberApi: MemberApi by lazy {
         instance.create(MemberApi::class.java)
     }
+
+    val leaveRequestApi: LeaveRequestApi by lazy {
+        instance.create(LeaveRequestApi::class.java)
+    }
 }

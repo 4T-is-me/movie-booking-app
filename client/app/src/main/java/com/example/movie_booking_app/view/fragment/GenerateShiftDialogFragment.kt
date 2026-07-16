@@ -40,6 +40,9 @@ class GenerateShiftDialogFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.btnCancel.setOnClickListener {
+            dismiss()
+        }
 
         // Date Picker cho Start Date (isStartDate = true)
         binding.tvStartDate.setOnClickListener {
