@@ -91,10 +91,12 @@ class StaffScheduleFragment : Fragment() {
     private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.shifts.collectLatest { shiftList ->
+                android.util.Log.d("StaffSchedule", "Received shifts count: ${shiftList.size}")
                 staffShiftAdapter.submitList(shiftList)
                 
                 // Set default display for today's selected date in calendar strip
                 val activeDate = dateAdapter.currentList.find { it.isSelected }?.id
+                android.util.Log.d("StaffSchedule", "Active date on load: $activeDate")
                 if (activeDate != null) {
                     updateTodayShiftCard(activeDate)
                 }
@@ -122,18 +124,22 @@ class StaffScheduleFragment : Fragment() {
         if (calendarDates.isNotEmpty()) {
             val startDate = calendarDates.first().id
             val endDate = calendarDates.last().id
+            android.util.Log.d("StaffSchedule", "Requesting shifts from $startDate to $endDate")
             viewModel.loadShifts(startDate, endDate)
         }
     }
 
     private fun updateTodayShiftCard(selectedDateId: String) {
         val shifts = viewModel.shifts.value
+        android.util.Log.d("StaffSchedule", "Updating card for date: $selectedDateId. Total shifts: ${shifts.size}")
         val matchingShift = shifts.find {
             val cleanDate = if (it.workDate?.contains("T") == true) it.workDate.substringBefore("T") else it.workDate
+            android.util.Log.d("StaffSchedule", "Checking shift: ${it.shiftId}, workDate: ${it.workDate}, cleanDate: $cleanDate against $selectedDateId")
             cleanDate == selectedDateId
         }
 
         if (matchingShift != null && !matchingShift.shift.isNullOrEmpty()) {
+            android.util.Log.d("StaffSchedule", "Found matching shift: ${matchingShift.shift} for $selectedDateId")
             binding.cardTodayShift.visibility = View.VISIBLE
             binding.tvTodayHeader.visibility = View.VISIBLE
             binding.tvShiftTitle.text = "${matchingShift.shift} Shift"
@@ -151,6 +157,7 @@ class StaffScheduleFragment : Fragment() {
             binding.tvStatusBadge.text = matchingShift.status ?: "Assigned"
             binding.tvStatusBadge.setBackgroundResource(com.example.movie_booking_app.R.drawable.bg_glass_badge)
         } else {
+            android.util.Log.d("StaffSchedule", "No matching shift found for $selectedDateId")
             binding.cardTodayShift.visibility = View.GONE
             binding.tvTodayHeader.visibility = View.GONE
         }
@@ -296,7 +303,11 @@ class StaffScheduleFragment : Fragment() {
                 val cleanDate = if (dateStr.contains("T")) dateStr.substringBefore("T") else dateStr
                 return try {
                     val date = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).parse(cleanDate)
-                    SimpleDateFormat("EEE", Locale.ENGLISH).format(date).uppercase()
+                    if (date != null) {
+                        SimpleDateFormat("EEE", Locale.ENGLISH).format(date).uppercase()
+                    } else {
+                        "MON"
+                    }
                 } catch (e: Exception) {
                     "MON"
                 }
