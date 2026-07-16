@@ -13,7 +13,6 @@ import com.example.movie_booking_app.databinding.DialogLeaveStatusFilterBinding
 class LeaveStatusFilterDialogFragment(private val onStatusSelected: (String?) -> Unit) : DialogFragment() {
     private var _binding: DialogLeaveStatusFilterBinding? = null
     private val binding get() = _binding!!
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = DialogLeaveStatusFilterBinding.inflate(inflater, container, false)
         return binding.root
