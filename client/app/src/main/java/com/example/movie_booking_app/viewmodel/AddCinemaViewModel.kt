@@ -8,6 +8,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,7 +34,7 @@ class AddCinemaViewModel @Inject constructor(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage = _errorMessage.asStateFlow()
 
-    fun saveCinema() {
+    fun saveCinema(posterPart: MultipartBody.Part?) {
         val name = cinemaName.value.trim()
         val addr = address.value.trim()
         val cit = city.value.trim()
@@ -48,15 +51,27 @@ class AddCinemaViewModel @Inject constructor(
             _isLoading.value = true
             _errorMessage.value = null
             try {
-                val request = AddCinemaRequest(
-                    cinemaName = name,
-                    address = addr,
-                    city = cit,
-                    hotline = hot,
-                    status = stat,
-                    image = if (img.isEmpty()) null else img
-                )
-                val success = repository.createCinema(request)
+                val success = if (posterPart != null) {
+                    repository.createCinemaWithImage(
+                        name.toRequestBody("text/plain".toMediaTypeOrNull()),
+                        addr.toRequestBody("text/plain".toMediaTypeOrNull()),
+                        cit.toRequestBody("text/plain".toMediaTypeOrNull()),
+                        hot.toRequestBody("text/plain".toMediaTypeOrNull()),
+                        stat.toRequestBody("text/plain".toMediaTypeOrNull()),
+                        posterPart
+                    )
+                } else {
+                    val request = AddCinemaRequest(
+                        cinemaName = name,
+                        address = addr,
+                        city = cit,
+                        hotline = hot,
+                        status = stat,
+                        image = if (img.isEmpty()) null else img
+                    )
+                    repository.createCinema(request)
+                }
+
                 if (success) {
                     _isSuccess.value = true
                 } else {

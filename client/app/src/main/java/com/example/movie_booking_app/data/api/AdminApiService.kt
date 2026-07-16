@@ -114,6 +114,17 @@ interface AdminApiService {
     @POST("api/admin/cinemas")
     suspend fun createCinema(@Body request: AddCinemaRequest): Response<Unit>
 
+    @Multipart
+    @POST("api/admin/cinemas")
+    suspend fun createCinemaWithImage(
+        @Part("cinemaName") cinemaName: RequestBody,
+        @Part("address") address: RequestBody,
+        @Part("city") city: RequestBody,
+        @Part("hotline") hotline: RequestBody,
+        @Part("status") status: RequestBody,
+        @Part poster: MultipartBody.Part?
+    ): Response<Unit>
+
     @GET("api/admin/cinemas")
     suspend fun getAdminCinemas(): Response<CinemaResponse>
 

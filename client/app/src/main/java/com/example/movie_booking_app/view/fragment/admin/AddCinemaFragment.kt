@@ -9,8 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -21,6 +23,12 @@ import com.google.android.material.textfield.TextInputEditText
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
+import java.io.FileOutputStream
+import android.net.Uri
 
 @AndroidEntryPoint
 class AddCinemaFragment : Fragment() {
@@ -32,12 +40,22 @@ class AddCinemaFragment : Fragment() {
     private lateinit var etAddress: TextInputEditText
     private lateinit var etCity: TextInputEditText
     private lateinit var etHotline: TextInputEditText
-    private lateinit var etImage: TextInputEditText
+    private lateinit var ivCinemaPreview: ImageView
+    private lateinit var btnPickImage: MaterialButton
     private lateinit var actvStatus: AutoCompleteTextView
     private lateinit var tvErrorMessage: TextView
     private lateinit var btnCancel: MaterialButton
     private lateinit var btnSave: MaterialButton
     private lateinit var pbLoading: ProgressBar
+
+    private var selectedImageUri: Uri? = null
+
+    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri?.let {
+            selectedImageUri = it
+            ivCinemaPreview.setImageURI(it)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,7 +72,8 @@ class AddCinemaFragment : Fragment() {
         etAddress = view.findViewById(R.id.etAddress)
         etCity = view.findViewById(R.id.etCity)
         etHotline = view.findViewById(R.id.etHotline)
-        etImage = view.findViewById(R.id.etImage)
+        ivCinemaPreview = view.findViewById(R.id.ivCinemaPreview)
+        btnPickImage = view.findViewById(R.id.btnPickImage)
         actvStatus = view.findViewById(R.id.actvStatus)
         tvErrorMessage = view.findViewById(R.id.tvErrorMessage)
         btnCancel = view.findViewById(R.id.btnCancel)
@@ -112,16 +131,20 @@ class AddCinemaFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
         
-        etImage.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                viewModel.image.value = s?.toString().orEmpty()
-            }
-            override fun afterTextChanged(s: Editable?) {}
-        })
+        btnPickImage.setOnClickListener {
+            pickImageLauncher.launch("image/*")
+        }
 
         btnSave.setOnClickListener {
-            viewModel.saveCinema()
+            var multipartBody: MultipartBody.Part? = null
+            selectedImageUri?.let { uri ->
+                val file = convertUriToFile(uri)
+                if (file != null) {
+                    val requestBody = file.readBytes().toRequestBody("image/*".toMediaTypeOrNull())
+                    multipartBody = MultipartBody.Part.createFormData("poster", file.name, requestBody)
+                }
+            }
+            viewModel.saveCinema(multipartBody)
         }
 
         val onCancelClick = View.OnClickListener {
@@ -176,5 +199,21 @@ class AddCinemaFragment : Fragment() {
                 parentFragmentManager.popBackStack()
             }
             .show()
+    }
+
+    private fun convertUriToFile(uri: Uri): File? {
+        val contentResolver = requireContext().contentResolver
+        val tempFile = File.createTempFile("upload_", ".jpg", requireContext().cacheDir)
+        return try {
+            contentResolver.openInputStream(uri)?.use { inputStream ->
+                FileOutputStream(tempFile).use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
+            }
+            tempFile
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 }
