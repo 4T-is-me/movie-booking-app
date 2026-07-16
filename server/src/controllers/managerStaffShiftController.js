@@ -119,9 +119,9 @@ const rejectLeaveRequest = async(req, res, next) => {
   try {
     const accountId = req.user.accountId
     const leaveRequestId = req.params.id
-    const { reason } = req.body;
+    const { rejectReason } = req.body;
 
-    await ManagerStaffShiftService.rejectLeaveRequest(accountId, leaveRequestId, reason)
+    await ManagerStaffShiftService.rejectLeaveRequest(accountId, leaveRequestId, { rejectReason })
     return res.status(StatusCodes.OK).json({
       success: true,
       message: "Leave request rejected successfully."

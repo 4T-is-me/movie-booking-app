@@ -42,15 +42,13 @@ class MovieRepositoryRemoteImpl @Inject constructor(
         }
     }
 
-    override fun getAdminMovies(): Flow<List<Movie>> = flow {
+    override fun getAdminMovies(status: String?): Flow<List<Movie>> = flow {
         try {
-            // Thử gọi API admin trước
-            val response = adminApi.getMovies()
+            val response = adminApi.getMovies(status = status)
             if (response.isSuccessful) {
                 val data = response.body()?.data ?: emptyList()
                 emit(data)
             } else {
-                // Nếu API admin lỗi (có thể chưa có), thử gọi API movies bình thường
                 val publicResponse = api.getMovies(1000)
                 if (publicResponse.isSuccessful) {
                     emit(publicResponse.body()?.data ?: emptyList())
@@ -59,7 +57,6 @@ class MovieRepositoryRemoteImpl @Inject constructor(
                 }
             }
         } catch (e: Exception) {
-            // Fallback sang API public nếu có exception
             try {
                 val publicResponse = api.getMovies(1000)
                 if (publicResponse.isSuccessful) {

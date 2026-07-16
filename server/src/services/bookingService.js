@@ -14,7 +14,7 @@ import crypto from "crypto";
 import mongoose from "mongoose";
 import { StatusCodes } from "http-status-codes";
 import ApiError from "../utils/ApiError.js";
-import { formatDate } from "../utils/formatters.js";
+import { formatDate, getShowtimeTimeRange } from "../utils/formatters.js";
 import { format } from "path";
 import { notificationService } from "./notificationService.js";
 
@@ -357,7 +357,8 @@ const handleGetMyTickets = async (accountId, page = 1, limit = 10) => {
       movie: movie?.movieName || "",
       poster: movie?.poster || "",
       showDate: showtime?.showDate ? formatDate(showtime.showDate) : "",
-      showtime: showtime?.showTime || "",
+      showtime: getShowtimeTimeRange(showtime),
+      showTime: getShowtimeTimeRange(showtime),
       cinemaName: cinema?.cinemaName || "",
       roomName: cinemaRoom?.roomName || "",
       seats: booking.seatNames || [],
@@ -419,7 +420,8 @@ const handleGetHistory = async (accountId, page = 1, limit = 10) => {
       movie: movie?.movieName || "",
       poster: movie?.poster || "",
       showDate: showtime?.showDate ? formatDate(showtime.showDate) : "",
-      showtime: showtime?.showTime || "",
+      showtime: getShowtimeTimeRange(showtime),
+      showTime: getShowtimeTimeRange(showtime),
       cinemaName: cinema?.cinemaName || "",
       roomName: cinemaRoom?.roomName || "",
       seats: booking.seatNames || [],
@@ -507,8 +509,9 @@ const handleGetbookingDetail = async (bookingId, accountId) => {
       movieGenre: movie.movieGenre || []
     },
     showtime: {
-      showDate: showtime.showDate || "",
-      showtime: showtime.showTime || ""
+      showDate: showtime.showDate ? formatDate(showtime.showDate) : "",
+      showtime: getShowtimeTimeRange(showtime),
+      showTime: getShowtimeTimeRange(showtime)
     },
     cinema: {
       cinemaName: cinema.cinemaName || "",

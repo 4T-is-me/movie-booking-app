@@ -3,6 +3,7 @@ import { Booking } from "../models/bookingModel.js";
 import { Showtime } from "../models/showTimeModel.js";
 import { Account } from "../models/accountModel.js";
 import { notificationService } from "../services/notificationService.js";
+import { getShowtimeTimeRange } from "../utils/formatters.js";
 
 const runShowtimeReminder = async () => {
     try {
@@ -45,7 +46,7 @@ const runShowtimeReminder = async () => {
                     if (account && account.fcmToken) {
                         const movieName = booking.showtimeId.movieId?.movieName || 'Movie';
                         const roomName = booking.showtimeId.roomId?.roomName || 'Theater';
-                        const showTimeStr = booking.showtimeId.showTime || '';
+                        const showTimeStr = getShowtimeTimeRange(booking.showtimeId);
 
                         const title = 'Upcoming Showtime Reminder!';
                         const body = `Your movie "${movieName}" is starting soon at ${showTimeStr} in Room ${roomName}. Please prepare to join!`;

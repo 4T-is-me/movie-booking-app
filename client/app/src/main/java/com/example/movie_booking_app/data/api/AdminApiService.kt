@@ -15,7 +15,12 @@ import retrofit2.http.*
 
 interface AdminApiService {
     @GET("api/admin/movies")
-    suspend fun getMovies(): Response<MovieListResponse>
+    suspend fun getMovies(
+        @Query("status") status: String? = null,
+        @Query("page") page: Int? = null,
+        @Query("limit") limit: Int? = null,
+        @Query("search") search: String? = null
+    ): Response<MovieListResponse>
 
     @POST("api/admin/movies")
     suspend fun createMovie(@Body request: AddMovieRequest): Response<Unit>
