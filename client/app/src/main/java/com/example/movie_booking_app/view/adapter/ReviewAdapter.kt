@@ -4,6 +4,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.ReviewItem
@@ -14,8 +16,9 @@ import java.time.format.DateTimeFormatter
 import com.bumptech.glide.Glide
 import com.example.movie_booking_app.utils.Constants
 
-class ReviewAdapter(private var items: List<ReviewItem>) :
-    RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder>() {
+class ReviewAdapter(
+    @Suppress("UNUSED_PARAMETER") items: List<ReviewItem> = emptyList()
+) : ListAdapter<ReviewItem, ReviewAdapter.ReviewViewHolder>(ReviewDiffCallback()) {
 
     inner class ReviewViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvAvatarText: TextView = view.findViewById(R.id.tvAvatarText)
@@ -32,7 +35,7 @@ class ReviewAdapter(private var items: List<ReviewItem>) :
     }
 
     override fun onBindViewHolder(holder: ReviewViewHolder, position: Int) {
-        val review = items[position]
+        val review = getItem(position)
 
         // Lấy tên hiển thị ưu tiên fullName → username → "Anonymous"
         val displayName = review.accountId?.memberInfo?.fullName
@@ -68,13 +71,6 @@ class ReviewAdapter(private var items: List<ReviewItem>) :
         holder.tvDate.text = formatRelativeDate(review.createdAt)
     }
 
-    override fun getItemCount(): Int = items.size
-
-    fun submitList(newList: List<ReviewItem>) {
-        items = newList
-        notifyDataSetChanged()
-    }
-
     private fun formatRelativeDate(isoString: String?): String {
         if (isoString.isNullOrEmpty()) return ""
         return try {
@@ -98,5 +94,10 @@ class ReviewAdapter(private var items: List<ReviewItem>) :
         } catch (e: Exception) {
             isoString.take(10)
         }
+    }
+
+    class ReviewDiffCallback : DiffUtil.ItemCallback<ReviewItem>() {
+        override fun areItemsTheSame(oldItem: ReviewItem, newItem: ReviewItem): Boolean = oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: ReviewItem, newItem: ReviewItem): Boolean = oldItem == newItem
     }
 }
