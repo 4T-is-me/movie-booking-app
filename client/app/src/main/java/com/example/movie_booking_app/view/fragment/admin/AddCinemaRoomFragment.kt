@@ -28,6 +28,20 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class AddCinemaRoomFragment : Fragment() {
 
+    companion object {
+        private const val ARG_CINEMA_ID = "cinema_id"
+
+        fun newInstance(cinemaId: String?): AddCinemaRoomFragment {
+            val fragment = AddCinemaRoomFragment()
+            val args = Bundle()
+            args.putString(ARG_CINEMA_ID, cinemaId)
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
+    private var cinemaId: String? = null
+
     private val viewModel: AddCinemaRoomViewModel by viewModels()
     private lateinit var seatPreviewAdapter: SeatPreviewAdapter
 
@@ -47,6 +61,11 @@ class AddCinemaRoomFragment : Fragment() {
     private lateinit var btnCancel: MaterialButton
     private lateinit var btnSave: MaterialButton
     private lateinit var pbLoading: ProgressBar
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        cinemaId = arguments?.getString(ARG_CINEMA_ID)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -156,7 +175,7 @@ class AddCinemaRoomFragment : Fragment() {
 
         // Save click
         btnSave.setOnClickListener {
-            viewModel.saveRoom()
+            viewModel.saveRoom(cinemaId ?: "")
         }
 
         // Cancel clicks

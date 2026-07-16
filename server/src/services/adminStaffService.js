@@ -1,5 +1,6 @@
 import { Account } from '../models/accountModel.js';
 import { Staff } from '../models/staffModel.js';
+import { Manager } from '../models/managerModel.js';
 import { Role } from '../models/rolesModel.js';
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
@@ -37,14 +38,20 @@ export const getStaffList = async (arg1, arg2, arg3) => {
         if (mongoose.Types.ObjectId.isValid(role)) {
             accountFilter.roleId = role;
         } else {
-            const roleDoc = await Role.findOne({
-                $or: [
-                    { name: { $regex: new RegExp(`^${role}$`, 'i') } },
-                    { roleName: { $regex: new RegExp(`^${role}$`, 'i') } }
-                ]
-            });
-            if (roleDoc) {
-                accountFilter.roleId = roleDoc._id;
+            let orQuery = [
+                { name: { $regex: new RegExp(`^${role}$`, 'i') } },
+                { roleName: { $regex: new RegExp(`^${role}$`, 'i') } }
+            ];
+            if (role.toLowerCase() === 'staff' || role.toLowerCase() === 'employee') {
+                orQuery.push({ name: { $regex: new RegExp(`^Employee$`, 'i') } });
+                orQuery.push({ roleName: { $regex: new RegExp(`^Employee$`, 'i') } });
+                orQuery.push({ name: { $regex: new RegExp(`^Staff$`, 'i') } });
+                orQuery.push({ roleName: { $regex: new RegExp(`^Staff$`, 'i') } });
+            }
+            
+            const roleDocs = await Role.find({ $or: orQuery });
+            if (roleDocs && roleDocs.length > 0) {
+                accountFilter.roleId = { $in: roleDocs.map(r => r._id) };
             } else {
                 accountFilter.roleId = new mongoose.Types.ObjectId();
             }
@@ -90,7 +97,6 @@ export const getStaffList = async (arg1, arg2, arg3) => {
         }
     }
 
-    const total = await Staff.countDocuments(staffFilter);
     const staffs = await Staff.find(staffFilter)
         .populate({
             path: 'accountId',
@@ -100,11 +106,34 @@ export const getStaffList = async (arg1, arg2, arg3) => {
                 select: 'roleName name'
             }
         })
-        .skip(skip)
-        .limit(Number(limit))
         .lean();
 
-    return { staffs, total, totalPages: Math.ceil(total / limit), currentPage: page };
+    let mappedManagers = [];
+    if (!role || (typeof role === 'string' && role.toLowerCase() === 'manager')) {
+        const managersList = await Manager.find(staffFilter)
+            .populate({
+                path: 'accountId',
+                select: '-passwordHash -refreshToken',
+                populate: {
+                    path: 'roleId',
+                    select: 'roleName name'
+                }
+            })
+            .lean();
+            
+        mappedManagers = managersList.map(m => {
+            const copy = { ...m };
+            copy.phone = m.phoneNumber;
+            copy.position = 'Manager';
+            return copy;
+        });
+    }
+
+    const allRecords = [...staffs, ...mappedManagers];
+    const total = allRecords.length;
+    const paginated = allRecords.slice(skip, skip + Number(limit));
+
+    return { staffs: paginated, total, totalPages: Math.ceil(total / limit), currentPage: page };
 };
 
 
@@ -162,16 +191,33 @@ export const createStaff = async (accountData, staffData) => {
 
     const savedAccount = await newAccount.save();
 
-    // 2. Create Staff linked with Account
-    const newStaff = new Staff({
-        ...staffData,
-        accountId: savedAccount._id
-    });
-
-    const savedStaff = await newStaff.save();
+    // 2. Create Staff or Manager linked with Account
+    let savedRecord;
+    let isManager = false;
+    if (role && role.toLowerCase() === 'manager') {
+        isManager = true;
+        const newManager = new Manager({
+            accountId: savedAccount._id,
+            cinemaId: staffData.cinemaId,
+            fullName: staffData.fullName,
+            phoneNumber: staffData.phone,
+            identityCard: staffData.identityCard,
+            salary: staffData.salary,
+            revenueTarget: 100000000, // Default revenue target for new managers
+            startDate: staffData.startDate
+        });
+        savedRecord = await newManager.save();
+    } else {
+        const newStaff = new Staff({
+            ...staffData,
+            accountId: savedAccount._id
+        });
+        savedRecord = await newStaff.save();
+    }
 
     // Return record populated with full information
-    return await Staff.findById(savedStaff._id).populate({
+    const ModelClass = isManager ? Manager : Staff;
+    const finalRecord = await ModelClass.findById(savedRecord._id).populate({
         path: 'accountId',
         select: '-passwordHash -refreshToken',
         populate: {
@@ -179,11 +225,22 @@ export const createStaff = async (accountData, staffData) => {
             select: 'roleName name'
         }
     }).lean();
+
+    if (isManager && finalRecord) {
+        finalRecord.phone = finalRecord.phoneNumber;
+        finalRecord.position = 'Manager';
+    }
+    return finalRecord;
 };
 
 export const updateStaff = async (staffId, updateData) => {
-    const staff = await Staff.findById(staffId);
-    if (!staff) return null;
+    let staff = await Staff.findById(staffId);
+    let isManagerModel = false;
+    if (!staff) {
+        staff = await Manager.findById(staffId);
+        if (!staff) return null;
+        isManagerModel = true;
+    }
 
     const { email, status, ...staffFields } = updateData;
  
@@ -203,15 +260,29 @@ export const updateStaff = async (staffId, updateData) => {
         await Account.findByIdAndUpdate(staff.accountId, accountUpdates);
     }
 
-    // 2. Update Staff fields
-    const updatedStaff = await Staff.findByIdAndUpdate(
-        staffId,
-        { $set: staffFields },
-        { new: true }
-    );
+    // 2. Update Staff/Manager fields
+    let updatedStaff;
+    if (isManagerModel) {
+        if (staffFields.phone) {
+            staffFields.phoneNumber = staffFields.phone;
+            delete staffFields.phone;
+        }
+        updatedStaff = await Manager.findByIdAndUpdate(
+            staffId,
+            { $set: staffFields },
+            { new: true }
+        );
+    } else {
+        updatedStaff = await Staff.findByIdAndUpdate(
+            staffId,
+            { $set: staffFields },
+            { new: true }
+        );
+    }
 
     // Return record populated with full information after updating
-    return await Staff.findById(updatedStaff._id).populate({
+    const ModelClass = isManagerModel ? Manager : Staff;
+    const finalRecord = await ModelClass.findById(updatedStaff._id).populate({
         path: 'accountId',
         select: '-passwordHash -refreshToken',
         populate: {
@@ -219,14 +290,23 @@ export const updateStaff = async (staffId, updateData) => {
             select: 'roleName name'
         }
     }).lean();
+
+    if (isManagerModel && finalRecord) {
+        finalRecord.phone = finalRecord.phoneNumber;
+        finalRecord.position = 'Manager';
+    }
+    return finalRecord;
 };
 
 /**
  * SOFT DELETE STAFF
  */
 export const softDeleteStaff = async (staffId) => {
-    const staffInfo = await Staff.findById(staffId);
-    if (!staffInfo) throw new Error('StaffNotFound');
+    let staffInfo = await Staff.findById(staffId);
+    if (!staffInfo) {
+        staffInfo = await Manager.findById(staffId);
+        if (!staffInfo) throw new Error('StaffNotFound');
+    }
 
     // Lock login account (Account status = 0)
     const updatedAccount = await Account.findByIdAndUpdate(

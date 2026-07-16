@@ -41,12 +41,12 @@ class CinemaRoomsViewModel @Inject constructor(
         }
     }
 
-    fun loadRooms() {
+    fun loadRooms(cinemaId: String? = null) {
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
             try {
-                repository.getRooms().collect { list ->
+                repository.getRooms(cinemaId).collect { list ->
                     _rooms.value = list
                     filterRooms(_searchQuery.value)
                     _isLoading.value = false

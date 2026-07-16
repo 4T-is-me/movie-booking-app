@@ -46,7 +46,7 @@
                     android:id="@+id/tvHeaderTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Work Schedule"
+                    android:text="@string/auto_str_work_schedule"
                     android:textColor="@color/white"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -54,7 +54,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Lumina Cinema Staff"
+                    android:text="@string/auto_str_lumina_cinema_staff"
                     android:textColor="@color/admin_text_secondary"
                     android:textSize="11sp" />
             </LinearLayout>

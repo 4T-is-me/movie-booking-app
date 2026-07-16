@@ -27,7 +27,7 @@ export const createStaff = async (req, res) => {
         return res.status(201).json({ success: true, data: staff, message: 'Staff account created successfully.' });
     } catch (error) {
         if (error.code === 11000) {
-            return res.status(400).json({ success: false, message: 'Data already exists (Username, Email, or Identity Card Number is duplicated).' });
+            return res.status(400).json({ success: false, message: 'Data already exists (Username, Email, Identity Card, or this Cinema already has a Manager).' });
         }
         return res.status(500).json({ success: false, message: 'Internal server error.', error: error.message });
     }

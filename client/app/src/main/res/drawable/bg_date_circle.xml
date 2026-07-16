@@ -10,7 +10,7 @@
     <!-- Default state (Light semi-transparent white fill) -->
     <item>
         <shape android:shape="oval">
-            <solid android:color="#1AFFFFFF" />
+            <solid android:color="@color/auto_color_1AFFFFFF" />
         </shape>
     </item>
 </selector>

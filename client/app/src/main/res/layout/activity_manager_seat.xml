@@ -356,7 +356,7 @@
                         android:layout_gravity="center"
                         android:layout_marginTop="32dp"
                         android:layout_marginBottom="32dp"
-                        android:indeterminateTint="#10B981" />
+                        android:indeterminateTint="@color/auto_color_10B981" />
 
                     <HorizontalScrollView
                         android:layout_width="match_parent"
@@ -500,7 +500,7 @@
                 android:textColor="@color/auto_color_FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:backgroundTint="#10B981" />
+                android:backgroundTint="@color/auto_color_10B981" />
         </LinearLayout>
     </LinearLayout>
 </ScrollView>
