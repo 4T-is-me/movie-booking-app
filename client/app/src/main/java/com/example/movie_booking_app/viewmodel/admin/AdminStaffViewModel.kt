@@ -137,11 +137,11 @@ class AdminStaffViewModel @Inject constructor(
                 .onStart { _uiState.update { it.copy(isLoading = true) } }
                 .catch { e ->
                     _uiState.update { it.copy(isLoading = false) }
-                    _actionMessage.emit(e.message ?: getString(R.string.admin_error_failed_add_employee))
+                    _actionMessage.emit(e.message ?: getString(R.string.toast_error_failed_add_employee))
                 }
                 .collect {
                     _actionSuccess.emit(true)
-                    _actionMessage.emit(getString(R.string.admin_success_employee_added))
+                    _actionMessage.emit(getString(R.string.toast_employee_added))
                     loadStaff(showLoading = false)
                 }
         }
@@ -153,11 +153,11 @@ class AdminStaffViewModel @Inject constructor(
                 .onStart { _uiState.update { it.copy(isLoading = true) } }
                 .catch { e ->
                     _uiState.update { it.copy(isLoading = false) }
-                    _actionMessage.emit(e.message ?: getString(R.string.admin_error_failed_update_employee))
+                    _actionMessage.emit(e.message ?: getString(R.string.toast_error_failed_update_employee))
                 }
                 .collect {
                     _actionSuccess.emit(true)
-                    _actionMessage.emit(getString(R.string.admin_success_employee_updated))
+                    _actionMessage.emit(getString(R.string.toast_employee_updated))
                     loadStaff(showLoading = false)
                 }
         }
@@ -169,11 +169,11 @@ class AdminStaffViewModel @Inject constructor(
                 .onStart { _uiState.update { it.copy(isLoading = true) } }
                 .catch { e ->
                     _uiState.update { it.copy(isLoading = false) }
-                    _actionMessage.emit(e.message ?: getString(R.string.admin_error_failed_disable_account))
+                    _actionMessage.emit(e.message ?: getString(R.string.toast_error_failed_disable_account))
                 }
                 .collect {
                     _actionSuccess.emit(true)
-                    _actionMessage.emit(getString(R.string.admin_success_employee_disabled))
+                    _actionMessage.emit(getString(R.string.toast_employee_disabled))
                     loadStaff(showLoading = false)
                 }
         }
@@ -197,7 +197,7 @@ class AdminStaffViewModel @Inject constructor(
 
     fun adjustMemberScore(memberId: String, currentPoints: Int, adjustment: Int, reason: String) {
         if (currentPoints + adjustment < 0) {
-            viewModelScope.launch { _actionMessage.emit(getString(R.string.admin_error_points_negative)) }
+            viewModelScope.launch { _actionMessage.emit(getString(R.string.toast_error_points_negative)) }
             return
         }
         viewModelScope.launch {
@@ -205,10 +205,10 @@ class AdminStaffViewModel @Inject constructor(
                 .onStart { _uiState.update { it.copy(isLoading = true) } }
                 .catch { e ->
                     _uiState.update { it.copy(isLoading = false) }
-                    _actionMessage.emit(e.message ?: getString(R.string.admin_error_network))
+                    _actionMessage.emit(e.message ?: getString(R.string.toast_error_network))
                 }
                 .collect {
-                    _scoreAdjustState.emit(com.example.movie_booking_app.data.model.response.ScoreAdjustState(isSuccess = true, message = getString(R.string.admin_success_points_adjusted)))
+                    _scoreAdjustState.emit(com.example.movie_booking_app.data.model.response.ScoreAdjustState(isSuccess = true, message = getString(R.string.toast_points_adjusted)))
                     loadMembers(showLoading = false)
                 }
         }
@@ -220,10 +220,10 @@ class AdminStaffViewModel @Inject constructor(
                 .onStart { _uiState.update { it.copy(isLoading = true) } }
                 .catch { e ->
                     _uiState.update { it.copy(isLoading = false) }
-                    _actionMessage.emit(e.message ?: getString(R.string.admin_error_network))
+                    _actionMessage.emit(e.message ?: getString(R.string.toast_error_network))
                 }
                 .collect {
-                    _actionMessage.emit(if (status == 1) getString(R.string.admin_success_member_activated) else getString(R.string.admin_success_member_deleted))
+                    _actionMessage.emit(if (status == 1) getString(R.string.toast_member_activated) else getString(R.string.toast_member_deleted))
                     loadMembers(showLoading = false)
                 }
         }

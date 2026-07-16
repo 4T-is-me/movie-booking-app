@@ -36,7 +36,7 @@ class UpdateShiftDialogFragment(
         staffAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerStaff.adapter = staffAdapter
 
-        // Trỏ Spinner về đúng nhân viên hiện tại của ca
+        // Set Spinner to the correct current employee of the shift
         val currentStaffIndex = staffList.indexOfFirst { it.second == currentShift.staffName }
         if (currentStaffIndex != -1) binding.spinnerStaff.setSelection(currentStaffIndex)
 

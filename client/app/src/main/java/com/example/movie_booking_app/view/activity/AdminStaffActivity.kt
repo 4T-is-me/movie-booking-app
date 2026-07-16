@@ -264,7 +264,7 @@ class AdminStaffActivity : BaseActivity() {
             }
             val address = binding.edtAddress.text.toString().trim()
             val statusText = binding.actvStatus.text.toString()
-            val statusVal = if (statusText.contains("Active") || statusText.contains("Hoạt động")) 1 else 0
+            val statusVal = if (statusText.contains("Active") || statusText.contains("Active")) 1 else 0
             val request = UpdateStaffRequest(
                 fullName = fullName,
                 email = email,
@@ -282,17 +282,17 @@ class AdminStaffActivity : BaseActivity() {
             val password = binding.edtPassword.text.toString().trim()
 
             if (username.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Vui lòng nhập tên đăng nhập và mật khẩu", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please enter username and password", Toast.LENGTH_SHORT).show()
                 return
             }
 
             if (username.length < 3 || username.length > 30) {
-                Toast.makeText(this, "Tên đăng nhập phải từ 3 đến 30 ký tự", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Username must be between 3 and 30 characters", Toast.LENGTH_SHORT).show()
                 return
             }
 
             if (password.length < 6) {
-                Toast.makeText(this, "Mật khẩu phải từ 6 ký tự trở lên", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show()
                 return
             }
 

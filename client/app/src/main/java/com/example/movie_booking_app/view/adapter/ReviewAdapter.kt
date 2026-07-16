@@ -37,12 +37,12 @@ class ReviewAdapter(
     override fun onBindViewHolder(holder: ReviewViewHolder, position: Int) {
         val review = getItem(position)
 
-        // Lấy tên hiển thị ưu tiên fullName → username → "Anonymous"
+        // Get display name prioritizing fullName -> username -> "Anonymous"
         val displayName = review.accountId?.memberInfo?.fullName
             ?: review.accountId?.username
             ?: "Anonymous"
 
-        // Avatar: lấy chữ cái đầu
+        // Avatar: get initial letter
         holder.tvAvatarText.text = displayName.firstOrNull()?.uppercaseChar()?.toString() ?: "A"
         holder.tvName.text = displayName
 
@@ -67,7 +67,7 @@ class ReviewAdapter(
         // Comment
         holder.tvComment.text = review.comment ?: ""
 
-        // Ngày tạo
+        // Creation date
         holder.tvDate.text = formatRelativeDate(review.createdAt)
     }
 

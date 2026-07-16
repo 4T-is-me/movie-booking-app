@@ -25,7 +25,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
         btnSend.setOnClickListener {
             val email = edtEmail.text.toString().trim()
             if (email.isEmpty()) {
-                Toast.makeText(this, "Vui lòng nhập email", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please enter email", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -37,18 +37,18 @@ class ForgotPasswordActivity : AppCompatActivity() {
                     withContext(Dispatchers.Main) {
                         btnSend.isEnabled = true
                         if (response.isSuccessful) {
-                            Toast.makeText(this@ForgotPasswordActivity, "Đã gửi mã OTP", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@ForgotPasswordActivity, "OTP sent successfully", Toast.LENGTH_SHORT).show()
                             val intent = Intent(this@ForgotPasswordActivity, VerifyOtpActivity::class.java)
                             intent.putExtra("email", email)
                             startActivity(intent)
                         } else {
-                            Toast.makeText(this@ForgotPasswordActivity, "Lỗi gửi OTP", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@ForgotPasswordActivity, "Error sending OTP", Toast.LENGTH_SHORT).show()
                         }
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
                         btnSend.isEnabled = true
-                        Toast.makeText(this@ForgotPasswordActivity, "Lỗi kết nối", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@ForgotPasswordActivity, "Connection error", Toast.LENGTH_SHORT).show()
                     }
                 }
             }

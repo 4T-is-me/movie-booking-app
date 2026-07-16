@@ -33,7 +33,7 @@ class LeaveStatusFilterDialogFragment(private val onStatusSelected: (String?) ->
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnFilterAll.setOnClickListener {
-            onStatusSelected(null) // null đại diện cho việc hiển thị toàn bộ status
+            onStatusSelected(null) // null represents displaying all status
             dismiss()
         }
         binding.btnFilterPending.setOnClickListener {

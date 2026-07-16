@@ -94,7 +94,7 @@ class GenerateShiftDialogFragment(
                 return@setOnClickListener
             }
 
-            // Check minimum 7 days chuẩn theo UTC/Day distance
+            // Check minimum 7 days standard according to UTC/Day distance
             if (startCalendar != null && endCalendar != null) {
                 val startCal = (startCalendar!!.clone() as Calendar).apply {
                     set(Calendar.HOUR_OF_DAY, 0)

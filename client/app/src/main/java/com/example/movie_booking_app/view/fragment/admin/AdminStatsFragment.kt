@@ -163,7 +163,7 @@ class AdminStatsFragment : Fragment() {
             }
         }
 
-        val dataSet = LineDataSet(entries, if (isMonthly) "Doanh thu tháng" else "Doanh thu ngày").apply {
+        val dataSet = LineDataSet(entries, if (isMonthly) "Monthly Revenue" else "Daily Revenue").apply {
             color = Color.YELLOW
             setCircleColor(Color.YELLOW)
             lineWidth = 2f

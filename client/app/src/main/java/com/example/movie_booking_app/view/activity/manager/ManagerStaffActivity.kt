@@ -81,19 +81,19 @@ class ManagerStaffActivity : AppCompatActivity() {
                 showUpdateShiftDialog(shiftItem)
             }
         )
-        // Setup Leave Request Adapter mới có tích hợp Undo
+        // Setup new Leave Request Adapter with integrated Undo
         leaveRequestAdapter = ManagerLeaveRequestAdapter(object : ManagerLeaveRequestAdapter.LeaveRequestListener {
             override fun onApprove(item: ManagerLeaveRequestResponse) {
                 leaveRequestViewModel.approveLeaveRequest(item.leaveRequestId)
             }
 
             override fun onReject(item: ManagerLeaveRequestResponse) {
-                // Task 3: Hiện dialog nhập lý do reject
+                // Task 3: Show dialog to enter reject reason
                 showRejectDialog(item)
             }
 
             override fun onUndo(item: ManagerLeaveRequestResponse) {
-                // Task 3: Gọi API revert thực tế sẽ lắp ở đây
+                // Task 3: Actual revert API call will be placed here
             }
         })
 
@@ -281,7 +281,7 @@ class ManagerStaffActivity : AppCompatActivity() {
             }
         }
 
-        // 2. Trạng thái Loading
+        // 2. Loading state
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 leaveRequestViewModel.isLoading.collectLatest { isLoading ->
@@ -290,7 +290,7 @@ class ManagerStaffActivity : AppCompatActivity() {
             }
         }
 
-        // 3. Trạng thái Lỗi hiển thị Dialog
+        // 3. Error state displaying Dialog
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 leaveRequestViewModel.errorMessage.collectLatest { error ->
@@ -331,7 +331,7 @@ class ManagerStaffActivity : AppCompatActivity() {
                 setUpShiftList(filteredList)
             }
         } else {
-            // Lọc local cho Leave Requests Tab
+            // Local filtering for Leave Requests Tab
             if (trimmedQuery.isEmpty()) {
                 setUpLeaveRequestList(originalLeaveRequests)
             } else {
