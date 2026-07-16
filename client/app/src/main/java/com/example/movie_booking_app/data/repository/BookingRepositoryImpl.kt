@@ -10,9 +10,9 @@ import javax.inject.Inject
 
 class BookingRepositoryImpl @Inject constructor(private val bookingApi: BookingApi) : BookingRepository {
 
-    override fun getSeats(showtimeId: String): Flow<List<Seat>> = flow {
+    override fun getSeats(showtimeId: String): Flow<com.example.movie_booking_app.data.model.response.SeatMapData> = flow {
         Log.w("BookingRepo", "WARNING: Using MOCK getSeats")
-        emit(emptyList())
+        emit(com.example.movie_booking_app.data.model.response.SeatMapData())
     }
 
     override fun getMovieShowtimes(movieId: String): Flow<List<Showtime>> = flow {

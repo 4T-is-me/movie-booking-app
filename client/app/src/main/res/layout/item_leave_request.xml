@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardLeaveRequestItem"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    android:background="@drawable/bg_card_dark"
+    android:padding="16dp"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <FrameLayout
+        android:id="@+id/avatarFrame"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:background="@drawable/bg_tab_active"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tvAvatarText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/bg_primary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:text="NC" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tvStaffName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/text_primary"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@id/tvStatusBadge"
+        app:layout_constraintStart_toEndOf="@id/avatarFrame"
+        app:layout_constraintTop_toTopOf="@id/avatarFrame"
+        tools:text="Nguyễn Văn Cường" />
+
+    <LinearLayout
+        android:id="@+id/layoutSubInfo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toStartOf="@id/tvStatusBadge"
+        app:layout_constraintStart_toStartOf="@id/tvStaffName"
+        app:layout_constraintTop_toBottomOf="@id/tvStaffName">
+
+        <TextView
+            android:id="@+id/tvPosition"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp"
+            tools:text="Position" />
+
+        <TextView
+            android:id="@+id/tvShiftInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp"
+            tools:text="Medical Leave · 2 day(s)" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvStatusBadge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/status_active_bg"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="4dp"
+        android:textColor="#FFA500"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvStaffName"
+        app:layout_constraintBottom_toBottomOf="@id/layoutSubInfo"
+        tools:text="PENDING" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:background="@color/auto_color_1AFFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/tvStaffName"
+        app:layout_constraintTop_toBottomOf="@id/layoutSubInfo" />
+
+    <LinearLayout
+        android:id="@+id/layoutShiftDetails"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/tvStaffName"
+        app:layout_constraintTop_toBottomOf="@id/divider">
+
+        <ImageView
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:src="@drawable/ic_clock"
+            app:tint="@color/text_secondary" />
+
+        <TextView
+            android:id="@+id/tvWorkDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:textColor="@color/auto_color_B0B0B0"
+            android:textSize="12sp"
+            tools:text="18/06/2024 - 19/06/2024" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvReason"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="#E0E0E0"
+        android:textSize="13sp"
+        android:textStyle="italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/tvStaffName"
+        app:layout_constraintTop_toBottomOf="@id/layoutShiftDetails"
+        tools:text="&quot;Khám sức khỏe định kỳ tại BV Chợ Rẫy&quot;" />
+
+    <LinearLayout
+        android:id="@+id/layoutButtons"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/tvStaffName"
+        app:layout_constraintTop_toBottomOf="@id/tvReason">
+
+        <LinearLayout
+            android:id="@+id/btnApprove"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/bg_btn_approve_stroke"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_thumb_up"
+                app:tint="#10B981" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_approve"
+                android:textColor="#10B981"
+                android:textStyle="bold"
+                android:textSize="13sp"
+                android:layout_marginStart="6dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnReject"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:layout_marginStart="6dp"
+            android:background="@drawable/bg_btn_reject_stroke"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:src="@drawable/ic_thumb_down"
+                app:tint="#EF4444" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_reject"
+                android:textColor="#EF4444"
+                android:textStyle="bold"
+                android:textSize="13sp"
+                android:layout_marginStart="6dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutUndoBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:padding="10dp"
+        android:background="#1A2D24"
+        android:visibility="gone"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:weightSum="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/tvStaffName"
+        app:layout_constraintTop_toBottomOf="@id/layoutButtons">
+
+        <TextView
+            android:id="@+id/tvUndoMessage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/undo_message_default"
+            android:textColor="#10B981"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/btnUndo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_undo"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="13sp"
+            android:paddingStart="16dp"/>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

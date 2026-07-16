@@ -28,7 +28,8 @@ interface ManagerApi {
     @GET("api/manager/staff-shifts")
     suspend fun getStaffShift(
         @Query("startDate") startDate: String? = null,
-        @Query("endDate") endDate: String? = null
+        @Query("endDate") endDate: String? = null,
+        @Query("status") status: String? = null
     ) : Response<ShiftResponse>
 
     @GET("api/manager/staff-shifts/{id}")
