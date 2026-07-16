@@ -19,7 +19,9 @@ import com.example.movie_booking_app.databinding.ActivityEditProfileBinding
 import com.example.movie_booking_app.viewmodel.EditProfileViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -46,17 +48,13 @@ class EditProfileActivity : AppCompatActivity() {
     )
 
     private val selectedGenres = mutableListOf<String>()
+    private var lastLoadedAvatarUrl: String? = null
 
     private val imagePickerLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
-            val file = getFileFromUri(it)
-            if (file != null) {
-                viewModel.uploadAvatar(file)
-            } else {
-                Toast.makeText(this, "Failed to load selected image", Toast.LENGTH_SHORT).show()
-            }
+            processAndUploadAvatar(it)
         }
     }
 
@@ -132,7 +130,7 @@ class EditProfileActivity : AppCompatActivity() {
                     // Handle overlays / loading states
                     val isRunning = state.isLoading || state.isSaving || state.isUploadingAvatar
                     binding.layoutLoading.visibility = if (isRunning) View.VISIBLE else View.GONE
-                    binding.btnSaveChanges.isEnabled = !state.isSaving
+                    binding.btnSaveChanges.isEnabled = !isRunning
 
                     // Populate user profile info when loaded
                     state.userProfile?.let { profile ->
@@ -160,11 +158,15 @@ class EditProfileActivity : AppCompatActivity() {
                             // Prepend base URL for local paths like /uploads/avatar.jpg
                             "${com.example.movie_booking_app.utils.Constants.BASE_URL.removeSuffix("/")}$url"
                         }
-                        Glide.with(this@EditProfileActivity)
-                            .load(finalUrl)
-                            .placeholder(R.drawable.ic_profile)
-                            .error(R.drawable.ic_profile)
-                            .into(binding.ivAvatar)
+                        if (finalUrl != lastLoadedAvatarUrl) {
+                            lastLoadedAvatarUrl = finalUrl
+                            Glide.with(this@EditProfileActivity)
+                                .load(finalUrl)
+                                .signature(com.bumptech.glide.signature.ObjectKey(System.currentTimeMillis().toString()))
+                                .placeholder(R.drawable.ic_profile)
+                                .error(R.drawable.ic_profile)
+                                .into(binding.ivAvatar)
+                        }
                     }
 
                     // Display errors on inputs
@@ -296,20 +298,62 @@ class EditProfileActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun getFileFromUri(uri: Uri): File? {
-        return try {
-            val inputStream = contentResolver.openInputStream(uri) ?: return null
-            val tempFile = File.createTempFile("avatar_temp_", ".jpg", cacheDir)
-            tempFile.deleteOnExit()
-            val outputStream = FileOutputStream(tempFile)
-            inputStream.copyTo(outputStream)
-            inputStream.close()
-            outputStream.close()
-            tempFile
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
+    private fun processAndUploadAvatar(uri: Uri) {
+        viewModel.setUploadingState(true)
+        lifecycleScope.launch {
+            try {
+                val processedFile = withContext(Dispatchers.Default) {
+                    val bitmap = withContext(Dispatchers.IO) {
+                        contentResolver.openInputStream(uri)?.use { inputStream ->
+                            android.graphics.BitmapFactory.decodeStream(inputStream)
+                        }
+                    } ?: throw Exception("Failed to decode bitmap from Uri")
+
+                    val resizedBitmap = resizeBitmap(bitmap, 800, 800)
+
+                    val tempFile = withContext(Dispatchers.IO) {
+                        File.createTempFile("avatar_compressed_", ".jpg", cacheDir).apply {
+                            deleteOnExit()
+                        }
+                    }
+
+                    withContext(Dispatchers.IO) {
+                        FileOutputStream(tempFile).use { out ->
+                            resizedBitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 85, out)
+                        }
+                    }
+
+                    tempFile
+                }
+
+                if (!isDestroyed && !isFinishing) {
+                    viewModel.uploadAvatar(processedFile)
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("EditProfileActivity", "Error processing image", e)
+                if (!isDestroyed && !isFinishing) {
+                    viewModel.setUploadingState(false)
+                    Toast.makeText(this@EditProfileActivity, "Unable to process selected image.", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
+    }
+
+    private fun resizeBitmap(source: android.graphics.Bitmap, maxWidth: Int, maxHeight: Int): android.graphics.Bitmap {
+        val width = source.width
+        val height = source.height
+        if (width <= maxWidth && height <= maxHeight) {
+            return source
+        }
+        val ratio = width.toFloat() / height.toFloat()
+        var targetWidth = maxWidth
+        var targetHeight = maxHeight
+        if (ratio > 1) {
+            targetHeight = (maxWidth / ratio).toInt()
+        } else {
+            targetWidth = (maxHeight * ratio).toInt()
+        }
+        return android.graphics.Bitmap.createScaledBitmap(source, targetWidth, targetHeight, true)
     }
 
     private fun formatDateString(rawDate: String?): String {

@@ -112,8 +112,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.10.2")
 
     // Image Loading
-    implementation(libs.coil)
-    implementation(libs.coil.network.okhttp)
 
     // Hilt
     implementation(libs.hilt.android)
