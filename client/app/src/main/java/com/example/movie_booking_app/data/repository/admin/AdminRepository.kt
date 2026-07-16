@@ -7,6 +7,7 @@ import com.example.movie_booking_app.data.model.request.AdminPromotionRequest
 import com.example.movie_booking_app.data.model.request.CreateStaffRequest
 import com.example.movie_booking_app.data.model.request.UpdateStaffRequest
 import com.example.movie_booking_app.data.model.response.*
+import kotlinx.coroutines.flow.flow
 import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -25,35 +26,36 @@ class AdminRepository @Inject constructor(
     suspend fun getMonthlyRevenue(year: Int) = api.getMonthlyRevenue(year)
     suspend fun getMovieRevenue() = api.getMovieRevenue()
 
-    suspend fun getStaffList(page: Int? = null, limit: Int? = null, search: String? = null) = 
-        api.getStaffList(page, limit, search)
-    
-    suspend fun createStaff(request: CreateStaffRequest) = api.createStaff(request)
-    suspend fun updateStaff(id: String, request: UpdateStaffRequest) = api.updateStaff(id, request)
-    suspend fun deleteStaff(id: String) = api.deleteStaff(id)
-    suspend fun updateStaffStatus(id: String, status: Int) = 
-        api.updateStaffStatus(id, com.example.movie_booking_app.data.model.request.UpdateStaffStatusRequest(status))
+    // Staff Management Flow-based
+    fun getStaffListFlow(page: Int? = null, limit: Int? = null, search: String? = null) = flow {
+        val response = api.getStaffList(page, limit, search)
+        if (response.isSuccessful && response.body() != null) {
+            emit(response.body()!!.data?.staffs ?: emptyList())
+        } else {
+            throw Exception(response.errorBody()?.string() ?: "Failed to load staff list")
+        }
+    }
 
-    suspend fun getMemberList(
-        page: Int? = null,
-        limit: Int? = null,
-        search: String? = null,
-        status: Int? = null
-    ): Response<AdminMemberResponse> = api.getMemberList(page, limit, search, status)
+    fun createStaffFlow(request: CreateStaffRequest) = flow {
+        val response = api.createStaff(request)
+        if (response.isSuccessful) emit(Unit)
+        else throw Exception(response.errorBody()?.string() ?: "Failed to create staff")
+    }
 
-    suspend fun adjustMemberScore(id: String, adjustment: Int, reason: String): Response<Unit> =
-        api.adjustMemberScore(id, com.example.movie_booking_app.data.model.request.AdjustScoreRequest(adjustment, reason))
+    fun updateStaffFlow(id: String, request: UpdateStaffRequest) = flow {
+        val response = api.updateStaff(id, request)
+        if (response.isSuccessful) emit(Unit)
+        else throw Exception(response.errorBody()?.string() ?: "Failed to update staff")
+    }
 
-    suspend fun updateMemberStatus(id: String, status: Int): Response<Unit> =
-        api.updateMemberStatus(id, com.example.movie_booking_app.data.model.request.UpdateMemberStatusRequest(status))
+    fun deleteStaffFlow(id: String) = flow {
+        val response = api.deleteStaff(id)
+        if (response.isSuccessful) emit(Unit)
+        else throw Exception(response.errorBody()?.string() ?: "Failed to delete staff")
+    }
 
-    // Member Management Flow-based methods (Refactored for Clean Code)
-    fun getMemberListFlow(
-        page: Int? = null,
-        limit: Int? = null,
-        search: String? = null,
-        status: Int? = null
-    ) = kotlinx.coroutines.flow.flow {
+    // Member Management Flow-based
+    fun getMemberListFlow(page: Int? = null, limit: Int? = null, search: String? = null, status: Int? = null) = flow {
         val response = api.getMemberList(page, limit, search, status)
         if (response.isSuccessful && response.body() != null) {
             emit(response.body()!!.data?.members ?: emptyList())
@@ -62,25 +64,26 @@ class AdminRepository @Inject constructor(
         }
     }
 
-    fun adjustMemberScoreFlow(id: String, adjustment: Int, reason: String) = kotlinx.coroutines.flow.flow {
+    fun adjustMemberScoreFlow(id: String, adjustment: Int, reason: String) = flow {
         val response = api.adjustMemberScore(id, com.example.movie_booking_app.data.model.request.AdjustScoreRequest(adjustment, reason))
-        if (response.isSuccessful) {
-            emit(Unit)
-        } else {
-            throw Exception(response.errorBody()?.string() ?: "Failed to adjust score")
-        }
+        if (response.isSuccessful) emit(Unit)
+        else throw Exception(response.errorBody()?.string() ?: "Failed to adjust score")
     }
 
-    fun updateMemberStatusFlow(id: String, status: Int) = kotlinx.coroutines.flow.flow {
+    fun updateMemberStatusFlow(id: String, status: Int) = flow {
         val response = api.updateMemberStatus(id, com.example.movie_booking_app.data.model.request.UpdateMemberStatusRequest(status))
-        if (response.isSuccessful) {
-            emit(Unit)
-        } else {
-            throw Exception(response.errorBody()?.string() ?: "Failed to update member status")
-        }
+        if (response.isSuccessful) emit(Unit)
+        else throw Exception(response.errorBody()?.string() ?: "Failed to update member status")
     }
 
-    suspend fun getCinemas() = api.getCinemas()
+    fun getCinemasFlow() = flow {
+        val response = api.getCinemas()
+        if (response.isSuccessful && response.body() != null) {
+            emit(response.body()!!.data ?: emptyList())
+        } else {
+            throw Exception("Failed to load cinemas")
+        }
+    }
 
     suspend fun getPromotions(): Response<AdminPromotionsResponse> = api.getPromotions()
     suspend fun createPromotion(request: AdminPromotionRequest) = api.createPromotion(request)
