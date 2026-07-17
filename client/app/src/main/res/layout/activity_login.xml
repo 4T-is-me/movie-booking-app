@@ -90,7 +90,7 @@
                 app:boxBackgroundMode="outline"
                 app:hintEnabled="false"
                 app:startIconDrawable="@drawable/ic_profile"
-                app:startIconTint="#808080"
+                app:startIconTint="@color/auto_color_808080"
                 app:layout_constraintTop_toBottomOf="@id/tvUsernameLabel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
@@ -100,7 +100,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/username_hint"
-                    android:textColorHint="#808080"
+                    android:textColorHint="@color/auto_color_808080"
                     android:textColor="@color/auto_color_FFFFFF"
                     android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -134,9 +134,9 @@
                 app:boxBackgroundMode="outline"
                 app:hintEnabled="false"
                 app:endIconMode="password_toggle"
-                app:endIconTint="#808080"
+                app:endIconTint="@color/auto_color_808080"
                 app:startIconDrawable="@android:drawable/ic_lock_idle_lock"
-                app:startIconTint="#808080"
+                app:startIconTint="@color/auto_color_808080"
                 app:layout_constraintTop_toBottomOf="@id/tvPasswordLabel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
@@ -146,7 +146,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/password_hint"
-                    android:textColorHint="#808080"
+                    android:textColorHint="@color/auto_color_808080"
                     android:textColor="@color/auto_color_FFFFFF"
                     android:inputType="textPassword" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -210,7 +210,7 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone"
                 android:elevation="4dp"
-                android:indeterminateTint="#000000"
+                android:indeterminateTint="@color/auto_color_000000"
                 app:layout_constraintTop_toTopOf="@id/btnLogin"
                 app:layout_constraintBottom_toBottomOf="@id/btnLogin"
                 app:layout_constraintEnd_toEndOf="@id/btnLogin"

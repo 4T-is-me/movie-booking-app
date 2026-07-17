@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.data.model.entity.Showtime
 import com.example.movie_booking_app.databinding.ItemTimeBinding
+import com.example.movie_booking_app.utils.DateUtils
 
 /**
  * Adapter mapping session times to the horizontal picker list.
@@ -28,7 +29,7 @@ class TimeAdapter(
 
         fun bind(showtime: Showtime) {
             // Priority: showTime field -> formatted startTime
-            binding.tvTime.text = showtime.showTime ?: formatTime(showtime.startTime ?: "")
+            binding.tvTime.text = DateUtils.formatMovieTime(showtime.showTime ?: showtime.startTime)
             binding.tvTime.isSelected = showtime.isSelected
 
             binding.root.setOnClickListener {
@@ -42,12 +43,5 @@ class TimeAdapter(
         override fun areContentsTheSame(oldItem: Showtime, newItem: Showtime) = oldItem == newItem
     }
     
-    private fun formatTime(dateTime: String): String {
-        return try {
-            // Format HH:mm from 2026-07-25T09:00:00.000Z
-            if (dateTime.length >= 16) dateTime.substring(11, 16) else dateTime
-        } catch (e: Exception) {
-            dateTime
-        }
-    }
+
 }

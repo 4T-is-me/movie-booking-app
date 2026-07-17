@@ -2,6 +2,7 @@ package com.example.movie_booking_app.view.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.movie_booking_app.R
@@ -18,8 +19,11 @@ class PurchaseHistoryAdapter(
 ) : RecyclerView.Adapter<PurchaseHistoryAdapter.ViewHolder>() {
 
     fun updateData(newItems: List<BookingHistoryItem>) {
-        items = newItems
-        notifyDataSetChanged()
+        val diffCallback = PurchaseHistoryDiffCallback(this.items, newItems)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+
+        this.items = newItems
+        diffResult.dispatchUpdatesTo(this)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -74,5 +78,22 @@ class PurchaseHistoryAdapter(
                 onItemClick?.invoke(item)
             }
         }
+    }
+}
+class PurchaseHistoryDiffCallback(
+    private val oldList: List<BookingHistoryItem>,
+    private val newList: List<BookingHistoryItem>
+) : DiffUtil.Callback() {
+
+    override fun getOldListSize(): Int = oldList.size
+    override fun getNewListSize(): Int = newList.size
+
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldList[oldItemPosition].bookingCode == newList[newItemPosition].bookingCode
+                && oldList[oldItemPosition].bookingId == newList[newItemPosition].bookingId
+    }
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldList[oldItemPosition] == newList[newItemPosition]
     }
 }

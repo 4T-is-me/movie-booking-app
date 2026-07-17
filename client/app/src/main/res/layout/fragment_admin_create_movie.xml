@@ -28,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="Movie Name (*)"
+            android:hint="@string/auto_str_movie_name"
             app:boxStrokeColor="@color/text_input_stroke"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="2dp"
@@ -37,7 +37,7 @@
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
             app:boxBackgroundMode="outline"
-            app:hintTextColor="#808080">
+            app:hintTextColor="@color/auto_color_808080">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtMovieName"
@@ -52,7 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="Duration (mins)"
+            android:hint="@string/auto_str_duration_mins"
             app:boxStrokeColor="@color/text_input_stroke"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="2dp"
@@ -61,7 +61,7 @@
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
             app:boxBackgroundMode="outline"
-            app:hintTextColor="#808080">
+            app:hintTextColor="@color/auto_color_808080">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtDuration"
@@ -84,7 +84,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginEnd="8dp"
-                android:hint="Release Date"
+                android:hint="@string/auto_str_release_date"
                 app:boxStrokeColor="@color/text_input_stroke"
                 app:boxStrokeWidth="1dp"
                 app:boxStrokeWidthFocused="2dp"
@@ -93,7 +93,7 @@
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusBottomEnd="12dp"
                 app:boxBackgroundMode="outline"
-                app:hintTextColor="#808080">
+                app:hintTextColor="@color/auto_color_808080">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtReleaseDate"
@@ -110,7 +110,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
-                android:hint="End Date"
+                android:hint="@string/auto_str_end_date_1"
                 app:boxStrokeColor="@color/text_input_stroke"
                 app:boxStrokeWidth="1dp"
                 app:boxStrokeWidthFocused="2dp"
@@ -119,7 +119,7 @@
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusBottomEnd="12dp"
                 app:boxBackgroundMode="outline"
-                app:hintTextColor="#808080">
+                app:hintTextColor="@color/auto_color_808080">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtEndDate"
@@ -170,7 +170,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="Censorship"
+            android:hint="@string/auto_str_censorship"
             app:boxStrokeColor="@color/text_input_stroke"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="2dp"
@@ -179,7 +179,7 @@
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
             app:boxBackgroundMode="outline"
-            app:hintTextColor="#808080">
+            app:hintTextColor="@color/auto_color_808080">
 
             <AutoCompleteTextView
                 android:id="@+id/spnCensorship"
@@ -195,7 +195,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="Country (Search to select)"
+            android:hint="@string/auto_str_country_search_to_select"
             app:boxStrokeColor="@color/text_input_stroke"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="2dp"
@@ -204,7 +204,7 @@
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
             app:boxBackgroundMode="outline"
-            app:hintTextColor="#808080">
+            app:hintTextColor="@color/auto_color_808080">
 
             <AutoCompleteTextView
                 android:id="@+id/edtCountry"
@@ -229,7 +229,7 @@
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
             app:boxBackgroundMode="outline"
-            app:hintTextColor="#808080">
+            app:hintTextColor="@color/auto_color_808080">
 
             <AutoCompleteTextView
                 android:id="@+id/spnLanguage"
@@ -245,7 +245,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="Director(s) - Comma separated"
+            android:hint="@string/auto_str_director_s_comma_separated"
             app:boxStrokeColor="@color/text_input_stroke"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="2dp"
@@ -254,7 +254,7 @@
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
             app:boxBackgroundMode="outline"
-            app:hintTextColor="#808080">
+            app:hintTextColor="@color/auto_color_808080">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtDirector"
@@ -269,7 +269,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="Actors - Comma separated"
+            android:hint="@string/auto_str_actors_comma_separated"
             app:boxStrokeColor="@color/text_input_stroke"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="2dp"
@@ -278,7 +278,7 @@
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
             app:boxBackgroundMode="outline"
-            app:hintTextColor="#808080">
+            app:hintTextColor="@color/auto_color_808080">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtActors"
@@ -313,7 +313,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:hint="Description"
+            android:hint="@string/auto_str_description"
             app:boxStrokeColor="@color/text_input_stroke"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="2dp"
@@ -322,7 +322,7 @@
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
             app:boxBackgroundMode="outline"
-            app:hintTextColor="#808080">
+            app:hintTextColor="@color/auto_color_808080">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtDescription"

@@ -9,7 +9,7 @@ espressoCore = "3.6.1"
 retrofit = "2.11.0"
 okhttp = "4.12.0"
 coroutines = "1.10.2"
-coil = "3.2.0"
+
 constraintlayout = "2.2.1"
 material = "1.14.0"
 viewpager2 = "1.1.0"
@@ -60,9 +60,7 @@ okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor",
 # Coroutines
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 
-# Coil XML
-coil = { group = "io.coil-kt.coil3", name = "coil", version.ref = "coil" }
-coil-network-okhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
+
 
 # UI XML
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }

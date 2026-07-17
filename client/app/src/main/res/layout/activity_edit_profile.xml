@@ -245,7 +245,7 @@
                 android:textStyle="bold"
                 app:backgroundTint="@color/auto_color_F5C542"
                 app:cornerRadius="28dp"
-                app:rippleColor="#22000000" />
+                app:rippleColor="@color/auto_color_22000000" />
 
         </LinearLayout>
 
@@ -374,7 +374,7 @@
         <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:indeterminateTint="#F5C542"
+            android:indeterminateTint="@color/auto_color_F5C542"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

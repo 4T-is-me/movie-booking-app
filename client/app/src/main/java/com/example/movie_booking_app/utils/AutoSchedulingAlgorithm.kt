@@ -46,7 +46,8 @@ object AutoSchedulingAlgorithm {
         movies: List<MovieDraft>,
         rooms: List<RoomDraft>,
         config: CinemaConfigDraft,
-        holidayDates: List<String> = emptyList()
+        holidayDates: List<String> = emptyList(),
+        existingShowtimes: List<ShowtimeDraft> = emptyList()
     ): List<ShowtimeDraft> {
         val activeMovies = movies.filter { it.status == "showing" }
         val activeRooms = rooms.filter { it.status == "active" }
@@ -55,7 +56,8 @@ object AutoSchedulingAlgorithm {
         var currentDate = startDate
         while (!currentDate.isAfter(endDate)) {
             val isHoliday = holidayDates.contains(currentDate.toString())
-            val dailySchedule = generateDailySchedule(currentDate, activeMovies, activeRooms, config, isHoliday)
+            val existingForDay = existingShowtimes.filter { it.show_date == currentDate.toString() }
+            val dailySchedule = generateDailySchedule(currentDate, activeMovies, activeRooms, config, isHoliday, existingForDay)
             result.addAll(dailySchedule)
             currentDate = currentDate.plusDays(1)
         }
@@ -67,7 +69,8 @@ object AutoSchedulingAlgorithm {
         movies: List<MovieDraft>,
         rooms: List<RoomDraft>,
         config: CinemaConfigDraft,
-        isHoliday: Boolean
+        isHoliday: Boolean,
+        existingShowtimesForDay: List<ShowtimeDraft>
     ): List<ShowtimeDraft> {
         val isWeekend = date.dayOfWeek.value == 6 || date.dayOfWeek.value == 7 || isHoliday
         val isHighSeason = date.month == Month.JUNE || date.month == Month.JULY || date.month == Month.AUGUST
@@ -75,32 +78,32 @@ object AutoSchedulingAlgorithm {
         val result = mutableListOf<ShowtimeDraft>()
         
         if (isWeekend) {
-            // Quy tắc B: Phân bổ Cuối tuần (Sat - Sun)
-            // 08:00 - 00:00 Continuous Bin Packing, ưu tiên Tier 1
+            // Rule B: Weekend allocation (Sat - Sun)
+            // 08:00 - 00:00 Continuous Bin Packing, prioritize Tier 1
             for (room in rooms) {
-                fillSlot(room, date, LocalTime.of(8, 0), LocalTime.of(23, 59), Int.MAX_VALUE, movies, config, result, preferLowTier = false)
+                fillSlot(room, date, LocalTime.of(8, 0), LocalTime.of(23, 59), Int.MAX_VALUE, movies, config, result, existingShowtimesForDay, preferLowTier = false)
             }
         } else {
-            // Quy tắc A: Phân bổ theo Ngày trong tuần & Mùa vụ (Mon - Fri)
+            // Rule A: Weekday & Seasonal allocation (Mon - Fri)
             if (isHighSeason) {
                 // High Season: 08:00 - 00:00
-                // Sáng (08:30 - 11:45): 2 suất (prefer low tier)
-                // Chiều (12:00 - 16:30): 2 suất (prefer low tier)
-                // Tối (17:00 - 00:00): Full, ưu tiên Tier 1
+                // Morning (08:30 - 11:45): 2 slots (prefer low tier)
+                // Afternoon (12:00 - 16:30): 2 slots (prefer low tier)
+                // Evening (17:00 - 00:00): Full, prioritize Tier 1
                 for (room in rooms) {
-                    fillSlot(room, date, LocalTime.of(8, 30), LocalTime.of(11, 45), 2, movies, config, result, preferLowTier = true)
-                    fillSlot(room, date, LocalTime.of(12, 0), LocalTime.of(16, 30), 2, movies, config, result, preferLowTier = true)
-                    fillSlot(room, date, LocalTime.of(17, 0), LocalTime.of(23, 59), Int.MAX_VALUE, movies, config, result, preferLowTier = false)
+                    fillSlot(room, date, LocalTime.of(8, 30), LocalTime.of(11, 45), 2, movies, config, result, existingShowtimesForDay, preferLowTier = true)
+                    fillSlot(room, date, LocalTime.of(12, 0), LocalTime.of(16, 30), 2, movies, config, result, existingShowtimesForDay, preferLowTier = true)
+                    fillSlot(room, date, LocalTime.of(17, 0), LocalTime.of(23, 59), Int.MAX_VALUE, movies, config, result, existingShowtimesForDay, preferLowTier = false)
                 }
             } else {
                 // Low Season: 09:00 - 00:00
-                // Sáng (09:30 - 11:45): 1 suất (prefer low tier)
-                // Chiều (12:00 - 16:30): 2 suất (prefer low tier)
-                // Tối (17:00 - 00:00): Full, ưu tiên Tier 1
+                // Morning (09:30 - 11:45): 1 slot (prefer low tier)
+                // Afternoon (12:00 - 16:30): 2 slots (prefer low tier)
+                // Evening (17:00 - 00:00): Full, prioritize Tier 1
                 for (room in rooms) {
-                    fillSlot(room, date, LocalTime.of(9, 30), LocalTime.of(11, 45), 1, movies, config, result, preferLowTier = true)
-                    fillSlot(room, date, LocalTime.of(12, 0), LocalTime.of(16, 30), 2, movies, config, result, preferLowTier = true)
-                    fillSlot(room, date, LocalTime.of(17, 0), LocalTime.of(23, 59), Int.MAX_VALUE, movies, config, result, preferLowTier = false)
+                    fillSlot(room, date, LocalTime.of(9, 30), LocalTime.of(11, 45), 1, movies, config, result, existingShowtimesForDay, preferLowTier = true)
+                    fillSlot(room, date, LocalTime.of(12, 0), LocalTime.of(16, 30), 2, movies, config, result, existingShowtimesForDay, preferLowTier = true)
+                    fillSlot(room, date, LocalTime.of(17, 0), LocalTime.of(23, 59), Int.MAX_VALUE, movies, config, result, existingShowtimesForDay, preferLowTier = false)
                 }
             }
         }
@@ -110,6 +113,7 @@ object AutoSchedulingAlgorithm {
     private fun fillSlot(
         room: RoomDraft, date: LocalDate, start: LocalTime, end: LocalTime, maxSlots: Int,
         movies: List<MovieDraft>, config: CinemaConfigDraft, result: MutableList<ShowtimeDraft>,
+        existingShowtimesForDay: List<ShowtimeDraft>,
         preferLowTier: Boolean
     ) {
         var currentDateTime = LocalDateTime.of(date, start)
@@ -122,7 +126,8 @@ object AutoSchedulingAlgorithm {
             
             // Try to find a non-conflicting movie by shifting start time in 15 min increments
             while (actualStartDT.isBefore(endDateTimeLimit)) {
-                movie = selectBestMovie(actualStartDT.toLocalTime(), movies, result, date, preferLowTier)
+                val combinedExisting = result + existingShowtimesForDay
+                movie = selectBestMovie(actualStartDT.toLocalTime(), movies, combinedExisting, date, preferLowTier)
                 if (movie != null) {
                     val endDT = actualStartDT.plusMinutes(movie.duration.toLong())
                     // Check if it fits the time block before ending
@@ -136,7 +141,7 @@ object AutoSchedulingAlgorithm {
                     // Try to pick a shorter movie instead of advancing time
                     val allMovies = if (preferLowTier) movies.sortedByDescending { it.tier } else movies.sortedBy { it.tier }
                     movie = allMovies.firstOrNull { m ->
-                        val hasConflict = result.any { r ->
+                        val hasConflict = combinedExisting.any { r ->
                             r.movie_id == m._id && r.show_date == date.toString() && isConflict(r.start_time, actualStartDT)
                         }
                         if (!hasConflict) {
@@ -157,7 +162,7 @@ object AutoSchedulingAlgorithm {
 
             result.add(createDraft(room, movie, date, startDateTime, endDateTime))
             
-            // Calculate next available time and round up to the nearest 5 minutes ("số chẵn")
+            // Calculate next available time and round up to the nearest 5 minutes ("even number")
             val rawNextTime = endDateTime.plusMinutes(config.cleaning_time_minutes.toLong())
             val remainder = rawNextTime.minute % 5
             currentDateTime = if (remainder == 0) {
@@ -197,7 +202,7 @@ object AutoSchedulingAlgorithm {
         try {
             val existingTime = LocalDateTime.parse(existingStartTime, DateTimeFormatter.ISO_DATE_TIME)
             val diff = Math.abs(java.time.Duration.between(existingTime, newStartTime).toMinutes())
-            return diff < 15 // Staggering rule: min 15 mins diff
+            return diff < 15 // Staggering rule: min 15 mins diff across rooms
         } catch (e: Exception) {
             return false
         }

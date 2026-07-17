@@ -31,7 +31,7 @@ class ManagerSeatActivity : AppCompatActivity() {
     private val viewModel: ManagerRoomViewModel by viewModels()
     private lateinit var llSeats: LinearLayout
     private lateinit var progressBar: ProgressBar
-    private val formatMoney = DecimalFormat("#,###đ")
+    private val formatMoney = DecimalFormat("#,### ₫")
 
     private var currentStatus: String = "active"
     private var pendingRegularPrice: Double = 0.0

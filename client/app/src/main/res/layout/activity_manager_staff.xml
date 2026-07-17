@@ -6,7 +6,6 @@
     android:background="@color/bg_primary"
     android:orientation="vertical">
 
-    <!-- Header Section Section -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/headerLayoutReport"
         android:layout_width="match_parent"
@@ -53,7 +52,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Tab Filter -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="46dp"
@@ -63,7 +61,6 @@
         android:background="@drawable/bg_tab_container"
         android:padding="4dp">
 
-        <!-- Tab Staff List -->
         <TextView
             android:id="@+id/tabStaffList"
             android:layout_width="0dp"
@@ -76,7 +73,6 @@
             android:textSize="14sp"
             android:textStyle="bold" />
 
-        <!-- Tab Leave Requests (Inactive) -->
         <TextView
             android:id="@+id/tabLeaveRequests"
             android:layout_width="0dp"
@@ -89,7 +85,6 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <!-- Date filter -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -98,7 +93,6 @@
         android:orientation="horizontal"
         android:gravity="center_vertical">
 
-       <!-- Employee name / position search bar -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="40dp"
@@ -119,7 +113,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
-                android:hint="Find employees, positions..."
+                android:hint="@string/find_employees_positions_hint"
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:maxLines="1"
@@ -129,7 +123,6 @@
                 android:textSize="13sp" />
         </LinearLayout>
 
-        <!-- Advanced Filter Button -->
         <LinearLayout
             android:id="@+id/btnAdvancedFilter"
             android:layout_width="wrap_content"
@@ -158,12 +151,10 @@
 
     </LinearLayout>
 
-    <!--  RecyclerView & FAB Button -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-            <!-- Shift list -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvStaffList"
             android:layout_width="match_parent"
@@ -173,7 +164,6 @@
             android:paddingTop="4dp"
             android:paddingBottom="88dp" />
 
-        <!-- TextView displayed when the list is empty -->
         <TextView
             android:id="@+id/txtNoStaffData"
             android:layout_width="wrap_content"
@@ -184,7 +174,14 @@
             android:textSize="14sp"
             android:visibility="gone" />
 
-        <!--  Generate Shift button-->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:indeterminateTint="@color/auto_color_D4AF37" />
+
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/btnGenerateShift"
             android:layout_width="wrap_content"

@@ -2,7 +2,7 @@ import {LeaveRequest} from "../models/leaveRequestModel.js";
 import {Staff} from "../models/staffModel.js";
 import {StaffShift} from "../models/staffShiftModel.js";
 import ApiError from "../utils/ApiError.js";
-import { StatusCodes } from "http-status-codes";
+import { StatusCodes } from 'http-status-codes';
 import {constants} from "../utils/Constants.js";
 import { Manager } from "../models/managerModel.js";
 import mongoose from "mongoose";
@@ -14,6 +14,21 @@ const checkStaff = async(accountId) => {
     }
     return currentStaff
 }
+
+const checkShift = async(shiftId) => {
+    const shift = await StaffShift.findById(shiftId)
+    if(!shift) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Shift not found!");
+    }
+    return shift
+}
+
+const checkTheSameCinema = (shiftCinemaId, currentCinemaId, message) => {
+    if (shiftCinemaId.toString() !== currentCinemaId.toString()) {
+        throw new ApiError(StatusCodes.FORBIDDEN, message || "You can only accept shifts within your assigned cinema!");
+    }
+}
+
 // Hàm check không được tự nhận ca của chính mình
 const checkNotOwnShift = (shiftStaffId, currentStaffId, message) => {
     if (shiftStaffId.toString() === currentStaffId.toString()) {
@@ -39,7 +54,7 @@ const createLeaveRequest = async(accountId, {staffShiftId, reason}) => {
     const shift = await checkShift(staffShiftId)
 
     //check shift belong to staff
-    checkMyShift(shift.staffId, staff._id,"You can only request time off for your own shifts!")
+    checkShiftOwner(shift.staffId, staff._id,"You can only request time off for your own shifts!")
 
     //only assigned shift can request
     if(shift.status !== "Assigned") {
@@ -94,7 +109,7 @@ const getReplacementShifts = async (accountId) => {
     const approvedRequests = await LeaveRequest.find({ status: "Approved" })
     .populate({
         path: "staffId",
-        select: "fullname phone position"
+        select: "fullName phone position"
     })
     .populate({
         path: "staffShiftId",
@@ -171,7 +186,7 @@ const acceptReplacementShift = async(accountId, shiftId) => {
         status: "Approved"
     }).populate("staffShiftId")
 
-    const isBOnApprovedLeave = approvedRequest.some(leave => {
+    const isBOnApprovedLeave = approvedRequests.some(leave => {
         const s = leave.staffShiftId
         if(!s) return false
         const isSameShift = new Date(s.workDate).getTime() === startOfDay.getTime()
@@ -215,12 +230,47 @@ const acceptReplacementShift = async(accountId, shiftId) => {
     }
 }
 
+const getStaffShifts = async (accountId, { startDate, endDate }) => {
+    const staff = await checkStaff(accountId);
+    
+    const filter = {
+        staffId: staff._id
+    };
+    
+    if (startDate && endDate) {
+        const start = new Date(startDate);
+        start.setUTCHours(0, 0, 0, 0);
 
+        const end = new Date(endDate);
+        end.setUTCHours(23, 59, 59, 999);
 
-
+        filter.workDate = {
+            $gte: start,
+            $lte: end
+        };
+    }
+    
+    const shifts = await StaffShift.find(filter)
+        .populate({
+            path: 'originalStaffId',
+            select: 'fullName'
+        })
+        .sort({ workDate: 1 });
+        
+    return shifts.map(item => ({
+        shiftId: item._id,
+        staffId: item.staffId,
+        cinemaId: item.cinemaId,
+        workDate: item.workDate,
+        shift: item.shift,
+        status: item.status,
+        originalStaffName: item.originalStaffId?.fullName || null
+    }));
+}
 
 export const StaffLeaveRequestService = {
     createLeaveRequest,
     getReplacementShifts,
-    acceptReplacementShift
+    acceptReplacementShift,
+    getStaffShifts
 }

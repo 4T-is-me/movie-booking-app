@@ -61,14 +61,14 @@ class PromotionDetailActivity : AppCompatActivity() {
         // Format min spend
         if (minOrderValue > 0) {
             val formatter = NumberFormat.getInstance(Locale.GERMANY)
-            binding.tvMinOrderValue.text = "Áp dụng tối thiểu: ${formatter.format(minOrderValue.toInt())} VND"
+            binding.tvMinOrderValue.text = "Minimum spending: ${formatter.format(minOrderValue.toInt())} VND"
         } else {
-            binding.tvMinOrderValue.text = "Không yêu cầu chi tiêu tối thiểu"
+            binding.tvMinOrderValue.text = "No minimum spending required"
         }
 
         // Parse and format date range
         val formattedDate = formatIsoDate(endDate)
-        binding.tvPromoDateRange.text = "Hạn sử dụng: $formattedDate"
+        binding.tvPromoDateRange.text = "Expiry date: $formattedDate"
 
         // Set listeners
         binding.btnBack.setOnClickListener {
@@ -81,7 +81,7 @@ class PromotionDetailActivity : AppCompatActivity() {
             val clip = ClipData.newPlainText("promo_code", code)
             clipboard.setPrimaryClip(clip)
 
-            Toast.makeText(this, "Mã $code đã được sao chép!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Code $code copied!", Toast.LENGTH_SHORT).show()
 
             // Animate Copy Button transition state
             binding.btnCopyCode.animate().alpha(0f).setDuration(120).withEndAction {

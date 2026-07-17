@@ -133,7 +133,7 @@ class ManagerActivity : AppCompatActivity() {
 
         val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val outputFormat = SimpleDateFormat("E", Locale("en", "US"))
-        //nạp data
+        //load data
         weeklyList.forEachIndexed { index, item ->
             entries.add(Entry(index.toFloat(), item.totalAmount.toFloat()))
             val dayOfWeekName = try {
@@ -167,7 +167,7 @@ class ManagerActivity : AppCompatActivity() {
             description.isEnabled = false
             legend.textColor = Color.WHITE
 
-            // Cấu hình trục X (Trục ngang dưới cùng)
+            // Configure X-axis (bottom horizontal axis)
             xAxis.apply {
                 position = XAxis.XAxisPosition.BOTTOM
                 textColor = Color.WHITE

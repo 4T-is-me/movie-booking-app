@@ -48,7 +48,7 @@ class ManagerRoomAdapter(
             tvVipCount.text = room.vipSeats.toString()
             tvCoupleCount.text = room.coupleSeats.toString()
             
-            // Xử lý status
+            // Handle status
             val statusText = when (room.status?.lowercase()) {
                 "active", "operating", "open" -> "Operating"
                 "maintenance", "maintain" -> "Maintenance"
@@ -56,7 +56,7 @@ class ManagerRoomAdapter(
             }
             tvOperating.text = statusText
             
-            // Đổi màu theo status
+            // Change color by status
             val context = itemView.context
             when (statusText) {
                 "Operating" -> {
@@ -69,7 +69,7 @@ class ManagerRoomAdapter(
                     tvRoomUnavailable.visibility = View.GONE
                 }
                 "Maintenance" -> {
-                    tvOperating.setTextColor(android.graphics.Color.parseColor("#F59E0B")) // Vàng cam
+                    tvOperating.setTextColor(android.graphics.Color.parseColor("#F59E0B")) // Orange yellow
                     tvOperating.background = androidx.core.content.ContextCompat.getDrawable(context, R.drawable.bg_label_maintain)
                     
                     flIcon.background = androidx.core.content.ContextCompat.getDrawable(context, R.drawable.bg_label_maintain)

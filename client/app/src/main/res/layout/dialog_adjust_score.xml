@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardBackgroundColor="#1A1A1A"
+    app:cardBackgroundColor="@color/auto_color_1A1A1A"
     app:cardCornerRadius="16dp">
 
     <LinearLayout
@@ -15,7 +15,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Adjust Loyalty Points"
+            android:text="@string/admin_adjust_loyalty_points"
             android:textColor="@color/yellow"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Current Points: 1,250"
+            android:text="@string/auto_str_current_points_1_250"
             android:textColor="@color/white"
             android:textSize="14sp" />
 
@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="New Points: 1,250"
+            android:text="@string/auto_str_new_points_1_250"
             android:textColor="@color/yellow"
             android:textSize="16sp"
             android:textStyle="bold"
@@ -46,7 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:hint="Adjustment (+/-)"
+            android:hint="@string/admin_adjustment_label"
             app:boxStrokeColor="@color/yellow"
             app:hintTextColor="@color/text_gray">
 
@@ -55,7 +55,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="numberSigned"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:importantForAutofill="no" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -64,7 +65,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:hint="Reason"
+            android:hint="@string/admin_reason_label"
             app:boxStrokeColor="@color/yellow"
             app:hintTextColor="@color/text_gray">
 
@@ -73,7 +74,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="text"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:importantForAutofill="no" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
@@ -89,14 +91,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
-                android:text="Cancel"
+                android:text="@string/admin_cancel"
                 android:textColor="@color/white" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnConfirmAdjust"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Confirm"
+                android:text="@string/admin_confirm_label"
                 android:textColor="@color/black"
                 app:backgroundTint="@color/yellow"
                 app:cornerRadius="8dp" />

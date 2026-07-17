@@ -6,6 +6,7 @@ import com.example.movie_booking_app.data.model.request.UpdateShiftRequest
 import com.example.movie_booking_app.data.model.response.GenerateShiftApiResponse
 import com.example.movie_booking_app.data.model.response.ManagerDashboardResponse
 import com.example.movie_booking_app.data.model.response.ManagerReportsResponse
+import com.example.movie_booking_app.data.model.response.ManagerStaffListResponse
 import com.example.movie_booking_app.data.model.response.ShiftDetailResponse
 import com.example.movie_booking_app.data.model.response.ShiftItemResponse
 import com.example.movie_booking_app.data.model.response.ShiftResponse
@@ -28,11 +29,15 @@ interface ManagerApi {
     @GET("api/manager/staff-shifts")
     suspend fun getStaffShift(
         @Query("startDate") startDate: String? = null,
-        @Query("endDate") endDate: String? = null
+        @Query("endDate") endDate: String? = null,
+        @Query("status") status: String? = null
     ) : Response<ShiftResponse>
 
     @GET("api/manager/staff-shifts/{id}")
     suspend fun getShiftDetail(@Path("id") shiftId: String): Response<ShiftDetailResponse>
+
+    @GET("api/manager/staff-shifts/staff")
+    suspend fun getManagerStaff(): Response<ManagerStaffListResponse>
 
     @POST("api/manager/staff-shifts/generate")
     suspend fun generateShift(@Body request: GenerateShiftRequest) : Response<GenerateShiftApiResponse>

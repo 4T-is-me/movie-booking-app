@@ -4,8 +4,10 @@ import com.example.movie_booking_app.data.api.ManagerApi
 import com.example.movie_booking_app.data.model.request.GenerateShiftRequest
 import com.example.movie_booking_app.data.model.request.UpdateShiftRequest
 import com.example.movie_booking_app.data.model.response.GenerateShiftApiResponse
+import com.example.movie_booking_app.data.model.response.GenerateShiftResponse
 import com.example.movie_booking_app.data.model.response.ManagerDashboardResponse
 import com.example.movie_booking_app.data.model.response.ManagerReportsResponse
+import com.example.movie_booking_app.data.model.response.ManagerStaffListResponse
 import com.example.movie_booking_app.data.model.response.ShiftDetailResponse
 import com.example.movie_booking_app.data.model.response.ShiftResponse
 import com.example.movie_booking_app.data.model.response.UpdateShiftResponse
@@ -43,9 +45,9 @@ class ManagerRepository @Inject constructor(private val api: ManagerApi) {
         }
     }
 
-    fun getStaffShifts(startDate: String? = null, endDate: String? = null): Flow<ShiftResponse?> = flow {
+    fun getStaffShifts(startDate: String? = null, endDate: String? = null, status: String? = null): Flow<ShiftResponse?> = flow {
         try {
-            val response = api.getStaffShift(startDate, endDate)
+            val response = api.getStaffShift(startDate, endDate, status)
             if (response.isSuccessful) {
                 emit(response.body())
             } else {
@@ -68,17 +70,41 @@ class ManagerRepository @Inject constructor(private val api: ManagerApi) {
         }
     }
 
-    fun generateShift(startDate: String?, endDate: String?): Flow<GenerateShiftApiResponse?> = flow {
+    fun getStaffForManager(): Flow<ManagerStaffListResponse?> = flow {
         try {
-            val response = api.generateShift(GenerateShiftRequest(startDate, endDate))
-            if(response.isSuccessful) {
+            val response = api.getManagerStaff()
+            if (response.isSuccessful) {
                 emit(response.body())
-            }else{
-                val errorJson = response.errorBody()?.string()
+            } else {
                 emit(null)
             }
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             emit(null)
+        }
+    }
+
+    fun generateShift(request: GenerateShiftRequest): Flow<GenerateShiftApiResponse?> = flow {
+        try {
+            val response = api.generateShift(request)
+            if (response.isSuccessful) {
+                emit(response.body())
+            } else {
+                val errorJson = response.errorBody()?.string()
+                val errorMessage = try {
+                    JSONObject(errorJson ?: "").getString("message")
+                } catch (e: Exception) {
+                    "Generate shifts failed"
+                }
+                emit(
+                    GenerateShiftApiResponse(
+                        success = false,
+                        message = errorMessage,
+                        data = GenerateShiftResponse(0, "", "", errorMessage)
+                    )
+                )
+            }
+        } catch (e: Exception) {
+            emit(GenerateShiftApiResponse(success = false, message = e.message ?: "Network Error", data = GenerateShiftResponse(0, "", "", e.message ?: "Network Error")))
         }
     }
     fun updateShift(shiftId: String, request: UpdateShiftRequest): Flow<UpdateShiftResponse?> = flow {

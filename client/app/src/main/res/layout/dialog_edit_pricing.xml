@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:inputType="number"
         android:textColor="@color/auto_color_FFFFFF"
-        android:backgroundTint="#60A5FA"
+        android:backgroundTint="@color/auto_color_60A5FA"
         android:layout_marginBottom="12dp"/>
 
     <TextView
@@ -42,7 +42,7 @@
         android:layout_height="wrap_content"
         android:inputType="number"
         android:textColor="@color/auto_color_FFFFFF"
-        android:backgroundTint="#FACC15"
+        android:backgroundTint="@color/auto_color_FACC15"
         android:layout_marginBottom="12dp"/>
 
     <TextView
@@ -57,7 +57,7 @@
         android:layout_height="wrap_content"
         android:inputType="number"
         android:textColor="@color/auto_color_FFFFFF"
-        android:backgroundTint="#A78BFA"
+        android:backgroundTint="@color/auto_color_A78BFA"
         android:layout_marginBottom="24dp"/>
 
     <LinearLayout
@@ -70,7 +70,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/auto_str_cancel_3"
-            android:backgroundTint="#334155"
+            android:backgroundTint="@color/auto_color_334155"
             android:textColor="@color/auto_color_FFFFFF" />
         <View android:layout_width="16dp" android:layout_height="match_parent" />
         <Button
@@ -79,7 +79,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/auto_str_save_temporary"
-            android:backgroundTint="#10B981"
+            android:backgroundTint="@color/auto_color_10B981"
             android:textColor="@color/auto_color_FFFFFF" />
     </LinearLayout>
 </LinearLayout>

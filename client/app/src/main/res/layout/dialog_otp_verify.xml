@@ -43,7 +43,7 @@
         app:boxCornerRadiusBottomStart="8dp"
         app:boxCornerRadiusTopEnd="8dp"
         app:boxCornerRadiusTopStart="8dp"
-        app:boxStrokeColor="#6200EE"
+        app:boxStrokeColor="@color/auto_color_6200EE"
         app:hintEnabled="false">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -52,7 +52,7 @@
             android:layout_height="56dp"
             android:background="@null"
             android:gravity="center"
-            android:hint="------"
+            android:hint="@string/auto_str_str_auto"
             android:inputType="number"
             android:letterSpacing="0.5"
             android:maxLength="6"
@@ -66,7 +66,7 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_marginTop="32dp"
-        android:backgroundTint="#6200EE"
+        android:backgroundTint="@color/auto_color_6200EE"
         android:text="@string/auto_str_x_c_nh_n_1"
         android:textAllCaps="false"
         android:textColor="@color/white"

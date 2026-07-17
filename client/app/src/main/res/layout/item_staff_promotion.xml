@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="4dp"
     android:layout_marginVertical="6dp"
-    app:cardBackgroundColor="#0D1120"
+    app:cardBackgroundColor="@color/auto_color_0D1120"
     app:cardCornerRadius="8dp"
     app:strokeColor="@color/admin_gold_transparent"
     app:strokeWidth="1dp">
@@ -25,7 +25,7 @@
             android:layout_height="40dp"
             android:src="@android:drawable/ic_dialog_info"
             android:scaleType="fitCenter"
-            android:background="#151A30"
+            android:background="@color/auto_color_151A30"
             android:padding="4dp"
             app:tint="@color/gold_selected" />
 
@@ -59,7 +59,7 @@
             android:id="@+id/tvStaffPromoCode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#33FFC107"
+            android:background="@color/auto_color_33FFC107"
             android:paddingHorizontal="8dp"
             android:paddingVertical="4dp"
             android:textColor="@color/gold_selected"

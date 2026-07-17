@@ -43,6 +43,7 @@ const getShowtimeSeats = async (showtimeId) => {
     // Populate movieId to get movie info in a single query (no extra API call needed)
     const showtime = await Showtime.findById(showtimeId)
         .populate('movieId', 'movieName poster duration language censorship movieGenre')
+        .populate('cinemaId', 'cinemaName')
         .lean();
     if (!showtime) return null;
 
@@ -137,7 +138,8 @@ const getShowtimeSeats = async (showtimeId) => {
         movieGenre: movie?.movieGenre ?? [],
 
         // --- Cinema / Room info ---
-        cinemaId: showtime.cinemaId,
+        cinemaId: showtime.cinemaId?._id ?? showtime.cinemaId,
+        cinemaName: showtime.cinemaId?.cinemaName ?? null,
         cinemaRoom: cinemaRoom
             ? {
                 roomId: cinemaRoom._id,
@@ -167,17 +169,17 @@ const getMovieShowtimes = async (movieId) => {
         movieId,
         startTime: { $gte: now }
     })
-        .populate(
-            "cinemaId",
-            "cinemaName address city image hotline status"
-        )
-        .sort({
-            showDate: 1,
-            startTime: 1
-        })
-        .lean();
-
-    return showtimes;
+    .populate({
+        path: "cinemaId",
+        select: "cinemaName address city image hotline status",
+        match: { status: "active" } 
+    })
+    .sort({
+        showDate: 1,
+        startTime: 1
+    })
+    .lean();
+    return showtimes.filter(showtime => showtime.cinemaId !== null);
 };
 export const showtimeService = {
 

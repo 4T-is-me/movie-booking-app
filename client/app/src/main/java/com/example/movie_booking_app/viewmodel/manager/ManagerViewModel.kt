@@ -3,11 +3,13 @@ package com.example.movie_booking_app.viewmodel.manager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bumptech.glide.load.engine.Resource
+import com.example.movie_booking_app.data.model.request.GenerateShiftRequest
 import com.example.movie_booking_app.data.model.request.UpdateShiftRequest
 
 import com.example.movie_booking_app.data.model.response.GenerateShiftApiResponse
 import com.example.movie_booking_app.data.model.response.ManagerDashboardResponse
 import com.example.movie_booking_app.data.model.response.ManagerReportsResponse
+import com.example.movie_booking_app.data.model.response.ManagerStaffListResponse
 import com.example.movie_booking_app.data.model.response.ShiftDetailResponse
 import com.example.movie_booking_app.data.model.response.ShiftItemResponse
 import com.example.movie_booking_app.data.model.response.ShiftResponse
@@ -40,6 +42,12 @@ class ManagerViewModel @Inject constructor(private val repository: ManagerReposi
     private val _updateShiftResult = MutableStateFlow<UpdateShiftResponse?>(null)
     val updateShiftResult: StateFlow<UpdateShiftResponse?> = _updateShiftResult.asStateFlow()
 
+    private val _staffListData = MutableStateFlow<ManagerStaffListResponse?>(null)
+    val staffListData: StateFlow<ManagerStaffListResponse?> = _staffListData.asStateFlow()
+
+    private val _isLoadingStaff = MutableStateFlow<Boolean>(false)
+    val isLoadingStaff: StateFlow<Boolean> = _isLoadingStaff.asStateFlow()
+
     init {
         // default = week
         loadReport("week")
@@ -60,9 +68,9 @@ class ManagerViewModel @Inject constructor(private val repository: ManagerReposi
         }
     }
 
-    fun loadStaffShifts(startDate: String? = null, endDate: String? = null) {
+    fun loadStaffShifts(startDate: String? = null, endDate: String? = null, status: String? = null) {
         viewModelScope.launch {
-            repository.getStaffShifts(startDate, endDate).collect { response ->
+            repository.getStaffShifts(startDate, endDate, status).collect { response ->
                 _shiftDate.value = response
             }
         }
@@ -76,9 +84,19 @@ class ManagerViewModel @Inject constructor(private val repository: ManagerReposi
         }
     }
 
-    fun loadGenerateShiftData(startDate: String?, endDate: String?) {
+    fun loadStaffForManager() {
         viewModelScope.launch {
-            repository.generateShift(startDate, endDate).collect { response ->
+            _isLoadingStaff.value = true
+            repository.getStaffForManager().collect { response ->
+                _staffListData.value = response
+                _isLoadingStaff.value = false
+            }
+        }
+    }
+
+    fun saveGeneratedShifts(request: GenerateShiftRequest) {
+        viewModelScope.launch {
+            repository.generateShift(request).collect { response ->
                 _generateShiftData.value = response
             }
         }

@@ -38,7 +38,7 @@ class VerifyOtpActivity : AppCompatActivity() {
         email = intent.getStringExtra("email") ?: ""
         type = intent.getStringExtra("type") ?: "forgot_password"
         val tvMessage = findViewById<TextView>(R.id.tvOtpMessage)
-        tvMessage.text = "Nhập mã OTP 6 số đã được gửi đến:\n$email"
+        tvMessage.text = "Enter 6-digit OTP sent to:\n$email"
 
         val ivBack = findViewById<ImageView>(R.id.ivBack)
         ivBack.setOnClickListener { finish() }
@@ -61,7 +61,7 @@ class VerifyOtpActivity : AppCompatActivity() {
         btnVerify.setOnClickListener {
             val otpCode = otpBoxes.joinToString("") { it.text.toString() }
             if (otpCode.length != 6) {
-                showError("Vui lòng nhập đủ 6 số OTP")
+                showError("Please enter all 6 digits of OTP")
                 return@setOnClickListener
             }
 
@@ -115,7 +115,7 @@ class VerifyOtpActivity : AppCompatActivity() {
                     is OtpUiState.Success -> {
                         btnVerify.isEnabled = true
                         pbLoading.visibility = View.GONE
-                        Toast.makeText(this@VerifyOtpActivity, "Xác thực thành công!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@VerifyOtpActivity, "Verification successful!", Toast.LENGTH_SHORT).show()
                         
                         if (type == "register") {
                             val intent = Intent(this@VerifyOtpActivity, LoginActivity::class.java)

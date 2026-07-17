@@ -21,8 +21,15 @@ object Constants {
     const val EVENING = "16:00 - 20:00"
     const val NIGHT = "20:00 - 00:00"
     const val FULLTIME = "08h–22h"
+    const val MAX_SHIFT_OF_DATE = 4
     val SHIFTS = listOf("Morning", "Afternoon", "Evening", "Night")
-    val STATUS_SHIFT = listOf("Assigned", "Completed", "Absent")
+    val STATUS_SHIFT = listOf("Active","Assigned", "Completed", "Absent", "NeedReplacement")
 
+    val STATUS_REQUEST = listOf("pending", "approved", "rejected")
+
+    object ComboPrice {
+        const val SINGLE_COMBO = 80_000
+        const val DOUBLE_COMBO = 120_000
+    }
 }
 

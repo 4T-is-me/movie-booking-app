@@ -41,15 +41,16 @@ class AdminStaffActivity : BaseActivity() {
 
         currentStaff = intent.getSerializableExtra("staff") as? Staff
         isEditMode = currentStaff != null
+        val intentRole = intent.getStringExtra("role") ?: "Manager"
 
-        setupUI()
+        setupUI(intentRole)
         setupListeners()
         observeViewModel()
     }
 
-    private fun setupUI() {
+    private fun setupUI(intentRole: String) {
         if (isEditMode) {
-            binding.tvFormTitle.text = "Update Employee"
+            binding.tvFormTitle.text = "Update $intentRole"
             binding.layoutUsername.visibility = View.GONE
             binding.layoutPassword.visibility = View.GONE
             binding.layoutAddress.visibility = View.VISIBLE
@@ -74,7 +75,7 @@ class AdminStaffActivity : BaseActivity() {
                 binding.layoutIdentityCard.alpha = 0.6f
             }
         } else {
-            binding.tvFormTitle.text = "Add New Employee"
+            binding.tvFormTitle.text = "Add New $intentRole"
             binding.layoutUsername.visibility = View.VISIBLE
             binding.layoutPassword.visibility = View.VISIBLE
             binding.layoutAddress.visibility = View.VISIBLE
@@ -82,7 +83,7 @@ class AdminStaffActivity : BaseActivity() {
         }
 
         // Setup Role autocomplete dropdown
-        val roles = arrayOf("Employee", "Manager")
+        val roles = arrayOf("Staff", "Manager")
         val roleAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, roles)
         binding.actvRole.setAdapter(roleAdapter)
 
@@ -93,10 +94,17 @@ class AdminStaffActivity : BaseActivity() {
 
         // Set default role selection if adding
         if (!isEditMode) {
-            binding.actvRole.setText("Employee", false)
+            binding.actvRole.setText(intentRole, false)
         } else {
             // For editing, try to guess role from UI state (or just map to Employee/Manager based on username or endpoint)
-            binding.actvRole.setText("Employee", false)
+            binding.actvRole.setText(intentRole, false)
+        }
+        
+        // Initialize position visibility
+        if (intentRole.equals("Manager", ignoreCase = true)) {
+            binding.layoutPosition.visibility = View.GONE
+        } else {
+            binding.layoutPosition.visibility = View.VISIBLE
         }
     }
 
@@ -120,6 +128,17 @@ class AdminStaffActivity : BaseActivity() {
             ).show()
         }
 
+        // Role dropdown listener to toggle position field and filter cinemas
+        binding.actvRole.setOnItemClickListener { _, _, position, _ ->
+            val selectedRole = binding.actvRole.adapter.getItem(position) as? String
+            if (selectedRole.equals("Manager", ignoreCase = true)) {
+                binding.layoutPosition.visibility = View.GONE
+            } else {
+                binding.layoutPosition.visibility = View.VISIBLE
+            }
+            updateCinemaDropdown()
+        }
+
         // Dropdown cinema listener
         binding.actvCinema.setOnItemClickListener { _, _, position, _ ->
             if (position in cinemasList.indices) {
@@ -138,20 +157,11 @@ class AdminStaffActivity : BaseActivity() {
 
     private fun observeViewModel() {
         lifecycleScope.launch {
-            viewModel.cinemas.collectLatest { cinemas ->
-                cinemasList = cinemas
-                val cinemaNames = cinemas.map { it.cinemaName ?: "Unknown" }
-                val cinemaAdapter = ArrayAdapter(this@AdminStaffActivity, android.R.layout.simple_dropdown_item_1line, cinemaNames)
-                binding.actvCinema.setAdapter(cinemaAdapter)
-
-                // Select current staff's cinema if editing
-                if (isEditMode && currentStaff != null) {
-                    val matchingIndex = cinemas.indexOfFirst { it.id == currentStaff?.cinemaId }
-                    if (matchingIndex != -1) {
-                        binding.actvCinema.setText(cinemas[matchingIndex].cinemaName, false)
-                        selectedCinemaId = cinemas[matchingIndex].id
-                    }
-                }
+            kotlinx.coroutines.flow.combine(viewModel.cinemas, viewModel.managers) { cinemas, managers ->
+                Pair(cinemas, managers)
+            }.collectLatest { (cinemas, managers) ->
+                this@AdminStaffActivity.cinemasList = cinemas // original full list
+                updateCinemaDropdown()
             }
         }
 
@@ -170,6 +180,41 @@ class AdminStaffActivity : BaseActivity() {
         }
     }
 
+    private fun updateCinemaDropdown() {
+        val allCinemas = viewModel.cinemas.value
+        val allManagers = viewModel.managers.value
+        val isManagerMode = binding.actvRole.text.toString().equals("Manager", ignoreCase = true)
+        val managerCinemaIds = allManagers.map { it.cinemaId }.toSet()
+
+        val filteredCinemas = if (isManagerMode && !isEditMode) {
+            allCinemas.filter { it.id !in managerCinemaIds }
+        } else if (isManagerMode && isEditMode) {
+            allCinemas.filter { it.id !in managerCinemaIds || it.id == currentStaff?.cinemaId }
+        } else {
+            allCinemas
+        }
+
+        this.cinemasList = filteredCinemas
+        val cinemaNames = filteredCinemas.map { it.cinemaName ?: "Unknown" }
+        val cinemaAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, cinemaNames)
+        binding.actvCinema.setAdapter(cinemaAdapter)
+
+        // Clear selection if it's no longer valid
+        if (selectedCinemaId != null && filteredCinemas.none { it.id == selectedCinemaId }) {
+            binding.actvCinema.setText("", false)
+            selectedCinemaId = null
+        }
+
+        // Select current staff's cinema if editing and it's valid
+        if (isEditMode && currentStaff != null) {
+            val matchingIndex = filteredCinemas.indexOfFirst { it.id == currentStaff?.cinemaId }
+            if (matchingIndex != -1) {
+                binding.actvCinema.setText(filteredCinemas[matchingIndex].cinemaName, false)
+                selectedCinemaId = filteredCinemas[matchingIndex].id
+            }
+        }
+    }
+
     private fun validateAndSave() {
         val fullName = binding.edtFullName.text.toString().trim()
         val email = binding.edtEmail.text.toString().trim()
@@ -180,8 +225,11 @@ class AdminStaffActivity : BaseActivity() {
         val salaryStr = binding.edtSalary.text.toString().trim()
         val startDate = binding.edtStartDate.text.toString().trim()
 
+        val isManager = role.equals("Manager", ignoreCase = true)
+        val finalPosition = if (isManager) "Manager" else position
+
         if (fullName.isEmpty() || email.isEmpty() || phone.isEmpty() || identityCard.isEmpty() ||
-            role.isEmpty() || position.isEmpty() || salaryStr.isEmpty() || startDate.isEmpty() ||
+            role.isEmpty() || (!isManager && position.isEmpty()) || salaryStr.isEmpty() || startDate.isEmpty() ||
             selectedCinemaId == null) {
             Toast.makeText(this, "Please fill in all required fields (*)", Toast.LENGTH_SHORT).show()
             return
@@ -216,14 +264,14 @@ class AdminStaffActivity : BaseActivity() {
             }
             val address = binding.edtAddress.text.toString().trim()
             val statusText = binding.actvStatus.text.toString()
-            val statusVal = if (statusText.contains("Active") || statusText.contains("Hoạt động")) 1 else 0
+            val statusVal = if (statusText.contains("Active") || statusText.contains("Active")) 1 else 0
             val request = UpdateStaffRequest(
                 fullName = fullName,
                 email = email,
                 phone = phone,
                 address = address.ifEmpty { null },
                 cinemaId = selectedCinemaId!!,
-                position = position,
+                position = finalPosition,
                 salary = salary,
                 startDate = startDate,
                 status = statusVal
@@ -234,17 +282,17 @@ class AdminStaffActivity : BaseActivity() {
             val password = binding.edtPassword.text.toString().trim()
 
             if (username.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Vui lòng nhập tên đăng nhập và mật khẩu", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please enter username and password", Toast.LENGTH_SHORT).show()
                 return
             }
 
             if (username.length < 3 || username.length > 30) {
-                Toast.makeText(this, "Tên đăng nhập phải từ 3 đến 30 ký tự", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Username must be between 3 and 30 characters", Toast.LENGTH_SHORT).show()
                 return
             }
 
             if (password.length < 6) {
-                Toast.makeText(this, "Mật khẩu phải từ 6 ký tự trở lên", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show()
                 return
             }
 
@@ -256,7 +304,7 @@ class AdminStaffActivity : BaseActivity() {
                 role = role,
                 fullName = fullName,
                 cinemaId = selectedCinemaId!!,
-                position = position,
+                position = finalPosition,
                 phone = phone,
                 identityCard = identityCard,
                 salary = salary,

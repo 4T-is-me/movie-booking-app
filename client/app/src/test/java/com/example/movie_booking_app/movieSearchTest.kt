@@ -7,8 +7,8 @@ import org.junit.Assert.*
 class MovieSearchTest {
 
     private val mockMovies = listOf(
-        Movie("1", "Avengers: Hồi Kết", "Avengers: Endgame", 181, "IMAX 3D", "", "", "", "", 4.8, 1500, true, "27.04.2019", "Action"),
-        Movie("2", "Người Nhện", "Spider-Man", 148, "2D", "", "", "", "", 4.5, 2100, true, "17.12.2021", "Action")
+        Movie("1", "Avengers: Endgame", "Avengers: Endgame", 181, "IMAX 3D", "", "", "", "", 4.8, 1500, true, "27.04.2019", "Action"),
+        Movie("2", "Spider-Man", "Spider-Man", 148, "2D", "", "", "", "", 4.5, 2100, true, "17.12.2021", "Action")
     )
 
     @Test
@@ -21,10 +21,10 @@ class MovieSearchTest {
 
     @Test
     fun searchByVietnameseNameReturnsCorrectMovie() {
-        val query = "Người Nhện"
+        val query = "Spider-Man"
         val result = mockMovies.filter { it.nameVn.contains(query, ignoreCase = true) }
         assertEquals(1, result.size)
-        assertEquals("Người Nhện", result[0].nameVn)
+        assertEquals("Spider-Man", result[0].nameVn)
     }
 
     @Test

@@ -3,6 +3,7 @@ package com.example.movie_booking_app.data.model.request
 import com.google.gson.annotations.SerializedName
 
 data class AddRoomRequest(
+    @SerializedName("cinemaId") val cinemaId: String? = null,
     @SerializedName("roomName") val roomName: String,
     @SerializedName("roomType") val roomType: String,
     @SerializedName("screenType") val screenType: String,

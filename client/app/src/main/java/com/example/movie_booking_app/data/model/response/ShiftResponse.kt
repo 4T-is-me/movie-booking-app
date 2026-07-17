@@ -26,3 +26,23 @@ data class ShiftItemResponse (
     val rating: Double? =null,
     val kpiPoints: Int? =null
 )
+
+data class ManagerStaffItem(
+    val id: String,
+    val fullName: String,
+    val position: String,
+    val phone: String,
+    val cinemaId: String,
+    val status: Int
+)
+
+data class ManagerStaffListData(
+    val cinemaId: String,
+    val staff: List<ManagerStaffItem>
+)
+
+data class ManagerStaffListResponse(
+    val success: Boolean,
+    val message: String,
+    val data: ManagerStaffListData?
+)

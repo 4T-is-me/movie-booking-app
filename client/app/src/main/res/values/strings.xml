@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string name="app_name">MovieBookingApp</string>
     <string name="hi_user">Hi, %1$s 👋</string>
     <string name="welcome_back">Welcome back</string>
@@ -71,6 +71,28 @@
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
 
+    <!-- Registration Validation Errors -->
+    <string name="error_username_required">Username is required</string>
+    <string name="error_username_length">Username must be 3-30 characters</string>
+    <string name="error_fullname_required">Full Name is required</string>
+    <string name="error_dob_required">Date of birth is required</string>
+    <string name="error_dob_future">Date of birth cannot be in the future</string>
+    <string name="error_dob_min_age">You must be at least 15 years old</string>
+    <string name="error_dob_max_age">Age cannot exceed 80 years</string>
+    <string name="error_dob_invalid">Invalid date format (dd/MM/yyyy)</string>
+    <string name="error_email_required">Email is required</string>
+    <string name="error_email_invalid">Invalid email format</string>
+    <string name="error_phone_required">Phone is required</string>
+    <string name="error_phone_invalid">Must be 10 digits starting with 0</string>
+    <string name="error_password_required">Password is required</string>
+    <string name="error_password_length">At least 6 characters</string>
+    <string name="error_confirm_password_required">Please confirm password</string>
+    <string name="error_confirm_password_mismatch">Passwords do not match</string>
+    <string name="error_address_required">Address is required</string>
+    <string name="error_idcard_required">Identify card is required</string>
+    <string name="error_idcard_invalid">Identity card must be 9 or 12 digits</string>
+
+
     <!-- Select Seat Activity Strings -->
     <string name="legend_available">Available</string>
     <string name="legend_vip">VIP</string>
@@ -115,6 +137,7 @@
     <string name="selected_seats_label">Selected Seats</string>
     <string name="seat_count_label">Seat Count</string>
     <string name="ticket_type_label">Ticket Type</string>
+    <string name="seat_type_label">Seat Type</string>
     <string name="select_combo_snacks">Select Combo &amp; Snacks</string>
     <string name="single_combo">Single Combo</string>
     <string name="single_combo_desc">1 Popcorn + 1 Soft Drink</string>
@@ -153,6 +176,9 @@
     <string name="total_paid_label">Total Paid</string>
     <string name="failed_load_booking_details">Failed to load booking details.</string>
     <string name="retry_btn">Retry</string>
+    <string name="booking_detail_selected_combo">SELECTED COMBO</string>
+    <string name="booking_detail_combo_none">None</string>
+    <string name="booking_detail_combo_total">Combo Total</string>
 
     <!-- My Ticket Fragment -->
     <string name="my_ticket_title">My Ticket</string>
@@ -176,7 +202,7 @@
     <string name="auto_str_date">Date</string>
     <string name="auto_str_time">Time</string>
     <string name="auto_str_seats">Seats</string>
-    <string name="auto_str_food_amp_drinks">FOOD &amp;amp; DRINKS</string>
+    <string name="auto_str_food_amp_drinks">FOOD &amp; DRINKS</string>
     <string name="auto_str_payment_details">PAYMENT DETAILS</string>
     <string name="auto_str_tickets_subtotal">Tickets Subtotal</string>
     <string name="auto_str_combos_subtotal">Combos Subtotal</string>
@@ -186,13 +212,13 @@
     <string name="auto_str_total_paid">Total Paid</string>
     <string name="auto_str_failed_to_load_booking_details">Failed to load booking details.</string>
     <string name="auto_str_retry">Retry</string>
-    <string name="auto_str_t_v_th_nh_c_ng">ĐẶT VÉ THÀNH CÔNG!</string>
+    <string name="auto_str_t_v_th_nh_c_ng">TICKET BOOKING SUCCESSFUL!</string>
     <string name="auto_str_change_password">Change Password</string>
     <string name="auto_str_keep_your_account_secure_by_us">Keep your account secure by using a strong password.</string>
     <string name="auto_str_current_password">Current password</string>
     <string name="auto_str_new_password">New password</string>
     <string name="auto_str_confirm_new_password">Confirm new password</string>
-    <string name="auto_str_password_requirements">Password requirements:</string>
+    <string name="auto_str_password_requirements">Password requirements</string>
     <string name="auto_str_at_least_6_characters">At least 6 characters</string>
     <string name="auto_str_at_least_1_uppercase_letter">At least 1 uppercase letter</string>
     <string name="auto_str_at_least_1_lowercase_letter">At least 1 lowercase letter</string>
@@ -200,20 +226,38 @@
     <string name="auto_str_at_least_1_special_character">At least 1 special character</string>
     <string name="auto_str_update_password">Update password</string>
     <string name="auto_str_for_your_security_avoid_using">For your security, avoid using easy-to-guess password like your birthday or name</string>
+    <string name="error_current_password_required">Current password is required.</string>
+    <string name="error_new_password_required">New password is required.</string>
+    <string name="error_change_confirm_password_required">Confirm password is required.</string>
+    <string name="error_current_password_incorrect">Current password is incorrect.</string>
+    <string name="error_new_password_min_length">New password must be at least 6 characters.</string>
+    <string name="error_new_password_uppercase">New password must contain at least one uppercase letter.</string>
+    <string name="error_new_password_lowercase">New password must contain at least one lowercase letter.</string>
+    <string name="error_new_password_number">New password must contain at least one number.</string>
+    <string name="error_new_password_special_character">New password must contain at least one special character.</string>
+    <string name="error_passwords_do_not_match">Passwords do not match.</string>
+    <string name="error_new_password_same_as_current">New password cannot be the same as the current password.</string>
+    <string name="error_unable_to_update_password">Unable to update password. Please try again.</string>
+    <string name="error_network_error">Network error. Please check your internet connection.</string>
+    <string name="error_session_expired">Session expired. Please log in again.</string>
+    <string name="success_password_updated">Password updated successfully.</string>
+    <string name="hint_enter_current_password">Enter your current password</string>
+    <string name="hint_enter_new_password">Enter your new password</string>
+    <string name="hint_enter_confirm_password">Enter your password</string>
     <string name="auto_str_edit_profile">Edit Profile</string>
     <string name="auto_str_tap_the_camera_icon_to_change">Tap the camera icon to change your photo</string>
     <string name="auto_str_personal_infomation">Personal infomation</string>
     <string name="auto_str_address">Address</string>
     <string name="auto_str_preferences">Preferences</string>
     <string name="auto_str_save_changes">Save Changes</string>
-    <string name="auto_str_qu_n_m_t_kh_u">Quên mật khẩu</string>
-    <string name="auto_str_nh_p_email_c_a_b_n_nh_n_m_otp">Nhập email của bạn để nhận mã OTP:</string>
-    <string name="auto_str_g_i_otp">Gửi OTP</string>
+    <string name="auto_str_qu_n_m_t_kh_u">Forgot Password</string>
+    <string name="auto_str_nh_p_email_c_a_b_n_nh_n_m_otp">Enter your email to receive OTP:</string>
+    <string name="auto_str_g_i_otp">Send OTP</string>
     <string name="auto_str_dashboard">Dashboard</string>
     <string name="auto_str_lumina_landmark_81">LUMINA Landmark 81</string>
     <string name="auto_str_tb">TB</string>
     <string name="auto_str_good_evening">Good evening 🌙</string>
-    <string name="auto_str_tr_n_th_b_nh">Trần Thị Bình</string>
+    <string name="auto_str_tr_n_th_b_nh">Jane Doe</string>
     <string name="auto_str_wednesday_20_06_2024">Wednesday, 20/06/2024</string>
     <string name="auto_str_branch_online">● Branch Online</string>
     <string name="auto_str_mgr_001_5_rooms">MGR-001 · 5 rooms</string>
@@ -224,7 +268,7 @@
     <string name="auto_str_78">78%</string>
     <string name="auto_str_occupancy">Occupancy</string>
     <string name="auto_str_12_3m">12.3M</string>
-    <string name="auto_str_f_amp_b_rev">F&amp;amp;B Rev</string>
+    <string name="auto_str_f_amp_b_rev">F&amp;B Rev</string>
     <string name="auto_str_6">6</string>
     <string name="auto_str_movies">Movies</string>
     <string name="auto_str_4_5">4/5</string>
@@ -264,16 +308,16 @@
     <string name="auto_str_month">Month</string>
     <string name="auto_str_year">Year</string>
     <string name="auto_str_0">+0%</string>
-    <string name="auto_str_0_1">0đ</string>
+    <string name="auto_str_0_1">0 ₫</string>
     <string name="auto_str_ticket_revenue">Ticket Revenue</string>
     <string name="auto_str_0_2">+0%</string>
-    <string name="auto_str_0_3">0đ</string>
-    <string name="auto_str_f_amp_b_revenue">F&amp;amp;B Revenue</string>
+    <string name="auto_str_0_3">0 ₫</string>
+    <string name="auto_str_f_amp_b_revenue">F&amp;B Revenue</string>
     <string name="auto_str_0_4">+0%</string>
     <string name="auto_str_0_5">0</string>
     <string name="auto_str_total_tickets">Total Tickets</string>
     <string name="auto_str_0_6">+0%</string>
-    <string name="auto_str_0_7">0đ</string>
+    <string name="auto_str_0_7">0 ₫</string>
     <string name="auto_str_avg_ticket_price">Avg Ticket Price</string>
     <string name="auto_str_revenue_trend">Revenue Trend</string>
     <string name="auto_str_visualized_analysis_of_ticket">Visualized analysis of ticket vs concessions</string>
@@ -303,20 +347,20 @@
     <string name="auto_str_seat_pricing">SEAT PRICING</string>
     <string name="auto_str_edit">Edit</string>
     <string name="auto_str_standard_1">Standard</string>
-    <string name="auto_str_100_000">100.000đ</string>
-    <string name="auto_str_str_auto">đ</string>
+    <string name="auto_str_100_000">100,000 ₫</string>
+    <string name="auto_str_str_auto">₫</string>
     <string name="auto_str_vip_1">VIP</string>
-    <string name="auto_str_150_000">150.000đ</string>
-    <string name="auto_str_str_auto_1">đ</string>
+    <string name="auto_str_150_000">150,000 ₫</string>
+    <string name="auto_str_str_auto_1">₫</string>
     <string name="auto_str_couple_pair">Couple /pair</string>
-    <string name="auto_str_280_000">280.000đ</string>
-    <string name="auto_str_str_auto_2">đ</string>
+    <string name="auto_str_280_000">280,000 ₫</string>
+    <string name="auto_str_str_auto_2">₫</string>
     <string name="auto_str_est_full_capacity">Est. Full Capacity</string>
-    <string name="auto_str_16_400_000">16.400.000đ</string>
+    <string name="auto_str_16_400_000">16,400,000 ₫</string>
     <string name="auto_str_save_all_changes">SAVE ALL CHANGES</string>
     <string name="auto_str_staff_detail">Staff Detail</string>
     <string name="auto_str_nc">NC</string>
-    <string name="auto_str_nguy_n_v_n_c_ng">Nguyễn Văn Cường</string>
+    <string name="auto_str_nguy_n_v_n_c_ng">John Doe</string>
     <string name="auto_str_cashier_e001">Cashier · E001</string>
     <string name="auto_str_active">Active</string>
     <string name="auto_str_current_shift">Current Shift</string>
@@ -327,7 +371,7 @@
     <string name="auto_str_this_week_s_schedule">THIS WEEK\'S SCHEDULE</string>
     <string name="auto_str_staff_management">Staff Management</string>
     <string name="auto_str_staff_list">Staff List</string>
-    <string name="auto_str_leave_requests_2">Leave Requests (2)</string>
+    <string name="auto_str_leave_requests_2">Leave Requests</string>
     <string name="auto_str_filter">Filter</string>
     <string name="auto_str_no_shifts_have_been_assigned_y">No shifts have been assigned yet!</string>
     <string name="auto_str_avengers_infinity_war">Avengers: Infinity War</string>
@@ -374,8 +418,9 @@
     <string name="auto_str_seat_count">Seat Count</string>
     <string name="auto_str_2_seats">2 seats</string>
     <string name="auto_str_ticket_type">Ticket Type</string>
+    <string name="auto_str_seat_type">Seat Type</string>
     <string name="auto_str_adult_x2">Adult x2</string>
-    <string name="auto_str_select_combo_amp_snacks">Select Combo &amp;amp; Snacks</string>
+    <string name="auto_str_select_combo_amp_snacks">Select Combo &amp; Snacks</string>
     <string name="auto_str_single_combo">Single Combo</string>
     <string name="auto_str_1_popcorn_1_soft_drink">1 Popcorn + 1 Soft Drink</string>
     <string name="auto_str_80_000_vnd">80.000 VND</string>
@@ -414,12 +459,12 @@
     <string name="auto_str_grand_total_1">Grand Total</string>
     <string name="auto_str_170_000_vnd_1">170.000 VND</string>
     <string name="auto_str_continue_1">Continue</string>
-    <string name="auto_str_m_u_i_c_a_b_n">Mã ưu đãi của bạn</string>
-    <string name="auto_str_m_khuy_n_m_i">MÃ KHUYẾN MÃI</string>
+    <string name="auto_str_m_u_i_c_a_b_n">Your promotion code</string>
+    <string name="auto_str_m_khuy_n_m_i">PROMOTION CODE</string>
     <string name="auto_str_copy">Copy</string>
-    <string name="auto_str_i_u_ki_n_amp_quy_nh_p_d_ng">Điều kiện &amp;amp; Quy định áp dụng</string>
-    <string name="auto_str_m_i_kh_ch_h_ng_ch_c_p_d_ng_m_u">• Mỗi khách hàng chỉ được áp dụng mã ưu đãi này 1 lần duy nhất trong suốt thời gian diễn ra chương trình.\n• Chỉ áp dụng cho các giao dịch đặt vé trực tuyến thông qua ứng dụng chính thức.\n• Không áp dụng đồng thời với các hình thức thẻ quà tặng, ưu đãi đối tác hoặc các chương trình khuyến mãi khác.\n• Không có giá trị quy đổi thành tiền mặt hoặc hoàn lại tiền thừa.\n• Đơn hàng hợp lệ phải thỏa mãn giá trị chi tiêu tối thiểu được yêu cầu ở trên.\n• Ban quản lý rạp chiếu phim có quyền thay đổi điều khoản áp dụng mà không cần báo trước.</string>
-    <string name="auto_str_t_v_ngay">ĐẶT VÉ NGAY</string>
+    <string name="auto_str_i_u_ki_n_amp_quy_nh_p_d_ng">Terms &amp; Conditions</string>
+    <string name="auto_str_m_i_kh_ch_h_ng_ch_c_p_d_ng_m_u">• Each customer can only apply this discount code once during the promotion period.\n• Only applicable for online ticket transactions via the official app.\n• Cannot be used in conjunction with gift cards, partner discounts, or other promotions.\n• Not redeemable for cash or refundable for change.\n• Eligible orders must meet the minimum spending requirements above.\n• The cinema management reserves the right to change these terms without prior notice.</string>
+    <string name="auto_str_t_v_ngay">BOOK NOW</string>
     <string name="auto_str_membership">Membership</string>
     <string name="auto_str_gold_member">GOLD MEMBER</string>
     <string name="auto_str_4_850">4,850</string>
@@ -438,9 +483,9 @@
     <string name="auto_str_score_history">Score History</string>
     <string name="auto_str_no_history_found">No history found</string>
     <string name="auto_str_0_vnd_3">0 VND</string>
-    <string name="auto_str_x_c_th_c_otp">Xác thực OTP</string>
-    <string name="auto_str_nh_p_m_otp_6_s_c_g_i_n_email_c">Nhập mã OTP 6 số đã được gửi đến email của bạn:</string>
-    <string name="auto_str_x_c_nh_n">Xác nhận</string>
+    <string name="auto_str_x_c_th_c_otp">Verify OTP</string>
+    <string name="auto_str_nh_p_m_otp_6_s_c_g_i_n_email_c">Enter the 6-digit OTP sent to your email:</string>
+    <string name="auto_str_x_c_nh_n">Confirm</string>
     <string name="auto_str_delete_promotion">Delete Promotion</string>
     <string name="auto_str_are_you_sure_you_want_to_delet">Are you sure you want to delete this promotion?</string>
     <string name="auto_str_cancel">Cancel</string>
@@ -452,9 +497,9 @@
     <string name="auto_str_are_you_sure_you_want_to_log_o">Are you sure you want to log out of the system?</string>
     <string name="auto_str_cancel_2">Cancel</string>
     <string name="auto_str_log_out_1">Log Out</string>
-    <string name="auto_str_k_ch_ho_t_l_i">Kích hoạt lại</string>
-    <string name="auto_str_h_y">Hủy</string>
-    <string name="auto_str_k_ch_ho_t">Kích hoạt</string>
+    <string name="auto_str_k_ch_ho_t_l_i">Re-activate</string>
+    <string name="auto_str_h_y">Cancel</string>
+    <string name="auto_str_k_ch_ho_t">Activate</string>
     <string name="auto_str_employee_details">Employee Details</string>
     <string name="auto_str_username">Username</string>
     <string name="auto_str_full_name">Full Name</string>
@@ -477,10 +522,10 @@
     <string name="auto_str_couple_price">Couple Price</string>
     <string name="auto_str_cancel_3">Cancel</string>
     <string name="auto_str_save_temporary">Save Temporary</string>
-    <string name="auto_str_x_c_th_c_otp_1">Xác thực OTP</string>
-    <string name="auto_str_nh_p_m_6_s_g_i_t_i_email">Nhập mã 6 số đã gửi tới email</string>
-    <string name="auto_str_x_c_nh_n_1">Xác nhận</string>
-    <string name="auto_str_h_y_1">Hủy</string>
+    <string name="auto_str_x_c_th_c_otp_1">Verify OTP</string>
+    <string name="auto_str_nh_p_m_6_s_g_i_t_i_email">Enter 6-digit code sent to email</string>
+    <string name="auto_str_x_c_nh_n_1">Confirm</string>
+    <string name="auto_str_h_y_1">Cancel</string>
     <string name="auto_str_booking_qr_code">Booking QR Code</string>
     <string name="auto_str_show_this_code_to_the_cinema_s">Show this code to the cinema staff</string>
     <string name="auto_str_close_1">Close</string>
@@ -528,32 +573,32 @@
     <string name="auto_str_seat_legend">Seat Legend</string>
     <string name="auto_str_standard_3">Standard</string>
     <string name="auto_str_vip_3">VIP</string>
-    <string name="auto_str_ch_m_v_o_gh_i_lo_i_gh">* Chạm vào ghế để đổi loại ghế</string>
-    <string name="auto_str_save_amp_back">Save &amp;amp; Back</string>
-    <string name="auto_str_qu_n_l_ph_ng_chi_u">Quản lý phòng chiếu</string>
-    <string name="auto_str_danh_s_ch_ph_ng_v_t_ng_s_gh_an">Danh sách phòng và tổng số ghế đang được quản lý</string>
-    <string name="auto_str_t_ng_s_ph_ng">Tổng số phòng</string>
-    <string name="auto_str_0_ph_ng">0 phòng</string>
-    <string name="auto_str_tap_ch_nh_s_a">Tap để chỉnh sửa</string>
+    <string name="auto_str_ch_m_v_o_gh_i_lo_i_gh">* Tap on seat to change type</string>
+    <string name="auto_str_save_amp_back">Save &amp; Back</string>
+    <string name="auto_str_qu_n_l_ph_ng_chi_u">Cinema Room Management</string>
+    <string name="auto_str_danh_s_ch_ph_ng_v_t_ng_s_gh_an">List of rooms and total seats managed</string>
+    <string name="auto_str_t_ng_s_ph_ng">Total Rooms</string>
+    <string name="auto_str_0_ph_ng">0 rooms</string>
+    <string name="auto_str_tap_ch_nh_s_a">Tap to edit</string>
     <string name="auto_str_active_3">Active</string>
     <string name="auto_str_inactive_2">Inactive</string>
     <string name="auto_str_full_name_1">Full Name</string>
     <string name="auto_str_position_1">Position</string>
     <string name="auto_str_actions">Actions</string>
-    <string name="auto_str_th_ng_k_h_th_ng">Thống kê hệ thống</string>
-    <string name="auto_str_doanh_thu_th_ng">Doanh thu tháng</string>
+    <string name="auto_str_th_ng_k_h_th_ng">System Statistics</string>
+    <string name="auto_str_doanh_thu_th_ng">Monthly Revenue</string>
     <string name="auto_str_0_vn">0 VNÐ</string>
-    <string name="auto_str_v_b_n_h_m_nay">Vé bán hôm nay</string>
+    <string name="auto_str_v_b_n_h_m_nay">Tickets Sold Today</string>
     <string name="auto_str_0_10">0</string>
-    <string name="auto_str_th_nh_vi_n">Thành viên</string>
+    <string name="auto_str_th_nh_vi_n">Members</string>
     <string name="auto_str_0_11">0</string>
-    <string name="auto_str_phim_ang_chi_u">Phim đang chiếu</string>
+    <string name="auto_str_phim_ang_chi_u">Now Showing</string>
     <string name="auto_str_0_12">0</string>
-    <string name="auto_str_doanh_thu_theo_ng_y">Doanh thu theo ngày</string>
-    <string name="auto_str_top_5_phim_doanh_thu_cao">Top 5 phim doanh thu cao</string>
-    <string name="auto_str_b_ng_t_ng_h_p">Bảng tổng hợp</string>
-    <string name="auto_str_ng_y">Ngày</string>
-    <string name="auto_str_th_ng">Tháng</string>
+    <string name="auto_str_doanh_thu_theo_ng_y">Daily Revenue</string>
+    <string name="auto_str_top_5_phim_doanh_thu_cao">Top 5 highest grossing movies</string>
+    <string name="auto_str_b_ng_t_ng_h_p">Summary Table</string>
+    <string name="auto_str_ng_y">Date</string>
+    <string name="auto_str_th_ng">Month</string>
     <string name="auto_str_cinema_rooms_management">Cinema Rooms Management</string>
     <string name="auto_str_list_of_rooms_currently_manage">List of rooms currently managed</string>
     <string name="auto_str_total_rooms">Total rooms</string>
@@ -602,7 +647,7 @@
     <string name="auto_str_joe">Joe</string>
     <string name="auto_str_russo">Russo</string>
     <string name="auto_str_aeon_mall_cgv">Aeon Mall CGV</string>
-    <string name="auto_str_9_32_km_27_c_linh_long_bi_n_h">9.32 km  |  27 Cô Linh, Long Biên, Hà Nội</string>
+    <string name="auto_str_9_32_km_27_c_linh_long_bi_n_h">9.32 km | 27 Co Linh, Long Bien, Hanoi</string>
     <string name="auto_str_avatar_2_the_way_of_water">Avatar 2: The Way Of Water</string>
     <string name="auto_str_adventure_sci_fi">📷 Adventure, Sci-fi</string>
     <string name="auto_str_20_12_2022">📅 20.12.2022</string>
@@ -612,7 +657,7 @@
     <string name="auto_str_morning_08_14">Morning (08-14)</string>
     <string name="auto_str_day_off">Day Off</string>
     <string name="auto_str_puss_in_boots_the_last_wish">Puss in Boots: The Last Wish</string>
-    <string name="auto_str_ph_ng_chi_u_1_08_00_09_42">Phòng chiếu 1 · 08:00 - 09:42</string>
+    <string name="auto_str_ph_ng_chi_u_1_08_00_09_42">Room 1 · 08:00 - 09:42</string>
     <string name="auto_str_generated">Generated</string>
     <string name="auto_str_hall_a_premium">Hall A - Premium</string>
     <string name="auto_str_120_seats_standard">120 seats · Standard</string>
@@ -661,4 +706,328 @@
     <string name="auto_str_save">Save</string>
     <string name="auto_str_add_new_employee">Add New Employee</string>
     <string name="auto_str_save_1">Save</string>
+
+    <!-- Admin Staff & Member Management Strings -->
+    <string name="admin_staff_members_title">Employees</string>
+    <string name="admin_settings_title">Settings</string>
+    <string name="admin_tab_employees">Managers</string>
+    <string name="admin_tab_staff">Staff</string>
+    <string name="admin_tab_members">Members</string>
+    <string name="admin_tab_active">Active</string>
+    <string name="admin_tab_inactive">Inactive</string>
+    <string name="admin_search_staff_hint">Search by name or email...</string>
+    <string name="admin_delete_member">Delete Member</string>
+    <string name="admin_reactivate_member">Reactivate Member</string>
+    <string name="admin_delete">Delete</string>
+    <string name="admin_reactivate">Reactivate</string>
+    <string name="admin_cancel">Cancel</string>
+    <string name="admin_close">Close</string>
+    <string name="admin_confirm_unlock_msg">Are you sure you want to reactivate the account for \"%1$s\"?</string>
+    <string name="admin_confirm_delete_member_msg">Are you sure you want to delete member \"%1$s\"?</string>
+    <string name="admin_confirm_delete_staff_msg">Are you sure you want to delete %1$s \"%2$s\"?</string>
+    <string name="admin_currency_format">%,.0f ₫</string>
+    <string name="admin_current_points_preview">Current Points: %1$s</string>
+    <string name="admin_new_points_preview">New Points: %1$s</string>
+    <string name="admin_error_enter_adjustment">Enter adjustment</string>
+    <string name="admin_error_cannot_be_zero">Cannot be 0</string>
+    <string name="admin_error_total_less_than_zero">New total &lt; 0</string>
+    <string name="admin_error_reason_required">Reason required</string>
+    <string name="admin_default_rank">Bronze</string>
+    <string name="admin_member_details">Member Details</string>
+    <string name="admin_points_label">Points</string>
+    <string name="admin_adjust_loyalty_points">Adjust Loyalty Points</string>
+    <string name="admin_adjustment_label">Adjustment (+/-)</string>
+    <string name="admin_reason_label">Reason</string>
+    <string name="admin_confirm_label">Confirm</string>
+    <string name="admin_member_detail_desc">Member Detail</string>
+    <string name="admin_adjust_score_desc">Adjust Score</string>
+    <string name="admin_toggle_status_desc">Toggle Status</string>
+    <string name="admin_rank_label">Rank</string>
+    <string name="admin_reward_points_label">Reward Points</string>
+    <string name="admin_total_spent_label">Total Spent</string>
+    <string name="admin_success_employee_added">Account added successfully!</string>
+    <string name="admin_success_employee_updated">Account updated successfully!</string>
+    <string name="admin_success_employee_disabled">Account disabled!</string>
+    <string name="admin_success_employee_reactivated">Account reactivated!</string>
+    <string name="admin_success_points_adjusted">Points adjusted!</string>
+    <string name="admin_success_member_activated">Member activated!</string>
+    <string name="admin_success_member_deleted">Member deleted!</string>
+    <string name="admin_error_points_negative">Total points cannot be less than 0</string>
+    <string name="admin_error_failed_add_employee">Failed to add employee</string>
+    <string name="admin_error_failed_update_employee">Failed to update employee</string>
+    <string name="admin_error_failed_disable_account">Failed to disable account</string>
+    <string name="admin_error_network">Network connection error</string>
+    <string name="toast_employee_added">Account added successfully!</string>
+    <string name="toast_employee_updated">Account updated successfully!</string>
+    <string name="toast_employee_disabled">Account disabled!</string>
+    <string name="toast_employee_reactivated">Account reactivated!</string>
+    <string name="toast_points_adjusted">Points adjusted!</string>
+    <string name="toast_member_activated">Member activated!</string>
+    <string name="toast_member_deleted">Member deleted!</string>
+    <string name="toast_error_points_negative">Total points cannot be less than 0</string>
+    <string name="toast_error_failed_add_employee">Failed to add employee</string>
+    <string name="toast_error_failed_update_employee">Failed to update employee</string>
+    <string name="toast_error_failed_disable_account">Failed to disable account</string>
+    <string name="toast_error_network">Network connection error</string>
+    <string name="admin_username">Username</string>
+    <string name="admin_full_name">Full Name</string>
+    <string name="admin_email">Email</string>
+    <string name="admin_phone_number">Phone Number</string>
+    <string name="admin_identity_card">Identity Card</string>
+    <string name="admin_address">Address</string>
+    <string name="admin_actions">Actions</string>
+
+    <string name="status_pending">PENDING</string>
+    <string name="status_approved">APPROVED</string>
+    <string name="status_rejected">REJECTED</string>
+
+    <string name="undo_message_approved">Request approved · Tap to undo</string>
+    <string name="undo_message_rejected">Request rejected · Tap to undo</string>
+
+    <!-- Manager & Staff Filter Strings -->
+    <string name="find_employees_positions_hint">Find employees, positions...</string>
+    <string name="filter_status_title">Filter Status</string>
+    <string name="select_status_filter_desc">Select a status to filter requests</string>
+    <string name="all_requests">All Requests</string>
+    <string name="status_pending_label">Pending</string>
+    <string name="status_approved_label">Approved</string>
+    <string name="status_rejected_label">Rejected</string>
+    <string name="status_title">Status</string>
+    <string name="status_active_label">Active</string>
+    <string name="status_assigned_label">Assigned</string>
+    <string name="status_completed_label">Completed</string>
+    <string name="status_need_replacement_label">NeedReplacement</string>
+    <string name="status_absent_label">Absent</string>
+    <string name="btn_approve">Approve</string>
+    <string name="btn_reject">Reject</string>
+    <string name="undo_message_default">Request approved</string>
+    <string name="btn_undo">Undo</string>
+    <string name="hint_select_staffName">Staff name</string>
+    <string name="hint_select_staffPosition">Staff position</string>
+
+    <!-- Auto-extracted strings (Node Script) -->
+    <string name="auto_str_reviews">Reviews</string>
+    <string name="auto_str_see_all">See all</string>
+    <string name="auto_str_0_0">0.0</string>
+    <string name="auto_str_0_reviews">0 reviews</string>
+    <string name="auto_str_no_reviews_yet_be_the_first_to">No reviews yet. Be the first to review!</string>
+    <string name="auto_str_write_review">Write Review</string>
+    <string name="auto_str_work_schedule">Work Schedule</string>
+    <string name="auto_str_lumina_cinema_staff">Lumina Cinema Staff</string>
+    <string name="auto_str_write_a_review">Write a Review</string>
+    <string name="auto_str_action_drama">Action, Drama</string>
+    <string name="auto_str_your_rating">Your Rating</string>
+    <string name="auto_str_tap_to_rate">Tap to rate</string>
+    <string name="auto_str_your_review">Your Review</string>
+    <string name="auto_str_0_1000">0 / 1000</string>
+    <string name="auto_str_android_textcolor">\"
+                    android:textColor=</string>
+    <string name="auto_str_submit_review">Submit Review</string>
+    <string name="auto_str_current_points_1_250">Current Points: 1,250</string>
+    <string name="auto_str_new_points_1_250">New Points: 1,250</string>
+    <string name="auto_str_update_failed">Update Failed</string>
+    <string name="auto_str_this_staff_has_already_been_as">This staff has already been assigned this shift for the day.</string>
+    <string name="auto_str_update_shift">Update Shift</string>
+    <string name="auto_str_update_shift_details_and_assig">Update shift details and assignment for staff member.</string>
+    <string name="auto_str_work_date">Work Date</string>
+    <string name="auto_str_shift">Shift</string>
+    <string name="auto_str_status">Status</string>
+    <string name="auto_str_write_a_review_1">Write a Review</string>
+    <string name="auto_str_please_rate_this_movie_and_sha">Please rate this movie and share your experience with others.</string>
+    <string name="auto_str_your_rating_1">Your Rating</string>
+    <string name="auto_str_submit_review_1">Submit Review</string>
+    <string name="auto_str_add_cinema">Add Cinema</string>
+    <string name="auto_str_cinema_information">Cinema Information</string>
+    <string name="auto_str_cinema_image">Cinema Image</string>
+    <string name="auto_str_select_image">Select Image</string>
+    <string name="auto_str_save_cinema">Save Cinema</string>
+    <string name="auto_str_cinemas_management">Cinemas Management</string>
+    <string name="auto_str_list_of_cinemas_currently_mana">List of cinemas currently managed</string>
+    <string name="auto_str_total_cinemas">Total Cinemas</string>
+    <string name="auto_str_add_cinema_1">Add Cinema</string>
+    <string name="auto_str_no_cinemas_found">No cinemas found</string>
+    <string name="auto_str_add_cinema_2">Add Cinema</string>
+    <string name="auto_str_failed_to_load_cinemas">Failed to load cinemas</string>
+    <string name="auto_str_cinema_capacity_overview">Cinema Capacity Overview</string>
+    <string name="auto_str_total_seats">Total Seats</string>
+    <string name="auto_str_regular">Regular</string>
+    <string name="auto_str_auto_generate_staff_shifts">Auto Generate Staff Shifts</string>
+    <string name="auto_str_select_the_date_range_to_autom">Select the date range to automatically assign shifts for staff.</string>
+    <string name="auto_str_end_date">End Date</string>
+    <string name="auto_str_generate">Generate</string>
+    <string name="auto_str_shifts_generated">Shifts Generated!</string>
+    <string name="auto_str_0_shifts_created">0 Shifts Created</string>
+    <string name="auto_str_the_system_has_successfully_al">The system has successfully allocated shifts.</string>
+    <string name="auto_str_done">Done</string>
+    <string name="auto_str_notifications_placeholder">Notifications Placeholder</string>
+    <string name="auto_str_my_profile_placeholder">My Profile Placeholder</string>
+    <string name="auto_str_leave_amp_swap_requests_placeh">Leave &amp; Swap Requests Placeholder</string>
+    <string name="auto_str_back">Back</string>
+    <string name="auto_str_select_movie_amp_showtime">SELECT MOVIE &amp; SHOWTIME</string>
+    <string name="auto_str_1_of_4">1 of 4</string>
+    <string name="auto_str_select_date">Select Date</string>
+    <string name="auto_str_select_showtime">Select Showtime</string>
+    <string name="auto_str_selected_seats_none">Selected seats: None</string>
+    <string name="auto_str_subtotal_0">Subtotal: 0 ₫</string>
+    <string name="auto_str_order_summary">ORDER SUMMARY</string>
+    <string name="auto_str_member_verification">MEMBER VERIFICATION</string>
+    <string name="auto_str_ki_m_tra_verify">VERIFY</string>
+    <string name="auto_str_member_verified">MEMBER VERIFIED</string>
+    <string name="auto_str_walk_in_customer_checkout">Walk-in Customer Checkout</string>
+    <string name="auto_str_this_order_will_be_processed_a">This order will be processed as a walk-in check-out. No reward points will be accumulated.</string>
+    <string name="auto_str_order_summary_1">ORDER SUMMARY</string>
+    <string name="auto_str_reward_points_redemption">REWARD POINTS REDEMPTION</string>
+    <string name="auto_str_promotion_coupon">PROMOTION COUPON</string>
+    <string name="auto_str_available_promotions">AVAILABLE PROMOTIONS</string>
+    <string name="auto_str_original_ticket_price">Original ticket price</string>
+    <string name="auto_str_promotion_discount">Promotion discount</string>
+    <string name="auto_str_points_discount">Points discount</string>
+    <string name="auto_str_confirm_booking">CONFIRM BOOKING</string>
+    <string name="auto_str_cash">Cash</string>
+    <string name="auto_str_bank_transfer_qr">Bank Transfer (QR)</string>
+    <string name="auto_str_total_payment_amount">TOTAL PAYMENT AMOUNT</string>
+    <string name="auto_str_confirm_checkout">CONFIRM CHECKOUT</string>
+    <string name="auto_str_next">NEXT</string>
+    <string name="auto_str_my_work_schedule">My Work Schedule</string>
+    <string name="auto_str_lumina_cinema_staff_work_hours">Lumina Cinema Staff Work Hours</string>
+    <string name="auto_str_today_s_shift">Today\'s Shift</string>
+    <string name="auto_str_morning_shift">Morning Shift</string>
+    <string name="auto_str_08_00_am_12_00_pm">08:00 AM - 12:00 PM</string>
+    <string name="auto_str_ticket_counter_staff_member">Ticket Counter • Staff Member</string>
+    <string name="auto_str_weekly_shifts">Weekly Shifts</string>
+    <string name="auto_str_settings_placeholder">Settings Placeholder</string>
+    <string name="auto_str_ticket_validator_placeholder">Ticket Validator Placeholder</string>
+    <string name="auto_str_user">User</string>
+    <string name="auto_str_2_days_ago">2 days ago</string>
+    <string name="auto_str_this_is_a_sample_review_commen">This is a sample review comment about the movie...</string>
+    <string name="auto_str_now_playing">NOW PLAYING</string>
+    <string name="auto_str_16">16</string>
+    <string name="auto_str_jul">Jul</string>
+    <string name="auto_str_morning_shift_1">Morning Shift</string>
+    <string name="auto_str_assigned">Assigned</string>
+    <string name="auto_str_08_00_am_12_00_pm_1">08:00 AM - 12:00 PM</string>
+    <string name="auto_str_request_time_off">Request time off</string>
+    <string name="auto_str_staff_console">Staff Console</string>
+
+    <!-- Auto-extracted strings (Node Script) -->
+    <string name="auto_str_promotion_title">Promotion Title (*)</string>
+    <string name="auto_str_detail_description">Detail/Description (*)</string>
+    <string name="auto_str_coupon_code_e_g_summer20">Coupon Code (e.g. SUMMER20) (*)</string>
+    <string name="auto_str_discount_type">Discount Type (*)</string>
+    <string name="auto_str_discount_value">Discount Value (*)</string>
+    <string name="auto_str_minimum_order_value_vnd">Minimum Order Value (VND)</string>
+    <string name="auto_str_maximum_usage_1_for_unlimited">Maximum Usage (-1 for unlimited)</string>
+    <string name="auto_str_banner_image_url">Banner image URL</string>
+    <string name="auto_str_password">Password (*)</string>
+    <string name="auto_str_identity_card_12_digits">Identity Card (12 digits) (*)</string>
+    <string name="auto_str_role">Role (*)</string>
+    <string name="auto_str_start_date_1">Start Date (*)</string>
+    <string name="auto_str_status_1">Status (*)</string>
+    <string name="auto_str_enter_your_current_password">Enter your current password</string>
+    <string name="auto_str_enter_your_new_password">Enter your new password</string>
+    <string name="auto_str_enter_your_password">Enter your password</string>
+    <string name="auto_str_email_1">Email</string>
+    <string name="auto_str_enter_coupon_code">Enter coupon code</string>
+    <string name="auto_str_share_your_thoughts_about_this">Share your thoughts about this movie...</string>
+    <string name="auto_str_share_your_thoughts">Share your thoughts...</string>
+    <string name="auto_str_cinema_name">Cinema Name *</string>
+    <string name="auto_str_city">City *</string>
+    <string name="auto_str_hotline">Hotline *</string>
+    <string name="auto_str_status_2">Status *</string>
+    <string name="auto_str_room_name">Room Name *</string>
+    <string name="auto_str_room_type">Room Type *</string>
+    <string name="auto_str_screen_type">Screen Type *</string>
+    <string name="auto_str_status_3">Status *</string>
+    <string name="auto_str_capacity">Capacity *</string>
+    <string name="auto_str_rows_1_26">Rows (1-26)</string>
+    <string name="auto_str_columns_1_30">Columns (1-30)</string>
+    <string name="auto_str_movie_name">Movie Name (*)</string>
+    <string name="auto_str_duration_mins">Duration (mins)</string>
+    <string name="auto_str_release_date">Release Date</string>
+    <string name="auto_str_end_date_1">End Date</string>
+    <string name="auto_str_country_search_to_select">Country (Search to select)</string>
+    <string name="auto_str_language_e_g_ti_ng_vi_t_ph_ti">Language (e.g. Vietnamese (English Subtitles))</string>
+    <string name="auto_str_director_s_comma_separated">Director(s) - Comma separated</string>
+    <string name="auto_str_actors_comma_separated">Actors - Comma separated</string>
+    <string name="auto_str_description">Description</string>
+    <string name="auto_str_search_movie">Search movie...</string>
+    <string name="auto_str_search_title_or_coupon_code">Search title or coupon code...</string>
+    <string name="auto_str_yyyy_mm_dd">YYYY-MM-DD</string>
+    <string name="auto_str_yyyy_mm_dd_1">YYYY-MM-DD</string>
+    <string name="auto_str_enter_member_id_phone_number_i">Enter Member ID / Phone number / ID</string>
+    <string name="auto_str_points_to_redeem">Points to redeem</string>
+    <string name="auto_str_enter_coupon_code_1">Enter coupon code</string>
+    <string name="auto_str_enter_value">Enter value</string>
+
+    <!--  (Shift) -->
+    <string name="toast_no_active_staff">No active staff found in your cinema to schedule!</string>
+    <string name="toast_fetching_staff_wait">Still fetching staff list data, please wait a moment!</string>
+    <string name="error_generate_shift_failed">Generate shifts failed on server</string>
+    <string name="toast_update_shift_success">Update successful</string>
+    <string name="error_unknown_backend">Unknown backend error</string>
+
+    <!-- (Leave Request) -->
+    <string name="toast_leave_approved">Request approved</string>
+    <string name="error_approve_leave_failed">Failed to approve request</string>
+    <string name="toast_leave_rejected">Request rejected</string>
+    <string name="error_reject_leave_failed">Failed to reject request</string>
+    <string name="msg_no_leave_requests">No leave requests found.</string>
+
+    <!-- (Reject Dialog) -->
+    <string name="dialog_reject_title">Reject Request</string>
+    <string name="dialog_reject_hint">Enter reject reason</string>
+    <string name="dialog_action_reject">Reject</string>
+    <string name="dialog_action_cancel">Cancel</string>
+    <string name="toast_reject_reason_empty">Reason cannot be empty</string>
+
+    <!-- preview shift -->
+    <string name="preview_avatar">NC</string>
+    <string name="preview_staff_name">John Doe</string>
+    <string name="preview_reason">"Regular health checkup at General Hospital"</string>
+
+    <!-- Fallback avatar text -->
+    <string name="default_avatar_initials">ST</string>
+
+    <!-- Format info shift - reason -->
+    <string name="format_shift_info">%1$s - %2$s</string>
+    <string name="format_reason">\"%1$s\"</string>
+
+    <!-- Text Undo -->
+    <string name="undo_msg_approved">Request approved</string>
+    <string name="undo_msg_rejected">Request rejected</string>
+
+    <string name="default_position">Staff</string>
+
+    <!-- UI Format Strings -->
+    <string name="format_shift_date">Date: %1$s</string>
+    <string name="format_shift_detail">Shift: %1$s (%2$s)</string>
+    <string name="format_rating">⭐ %1$.1f</string>
+    <!-- Spinner Options -->
+    <string-array name="shift_duration_options">
+        <item>1 Week</item>
+        <item>1 Month</item>
+    </string-array>
+
+    <!-- Button States -->
+    <string name="btn_save">Save</string>
+
+    <!-- Validation Error Messages -->
+    <string name="error_empty_staff_count">Please enter staff count!</string>
+    <string name="error_invalid_staff_count">Staff count must be greater than 0</string>
+    <string name="error_empty_staff_selection">Please select at least 1 staff member!</string>
+    <string name="error_failed_generation">Failed to schedule. The selected staff combination cannot fulfill the 6-day work week constraint.</string>
+
+    <!-- Dynamic Error Messages (String Format) -->
+    <string name="error_weekend_insufficient_staff">Because this period includes weekends, each shift needs %1$d staff. Please select at least %2$d staff members!</string>
+    <string name="error_weekday_insufficient_staff">Each shift needs %1$d staff. Please select at least %2$d staff members!</string>
+
+    <!-- Placeholders -->
+    <string name="filter_placeholder_start_date">Select the start date</string>
+    <string name="filter_placeholder_end_date">Select the last day</string>
+
+    <!-- Toast Messages -->
+    <string name="error_start_after_end">Start date cannot be after end date</string>
+    <string name="error_end_before_start">End date cannot be before start date</string>
+    <string name="error_missing_end_date">Please select end date</string>
+    <string name="error_missing_start_date">Please select start date</string>
 </resources>

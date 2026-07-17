@@ -2,6 +2,7 @@ package com.example.movie_booking_app.data.api
 
 import com.example.movie_booking_app.data.model.request.AddMovieRequest
 import com.example.movie_booking_app.data.model.request.UpdateMovieRequest
+import com.example.movie_booking_app.data.model.request.AddCinemaRequest
 import com.example.movie_booking_app.data.model.response.*
 import com.example.movie_booking_app.data.model.response.DailyRevenueResponse
 import com.example.movie_booking_app.data.model.response.MonthlyRevenueResponse
@@ -104,11 +105,29 @@ interface AdminApiService {
     suspend fun getStaffList(
         @Query("page") page: Int? = null,
         @Query("limit") limit: Int? = null,
-        @Query("search") search: String? = null
+        @Query("search") search: String? = null,
+        @Query("role") role: String? = null
     ): Response<AdminStaffListResponse>
 
     @GET("api/cinemas")
     suspend fun getCinemas(): Response<CinemaResponse>
+
+    @POST("api/admin/cinemas")
+    suspend fun createCinema(@Body request: AddCinemaRequest): Response<Unit>
+
+    @Multipart
+    @POST("api/admin/cinemas")
+    suspend fun createCinemaWithImage(
+        @Part("cinemaName") cinemaName: RequestBody,
+        @Part("address") address: RequestBody,
+        @Part("city") city: RequestBody,
+        @Part("hotline") hotline: RequestBody,
+        @Part("status") status: RequestBody,
+        @Part poster: MultipartBody.Part?
+    ): Response<Unit>
+
+    @GET("api/admin/cinemas")
+    suspend fun getAdminCinemas(): Response<CinemaResponse>
 
     @POST("api/admin/staff")
     suspend fun createStaff(@Body request: com.example.movie_booking_app.data.model.request.CreateStaffRequest): Response<Unit>
