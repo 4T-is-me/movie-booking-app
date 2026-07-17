@@ -105,7 +105,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/auto_str_4_850"
                     android:textColor="@color/text_primary"
-                    android:textSize="38sp"
+                    android:textSize="30sp"
                     android:textStyle="bold"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toEndOf="parent" />

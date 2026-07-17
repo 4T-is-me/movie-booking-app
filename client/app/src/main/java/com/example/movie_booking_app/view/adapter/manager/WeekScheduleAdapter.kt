@@ -4,17 +4,19 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.data.model.response.DaySchedule
 import com.example.movie_booking_app.databinding.ItemDayScheduleBinding
 
-class WeekScheduleAdapter(
-    private var list: List<DaySchedule> = emptyList()
-) : RecyclerView.Adapter<WeekScheduleAdapter.ViewHolder>() {
+class WeekScheduleAdapter(private var list: List<DaySchedule> = emptyList()) : RecyclerView.Adapter<WeekScheduleAdapter.ViewHolder>() {
 
     fun submitList(newList: List<DaySchedule>) {
-        list = newList
-        notifyDataSetChanged()
+        val diffCallback = WeekScheduleDiffCallback(this.list, newList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+
+        this.list = newList
+        diffResult.dispatchUpdatesTo(this)
     }
 
     inner class ViewHolder(private val binding: ItemDayScheduleBinding) :
@@ -51,4 +53,18 @@ class WeekScheduleAdapter(
     }
 
     override fun getItemCount(): Int = list.size
+}
+
+class WeekScheduleDiffCallback(private val oldList: List<DaySchedule>, private val newList: List<DaySchedule>) : DiffUtil.Callback() {
+
+    override fun getOldListSize(): Int = oldList.size
+    override fun getNewListSize(): Int = newList.size
+
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldList[oldItemPosition].day == newList[newItemPosition].day
+    }
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldList[oldItemPosition] == newList[newItemPosition]
+    }
 }

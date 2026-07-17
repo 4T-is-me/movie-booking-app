@@ -3,6 +3,7 @@ package com.example.movie_booking_app.view.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.ScoreHistory
@@ -59,7 +60,23 @@ class ScoreHistoryAdapter(private var list: List<ScoreHistory> = emptyList()) : 
     override fun getItemCount(): Int = list.size
 
     fun updateData(newList: List<ScoreHistory>) {
+        val diffCallback = ScoreHistoryDiffCallback(this.list, newList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+
         this.list = newList
-        notifyDataSetChanged()
+        diffResult.dispatchUpdatesTo(this)
+    }
+}
+class ScoreHistoryDiffCallback(private val oldList: List<ScoreHistory>, private val newList: List<ScoreHistory>) : DiffUtil.Callback() {
+
+    override fun getOldListSize(): Int = oldList.size
+    override fun getNewListSize(): Int = newList.size
+
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldList[oldItemPosition]._id == newList[newItemPosition]._id
+    }
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldList[oldItemPosition] == newList[newItemPosition]
     }
 }

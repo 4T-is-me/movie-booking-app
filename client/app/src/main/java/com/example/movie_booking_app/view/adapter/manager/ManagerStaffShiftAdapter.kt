@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.ShiftItemResponse
@@ -20,7 +21,6 @@ class ManagerStaffShiftAdapter(
     private val onItemClick: ((ShiftItemResponse) -> Unit)? = null ,
     private val onEditClick: ((ShiftItemResponse) -> Unit)? = null
 ): RecyclerView.Adapter<ManagerStaffShiftAdapter.ShiftViewHolder>() {
-
     inner class ShiftViewHolder(val binding: ItemStaffCardBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShiftViewHolder {
@@ -54,20 +54,20 @@ class ManagerStaffShiftAdapter(
         }
 
         when(shiftItem.status) {
-            "Assigned" -> {
-                binding.tvStatusBadge.text = "Assigned" 
+            Constants.STATUS_SHIFT[1] -> {
+                binding.tvStatusBadge.text = Constants.STATUS_SHIFT[1]
                 binding.tvStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.status_active_text)) // green
                 binding.tvStatusBadge.backgroundTintList =
                     ColorStateList.valueOf(ContextCompat.getColor(context, R.color.status_active_bg))
             }
-             "Completed" -> {
-                binding.tvStatusBadge.text = "Completed"
+            Constants.STATUS_SHIFT[2] -> {
+                binding.tvStatusBadge.text = Constants.STATUS_SHIFT[2]
                 binding.tvStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.status_complete_text)) // yellow Gold
                 binding.tvStatusBadge.backgroundTintList =
                     ColorStateList.valueOf(ContextCompat.getColor(context, R.color.status_complete_bg))
             }
-            "Absent"-> {
-                binding.tvStatusBadge.text = "Absent"
+            Constants.STATUS_SHIFT[3]-> {
+                binding.tvStatusBadge.text = Constants.STATUS_SHIFT[3]
                 binding.tvStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.status_leave_text)) // red
                 binding.tvStatusBadge.backgroundTintList =
                     ColorStateList.valueOf(ContextCompat.getColor(context, R.color.status_leave_bg)) // Đã sửa màu bg cho khớp với màu chữ leave
@@ -88,13 +88,12 @@ class ManagerStaffShiftAdapter(
         }
     }
 
-    override fun getItemCount(): Int {
-        return list.size
-    }
-
     fun updateData(newList: List<ShiftItemResponse>) {
+        val diffCallback = StaffShiftDiffCallback(this.list, newList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+
         this.list = newList
-        notifyDataSetChanged()
+        diffResult.dispatchUpdatesTo(this)
     }
 
     private fun getShiftTimeDisplay(shift: String): String {
@@ -106,7 +105,7 @@ class ManagerStaffShiftAdapter(
             else -> Constants.FULLTIME
         }
     }
-
+    override fun getItemCount(): Int = list.size
     private fun formatDate(dateString: String?): String {
         if (dateString.isNullOrEmpty()) return ""
 
@@ -127,5 +126,21 @@ class ManagerStaffShiftAdapter(
         } catch (e: Exception) {
             dateString
         }
+    }
+}
+
+class StaffShiftDiffCallback(private val oldList: List<ShiftItemResponse>, private val newList: List<ShiftItemResponse>) : DiffUtil.Callback() {
+
+    override fun getOldListSize(): Int = oldList.size
+    override fun getNewListSize(): Int = newList.size
+
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldList[oldItemPosition].staffName == newList[newItemPosition].staffName
+                && oldList[oldItemPosition].workDate == newList[newItemPosition].workDate
+                && oldList[oldItemPosition].shiftId == newList[newItemPosition].shiftId
+    }
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldList[oldItemPosition] == newList[newItemPosition]
     }
 }
