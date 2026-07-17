@@ -163,7 +163,6 @@ class ProfileFragment : Fragment() {
                     binding.layoutMemberCardInner.setBackgroundResource(memberCardBg)
                     binding.cardMember.strokeColor = badgeColor
                     binding.ivAvatar.strokeColor = android.content.res.ColorStateList.valueOf(badgeColor)
-                    binding.cardCamera.setCardBackgroundColor(android.content.res.ColorStateList.valueOf(badgeColor))
 
                     val points = userProfile?.rewardPoints ?: 0
                     binding.tvPoints.text = "$points pts"

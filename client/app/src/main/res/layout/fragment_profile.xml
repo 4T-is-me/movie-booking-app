@@ -70,28 +70,6 @@
                                 app:strokeWidth="2.5dp"
                                 app:strokeColor="@color/auto_color_F5C542" />
 
-                            <!-- Camera Badge (Static Gold) -->
-                            <com.google.android.material.card.MaterialCardView
-                                android:id="@+id/cardCamera"
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                app:cardCornerRadius="12dp"
-                                app:cardBackgroundColor="@color/auto_color_F5C542"
-                                app:cardElevation="2dp"
-                                app:strokeWidth="0dp"
-                                app:layout_constraintBottom_toBottomOf="@id/ivAvatar"
-                                app:layout_constraintEnd_toEndOf="@id/ivAvatar"
-                                android:layout_margin="2dp">
-
-                                <ImageView
-                                    android:id="@+id/ivCameraIcon"
-                                    android:layout_width="14dp"
-                                    android:layout_height="14dp"
-                                    android:layout_gravity="center"
-                                    android:src="@drawable/ic_camera"
-                                    app:tint="@color/auto_color_000000" />
-                            </com.google.android.material.card.MaterialCardView>
-
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
                         <!-- Edit Profile Icon (Static White) -->
