@@ -66,6 +66,16 @@ class AdminCinemasFragment : Fragment() {
                     .replace(R.id.fragmentContainer, fragment)
                     .addToBackStack(null)
                     .commit()
+            },
+            onEditClick = { cinema ->
+                val fragment = AddCinemaFragment.newInstance(cinema.id)
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainer, fragment)
+                    .addToBackStack(null)
+                    .commit()
+            },
+            onToggleStatusClick = { cinema ->
+                viewModel.toggleCinemaStatus(cinema.id ?: "", cinema.status ?: "active")
             }
         )
         rvCinemas.layoutManager = LinearLayoutManager(context)

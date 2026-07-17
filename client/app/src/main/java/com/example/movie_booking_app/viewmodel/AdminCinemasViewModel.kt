@@ -47,6 +47,26 @@ class AdminCinemasViewModel @Inject constructor(
         }
     }
 
+    fun toggleCinemaStatus(cinemaId: String, currentStatus: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
+            try {
+                val newStatus = if (currentStatus.lowercase() == "active") "inactive" else "active"
+                val success = repository.updateCinemaStatus(cinemaId, newStatus)
+                if (success) {
+                    loadCinemas()
+                } else {
+                    _error.value = "Failed to update status"
+                }
+            } catch (e: Exception) {
+                _error.value = e.message ?: "Failed to update status"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
     fun setSearchQuery(query: String) {
         _searchQuery.value = query
     }

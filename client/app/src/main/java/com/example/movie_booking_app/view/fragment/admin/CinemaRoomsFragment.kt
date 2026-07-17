@@ -91,16 +91,18 @@ class CinemaRoomsFragment : Fragment() {
         // Set up RecyclerView
         adapter = CinemaRoomsAdapter(
             onRoomClick = { room ->
-                // Navigate to AdminRoomDetailFragment
-                val fragment = AdminRoomDetailFragment.newInstance(
-                    room.id,
-                    room.roomName,
-                    if (room.columns > 0) room.columns else 8
-                )
+                // Seat layout viewing is disabled
+            },
+            onEditClick = { room ->
+                // Navigate to AddCinemaRoomFragment in Edit Mode
+                val fragment = AddCinemaRoomFragment.newInstance(cinemaId, room.id)
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.fragmentContainer, fragment)
                     .addToBackStack(null)
                     .commit()
+            },
+            onToggleStatusClick = { room ->
+                viewModel.toggleRoomStatus(room.id, room.status ?: "active", cinemaId)
             }
         )
         rvRooms.layoutManager = LinearLayoutManager(context)

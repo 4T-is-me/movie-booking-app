@@ -350,11 +350,142 @@ const handleToggleRoomStatus = async (roomId, status) => {
     return result;
 }
 
+const handleGetRoomDetails = async (roomId) => {
+    try {
+        const room = await CinemaRoom.findOne({ _id: roomId, isDeleted: false });
+        return room;
+    } catch (error) {
+        throw error;
+    }
+};
+
+const handleUpdateRoom = async (roomId, { roomName, roomType, screenType, rowsCount, colsCount, status, seatsInput }) => {
+    const session = await mongoose.startSession();
+    try {
+        session.startTransaction();
+
+        const room = await CinemaRoom.findOne({ _id: roomId, isDeleted: false }).session(session);
+        if (!room) {
+            throw new ApiError(StatusCodes.NOT_FOUND, "Room not found!");
+        }
+
+        if (roomName && roomName.trim() !== room.roomName) {
+            const existingRoom = await CinemaRoom.findOne({
+                cinemaId: room.cinemaId,
+                roomName: roomName.trim(),
+                isDeleted: false,
+                _id: { $ne: roomId }
+            }).session(session);
+            if (existingRoom) {
+                throw new ApiError(StatusCodes.CONFLICT, "Room name already exists!");
+            }
+            room.roomName = roomName.trim();
+        }
+
+        if (roomType) room.roomType = roomType;
+        if (screenType) {
+            const VALID_SCREEN_TYPES = ["2D", "3D", "IMAX"];
+            const finalScreenType = screenType.toUpperCase();
+            if (!VALID_SCREEN_TYPES.includes(finalScreenType)) {
+                throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid screen type!");
+            }
+            room.screenType = finalScreenType;
+        }
+        if (status) room.status = status;
+
+        let layoutChanged = false;
+        if (rowsCount !== undefined && colsCount !== undefined) {
+            const finalRows = Number(rowsCount);
+            const finalCols = Number(colsCount);
+            if (finalRows !== room.rowsCount || finalCols !== room.colsCount || seatsInput) {
+                room.rowsCount = finalRows;
+                room.colsCount = finalCols;
+                room.totalSeats = finalRows * finalCols;
+                layoutChanged = true;
+            }
+        }
+
+        await room.save({ session });
+
+        if (layoutChanged) {
+            await Seat.deleteMany({ roomId: room._id }).session(session);
+            const seats = [];
+
+            if (seatsInput && Array.isArray(seatsInput) && seatsInput.length > 0) {
+                for (const s of seatsInput) {
+                    const name = s.seatName;
+                    const inputType = s.seatType || "standard";
+                    const rowLetter = name.charAt(0);
+                    const colNumber = parseInt(name.substring(1), 10);
+
+                    let seatType = "Regular";
+                    let price = 100000;
+
+                    if (inputType.toLowerCase() === "vip") {
+                        seatType = "VIP";
+                        price = 150000;
+                    } else if (inputType.toLowerCase() === "couple") {
+                        seatType = "Couple";
+                        price = 250000;
+                    }
+
+                    seats.push({
+                        roomId: room._id,
+                        seatName: name,
+                        row: rowLetter,
+                        col: colNumber,
+                        price,
+                        status: "active",
+                        seatType
+                    });
+                }
+            } else {
+                for (let r = 0; r < room.rowsCount; r++) {
+                    const rowLetter = String.fromCharCode(r + 65);
+                    for (let c = 1; c <= room.colsCount; c++) {
+                        let seatType = "Regular";
+                        let price = 100000;
+
+                        if (r === room.rowsCount - 1) {
+                            seatType = "Couple";
+                            price = 250000;
+                        } else if (r === room.rowsCount - 2 || r === room.rowsCount - 3) {
+                            seatType = "VIP";
+                            price = 150000;
+                        }
+
+                        seats.push({
+                            roomId: room._id,
+                            seatName: `${rowLetter}${c}`,
+                            row: rowLetter,
+                            col: c,
+                            price,
+                            status: "active",
+                            seatType
+                        });
+                    }
+                }
+            }
+            await Seat.insertMany(seats, { session });
+        }
+
+        await session.commitTransaction();
+        return room;
+    } catch (error) {
+        await session.abortTransaction();
+        throw error;
+    } finally {
+        session.endSession();
+    }
+};
+
 export const adminRoomService = {
     handleCreateRoom,
     handleGetAllRoom,
     handleGetRoomSeats,
     handleUpdateSeatTypes,
     handleSoftDeleteRoom,
-    handleToggleRoomStatus
+    handleToggleRoomStatus,
+    handleGetRoomDetails,
+    handleUpdateRoom
 };

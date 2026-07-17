@@ -9,6 +9,8 @@ import com.example.movie_booking_app.data.model.response.MonthlyRevenueResponse
 import com.example.movie_booking_app.data.model.response.MovieRevenueResponse
 import com.example.movie_booking_app.data.model.response.OverviewStatsResponse
 import com.example.movie_booking_app.data.model.response.AdminStaffListResponse
+import com.example.movie_booking_app.data.model.request.UpdateStatusRequest
+import com.example.movie_booking_app.data.model.response.CinemaDetailResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
@@ -128,6 +130,30 @@ interface AdminApiService {
 
     @GET("api/admin/cinemas")
     suspend fun getAdminCinemas(): Response<CinemaResponse>
+
+    @GET("api/admin/cinemas/{id}")
+    suspend fun getCinemaDetails(@Path("id") id: String): Response<CinemaDetailResponse>
+
+    @PUT("api/admin/cinemas/{id}")
+    suspend fun updateCinema(@Path("id") id: String, @Body request: AddCinemaRequest): Response<Unit>
+
+    @Multipart
+    @PUT("api/admin/cinemas/{id}")
+    suspend fun updateCinemaWithImage(
+        @Path("id") id: String,
+        @Part("cinemaName") cinemaName: RequestBody,
+        @Part("address") address: RequestBody,
+        @Part("city") city: RequestBody,
+        @Part("hotline") hotline: RequestBody,
+        @Part("status") status: RequestBody,
+        @Part poster: MultipartBody.Part?
+    ): Response<Unit>
+
+    @PATCH("api/admin/cinemas/{id}/status")
+    suspend fun updateCinemaStatus(
+        @Path("id") id: String,
+        @Body request: UpdateStatusRequest
+    ): Response<Unit>
 
     @POST("api/admin/staff")
     suspend fun createStaff(@Body request: com.example.movie_booking_app.data.model.request.CreateStaffRequest): Response<Unit>

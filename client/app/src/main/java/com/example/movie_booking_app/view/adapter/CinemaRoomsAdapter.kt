@@ -13,31 +13,38 @@ import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.CinemaRoom
 
 class CinemaRoomsAdapter(
-    private val onRoomClick: (CinemaRoom) -> Unit
+    private val onRoomClick: (CinemaRoom) -> Unit,
+    private val onEditClick: (CinemaRoom) -> Unit,
+    private val onToggleStatusClick: (CinemaRoom) -> Unit
 ) : ListAdapter<CinemaRoom, CinemaRoomsAdapter.RoomViewHolder>(RoomDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RoomViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_cinema_room, parent, false)
-        return RoomViewHolder(view)
+        return RoomViewHolder(view, onRoomClick, onEditClick, onToggleStatusClick)
     }
 
     override fun onBindViewHolder(holder: RoomViewHolder, position: Int) {
         val room = getItem(position)
         holder.bind(room)
-        holder.itemView.setOnClickListener { onRoomClick(room) }
     }
 
-    class RoomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class RoomViewHolder(
+        itemView: View,
+        private val onRoomClick: (CinemaRoom) -> Unit,
+        private val onEditClick: (CinemaRoom) -> Unit,
+        private val onToggleStatusClick: (CinemaRoom) -> Unit
+    ) : RecyclerView.ViewHolder(itemView) {
         private val tvRoomName: TextView = itemView.findViewById(R.id.tvRoomName)
         private val tvStatusChip: TextView = itemView.findViewById(R.id.tvStatusChip)
         private val tvRoomType: TextView = itemView.findViewById(R.id.tvRoomType)
         private val tvCapacity: TextView = itemView.findViewById(R.id.tvCapacity)
+        private val ivOptions: View = itemView.findViewById(R.id.ivOptions)
 
         fun bind(room: CinemaRoom) {
             tvRoomName.text = room.roomName
             
             // Format type: e.g., Standard • 2D
-            val formattedType = "Standard • ${room.roomType ?: "2D"}"
+            val formattedType = "${room.roomType ?: "Standard"} • ${room.screenType ?: "2D"}"
             tvRoomType.text = formattedType
 
             // Format capacity: e.g., 120 seats
@@ -70,6 +77,33 @@ class CinemaRoomsAdapter(
             tvStatusChip.text = statusText
             tvStatusChip.setTextColor(textColor)
             tvStatusChip.background = ContextCompat.getDrawable(itemView.context, backgroundRes)
+
+            itemView.setOnClickListener { onEditClick(room) }
+
+            ivOptions.setOnClickListener { view ->
+                val popup = androidx.appcompat.widget.PopupMenu(view.context, view)
+                popup.menu.add(0, 1, 0, "Edit Room")
+                if (status.lowercase() == "active") {
+                    popup.menu.add(0, 2, 1, "Close Room")
+                } else {
+                    popup.menu.add(0, 3, 1, "Reactivate Room")
+                }
+
+                popup.setOnMenuItemClickListener { item ->
+                    when (item.itemId) {
+                        1 -> {
+                            onEditClick(room)
+                            true
+                        }
+                        2, 3 -> {
+                            onToggleStatusClick(room)
+                            true
+                        }
+                        else -> false
+                    }
+                }
+                popup.show()
+            }
         }
     }
 

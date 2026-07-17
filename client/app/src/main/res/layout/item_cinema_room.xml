@@ -108,11 +108,14 @@
 
         </LinearLayout>
 
-        <!-- Chevron (Right) -->
+        <!-- Options Menu Button (Three Dots) -->
         <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_chevron_right"
+            android:id="@+id/ivOptions"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="6dp"
+            android:src="@drawable/ic_more_vert"
             app:tint="@color/cinema_text_secondary"
             tools:ignore="ContentDescription" />
 
