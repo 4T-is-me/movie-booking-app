@@ -11,7 +11,7 @@ import com.example.movie_booking_app.data.model.response.*
 
 /**
  * Mock data source for Admin related entities.
- * (Kế thừa ISSUE_27_TEMP — Kiên)
+ * (Inherited from ISSUE_27_TEMP - Kien)
  */
 object MockAdminDataSource {
 
@@ -43,11 +43,11 @@ object MockAdminDataSource {
     fun getMockMovieRevenue(): MovieRevenueResponse {
         return MovieRevenueResponse(
             data = listOf(
-                MovieRevenueItem("1", "Avengers: Endgame", "Biệt Đội Siêu Anh Hùng: Hồi Kết", 15000.0),
-                MovieRevenueItem("2", "Spider-Man: No Way Home", "Người Nhện: Không Còn Nhà", 12500.0),
-                MovieRevenueItem("3", "Jurassic World", "Thế Giới Khủng Long", 9000.0),
-                MovieRevenueItem("4", "Avatar: The Way of Water", "Avatar: Dòng Chảy Của Nước", 8500.0),
-                MovieRevenueItem("5", "The Lion King", "Vua Sư Tử", 7200.0)
+                MovieRevenueItem("1", "Avengers: Endgame", "Avengers: Endgame", 15000.0),
+                MovieRevenueItem("2", "Spider-Man: No Way Home", "Spider-Man: No Way Home", 12500.0),
+                MovieRevenueItem("3", "Jurassic World", "Jurassic World", 9000.0),
+                MovieRevenueItem("4", "Avatar: The Way of Water", "Avatar: The Way of Water", 8500.0),
+                MovieRevenueItem("5", "The Lion King", "The Lion King", 7200.0)
             )
         )
     }

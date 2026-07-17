@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0D0D0D"
+    android:background="@color/auto_color_0D0D0D"
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,7 +16,7 @@
             android:id="@+id/layoutHeader"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="#161616"
+            android:background="@color/auto_color_161616"
             android:elevation="4dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
@@ -40,8 +40,8 @@
                 android:layout_marginStart="12dp"
                 android:layout_weight="1"
                 android:fontFamily="sans-serif-medium"
-                android:text="Write a Review"
-                android:textColor="#FFFFFF"
+                android:text="@string/auto_str_write_a_review"
+                android:textColor="@color/auto_color_FFFFFF"
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="24dp"
-            app:cardBackgroundColor="#1A1A1A"
+            app:cardBackgroundColor="@color/auto_color_1A1A1A"
             app:cardCornerRadius="16dp"
             app:cardElevation="4dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -88,8 +88,8 @@
                         android:ellipsize="end"
                         android:fontFamily="sans-serif-medium"
                         android:maxLines="2"
-                        android:text="Movie Title"
-                        android:textColor="#FFFFFF"
+                        android:text="@string/auto_str_movie_title"
+                        android:textColor="@color/auto_color_FFFFFF"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
@@ -98,8 +98,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Action, Drama"
-                        android:textColor="#888888"
+                        android:text="@string/auto_str_action_drama"
+                        android:textColor="@color/auto_color_888888"
                         android:textSize="12sp" />
 
                 </LinearLayout>
@@ -113,7 +113,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
-            app:cardBackgroundColor="#1A1A1A"
+            app:cardBackgroundColor="@color/auto_color_1A1A1A"
             app:cardCornerRadius="16dp"
             app:cardElevation="4dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -131,8 +131,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
-                    android:text="Your Rating"
-                    android:textColor="#FFFFFF"
+                    android:text="@string/auto_str_your_rating"
+                    android:textColor="@color/auto_color_FFFFFF"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -141,8 +141,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Tap to rate"
-                    android:textColor="#FACC15"
+                    android:text="@string/auto_str_tap_to_rate"
+                    android:textColor="@color/auto_color_FACC15"
                     android:textSize="13sp" />
 
                 <RatingBar
@@ -154,8 +154,8 @@
                     android:numStars="5"
                     android:rating="0"
                     android:stepSize="1"
-                    android:progressTint="#FACC15"
-                    android:secondaryProgressTint="#444444" />
+                    android:progressTint="@color/auto_color_FACC15"
+                    android:secondaryProgressTint="@color/auto_color_444444" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -167,7 +167,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
-            app:cardBackgroundColor="#1A1A1A"
+            app:cardBackgroundColor="@color/auto_color_1A1A1A"
             app:cardCornerRadius="16dp"
             app:cardElevation="4dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -184,8 +184,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
-                    android:text="Your Review"
-                    android:textColor="#FFFFFF"
+                    android:text="@string/auto_str_your_review"
+                    android:textColor="@color/auto_color_FFFFFF"
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
@@ -196,13 +196,13 @@
                     android:layout_marginTop="12dp"
                     android:background="@drawable/bg_input_dark"
                     android:gravity="top|start"
-                    android:hint="Share your thoughts about this movie..."
+                    android:hint="@string/auto_str_share_your_thoughts_about_this"
                     android:inputType="textMultiLine|textCapSentences"
                     android:maxLines="8"
                     android:minLines="5"
                     android:padding="14dp"
-                    android:textColor="#FFFFFF"
-                    android:textColorHint="#555555"
+                    android:textColor="@color/auto_color_FFFFFF"
+                    android:textColorHint="@color/auto_color_555555"
                     android:textSize="14sp" />
 
                 <LinearLayout
@@ -215,8 +215,8 @@
                         android:id="@+id/tvCharCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0 / 1000"
-                        android:textColor="#555555"
+                        android:text="@string/auto_str_0_1000"
+                        android:textColor="@color/auto_color_555555"
                         android:textSize="12sp" />
                 </LinearLayout>
 
@@ -226,7 +226,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text=""
-                    android:textColor="#EF4444"
+                    android:textColor="@color/auto_color_EF4444"
                     android:textSize="12sp"
                     android:visibility="gone" />
 
@@ -242,8 +242,8 @@
             android:layout_marginTop="24dp"
             android:background="@drawable/bg_btn_primary"
             android:fontFamily="sans-serif-medium"
-            android:text="Submit Review"
-            android:textColor="#000000"
+            android:text="@string/auto_str_submit_review"
+            android:textColor="@color/auto_color_000000"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
@@ -256,7 +256,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:indeterminateTint="#FACC15"
+            android:indeterminateTint="@color/auto_color_FACC15"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

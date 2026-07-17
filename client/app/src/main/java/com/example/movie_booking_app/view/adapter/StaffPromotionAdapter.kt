@@ -33,7 +33,7 @@ class StaffPromotionAdapter(
 
         fun bind(promo: Promo) {
             tvStaffPromoTitle.text = promo.title
-            tvStaffPromoDetail.text = promo.detail ?: "Không có mô tả chi tiết"
+            tvStaffPromoDetail.text = promo.detail ?: "No detailed description"
             tvStaffPromoCode.text = promo.discountCode
 
             itemView.setOnClickListener {

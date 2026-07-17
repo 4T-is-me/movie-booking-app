@@ -2,6 +2,8 @@ package com.example.movie_booking_app.view.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.movie_booking_app.R
@@ -13,14 +15,12 @@ import java.text.DecimalFormatSymbols
 import java.util.Locale
 
 class MyTicketAdapter(
-    private var items: List<BookingHistoryItem> = emptyList(),
     private val onViewTicketClick: (BookingHistoryItem) -> Unit,
     private val onViewQrClick: (BookingHistoryItem) -> Unit
-) : RecyclerView.Adapter<MyTicketAdapter.ViewHolder>() {
+) : ListAdapter<BookingHistoryItem, MyTicketAdapter.ViewHolder>(MyTicketDiffCallback()) {
 
     fun updateData(newItems: List<BookingHistoryItem>) {
-        items = newItems
-        notifyDataSetChanged()
+        submitList(newItems)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -31,10 +31,8 @@ class MyTicketAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(items[position], onViewTicketClick, onViewQrClick)
+        holder.bind(getItem(position), onViewTicketClick, onViewQrClick)
     }
-
-    override fun getItemCount(): Int = items.size
 
     class ViewHolder(
         private val binding: ItemMyTicketBinding
@@ -86,5 +84,10 @@ class MyTicketAdapter(
                 onViewQrClick(item)
             }
         }
+    }
+
+    class MyTicketDiffCallback : DiffUtil.ItemCallback<BookingHistoryItem>() {
+        override fun areItemsTheSame(oldItem: BookingHistoryItem, newItem: BookingHistoryItem): Boolean = oldItem.bookingId == newItem.bookingId
+        override fun areContentsTheSame(oldItem: BookingHistoryItem, newItem: BookingHistoryItem): Boolean = oldItem == newItem
     }
 }

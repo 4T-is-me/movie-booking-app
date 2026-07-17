@@ -93,7 +93,7 @@ class ManagerStaffActivity : AppCompatActivity() {
             }
 
             override fun onUndo(item: ManagerLeaveRequestResponse) {
-                // Task 3: Gọi API revert thực tế sẽ lắp ở đây
+                // Task 3: Actual revert API call will be placed here
             }
         })
 
@@ -293,7 +293,7 @@ class ManagerStaffActivity : AppCompatActivity() {
             }
         }
 
-        // 2. Trạng thái Loading
+        // 2. Loading state
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 leaveRequestViewModel.isLoading.collectLatest { isLoading ->
@@ -302,7 +302,7 @@ class ManagerStaffActivity : AppCompatActivity() {
             }
         }
 
-        // 3. Trạng thái Lỗi hiển thị Dialog
+        // 3. Error state displaying Dialog
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 leaveRequestViewModel.errorMessage.collectLatest { error ->

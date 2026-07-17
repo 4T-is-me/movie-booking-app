@@ -2,6 +2,7 @@ package com.example.movie_booking_app.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.request.ChangePasswordRequest
 import com.example.movie_booking_app.data.repository.ProfileRepository
 import com.example.movie_booking_app.data.repository.UnauthorizedException
@@ -35,68 +36,68 @@ class ChangePasswordViewModel @Inject constructor(
     fun onCurrentPasswordChanged(password: String) {
         currentPassword = password.trim()
         currentPasswordTouched = true
-        validateForm()
+        validateForm(showAll = hasAttemptedSubmit)
     }
 
     fun onNewPasswordChanged(password: String) {
         newPassword = password.trim()
         newPasswordTouched = true
-        validateForm()
+        validateForm(showAll = hasAttemptedSubmit)
     }
 
     fun onConfirmPasswordChanged(password: String) {
         confirmPassword = password.trim()
         confirmPasswordTouched = true
-        validateForm()
+        validateForm(showAll = hasAttemptedSubmit)
     }
 
     private fun validateForm(showAll: Boolean = false): Boolean {
         val lengthValid = newPassword.length >= 6
-        val uppercaseValid = newPassword.any { it.isUpperCase() }
-        val lowercaseValid = newPassword.any { it.isLowerCase() }
-        val numberValid = newPassword.any { it.isDigit() }
-        val specialValid = newPassword.any { !it.isLetterOrDigit() }
-        val confirmMatches = newPassword == confirmPassword && confirmPassword.isNotEmpty()
+        val uppercaseValid = newPassword.any { it in 'A'..'Z' }
+        val lowercaseValid = newPassword.any { it in 'a'..'z' }
+        val numberValid = newPassword.any { it in '0'..'9' }
+        val specialChars = "!@#$%^&*()_+-=[]{}|;:'\",.<>?/"
+        val specialValid = newPassword.any { it in specialChars }
+        val confirmMatches = newPassword == confirmPassword
 
-        // 1. Current Password Empty
         val isCurrentPasswordEmpty = currentPassword.isEmpty()
-        var currentPasswordError: String? = null
+        val isNewPasswordEmpty = newPassword.isEmpty()
+        val isConfirmPasswordEmpty = confirmPassword.isEmpty()
+
+        var currentPasswordError: Int? = null
         if (showAll || currentPasswordTouched) {
             if (isCurrentPasswordEmpty) {
-                currentPasswordError = "Current password cannot be empty."
+                currentPasswordError = R.string.error_current_password_required
             }
         }
 
-        // 2. New Password Empty
-        // 4. New Password Length
-        // 6. Same As Current Password
-        val isNewPasswordEmpty = newPassword.isEmpty()
-        var newPasswordError: String? = null
+        var newPasswordError: Int? = null
         if (showAll || newPasswordTouched) {
             if (isNewPasswordEmpty) {
-                newPasswordError = "New password cannot be empty."
-            } else if (newPassword.length < 6) {
-                newPasswordError = "New password must be at least 6 characters."
-            } else if (newPassword == currentPassword) {
-                newPasswordError = "New password must be different from your current password."
+                newPasswordError = R.string.error_new_password_required
+            } else if (showAll) {
+                if (!lengthValid) {
+                    newPasswordError = R.string.error_new_password_min_length
+                } else if (!uppercaseValid) {
+                    newPasswordError = R.string.error_new_password_uppercase
+                } else if (!lowercaseValid) {
+                    newPasswordError = R.string.error_new_password_lowercase
+                } else if (!numberValid) {
+                    newPasswordError = R.string.error_new_password_number
+                } else if (!specialValid) {
+                    newPasswordError = R.string.error_new_password_special_character
+                }
             }
         }
 
-        // 3. Confirm Password Empty
-        val isConfirmPasswordEmpty = confirmPassword.isEmpty()
-        var confirmPasswordError: String? = null
-        if (showAll || confirmPasswordTouched) {
+        var confirmPasswordError: Int? = null
+        if (confirmPassword.isNotEmpty() && confirmPassword != newPassword) {
+            confirmPasswordError = R.string.error_passwords_do_not_match
+        } else if (showAll || confirmPasswordTouched) {
             if (isConfirmPasswordEmpty) {
-                confirmPasswordError = "Please confirm your new password."
-            }
-        }
-
-        // 5. Password Confirmation mismatch
-        val isMismatch = newPassword.isNotEmpty() && confirmPassword.isNotEmpty() && newPassword != confirmPassword
-        if (isMismatch) {
-            if (showAll || (newPasswordTouched && confirmPasswordTouched)) {
-                newPasswordError = "New password and confirmation password do not match."
-                confirmPasswordError = "New password and confirmation password do not match."
+                confirmPasswordError = R.string.error_change_confirm_password_required
+            } else if (confirmPassword != newPassword) {
+                confirmPasswordError = R.string.error_passwords_do_not_match
             }
         }
 
@@ -114,17 +115,20 @@ class ChangePasswordViewModel @Inject constructor(
 
         return isCurrentPasswordEmpty ||
                 isNewPasswordEmpty ||
-                newPassword.length < 6 ||
-                newPassword == currentPassword ||
                 isConfirmPasswordEmpty ||
-                newPassword != confirmPassword
+                !lengthValid ||
+                !uppercaseValid ||
+                !lowercaseValid ||
+                !numberValid ||
+                !specialValid ||
+                confirmPassword != newPassword
     }
 
     fun isSubmitEnabled(): Boolean {
+        val state = _uiState.value
         return currentPassword.isNotEmpty() &&
                 newPassword.isNotEmpty() &&
-                newPassword.length >= 6 &&
-                newPassword != currentPassword &&
+                state.isNewPasswordValid &&
                 confirmPassword.isNotEmpty() &&
                 newPassword == confirmPassword
     }
@@ -141,12 +145,12 @@ class ChangePasswordViewModel @Inject constructor(
                     _uiState.value = _uiState.value.copy(isLoading = true, error = null, isSuccess = false)
                 }
                 .catch { exception ->
-                    val errorMsg = when (exception) {
+                    val errorRes = when (exception) {
                         is UnauthorizedException -> {
-                            "Your session has expired. Please log in again."
+                            R.string.error_session_expired
                         }
                         is java.io.IOException -> {
-                            "Unable to connect to the server. Please try again."
+                            R.string.error_network_error
                         }
                         else -> {
                             val rawMessage = exception.message ?: ""
@@ -160,14 +164,17 @@ class ChangePasswordViewModel @Inject constructor(
                                 rawMessage
                             }
 
-                            if (parsedMessage.contains("Mật khẩu hiện tại không đúng", ignoreCase = true) ||
+                            if (parsedMessage.contains("Current password is incorrect", ignoreCase = true) ||
                                 parsedMessage.contains("current password is incorrect", ignoreCase = true) ||
-                                parsedMessage.contains("incorrect password", ignoreCase = true)) {
-                                "The current password is incorrect."
-                            } else if (parsedMessage.isNotEmpty()) {
-                                parsedMessage
+                                parsedMessage.contains("incorrect password", ignoreCase = true) ||
+                                parsedMessage.contains("The current password is incorrect", ignoreCase = true)) {
+                                R.string.error_current_password_incorrect
+                            } else if (parsedMessage.contains("New password cannot be the same as the current password", ignoreCase = true) ||
+                                parsedMessage.contains("same password", ignoreCase = true) ||
+                                parsedMessage.contains("cannot be the same", ignoreCase = true)) {
+                                R.string.error_new_password_same_as_current
                             } else {
-                                "Password could not be updated. Please try again."
+                                R.string.error_unable_to_update_password
                             }
                         }
                     }
@@ -175,7 +182,7 @@ class ChangePasswordViewModel @Inject constructor(
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         isUnauthorized = exception is UnauthorizedException,
-                        error = errorMsg
+                        error = errorRes
                     )
                 }
                 .collect {

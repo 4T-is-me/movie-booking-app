@@ -49,7 +49,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         private const val TAG              = "MyFCMService"
         private const val CHANNEL_ID      = "movie_booking_channel"
         private const val CHANNEL_NAME    = "Movie Booking Notifications"
-        private const val CHANNEL_DESC    = "Thông báo đặt vé phim và khuyến mãi"
+        private const val CHANNEL_DESC    = "Movie booking and promotion notifications"
         private const val NOTIFICATION_ID = 1001   // base ID; incremented per message
     }
 

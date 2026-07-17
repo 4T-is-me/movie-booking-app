@@ -34,7 +34,7 @@ class WriteReviewActivity : AppCompatActivity() {
         binding = ActivityWriteReviewBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Nhận dữ liệu từ Intent
+        // Get data from Intent
         movieId    = intent.getStringExtra("movieId") ?: ""
         movieTitle = intent.getStringExtra("movieTitle") ?: ""
         moviePoster = intent.getStringExtra("moviePoster") ?: ""
@@ -53,10 +53,10 @@ class WriteReviewActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        // Nút back
+        // Back button
         binding.btnBack.setOnClickListener { finish() }
 
-        // Hiển thị thông tin phim
+        // Display movie info
         binding.tvMovieTitle.text = movieTitle.ifEmpty { "Unknown" }
         binding.tvMovieGenre.text = movieGenre.ifEmpty { "" }
 
@@ -72,7 +72,7 @@ class WriteReviewActivity : AppCompatActivity() {
             .error(R.drawable.movie)
             .into(binding.ivMoviePoster)
 
-        // Nút submit
+        // Submit button
         binding.btnSubmitReview.setOnClickListener {
             val rating  = binding.ratingBarReview.rating.toInt()
             val comment = binding.etComment.text.toString().trim()
@@ -96,7 +96,7 @@ class WriteReviewActivity : AppCompatActivity() {
             }
             binding.tvCommentError.visibility = View.GONE
 
-            // Hiển thị loading, ẩn nút submit
+            // Show loading, hide submit button
             binding.progressBar.visibility = View.VISIBLE
             binding.btnSubmitReview.isEnabled = false
 
@@ -111,7 +111,7 @@ class WriteReviewActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {
                 val len = s?.length ?: 0
                 binding.tvCharCount.text = "$len / 1000"
-                // Ẩn lỗi khi người dùng đang nhập
+                // Hide error when user is typing
                 if (len >= 5) binding.tvCommentError.visibility = View.GONE
             }
         })

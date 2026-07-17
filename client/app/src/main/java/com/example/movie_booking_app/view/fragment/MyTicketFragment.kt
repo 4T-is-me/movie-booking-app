@@ -17,7 +17,9 @@ import com.example.movie_booking_app.view.activity.MainActivity
 import com.example.movie_booking_app.view.adapter.MyTicketAdapter
 import com.example.movie_booking_app.viewmodel.MyTicketViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class MyTicketFragment : Fragment() {
@@ -160,25 +162,39 @@ class MyTicketFragment : Fragment() {
         tvDateTime.text = "${item.showDate} • ${item.showtime}"
         tvCinemaRoom.text = "${item.cinemaName} • ${item.roomName}"
 
-        // Decode and load QR Code
-        val qr = item.qrCodeData
-        if (!qr.isNullOrEmpty()) {
-            try {
-                val cleanBase64 = qr.substringAfter("base64,")
-                val imageBytes = android.util.Base64.decode(cleanBase64, android.util.Base64.DEFAULT)
-                val decodedImage = android.graphics.BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
-                ivQrCode.setImageBitmap(decodedImage)
-            } catch (e: Exception) {
-                ivQrCode.setImageResource(com.example.movie_booking_app.R.drawable.ic_ticket)
-            }
-        } else {
-            ivQrCode.setImageResource(com.example.movie_booking_app.R.drawable.ic_ticket)
-        }
-
         btnClose.setOnClickListener {
             dialog.dismiss()
         }
 
-        dialog.show()
+        val qr = item.qrCodeData
+        if (!qr.isNullOrEmpty()) {
+            viewLifecycleOwner.lifecycleScope.launch {
+                try {
+                    val bitmap = withContext(Dispatchers.Default) {
+                        val cleanBase64 = qr.substringAfter("base64,")
+                        val imageBytes = android.util.Base64.decode(cleanBase64, android.util.Base64.DEFAULT)
+                        android.graphics.BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                    }
+                    if (isAdded && !isDetached && _binding != null) {
+                        if (bitmap != null) {
+                            ivQrCode.setImageBitmap(bitmap)
+                        } else {
+                            ivQrCode.setImageResource(com.example.movie_booking_app.R.drawable.ic_ticket)
+                        }
+                        dialog.show()
+                    }
+                } catch (e: Exception) {
+                    android.util.Log.e("MyTicketFragment", "Error decoding QR Code", e)
+                    if (isAdded && !isDetached && _binding != null) {
+                        ivQrCode.setImageResource(com.example.movie_booking_app.R.drawable.ic_ticket)
+                        android.widget.Toast.makeText(requireContext(), "Unable to load QR Code.", android.widget.Toast.LENGTH_SHORT).show()
+                        dialog.show()
+                    }
+                }
+            }
+        } else {
+            ivQrCode.setImageResource(com.example.movie_booking_app.R.drawable.ic_ticket)
+            dialog.show()
+        }
     }
 }

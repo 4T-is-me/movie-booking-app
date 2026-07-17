@@ -10,8 +10,8 @@ import javax.inject.Inject
 class CinemaRoomsRepositoryImpl @Inject constructor(
     private val api: CinemaRoomApi
 ) : CinemaRoomsRepository {
-    override fun getRooms(): Flow<List<CinemaRoom>> = flow {
-        val response = api.getRooms()
+    override fun getRooms(cinemaId: String?): Flow<List<CinemaRoom>> = flow {
+        val response = api.getRooms(cinemaId)
         if (response.isSuccessful) {
             emit(response.body()?.data ?: emptyList())
         } else {

@@ -43,13 +43,15 @@ data class BookingDetailShowtime(
 
 data class BookingDetailSeat(
     @SerializedName("seatName") val seatName: String,
+    @SerializedName("seatType") val seatType: String? = null,
     @SerializedName("price") val price: Int
 )
 
 data class BookingDetailCombo(
     @SerializedName("name") val name: String,
     @SerializedName("quantity") val quantity: Int,
-    @SerializedName("price") val price: Int
+    @SerializedName("price") val price: Int,
+    @SerializedName("subtotal") val subtotal: Int
 )
 
 data class BookingDetailPayment(

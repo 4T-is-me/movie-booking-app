@@ -21,7 +21,7 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Kích hoạt chế độ tràn viền hiện đại
+        // Activate modern edge-to-edge mode
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
     }

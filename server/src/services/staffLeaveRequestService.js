@@ -230,12 +230,47 @@ const acceptReplacementShift = async(accountId, shiftId) => {
     }
 }
 
+const getStaffShifts = async (accountId, { startDate, endDate }) => {
+    const staff = await checkStaff(accountId);
+    
+    const filter = {
+        staffId: staff._id
+    };
+    
+    if (startDate && endDate) {
+        const start = new Date(startDate);
+        start.setUTCHours(0, 0, 0, 0);
 
+        const end = new Date(endDate);
+        end.setUTCHours(23, 59, 59, 999);
 
-
+        filter.workDate = {
+            $gte: start,
+            $lte: end
+        };
+    }
+    
+    const shifts = await StaffShift.find(filter)
+        .populate({
+            path: 'originalStaffId',
+            select: 'fullName'
+        })
+        .sort({ workDate: 1 });
+        
+    return shifts.map(item => ({
+        shiftId: item._id,
+        staffId: item.staffId,
+        cinemaId: item.cinemaId,
+        workDate: item.workDate,
+        shift: item.shift,
+        status: item.status,
+        originalStaffName: item.originalStaffId?.fullName || null
+    }));
+}
 
 export const StaffLeaveRequestService = {
     createLeaveRequest,
     getReplacementShifts,
-    acceptReplacementShift
+    acceptReplacementShift,
+    getStaffShifts
 }

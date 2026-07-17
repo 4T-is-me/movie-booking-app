@@ -57,7 +57,7 @@ class AdminStatsViewModel @Inject constructor(
                     val startDate = sdf.format(calendar.time)
                     val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
-                    // Gọi tất cả API song song
+                    // Call all APIs in parallel
                     val overviewDef = async { try { repository.getOverviewStats().first() } catch (e: Exception) { null } }
                     val dailyDef = async { try { repository.getDailyRevenue(startDate, endDate).first() } catch (e: Exception) { null } }
                     val monthlyDef = async { try { repository.getMonthlyRevenue(currentYear).first() } catch (e: Exception) { null } }
@@ -78,7 +78,7 @@ class AdminStatsViewModel @Inject constructor(
                             monthlyRevenue = if (monthlyRes?.isSuccessful == true) monthlyRes.body()?.data ?: emptyList() else _uiState.value.monthlyRevenue,
                             movieRevenue = if (movieRes?.isSuccessful == true) movieRes.body()?.data ?: emptyList() else _uiState.value.movieRevenue,
                             error = if (overviewRes == null && dailyRes == null && monthlyRes == null && movieRes == null) 
-                                "Lỗi kết nối hoặc parse dữ liệu" else null
+                                "Connection error or data parsing failed" else null
                         )
                     }
 
@@ -87,7 +87,7 @@ class AdminStatsViewModel @Inject constructor(
                     withContext(Dispatchers.Main) {
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
-                            error = e.message ?: "Đã xảy ra lỗi không xác định"
+                            error = e.message ?: "An unknown error occurred"
                         )
                     }
                 }

@@ -13,8 +13,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Auto Generate Staff Shifts"
-        android:textColor="#FFFFFF"
+        android:text="@string/auto_str_auto_generate_staff_shifts"
+        android:textColor="@color/auto_color_FFFFFF"
         android:textSize="18sp"
         android:textStyle="bold" />
 
@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="Select parameters, select active staff, then preview schedules."
+        android:text="@string/auto_str_select_the_date_range_to_autom"
         android:textColor="@color/text_secondary"
         android:textSize="13sp" />
 
@@ -161,7 +161,7 @@
             android:layout_height="44dp"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:text="Cancel"
+            android:text="@string/auto_str_cancel_2"
             android:textColor="@color/text_secondary" />
 
         <Button
@@ -170,7 +170,7 @@
             android:layout_height="44dp"
             android:layout_weight="1"
             android:background="@drawable/bg_tab_active_gold"
-            android:text="Generate"
+            android:text="@string/auto_str_generate"
             android:textColor="@color/bg_primary"
             android:textStyle="bold" />
     </LinearLayout>

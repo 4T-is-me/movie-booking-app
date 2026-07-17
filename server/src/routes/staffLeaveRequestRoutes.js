@@ -10,4 +10,6 @@ staffLeaveRequestRouter.post("/create", authMiddleware.isAuthorized, staffLeaveR
 staffLeaveRequestRouter.get("/replacement-shifts", authMiddleware.isAuthorized, staffLeaveRequestController.getReplacementShifts)
 // POST /api/staffs/leave-requests/:id/accept
 staffLeaveRequestRouter.post("/:id/accept", authMiddleware.isAuthorized, staffLeaveRequestController.acceptReplacementShift)
+// GET /api/staffs/leave-requests/shifts
+staffLeaveRequestRouter.get("/shifts", authMiddleware.isAuthorized, staffLeaveRequestController.getStaffShifts)
 export default staffLeaveRequestRouter;

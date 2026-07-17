@@ -180,7 +180,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:visibility="gone"
-            android:indeterminateTint="#D4AF37" />
+            android:indeterminateTint="@color/auto_color_D4AF37" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/btnGenerateShift"

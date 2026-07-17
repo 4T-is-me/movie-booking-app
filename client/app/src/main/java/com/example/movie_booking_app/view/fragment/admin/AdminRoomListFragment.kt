@@ -54,7 +54,7 @@ class AdminRoomListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.rooms.collect { rooms ->
                 adapter.submitList(rooms)
-                tvTotalRoomsCount.text = "${rooms.size} phòng"
+                tvTotalRoomsCount.text = "${rooms.size} rooms"
             }
         }
 

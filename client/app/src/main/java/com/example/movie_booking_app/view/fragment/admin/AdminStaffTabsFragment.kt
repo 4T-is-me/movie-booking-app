@@ -40,14 +40,14 @@ class AdminStaffTabsFragment : Fragment() {
         val adapter = object : FragmentStateAdapter(this) {
             override fun getItemCount(): Int = 2
             override fun createFragment(position: Int): Fragment {
-                return if (position == 0) AdminStaffFragment() else MemberListFragment()
+                return if (position == 0) AdminStaffFragment.newInstance("Manager") else AdminStaffFragment.newInstance("Staff")
             }
         }
 
         binding.viewPager.adapter = adapter
 
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            tab.text = if (position == 0) getString(R.string.admin_tab_employees) else getString(R.string.admin_tab_members)
+            tab.text = if (position == 0) getString(R.string.admin_tab_employees) else getString(R.string.admin_tab_staff)
         }.attach()
 
         // Select the initial tab passed via arguments

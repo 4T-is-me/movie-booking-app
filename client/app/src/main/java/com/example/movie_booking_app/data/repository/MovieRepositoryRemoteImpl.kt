@@ -6,7 +6,6 @@ import com.example.movie_booking_app.data.model.entity.Movie
 import com.example.movie_booking_app.data.model.entity.MovieNews
 import com.example.movie_booking_app.data.model.entity.Promo
 import com.example.movie_booking_app.data.model.entity.Service
-import com.example.movie_booking_app.data.model.entity.Cinema
 import com.example.movie_booking_app.data.model.entity.Showtime
 import com.example.movie_booking_app.data.model.request.AddMovieRequest
 import com.example.movie_booking_app.data.model.request.UpdateMovieRequest
@@ -28,46 +27,25 @@ class MovieRepositoryRemoteImpl @Inject constructor(
     private val adminApi: AdminApiService
 ) : MovieRepository {
 
-    override fun getMovies(): Flow<List<Movie>> = flow {
+    override fun getMovies(status: String?, page: Int?, limit: Int?): Flow<List<Movie>> = flow {
         try {
-            val response = api.getMovies(1000)
+            // Use 100 as default limit to ensure enough movies for both Now Playing and Coming Soon sections
+            val response = api.getMovies(status, page, limit ?: 100)
             if (response.isSuccessful) {
                 val data = response.body()?.data ?: emptyList()
                 emit(data)
             } else {
                 emit(emptyList())
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             emit(emptyList())
         }
     }
 
     override fun getAdminMovies(status: String?): Flow<List<Movie>> = flow {
-        try {
-            val response = adminApi.getMovies(status = status)
-            if (response.isSuccessful) {
-                val data = response.body()?.data ?: emptyList()
-                emit(data)
-            } else {
-                val publicResponse = api.getMovies(1000)
-                if (publicResponse.isSuccessful) {
-                    emit(publicResponse.body()?.data ?: emptyList())
-                } else {
-                    emit(emptyList())
-                }
-            }
-        } catch (e: Exception) {
-            try {
-                val publicResponse = api.getMovies(1000)
-                if (publicResponse.isSuccessful) {
-                    emit(publicResponse.body()?.data ?: emptyList())
-                } else {
-                    emit(emptyList())
-                }
-            } catch (e2: Exception) {
-                emit(emptyList())
-            }
-        }
+        val adminData = runCatching { adminApi.getMovies(status = status) }.getOrNull()?.takeIf { it.isSuccessful }?.body()?.data
+        val publicData = runCatching { api.getMovies() }.getOrNull()?.body()?.data
+        emit(adminData ?: publicData ?: emptyList())
     }
 
     override fun searchMovies(query: String): Flow<List<Movie>> = flow {
@@ -79,7 +57,7 @@ class MovieRepositoryRemoteImpl @Inject constructor(
             } else {
                 emit(emptyList())
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             emit(emptyList())
         }
     }
@@ -105,7 +83,7 @@ class MovieRepositoryRemoteImpl @Inject constructor(
             } else {
                 emit(emptyList())
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             emit(emptyList())
         }
     }

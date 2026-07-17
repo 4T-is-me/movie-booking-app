@@ -236,8 +236,8 @@ class StaffSalesViewModel @Inject constructor(
             _scoreToRedeem.value = 0
             _scoreError.value = null
             recalculateTotals()
-            bookingRepository.getSeats(showtimeId).collect { list ->
-                _seats.value = list
+            bookingRepository.getSeats(showtimeId).collect { seatMapData ->
+                _seats.value = seatMapData.seats ?: emptyList()
                 _isLoading.value = false
             }
         }
@@ -478,7 +478,8 @@ class StaffSalesViewModel @Inject constructor(
                         paymentMethod = paymentMethod,
                         promotionId = _appliedPromotion.value?.id,
                         combos = emptyList(), // Staff tickets sales combo not added in this flow
-                        scoreToRedeem = if (_useScore.value) _scoreToRedeem.value else null
+                        scoreToRedeem = if (_useScore.value) _scoreToRedeem.value else null,
+                        memberId = _verifiedMember.value?.memberId
                     )
 
                     paymentRepository.confirmBooking(request)
@@ -505,7 +506,9 @@ class StaffSalesViewModel @Inject constructor(
                                     bookingRepository.releaseSeats(showtime.id, seatIds).collectLatest {}
                                 }
                             } catch (e: Exception) {
-                                _checkoutSuccess.value = true
+                                _checkoutSuccess.value = false
+                                _checkoutError.value = "Response format error: ${e.message}"
+                                bookingRepository.releaseSeats(showtime.id, seatIds).collectLatest {}
                             }
                         }
                 }

@@ -33,7 +33,7 @@ class MemberListFragment : Fragment() {
 
     private var _binding: FragmentAdminUserListBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: AdminStaffViewModel by viewModels({ requireParentFragment() })
+    private val viewModel: AdminStaffViewModel by viewModels()
     private lateinit var adapter: MemberAdapter
 
     private var selectedTab = TAB_ACTIVE
@@ -100,7 +100,7 @@ class MemberListFragment : Fragment() {
         tvDetailAddress.text = member.address ?: getString(R.string.user_name_placeholder)
         tvDetailRank.text = member.membershipRank ?: getString(R.string.admin_default_rank)
         tvDetailPoints.text = String.format(Locale.getDefault(), "%,d", member.rewardPoints ?: 0)
-        tvDetailTotalSpent.text = String.format(Locale.getDefault(), "%,.0f đ", member.totalSpent ?: 0.0)
+        tvDetailTotalSpent.text = String.format(Locale.getDefault(), "%,.0f ₫", member.totalSpent ?: 0.0)
 
         btnClose.setOnClickListener { dialog.dismiss() }
         dialog.show()

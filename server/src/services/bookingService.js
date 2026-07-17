@@ -73,13 +73,18 @@ const handleHoldSeats = async ({ accountId, showtimeId, seatIds }) => {
 };
 
 // handle confirm booking
-const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore = false, paymentMethod, couponCode, promotionId: requestPromotionId, combos = [], scoreToRedeem }) => {
+const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore = false, paymentMethod, couponCode, promotionId: requestPromotionId, combos = [], scoreToRedeem, memberId }) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
     // find member
-    const member = await Member.findOne({ accountId: accountId }).session(session);
+    let member;
+    if (memberId) {
+      member = await Member.findById(memberId).session(session);
+    } else {
+      member = await Member.findOne({ accountId: accountId }).session(session);
+    }
 
     // validate member
     if (!member) {
@@ -264,7 +269,7 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
         [
           {
             promotionId: promotionId,
-            accountId: accountId,
+            accountId: member.accountId,
             invoiceId: booking[0]._id,
             discountAmount: promotionDiscount
           }
@@ -296,7 +301,7 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
     console.log(`[DEBUG] Transaction committed successfully for booking ${booking[0]._id}. commitTransaction() executed.`);
 
     // Trigger FCM notification asynchronously so it does not delay checkout response
-    notificationService.sendBookingSuccessNotification(accountId, booking[0]).catch(err => {
+    notificationService.sendBookingSuccessNotification(member.accountId, booking[0]).catch(err => {
         console.error('Failed to send booking success notification:', err.message)
     })
 
@@ -523,6 +528,12 @@ const handleGetbookingDetail = async (bookingId, accountId) => {
       seatName: seat.seatName || "",
       seatType: seat.seatType || "",
       price: seat.price || 0
+    })),
+    combos: (booking.combos || []).map(combo => ({
+      name: combo.name || "",
+      quantity: combo.quantity || 0,
+      price: combo.price || 0,
+      subtotal: (combo.price || 0) * (combo.quantity || 0)
     })),
     payment: {
       ticketPrice: booking.ticketPrice || 0,

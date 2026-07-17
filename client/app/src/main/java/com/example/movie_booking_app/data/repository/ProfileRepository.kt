@@ -5,8 +5,10 @@ import com.example.movie_booking_app.data.model.entity.UserProfile
 import com.example.movie_booking_app.data.model.request.UpdateProfileRequest
 import com.example.movie_booking_app.data.model.response.UploadAvatarResponse
 import com.example.movie_booking_app.data.model.response.toUserProfile
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class UnauthorizedException(message: String) : Exception(message)
@@ -34,7 +36,7 @@ class ProfileRepository @Inject constructor(
                 throw Exception(errorMsg)
             }
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
     /**
      * Updates and emits the user profile details.
@@ -52,7 +54,7 @@ class ProfileRepository @Inject constructor(
                 throw Exception(errorMsg)
             }
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
     /**
      * Uploads the user avatar.
@@ -70,7 +72,7 @@ class ProfileRepository @Inject constructor(
                 throw Exception(errorMsg)
             }
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
     fun changePassword(request: com.example.movie_booking_app.data.model.request.ChangePasswordRequest): Flow<Unit> = flow {
         val response = profileApi.changePassword(request)
@@ -85,5 +87,5 @@ class ProfileRepository @Inject constructor(
                 throw Exception(errorMsg)
             }
         }
-    }
+    }.flowOn(Dispatchers.IO)
 }

@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.view.fragment.admin.AdminMovieListFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminRoomListFragment
-import com.example.movie_booking_app.view.fragment.admin.CinemaRoomsFragment
+import com.example.movie_booking_app.view.fragment.admin.AdminCinemasFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminStatsFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminStaffFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminStaffTabsFragment
@@ -66,16 +66,16 @@ class AdminActivity : BaseActivity() {
                     loadFragment(AdminStaffTabsFragment.newInstance(0))
                 }
                 R.id.nav_rooms -> {
-                    tvHeaderTitle.text = getString(R.string.auto_str_cinema_rooms)
-                    loadFragment(CinemaRoomsFragment())
+                    tvHeaderTitle.text = "Cinemas"
+                    loadFragment(AdminCinemasFragment())
                 }
                 R.id.nav_promotions -> {
                     tvHeaderTitle.text = getString(R.string.auto_str_promotions)
                     loadFragment(AdminPromotionFragment())
                 }
                 R.id.nav_members -> {
-                    tvHeaderTitle.text = getString(R.string.admin_staff_members_title)
-                    loadFragment(AdminStaffTabsFragment.newInstance(1))
+                    tvHeaderTitle.text = getString(R.string.admin_tab_members)
+                    loadFragment(com.example.movie_booking_app.view.fragment.admin.MemberListFragment())
                 }
                 R.id.nav_settings -> {
                     tvHeaderTitle.text = getString(R.string.admin_settings_title)

@@ -43,7 +43,7 @@ class MovieDetailActivity : AppCompatActivity() {
         binding = ActivityMovieDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Lấy movieId từ Intent
+        // Get movieId from Intent
         movieId = intent.getStringExtra("movieId") ?: ""
 
         if (movieId.isEmpty()) {
@@ -52,7 +52,7 @@ class MovieDetailActivity : AppCompatActivity() {
             return
         }
 
-        // Gọi API
+        // Call API
         viewModel.fetchMovieDetail(movieId)
         viewModel.fetchMovieShowtimes(movieId)
         viewModel.fetchMovieReviews(movieId)
@@ -280,7 +280,7 @@ class MovieDetailActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: android.content.Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_WRITE_REVIEW && resultCode == RESULT_OK) {
-            // Tải lại thông tin phim (rating mới)
+            // Reload movie info (new rating)
             viewModel.fetchMovieDetail(movieId)
         }
     }
