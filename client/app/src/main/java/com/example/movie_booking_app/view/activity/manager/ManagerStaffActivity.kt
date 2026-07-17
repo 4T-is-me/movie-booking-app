@@ -6,7 +6,6 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -155,7 +154,7 @@ class ManagerStaffActivity : AppCompatActivity() {
             val cinemaId = staffResponse.data.cinemaId
 
             if (activeStaffList.isEmpty()) {
-                Toast.makeText(this, "No active staff found in your cinema to schedule!", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.toast_no_active_staff), Toast.LENGTH_LONG).show()
                 return
             }
             // Khởi tạo Dialog mới truyền danh sách Staff phẳng và Callback save
@@ -168,7 +167,7 @@ class ManagerStaffActivity : AppCompatActivity() {
             )
             dialog.show(supportFragmentManager, "GenerateShiftDialogFragment")
         } else {
-            Toast.makeText(this, "Still fetching staff list data, please wait a moment!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.toast_fetching_staff_wait), Toast.LENGTH_SHORT).show()
             viewModel.loadStaffForManager()
         }
     }
@@ -185,7 +184,7 @@ class ManagerStaffActivity : AppCompatActivity() {
                             }
                             successDialog.show(supportFragmentManager, "GenerateShiftSuccessDialogFragment")
                         } else {
-                            showErrorDialog(response.message ?: "Generate shifts failed on server")
+                            showErrorDialog(response.message ?: getString(R.string.error_generate_shift_failed))
                         }
                         viewModel.clearGenerateShiftState()
                     }
@@ -230,10 +229,10 @@ class ManagerStaffActivity : AppCompatActivity() {
                 viewModel.updateShiftResult.collectLatest { response ->
                     if (response != null) {
                         if (response.success) {
-                            Toast.makeText(this@ManagerStaffActivity, response.message ?: "Update successful", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@ManagerStaffActivity, response.message ?: getString(R.string.toast_update_shift_success), Toast.LENGTH_SHORT).show()
                             viewModel.loadStaffShifts()
                         } else {
-                            showErrorDialog(response.message ?: "Unknown backend error")
+                            showErrorDialog(response.message ?: getString(R.string.error_unknown_backend))
                         }
                         viewModel.clearUpdateState()
                     }
@@ -265,10 +264,10 @@ class ManagerStaffActivity : AppCompatActivity() {
                 leaveRequestViewModel.approveResult.collectLatest { response ->
                     if (response != null) {
                         if (response.success) {
-                            Toast.makeText(this@ManagerStaffActivity, "Request approved", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@ManagerStaffActivity, getString(R.string.toast_leave_approved), Toast.LENGTH_SHORT).show()
                             leaveRequestViewModel.loadLeaveRequestForManager(selectedStatusFilter)
                         } else {
-                            showErrorDialog("Failed to approve request")
+                            showErrorDialog(getString(R.string.error_approve_leave_failed))
                         }
                         leaveRequestViewModel.clearApproveState()
                     }
@@ -282,10 +281,10 @@ class ManagerStaffActivity : AppCompatActivity() {
                 leaveRequestViewModel.rejectResult.collectLatest { response ->
                     if (response != null) {
                         if (response.success) {
-                            Toast.makeText(this@ManagerStaffActivity, "Request rejected", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@ManagerStaffActivity, getString(R.string.toast_leave_rejected), Toast.LENGTH_SHORT).show()
                             leaveRequestViewModel.loadLeaveRequestForManager(selectedStatusFilter)
                         } else {
-                            showErrorDialog("Failed to reject request")
+                            showErrorDialog(getString(R.string.error_reject_leave_failed))
                         }
                         leaveRequestViewModel.clearRejectState()
                     }
@@ -318,7 +317,7 @@ class ManagerStaffActivity : AppCompatActivity() {
     private fun setUpLeaveRequestList(requests: List<ManagerLeaveRequestResponse>) {
         if (requests.isEmpty()) {
             binding.rvStaffList.visibility = View.GONE
-            binding.txtNoStaffData?.text = "No leave requests found."
+            binding.txtNoStaffData?.text = getString(R.string.msg_no_leave_requests)
             binding.txtNoStaffData?.visibility = View.VISIBLE
         } else {
             binding.rvStaffList.visibility = View.VISIBLE
@@ -401,10 +400,10 @@ class ManagerStaffActivity : AppCompatActivity() {
     private fun showRejectDialog(item: ManagerLeaveRequestResponse) {
         val builder = androidx.appcompat.app.AlertDialog.Builder(this)
         val input = android.widget.EditText(this)
-        input.hint = "Enter reject reason"
-        builder.setTitle("Reject Request")
+        input.hint = getString(R.string.dialog_reject_hint)
+        builder.setTitle(getString(R.string.dialog_reject_title))
             .setView(input)
-            .setPositiveButton("Reject") { _, _ ->
+            .setPositiveButton(getString(R.string.dialog_action_reject)) { _, _ ->
                 val reason = input.text.toString()
                 if (reason.isNotBlank()) {
                     leaveRequestViewModel.rejectLeaveRequest(item.leaveRequestId, reason)

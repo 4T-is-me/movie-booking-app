@@ -1,13 +1,10 @@
 package com.example.movie_booking_app.view.fragment
 
-import android.app.DatePickerDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
@@ -21,12 +18,9 @@ import com.example.movie_booking_app.utils.AutoStaffSchedulingAlgorithm
 import com.example.movie_booking_app.utils.StaffShiftDraft
 import com.example.movie_booking_app.view.adapter.manager.ManagerShiftDraftPreviewAdapter
 import com.example.movie_booking_app.view.adapter.manager.ManagerStaffSelectAdapter
-import java.text.SimpleDateFormat
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
-import java.util.Calendar
-import java.util.Locale
 
 class GenerateShiftDialogFragment(
     private val staffList: List<ManagerStaffItem>,
@@ -55,8 +49,8 @@ class GenerateShiftDialogFragment(
         setupStaffSelectionRecyclerView()
         setupPreviewRecyclerView()
         setUpClickListener()
-
     }
+
     private fun setUpClickListener(){
         binding.btnCancel.setOnClickListener {
             dismiss()
@@ -67,19 +61,19 @@ class GenerateShiftDialogFragment(
                 val staffPerShiftInput = binding.etStaffPerShift.text.toString().trim()
 
                 if (staffPerShiftInput.isEmpty()) {
-                    showError("Please enter staff count!")
+                    showError(getString(R.string.error_empty_staff_count))
                     return@setOnClickListener
                 }
 
                 val baseStaffCount = staffPerShiftInput.toIntOrNull() ?: 2
                 if (baseStaffCount <= 0) {
-                    showError("Staff count must be greater than 0")
+                    showError(getString(R.string.error_invalid_staff_count))
                     return@setOnClickListener
                 }
 
                 val selectedStaff = staffSelectAdapter.getSelectedStaff()
                 if (selectedStaff.isEmpty()) {
-                    showError("Please select at least 1 staff member!")
+                    showError(getString(R.string.error_empty_staff_selection))
                     return@setOnClickListener
                 }
 
@@ -106,14 +100,13 @@ class GenerateShiftDialogFragment(
 
                 if (selectedStaff.size < maxRequiredStaffForPeriod) {
                     if (hasSpecialDay) {
-                        showError("Because this period includes weekends, each shift needs ${baseStaffCount + 1} staff. Please select at least ${baseStaffCount + 1} staff members!")
+                        showError(getString(R.string.error_weekend_insufficient_staff, baseStaffCount + 1, baseStaffCount + 1))
                     } else {
-                        showError("Each shift needs $baseStaffCount staff. Please select at least $baseStaffCount staff members!")
+                        showError(getString(R.string.error_weekday_insufficient_staff, baseStaffCount, baseStaffCount))
                     }
                     return@setOnClickListener
                 }
 
-                // Hàm này sẽ check trước, nếu thiếu người gánh ca nó sẽ trả về false kèm câu thông báo lỗi chi tiết
                 val validationResult = AutoStaffSchedulingAlgorithm.validateSchedulingCapability(
                     startDate = startLocal,
                     endDate = endLocal,
@@ -131,7 +124,6 @@ class GenerateShiftDialogFragment(
                 computedStartDateStr = startLocal.toString()
                 computedEndDateStr = endLocal.toString()
 
-                // Gọi hàm sinh ca (lúc này thuật toán mới đã fix chặt chẽ dailyCount == 0, tối đa chỉ ra được ca thực tế, không bị 98 nữa)
                 generatedDrafts = AutoStaffSchedulingAlgorithm.generateStaffSchedule(
                     startDate = startLocal,
                     endDate = endLocal,
@@ -141,7 +133,7 @@ class GenerateShiftDialogFragment(
                 )
 
                 if (generatedDrafts.isEmpty()) {
-                    showError("Failed to schedule. The selected staff combination cannot fulfill the 6-day work week constraint.")
+                    showError(getString(R.string.error_failed_generation))
                     return@setOnClickListener
                 }
 
@@ -151,10 +143,9 @@ class GenerateShiftDialogFragment(
                 binding.tvStaffSelectionTitle.visibility = View.GONE
                 binding.rvStaffSelection.visibility = View.GONE
 
-                binding.btnConfirmGenerate.text = "Save"
+                binding.btnConfirmGenerate.text = getString(R.string.btn_save)
                 isPreviewMode = true
             } else {
-
                 if (computedStartDateStr.isEmpty() || computedEndDateStr.isEmpty()) return@setOnClickListener
 
                 val requestPayload = GenerateShiftRequest(
@@ -178,7 +169,7 @@ class GenerateShiftDialogFragment(
     }
 
     private fun setupDurationSpinner() {
-        val options = arrayOf("1 Week", "1 Month")
+        val options = resources.getStringArray(R.array.shift_duration_options)
         val adapter = ArrayAdapter(requireContext(), R.layout.item_spinner_text, options).apply {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
@@ -201,6 +192,7 @@ class GenerateShiftDialogFragment(
             adapter = previewAdapter
         }
     }
+
     private fun showError(message: String) {
         binding.tvErrorMessage.apply {
             text = message
@@ -222,5 +214,4 @@ class GenerateShiftDialogFragment(
         super.onDestroyView()
         _binding = null
     }
-
 }
