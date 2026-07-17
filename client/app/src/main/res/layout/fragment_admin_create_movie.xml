@@ -216,11 +216,11 @@
 
         <!-- Language -->
         <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="Language (e.g. Tiếng Việt (Phụ đề Tiếng Anh))"
+            android:hint="Language"
             app:boxStrokeColor="@color/text_input_stroke"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="2dp"
@@ -231,10 +231,11 @@
             app:boxBackgroundMode="outline"
             app:hintTextColor="#808080">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtLanguage"
+            <AutoCompleteTextView
+                android:id="@+id/spnLanguage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="none"
                 android:textColor="@color/white" />
         </com.google.android.material.textfield.TextInputLayout>
 

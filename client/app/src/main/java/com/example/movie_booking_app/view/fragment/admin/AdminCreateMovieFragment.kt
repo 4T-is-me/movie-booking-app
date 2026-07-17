@@ -74,7 +74,7 @@ class AdminCreateMovieFragment : Fragment() {
         val edtDuration = view.findViewById<TextInputEditText>(R.id.edtDuration)
         val edtReleaseDate = view.findViewById<TextInputEditText>(R.id.edtReleaseDate)
         val edtEndDate = view.findViewById<TextInputEditText>(R.id.edtEndDate)
-        val edtLanguage = view.findViewById<TextInputEditText>(R.id.edtLanguage)
+        val spnLanguage = view.findViewById<AutoCompleteTextView>(R.id.spnLanguage)
 
         val edtDirector = view.findViewById<TextInputEditText>(R.id.edtDirector)
         val edtActors = view.findViewById<TextInputEditText>(R.id.edtActors)
@@ -137,6 +137,15 @@ class AdminCreateMovieFragment : Fragment() {
         )
         edtCountry.setAdapter(countryAdapter)
 
+        // Setup Language Dropdown
+        val languageOptions = arrayOf("Vietnamese (Dubbing)", "Vietnamese (Subtitle)", "English (Subtitle)", "English (Original)", "Korean (Subtitle)", "Japanese (Subtitle)")
+        val languageAdapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_dropdown_item_1line,
+            languageOptions
+        )
+        spnLanguage.setAdapter(languageAdapter)
+
         // Pre-fill if editing
         editingMovie = arguments?.getSerializable("movie") as? com.example.movie_booking_app.data.model.entity.Movie
         editingMovie?.let { movie ->
@@ -147,7 +156,7 @@ class AdminCreateMovieFragment : Fragment() {
             edtDuration.setText(movie.duration?.toString())
             edtReleaseDate.setText(DateUtils.formatMovieDate(movie.releaseDate))
             edtEndDate.setText(DateUtils.formatMovieDate(movie.endDate))
-            edtLanguage.setText(movie.language)
+            spnLanguage.setText(movie.language, false)
 
             edtDirector.setText(movie.director?.joinToString(", "))
             edtActors.setText(movie.actors?.joinToString(", "))
@@ -214,7 +223,7 @@ class AdminCreateMovieFragment : Fragment() {
                 } else null
             } catch (e: Exception) { endDateStr }
 
-            val language = edtLanguage.text.toString()
+            val language = spnLanguage.text.toString()
             val director = edtDirector.text.toString().split(",").map { it.trim() }.filter { it.isNotEmpty() }
             val actors = edtActors.text.toString().split(",").map { it.trim() }.filter { it.isNotEmpty() }
             val description = edtDescription.text.toString()

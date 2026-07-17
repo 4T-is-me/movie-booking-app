@@ -18,8 +18,12 @@ import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Movie
 import com.example.movie_booking_app.view.adapter.AdminMovieAdapter
 import com.example.movie_booking_app.viewmodel.MovieViewModel
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.widget.Button
+import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -98,14 +102,27 @@ class AdminMovieListFragment : Fragment() {
     }
 
     private fun showDeleteConfirmationDialog(movie: Movie) {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle("Delete Movie")
-            .setMessage("Are you sure you want to delete the movie \"${movie.movieName}\"?")
-            .setNegativeButton("Cancel", null)
-            .setPositiveButton("Delete") { _, _ ->
-                movie.id?.let { viewModel.deleteMovie(it) }
-            }
-            .show()
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(R.layout.dialog_confirm_delete_staff)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setCancelable(true)
+
+        val tvDeleteMessage = dialog.findViewById<TextView>(R.id.tvDeleteMessage)
+        val btnCancel = dialog.findViewById<MaterialButton>(R.id.btnCancelDelete)
+        val btnConfirm = dialog.findViewById<MaterialButton>(R.id.btnConfirmDelete)
+
+        tvDeleteMessage.text = "Are you sure you want to delete the movie \"${movie.movieName}\"?"
+
+        btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        btnConfirm.setOnClickListener {
+            dialog.dismiss()
+            movie.id?.let { viewModel.deleteMovie(it) }
+        }
+
+        dialog.show()
     }
 
     private fun observeViewModel() {
