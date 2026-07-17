@@ -550,6 +550,15 @@
     <string name="auto_str_default_show_times">Default Show Times</string>
     <string name="auto_str_choose_poster">Choose Poster</string>
     <string name="auto_str_save_movie">SAVE MOVIE</string>
+    <string name="auto_str_movie_name">Movie Name</string>
+    <string name="auto_str_duration_mins">Duration (mins)</string>
+    <string name="auto_str_release_date">Release Date</string>
+    <string name="auto_str_end_date_1">End Date</string>
+    <string name="auto_str_country_search_to_select">Country (Search to select)</string>
+    <string name="auto_str_language_e_g_ti_ng_vi_t_ph_ti">Language (e.g. Tiếng Việt, Phụ đề)</string>
+    <string name="auto_str_director_s_comma_separated">Director(s) (comma separated)</string>
+    <string name="auto_str_actors_comma_separated">Actors (comma separated)</string>
+    <string name="auto_str_description">Description</string>
     <string name="auto_str_active_1">Active</string>
     <string name="auto_str_inactive">Inactive</string>
     <string name="auto_str_total">Total</string>
