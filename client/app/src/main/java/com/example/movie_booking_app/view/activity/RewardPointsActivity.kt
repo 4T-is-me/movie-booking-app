@@ -3,6 +3,7 @@ package com.example.movie_booking_app.view.activity
 import android.content.Intent
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -13,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
+import com.example.movie_booking_app.data.model.entity.UserProfile
 import com.example.movie_booking_app.databinding.ActivityRewardPointsBinding
 import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.view.adapter.ScoreHistoryAdapter
@@ -33,6 +35,19 @@ class RewardPointsActivity : AppCompatActivity() {
 
         setupRecyclerView()
         observeViewModel()
+
+        val userProfile = intent.getSerializableExtra("USER_PROFILE") as? UserProfile
+        Log.d("member", userProfile.toString())
+        userProfile?.let {
+            val safeId = it.accountId?.takeLast(8)?.uppercase() ?: "UNKNOWN"
+            binding.tvUserInfo.text = "${it.fullName ?: "-"} • $safeId"
+
+            val totalSpent = it.totalSpent?.toDouble() ?: 0.0
+            val rewardPoints = it.rewardPoints ?: 0
+            val rank = it.membershipRank ?: "bronze"
+
+            updateCardRankStyle(totalSpent, rewardPoints, rank)
+        }
 
         viewModel.fetchScoreHistory()
 
@@ -59,21 +74,22 @@ class RewardPointsActivity : AppCompatActivity() {
                 launch {
                     viewModel.memberState.collect { member ->
                         member?.let {
-                            //assign name + id with last 8 characters
                             binding.tvUserInfo.text = "${it.fullName} • ${it._id.takeLast(8).uppercase()}"
+                            updateCardRankStyle(it.totalSpent, it.rewardPoints, it.membershipRank)
                         }
                     }
                 }
 
-                // list score history
                 launch {
                     viewModel.scoreHistoryState.collect { historyList ->
                         if (historyList.isEmpty()) {
                             binding.rvHistory.visibility = View.GONE
                             binding.tvEmptyHistory.visibility = View.VISIBLE
-                            updateCardRankStyle(0.0, 0, "bronze")
-                        } else {
 
+                            if (binding.tvUserInfo.text.isNullOrEmpty()) {
+                                updateCardRankStyle(0.0, 0, "bronze")
+                            }
+                        } else {
                             binding.rvHistory.visibility = View.VISIBLE
                             binding.tvEmptyHistory.visibility = View.GONE
 
@@ -91,7 +107,7 @@ class RewardPointsActivity : AppCompatActivity() {
                         }
                     }
                 }
-                // error
+
                 launch {
                     viewModel.errorMessage.collect { error ->
                         error?.let {
@@ -103,7 +119,7 @@ class RewardPointsActivity : AppCompatActivity() {
         }
     }
 
-    //Change card color based on rank
+    // Change card color based on rank
     private fun updateCardRankStyle(totalSpent: Double, currentPoints: Int, memberShipRank: String) {
         val colors: IntArray
         val rankText: String
@@ -163,11 +179,12 @@ class RewardPointsActivity : AppCompatActivity() {
                 nextTierLeftText = String.format("%,d more to reach Silver Member", moneyLeft)
             }
         }
+
         // Create a Gradient Drawable with a 135-degree diagonal sweep from a dynamic color array.
         val gradientDrawable = GradientDrawable(GradientDrawable.Orientation.TL_BR, colors)
         gradientDrawable.cornerRadius = dpToPx(20)
 
-        //Directly overwrite the old XML code with the newly created gradient color.
+        // Directly overwrite the old XML code with the newly created gradient color.
         binding.layoutMemberCard.background = gradientDrawable
         binding.tvBadgeText.text = rankText
         binding.tvPointsNum.text = String.format("%,d", currentPoints)
@@ -180,7 +197,8 @@ class RewardPointsActivity : AppCompatActivity() {
         binding.tvProgressLabel.text = progressLabelText
         binding.tvNextTierHint.text = nextTierLeftText
     }
-    // A helper function that converts dp values ​​to pixels to ensure accurate corner rounding across all phone screens.
+
+    // A helper function that converts dp values to pixels to ensure accurate corner rounding across all phone screens.
     private fun dpToPx(dp: Int): Float {
         return dp * resources.displayMetrics.density
     }

@@ -788,10 +788,13 @@
     <string name="status_assigned_label">Assigned</string>
     <string name="status_completed_label">Completed</string>
     <string name="status_need_replacement_label">NeedReplacement</string>
+    <string name="status_absent_label">Absent</string>
     <string name="btn_approve">Approve</string>
     <string name="btn_reject">Reject</string>
     <string name="undo_message_default">Request approved</string>
     <string name="btn_undo">Undo</string>
+    <string name="hint_select_staffName">Staff name</string>
+    <string name="hint_select_staffPosition">Staff position</string>
 
     <!-- Auto-extracted strings (Node Script) -->
     <string name="auto_str_reviews">Reviews</string>
@@ -946,4 +949,76 @@
     <string name="auto_str_points_to_redeem">Points to redeem</string>
     <string name="auto_str_enter_coupon_code_1">Enter coupon code</string>
     <string name="auto_str_enter_value">Enter value</string>
+
+    <!--  (Shift) -->
+    <string name="toast_no_active_staff">No active staff found in your cinema to schedule!</string>
+    <string name="toast_fetching_staff_wait">Still fetching staff list data, please wait a moment!</string>
+    <string name="error_generate_shift_failed">Generate shifts failed on server</string>
+    <string name="toast_update_shift_success">Update successful</string>
+    <string name="error_unknown_backend">Unknown backend error</string>
+
+    <!-- (Leave Request) -->
+    <string name="toast_leave_approved">Request approved</string>
+    <string name="error_approve_leave_failed">Failed to approve request</string>
+    <string name="toast_leave_rejected">Request rejected</string>
+    <string name="error_reject_leave_failed">Failed to reject request</string>
+    <string name="msg_no_leave_requests">No leave requests found.</string>
+
+    <!-- (Reject Dialog) -->
+    <string name="dialog_reject_title">Reject Request</string>
+    <string name="dialog_reject_hint">Enter reject reason</string>
+    <string name="dialog_action_reject">Reject</string>
+    <string name="dialog_action_cancel">Cancel</string>
+    <string name="toast_reject_reason_empty">Reason cannot be empty</string>
+
+    <!-- preview shift -->
+    <string name="preview_avatar">NC</string>
+    <string name="preview_staff_name">John Doe</string>
+    <string name="preview_reason">"Regular health checkup at General Hospital"</string>
+
+    <!-- Fallback avatar text -->
+    <string name="default_avatar_initials">ST</string>
+
+    <!-- Format info shift - reason -->
+    <string name="format_shift_info">%1$s - %2$s</string>
+    <string name="format_reason">\"%1$s\"</string>
+
+    <!-- Text Undo -->
+    <string name="undo_msg_approved">Request approved</string>
+    <string name="undo_msg_rejected">Request rejected</string>
+
+    <string name="default_position">Staff</string>
+
+    <!-- UI Format Strings -->
+    <string name="format_shift_date">Date: %1$s</string>
+    <string name="format_shift_detail">Shift: %1$s (%2$s)</string>
+    <string name="format_rating">⭐ %1$.1f</string>
+    <!-- Spinner Options -->
+    <string-array name="shift_duration_options">
+        <item>1 Week</item>
+        <item>1 Month</item>
+    </string-array>
+
+    <!-- Button States -->
+    <string name="btn_save">Save</string>
+
+    <!-- Validation Error Messages -->
+    <string name="error_empty_staff_count">Please enter staff count!</string>
+    <string name="error_invalid_staff_count">Staff count must be greater than 0</string>
+    <string name="error_empty_staff_selection">Please select at least 1 staff member!</string>
+    <string name="error_failed_generation">Failed to schedule. The selected staff combination cannot fulfill the 6-day work week constraint.</string>
+
+    <!-- Dynamic Error Messages (String Format) -->
+    <string name="error_weekend_insufficient_staff">Because this period includes weekends, each shift needs %1$d staff. Please select at least %2$d staff members!</string>
+    <string name="error_weekday_insufficient_staff">Each shift needs %1$d staff. Please select at least %2$d staff members!</string>
+
+    <!-- Placeholders -->
+    <string name="filter_placeholder_start_date">Select the start date</string>
+    <string name="filter_placeholder_end_date">Select the last day</string>
+
+    <!-- Toast Messages -->
+    <string name="error_start_after_end">Start date cannot be after end date</string>
+    <string name="error_end_before_start">End date cannot be before start date</string>
+    <string name="error_missing_end_date">Please select end date</string>
+    <string name="error_missing_start_date">Please select start date</string>
 </resources>

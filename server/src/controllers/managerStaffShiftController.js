@@ -44,22 +44,46 @@ const updateShifts = async (req, res, next) => {
   }
 }
 
-// Generate staff shifts
-const generateShift = async (req, res, next) => {
-  try {
-    const accountId = req.user.accountId;
-    const dateRange = req.body; // { startDate: "...", endDate: "..." }
-    const result = await ManagerStaffShiftService.generateShift(accountId, dateRange);
-    return res.status(StatusCodes.CREATED).json({
-      success: true,
-      message: "Successfully generate staff shifts.",
-      data: result
-    })
-  } catch (error) {
-    next(error);
-  }
-}
+// Get staff list for manager's cinema (used by FE algorithm)
+const getStaffForManager = async (req, res, next) => {
+    try {
+        const accountId = req.user.accountId;
+        const result = await ManagerStaffShiftService.getStaffForManager(accountId);
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            message: "Successfully retrieved staff list.",
+            data: result
+        });
+    } catch (error) {
+        next(error);
+    }
+};
 
+// Generate staff shifts (receives pre-computed array from FE algorithm)
+const generateShift = async (req, res, next) => {
+    try {
+        const accountId = req.user.accountId;
+        const { dateRange, config, shifts } = req.body;
+
+        // Kiểm tra tính hợp lệ thô của request payload
+        if (!shifts || !Array.isArray(shifts) || shifts.length === 0) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                success: false,
+                message: "No shift data provided from frontend algorithm."
+            });
+        }
+        const result = await ManagerStaffShiftService.generateShift(accountId, dateRange, config, shifts);
+
+        res.status(StatusCodes.CREATED).json({
+            success: true,
+            message: result.message,
+            data: result
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
 
 // Get staff detail - Manager
 export const getStaffDetail = async (req, res, next) => {
@@ -134,6 +158,7 @@ const rejectLeaveRequest = async(req, res, next) => {
 export const StaffShiftController = {
   getShifts,
   updateShifts,
+  getStaffForManager,
   generateShift,
   getStaffDetail,
   getLeaveRequestForManager,

@@ -4,7 +4,6 @@ import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
@@ -21,6 +20,7 @@ class ManagerStaffShiftAdapter(
     private val onItemClick: ((ShiftItemResponse) -> Unit)? = null ,
     private val onEditClick: ((ShiftItemResponse) -> Unit)? = null
 ): RecyclerView.Adapter<ManagerStaffShiftAdapter.ShiftViewHolder>() {
+
     inner class ShiftViewHolder(val binding: ItemStaffCardBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShiftViewHolder {
@@ -36,47 +36,45 @@ class ManagerStaffShiftAdapter(
         binding.tvStaffName.text = shiftItem.staffName ?: ""
         binding.tvAvatarText.text = NameFormatter.getAvatarInitials(shiftItem.staffName ?: "")
 
-        val positionText = shiftItem.position ?: "Staff"
+        val positionText = shiftItem.position ?: context.getString(R.string.default_position)
         val shiftName = shiftItem.shift ?: ""
         val shiftTime = getShiftTimeDisplay(shiftName)
 
         binding.tvPosition.text = positionText
 
-
-        binding.tvWorkDate.text = "Date: ${formatDate(shiftItem.workDate)}"
-        binding.tvShift.text = "Shift: $shiftName ($shiftTime)"
+        binding.tvWorkDate.text = context.getString(R.string.format_shift_date, formatDate(shiftItem.workDate))
+        binding.tvShift.text = context.getString(R.string.format_shift_detail, shiftName, shiftTime)
 
         val rating = shiftItem.rating ?: 0.0
         if (rating >= 0) {
             binding.tvStaffRating.visibility = View.VISIBLE
-            binding.tvStaffRating.text = "⭐ ${String.format("%.1f", rating)}"
+            binding.tvStaffRating.text = context.getString(R.string.format_rating, rating)
         } else {
             binding.tvStaffRating.visibility = View.GONE
         }
 
-        //  Status Badge (Active / Assigned / Completed / Absent)
         when(shiftItem.status) {
             "Assigned" -> {
-                binding.tvStatusBadge.text = "Assigned"
+                binding.tvStatusBadge.text = "Assigned" 
                 binding.tvStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.status_active_text)) // green
                 binding.tvStatusBadge.backgroundTintList =
                     ColorStateList.valueOf(ContextCompat.getColor(context, R.color.status_active_bg))
             }
-            "Completed" -> {
+             "Completed" -> {
                 binding.tvStatusBadge.text = "Completed"
                 binding.tvStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.status_complete_text)) // yellow Gold
                 binding.tvStatusBadge.backgroundTintList =
                     ColorStateList.valueOf(ContextCompat.getColor(context, R.color.status_complete_bg))
             }
-            "Absent" -> {
+            "Absent"-> {
                 binding.tvStatusBadge.text = "Absent"
                 binding.tvStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.status_leave_text)) // red
                 binding.tvStatusBadge.backgroundTintList =
-                    ColorStateList.valueOf(ContextCompat.getColor(context, R.color.status_active_bg))
+                    ColorStateList.valueOf(ContextCompat.getColor(context, R.color.status_leave_bg)) // Đã sửa màu bg cho khớp với màu chữ leave
             }
             else -> {
-                binding.tvStatusBadge.text = "Active"
-                binding.tvStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.status_active_text)) // green
+                binding.tvStatusBadge.text = Constants.STATUS_SHIFT[0]
+                binding.tvStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.status_active_text)) // hoặc màu mặc định tùy bồ
                 binding.tvStatusBadge.backgroundTintList =
                     ColorStateList.valueOf(ContextCompat.getColor(context, R.color.status_active_bg))
             }
@@ -99,13 +97,12 @@ class ManagerStaffShiftAdapter(
         notifyDataSetChanged()
     }
 
-
     private fun getShiftTimeDisplay(shift: String): String {
         return when (shift) {
-            "Morning" -> Constants.MORNING
-            "Afternoon" -> Constants.AFTERNOON
-            "Evening" -> Constants.EVENING
-            "Night" -> Constants.NIGHT
+            Constants.SHIFTS[0] -> Constants.MORNING
+            Constants.SHIFTS[1] -> Constants.AFTERNOON
+            Constants.SHIFTS[2] -> Constants.EVENING
+            Constants.SHIFTS[3] -> Constants.NIGHT
             else -> Constants.FULLTIME
         }
     }

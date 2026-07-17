@@ -123,6 +123,7 @@ const getProfile = async (accountId) => {
     }
 
     return {
+        accountId: account._id.toString(),
         username: account.username,
         fullName: account.memberInfo?.fullName,
         email: account.email,

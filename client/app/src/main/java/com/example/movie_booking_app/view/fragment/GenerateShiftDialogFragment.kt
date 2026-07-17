@@ -1,192 +1,210 @@
 package com.example.movie_booking_app.view.fragment
 
-import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import android.widget.ArrayAdapter
 import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.movie_booking_app.R
+import com.example.movie_booking_app.data.model.request.DateRangePayload
+import com.example.movie_booking_app.data.model.request.GenerateShiftRequest
+import com.example.movie_booking_app.data.model.request.NewShiftRequestItem
+import com.example.movie_booking_app.data.model.request.ShiftConfigPayload
+import com.example.movie_booking_app.data.model.response.ManagerStaffItem
 import com.example.movie_booking_app.databinding.FragmentGenerateShiftDialogBinding
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
+import com.example.movie_booking_app.utils.AutoStaffSchedulingAlgorithm
+import com.example.movie_booking_app.utils.StaffShiftDraft
+import com.example.movie_booking_app.view.adapter.manager.ManagerShiftDraftPreviewAdapter
+import com.example.movie_booking_app.view.adapter.manager.ManagerStaffSelectAdapter
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.temporal.TemporalAdjusters
 
 class GenerateShiftDialogFragment(
-    private val onGenerateClick: (startDate: String, endDate: String) -> Unit
+    private val staffList: List<ManagerStaffItem>,
+    private val cinemaId: String,
+    private val onSaveClick: (GenerateShiftRequest) -> Unit
 ) : DialogFragment() {
 
     private var _binding: FragmentGenerateShiftDialogBinding? = null
     private val binding get() = _binding!!
+    private var computedStartDateStr: String = ""
+    private var computedEndDateStr: String = ""
+    private lateinit var previewAdapter: ManagerShiftDraftPreviewAdapter
+    private lateinit var staffSelectAdapter: ManagerStaffSelectAdapter
+    private var generatedDrafts: List<StaffShiftDraft> = emptyList()
+    private var isPreviewMode = false
 
-    private var selectedStartDate: String? = null
-    private var selectedEndDate: String? = null
-
-    // Format "yyyy-MM-dd" to send API
-    private val apiDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-    private val displayDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-
-    private var startCalendar: Calendar? = null
-    private var endCalendar: Calendar? = null
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentGenerateShiftDialogBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        setupDurationSpinner()
+        setupStaffSelectionRecyclerView()
+        setupPreviewRecyclerView()
+        setUpClickListener()
+    }
+
+    private fun setUpClickListener(){
         binding.btnCancel.setOnClickListener {
             dismiss()
         }
 
-        // Date Picker cho Start Date (isStartDate = true)
-        binding.tvStartDate.setOnClickListener {
-            showDatePicker(
-                isStartDate = true,
-                currentSelected = startCalendar
-            ) { calendar, apiStr, displayStr ->
-                if (endCalendar != null && calendar.after(endCalendar)) {
-                    Toast.makeText(
-                        context,
-                        "Start date cannot be after end date",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return@showDatePicker
-                }
-                startCalendar = calendar
-                selectedStartDate = apiStr
-                binding.tvStartDate.text = displayStr
-            }
-        }
-
-        // Date Picker cho End Date (isStartDate = false)
-        binding.tvEndDate.setOnClickListener {
-            showDatePicker(
-                isStartDate = false,
-                currentSelected = endCalendar
-            ) { calendar, apiStr, displayStr ->
-                if (startCalendar != null && calendar.before(startCalendar)) {
-                    Toast.makeText(
-                        context,
-                        "End date cannot be before start date",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return@showDatePicker
-                }
-                endCalendar = calendar
-                selectedEndDate = apiStr
-                binding.tvEndDate.text = displayStr
-            }
-        }
-
         binding.btnConfirmGenerate.setOnClickListener {
-            val startDate = selectedStartDate
-            val endDate = selectedEndDate
+            if (!isPreviewMode) {
+                val staffPerShiftInput = binding.etStaffPerShift.text.toString().trim()
 
-            // Check null/empty
-            if (startDate.isNullOrEmpty() || endDate.isNullOrEmpty()) {
-                Toast.makeText(context, "Please select both start date and end date!", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            // Check minimum 7 days standard according to UTC/Day distance
-            if (startCalendar != null && endCalendar != null) {
-                val startCal = (startCalendar!!.clone() as Calendar).apply {
-                    set(Calendar.HOUR_OF_DAY, 0)
-                    set(Calendar.MINUTE, 0)
-                    set(Calendar.SECOND, 0)
-                    set(Calendar.MILLISECOND, 0)
-                }
-                val endCal = (endCalendar!!.clone() as Calendar).apply {
-                    set(Calendar.HOUR_OF_DAY, 0)
-                    set(Calendar.MINUTE, 0)
-                    set(Calendar.SECOND, 0)
-                    set(Calendar.MILLISECOND, 0)
-                }
-
-                val diffInMillis = endCal.timeInMillis - startCal.timeInMillis
-                val diffInDays = Math.round(diffInMillis.toDouble() / (1000 * 60 * 60 * 24)).toInt() + 1
-
-                if (diffInDays < 7) {
-                    Toast.makeText(
-                        context,
-                        "Selected range is $diffInDays days. You must select at least 7 days!",
-                        Toast.LENGTH_LONG
-                    ).show()
+                if (staffPerShiftInput.isEmpty()) {
+                    showError(getString(R.string.error_empty_staff_count))
                     return@setOnClickListener
                 }
-            }
 
-            onGenerateClick(startDate, endDate)
-            dismiss()
+                val baseStaffCount = staffPerShiftInput.toIntOrNull() ?: 2
+                if (baseStaffCount <= 0) {
+                    showError(getString(R.string.error_invalid_staff_count))
+                    return@setOnClickListener
+                }
+
+                val selectedStaff = staffSelectAdapter.getSelectedStaff()
+                if (selectedStaff.isEmpty()) {
+                    showError(getString(R.string.error_empty_staff_selection))
+                    return@setOnClickListener
+                }
+
+                val today = LocalDate.now()
+                val startLocal = today.with(TemporalAdjusters.next(DayOfWeek.MONDAY))
+                val endLocal = if (binding.spinnerDuration.selectedItemPosition == 1) {
+                    startLocal.plusMonths(1).minusDays(1)
+                } else {
+                    startLocal.plusDays(6)
+                }
+
+                var hasSpecialDay = false
+                var tempDate = startLocal
+
+                while (!tempDate.isAfter(endLocal)) {
+                    if (tempDate.dayOfWeek == DayOfWeek.SATURDAY || tempDate.dayOfWeek == DayOfWeek.SUNDAY) {
+                        hasSpecialDay = true
+                        break
+                    }
+                    tempDate = tempDate.plusDays(1)
+                }
+
+                val maxRequiredStaffForPeriod = if (hasSpecialDay) baseStaffCount + 1 else baseStaffCount
+
+                if (selectedStaff.size < maxRequiredStaffForPeriod) {
+                    if (hasSpecialDay) {
+                        showError(getString(R.string.error_weekend_insufficient_staff, baseStaffCount + 1, baseStaffCount + 1))
+                    } else {
+                        showError(getString(R.string.error_weekday_insufficient_staff, baseStaffCount, baseStaffCount))
+                    }
+                    return@setOnClickListener
+                }
+
+                val validationResult = AutoStaffSchedulingAlgorithm.validateSchedulingCapability(
+                    startDate = startLocal,
+                    endDate = endLocal,
+                    selectedStaff = selectedStaff,
+                    baseStaffPerShift = baseStaffCount
+                )
+
+                if (!validationResult.first) {
+                    showError(validationResult.second)
+                    return@setOnClickListener
+                }
+
+                binding.tvErrorMessage.visibility = View.GONE
+
+                computedStartDateStr = startLocal.toString()
+                computedEndDateStr = endLocal.toString()
+
+                generatedDrafts = AutoStaffSchedulingAlgorithm.generateStaffSchedule(
+                    startDate = startLocal,
+                    endDate = endLocal,
+                    selectedStaff = selectedStaff,
+                    cinemaId = cinemaId,
+                    baseStaffPerShift = baseStaffCount
+                )
+
+                if (generatedDrafts.isEmpty()) {
+                    showError(getString(R.string.error_failed_generation))
+                    return@setOnClickListener
+                }
+
+                previewAdapter.updateData(generatedDrafts)
+                binding.tvPreviewTitle.visibility = View.VISIBLE
+                binding.rvPreviewShifts.visibility = View.VISIBLE
+                binding.tvStaffSelectionTitle.visibility = View.GONE
+                binding.rvStaffSelection.visibility = View.GONE
+
+                binding.btnConfirmGenerate.text = getString(R.string.btn_save)
+                isPreviewMode = true
+            } else {
+                if (computedStartDateStr.isEmpty() || computedEndDateStr.isEmpty()) return@setOnClickListener
+
+                val requestPayload = GenerateShiftRequest(
+                    dateRange = DateRangePayload(computedStartDateStr, computedEndDateStr),
+                    config = ShiftConfigPayload(binding.etStaffPerShift.text.toString().toInt()),
+                    shifts = generatedDrafts.map {
+                        NewShiftRequestItem(
+                            staffId = it.staffId,
+                            cinemaId = it.cinemaId,
+                            workDate = it.workDate,
+                            shift = it.shift,
+                            status = it.status,
+                            isHoliday = it.isHoliday
+                        )
+                    }
+                )
+                onSaveClick(requestPayload)
+                dismiss()
+            }
         }
     }
 
-    private fun showDatePicker(
-        isStartDate: Boolean,
-        currentSelected: Calendar?,
-        onDateSelected: (Calendar, String, String) -> Unit
-    ) {
-        val calendar = currentSelected ?: Calendar.getInstance()
-
-        // get 00:00:00 today
-        val today = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
+    private fun setupDurationSpinner() {
+        val options = resources.getStringArray(R.array.shift_duration_options)
+        val adapter = ArrayAdapter(requireContext(), R.layout.item_spinner_text, options).apply {
+            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
+        binding.spinnerDuration.adapter = adapter
+    }
 
-        val datePickerDialog = DatePickerDialog(
-            requireContext(),
-            { _, year, month, dayOfMonth ->
-                val localCal = Calendar.getInstance().apply {
-                    set(year, month, dayOfMonth, 0, 0, 0)
-                    set(Calendar.MILLISECOND, 0)
-                }
-
-                // check date in the past
-                if (localCal.before(today)) {
-                    Toast.makeText(
-                        context,
-                        "Cannot select a date in the past!",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return@DatePickerDialog
-                }
-
-                val apiDateStr = apiDateFormat.format(localCal.time)
-                val displayDateStr = displayDateFormat.format(localCal.time)
-
-                onDateSelected(localCal, apiDateStr, displayDateStr)
-            },
-            calendar.get(Calendar.YEAR),
-            calendar.get(Calendar.MONTH),
-            calendar.get(Calendar.DAY_OF_MONTH)
-        )
-
-        //block date in the past
-        val minDateInMillis = if (!isStartDate && startCalendar != null) {
-            startCalendar!!.timeInMillis
-        } else {
-            today.timeInMillis
+    private fun setupStaffSelectionRecyclerView() {
+        staffSelectAdapter = ManagerStaffSelectAdapter { _ -> }
+        binding.rvStaffSelection.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = staffSelectAdapter
         }
+        staffSelectAdapter.submitList(staffList)
+    }
 
-        datePickerDialog.datePicker.minDate = minDateInMillis
-        datePickerDialog.show()
+    private fun setupPreviewRecyclerView() {
+        previewAdapter = ManagerShiftDraftPreviewAdapter()
+        binding.rvPreviewShifts.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = previewAdapter
+        }
+    }
+
+    private fun showError(message: String) {
+        binding.tvErrorMessage.apply {
+            text = message
+            visibility = View.VISIBLE
+        }
     }
 
     override fun onStart() {
         super.onStart()
         dialog?.window?.apply {
             val displayMetrics = resources.displayMetrics
-            val width = (displayMetrics.widthPixels * 0.85).toInt() // 85%
-
+            val width = (displayMetrics.widthPixels * 0.90).toInt()
             setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT)
             setBackgroundDrawableResource(android.R.color.transparent)
         }

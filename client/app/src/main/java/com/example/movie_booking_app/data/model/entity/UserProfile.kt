@@ -1,9 +1,12 @@
 package com.example.movie_booking_app.data.model.entity
 
+import java.io.Serializable
+
 /**
  * Data class representing the User Profile information.
  */
 data class UserProfile(
+    val accountId: String? = null,
     val username: String? = null,
     val fullName: String? = null,
     val email: String? = null,
@@ -21,4 +24,4 @@ data class UserProfile(
     val image: String? = null,
     val favoriteCinema: String? = null,
     val favoriteGenres: List<String>? = null
-)
+): Serializable

@@ -7,8 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="12dp"
-    android:layout_marginHorizontal="16dp"
-    android:layout_marginVertical="8dp"
+
     android:background="@drawable/bg_card_dark"
     android:padding="16dp"
     android:foreground="?android:attr/selectableItemBackground">
@@ -29,7 +28,7 @@
             android:textColor="@color/bg_primary"
             android:textSize="15sp"
             android:textStyle="bold"
-            tools:text="NC" />
+            tools:text="@string/preview_avatar" />
     </FrameLayout>
 
     <TextView
@@ -46,7 +45,7 @@
         app:layout_constraintEnd_toStartOf="@id/tvStatusBadge"
         app:layout_constraintStart_toEndOf="@id/avatarFrame"
         app:layout_constraintTop_toTopOf="@id/avatarFrame"
-        tools:text="Nguyễn Văn Cường" />
+        tools:text="@string/preview_staff_name" />
 
     <LinearLayout
         android:id="@+id/layoutSubInfo"
@@ -125,9 +124,10 @@
             android:layout_marginStart="6dp"
             android:textColor="@color/auto_color_B0B0B0"
             android:textSize="12sp"
-            tools:text="18/06/2024 - 19/06/2024" />
+            tools:text="18/06/2026 - 19/06/2026" />
     </LinearLayout>
 
+    <!-- ĐÃ ĐỔI TIẾNG VIỆT SANG TIẾNG ANH Ở ĐÂY -->
     <TextView
         android:id="@+id/tvReason"
         android:layout_width="0dp"
@@ -139,7 +139,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@id/tvStaffName"
         app:layout_constraintTop_toBottomOf="@id/layoutShiftDetails"
-        tools:text="&quot;Khám sức khỏe định kỳ tại BV Chợ Rẫy&quot;" />
+        tools:text="@string/preview_reason" />
 
     <LinearLayout
         android:id="@+id/layoutButtons"

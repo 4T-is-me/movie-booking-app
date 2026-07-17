@@ -23,8 +23,6 @@ const checkCinemaPermission = (managerCinemaId, objectCinemaId) => {
     }
 }
 
-
-
 const getShifts = async (accountId, query) => {
     const { staffId, workDate, startDate, endDate, shift, status } = query;
 
@@ -42,27 +40,35 @@ const getShifts = async (accountId, query) => {
     if (status) {
         filter.status = status;
     }
-    let start, end;
 
-    if (startDate && endDate) {
-        start = new Date(startDate);
+    // Khởi tạo object điều kiện cho workDate
+    const dateFilter = {};
+
+    if (startDate) {
+        const start = new Date(startDate);
         start.setUTCHours(0, 0, 0, 0);
-
-        end = new Date(endDate);
-        end.setUTCHours(23, 59, 59, 999);
-    } else {
-        // Mặc định lấy trọn vẹn ngày hôm nay
-        start = new Date();
-        start.setUTCHours(0, 0, 0, 0);
-
-        end = new Date();
-        end.setUTCHours(23, 59, 59, 999);
+        dateFilter.$gte = start; // Lấy từ 00:00:00 của startDate trở đi
     }
 
-    filter.workDate = {
-        $gte: start,
-        $lte: end
-    };
+    if (endDate) {
+        const end = new Date(endDate);
+        end.setUTCHours(23, 59, 59, 999);
+        dateFilter.$lte = end; // Lấy đến 23:59:59 của endDate trở về trước
+    }
+
+    // Nếu người dùng KHÔNG truyền cả startDate lẫn endDate, mặc định lấy trọn ngày hôm nay
+    if (!startDate && !endDate) {
+        const startToday = new Date();
+        startToday.setUTCHours(0, 0, 0, 0);
+
+        const endToday = new Date();
+        endToday.setUTCHours(23, 59, 59, 999);
+
+        dateFilter.$gte = startToday;
+        dateFilter.$lte = endToday;
+    }
+
+    filter.workDate = dateFilter;
 
     const shifts = await StaffShift.find(filter)
         .populate({
@@ -113,14 +119,12 @@ const getShifts = async (accountId, query) => {
         rating: item.staffId?.rating || 0,
         kpiPoints: item.staffId?.kpiPoints || 0
     }));
-}
 
+}
 
 //unfinished
 const updateShifts = async (accountId, shiftId, updateData) => {
-    console.log(updateData);
     const { staffId, shift, status } = updateData;
-    console.log(shiftId);
 
     const manager = await checkManager(accountId);
 
@@ -314,210 +318,59 @@ const pickNextStaffRoundRobin = (dayStaffs, currentShift, shiftOccupancy, staffD
     }
     return null;
 }
-
-const generateShift = async (accountId, dateRange) => {
-    const { startDate, endDate } = dateRange;
-
-    // 1. Chuẩn hóa ngày giờ về UTC 00:00:00
-    const currentDate = new Date(startDate);
-    currentDate.setUTCHours(0, 0, 0, 0);
-    const finalDate = new Date(endDate);
-    finalDate.setUTCHours(0, 0, 0, 0);
-
-    if (currentDate > finalDate) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "Start date cannot be later than end date.");
-    }
-
-    // 2. Bắt buộc tối thiểu 7 ngày
-    const diffTime = finalDate.getTime() - currentDate.getTime();
-    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1;
-    if (diffDays < 7) {
-        throw new ApiError(
-            StatusCodes.BAD_REQUEST,
-            `Minimum schedule range requirement not met. You selected ${diffDays} day(s), but at least 7 days are required.`
-        );
-    }
-
-    const today = new Date();
-    today.setUTCHours(0, 0, 0, 0);
-    if (currentDate < today) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "Cannot schedule shifts for past dates.");
-    }
-
-    // 3. Check Manager & Cinema
+const getStaffForManager = async (accountId) => {
     const manager = await checkManager(accountId);
+    
+    const staffList = await Staff.find({ cinemaId: manager.cinemaId })
+        .populate({
+            path: 'accountId',
+            select: 'status', 
+            model: 'Account'
+        })
+        .lean();
 
-    const cinemaId = manager.cinemaId;
+        console.log(staffList);
+    const activeStaffList = staffList
+        .filter(s => s.accountId && s.accountId.status === 1) 
+        .map(s => ({
+            id: s._id,
+            fullName: s.fullName || '',
+            position: s.position || 'Staff',
+            phone: s.phone || '',
+            cinemaId: s.cinemaId,
+            status: s.accountId.status 
+        }));
+    
+    return {
+        cinemaId: manager.cinemaId,
+        staff: activeStaffList
+    };
+};
 
-    const allStaff = await Staff.find({ cinemaId }).lean();
-    if (!allStaff || allStaff.length === 0) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "The cinema currently has no staff to schedule.");
+const generateShift = async (accountId, dateRange, config = {}, shiftsFromFE = []) => {
+    // Vì thuật toán đã chạy ở FE, service ở đây đóng vai trò Validate & Insert dữ liệu thô nhận được từ FE
+    if (!shiftsFromFE || !Array.isArray(shiftsFromFE) || shiftsFromFE.length === 0) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "No shift data provided for insertion.");
     }
 
-    // 4. Lấy tổng ca làm từ đầu tháng trong DB để cân bằng dài hạn
-    const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-    const existingShiftsCount = await StaffShift.aggregate([
-        {
-            $match: {
-                cinemaId: cinemaId,
-                workDate: { $gte: startOfMonth, $lt: currentDate },
-                status: { $ne: 'Cancelled' }
-            }
-        },
-        {
-            $group: {
-                _id: "$staffId",
-                total: { $sum: 1 }
-            }
-        }
-    ]);
+    // B1: Chuẩn hóa định dạng dữ liệu & Ép kiểu từ chuỗi String sang Date object trong DB
+    const formattedShifts = shiftsFromFE.map(item => ({
+        staffId: item.staffId,
+        cinemaId: item.cinemaId,
+        workDate: new Date(item.workDate), // Ép kiểu string "yyyy-MM-dd" về Date UTC 00:00:00
+        shift: item.shift,
+        status: item.status || 'Assigned',
+        isHoliday: item.isHoliday || false
+    }));
 
-    const overallStaffCount = {};
-    const weeklyWorkDaysCount = {}; // Đếm số ngày đi làm trong tuần
-
-    allStaff.forEach(s => {
-        const idStr = s._id.toString();
-        const found = existingShiftsCount.find(item => item._id.toString() === idStr);
-        overallStaffCount[idStr] = found ? found.total : 0;
-        weeklyWorkDaysCount[idStr] = 0;
-    });
-
-    const newShiftsToInsert = [];
-
-    // Các cặp ca cố định (Double Shift)
-    const SHIFT_PAIRS = [
-        { name: 'Morning - Afternoon', shifts: ['Morning', 'Afternoon'] },
-        { name: 'Evening - Night', shifts: ['Evening', 'Night'] }
-    ];
-
-    let dayIndex = 0;
-
-    // 5. Vòng lặp chia ca theo ngày
-    while (currentDate <= finalDate) {
-        const targetDate = new Date(currentDate);
-        targetDate.setUTCHours(0, 0, 0, 0);
-
-        // Reset số ngày làm khi sang tuần mới (mỗi 7 ngày)
-        if (dayIndex > 0 && dayIndex % 7 === 0) {
-            Object.keys(weeklyWorkDaysCount).forEach(id => weeklyWorkDaysCount[id] = 0);
-        }
-
-        const dayStaff = await getAvailableStaffForDay(allStaff, cinemaId, targetDate);
-
-        const { shiftOccupancy, staffDailyCount } = await getExistingShiftsOfDay(cinemaId, targetDate);
-
-        Object.keys(staffDailyCount).forEach(staffId => {
-            overallStaffCount[staffId] = (overallStaffCount[staffId] || 0) + staffDailyCount[staffId];
-            if (staffDailyCount[staffId] > 0) {
-                weeklyWorkDaysCount[staffId] = (weeklyWorkDaysCount[staffId] || 0) + 1;
-            }
-        });
-
-        const isToday = targetDate.getTime() === today.getTime();
-        const initialStatus = isToday ? 'Active' : 'Assigned';
-
-        // -------------------------------------------------------------
-        // XẾP CẶP CA - KHÓA CỨNG ĐIỀU KIỆN NGHỈ 1 NGÀY/TUẦN
-        // -------------------------------------------------------------
-        for (const pair of SHIFT_PAIRS) {
-            const [shift1, shift2] = pair.shifts;
-
-            const occ1 = (shiftOccupancy[shift1] || []).length;
-            const occ2 = (shiftOccupancy[shift2] || []).length;
-
-            const neededPairs = Math.min(
-                constants.STAFF_PER_SHIFT - occ1,
-                constants.STAFF_PER_SHIFT - occ2
-            );
-
-            if (neededPairs <= 0) continue;
-
-            for (let p = 0; p < neededPairs; p++) {
-                //  Bắt buộc chưa làm ca nào hôm nay VÀ chưa đi làm quá 5 ngày (để chắc chắn có 1 ngày nghỉ)
-                const eligibleForPair = dayStaff.filter(staff => {
-                    const id = staff._id.toString();
-                    const dailyCount = staffDailyCount[id] || 0;
-                    const workedDays = weeklyWorkDaysCount[id] || 0;
-
-                    const isFree1 = !(shiftOccupancy[shift1] || []).includes(id);
-                    const isFree2 = !(shiftOccupancy[shift2] || []).includes(id);
-
-                    // Khóa cứng: workedDays < 6 (Chỉ cho phép làm tối đa 6 ngày)
-                    return dailyCount === 0 && isFree1 && isFree2 && workedDays < 6;
-                });
-
-                if (eligibleForPair.length === 0) {
-                    const formattedDate = targetDate.toLocaleDateString('vi-VN');
-                    throw new ApiError(
-                        StatusCodes.BAD_REQUEST,
-                        `Allocation error: Not enough available staff to form pair [${pair.name}] on ${formattedDate} (Mandatory 1-day weekly off policy).`
-                    );
-                }
-
-                //SẮP XẾP: Ưu tiên nhân viên có số ngày đi làm (workedDays) ít nhất
-                eligibleForPair.sort((a, b) => {
-                    const idA = a._id.toString();
-                    const idB = b._id.toString();
-
-                    const daysA = weeklyWorkDaysCount[idA] || 0;
-                    const daysB = weeklyWorkDaysCount[idB] || 0;
-
-                    if (daysA !== daysB) return daysA - daysB;
-
-                    const totalA = overallStaffCount[idA] || 0;
-                    const totalB = overallStaffCount[idB] || 0;
-                    if (totalA !== totalB) return totalA - totalB;
-
-                    return Math.random() - 0.5;
-                });
-
-                const selected = eligibleForPair[0];
-                const id = selected._id.toString();
-
-                // Gán cặp ca
-                [shift1, shift2].forEach(sName => {
-                    if (!shiftOccupancy[sName]) shiftOccupancy[sName] = [];
-                    shiftOccupancy[sName].push(id);
-
-                    newShiftsToInsert.push({
-                        staffId: selected._id,
-                        cinemaId: cinemaId,
-                        workDate: targetDate,
-                        shift: sName,
-                        status: initialStatus
-                    });
-                });
-
-                // Cập nhật bộ đếm
-                if ((staffDailyCount[id] || 0) === 0) {
-                    weeklyWorkDaysCount[id] = (weeklyWorkDaysCount[id] || 0) + 1;
-                }
-                staffDailyCount[id] = (staffDailyCount[id] || 0) + 2;
-                overallStaffCount[id] = (overallStaffCount[id] || 0) + 2;
-            }
-        }
-
-        currentDate.setUTCDate(currentDate.getUTCDate() + 1);
-        dayIndex++;
-    }
-
-    // Lưu Database
-    if (newShiftsToInsert.length === 0) {
-        return {
-            generated: 0,
-            startDate,
-            endDate,
-            message: `Shifts for the selected period (${startDate} to ${endDate}) have already been fully scheduled.`
-        };
-    }
-
-    const docs = await StaffShift.insertMany(newShiftsToInsert);
+    // B2: Thực hiện insert hàng loạt (Bulk Insert) xuống MongoDB với hiệu năng tối ưu
+    const docs = await StaffShift.insertMany(formattedShifts);
 
     return {
         generated: docs.length,
-        startDate,
-        endDate,
-        message: `Successfully allocated ${docs.length} new shifts from ${startDate} to ${endDate}.`
+        startDate: dateRange?.startDate,
+        endDate: dateRange?.endDate,
+        message: `Successfully allocated and saved ${docs.length} shifts into database.`
     };
 };
 const getWeekRange = (inputDate) => {
@@ -800,6 +653,7 @@ export const ManagerStaffShiftService = {
     updateShifts,
     generateShift,
     getShifts,
+    getStaffForManager,
     getStaffDetailService,
     getLeaveRequestForManager,
     approveLeaveRequest,

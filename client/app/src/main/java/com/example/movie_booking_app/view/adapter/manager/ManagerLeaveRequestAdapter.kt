@@ -45,10 +45,10 @@ class ManagerLeaveRequestAdapter(private val listener: LeaveRequestListener) :
 
     private fun getShiftTimeDisplay(shift: String): String {
         return when (shift) {
-            "Morning" -> Constants.MORNING
-            "Afternoon" -> Constants.AFTERNOON
-            "Evening" -> Constants.EVENING
-            "Night" -> Constants.NIGHT
+            Constants.SHIFTS[0]-> Constants.MORNING
+            Constants.SHIFTS[1] -> Constants.AFTERNOON
+            Constants.SHIFTS[2] -> Constants.EVENING
+            Constants.SHIFTS[3] -> Constants.NIGHT
             else -> Constants.FULLTIME
         }
     }
@@ -64,16 +64,17 @@ class ManagerLeaveRequestAdapter(private val listener: LeaveRequestListener) :
 
             val initials = NameFormatter.getAvatarInitials(item.staffName)
             val shiftTime = getShiftTimeDisplay(item.shift)
-            binding.tvAvatarText.text = if (initials.isNotEmpty()) initials else "ST"
+
+            binding.tvAvatarText.text = if (initials.isNotEmpty()) initials else context.getString(R.string.default_avatar_initials)
             binding.tvStaffName.text = item.staffName
             binding.tvPosition.text = item.staffPosition
-            binding.tvShiftInfo.text = "${item.shift} - ${shiftTime}"
+            binding.tvShiftInfo.text = context.getString(R.string.format_shift_info, item.shift, shiftTime)
             binding.tvWorkDate.text = item.workDate
-            binding.tvReason.text = "\"${item.reason}\""
+            binding.tvReason.text = context.getString(R.string.format_reason, item.reason)
 
             // --- Status UI / Stroke Card / Undo Bar ---
             when (currentState.lowercase(Locale.getDefault())) {
-                "pending" -> {
+                Constants.STATUS_REQUEST[0] -> {
                     binding.tvStatusBadge.text = context.getString(R.string.status_pending)
                     binding.tvStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.text_gold_orange))
                     binding.tvStatusBadge.setBackgroundResource(R.drawable.bg_badge_gold)
@@ -84,7 +85,7 @@ class ManagerLeaveRequestAdapter(private val listener: LeaveRequestListener) :
                     cardView?.strokeWidth = 1
                     cardView?.strokeColor = ContextCompat.getColor(context, R.color.color_stroke)
                 }
-                "approved" -> {
+                Constants.STATUS_REQUEST[1] -> {
                     binding.tvStatusBadge.text = context.getString(R.string.status_approved)
                     binding.tvStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.color_success_green))
                     binding.tvStatusBadge.setBackgroundResource(R.drawable.bg_badge_approved)
@@ -96,14 +97,14 @@ class ManagerLeaveRequestAdapter(private val listener: LeaveRequestListener) :
 
                     if (actionStates.containsKey(item.leaveRequestId)) {
                         binding.layoutUndoBar.visibility = View.VISIBLE
-                        binding.tvUndoMessage.text = "Request approved"
+                        binding.tvUndoMessage.text = context.getString(R.string.undo_msg_approved)
                         binding.tvUndoMessage.setTextColor(ContextCompat.getColor(context, R.color.color_success_green))
                         binding.layoutUndoBar.setBackgroundColor(ContextCompat.getColor(context, R.color.bg_undo_approved))
                     } else {
                         binding.layoutUndoBar.visibility = View.GONE
                     }
                 }
-                "rejected" -> {
+                Constants.STATUS_REQUEST[2] -> {
                     binding.tvStatusBadge.text = context.getString(R.string.status_rejected)
                     binding.tvStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.color_error_red))
                     binding.tvStatusBadge.setBackgroundResource(R.drawable.bg_badge_rejected)
@@ -115,7 +116,7 @@ class ManagerLeaveRequestAdapter(private val listener: LeaveRequestListener) :
 
                     if (actionStates.containsKey(item.leaveRequestId)) {
                         binding.layoutUndoBar.visibility = View.VISIBLE
-                        binding.tvUndoMessage.text = "Request rejected"
+                        binding.tvUndoMessage.text = context.getString(R.string.undo_msg_rejected)
                         binding.tvUndoMessage.setTextColor(ContextCompat.getColor(context, R.color.color_error_red))
                         binding.layoutUndoBar.setBackgroundColor(ContextCompat.getColor(context, R.color.bg_undo_rejected))
                     } else {
@@ -128,7 +129,7 @@ class ManagerLeaveRequestAdapter(private val listener: LeaveRequestListener) :
             binding.btnApprove.setOnClickListener {
                 val currentPosition = bindingAdapterPosition
                 if (currentPosition != RecyclerView.NO_POSITION) {
-                    actionStates[item.leaveRequestId] = "Approved"
+                    actionStates[item.leaveRequestId] = Constants.STATUS_REQUEST[1]
                     notifyItemChanged(currentPosition)
                     listener.onApprove(item)
                 }
@@ -137,7 +138,7 @@ class ManagerLeaveRequestAdapter(private val listener: LeaveRequestListener) :
             binding.btnReject.setOnClickListener {
                 val currentPosition = bindingAdapterPosition
                 if (currentPosition != RecyclerView.NO_POSITION) {
-                    actionStates[item.leaveRequestId] = "Rejected"
+                    actionStates[item.leaveRequestId] = Constants.STATUS_REQUEST[2]
                     notifyItemChanged(currentPosition)
                     listener.onReject(item)
                 }

@@ -6,6 +6,7 @@ const getScoreHistory = async (req, res, next) => {
         const accountId = req.user.accountId
         const { page, limit } = req.query
         const result = await memberService.getScoreHistory(accountId, parseInt(page) || 1, parseInt(limit) || 10)
+        console.log(result)
         res.status(StatusCodes.OK).json(result)
     } catch (error) {
         next(error)
