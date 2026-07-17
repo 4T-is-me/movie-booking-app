@@ -94,4 +94,16 @@ class LeaveRequestRepository @Inject constructor(private val api: LeaveRequestAp
             emit(null)
         }
     }
+    fun undoLeaveRequest(id: String): Flow<SimpleSuccessResponse?> = flow {
+        try {
+            val response = api.undoLeaveRequest(id)
+            if(response.isSuccessful) {
+                emit(response.body())
+            }else {
+                emit(null)
+            }
+        }catch (e: Exception) {
+            emit(null)
+        }
+    }
 }

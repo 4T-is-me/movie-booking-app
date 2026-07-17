@@ -35,6 +35,7 @@ class MovieDetailActivity : AppCompatActivity() {
     private val actorsAdapter by lazy { CardItemAdapter() }
 
     private var isReviewsExpanded = false
+    private var isDescriptionExpanded = false
     private var currentReviewsList = emptyList<com.example.movie_booking_app.data.model.response.ReviewItem>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -133,8 +134,30 @@ class MovieDetailActivity : AppCompatActivity() {
                 launch {
                     viewModel.movieDetail.collect { response ->
                         response?.data?.let { movie ->
+                            val descriptionText = movie.description ?: ""
+
                             binding.txtTitle.text = movie.movieName ?: "Unknown"
-                            binding.txtDescription.text = movie.description ?: ""
+                            binding.txtDescription.text = descriptionText
+                            binding.txtDescription.post {
+
+                                if (binding.txtDescription.lineCount > 3) {
+                                    binding.tvSeeMoreDescription.visibility = View.VISIBLE
+
+                                    binding.tvSeeMoreDescription.setOnClickListener {
+                                        isDescriptionExpanded = !isDescriptionExpanded
+                                        if (isDescriptionExpanded) {
+                                            binding.txtDescription.maxLines =
+                                                Integer.MAX_VALUE
+                                            binding.tvSeeMoreDescription.text = "See less"
+                                        } else {
+                                            binding.txtDescription.maxLines = 2
+                                            binding.tvSeeMoreDescription.text = "See more"
+                                        }
+                                    }
+                                } else {
+                                    binding.tvSeeMoreDescription.visibility = View.GONE
+                                }
+                            }
                             binding.txtGenre.text = movie.movieGenre?.joinToString(", ") ?: ""
                             binding.txtLanguage.text = movie.language ?: ""
                             binding.txtDuration.text = formatDuration(movie.duration)

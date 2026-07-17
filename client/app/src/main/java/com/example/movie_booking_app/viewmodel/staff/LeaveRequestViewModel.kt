@@ -37,6 +37,9 @@ class LeaveRequestViewModel@Inject constructor(private val repository: LeaveRequ
     private val _rejectResult = MutableStateFlow<SimpleSuccessResponse?>(null)
     val rejectResult: StateFlow<SimpleSuccessResponse?> = _rejectResult.asStateFlow()
 
+    private val _undoResult = MutableStateFlow<SimpleSuccessResponse?>(null)
+    val undoResult: StateFlow<SimpleSuccessResponse?> = _undoResult.asStateFlow()
+
     // --- Loading & Error UI ---
     private val _isLoading = MutableStateFlow<Boolean>(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
@@ -100,6 +103,14 @@ class LeaveRequestViewModel@Inject constructor(private val repository: LeaveRequ
             }
         }
     }
+    fun undoLeaveRequest(leaveRequestId: String) {
+        viewModelScope.launch {
+            repository.undoLeaveRequest(leaveRequestId).collect { response ->
+                _rejectResult.value = response
+            }
+        }
+    }
+
 
     fun clearError() {
         _errorMessage.value = null
@@ -118,6 +129,9 @@ class LeaveRequestViewModel@Inject constructor(private val repository: LeaveRequ
     }
 
     fun clearRejectState() {
+        _rejectResult.value = null
+    }
+    fun clearUndoState() {
         _rejectResult.value = null
     }
 }

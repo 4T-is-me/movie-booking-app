@@ -8,7 +8,6 @@ const getScoreHistory = async (accountId, page = 1, limit = 10) => {
     if (!member) {
         throw new ApiError(StatusCodes.NOT_FOUND, 'Member not found')
     }
-    console.log(member)
     const skip = (page - 1) * limit
     const total = await ScoreHistory.countDocuments({ memberId: member._id })
     const histories = await ScoreHistory.find({ memberId: member._id })

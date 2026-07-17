@@ -215,26 +215,51 @@
         </LinearLayout>
 
         <!-- Storyline -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="28dp"
-            android:text="@string/auto_str_storyline"
-            android:textColor="@android:color/white"
-            android:textSize="22sp"
-            android:textStyle="bold" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="28dp"
+                android:text="@string/auto_str_storyline"
+                android:textColor="@android:color/white"
+                android:textSize="22sp"
+                android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/txtDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="10dp"
-            android:lineSpacingExtra="6dp"
-            android:text="@string/auto_str_as_the_avengers_and_their_alli"
-            android:textColor="@color/auto_color_DDDDDD"
-            android:textSize="15.5sp" />
+            <!-- Cố định bọc bằng LinearLayout để căn lề chuẩn 20dp -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lineSpacingExtra="6dp"
+                    android:maxLines="3"
+                    android:text="@string/auto_str_as_the_avengers_and_their_alli"
+                    android:textColor="@color/auto_color_DDDDDD"
+                    android:textSize="15.5sp" />
+
+                <!-- Căn nút "See more" sang góc phải cho tinh tế và chuyên nghiệp -->
+                <TextView
+                    android:id="@+id/tvSeeMoreDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:text="See more"
+                    android:textColor="@color/auto_color_FACC15"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:paddingVertical="6dp"
+                    android:paddingHorizontal="12dp"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:visibility="gone" />
+            </LinearLayout>
 
         <!-- Director, Actor, Cinema RecyclerViews giữ nguyên như trước -->
         <TextView

@@ -154,6 +154,21 @@ const rejectLeaveRequest = async(req, res, next) => {
     next(error);
   }
 }
+const undoLeaveRequest = async(req, res, next) => {
+  try {
+    const accountId = req.user.accountId
+    const { id } = req.params;
+    const result = await ManagerStaffShiftService.undoLeaveRequest( accountId, id);
+    return res.status(StatusCodes.OK).json({
+      success: true,
+      message: "Undo leave request successfully.",
+      data: result
+    }) 
+  }catch (error) {
+    next(error);
+  }
+}
+
 
 export const StaffShiftController = {
   getShifts,
@@ -163,5 +178,6 @@ export const StaffShiftController = {
   getStaffDetail,
   getLeaveRequestForManager,
   approveLeaveRequest,
-  rejectLeaveRequest
+  rejectLeaveRequest,
+  undoLeaveRequest
 };

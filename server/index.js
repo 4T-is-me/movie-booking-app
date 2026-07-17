@@ -86,10 +86,10 @@ app.use(errorHandlingMiddleware);
 
 const startServer = async () => {
     await connectDB();
-    CleanUpJobs.startSeatCleanupJob();
-    CleanUpJobs.updateMovieStatus();
-    CleanUpJobs.updateStaffShiftStatus();
-    ShowtimeReminderJob.startShowtimeReminderJob();
+    await CleanUpJobs.startSeatCleanupJob();
+    await CleanUpJobs.updateMovieStatus();
+    await CleanUpJobs.updateStaffShiftStatus();
+    await ShowtimeReminderJob.startShowtimeReminderJob();
 
     app.listen(PORT, () => {
         console.log(`🚀 ES Modules Server is running at: http://localhost:${PORT}`);
