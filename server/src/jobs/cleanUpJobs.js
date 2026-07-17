@@ -15,39 +15,35 @@ import { StaffShift } from "../models/staffShiftModel.js";
 };
 cron.schedule("*/30 * * * * *", startSeatCleanupJob);
 
-
-
-
 const updateMovieStatus = async () => {
-    const now = new Date();
+    try {
+        const now = new Date();
+        const showingResult = await Movie.updateMany(
+            {
+                releaseDate: { $lte: now },
+                endDate: { $gte: now },
+                status: "coming-soon"
+            },
+            {
+                $set: { status: "showing" }
+            }
+        );
 
-    // Coming Soon -> Showing
-    await Movie.updateMany(
-        {
-            releaseDate: { $lte: now },
-            endDate: { $gte: now },
-        status: "coming_soon"
-        },
-        {
-            $set: { status: "showing" }
-        }
-    );
+        const endedResult = await Movie.updateMany(
+            {
+                endDate: { $lt: now },
+                status: { $in: ["showing", "coming-soon"] } 
+            },
+            {
+                $set: { status: "ended" }
+            }
+        );
 
-    // Showing -> Ended
-    await Movie.updateMany(
-        {
-            endDate: { $lt: now },
-            status: "showing"
-        },
-        {
-            $set: { status: "ended" }
-        }
-    );
-};
-//update every day(00:00)
+    } catch (error) {
+        console.error("[Cron Job Error] Failed to update movie status:", error);
+    }
+}
 cron.schedule("0 0 * * *", updateMovieStatus);
-
-
 
 
 const updateStaffShiftStatus = async () => {
