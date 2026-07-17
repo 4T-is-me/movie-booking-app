@@ -167,17 +167,17 @@ const getMovieShowtimes = async (movieId) => {
         movieId,
         startTime: { $gte: now }
     })
-        .populate(
-            "cinemaId",
-            "cinemaName address city image hotline status"
-        )
-        .sort({
-            showDate: 1,
-            startTime: 1
-        })
-        .lean();
-
-    return showtimes;
+    .populate({
+        path: "cinemaId",
+        select: "cinemaName address city image hotline status",
+        match: { status: "active" } 
+    })
+    .sort({
+        showDate: 1,
+        startTime: 1
+    })
+    .lean();
+    return showtimes.filter(showtime => showtime.cinemaId !== null);
 };
 export const showtimeService = {
 

@@ -2,13 +2,13 @@ import { StatusCodes } from 'http-status-codes'
 import ApiError from '../utils/ApiError.js'
 import { ScoreHistory } from '../models/scoreHistoryModel.js'
 import { Member } from '../models/memberModel.js'
-
+import mongoose from 'mongoose'
 const getScoreHistory = async (accountId, page = 1, limit = 10) => {
     const member = await Member.findOne({ accountId }).lean()
     if (!member) {
         throw new ApiError(StatusCodes.NOT_FOUND, 'Member not found')
     }
-
+    console.log(member)
     const skip = (page - 1) * limit
     const total = await ScoreHistory.countDocuments({ memberId: member._id })
     const histories = await ScoreHistory.find({ memberId: member._id })
@@ -45,7 +45,7 @@ const getScoreHistory = async (accountId, page = 1, limit = 10) => {
     }
 }
 
-import mongoose from 'mongoose'
+
 
 const getMemberByIdentity = async (identity) => {
     let query = {};

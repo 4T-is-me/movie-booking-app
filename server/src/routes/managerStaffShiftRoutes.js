@@ -4,6 +4,9 @@ import { StaffShiftController } from '../controllers/managerStaffShiftController
 
 const managerStaffShiftRouter = express.Router()
 
+// GET /api/manager/staff-shifts/staff - get list of active staff for manager's cinema
+managerStaffShiftRouter.get('/staff', authMiddleware.isAuthorized, authMiddleware.authorizeRoles('Manager'), StaffShiftController.getStaffForManager)
+
 // GET /api/manager/staff-shifts
 managerStaffShiftRouter.get('/', authMiddleware.isAuthorized, authMiddleware.authorizeRoles('Manager'), StaffShiftController.getShifts)
 
