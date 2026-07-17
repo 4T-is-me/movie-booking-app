@@ -36,4 +36,7 @@ interface LeaveRequestApi {
 
     @PATCH("/api/manager/staff-shifts/leave-requests/{id}/reject")
     suspend fun rejectLeaveRequest(@Path("id") leaveRequestId: String, @Body rejectReason: RejectLeaveRequest) : Response<SimpleSuccessResponse>
+
+    @PATCH("/api/manager/staff-shifts/leave-requests/{id}/undo")
+    suspend fun undoLeaveRequest(@Path("id") leaveRequestId: String) : Response<SimpleSuccessResponse>
 }

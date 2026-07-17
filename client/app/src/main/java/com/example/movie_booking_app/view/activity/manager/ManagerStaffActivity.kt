@@ -7,9 +7,11 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
@@ -49,6 +51,7 @@ class ManagerStaffActivity : AppCompatActivity() {
 
     private var currentTab = "staff_list"
     private lateinit var staffShiftAdapter: ManagerStaffShiftAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityManagerStaffBinding.inflate(layoutInflater)
@@ -58,7 +61,6 @@ class ManagerStaffActivity : AppCompatActivity() {
             binding.tabLeaveRequests
         )
         viewModel.loadStaffForManager()
-
 
         setUpClickListeners()
         setUpRecyclerView()
@@ -71,7 +73,7 @@ class ManagerStaffActivity : AppCompatActivity() {
         setActiveTab(binding.tabStaffList, "staff_list")
     }
 
-    private fun setUpRecyclerView () {
+    private fun setUpRecyclerView() {
         staffShiftAdapter = ManagerStaffShiftAdapter(
             onItemClick = { shift ->
                 val intent = Intent(this, ManagerShiftDetailActivity::class.java)
@@ -92,7 +94,7 @@ class ManagerStaffActivity : AppCompatActivity() {
             }
 
             override fun onUndo(item: ManagerLeaveRequestResponse) {
-                // Task 3: Actual revert API call will be placed here
+                showConfirmUndoDialog(item)
             }
         })
 
@@ -105,7 +107,7 @@ class ManagerStaffActivity : AppCompatActivity() {
     private fun setUpClickListeners() {
         binding.ivBack.setOnClickListener { finish() }
         binding.tabStaffList.setOnClickListener {
-            setActiveTab(binding.tabStaffList,  "staff_list")
+            setActiveTab(binding.tabStaffList, "staff_list")
         }
         binding.tabLeaveRequests.setOnClickListener {
             setActiveTab(binding.tabLeaveRequests, "leave_requests")
@@ -126,7 +128,7 @@ class ManagerStaffActivity : AppCompatActivity() {
     private fun setActiveTab(selectedTab: TextView, tabType: String) {
         currentTab = tabType
         val secondaryTextColor = ContextCompat.getColor(this, R.color.text_secondary)
-        for(tab in tabButtons) {
+        for (tab in tabButtons) {
             tab.setBackgroundColor(Color.TRANSPARENT)
             tab.setTextColor(secondaryTextColor)
             tab.setTypeface(null, Typeface.BOLD)
@@ -135,11 +137,11 @@ class ManagerStaffActivity : AppCompatActivity() {
         selectedTab.setTextColor(ContextCompat.getColor(this, R.color.bg_primary))
         selectedTab.setTypeface(null, Typeface.BOLD)
 
-        if(tabType == "staff_list") {
+        if (tabType == "staff_list") {
             binding.btnGenerateShift.visibility = View.VISIBLE
             binding.rvStaffList.adapter = staffShiftAdapter
             viewModel.loadStaffShifts()
-        }else {
+        } else {
             binding.btnGenerateShift.visibility = View.GONE
             binding.rvStaffList.adapter = leaveRequestAdapter
             leaveRequestViewModel.loadLeaveRequestForManager(selectedStatusFilter)
@@ -157,7 +159,6 @@ class ManagerStaffActivity : AppCompatActivity() {
                 Toast.makeText(this, getString(R.string.toast_no_active_staff), Toast.LENGTH_LONG).show()
                 return
             }
-            // Khởi tạo Dialog mới truyền danh sách Staff phẳng và Callback save
             val dialog = GenerateShiftDialogFragment(
                 staffList = activeStaffList,
                 cinemaId = cinemaId,
@@ -176,11 +177,11 @@ class ManagerStaffActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.generateShiftData.collectLatest { response ->
-                    if(response != null) {
+                    if (response != null) {
                         if (response.success) {
                             viewModel.loadStaffShifts()
                             val successDialog = GenerateShiftSuccessDialogFragment(response.data) {
-                                viewModel.loadStaffShifts() // Tải lại danh sách lịch làm việc chính để cập nhật UI
+                                viewModel.loadStaffShifts()
                             }
                             successDialog.show(supportFragmentManager, "GenerateShiftSuccessDialogFragment")
                         } else {
@@ -192,6 +193,7 @@ class ManagerStaffActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun setUpShiftList(shifts: List<ShiftItemResponse>) {
         val shiftItems = shifts.orEmpty()
         if (shiftItems.isEmpty()) {
@@ -214,7 +216,7 @@ class ManagerStaffActivity : AppCompatActivity() {
                             val currentQuery = binding.etSearchStaff?.text?.toString().orEmpty()
                             applySearchFilter(currentQuery)
                         }
-                    }?: run {
+                    } ?: run {
                         originalShiftList = emptyList()
                         setUpShiftList(emptyList())
                     }
@@ -292,7 +294,24 @@ class ManagerStaffActivity : AppCompatActivity() {
             }
         }
 
-        // 2. Loading state
+        // Observe Undo Result
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                leaveRequestViewModel.undoResult.collectLatest { response ->
+                    if (response != null) {
+                        if (response.success) {
+                            Toast.makeText(this@ManagerStaffActivity, getString(R.string.msg_undo_success), Toast.LENGTH_SHORT).show()
+                            leaveRequestViewModel.loadLeaveRequestForManager(selectedStatusFilter)
+                        } else {
+                            showErrorDialog(getString(R.string.error_undo_failed))
+                        }
+                        leaveRequestViewModel.clearUndoState()
+                    }
+                }
+            }
+        }
+
+        // Loading state
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 leaveRequestViewModel.isLoading.collectLatest { isLoading ->
@@ -301,7 +320,7 @@ class ManagerStaffActivity : AppCompatActivity() {
             }
         }
 
-        // 3. Error state displaying Dialog
+        // Error state displaying Dialog
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 leaveRequestViewModel.errorMessage.collectLatest { error ->
@@ -326,7 +345,6 @@ class ManagerStaffActivity : AppCompatActivity() {
         }
     }
 
-    //Function to filter the RAM list based on a query (name, location, shift)
     private fun applySearchFilter(query: String) {
         val trimmedQuery = query.trim().lowercase()
         if (currentTab == "staff_list") {
@@ -367,7 +385,7 @@ class ManagerStaffActivity : AppCompatActivity() {
     }
 
     private fun showAdvancedFilterBottomSheet() {
-        val filterFragment = StaffFilterBottomSheetFragment { startDate, endDate, status->
+        val filterFragment = StaffFilterBottomSheetFragment { startDate, endDate, status ->
             viewModel.loadStaffShifts(
                 startDate = startDate,
                 endDate = endDate,
@@ -398,25 +416,40 @@ class ManagerStaffActivity : AppCompatActivity() {
     }
 
     private fun showRejectDialog(item: ManagerLeaveRequestResponse) {
-        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
-        val input = android.widget.EditText(this)
-        input.hint = getString(R.string.dialog_reject_hint)
-        builder.setTitle(getString(R.string.dialog_reject_title))
-            .setView(input)
-            .setPositiveButton(getString(R.string.dialog_action_reject)) { _, _ ->
-                val reason = input.text.toString()
-                if (reason.isNotBlank()) {
-                    leaveRequestViewModel.rejectLeaveRequest(item.leaveRequestId, reason)
-                } else {
-                    Toast.makeText(this, "Reason cannot be empty", Toast.LENGTH_SHORT).show()
-                }
+        val builder = AlertDialog.Builder(this)
+        val dialogBinding = com.example.movie_booking_app.databinding.DialogRejectLeaveCustomBinding.inflate(layoutInflater)
+        builder.setView(dialogBinding.root)
+
+        val dialog = builder.create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        // Cancel
+        dialogBinding.btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+        // Confirm Reject
+        dialogBinding.btnConfirmReject.setOnClickListener {
+            val reason = dialogBinding.etRejectReason.text.toString().trim()
+            if (reason.isNotBlank()) {
+                leaveRequestAdapter.setLocalRejectState(item.leaveRequestId)
+
+                // Gọi API gửi lên server
+                leaveRequestViewModel.rejectLeaveRequest(item.leaveRequestId, reason)
+                dialog.dismiss()
+            } else {
+                Toast.makeText(this, getString(R.string.error_empty_reason_reject), Toast.LENGTH_SHORT).show()
             }
-            .setNegativeButton("Cancel", null)
-            .show()
+        }
+        dialog.show()
+
+        val displayMetrics = resources.displayMetrics
+        val width = (displayMetrics.widthPixels * 0.85).toInt()
+        val height = WindowManager.LayoutParams.WRAP_CONTENT
+        dialog.window?.setLayout(width, height)
     }
 
     private fun showErrorDialog(backendErrorMessage: String) {
-        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this)
         val dialogBinding = DialogErrorCustomBinding.inflate(layoutInflater)
         builder.setView(dialogBinding.root)
         val dialog = builder.create()
@@ -427,5 +460,28 @@ class ManagerStaffActivity : AppCompatActivity() {
             dialog.dismiss()
         }
         dialog.show()
+    }
+
+    private fun showConfirmUndoDialog(item: ManagerLeaveRequestResponse) {
+        val builder = AlertDialog.Builder(this)
+        val dialogBinding = com.example.movie_booking_app.databinding.DialogUndoLeaveCustomBinding.inflate(layoutInflater)
+        builder.setView(dialogBinding.root)
+        val dialog = builder.create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialogBinding.btnCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialogBinding.btnConfirmUndo.setOnClickListener {
+            leaveRequestViewModel.undoLeaveRequest(item.leaveRequestId)
+            dialog.dismiss()
+        }
+        dialog.show()
+
+        val displayMetrics = resources.displayMetrics
+        val width = (displayMetrics.widthPixels * 0.85).toInt()
+        val height = WindowManager.LayoutParams.WRAP_CONTENT
+        dialog.window?.setLayout(width, height)
     }
 }

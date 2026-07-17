@@ -641,12 +641,62 @@ const rejectLeaveRequest = async (accountId, leaveRequestId,{ rejectReason }) =>
 
     leaveRequest.status = "Rejected";
     leaveRequest.managerId = manager._id;
-    leaveRequest.rejectReason = rejectReason || "No specific reason provided.";
+    leaveRequest.rejectReason = rejectReason && rejectReason.trim() !== "" ? rejectReason : "No specific reason provided.";
     leaveRequest.approvedAt = new Date();
     await leaveRequest.save();
 
     return { success: true };
 }
+
+const undoLeaveRequest = async (accountId, leaveRequestId) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+        const manager = await checkManager(accountId);
+        const leaveRequest = await LeaveRequest.findById(leaveRequestId).populate("staffShiftId").session(session);
+        if(!leaveRequest) {
+            throw new ApiError(StatusCodes.NOT_FOUND, "Leave request not found!");
+        }
+        const shift = leaveRequest.staffShiftId;
+        if(!shift) {
+            throw new ApiError(StatusCodes.NOT_FOUND, "Associated shift not found!");
+        }
+        //check permission
+        checkCinemaPermission(manager.cinemaId, shift.cinemaId);
+        //check status
+        if (leaveRequest.status === "Pending") {
+            throw new ApiError(StatusCodes.CONFLICT, "This leave request is already pending!");
+        }
+
+        if (leaveRequest.status === 'Approved') {
+            if (shift.status !== 'NeedReplacement') {
+                throw new ApiError(StatusCodes.CONFLICT, "Cannot undo because another staff has already accepted this shift or shift is processed!");
+            }
+
+            
+            shift.status = 'Assigned';
+            await shift.save({ session });
+        } 
+   
+        leaveRequest.status = 'Pending';
+        leaveRequest.managerId = null;
+        leaveRequest.approvedAt = null;
+        leaveRequest.rejectReason = null; 
+
+        await leaveRequest.save({ session });
+        await session.commitTransaction();
+        session.endSession();
+
+        return leaveRequest
+
+    } catch (error) {
+        await session.abortTransaction();
+        throw error;
+    }finally {
+        session.endSession();
+    }
+}
+
 
 
 export const ManagerStaffShiftService = {
@@ -657,5 +707,6 @@ export const ManagerStaffShiftService = {
     getStaffDetailService,
     getLeaveRequestForManager,
     approveLeaveRequest,
-    rejectLeaveRequest
+    rejectLeaveRequest,
+    undoLeaveRequest
 };

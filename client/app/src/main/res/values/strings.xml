@@ -1021,4 +1021,22 @@
     <string name="error_end_before_start">End date cannot be before start date</string>
     <string name="error_missing_end_date">Please select end date</string>
     <string name="error_missing_start_date">Please select start date</string>
+
+    <string name="dialog_reject_title_reject">Reject Leave Request</string>
+    <string name="dialog_reject_reason_label">Reason</string>
+    <string name="dialog_reject_hint_reject">Enter reason for rejection…</string>
+    <string name="dialog_action_reject_reject">Reject</string>
+    <string name="auto_str_reset_1_reject">Cancel</string>
+    <string name="error_empty_reason_reject">Reason cannot be empty</string>
+
+    <!-- Undo Feature -->
+    <string name="msg_undo_success">Decision undone successfully</string>
+    <string name="error_undo_failed">Failed to undo leave request. Another staff may have taken the shift.</string>
+
+    <!-- Dialog Confirm Undo -->
+    <string name="dialog_undo_title">Undo Decision</string>
+    <string name="dialog_undo_message">Are you sure you want to undo this decision? This request will return to Pending status.</string>
+    <string name="action_undo">Undo</string>
+    <string name="action_cancel">Cancel</string>
+
 </resources>

@@ -25,5 +25,7 @@ managerStaffShiftRouter.get('/:id', authMiddleware.isAuthorized, authMiddleware.
 managerStaffShiftRouter.patch('/leave-requests/:id/approve', authMiddleware.isAuthorized, authMiddleware.authorizeRoles('Manager'), StaffShiftController.approveLeaveRequest)
 // PATCH /api/manager/staff-shifts/leave-requests/:id/reject
 managerStaffShiftRouter.patch('/leave-requests/:id/reject', authMiddleware.isAuthorized, authMiddleware.authorizeRoles('Manager'), StaffShiftController.rejectLeaveRequest)
+//POST /api/manager/staff-shifts/leave-requests/:id/undo
+managerStaffShiftRouter.patch('/leave-requests/:id/undo', authMiddleware.isAuthorized, authMiddleware.authorizeRoles('Manager'), StaffShiftController.undoLeaveRequest)
 
 export default managerStaffShiftRouter
