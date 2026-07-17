@@ -1,9 +1,7 @@
 package com.example.movie_booking_app.view.activity
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -20,46 +18,46 @@ import com.example.movie_booking_app.view.adapter.CinemaAdapter
 import com.example.movie_booking_app.view.adapter.ReviewAdapter
 import com.example.movie_booking_app.viewmodel.MovieViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
 class MovieDetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMovieDetailBinding
-
     private val viewModel: MovieViewModel by viewModels()
 
     private lateinit var movieId: String
     private var selectedCinema: Cinema? = null
-    private lateinit var reviewAdapter: ReviewAdapter
+
+    // Khởi tạo adapter một lần duy nhất
+    private val reviewAdapter by lazy { ReviewAdapter(emptyList()) }
+    private val directorAdapter by lazy { CardItemAdapter() }
+    private val actorsAdapter by lazy { CardItemAdapter() }
+
     private var isReviewsExpanded = false
     private var currentReviewsList = emptyList<com.example.movie_booking_app.data.model.response.ReviewItem>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityMovieDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Get movieId from Intent
         movieId = intent.getStringExtra("movieId") ?: ""
-
         if (movieId.isEmpty()) {
             Toast.makeText(this, "Movie ID invalid", Toast.LENGTH_SHORT).show()
             finish()
             return
         }
 
-        // Call API
-        viewModel.fetchMovieDetail(movieId)
-        viewModel.fetchMovieShowtimes(movieId)
-        viewModel.fetchMovieReviews(movieId)
+        setupViews()
+        setupAdapters()
+        refreshData()
+        observeMovie()
+    }
 
-        // Setup ReviewAdapter
-        reviewAdapter = ReviewAdapter(emptyList())
-        binding.rvReviews.adapter = reviewAdapter
+    private fun setupViews() {
+        binding.ivBack.setOnClickListener { finish() }
 
         binding.tvSeeAllReviews.setOnClickListener {
             isReviewsExpanded = !isReviewsExpanded
@@ -68,80 +66,98 @@ class MovieDetailActivity : AppCompatActivity() {
 
         binding.btnBookTicket.setOnClickListener {
             val movie = viewModel.movieDetail.value?.data
-
             if (movie?.status == "coming-soon") {
                 Toast.makeText(this, "This movie is coming soon.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            if (selectedCinema == null) {
+            val cinema = selectedCinema
+            if (cinema == null) {
                 Toast.makeText(this, "Please select a cinema first.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+
             val intent = Intent(this, SelectSeatActivity::class.java).apply {
                 putExtra("movieId", movieId)
-                putExtra("cinemaId", selectedCinema!!.id)
-                val movie = viewModel.movieDetail.value?.data
+                putExtra("cinemaId", cinema.id)
                 putExtra("movieName", movie?.movieName ?: "")
                 putExtra("moviePoster", movie?.poster ?: "")
                 putExtra("movieGenre", movie?.movieGenre?.joinToString(", ") ?: "")
-                putExtra("cinemaName", selectedCinema!!.cinemaName ?: "")
-                putExtra("cinemaAddress", selectedCinema!!.address ?: "")
+                putExtra("cinemaName", cinema.cinemaName ?: "")
+                putExtra("cinemaAddress", cinema.address ?: "")
             }
             startActivity(intent)
         }
 
-        binding.ivBack.setOnClickListener {
-            finish()
-        }
-
         // Setup SwipeRefreshLayout
-        binding.swipeRefresh.setOnRefreshListener {
-            viewModel.fetchMovieDetail(movieId)
-            viewModel.fetchMovieShowtimes(movieId)
-            viewModel.fetchMovieReviews(movieId)
-        }
+        binding.swipeRefresh.setOnRefreshListener { refreshData() }
         binding.swipeRefresh.setColorSchemeResources(
             android.R.color.holo_orange_light,
             android.R.color.black
         )
+    }
 
-        observeMovie()
+    private fun setupAdapters() {
+        // Gán adapter cố định ngay từ đầu
+        binding.rvReviews.adapter = reviewAdapter
+
+        binding.rvDirector.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        binding.rvDirector.adapter = directorAdapter
+
+        binding.rvActors.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        binding.rvActors.adapter = actorsAdapter
+    }
+
+    private fun refreshData() {
+        binding.swipeRefresh.isRefreshing = true
+        viewModel.fetchMovieDetail(movieId)
+        viewModel.fetchMovieShowtimes(movieId)
+        viewModel.fetchMovieReviews(movieId)
     }
 
     private fun observeMovie() {
-
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
 
                 launch {
+                    combine(
+                        viewModel.movieDetail,
+                        viewModel.movieShowtimes,
+                        viewModel.movieReviews
+                    ) { detail, showtimes, reviews ->
+                        detail != null
+                    }.collect { isLoaded ->
+                        if (isLoaded) binding.swipeRefresh.isRefreshing = false
+                    }
+                }
+
+                // Chi tiết phim
+                launch {
                     viewModel.movieDetail.collect { response ->
-                        binding.swipeRefresh.isRefreshing = false
                         response?.data?.let { movie ->
-                            val review = movie.totalReviews.toString()
                             binding.txtTitle.text = movie.movieName ?: "Unknown"
                             binding.txtDescription.text = movie.description ?: ""
-                            binding.txtGenre.text =  movie.movieGenre?.joinToString(", ") ?: ""
+                            binding.txtGenre.text = movie.movieGenre?.joinToString(", ") ?: ""
                             binding.txtLanguage.text = movie.language ?: ""
                             binding.txtDuration.text = formatDuration(movie.duration)
                             binding.txtReleaseDate.text = com.example.movie_booking_app.utils.DateUtils.formatMovieDate(movie.releaseDate)
                             binding.txtRating.text = movie.rating?.toString() ?: "Unrated"
-                            binding.txtVote.text = "(${review})"
-                            // Update rating summary in reviews section
+                            binding.txtVote.text = "(${movie.totalReviews ?: 0})"
+
+                            // Cập nhật khu vực đánh giá tổng quan
                             val rating = movie.rating ?: 0.0
                             binding.tvAvgRating.text = String.format("%.1f", rating)
                             binding.ratingBarSummary.rating = rating.toFloat()
                             val total = movie.totalReviews ?: 0
                             binding.tvReviewCount.text = "$total review${if (total != 1) "s" else ""}"
-                            if (total > 0) {
-                                binding.layoutRatingSummary.visibility = View.VISIBLE
-                            } else {
-                                binding.layoutRatingSummary.visibility = View.GONE
-                            }
+                            binding.layoutRatingSummary.visibility = if (total > 0) View.VISIBLE else View.GONE
+
+                            movie.director?.let { directorAdapter.submitList(it) }
+                            movie.actors?.let { actorsAdapter.submitList(it) }
 
                             val posterUrl = movie.poster
-                            val fullUrl = if (posterUrl?.startsWith("http") == true) posterUrl 
-                                          else "${com.example.movie_booking_app.utils.Constants.BASE_URL}${posterUrl?.removePrefix("/")}"
+                            val fullUrl = if (posterUrl?.startsWith("http") == true) posterUrl
+                            else "${com.example.movie_booking_app.utils.Constants.BASE_URL}${posterUrl?.removePrefix("/")}"
 
                             Glide.with(this@MovieDetailActivity)
                                 .load(fullUrl)
@@ -149,34 +165,27 @@ class MovieDetailActivity : AppCompatActivity() {
                                 .error(android.R.drawable.stat_notify_error)
                                 .into(binding.imgPoster)
 
-                            binding.rvDirector.layoutManager = LinearLayoutManager(this@MovieDetailActivity, LinearLayoutManager.HORIZONTAL, false)
-                            binding.rvDirector.adapter = CardItemAdapter(movie.director ?: emptyList())
-
-                            binding.rvActors.layoutManager = LinearLayoutManager(this@MovieDetailActivity, LinearLayoutManager.HORIZONTAL, false)
-                            binding.rvActors.adapter = CardItemAdapter(movie.actors ?: emptyList())
-
-                             if (movie.hasWatched == true) {
-                                 binding.btnWriteReview.visibility = View.VISIBLE
-                                 binding.btnWriteReview.setOnClickListener {
-                                     val intent = Intent(this@MovieDetailActivity, WriteReviewActivity::class.java).apply {
-                                         putExtra("movieId", movieId)
-                                         putExtra("movieTitle", movie.movieName ?: "")
-                                         putExtra("moviePoster", movie.poster ?: "")
-                                         putExtra("movieGenre", movie.movieGenre?.joinToString(", ") ?: "")
-                                     }
-                                     startActivityForResult(intent, REQUEST_WRITE_REVIEW)
-                                 }
-                             } else {
-                                 binding.btnWriteReview.visibility = View.GONE
-                             }
+                            if (movie.hasWatched == true) {
+                                binding.btnWriteReview.visibility = View.VISIBLE
+                                binding.btnWriteReview.setOnClickListener {
+                                    val intent = Intent(this@MovieDetailActivity, WriteReviewActivity::class.java).apply {
+                                        putExtra("movieId", movieId)
+                                        putExtra("movieTitle", movie.movieName ?: "")
+                                        putExtra("moviePoster", movie.poster ?: "")
+                                        putExtra("movieGenre", movie.movieGenre?.joinToString(", ") ?: "")
+                                    }
+                                    startActivityForResult(intent, REQUEST_WRITE_REVIEW)
+                                }
+                            } else {
+                                binding.btnWriteReview.visibility = View.GONE
+                            }
                         }
-
                     }
                 }
+
+                // Suất chiếu & Rạp
                 launch {
                     viewModel.movieShowtimes.collect { showtimes ->
-                        binding.swipeRefresh.isRefreshing = false
-                        // no cinema is not yet available.
                         if (showtimes.isEmpty()) {
                             binding.rvCinema.visibility = View.GONE
                             binding.tvNoCinema.visibility = View.VISIBLE
@@ -185,14 +194,11 @@ class MovieDetailActivity : AppCompatActivity() {
 
                         binding.rvCinema.visibility = View.VISIBLE
                         binding.tvNoCinema.visibility = View.GONE
+
                         val cinemas = showtimes
-                            .mapNotNull {
-                                it.cinemaId
-                            }
-                            .distinctBy {
-                                it.id ?: it.cinemaName
-                            }
-                        
+                            .mapNotNull { it.cinemaId }
+                            .distinctBy { it.id ?: it.cinemaName }
+
                         if (cinemas.isNotEmpty()) {
                             binding.rvCinema.layoutManager = LinearLayoutManager(this@MovieDetailActivity, LinearLayoutManager.VERTICAL, false)
                             binding.rvCinema.adapter = CinemaAdapter(cinemas) { cinema ->
@@ -202,38 +208,30 @@ class MovieDetailActivity : AppCompatActivity() {
                     }
                 }
 
-                launch {
-                    viewModel.showtimeError.collect { error ->
-                        error?.let {
-                            binding.swipeRefresh.isRefreshing = false
-                            Toast.makeText(this@MovieDetailActivity, "Showtimes: $it", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }
-
-                launch {
-                    viewModel.detailError.collect { error ->
-                        error?.let {
-                            binding.swipeRefresh.isRefreshing = false
-                            Toast.makeText(this@MovieDetailActivity, it, Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }
-
-                launch {
-                    viewModel.reviewActionSuccess.collect { success ->
-                        if (success) {
-                            viewModel.fetchMovieDetail(movieId)
-                            viewModel.fetchMovieReviews(movieId)
-                        }
-                    }
-                }
-
+                // Lắng nghe danh sách đánh giá
                 launch {
                     viewModel.movieReviews.collect { reviews ->
-                        binding.swipeRefresh.isRefreshing = false
                         currentReviewsList = reviews
                         updateReviewsDisplay()
+                    }
+                }
+
+                // Xử lý lỗi
+                launch {
+                    viewModel.detailError.collect { error ->
+                        error?.let { Toast.makeText(this@MovieDetailActivity, it, Toast.LENGTH_SHORT).show() }
+                    }
+                }
+                launch {
+                    viewModel.showtimeError.collect { error ->
+                        error?.let { Toast.makeText(this@MovieDetailActivity, "Showtimes: $it", Toast.LENGTH_SHORT).show() }
+                    }
+                }
+
+                // Thành công khi viết review
+                launch {
+                    viewModel.reviewActionSuccess.collect { success ->
+                        if (success) refreshData()
                     }
                 }
             }
@@ -264,12 +262,10 @@ class MovieDetailActivity : AppCompatActivity() {
         }
     }
 
-    fun formatDuration(minutes: Int?): String {
+    private fun formatDuration(minutes: Int?): String {
         if (minutes == null || minutes <= 0) return "0m"
-
         val h = minutes / 60
         val m = minutes % 60
-
         return when {
             h > 0 && m > 0 -> "${h}h${m}m"
             h > 0 -> "${h}h"
@@ -277,11 +273,10 @@ class MovieDetailActivity : AppCompatActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: android.content.Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_WRITE_REVIEW && resultCode == RESULT_OK) {
-            // Reload movie info (new rating)
-            viewModel.fetchMovieDetail(movieId)
+            refreshData()
         }
     }
 

@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.ManagerLeaveRequestResponse
@@ -26,8 +27,11 @@ class ManagerLeaveRequestAdapter(private val listener: LeaveRequestListener) :
     private val actionStates = mutableMapOf<String, String>()
 
     fun updateData(newItems: List<ManagerLeaveRequestResponse>) {
+        val diffCallback = LeaveRequestDiffCallback(this.items, newItems)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+
         this.items = newItems
-        notifyDataSetChanged()
+        diffResult.dispatchUpdatesTo(this)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ManagerLeaveViewHolder {
@@ -153,5 +157,18 @@ class ManagerLeaveRequestAdapter(private val listener: LeaveRequestListener) :
                 }
             }
         }
+    }
+}
+class LeaveRequestDiffCallback(private val oldList: List<ManagerLeaveRequestResponse>, private val newList: List<ManagerLeaveRequestResponse>) : DiffUtil.Callback() {
+
+    override fun getOldListSize(): Int = oldList.size
+    override fun getNewListSize(): Int = newList.size
+
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldList[oldItemPosition].leaveRequestId == newList[newItemPosition].leaveRequestId
+    }
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldList[oldItemPosition] == newList[newItemPosition]
     }
 }

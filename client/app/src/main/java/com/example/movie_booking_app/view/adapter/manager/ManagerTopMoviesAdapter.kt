@@ -3,21 +3,25 @@ package com.example.movie_booking_app.view.adapter.manager
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.TopMoviesResponse
 import com.example.movie_booking_app.databinding.ItemTopMovieBinding
 
 class ManagerTopMoviesAdapter : RecyclerView.Adapter<ManagerTopMoviesAdapter.TopMoviesViewHolder>() {
-
     private var moviesList: List<TopMoviesResponse> = emptyList()
     private var maxTickets = 1
-
-    // Function to update data manually, clear old counters
     fun submitList(newList: List<TopMoviesResponse>?) {
-        this.moviesList = newList.orEmpty()
+        val validatedNewList = newList.orEmpty()
+
+        val diffCallback = TopMoviesDiffCallback(this.moviesList, validatedNewList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+
+        this.moviesList = validatedNewList
         this.maxTickets = if (moviesList.isNotEmpty()) moviesList[0].totalTickets.coerceAtLeast(1) else 1
-        notifyDataSetChanged() // Force redrawing the whole list, no position cache
+
+        diffResult.dispatchUpdatesTo(this)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TopMoviesViewHolder {
@@ -45,7 +49,6 @@ class ManagerTopMoviesAdapter : RecyclerView.Adapter<ManagerTopMoviesAdapter.Top
                 val purpleColor = ContextCompat.getColor(context, R.color.color_bg_text_bottom)
                 val textColor = ContextCompat.getColor(context, R.color.text_light_gray)
 
-
                 if (rank == 1) {
                     txtRank.background?.mutate()?.setTint(goldColor)
                     txtRank.setTextColor(textColor)
@@ -59,5 +62,20 @@ class ManagerTopMoviesAdapter : RecyclerView.Adapter<ManagerTopMoviesAdapter.Top
                 progressMovie.progress = progressPercentage
             }
         }
+    }
+}
+
+
+class TopMoviesDiffCallback(private val oldList: List<TopMoviesResponse>, private val newList: List<TopMoviesResponse>) : DiffUtil.Callback() {
+
+    override fun getOldListSize(): Int = oldList.size
+    override fun getNewListSize(): Int = newList.size
+
+    override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldList[oldItemPosition].title == newList[newItemPosition].title
+    }
+
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldItemPosition == newItemPosition && oldList[oldItemPosition] == newList[newItemPosition]
     }
 }
