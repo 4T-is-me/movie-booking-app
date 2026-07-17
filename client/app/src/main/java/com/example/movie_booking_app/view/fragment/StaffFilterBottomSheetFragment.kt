@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.FragmentStaffFilterBottomSheetBinding
+import com.example.movie_booking_app.utils.Constants
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -59,10 +60,12 @@ class StaffFilterBottomSheetFragment(private val onApplyFilter: (startDate: Stri
     }
     private fun setupStatusFilter() {
         val statusViews = mapOf(
-            "Active" to binding.tvStatusActive,
-            "Assigned" to binding.tvStatusAssigned,
-            "Completed" to binding.tvStatusCompleted,
-            "NeedReplacement" to binding.tvStatusNeedReplacement
+            Constants.STATUS_SHIFT[0] to binding.tvStatusActive,
+            Constants.STATUS_SHIFT[1] to binding.tvStatusAssigned,
+            Constants.STATUS_SHIFT[2] to binding.tvStatusCompleted,
+            Constants.STATUS_SHIFT[3] to binding.tvAbsent,
+            Constants.STATUS_SHIFT[4] to binding.tvStatusNeedReplacement
+
         )
 
         statusViews.forEach { (statusName, textView) ->

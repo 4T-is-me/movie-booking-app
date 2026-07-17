@@ -2,11 +2,14 @@ package com.example.movie_booking_app.data.model.response
 
 import com.example.movie_booking_app.data.model.entity.UserProfile
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
+import kotlin.String
 
 /**
  * Response data class for user profile information.
  */
 data class UserProfileResponse(
+    val accountId: String?= null,
     val username: String? = null,
     val fullName: String? = null,
     val email: String? = null,
@@ -24,13 +27,14 @@ data class UserProfileResponse(
     val favoriteGenres: List<String>? = null,
     val membershipRank: String? = null,
     val totalSpent: Int? = null
-)
+): Serializable
 
 /**
  * Extension function to map UserProfileResponse to UserProfile entity.
  */
 fun UserProfileResponse.toUserProfile(): UserProfile {
     return UserProfile(
+        accountId =  accountId ,
         username = username,
         fullName = fullName,
         email = email,

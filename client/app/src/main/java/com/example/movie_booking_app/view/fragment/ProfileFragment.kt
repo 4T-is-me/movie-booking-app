@@ -20,6 +20,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import com.bumptech.glide.Glide
 import com.example.movie_booking_app.R
+import com.example.movie_booking_app.data.model.entity.UserProfile
+import com.example.movie_booking_app.data.model.response.UserProfileResponse
 import com.example.movie_booking_app.view.activity.RewardPointsActivity
 import kotlin.jvm.java
 
@@ -31,7 +33,7 @@ class ProfileFragment : Fragment() {
 
     private val viewModel: ProfileViewModel by viewModels()
     private var progressDialog: android.app.Dialog? = null
-
+    private var currentUserProfile: UserProfile? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -74,7 +76,9 @@ class ProfileFragment : Fragment() {
             startActivity(intent)
         }
         binding.layoutRewardPoints.setOnClickListener {
-            val intent = Intent(requireContext(), RewardPointsActivity::class.java)
+            val intent = Intent(requireContext(), RewardPointsActivity::class.java).apply {
+                putExtra("USER_PROFILE", currentUserProfile)
+            }
             startActivity(intent)
         }
 
@@ -120,6 +124,7 @@ class ProfileFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.userProfile.collect { userProfile ->
+                    currentUserProfile = userProfile
                     binding.tvName.text = userProfile?.fullName ?: "-"
                     binding.tvPhone.text = userProfile?.phone ?: "-"
                     binding.tvEmail.text = userProfile?.email ?: "-"

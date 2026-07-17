@@ -58,6 +58,8 @@ class ManagerStaffActivity : AppCompatActivity() {
             binding.tabStaffList,
             binding.tabLeaveRequests
         )
+        viewModel.loadStaffForManager()
+
 
         setUpClickListeners()
         setUpRecyclerView()
@@ -81,14 +83,12 @@ class ManagerStaffActivity : AppCompatActivity() {
                 showUpdateShiftDialog(shiftItem)
             }
         )
-        // Setup Leave Request Adapter mới có tích hợp Undo
         leaveRequestAdapter = ManagerLeaveRequestAdapter(object : ManagerLeaveRequestAdapter.LeaveRequestListener {
             override fun onApprove(item: ManagerLeaveRequestResponse) {
                 leaveRequestViewModel.approveLeaveRequest(item.leaveRequestId)
             }
 
             override fun onReject(item: ManagerLeaveRequestResponse) {
-                // Task 3: Hiện dialog nhập lý do reject
                 showRejectDialog(item)
             }
 
@@ -112,7 +112,6 @@ class ManagerStaffActivity : AppCompatActivity() {
             setActiveTab(binding.tabLeaveRequests, "leave_requests")
         }
 
-        //open BottomSheet
         binding.btnAdvancedFilter?.setOnClickListener {
             if (currentTab == "staff_list") {
                 showAdvancedFilterBottomSheet()
@@ -123,7 +122,6 @@ class ManagerStaffActivity : AppCompatActivity() {
         binding.btnGenerateShift.setOnClickListener {
             showGenerateShiftDialog()
         }
-
     }
 
     private fun setActiveTab(selectedTab: TextView, tabType: String) {
@@ -150,10 +148,29 @@ class ManagerStaffActivity : AppCompatActivity() {
     }
 
     private fun showGenerateShiftDialog() {
-        val dialog = GenerateShiftDialogFragment {startDate, endDate ->
-            viewModel.loadGenerateShiftData(startDate, endDate)
+        val staffResponse = viewModel.staffListData.value
+
+        if (staffResponse?.success == true && staffResponse.data != null) {
+            val activeStaffList = staffResponse.data.staff
+            val cinemaId = staffResponse.data.cinemaId
+
+            if (activeStaffList.isEmpty()) {
+                Toast.makeText(this, "No active staff found in your cinema to schedule!", Toast.LENGTH_LONG).show()
+                return
+            }
+            // Khởi tạo Dialog mới truyền danh sách Staff phẳng và Callback save
+            val dialog = GenerateShiftDialogFragment(
+                staffList = activeStaffList,
+                cinemaId = cinemaId,
+                onSaveClick = { requestPayload ->
+                    viewModel.saveGeneratedShifts(requestPayload)
+                }
+            )
+            dialog.show(supportFragmentManager, "GenerateShiftDialogFragment")
+        } else {
+            Toast.makeText(this, "Still fetching staff list data, please wait a moment!", Toast.LENGTH_SHORT).show()
+            viewModel.loadStaffForManager()
         }
-        dialog.show(supportFragmentManager, "GenerateShiftDialogFragment")
     }
 
     private fun observeGenerateShiftResult() {
@@ -162,14 +179,14 @@ class ManagerStaffActivity : AppCompatActivity() {
                 viewModel.generateShiftData.collectLatest { response ->
                     if(response != null) {
                         if (response.success) {
+                            viewModel.loadStaffShifts()
                             val successDialog = GenerateShiftSuccessDialogFragment(response.data) {
-                                viewModel.loadStaffShifts() // Reload shift list
+                                viewModel.loadStaffShifts() // Tải lại danh sách lịch làm việc chính để cập nhật UI
                             }
                             successDialog.show(supportFragmentManager, "GenerateShiftSuccessDialogFragment")
-                        }else {
-                            Toast.makeText(this@ManagerStaffActivity, response.message, Toast.LENGTH_SHORT).show()
+                        } else {
+                            showErrorDialog(response.message ?: "Generate shifts failed on server")
                         }
-                        // Reset state
                         viewModel.clearGenerateShiftState()
                     }
                 }
@@ -194,10 +211,7 @@ class ManagerStaffActivity : AppCompatActivity() {
                 viewModel.shiftData.collectLatest { response ->
                     response?.data?.let { shiftList ->
                         if (currentTab == "staff_list") {
-                            // Store the newly retrieved original list
                             originalShiftList = shiftList
-
-                            // Re-filter immediately
                             val currentQuery = binding.etSearchStaff?.text?.toString().orEmpty()
                             applySearchFilter(currentQuery)
                         }
@@ -216,11 +230,9 @@ class ManagerStaffActivity : AppCompatActivity() {
                 viewModel.updateShiftResult.collectLatest { response ->
                     if (response != null) {
                         if (response.success) {
-                            // success
                             Toast.makeText(this@ManagerStaffActivity, response.message ?: "Update successful", Toast.LENGTH_SHORT).show()
-                            viewModel.loadStaffShifts() // reload list shift
+                            viewModel.loadStaffShifts()
                         } else {
-                            //  failed (display error )
                             showErrorDialog(response.message ?: "Unknown backend error")
                         }
                         viewModel.clearUpdateState()
@@ -331,7 +343,6 @@ class ManagerStaffActivity : AppCompatActivity() {
                 setUpShiftList(filteredList)
             }
         } else {
-            // Lọc local cho Leave Requests Tab
             if (trimmedQuery.isEmpty()) {
                 setUpLeaveRequestList(originalLeaveRequests)
             } else {
@@ -346,7 +357,6 @@ class ManagerStaffActivity : AppCompatActivity() {
         }
     }
 
-     //Integrate a TextWatcher into the EditText to enable real-time keyword filtering.
     private fun setUpSearchListener() {
         binding.etSearchStaff?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -356,7 +366,7 @@ class ManagerStaffActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {}
         })
     }
-    //Open the BottomSheet and receive the date range filter result from the Fragment.
+
     private fun showAdvancedFilterBottomSheet() {
         val filterFragment = StaffFilterBottomSheetFragment { startDate, endDate, status->
             viewModel.loadStaffShifts(
@@ -372,7 +382,7 @@ class ManagerStaffActivity : AppCompatActivity() {
         val staffListPair = originalShiftList
             .filter { !it.staffId.isNullOrEmpty() && !it.staffName.isNullOrEmpty() }
             .map { Pair(it.staffId!!, it.staffName!!) }
-            .distinctBy { it.first } //get distinct Id
+            .distinctBy { it.first }
 
         val dialog = UpdateShiftDialogFragment(shiftItem, staffListPair) { staffId, shift, status ->
             viewModel.updateShift(shiftItem.shiftId ?: "", staffId, shift, status)
@@ -408,12 +418,10 @@ class ManagerStaffActivity : AppCompatActivity() {
 
     private fun showErrorDialog(backendErrorMessage: String) {
         val builder = androidx.appcompat.app.AlertDialog.Builder(this)
-        //inflate
         val dialogBinding = DialogErrorCustomBinding.inflate(layoutInflater)
         builder.setView(dialogBinding.root)
         val dialog = builder.create()
 
-        //delete background default
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialogBinding.tvDialogMessage.text = backendErrorMessage
         dialogBinding.btnDialogOk.setOnClickListener {
@@ -421,8 +429,4 @@ class ManagerStaffActivity : AppCompatActivity() {
         }
         dialog.show()
     }
-
-
-
-
 }
