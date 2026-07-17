@@ -11,5 +11,6 @@ data class Cinema(
     val hotline: String?,
     val image: String?,
     val status: String?,
+    val totalRooms: Int? = null,
     var isSelected: Boolean = false
 )

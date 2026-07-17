@@ -12,6 +12,12 @@ adminRoomRouter.get('/',authMiddleware.isAuthorized,authMiddleware.authorizeRole
 adminRoomRouter.get('/:id/seats',authMiddleware.isAuthorized,authMiddleware.authorizeRoles("Admin"),adminRoomController.getRoomSeats)
 //PATCH /api/admin/rooms/:id/seats - update seat types of a room
 adminRoomRouter.patch('/:id/seats',authMiddleware.isAuthorized,authMiddleware.authorizeRoles("Admin"),adminRoomController.updateSeatTypes)
+//GET /api/admin/rooms/:id - get room details
+adminRoomRouter.get('/:id',authMiddleware.isAuthorized,authMiddleware.authorizeRoles("Admin"),adminRoomController.getRoomDetails)
+//PUT /api/admin/rooms/:id - update a room
+adminRoomRouter.put('/:id',authMiddleware.isAuthorized,authMiddleware.authorizeRoles("Admin"),adminRoomController.updateRoom)
+//PATCH /api/admin/rooms/:id/status - soft delete / reactivate room
+adminRoomRouter.patch('/:id/status',authMiddleware.isAuthorized,authMiddleware.authorizeRoles("Admin"),adminRoomController.toggleRoomStatus)
 //DELETE /api/admin/rooms/:id - delete a room
 adminRoomRouter.delete('/:id',authMiddleware.isAuthorized,authMiddleware.authorizeRoles("Admin"),adminRoomController.softDeleteRoom)
 export const adminRoomRoute = {

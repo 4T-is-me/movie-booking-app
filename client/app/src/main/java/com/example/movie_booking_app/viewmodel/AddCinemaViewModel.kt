@@ -18,6 +18,7 @@ class AddCinemaViewModel @Inject constructor(
     private val repository: CinemasRepository
 ) : ViewModel() {
 
+    val cinemaId = MutableStateFlow<String?>(null)
     val cinemaName = MutableStateFlow("")
     val address = MutableStateFlow("")
     val city = MutableStateFlow("")
@@ -33,6 +34,29 @@ class AddCinemaViewModel @Inject constructor(
 
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage = _errorMessage.asStateFlow()
+
+    fun loadCinema(id: String) {
+        cinemaId.value = id
+        viewModelScope.launch {
+            _isLoading.value = true
+            _errorMessage.value = null
+            try {
+                val cinema = repository.getCinemaDetails(id)
+                if (cinema != null) {
+                    cinemaName.value = cinema.cinemaName.orEmpty()
+                    address.value = cinema.address.orEmpty()
+                    city.value = cinema.city.orEmpty()
+                    hotline.value = cinema.hotline.orEmpty()
+                    status.value = cinema.status.orEmpty()
+                    image.value = cinema.image.orEmpty()
+                }
+            } catch (e: Exception) {
+                _errorMessage.value = e.message ?: "Failed to load cinema details"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
 
     fun saveCinema(posterPart: MultipartBody.Part?) {
         val name = cinemaName.value.trim()
@@ -51,31 +75,56 @@ class AddCinemaViewModel @Inject constructor(
             _isLoading.value = true
             _errorMessage.value = null
             try {
-                val success = if (posterPart != null) {
-                    repository.createCinemaWithImage(
-                        name.toRequestBody("text/plain".toMediaTypeOrNull()),
-                        addr.toRequestBody("text/plain".toMediaTypeOrNull()),
-                        cit.toRequestBody("text/plain".toMediaTypeOrNull()),
-                        hot.toRequestBody("text/plain".toMediaTypeOrNull()),
-                        stat.toRequestBody("text/plain".toMediaTypeOrNull()),
-                        posterPart
-                    )
+                val currentId = cinemaId.value
+                val success = if (currentId != null) {
+                    if (posterPart != null) {
+                        repository.updateCinemaWithImage(
+                            currentId,
+                            name.toRequestBody("text/plain".toMediaTypeOrNull()),
+                            addr.toRequestBody("text/plain".toMediaTypeOrNull()),
+                            cit.toRequestBody("text/plain".toMediaTypeOrNull()),
+                            hot.toRequestBody("text/plain".toMediaTypeOrNull()),
+                            stat.toRequestBody("text/plain".toMediaTypeOrNull()),
+                            posterPart
+                        )
+                    } else {
+                        val request = AddCinemaRequest(
+                            cinemaName = name,
+                            address = addr,
+                            city = cit,
+                            hotline = hot,
+                            status = stat,
+                            image = if (img.isEmpty()) null else img
+                        )
+                        repository.updateCinema(currentId, request)
+                    }
                 } else {
-                    val request = AddCinemaRequest(
-                        cinemaName = name,
-                        address = addr,
-                        city = cit,
-                        hotline = hot,
-                        status = stat,
-                        image = if (img.isEmpty()) null else img
-                    )
-                    repository.createCinema(request)
+                    if (posterPart != null) {
+                        repository.createCinemaWithImage(
+                            name.toRequestBody("text/plain".toMediaTypeOrNull()),
+                            addr.toRequestBody("text/plain".toMediaTypeOrNull()),
+                            cit.toRequestBody("text/plain".toMediaTypeOrNull()),
+                            hot.toRequestBody("text/plain".toMediaTypeOrNull()),
+                            stat.toRequestBody("text/plain".toMediaTypeOrNull()),
+                            posterPart
+                        )
+                    } else {
+                        val request = AddCinemaRequest(
+                            cinemaName = name,
+                            address = addr,
+                            city = cit,
+                            hotline = hot,
+                            status = stat,
+                            image = if (img.isEmpty()) null else img
+                        )
+                        repository.createCinema(request)
+                    }
                 }
 
                 if (success) {
                     _isSuccess.value = true
                 } else {
-                    _errorMessage.value = "Failed to create cinema"
+                    _errorMessage.value = if (currentId != null) "Failed to update cinema" else "Failed to create cinema"
                 }
             } catch (e: Exception) {
                 _errorMessage.value = e.message ?: "An error occurred"

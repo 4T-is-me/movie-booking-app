@@ -30,21 +30,25 @@ class AddCinemaRoomFragment : Fragment() {
 
     companion object {
         private const val ARG_CINEMA_ID = "cinema_id"
+        private const val ARG_ROOM_ID = "room_id"
 
-        fun newInstance(cinemaId: String?): AddCinemaRoomFragment {
+        fun newInstance(cinemaId: String?, roomId: String? = null): AddCinemaRoomFragment {
             val fragment = AddCinemaRoomFragment()
             val args = Bundle()
             args.putString(ARG_CINEMA_ID, cinemaId)
+            args.putString(ARG_ROOM_ID, roomId)
             fragment.arguments = args
             return fragment
         }
     }
 
     private var cinemaId: String? = null
+    private var roomId: String? = null
 
     private val viewModel: AddCinemaRoomViewModel by viewModels()
     private lateinit var seatPreviewAdapter: SeatPreviewAdapter
 
+    private lateinit var tvTitle: TextView
     private lateinit var btnBack: View
     private lateinit var etRoomName: TextInputEditText
     private lateinit var actvRoomType: AutoCompleteTextView
@@ -65,6 +69,7 @@ class AddCinemaRoomFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         cinemaId = arguments?.getString(ARG_CINEMA_ID)
+        roomId = arguments?.getString(ARG_ROOM_ID)
     }
 
     override fun onCreateView(
@@ -78,6 +83,7 @@ class AddCinemaRoomFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Bind Views
+        tvTitle = view.findViewById(R.id.tvTitle)
         btnBack = view.findViewById(R.id.btnBack)
         etRoomName = view.findViewById(R.id.etRoomName)
         actvRoomType = view.findViewById(R.id.actvRoomType)
@@ -94,6 +100,15 @@ class AddCinemaRoomFragment : Fragment() {
         btnCancel = view.findViewById(R.id.btnCancel)
         btnSave = view.findViewById(R.id.btnSave)
         pbLoading = view.findViewById(R.id.pbLoading)
+
+        if (roomId != null) {
+            tvTitle.text = "Edit Room"
+            btnSave.text = "Update Room"
+            viewModel.loadRoom(roomId!!)
+        } else {
+            tvTitle.text = "Add Room"
+            btnSave.text = "Save Room"
+        }
 
         // Setup drop downs (Adapters)
         setupDropdowns()
@@ -187,6 +202,60 @@ class AddCinemaRoomFragment : Fragment() {
     }
 
     private fun observeViewModel() {
+        // Observe text fields for pre-filling
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.roomName.collectLatest { name ->
+                if (etRoomName.text?.toString() != name) {
+                    etRoomName.setText(name)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.rowsStr.collectLatest { rows ->
+                if (etRows.text?.toString() != rows) {
+                    etRows.setText(rows)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.columnsStr.collectLatest { cols ->
+                if (etColumns.text?.toString() != cols) {
+                    etColumns.setText(cols)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.roomType.collectLatest { type ->
+                if (actvRoomType.text?.toString() != type) {
+                    actvRoomType.setText(type, false)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.screenType.collectLatest { screen ->
+                if (actvScreenType.text?.toString() != screen) {
+                    actvScreenType.setText(screen, false)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.status.collectLatest { stat ->
+                val display = when (stat.lowercase()) {
+                    "active" -> "Active"
+                    "maintenance" -> "Maintenance"
+                    else -> "Inactive"
+                }
+                if (actvStatus.text?.toString() != display) {
+                    actvStatus.setText(display, false)
+                }
+            }
+        }
+
         // Observe capacity state
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.capacity.collectLatest { cap ->
@@ -236,7 +305,7 @@ class AddCinemaRoomFragment : Fragment() {
                     btnSave.isEnabled = false
                 } else {
                     pbLoading.visibility = View.GONE
-                    btnSave.text = "Save Room"
+                    btnSave.text = if (roomId != null) "Update Room" else "Save Room"
                     btnSave.isEnabled = true
                 }
             }
@@ -255,7 +324,7 @@ class AddCinemaRoomFragment : Fragment() {
     private fun showSuccessDialog() {
         AlertDialog.Builder(requireContext())
             .setTitle("Success")
-            .setMessage("Cinema room created successfully.")
+            .setMessage(if (roomId != null) "Cinema room updated successfully." else "Cinema room created successfully.")
             .setCancelable(false)
             .setPositiveButton("OK") { dialog, _ ->
                 dialog.dismiss()

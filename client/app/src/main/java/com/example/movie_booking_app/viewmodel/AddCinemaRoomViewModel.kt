@@ -22,12 +22,15 @@ class AddCinemaRoomViewModel @Inject constructor(
     private val repository: CinemaRoomsRepository
 ) : ViewModel() {
 
+    val roomId = MutableStateFlow<String?>(null)
     val roomName = MutableStateFlow("")
     val roomType = MutableStateFlow("Standard")
     val screenType = MutableStateFlow("2D")
     val rowsStr = MutableStateFlow("8")
     val columnsStr = MutableStateFlow("12")
     val status = MutableStateFlow("active")
+
+    private var isPrefilling = false
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
@@ -54,6 +57,9 @@ class AddCinemaRoomViewModel @Inject constructor(
             combine(rowsStr, columnsStr) { rStr, cStr ->
                 Pair(rStr.toIntOrNull(), cStr.toIntOrNull())
             }.collectLatest { (r, c) ->
+                if (isPrefilling) {
+                    return@collectLatest
+                }
                 if (r != null && r in 1..26 && c != null && c in 1..30) {
                     generatePreview(r, c)
                 } else {
@@ -92,6 +98,37 @@ class AddCinemaRoomViewModel @Inject constructor(
             }
             currentList[position] = seat.copy(seatType = nextType)
             _previewSeats.value = currentList
+        }
+    }
+
+    fun loadRoom(id: String) {
+        roomId.value = id
+        viewModelScope.launch {
+            _isLoading.value = true
+            _errorMessage.value = null
+            try {
+                val room = repository.getRoomDetails(id)
+                if (room != null) {
+                    isPrefilling = true
+                    roomName.value = room.roomName
+                    roomType.value = room.roomType ?: "Standard"
+                    screenType.value = room.screenType ?: "2D"
+                    rowsStr.value = room.rows.toString()
+                    columnsStr.value = room.columns.toString()
+                    status.value = room.status ?: "active"
+
+                    val seats = repository.getRoomSeats(id)
+                    if (seats.isNotEmpty()) {
+                        _previewSeats.value = seats
+                    }
+                    kotlinx.coroutines.delay(100)
+                    isPrefilling = false
+                }
+            } catch (e: Exception) {
+                _errorMessage.value = e.message ?: "Failed to load room details"
+            } finally {
+                _isLoading.value = false
+            }
         }
     }
 
@@ -139,11 +176,16 @@ class AddCinemaRoomViewModel @Inject constructor(
                     status = currentStatus,
                     seats = seatInputs
                 )
-                val success = repository.createRoom(request)
+                val currentRoomId = roomId.value
+                val success = if (currentRoomId != null) {
+                    repository.updateRoom(currentRoomId, request)
+                } else {
+                    repository.createRoom(request)
+                }
                 if (success) {
                     _isSuccess.value = true
                 } else {
-                    _errorMessage.value = "Unable to create cinema room. Make sure the name is unique."
+                    _errorMessage.value = if (currentRoomId != null) "Unable to update cinema room. Make sure the name is unique." else "Unable to create cinema room. Make sure the name is unique."
                 }
             } catch (e: Exception) {
                 _errorMessage.value = e.message ?: "Failed to save cinema room"

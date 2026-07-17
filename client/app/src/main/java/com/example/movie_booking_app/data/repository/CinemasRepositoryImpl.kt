@@ -48,4 +48,52 @@ class CinemasRepositoryImpl @Inject constructor(
             false
         }
     }
+
+    override suspend fun getCinemaDetails(id: String): Cinema? {
+        return try {
+            val response = adminApi.getCinemaDetails(id)
+            if (response.isSuccessful) {
+                response.body()?.data
+            } else {
+                null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    override suspend fun updateCinema(id: String, request: AddCinemaRequest): Boolean {
+        return try {
+            val response = adminApi.updateCinema(id, request)
+            response.isSuccessful
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    override suspend fun updateCinemaWithImage(
+        id: String,
+        cinemaName: RequestBody,
+        address: RequestBody,
+        city: RequestBody,
+        hotline: RequestBody,
+        status: RequestBody,
+        poster: MultipartBody.Part?
+    ): Boolean {
+        return try {
+            val response = adminApi.updateCinemaWithImage(id, cinemaName, address, city, hotline, status, poster)
+            response.isSuccessful
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    override suspend fun updateCinemaStatus(id: String, status: String): Boolean {
+        return try {
+            val response = adminApi.updateCinemaStatus(id, com.example.movie_booking_app.data.model.request.UpdateStatusRequest(status))
+            response.isSuccessful
+        } catch (e: Exception) {
+            false
+        }
+    }
 }

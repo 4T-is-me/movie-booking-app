@@ -96,10 +96,64 @@ const softDeleteRoom = async (req, res, next) => {
     }
 }
 
+const getRoomDetails = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const room = await adminRoomService.handleGetRoomDetails(id);
+        if (!room) {
+            return res.status(StatusCodes.NOT_FOUND).json({ success: false, message: "Room not found" });
+        }
+        return res.status(StatusCodes.OK).json({ success: true, data: room });
+    } catch (error) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: `Internal server error: ${error.message}` });
+    }
+};
+
+const updateRoom = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        let { roomName, roomType, screenType, rows, columns, rowsCount, colsCount, status, seats } = req.body;
+
+        const finalRows = rows || rowsCount;
+        const finalCols = columns || colsCount;
+
+        const result = await adminRoomService.handleUpdateRoom(id, {
+            roomName,
+            roomType,
+            screenType,
+            rowsCount: finalRows ? Number(finalRows) : undefined,
+            colsCount: finalCols ? Number(finalCols) : undefined,
+            status,
+            seatsInput: seats
+        });
+
+        return res.status(StatusCodes.OK).json({ success: true, data: result });
+    } catch (error) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: `Internal server error: ${error.message}` });
+    }
+};
+
+const toggleRoomStatus = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+        if (!status || (status !== "active" && status !== "inactive")) {
+            return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Invalid status: must be active or inactive" });
+        }
+        const result = await adminRoomService.handleToggleRoomStatus(id, status);
+        return res.status(StatusCodes.OK).json({ success: true, data: result });
+    } catch (error) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: `Internal server error: ${error.message}` });
+    }
+};
+
 export const adminRoomController = {
     creatRoomWithSeats,
     getAllRooms,
     getRoomSeats,
     updateSeatTypes,
-    softDeleteRoom
+    softDeleteRoom,
+    getRoomDetails,
+    updateRoom,
+    toggleRoomStatus
 }

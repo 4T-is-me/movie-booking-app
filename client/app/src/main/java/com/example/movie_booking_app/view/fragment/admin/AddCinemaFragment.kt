@@ -33,8 +33,22 @@ import android.net.Uri
 @AndroidEntryPoint
 class AddCinemaFragment : Fragment() {
 
+    companion object {
+        private const val ARG_CINEMA_ID = "cinema_id"
+
+        fun newInstance(cinemaId: String? = null): AddCinemaFragment {
+            val fragment = AddCinemaFragment()
+            val args = Bundle()
+            args.putString(ARG_CINEMA_ID, cinemaId)
+            fragment.arguments = args
+            return fragment
+        }
+    }
+
+    private var cinemaId: String? = null
     private val viewModel: AddCinemaViewModel by viewModels()
 
+    private lateinit var tvTitle: TextView
     private lateinit var btnBack: View
     private lateinit var etCinemaName: TextInputEditText
     private lateinit var etAddress: TextInputEditText
@@ -57,6 +71,11 @@ class AddCinemaFragment : Fragment() {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        cinemaId = arguments?.getString(ARG_CINEMA_ID)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -67,6 +86,7 @@ class AddCinemaFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        tvTitle = view.findViewById(R.id.tvTitle)
         btnBack = view.findViewById(R.id.btnBack)
         etCinemaName = view.findViewById(R.id.etCinemaName)
         etAddress = view.findViewById(R.id.etAddress)
@@ -79,6 +99,15 @@ class AddCinemaFragment : Fragment() {
         btnCancel = view.findViewById(R.id.btnCancel)
         btnSave = view.findViewById(R.id.btnSave)
         pbLoading = view.findViewById(R.id.pbLoading)
+
+        if (cinemaId != null) {
+            tvTitle.text = "Edit Cinema"
+            btnSave.text = "Update Cinema"
+            viewModel.loadCinema(cinemaId!!)
+        } else {
+            tvTitle.text = "Add Cinema"
+            btnSave.text = "Save Cinema"
+        }
 
         setupDropdowns()
         setupFormListeners()
@@ -141,7 +170,7 @@ class AddCinemaFragment : Fragment() {
                 val file = convertUriToFile(uri)
                 if (file != null) {
                     val requestBody = file.readBytes().toRequestBody("image/*".toMediaTypeOrNull())
-                    multipartBody = MultipartBody.Part.createFormData("poster", file.name, requestBody)
+                    multipartBody = MultipartBody.Part.createFormData("image", file.name, requestBody)
                 }
             }
             viewModel.saveCinema(multipartBody)
@@ -155,6 +184,58 @@ class AddCinemaFragment : Fragment() {
     }
 
     private fun observeViewModel() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.cinemaName.collectLatest { name ->
+                if (etCinemaName.text?.toString() != name) {
+                    etCinemaName.setText(name)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.address.collectLatest { addr ->
+                if (etAddress.text?.toString() != addr) {
+                    etAddress.setText(addr)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.city.collectLatest { city ->
+                if (etCity.text?.toString() != city) {
+                    etCity.setText(city)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.hotline.collectLatest { hotline ->
+                if (etHotline.text?.toString() != hotline) {
+                    etHotline.setText(hotline)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.status.collectLatest { stat ->
+                val display = if (stat.lowercase() == "active") "Active" else "Inactive"
+                if (actvStatus.text?.toString() != display) {
+                    actvStatus.setText(display, false)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.image.collectLatest { imgUrl ->
+                if (!imgUrl.isNullOrEmpty() && selectedImageUri == null) {
+                    com.bumptech.glide.Glide.with(this@AddCinemaFragment)
+                        .load(imgUrl)
+                        .placeholder(R.drawable.bg_placeholder_card)
+                        .into(ivCinemaPreview)
+                }
+            }
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.errorMessage.collectLatest { msg ->
                 if (msg != null) {
@@ -174,7 +255,7 @@ class AddCinemaFragment : Fragment() {
                     btnSave.isEnabled = false
                 } else {
                     pbLoading.visibility = View.GONE
-                    btnSave.text = "Save Cinema"
+                    btnSave.text = if (cinemaId != null) "Update Cinema" else "Save Cinema"
                     btnSave.isEnabled = true
                 }
             }
@@ -192,7 +273,7 @@ class AddCinemaFragment : Fragment() {
     private fun showSuccessDialog() {
         AlertDialog.Builder(requireContext())
             .setTitle("Success")
-            .setMessage("Cinema created successfully.")
+            .setMessage(if (cinemaId != null) "Cinema updated successfully." else "Cinema created successfully.")
             .setCancelable(false)
             .setPositiveButton("OK") { dialog, _ ->
                 dialog.dismiss()

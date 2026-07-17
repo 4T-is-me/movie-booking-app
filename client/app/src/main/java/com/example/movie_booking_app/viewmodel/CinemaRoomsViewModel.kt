@@ -58,6 +58,26 @@ class CinemaRoomsViewModel @Inject constructor(
         }
     }
 
+    fun toggleRoomStatus(roomId: String, currentStatus: String, cinemaId: String?) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _error.value = null
+            try {
+                val newStatus = if (currentStatus.lowercase() == "active") "inactive" else "active"
+                val success = repository.updateRoomStatus(roomId, newStatus)
+                if (success) {
+                    loadRooms(cinemaId)
+                } else {
+                    _error.value = "Failed to update room status"
+                }
+            } catch (e: Exception) {
+                _error.value = e.message ?: "Failed to update room status"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
     fun setSearchQuery(query: String) {
         _searchQuery.value = query
     }

@@ -17,4 +17,19 @@ interface CinemasRepository {
         status: RequestBody,
         poster: MultipartBody.Part?
     ): Boolean
+
+    suspend fun getCinemaDetails(id: String): Cinema?
+    suspend fun updateCinema(id: String, request: AddCinemaRequest): Boolean
+
+    suspend fun updateCinemaWithImage(
+        id: String,
+        cinemaName: RequestBody,
+        address: RequestBody,
+        city: RequestBody,
+        hotline: RequestBody,
+        status: RequestBody,
+        poster: MultipartBody.Part?
+    ): Boolean
+
+    suspend fun updateCinemaStatus(id: String, status: String): Boolean
 }
