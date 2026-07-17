@@ -30,7 +30,6 @@ class MovieDetailActivity : AppCompatActivity() {
     private lateinit var movieId: String
     private var selectedCinema: Cinema? = null
 
-    // Khởi tạo adapter một lần duy nhất
     private val reviewAdapter by lazy { ReviewAdapter(emptyList()) }
     private val directorAdapter by lazy { CardItemAdapter() }
     private val actorsAdapter by lazy { CardItemAdapter() }
@@ -98,7 +97,6 @@ class MovieDetailActivity : AppCompatActivity() {
     }
 
     private fun setupAdapters() {
-        // Gán adapter cố định ngay từ đầu
         binding.rvReviews.adapter = reviewAdapter
 
         binding.rvDirector.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)

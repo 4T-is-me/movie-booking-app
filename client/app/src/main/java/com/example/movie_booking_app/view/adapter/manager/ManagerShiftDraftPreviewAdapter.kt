@@ -59,7 +59,6 @@ class ShiftDraftDiffCallback(private val oldList: List<StaffShiftDraft>, private
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        // So sánh sâu toàn bộ nội dung (bao gồm cả trạng thái xem có đổi thành ngày lễ isHoliday không)
         return oldList[oldItemPosition] == newList[newItemPosition]
     }
 }
