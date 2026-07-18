@@ -4,8 +4,10 @@ import com.example.movie_booking_app.data.model.request.CreateLeaveRequest
 import com.example.movie_booking_app.data.model.request.RejectLeaveRequest
 import com.example.movie_booking_app.data.model.response.AcceptShiftResponse
 import com.example.movie_booking_app.data.model.response.CreateLeaveResponse
+import com.example.movie_booking_app.data.model.response.LeaveRequestResponse
+import com.example.movie_booking_app.data.model.response.StaffLeaveRequestListResponse
 import com.example.movie_booking_app.data.model.response.ManagerLeaveRequestListResponse
-import com.example.movie_booking_app.data.model.response.ManagerLeaveRequestResponse
+import com.example.movie_booking_app.data.model.response.ReplacementShiftListResponse
 import com.example.movie_booking_app.data.model.response.ReplacementShiftResponse
 import com.example.movie_booking_app.data.model.response.SimpleSuccessResponse
 import retrofit2.Response
@@ -22,11 +24,13 @@ interface LeaveRequestApi {
     suspend fun createLeaveRequest(@Body body: CreateLeaveRequest): Response<CreateLeaveResponse>
 
     @GET("/api/staffs/leave-requests/replacement-shifts")
-    suspend fun getReplacementShifts() : Response<List<ReplacementShiftResponse>>
+    suspend fun getReplacementShifts() : Response<ReplacementShiftListResponse>
 
     @POST("/api/staffs/leave-requests/{id}/accept")
     suspend fun acceptReplacementShift(@Path("id") shiftId: String) : Response<AcceptShiftResponse>
 
+    @GET("/api/staffs/leave-requests")
+    suspend fun getMyLeaveRequests(@Query("status") status: String? = null): Response<StaffLeaveRequestListResponse>
     // --- Manager endpoints ---
     @GET("/api/manager/staff-shifts/leave-requests")
     suspend fun getLeaveRequestsForManager(@Query("status") status: String?) : Response<ManagerLeaveRequestListResponse>
@@ -39,4 +43,5 @@ interface LeaveRequestApi {
 
     @PATCH("/api/manager/staff-shifts/leave-requests/{id}/undo")
     suspend fun undoLeaveRequest(@Path("id") leaveRequestId: String) : Response<SimpleSuccessResponse>
+
 }

@@ -893,7 +893,7 @@
     <string name="auto_str_today_s_shift">Today\'s Shift</string>
     <string name="auto_str_morning_shift">Morning Shift</string>
     <string name="auto_str_08_00_am_12_00_pm">08:00 AM - 12:00 PM</string>
-    <string name="auto_str_ticket_counter_staff_member">Ticket Counter • Staff Member</string>
+    <string name="auto_str_ticket_counter_staff_member">Staff Member</string>
     <string name="auto_str_weekly_shifts">Weekly Shifts</string>
     <string name="auto_str_settings_placeholder">Settings Placeholder</string>
     <string name="auto_str_ticket_validator_placeholder">Ticket Validator Placeholder</string>
@@ -968,7 +968,7 @@
     <string name="msg_no_leave_requests">No leave requests found.</string>
 
     <!-- (Reject Dialog) -->
-    <string name="dialog_reject_title">Reject Request</string>
+    <string name="dialog_reject_title_leave">Reject Request</string>
     <string name="dialog_reject_hint">Enter reject reason</string>
     <string name="dialog_action_reject">Reject</string>
     <string name="dialog_action_cancel">Cancel</string>
@@ -1041,5 +1041,12 @@
     <string name="dialog_undo_message">Are you sure you want to undo this decision? This request will return to Pending status.</string>
     <string name="action_undo">Undo</string>
     <string name="action_cancel">Cancel</string>
+
+    <!-- Dialog Leave Request -->
+    <string name="leave_dialog_title">Request Leave</string>
+    <string name="leave_dialog_hint">Enter your reason for leave request...</string>
+    <string name="leave_dialog_empty_error">Please enter a reason!</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_submit">Submit</string>
 
 </resources>

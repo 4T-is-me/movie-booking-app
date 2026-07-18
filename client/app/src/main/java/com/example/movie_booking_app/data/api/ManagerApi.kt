@@ -8,7 +8,6 @@ import com.example.movie_booking_app.data.model.response.ManagerDashboardRespons
 import com.example.movie_booking_app.data.model.response.ManagerReportsResponse
 import com.example.movie_booking_app.data.model.response.ManagerStaffListResponse
 import com.example.movie_booking_app.data.model.response.ShiftDetailResponse
-import com.example.movie_booking_app.data.model.response.ShiftItemResponse
 import com.example.movie_booking_app.data.model.response.ShiftResponse
 import com.example.movie_booking_app.data.model.response.UpdateShiftResponse
 import retrofit2.Response

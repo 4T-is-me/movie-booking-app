@@ -10,3 +10,9 @@ data class ReplacementShiftResponse(
     val shift: String,
     val approvedAt: String?
 )
+
+data class ReplacementShiftListResponse(
+    val success: Boolean,
+    val message: String?,
+    val data: List<ReplacementShiftResponse>?
+)

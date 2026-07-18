@@ -5,6 +5,7 @@ import com.example.movie_booking_app.data.model.request.CreateLeaveRequest
 import com.example.movie_booking_app.data.model.request.RejectLeaveRequest
 import com.example.movie_booking_app.data.model.response.AcceptShiftResponse
 import com.example.movie_booking_app.data.model.response.CreateLeaveResponse
+import com.example.movie_booking_app.data.model.response.LeaveRequestResponse
 import com.example.movie_booking_app.data.model.response.ManagerLeaveRequestResponse
 import com.example.movie_booking_app.data.model.response.ReplacementShiftResponse
 import com.example.movie_booking_app.data.model.response.SimpleSuccessResponse
@@ -16,11 +17,24 @@ import javax.inject.Singleton
 @Singleton
 class LeaveRequestRepository @Inject constructor(private val api: LeaveRequestApi) {
     // --- Staff Flows ---
-    fun createLeaveRequest(staffShiftId: String, reason: String): Flow<CreateLeaveResponse?> = flow {
+    fun createLeaveRequest(staffShiftId: String, reason: String): Flow<Result<CreateLeaveResponse?>> = flow {
         try {
             val response = api.createLeaveRequest(CreateLeaveRequest(staffShiftId, reason))
+            if (response.isSuccessful) {
+                emit(Result.success(response.body()))
+            } else {
+                val errorMsg = response.errorBody()?.string() ?: "Failed to submit leave request"
+                emit(Result.failure(Exception(errorMsg)))
+            }
+        } catch (e: Exception) {
+            emit(Result.failure(e))
+        }
+    }
+    fun getReplacementShift() : Flow<List<ReplacementShiftResponse>?> = flow {
+        try {
+            val response = api.getReplacementShifts()
             if(response.isSuccessful) {
-                emit(response.body())
+                emit(response.body()?.data)
             }else {
                 emit(null)
             }
@@ -29,17 +43,18 @@ class LeaveRequestRepository @Inject constructor(private val api: LeaveRequestAp
             emit(null)
         }
     }
-    fun getReplacementShift() : Flow<List<ReplacementShiftResponse>?> = flow {
-        try {
-            val response = api.getReplacementShifts()
-            if(response.isSuccessful) {
-                emit(response.body())
-            }else {
-                emit(null)
-            }
 
-        }catch (e: Exception) {
-            emit(null)
+    fun getMyLeaveRequests(status: String?): Flow<Result<List<LeaveRequestResponse>>> = flow {
+        try {
+            val response = api.getMyLeaveRequests(status)
+            if (response.isSuccessful && response.body() != null) {
+                val list = response.body()?.data ?: emptyList()
+                emit(Result.success(list))
+            } else {
+                emit(Result.failure(Exception(response.errorBody()?.string() ?: "Unknown Error")))
+            }
+        } catch (e: Exception) {
+            emit(Result.failure(e))
         }
     }
 

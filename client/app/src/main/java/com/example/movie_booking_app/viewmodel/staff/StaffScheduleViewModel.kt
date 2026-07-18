@@ -22,11 +22,7 @@ class StaffScheduleViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
-    private val _leaveRequestStatus = MutableStateFlow<Boolean?>(null)
-    val leaveRequestStatus: StateFlow<Boolean?> = _leaveRequestStatus.asStateFlow()
 
-    private val _replacementStatus = MutableStateFlow<Boolean?>(null)
-    val replacementStatus: StateFlow<Boolean?> = _replacementStatus.asStateFlow()
 
     fun loadShifts(startDate: String? = null, endDate: String? = null) {
         viewModelScope.launch {
@@ -48,34 +44,6 @@ class StaffScheduleViewModel @Inject constructor(
         }
     }
 
-    fun requestTimeOff(shiftId: String, reason: String) {
-        viewModelScope.launch {
-            _isLoading.value = true
-            repository.createLeaveRequest(shiftId, reason).collect { success ->
-                _leaveRequestStatus.value = success
-                if (success) {
-                    loadShifts()
-                }
-                _isLoading.value = false
-            }
-        }
-    }
 
-    fun acceptReplacement(leaveRequestId: String) {
-        viewModelScope.launch {
-            _isLoading.value = true
-            repository.acceptReplacementShift(leaveRequestId).collect { success ->
-                _replacementStatus.value = success
-                if (success) {
-                    loadShifts()
-                }
-                _isLoading.value = false
-            }
-        }
-    }
-
-    fun resetRequestStatus() {
-        _leaveRequestStatus.value = null
-        _replacementStatus.value = null
-    }
+ 
 }

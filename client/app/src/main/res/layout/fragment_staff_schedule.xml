@@ -77,97 +77,12 @@
                 android:letterSpacing="0.05"
                 android:layout_marginBottom="12dp" />
 
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardTodayShift"
+            <!--    container list card       -->
+            <LinearLayout
+                android:id="@+id/lnTodayShiftsContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="28dp"
-                app:cardBackgroundColor="@color/bg_surface"
-                app:cardCornerRadius="18dp"
-                app:strokeColor="@color/border_subtle"
-                app:strokeWidth="1dp"
-                app:cardElevation="2dp">
-
-                <!-- Solid background layout inside Card -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp">
-
-                        <TextView
-                            android:id="@+id/tvShiftTitle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/auto_str_morning_shift"
-                            android:textColor="@color/white"
-                            android:textSize="19sp"
-                            android:textStyle="bold" />
-
-                        <!-- Active Badge using Glassmorphism shape -->
-                        <TextView
-                            android:id="@+id/tvStatusBadge"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:text="@string/auto_str_active_1"
-                            android:textColor="@color/white"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            android:background="@drawable/bg_glass_badge"
-                            android:paddingHorizontal="12dp"
-                            android:paddingVertical="5dp" />
-                    </RelativeLayout>
-
-                    <!-- Details Rows with clock / location icons -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="10dp"
-                        android:gravity="center_vertical">
-                        <ImageView
-                            android:layout_width="18dp"
-                            android:layout_height="18dp"
-                            android:src="@drawable/ic_clock"
-                            app:tint="@color/color_gold" />
-                        <TextView
-                            android:id="@+id/tvShiftHours"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:text="@string/auto_str_08_00_am_12_00_pm"
-                            android:textColor="@color/white"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-                        <ImageView
-                            android:layout_width="18dp"
-                            android:layout_height="18dp"
-                            android:src="@drawable/ic_location"
-                            app:tint="@color/color_gold" />
-                        <TextView
-                            android:id="@+id/tvShiftLocation"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:text="@string/auto_str_ticket_counter_staff_member"
-                            android:textColor="@color/auto_color_E2E8F0"
-                            android:textSize="14sp" />
-                    </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                android:orientation="vertical" />
 
             <!-- Upcoming Shifts Section -->
             <TextView

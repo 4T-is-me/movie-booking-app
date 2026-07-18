@@ -23,22 +23,4 @@ class StaffRepository @Inject constructor(private val api: StaffApi) {
             emit(null)
         }
     }
-
-    fun createLeaveRequest(staffShiftId: String, reason: String): Flow<Boolean> = flow {
-        try {
-            val response = api.createLeaveRequest(LeaveRequestParams(staffShiftId, reason))
-            emit(response.isSuccessful)
-        } catch (e: Exception) {
-            emit(false)
-        }
-    }
-
-    fun acceptReplacementShift(leaveRequestId: String): Flow<Boolean> = flow {
-        try {
-            val response = api.acceptReplacementShift(leaveRequestId)
-            emit(response.isSuccessful)
-        } catch (e: Exception) {
-            emit(false)
-        }
-    }
 }

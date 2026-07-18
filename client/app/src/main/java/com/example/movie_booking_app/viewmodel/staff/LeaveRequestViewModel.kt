@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.response.AcceptShiftResponse
 import com.example.movie_booking_app.data.model.response.CreateLeaveResponse
+import com.example.movie_booking_app.data.model.response.LeaveRequestResponse
 import com.example.movie_booking_app.data.model.response.ManagerLeaveRequestResponse
 import com.example.movie_booking_app.data.model.response.ReplacementShiftResponse
 import com.example.movie_booking_app.data.model.response.SimpleSuccessResponse
@@ -12,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,7 +21,7 @@ import javax.inject.Inject
 class LeaveRequestViewModel@Inject constructor(private val repository: LeaveRequestRepository) : ViewModel() {
     // --- States cho Staff ---
     private val _createLeaveResult = MutableStateFlow<CreateLeaveResponse?>(null)
-    val creatLeaveRequest: StateFlow<CreateLeaveResponse?> = _createLeaveResult.asStateFlow()
+    val createLeaveResult: StateFlow<CreateLeaveResponse?> = _createLeaveResult.asStateFlow()
 
     private val _replacementShifts = MutableStateFlow<List<ReplacementShiftResponse>?>(null)
     val replacementShifts : StateFlow<List<ReplacementShiftResponse>?> = _replacementShifts.asStateFlow()
@@ -36,6 +38,8 @@ class LeaveRequestViewModel@Inject constructor(private val repository: LeaveRequ
 
     private val _rejectResult = MutableStateFlow<SimpleSuccessResponse?>(null)
     val rejectResult: StateFlow<SimpleSuccessResponse?> = _rejectResult.asStateFlow()
+    private val _leaveRequests = MutableStateFlow<List<LeaveRequestResponse>>(emptyList())
+    val leaveRequests: StateFlow<List<LeaveRequestResponse>> = _leaveRequests.asStateFlow()
 
     private val _undoResult = MutableStateFlow<SimpleSuccessResponse?>(null)
     val undoResult: StateFlow<SimpleSuccessResponse?> = _undoResult.asStateFlow()
@@ -49,10 +53,14 @@ class LeaveRequestViewModel@Inject constructor(private val repository: LeaveRequ
 
 
 
-    fun createLeaveCreate(staffShift: String, reason: String) {
+    fun createLeaveRequest(staffShift: String, reason: String) {
         viewModelScope.launch {
-            repository.createLeaveRequest(staffShift, reason).collect {response ->
-                _createLeaveResult.value = response
+            repository.createLeaveRequest(staffShift, reason).collect { result ->
+                result.onSuccess { response ->
+                    _createLeaveResult.value = response
+                }.onFailure { exception ->
+                    _errorMessage.value = exception.message ?: "An unknown error occurred"
+                }
             }
         }
     }
@@ -61,6 +69,20 @@ class LeaveRequestViewModel@Inject constructor(private val repository: LeaveRequ
         viewModelScope.launch {
             repository.getReplacementShift().collect {response ->
                 _replacementShifts.value = response
+            }
+        }
+    }
+
+    fun loadMyLeaveRequests(status: String? = null) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            repository.getMyLeaveRequests(status).collectLatest { result ->
+                _isLoading.value = false
+                result.onSuccess { list ->
+                    _leaveRequests.value = list
+                }.onFailure { exception ->
+                    _errorMessage.value = exception.message
+                }
             }
         }
     }
