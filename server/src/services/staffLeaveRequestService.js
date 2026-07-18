@@ -263,6 +263,7 @@ const getStaffShifts = async (accountId, { startDate, endDate }) => {
         staffId: item.staffId,
         cinemaId: item.cinemaId,
         workDate: item.workDate,
+        position: staff.position,
         shift: item.shift,
         status: item.status,
         originalStaffName: item.originalStaffId?.fullName || null

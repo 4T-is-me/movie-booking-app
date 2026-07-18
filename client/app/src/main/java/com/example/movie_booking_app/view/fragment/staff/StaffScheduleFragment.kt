@@ -96,7 +96,7 @@ class StaffScheduleFragment : Fragment() {
             viewModel.shifts.collectLatest { shiftList ->
                 android.util.Log.d("StaffSchedule", "Received shifts count: ${shiftList.size}")
                 staffShiftAdapter.submitList(shiftList)
-                
+
                 // Set default display for today's selected date in calendar strip
                 val activeDate = dateAdapter.currentList.find { it.isSelected }?.id
                 android.util.Log.d("StaffSchedule", "Active date on load: $activeDate")
@@ -158,39 +158,63 @@ class StaffScheduleFragment : Fragment() {
     private fun updateTodayShiftCard(selectedDateId: String) {
         val shifts = viewModel.shifts.value
         Log.d("StaffSchedule", "Updating card for date: $selectedDateId. Total shifts: ${shifts.size}")
-        val matchingShift = shifts.find {
+
+        // Filter out ALL duplicate dates
+        val matchingShifts = shifts.filter {
             val cleanDate = if (it.workDate?.contains("T") == true) it.workDate.substringBefore("T") else it.workDate
-            Log.d("StaffSchedule", "Checking shift: ${it.shiftId}, workDate: ${it.workDate}, cleanDate: $cleanDate against $selectedDateId")
             cleanDate == selectedDateId
         }
 
-        if (matchingShift != null && !matchingShift.shift.isNullOrEmpty()) {
-            Log.d("StaffSchedule", "Found matching shift: ${matchingShift.shift} for $selectedDateId")
-            binding.cardTodayShift.visibility = View.VISIBLE
-            binding.tvTodayHeader.visibility = View.VISIBLE
-            binding.tvShiftTitle.text = "${matchingShift.shift} Shift"
+        // Clear all shifts from the previous day that were previously added to the container
+        binding.lnTodayShiftsContainer.removeAllViews()
 
-            // Map Shift to hours
-            val hours = when (matchingShift.shift) {
-                "Morning" -> "08:00 AM - 12:00 PM"
-                "Afternoon" -> "12:00 PM - 05:00 PM"
-                "Evening" -> "05:00 PM - 10:00 PM"
-                "Night" -> "10:00 PM - 02:00 AM"
-                else -> "Flexible hours"
-            }
-            binding.tvShiftHours.text = hours
-            binding.tvShiftLocation.text = "Lumina Screen Room • Staff Member"
-            binding.tvStatusBadge.text = matchingShift.status ?: "Assigned"
-            binding.tvStatusBadge.setBackgroundResource(R.drawable.bg_glass_badge)
-        } else {
-            Log.d("StaffSchedule", "No matching shift found for $selectedDateId")
-            binding.cardTodayShift.visibility = View.VISIBLE
+        val layoutInflater = LayoutInflater.from(requireContext())
+
+        if (matchingShifts.isNotEmpty()) {
             binding.tvTodayHeader.visibility = View.VISIBLE
-            binding.tvShiftTitle.text = "No Shift Scheduled"
-            binding.tvShiftHours.text = "You have no shift scheduled for this day"
-            binding.tvShiftLocation.text = "Enjoy your day off!"
-            binding.tvStatusBadge.text = "Off"
-            binding.tvStatusBadge.setBackgroundResource(R.drawable.bg_glass_badge)
+
+            // Review each shift for that day to create a separate Card
+            matchingShifts.forEach { item ->
+                val itemBinding = com.example.movie_booking_app.databinding.ItemTodaySubShiftBinding.inflate(
+                    layoutInflater,
+                    binding.lnTodayShiftsContainer,
+                    false
+                )
+                // shift name data (Morning, Afternoon,...)
+                itemBinding.tvSubShiftTitle.text = "${item.shift} Shift"
+                // stauts Badge
+                itemBinding.tvSubStatusBadge.text = item.status ?: "Assigned"
+
+                // working hours data
+                itemBinding.tvSubShiftHours.text = when (item.shift) {
+                    "Morning" -> "08:00 AM - 12:00 PM"
+                    "Afternoon" -> "12:00 PM - 05:00 PM"
+                    "Evening" -> "05:00 PM - 10:00 PM"
+                    "Night" -> "10:00 PM - 02:00 AM"
+                    else -> "Flexible hours"
+                }
+
+                itemBinding.tvSubShiftLocation.text = "${item.position} • ${getString(R.string.auto_str_ticket_counter_staff_member)}"
+
+                binding.lnTodayShiftsContainer.addView(itemBinding.root)
+            }
+        } else {
+            // For days off – Issue an "Off" card featuring a matching design.
+            binding.tvTodayHeader.visibility = View.VISIBLE
+
+            val itemBinding = com.example.movie_booking_app.databinding.ItemTodaySubShiftBinding.inflate(
+                layoutInflater,
+                binding.lnTodayShiftsContainer,
+                false
+            )
+
+            // Custom UI for holidays
+            itemBinding.tvSubShiftTitle.text = "No Shift Scheduled"
+            itemBinding.tvSubStatusBadge.text = "Off"
+            itemBinding.layoutSubHours.visibility = View.GONE // Hide the time row
+            itemBinding.tvSubShiftLocation.text = "Enjoy your day off!"
+
+            binding.lnTodayShiftsContainer.addView(itemBinding.root)
         }
     }
 
@@ -199,16 +223,15 @@ class StaffScheduleFragment : Fragment() {
         val dialog = android.app.Dialog(context)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
 
-        // Khởi tạo binding từ file XML
         val dialogBinding = DialogRequestLeaveBinding.inflate(LayoutInflater.from(context))
         dialog.setContentView(dialogBinding.root)
 
-        // Xử lý nút Hủy (Cancel)
+        //cancel
         dialogBinding.btnDialogCancel.setOnClickListener {
             dialog.dismiss()
         }
 
-        // Xử lý nút Gửi đơn (Submit)
+        //(Submit)
         dialogBinding.btnDialogSubmit.setOnClickListener {
             val reason = dialogBinding.etDialogReason.text.toString().trim()
 
