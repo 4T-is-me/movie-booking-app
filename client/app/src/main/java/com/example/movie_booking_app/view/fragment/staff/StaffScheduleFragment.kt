@@ -1,11 +1,14 @@
 package com.example.movie_booking_app.view.fragment.staff
 
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -13,18 +16,20 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.ShowDate
 import com.example.movie_booking_app.data.model.response.ShiftItemResponse
+import com.example.movie_booking_app.databinding.DialogRequestLeaveBinding
 import com.example.movie_booking_app.databinding.FragmentStaffScheduleBinding
 import com.example.movie_booking_app.databinding.ItemStaffScheduleShiftBinding
 import com.example.movie_booking_app.view.adapter.DateAdapter
+import com.example.movie_booking_app.viewmodel.staff.LeaveRequestViewModel
 import com.example.movie_booking_app.viewmodel.staff.StaffScheduleViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 
 @AndroidEntryPoint
@@ -34,6 +39,7 @@ class StaffScheduleFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: StaffScheduleViewModel by viewModels()
+    private val leaveRequestViewModel: LeaveRequestViewModel by viewModels()
 
     private lateinit var dateAdapter: DateAdapter
     private lateinit var staffShiftAdapter: StaffShiftAdapter
@@ -73,12 +79,9 @@ class StaffScheduleFragment : Fragment() {
         // Shifts List Adapter
         staffShiftAdapter = StaffShiftAdapter(
             onRequestTimeOff = { item ->
-                item.shiftId?.let { id ->
-                    viewModel.requestTimeOff(id, "Personal Reason")
-                }
+                showRequestLeaveDialog(item)
             },
             onRequestReplacement = { item ->
-                // Accept replacement logic
                 Toast.makeText(requireContext(), "Accept replacement requested!", Toast.LENGTH_SHORT).show()
             }
         )
@@ -104,13 +107,36 @@ class StaffScheduleFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            viewModel.leaveRequestStatus.collectLatest { success ->
-                if (success == true) {
+            leaveRequestViewModel.createLeaveResult.collectLatest { response ->
+                if (response != null) {
                     Toast.makeText(requireContext(), "Leave request submitted successfully!", Toast.LENGTH_LONG).show()
-                    viewModel.resetRequestStatus()
-                } else if (success == false) {
-                    Toast.makeText(requireContext(), "Failed to submit leave request!", Toast.LENGTH_LONG).show()
-                    viewModel.resetRequestStatus()
+                    leaveRequestViewModel.clearCreateLeaveState()
+                    val activeDate = dateAdapter.currentList.find { it.isSelected }?.id
+                    loadData()
+                }
+            }
+        }
+
+        //  Lắng nghe thông báo lỗi từ LeaveRequestViewModel
+        lifecycleScope.launch {
+            leaveRequestViewModel.errorMessage.collectLatest { message ->
+                if (message != null) {
+                    Log.d("mess", message)
+                    
+                    val displayMessage = try {
+                        val jsonObject = org.json.JSONObject(message)
+                        val errors = jsonObject.optJSONArray("errors")
+                        if (errors != null && errors.length() > 0) {
+                            errors.getJSONObject(0).optString("message", message)
+                        } else {
+                            jsonObject.optString("message", message)
+                        }
+                    } catch (e: Exception) {
+                        message
+                    }
+
+                    Toast.makeText(requireContext(), displayMessage, Toast.LENGTH_LONG).show()
+                    leaveRequestViewModel.clearError()
                 }
             }
         }
@@ -131,19 +157,19 @@ class StaffScheduleFragment : Fragment() {
 
     private fun updateTodayShiftCard(selectedDateId: String) {
         val shifts = viewModel.shifts.value
-        android.util.Log.d("StaffSchedule", "Updating card for date: $selectedDateId. Total shifts: ${shifts.size}")
+        Log.d("StaffSchedule", "Updating card for date: $selectedDateId. Total shifts: ${shifts.size}")
         val matchingShift = shifts.find {
             val cleanDate = if (it.workDate?.contains("T") == true) it.workDate.substringBefore("T") else it.workDate
-            android.util.Log.d("StaffSchedule", "Checking shift: ${it.shiftId}, workDate: ${it.workDate}, cleanDate: $cleanDate against $selectedDateId")
+            Log.d("StaffSchedule", "Checking shift: ${it.shiftId}, workDate: ${it.workDate}, cleanDate: $cleanDate against $selectedDateId")
             cleanDate == selectedDateId
         }
 
         if (matchingShift != null && !matchingShift.shift.isNullOrEmpty()) {
-            android.util.Log.d("StaffSchedule", "Found matching shift: ${matchingShift.shift} for $selectedDateId")
+            Log.d("StaffSchedule", "Found matching shift: ${matchingShift.shift} for $selectedDateId")
             binding.cardTodayShift.visibility = View.VISIBLE
             binding.tvTodayHeader.visibility = View.VISIBLE
             binding.tvShiftTitle.text = "${matchingShift.shift} Shift"
-            
+
             // Map Shift to hours
             val hours = when (matchingShift.shift) {
                 "Morning" -> "08:00 AM - 12:00 PM"
@@ -155,17 +181,59 @@ class StaffScheduleFragment : Fragment() {
             binding.tvShiftHours.text = hours
             binding.tvShiftLocation.text = "Lumina Screen Room • Staff Member"
             binding.tvStatusBadge.text = matchingShift.status ?: "Assigned"
-            binding.tvStatusBadge.setBackgroundResource(com.example.movie_booking_app.R.drawable.bg_glass_badge)
+            binding.tvStatusBadge.setBackgroundResource(R.drawable.bg_glass_badge)
         } else {
-            android.util.Log.d("StaffSchedule", "No matching shift found for $selectedDateId")
+            Log.d("StaffSchedule", "No matching shift found for $selectedDateId")
             binding.cardTodayShift.visibility = View.VISIBLE
             binding.tvTodayHeader.visibility = View.VISIBLE
             binding.tvShiftTitle.text = "No Shift Scheduled"
             binding.tvShiftHours.text = "You have no shift scheduled for this day"
             binding.tvShiftLocation.text = "Enjoy your day off!"
             binding.tvStatusBadge.text = "Off"
-            binding.tvStatusBadge.setBackgroundResource(com.example.movie_booking_app.R.drawable.bg_glass_badge)
+            binding.tvStatusBadge.setBackgroundResource(R.drawable.bg_glass_badge)
         }
+    }
+
+    private fun showRequestLeaveDialog(shiftItem: ShiftItemResponse) {
+        val context = requireContext()
+        val dialog = android.app.Dialog(context)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+
+        // Khởi tạo binding từ file XML
+        val dialogBinding = DialogRequestLeaveBinding.inflate(LayoutInflater.from(context))
+        dialog.setContentView(dialogBinding.root)
+
+        // Xử lý nút Hủy (Cancel)
+        dialogBinding.btnDialogCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        // Xử lý nút Gửi đơn (Submit)
+        dialogBinding.btnDialogSubmit.setOnClickListener {
+            val reason = dialogBinding.etDialogReason.text.toString().trim()
+
+            if (reason.isEmpty()) {
+                Toast.makeText(context, getString(R.string.leave_dialog_empty_error), Toast.LENGTH_SHORT).show()
+            } else {
+                dialogBinding.btnDialogSubmit.isEnabled = false
+                dialogBinding.btnDialogSubmit.alpha = 0.5f
+
+                shiftItem.shiftId?.let { id ->
+                    leaveRequestViewModel.createLeaveRequest(id, reason)
+                }
+                dialog.dismiss()
+            }
+        }
+
+        dialog.window?.apply {
+            setLayout(
+                (resources.displayMetrics.widthPixels * 0.9).toInt(),
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        }
+
+        dialog.show()
     }
 
     private fun generateCurrentWeekDates(): List<ShowDate> {

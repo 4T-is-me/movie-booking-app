@@ -16,17 +16,17 @@ import javax.inject.Singleton
 @Singleton
 class LeaveRequestRepository @Inject constructor(private val api: LeaveRequestApi) {
     // --- Staff Flows ---
-    fun createLeaveRequest(staffShiftId: String, reason: String): Flow<CreateLeaveResponse?> = flow {
+    fun createLeaveRequest(staffShiftId: String, reason: String): Flow<Result<CreateLeaveResponse?>> = flow {
         try {
             val response = api.createLeaveRequest(CreateLeaveRequest(staffShiftId, reason))
-            if(response.isSuccessful) {
-                emit(response.body())
-            }else {
-                emit(null)
+            if (response.isSuccessful) {
+                emit(Result.success(response.body()))
+            } else {
+                val errorMsg = response.errorBody()?.string() ?: "Failed to submit leave request"
+                emit(Result.failure(Exception(errorMsg)))
             }
-
-        }catch (e: Exception) {
-            emit(null)
+        } catch (e: Exception) {
+            emit(Result.failure(e))
         }
     }
     fun getReplacementShift() : Flow<List<ReplacementShiftResponse>?> = flow {

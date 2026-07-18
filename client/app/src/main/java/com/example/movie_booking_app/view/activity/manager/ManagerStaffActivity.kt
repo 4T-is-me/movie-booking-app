@@ -51,7 +51,6 @@ class ManagerStaffActivity : AppCompatActivity() {
 
     private var currentTab = "staff_list"
     private lateinit var staffShiftAdapter: ManagerStaffShiftAdapter
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityManagerStaffBinding.inflate(layoutInflater)
@@ -61,6 +60,7 @@ class ManagerStaffActivity : AppCompatActivity() {
             binding.tabLeaveRequests
         )
         viewModel.loadStaffForManager()
+
 
         setUpClickListeners()
         setUpRecyclerView()
@@ -107,7 +107,7 @@ class ManagerStaffActivity : AppCompatActivity() {
     private fun setUpClickListeners() {
         binding.ivBack.setOnClickListener { finish() }
         binding.tabStaffList.setOnClickListener {
-            setActiveTab(binding.tabStaffList, "staff_list")
+            setActiveTab(binding.tabStaffList,  "staff_list")
         }
         binding.tabLeaveRequests.setOnClickListener {
             setActiveTab(binding.tabLeaveRequests, "leave_requests")
@@ -128,7 +128,7 @@ class ManagerStaffActivity : AppCompatActivity() {
     private fun setActiveTab(selectedTab: TextView, tabType: String) {
         currentTab = tabType
         val secondaryTextColor = ContextCompat.getColor(this, R.color.text_secondary)
-        for (tab in tabButtons) {
+        for(tab in tabButtons) {
             tab.setBackgroundColor(Color.TRANSPARENT)
             tab.setTextColor(secondaryTextColor)
             tab.setTypeface(null, Typeface.BOLD)
@@ -137,11 +137,11 @@ class ManagerStaffActivity : AppCompatActivity() {
         selectedTab.setTextColor(ContextCompat.getColor(this, R.color.bg_primary))
         selectedTab.setTypeface(null, Typeface.BOLD)
 
-        if (tabType == "staff_list") {
+        if(tabType == "staff_list") {
             binding.btnGenerateShift.visibility = View.VISIBLE
             binding.rvStaffList.adapter = staffShiftAdapter
             viewModel.loadStaffShifts()
-        } else {
+        }else {
             binding.btnGenerateShift.visibility = View.GONE
             binding.rvStaffList.adapter = leaveRequestAdapter
             leaveRequestViewModel.loadLeaveRequestForManager(selectedStatusFilter)
@@ -177,7 +177,7 @@ class ManagerStaffActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.generateShiftData.collectLatest { response ->
-                    if (response != null) {
+                    if(response != null) {
                         if (response.success) {
                             viewModel.loadStaffShifts()
                             val successDialog = GenerateShiftSuccessDialogFragment(response.data) {
@@ -193,7 +193,6 @@ class ManagerStaffActivity : AppCompatActivity() {
             }
         }
     }
-
     private fun setUpShiftList(shifts: List<ShiftItemResponse>) {
         val shiftItems = shifts.orEmpty()
         if (shiftItems.isEmpty()) {
@@ -216,7 +215,7 @@ class ManagerStaffActivity : AppCompatActivity() {
                             val currentQuery = binding.etSearchStaff?.text?.toString().orEmpty()
                             applySearchFilter(currentQuery)
                         }
-                    } ?: run {
+                    }?: run {
                         originalShiftList = emptyList()
                         setUpShiftList(emptyList())
                     }
@@ -428,8 +427,8 @@ class ManagerStaffActivity : AppCompatActivity() {
             dialog.dismiss()
         }
         // Confirm Reject
-        dialogBinding.btnConfirmReject.setOnClickListener {
-            val reason = dialogBinding.etRejectReason.text.toString().trim()
+        dialogBinding.btnSubmitLeave.setOnClickListener {
+            val reason = dialogBinding.etLeaveReason .text.toString().trim()
             if (reason.isNotBlank()) {
                 leaveRequestAdapter.setLocalRejectState(item.leaveRequestId)
 

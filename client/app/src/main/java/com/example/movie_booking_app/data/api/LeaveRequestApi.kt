@@ -5,7 +5,6 @@ import com.example.movie_booking_app.data.model.request.RejectLeaveRequest
 import com.example.movie_booking_app.data.model.response.AcceptShiftResponse
 import com.example.movie_booking_app.data.model.response.CreateLeaveResponse
 import com.example.movie_booking_app.data.model.response.ManagerLeaveRequestListResponse
-import com.example.movie_booking_app.data.model.response.ManagerLeaveRequestResponse
 import com.example.movie_booking_app.data.model.response.ReplacementShiftResponse
 import com.example.movie_booking_app.data.model.response.SimpleSuccessResponse
 import retrofit2.Response
@@ -39,4 +38,5 @@ interface LeaveRequestApi {
 
     @PATCH("/api/manager/staff-shifts/leave-requests/{id}/undo")
     suspend fun undoLeaveRequest(@Path("id") leaveRequestId: String) : Response<SimpleSuccessResponse>
+
 }

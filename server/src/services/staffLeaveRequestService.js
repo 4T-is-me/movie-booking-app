@@ -230,6 +230,7 @@ const acceptReplacementShift = async(accountId, shiftId) => {
     }
 }
 
+
 const getStaffShifts = async (accountId, { startDate, endDate }) => {
     const staff = await checkStaff(accountId);
     

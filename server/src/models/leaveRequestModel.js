@@ -8,7 +8,8 @@ const leaveRequestSchema = new mongoose.Schema(
     reason: { type: String, required: true },
     status: { type: String, default: "Pending" },
     approvedAt: { type: Date, default: null },
-    rejectReason: { type: String, default: null }
+    rejectReason: { type: String, default: null },
+    managerId: { type: mongoose.Schema.Types.ObjectId, ref: "Manager", default: null },
   },
   {
     versionKey: false,

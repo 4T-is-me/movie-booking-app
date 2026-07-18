@@ -20,13 +20,4 @@ interface StaffApi {
         @Query("endDate") endDate: String? = null
     ): Response<ShiftResponse>
 
-    @POST("api/staffs/leave-requests")
-    suspend fun createLeaveRequest(
-        @Body params: LeaveRequestParams
-    ): Response<okhttp3.ResponseBody>
-
-    @POST("api/staffs/leave-requests/{id}/accept")
-    suspend fun acceptReplacementShift(
-        @Path("id") leaveRequestId: String
-    ): Response<okhttp3.ResponseBody>
 }

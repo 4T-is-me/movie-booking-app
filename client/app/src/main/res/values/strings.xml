@@ -968,7 +968,7 @@
     <string name="msg_no_leave_requests">No leave requests found.</string>
 
     <!-- (Reject Dialog) -->
-    <string name="dialog_reject_title">Reject Request</string>
+    <string name="dialog_reject_title_leave">Reject Request</string>
     <string name="dialog_reject_hint">Enter reject reason</string>
     <string name="dialog_action_reject">Reject</string>
     <string name="dialog_action_cancel">Cancel</string>
@@ -1041,5 +1041,12 @@
     <string name="dialog_undo_message">Are you sure you want to undo this decision? This request will return to Pending status.</string>
     <string name="action_undo">Undo</string>
     <string name="action_cancel">Cancel</string>
+
+    <!-- Dialog Leave Request -->
+    <string name="leave_dialog_title">Request Leave</string>
+    <string name="leave_dialog_hint">Enter your reason for leave request...</string>
+    <string name="leave_dialog_empty_error">Please enter a reason!</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_submit">Submit</string>
 
 </resources>
