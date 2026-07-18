@@ -121,8 +121,6 @@ class StaffScheduleFragment : Fragment() {
         lifecycleScope.launch {
             leaveRequestViewModel.errorMessage.collectLatest { message ->
                 if (message != null) {
-                    Log.d("mess", message)
-                    
                     val displayMessage = try {
                         val jsonObject = org.json.JSONObject(message)
                         val errors = jsonObject.optJSONArray("errors")

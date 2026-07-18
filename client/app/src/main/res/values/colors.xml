@@ -342,4 +342,12 @@
     <color name="cinema_dark_input">#0F172A</color>
     <color name="cinema_border_subtle">#334155</color>
     <color name="cinema_text_muted">#64748B</color>
+
+    <color name="color_red">#F43F5E</color>
+    <color name="color_green">#10B981</color>
+
+    <!-- Màu nền mờ cho các Badge trạng thái đơn -->
+    <color name="bg_pending_badge">#1AF5C518</color>
+    <color name="bg_approved_badge">#1A10B981</color>
+    <color name="bg_rejected_badge">#1AF43F5E</color>
 </resources>

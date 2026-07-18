@@ -270,9 +270,36 @@ const getStaffShifts = async (accountId, { startDate, endDate }) => {
     }));
 }
 
+const getStaffLeaveRequests = async (accountId, statusFilter) => {
+    const staff = await checkStaff(accountId);
+    const filter = { staffId: staff._id };
+    if (statusFilter) {
+        filter.status = statusFilter;
+    }
+
+    const leaveRequests = await LeaveRequest.find(filter)
+        .populate({
+            path: 'staffShiftId',
+            select: 'workDate shift'
+        })
+        .sort({ createdAt: -1 });
+
+    return leaveRequests.map(item => ({
+        leaveRequestId: item._id,
+        shiftId: item.staffShiftId?._id || null,
+        workDate: item.staffShiftId?.workDate || null,
+        shift: item.staffShiftId?.shift || null,
+        reason: item.reason,
+        status: item.status,
+        rejectReason: item.rejectReason,
+        createdAt: item.createdAt
+    }));   
+}
+
 export const StaffLeaveRequestService = {
     createLeaveRequest,
     getReplacementShifts,
     acceptReplacementShift,
-    getStaffShifts
+    getStaffShifts,
+    getStaffLeaveRequests
 }

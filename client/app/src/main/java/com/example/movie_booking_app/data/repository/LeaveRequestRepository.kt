@@ -5,6 +5,7 @@ import com.example.movie_booking_app.data.model.request.CreateLeaveRequest
 import com.example.movie_booking_app.data.model.request.RejectLeaveRequest
 import com.example.movie_booking_app.data.model.response.AcceptShiftResponse
 import com.example.movie_booking_app.data.model.response.CreateLeaveResponse
+import com.example.movie_booking_app.data.model.response.LeaveRequestResponse
 import com.example.movie_booking_app.data.model.response.ManagerLeaveRequestResponse
 import com.example.movie_booking_app.data.model.response.ReplacementShiftResponse
 import com.example.movie_booking_app.data.model.response.SimpleSuccessResponse
@@ -33,13 +34,27 @@ class LeaveRequestRepository @Inject constructor(private val api: LeaveRequestAp
         try {
             val response = api.getReplacementShifts()
             if(response.isSuccessful) {
-                emit(response.body())
+                emit(response.body()?.data)
             }else {
                 emit(null)
             }
 
         }catch (e: Exception) {
             emit(null)
+        }
+    }
+
+    fun getMyLeaveRequests(status: String?): Flow<Result<List<LeaveRequestResponse>>> = flow {
+        try {
+            val response = api.getMyLeaveRequests(status)
+            if (response.isSuccessful && response.body() != null) {
+                val list = response.body()?.data ?: emptyList()
+                emit(Result.success(list))
+            } else {
+                emit(Result.failure(Exception(response.errorBody()?.string() ?: "Unknown Error")))
+            }
+        } catch (e: Exception) {
+            emit(Result.failure(e))
         }
     }
 
