@@ -77,15 +77,49 @@ const getStaffShifts = async (req, res, next) => {
 
 const getMyLeaveRequests = async (req, res, next) => {
     try {
-        
         const accountId = req.user.accountId;
-        const { status } = req.query;
-        const result = await StaffLeaveRequestService.getStaffLeaveRequests(accountId, status);
-    return res.status(StatusCodes.OK).json({
-        success: true,
-        message: "Successfully get leave requests.",
-        data: result
-    })
+        const { status, page = 1, limit = 10 } = req.query; 
+        
+        const result = await StaffLeaveRequestService.getStaffLeaveRequests(accountId, status, page, limit);
+        
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            message: "Successfully get leave requests.",
+            data: result 
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
+const updatePendingReason = async (req, res, next) => {
+    try {
+        const accountId  = req.user.accountId;
+        const { id } = req.params;
+        const { reason } = req.body;
+
+        const result = await StaffLeaveRequestService.updatePendingReason(accountId, id, reason);
+
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            message: "Leave request updated successfully.",
+        })
+    } catch (error) {
+        next(error);
+    }
+}
+const deletePendingRequest = async (req, res, next) => {
+    try {
+        const accountId = req.user.accountId;
+        const { id } = req.params;
+        
+        const result = await StaffLeaveRequestService.deletePendingRequest(accountId, id);
+
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            message: "Leave request deleted successfully.",
+        })
+        
     } catch (error) {
         next(error);
     }
@@ -96,5 +130,7 @@ export const staffLeaveRequestController = {
     getReplacementShifts,
     acceptReplacementShift,
     getStaffShifts,
-    getMyLeaveRequests
+    getMyLeaveRequests,
+    updatePendingReason,
+    deletePendingRequest
 }

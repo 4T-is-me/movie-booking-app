@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/admin_bg">
 
-    <!-- Header Section (Section title inside page) -->
+    <!-- Header Section -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/headerLayout"
         android:layout_width="match_parent"
@@ -77,14 +77,36 @@
                 android:letterSpacing="0.05"
                 android:layout_marginBottom="12dp" />
 
-            <!--    container list card       -->
+            <!-- container list card -->
             <LinearLayout
                 android:id="@+id/lnTodayShiftsContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
 
-            <!-- Upcoming Shifts Section -->
+            <!-- 1. DANH SÁCH CẦN THAY CA (Đứng trên Weekly Shifts) -->
+            <TextView
+                android:id="@+id/tvNeedReplacementHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Shifts Need Replacement"
+                android:textColor="@color/auto_color_94A3B8"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.05"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone" /> <!-- Mặc định ẩn, chỉ hiện nếu có data -->
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvNeedReplacementShifts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:visibility="gone"
+                tools:listitem="@layout/item_staff_schedule_shift" />
+
+            <!-- 2. DANH SÁCH LỊCH LÀM VIỆC TUẦN -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -93,6 +115,7 @@
                 android:textSize="14sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.05"
+                android:layout_marginTop="16dp"
                 android:layout_marginBottom="12dp" />
 
             <androidx.recyclerview.widget.RecyclerView

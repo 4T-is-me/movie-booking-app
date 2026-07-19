@@ -12,6 +12,7 @@ import com.example.movie_booking_app.databinding.ItemLeaveRequestBinding
 import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.utils.NameFormatter
 import com.google.android.material.card.MaterialCardView
+import java.text.SimpleDateFormat
 import java.util.Locale
 
 class ManagerLeaveRequestAdapter(private val listener: LeaveRequestListener) :
@@ -90,32 +91,46 @@ class ManagerLeaveRequestAdapter(private val listener: LeaveRequestListener) :
                     cardView?.strokeWidth = 1
                     cardView?.strokeColor = ContextCompat.getColor(context, R.color.color_stroke)
                 }
+
                 Constants.STATUS_REQUEST[1] -> { // Approved
                     binding.tvStatusBadge.text = context.getString(R.string.status_approved)
                     binding.tvStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.color_success_green))
                     binding.tvStatusBadge.setBackgroundResource(R.drawable.bg_badge_approved)
 
                     binding.layoutButtons.visibility = View.GONE
-                    binding.layoutUndoBar.visibility = View.VISIBLE
 
-                    binding.tvUndoMessage.text = context.getString(R.string.undo_msg_approved)
-                    binding.tvUndoMessage.setTextColor(ContextCompat.getColor(context, R.color.color_success_green))
-                    binding.layoutUndoBar.setBackgroundColor(ContextCompat.getColor(context, R.color.bg_undo_approved))
+                    // CHECK: Already claimed OR shift has expired.
+                    if (item.isShiftTaken == true || isShiftExpired(item.workDate)) {
+                        binding.layoutUndoBar.visibility = View.GONE
+                    } else {
+                        binding.layoutUndoBar.visibility = View.VISIBLE
+                        binding.btnUndo.visibility = View.VISIBLE
+                        binding.tvUndoMessage.text = context.getString(R.string.undo_msg_approved)
+                        binding.tvUndoMessage.setTextColor(ContextCompat.getColor(context, R.color.color_success_green))
+                        binding.layoutUndoBar.setBackgroundColor(ContextCompat.getColor(context, R.color.bg_undo_approved))
+                    }
 
                     cardView?.strokeWidth = 4
                     cardView?.strokeColor = ContextCompat.getColor(context, R.color.color_success_green)
                 }
+
                 Constants.STATUS_REQUEST[2] -> { // Rejected
                     binding.tvStatusBadge.text = context.getString(R.string.status_rejected)
                     binding.tvStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.color_error_red))
                     binding.tvStatusBadge.setBackgroundResource(R.drawable.bg_badge_rejected)
 
                     binding.layoutButtons.visibility = View.GONE
-                    binding.layoutUndoBar.visibility = View.VISIBLE
 
-                    binding.tvUndoMessage.text = context.getString(R.string.undo_msg_rejected)
-                    binding.tvUndoMessage.setTextColor(ContextCompat.getColor(context, R.color.color_error_red))
-                    binding.layoutUndoBar.setBackgroundColor(ContextCompat.getColor(context, R.color.bg_undo_rejected))
+                    // CHECK: rejected case has exceeded the processing time limit
+                    if (isShiftExpired(item.workDate)) {
+                        binding.layoutUndoBar.visibility = View.GONE
+                    } else {
+                        binding.layoutUndoBar.visibility = View.VISIBLE
+                        binding.btnUndo.visibility = View.VISIBLE
+                        binding.tvUndoMessage.text = context.getString(R.string.undo_msg_rejected)
+                        binding.tvUndoMessage.setTextColor(ContextCompat.getColor(context, R.color.color_error_red))
+                        binding.layoutUndoBar.setBackgroundColor(ContextCompat.getColor(context, R.color.bg_undo_rejected))
+                    }
 
                     cardView?.strokeWidth = 4
                     cardView?.strokeColor = ContextCompat.getColor(context, R.color.color_error_red)
@@ -151,7 +166,22 @@ class ManagerLeaveRequestAdapter(private val listener: LeaveRequestListener) :
             notifyItemChanged(position)
         }
     }
+
+    private fun isShiftExpired(workDateStr: String): Boolean {
+        return try {
+            val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault())
+            val workDate = sdf.parse(workDateStr) ?: return false
+
+            val today = java.util.Date()
+
+            workDate.before(today)
+        } catch (e: Exception) {
+            false
+        }
+    }
 }
+
+
 class LeaveRequestDiffCallback(private val oldList: List<ManagerLeaveRequestResponse>, private val newList: List<ManagerLeaveRequestResponse>) : DiffUtil.Callback() {
 
     override fun getOldListSize(): Int = oldList.size

@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.view.Window
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -22,7 +23,9 @@ import com.example.movie_booking_app.data.model.response.ShiftItemResponse
 import com.example.movie_booking_app.databinding.DialogRequestLeaveBinding
 import com.example.movie_booking_app.databinding.FragmentStaffScheduleBinding
 import com.example.movie_booking_app.databinding.ItemStaffScheduleShiftBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.view.adapter.DateAdapter
+import com.example.movie_booking_app.view.adapter.ReplacementShiftAdapter
 import com.example.movie_booking_app.viewmodel.staff.LeaveRequestViewModel
 import com.example.movie_booking_app.viewmodel.staff.StaffScheduleViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,6 +46,7 @@ class StaffScheduleFragment : Fragment() {
 
     private lateinit var dateAdapter: DateAdapter
     private lateinit var staffShiftAdapter: StaffShiftAdapter
+    private lateinit var replacementShiftAdapter: ReplacementShiftAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,6 +75,17 @@ class StaffScheduleFragment : Fragment() {
             // Update Today's Shift Card based on selected day from DB shifts
             updateTodayShiftCard(selectedDate.id)
         }
+
+        replacementShiftAdapter = ReplacementShiftAdapter { item ->
+            item.shiftId?.let { id ->
+                leaveRequestViewModel.acceptReplacementShift(id)
+            }?: Toast.makeText(requireContext(), "Invalid Shift ID", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.rvNeedReplacementShifts.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = replacementShiftAdapter
+        }
         binding.rvWeeklyCalendar.apply {
             layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
             adapter = dateAdapter
@@ -82,7 +97,7 @@ class StaffScheduleFragment : Fragment() {
                 showRequestLeaveDialog(item)
             },
             onRequestReplacement = { item ->
-                Toast.makeText(requireContext(), "Accept replacement requested!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.error_cannot_accept_own_shift), Toast.LENGTH_SHORT).show()
             }
         )
         binding.rvWeeklyShifts.apply {
@@ -94,14 +109,40 @@ class StaffScheduleFragment : Fragment() {
     private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.shifts.collectLatest { shiftList ->
-                android.util.Log.d("StaffSchedule", "Received shifts count: ${shiftList.size}")
+                Log.d("StaffSchedule", "Received shifts count: ${shiftList.size}")
                 staffShiftAdapter.submitList(shiftList)
 
                 // Set default display for today's selected date in calendar strip
                 val activeDate = dateAdapter.currentList.find { it.isSelected }?.id
-                android.util.Log.d("StaffSchedule", "Active date on load: $activeDate")
+                Log.d("StaffSchedule", "Active date on load: $activeDate")
                 if (activeDate != null) {
                     updateTodayShiftCard(activeDate)
+                }
+            }
+        }
+        lifecycleScope.launch {
+            leaveRequestViewModel.replacementShifts.collectLatest { replacementList ->
+                if (!replacementList.isNullOrEmpty()) {
+                    binding.tvNeedReplacementHeader.visibility = View.VISIBLE
+                    binding.rvNeedReplacementShifts.visibility = View.VISIBLE
+                    replacementShiftAdapter.submitList(replacementList)
+                } else {
+                    binding.tvNeedReplacementHeader.visibility = View.GONE
+                    binding.rvNeedReplacementShifts.visibility = View.GONE
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            leaveRequestViewModel.acceptShiftResult.collectLatest { response ->
+                if (response != null) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Shift accepted successfully!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    leaveRequestViewModel.clearAcceptShiftState()
+                    loadData()
                 }
             }
         }
@@ -109,7 +150,11 @@ class StaffScheduleFragment : Fragment() {
         lifecycleScope.launch {
             leaveRequestViewModel.createLeaveResult.collectLatest { response ->
                 if (response != null) {
-                    Toast.makeText(requireContext(), "Leave request submitted successfully!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Leave request submitted successfully!",
+                        Toast.LENGTH_LONG
+                    ).show()
                     leaveRequestViewModel.clearCreateLeaveState()
                     val activeDate = dateAdapter.currentList.find { it.isSelected }?.id
                     loadData()
@@ -117,20 +162,25 @@ class StaffScheduleFragment : Fragment() {
             }
         }
 
-        //  Lắng nghe thông báo lỗi từ LeaveRequestViewModel
         lifecycleScope.launch {
-            leaveRequestViewModel.errorMessage.collectLatest { message ->
-                if (message != null) {
-                    val displayMessage = try {
-                        val jsonObject = org.json.JSONObject(message)
-                        val errors = jsonObject.optJSONArray("errors")
-                        if (errors != null && errors.length() > 0) {
-                            errors.getJSONObject(0).optString("message", message)
-                        } else {
-                            jsonObject.optString("message", message)
+            leaveRequestViewModel.errorMessage.collectLatest { rawMessage ->
+                if (rawMessage != null) {
+                    val displayMessage = when (rawMessage) {
+                       Constants.ERROR_DUPLICATE_SHIFT -> getString(R.string.error_duplicate_shift)
+                        Constants.ERROR_UNKNOWN -> getString(R.string.error_unknown)
+                        else -> {
+                            try {
+                                val jsonObject = org.json.JSONObject(rawMessage)
+                                val errors = jsonObject.optJSONArray("errors")
+                                if (errors != null && errors.length() > 0) {
+                                    errors.getJSONObject(0).optString("message", rawMessage)
+                                } else {
+                                    jsonObject.optString("message", rawMessage)
+                                }
+                            } catch (e: Exception) {
+                                rawMessage
+                            }
                         }
-                    } catch (e: Exception) {
-                        message
                     }
 
                     Toast.makeText(requireContext(), displayMessage, Toast.LENGTH_LONG).show()
@@ -148,8 +198,9 @@ class StaffScheduleFragment : Fragment() {
         if (calendarDates.isNotEmpty()) {
             val startDate = calendarDates.first().id
             val endDate = calendarDates.last().id
-            android.util.Log.d("StaffSchedule", "Requesting shifts from $startDate to $endDate")
+            Log.d("StaffSchedule", "Requesting shifts from $startDate to $endDate")
             viewModel.loadShifts(startDate, endDate)
+            leaveRequestViewModel.loadReplacementShifts()
         }
     }
 
@@ -185,11 +236,11 @@ class StaffScheduleFragment : Fragment() {
 
                 // working hours data
                 itemBinding.tvSubShiftHours.text = when (item.shift) {
-                    "Morning" -> "08:00 AM - 12:00 PM"
-                    "Afternoon" -> "12:00 PM - 05:00 PM"
-                    "Evening" -> "05:00 PM - 10:00 PM"
-                    "Night" -> "10:00 PM - 02:00 AM"
-                    else -> "Flexible hours"
+                    Constants.SHIFTS[0] -> Constants.MORNING
+                    Constants.SHIFTS[1]  -> Constants.AFTERNOON
+                    Constants.SHIFTS[2]  -> Constants.EVENING
+                    Constants.SHIFTS[3]  -> Constants.NIGHT
+                    else -> Constants.FULLTIME
                 }
 
                 itemBinding.tvSubShiftLocation.text = "${item.position} • ${getString(R.string.auto_str_ticket_counter_staff_member)}"
@@ -322,11 +373,11 @@ class StaffScheduleFragment : Fragment() {
 
                     val shiftName = "${item.shift} Shift"
                     val shiftTime = when (item.shift) {
-                        "Morning" -> "08:00 AM - 12:00 PM"
-                        "Afternoon" -> "12:00 PM - 05:00 PM"
-                        "Evening" -> "05:00 PM - 10:00 PM"
-                        "Night" -> "10:00 PM - 02:00 AM"
-                        else -> "Flexible hours"
+                        Constants.SHIFTS[0] -> Constants.MORNING
+                        Constants.SHIFTS[1]-> Constants.AFTERNOON
+                        Constants.SHIFTS[2]-> Constants.EVENING
+                        Constants.SHIFTS[3]-> Constants.NIGHT
+                        else -> Constants.FULLTIME
                     }
 
                     binding.tvShiftName.text = shiftName
@@ -334,23 +385,38 @@ class StaffScheduleFragment : Fragment() {
 
                     // Action buttons displaying dynamic labels based on conditions
                     when (item.status) {
-                        "NeedReplacement" -> {
-                            setDynamicBadge(binding.tvShiftStatus, "Need Replacement", Color.parseColor("#F43F5E"), Color.parseColor("#1AF43F5E"))
+                        Constants.STATUS_SHIFT[4] -> {
+                            setDynamicBadge(
+                                binding.tvShiftStatus,
+                                Constants.STATUS_SHIFT[4],
+                                ContextCompat.getColor(context, R.color.status_rose_red),
+                                ContextCompat.getColor(context, R.color.bg_badge_rose_red)
+                            )
                             binding.btnShiftAction.visibility = View.VISIBLE
-                            binding.btnShiftAction.text = "Accept replacement"
-                            binding.btnShiftAction.setTextColor(Color.parseColor("#F5C518"))
+                            binding.btnShiftAction.text = context?.getString(R.string.action_accept_replacement)
+                            binding.btnShiftAction.setTextColor(ContextCompat.getColor(context, R.color.status_gold_yellow))
                             binding.btnShiftAction.setOnClickListener { onRequestReplacement(item) }
                         }
-                        "Completed" -> {
-                            setDynamicBadge(binding.tvShiftStatus, "Completed", Color.parseColor("#F5C518"), Color.parseColor("#1AF5C518"))
+                        Constants.STATUS_SHIFT[2] -> {
+                            setDynamicBadge(
+                                binding.tvShiftStatus,
+                                Constants.STATUS_SHIFT[2],
+                                ContextCompat.getColor(context, R.color.status_gold_yellow),
+                                ContextCompat.getColor(context, R.color.bg_badge_gold_yellow)
+                            )
                             binding.btnShiftAction.visibility = View.GONE
                         }
                         else -> {
                             // Assigned
-                            setDynamicBadge(binding.tvShiftStatus, "Assigned", Color.parseColor("#F5C518"), Color.parseColor("#1AF5C518"))
+                            setDynamicBadge(
+                                binding.tvShiftStatus,
+                                Constants.STATUS_SHIFT[1],
+                                ContextCompat.getColor(context, R.color.status_gold_yellow),
+                                ContextCompat.getColor(context, R.color.bg_badge_gold_yellow)
+                            )
                             binding.btnShiftAction.visibility = View.VISIBLE
-                            binding.btnShiftAction.text = "Request time off"
-                            binding.btnShiftAction.setTextColor(Color.parseColor("#FB7185"))
+                            binding.btnShiftAction.text = context?.getString(R.string.action_request_time_off)
+                            binding.btnShiftAction.setTextColor(ContextCompat.getColor(context, R.color.status_light_rose))
                             binding.btnShiftAction.setOnClickListener { onRequestTimeOff(item) }
                         }
                     }

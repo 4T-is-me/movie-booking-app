@@ -25,6 +25,7 @@ class MyLeaveRequestsAdapter(
         this.list = newList
         diffResult.dispatchUpdatesTo(this)
     }
+
     inner class ViewHolder(val binding: ItemMyLeaveRequestBinding) : RecyclerView.ViewHolder(binding.root) {
 
         private val context = itemView.context
@@ -36,11 +37,12 @@ class MyLeaveRequestsAdapter(
 
             when (item.status) {
                 "Pending" -> {
-                
                     val textColor = ContextCompat.getColor(context, R.color.color_gold)
                     val bgColor = ContextCompat.getColor(context, R.color.bg_pending_badge)
 
                     setDynamicBadge(binding.tvLeaveStatusBadge, "Pending", textColor, bgColor)
+
+                    binding.vStatusIndicator.setBackgroundColor(textColor)
 
                     binding.layoutRejectReason.visibility = View.GONE
                     binding.layoutPendingActions.visibility = View.VISIBLE
@@ -49,10 +51,12 @@ class MyLeaveRequestsAdapter(
                     binding.btnDeleteLeave.setOnClickListener { onDeleteClick(item) }
                 }
                 "Approved" -> {
-                    val textColor = ContextCompat.getColor(context, R.color.color_green) 
+                    val textColor = ContextCompat.getColor(context, R.color.color_green)
                     val bgColor = ContextCompat.getColor(context, R.color.bg_approved_badge)
 
                     setDynamicBadge(binding.tvLeaveStatusBadge, "Approved", textColor, bgColor)
+
+                    binding.vStatusIndicator.setBackgroundColor(textColor)
 
                     binding.layoutRejectReason.visibility = View.GONE
                     binding.layoutPendingActions.visibility = View.GONE
@@ -63,11 +67,12 @@ class MyLeaveRequestsAdapter(
 
                     setDynamicBadge(binding.tvLeaveStatusBadge, "Rejected", textColor, bgColor)
 
+                    // Cập nhật màu viền dọc trái cho trạng thái Rejected
+                    binding.vStatusIndicator.setBackgroundColor(textColor)
+
                     binding.layoutPendingActions.visibility = View.GONE
                     binding.layoutRejectReason.visibility = View.VISIBLE
                     binding.tvRejectReason.text = item.rejectReason ?: "No feedback provided."
-
-
                     binding.tvRejectReason.setTextColor(textColor)
                 }
                 else -> {
@@ -75,11 +80,14 @@ class MyLeaveRequestsAdapter(
                     val bgColor = ContextCompat.getColor(context, R.color.auto_color_94A3B8)
 
                     setDynamicBadge(binding.tvLeaveStatusBadge, item.status ?: "Unknown", textColor, bgColor)
+                    binding.vStatusIndicator.setBackgroundColor(textColor)
+
                     binding.layoutPendingActions.visibility = View.GONE
                     binding.layoutRejectReason.visibility = View.GONE
                 }
             }
         }
+
         private fun setDynamicBadge(tv: TextView, text: String, textColor: Int, bgColor: Int) {
             tv.text = text
             tv.setTextColor(textColor)
@@ -90,6 +98,7 @@ class MyLeaveRequestsAdapter(
             tv.background = shape
         }
     }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemMyLeaveRequestBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
@@ -100,16 +109,19 @@ class MyLeaveRequestsAdapter(
     }
 
     override fun getItemCount(): Int = list.size
-    private class LeaveRequestDiffCallback(private val oldList: List<LeaveRequestResponse>,private val newList: List<LeaveRequestResponse>) : DiffUtil.Callback() {
+
+    private class LeaveRequestDiffCallback(
+        private val oldList: List<LeaveRequestResponse>,
+        private val newList: List<LeaveRequestResponse>
+    ) : DiffUtil.Callback() {
 
         override fun getOldListSize(): Int = oldList.size
-
         override fun getNewListSize(): Int = newList.size
 
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             return oldList[oldItemPosition].leaveRequestId == newList[newItemPosition].leaveRequestId
         }
-    
+
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             return oldList[oldItemPosition] == newList[newItemPosition]
         }

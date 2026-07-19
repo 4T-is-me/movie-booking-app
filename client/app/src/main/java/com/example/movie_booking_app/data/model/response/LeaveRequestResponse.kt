@@ -11,8 +11,17 @@ data class LeaveRequestResponse(
     val createdAt: String?
 )
 
+data class LeaveRequestPaginationData(
+    val docs: List<LeaveRequestResponse>?,
+    val totalItems: Int,
+    val totalPages: Int,
+    val currentPage: Int,
+    val limit: Int
+)
+
+
 data class StaffLeaveRequestListResponse(
     val success: Boolean,
     val message: String?,
-    val data: List<LeaveRequestResponse>?
+    val data: LeaveRequestPaginationData?
 )

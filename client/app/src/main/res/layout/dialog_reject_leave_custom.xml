@@ -17,7 +17,6 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <!-- Thanh gạch trang trí phía trên -->
         <View
             android:layout_width="40dp"
             android:layout_height="4dp"
@@ -25,7 +24,6 @@
             android:layout_marginBottom="16dp"
             android:background="#40FFFFFF" />
 
-        <!-- Tiêu đề Dialog -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -34,7 +32,6 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
-        <!-- Label phụ -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -43,7 +40,6 @@
             android:textColor="@color/text_secondary"
             android:textSize="13sp" />
 
-        <!-- Ô nhập lý do nghỉ -->
         <EditText
             android:id="@+id/etLeaveReason"
             android:layout_width="match_parent"
@@ -61,7 +57,6 @@
             android:singleLine="false"
             android:scrollbars="vertical" />
 
-        <!-- Khối chứa 2 nút hành động -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -85,7 +80,7 @@
                 android:layout_weight="1"
                 android:backgroundTint="@color/color_gold"
                 android:text="@string/dialog_submit"
-                android:textColor="#1A1A1A"
+                android:textColor="@color/black"
                 android:textStyle="bold" />
         </LinearLayout>
 

@@ -14,5 +14,8 @@ staffLeaveRequestRouter.post("/:id/accept", authMiddleware.isAuthorized, staffLe
 staffLeaveRequestRouter.get("/shifts", authMiddleware.isAuthorized, staffLeaveRequestController.getStaffShifts)
 // GET /api/staffs/leave-requests
 staffLeaveRequestRouter.get("/", authMiddleware.isAuthorized, staffLeaveRequestController.getMyLeaveRequests)
-
+//PATCH /api/staffs/leave-requests/:id
+staffLeaveRequestRouter.patch("/:id", authMiddleware.isAuthorized, staffLeaveRequestController.updatePendingReason)
+//DELETE /api/staffs/leave-requests/:id
+staffLeaveRequestRouter.delete("/:id", authMiddleware.isAuthorized, staffLeaveRequestController.deletePendingRequest)
 export default staffLeaveRequestRouter;

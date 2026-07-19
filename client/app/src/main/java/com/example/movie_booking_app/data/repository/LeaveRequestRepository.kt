@@ -1,10 +1,13 @@
 package com.example.movie_booking_app.data.repository
 
+import android.util.Log
 import com.example.movie_booking_app.data.api.LeaveRequestApi
 import com.example.movie_booking_app.data.model.request.CreateLeaveRequest
 import com.example.movie_booking_app.data.model.request.RejectLeaveRequest
 import com.example.movie_booking_app.data.model.response.AcceptShiftResponse
 import com.example.movie_booking_app.data.model.response.CreateLeaveResponse
+import com.example.movie_booking_app.data.model.response.GenericMessageResponse
+import com.example.movie_booking_app.data.model.response.LeaveRequestPaginationData
 import com.example.movie_booking_app.data.model.response.LeaveRequestResponse
 import com.example.movie_booking_app.data.model.response.ManagerLeaveRequestResponse
 import com.example.movie_booking_app.data.model.response.ReplacementShiftResponse
@@ -44,12 +47,12 @@ class LeaveRequestRepository @Inject constructor(private val api: LeaveRequestAp
         }
     }
 
-    fun getMyLeaveRequests(status: String?): Flow<Result<List<LeaveRequestResponse>>> = flow {
+    fun getMyLeaveRequests(status: String?, page: Int, limit: Int): Flow<Result<LeaveRequestPaginationData>> = flow {
         try {
-            val response = api.getMyLeaveRequests(status)
+            val response = api.getMyLeaveRequests(status, page, limit)
             if (response.isSuccessful && response.body() != null) {
-                val list = response.body()?.data ?: emptyList()
-                emit(Result.success(list))
+                val paginationData = response.body()?.data ?: LeaveRequestPaginationData(emptyList(), 0, 0, 1, 10)
+                emit(Result.success(paginationData))
             } else {
                 emit(Result.failure(Exception(response.errorBody()?.string() ?: "Unknown Error")))
             }
@@ -119,6 +122,34 @@ class LeaveRequestRepository @Inject constructor(private val api: LeaveRequestAp
             }
         }catch (e: Exception) {
             emit(null)
+        }
+    }
+
+    fun updateLeaveRequestReason(id: String, reason: String): Flow<Result<GenericMessageResponse>> = flow {
+        try {
+            val response = api.updateLeaveRequestReason(id, mapOf("reason" to reason))
+            if (response.isSuccessful && response.body() != null) {
+                emit(Result.success(response.body()!!))
+            } else {
+                emit(Result.failure(Exception(response.errorBody()?.string() ?: "Update failed")))
+                Log.d("testfailed", response.body()?.message.toString())
+            }
+
+        }catch (e: Exception){
+            emit(Result.failure(e))
+        }
+    }
+
+    fun deleteLeaveRequest(id: String): Flow<Result<GenericMessageResponse>> = flow {
+        try {
+            val response = api.deleteLeaveRequest(id)
+            if (response.isSuccessful && response.body() != null) {
+                emit(Result.success(response.body()!!))
+            } else {
+                emit(Result.failure(Exception(response.errorBody()?.string() ?: "Delete failed")))
+            }
+        }catch (e: Exception) {
+            emit(Result.failure(e))
         }
     }
 }

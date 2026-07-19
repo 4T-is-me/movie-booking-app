@@ -16,5 +16,6 @@ data class ManagerLeaveRequestResponse(
     val workDate: String,
     val reason: String,
     val status: String,
-    val createdAt: String
+    val createdAt: String,
+    val isShiftTaken: Boolean? = false
 )
