@@ -32,7 +32,7 @@ interface LeaveRequestApi {
     suspend fun acceptReplacementShift(@Path("id") shiftId: String) : Response<AcceptShiftResponse>
 
     @GET("/api/staffs/leave-requests")
-    suspend fun getMyLeaveRequests(@Query("status") status: String? = null): Response<StaffLeaveRequestListResponse>
+    suspend fun getMyLeaveRequests(@Query("status") status: String? = null, @Query("page") page: Int = 1, @Query("limit") limit: Int = 10): Response<StaffLeaveRequestListResponse>
     // --- Manager endpoints ---
     @GET("/api/manager/staff-shifts/leave-requests")
     suspend fun getLeaveRequestsForManager(@Query("status") status: String?) : Response<ManagerLeaveRequestListResponse>

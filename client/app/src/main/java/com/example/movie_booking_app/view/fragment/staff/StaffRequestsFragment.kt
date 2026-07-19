@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.LeaveRequestResponse
 import com.example.movie_booking_app.databinding.DialogDeleteLeaveRequestBinding
@@ -20,10 +21,10 @@ import com.example.movie_booking_app.databinding.FragmentStaffRequestsBinding
 import com.example.movie_booking_app.utils.DateUtils
 import com.example.movie_booking_app.view.adapter.MyLeaveRequestsAdapter
 import com.example.movie_booking_app.viewmodel.staff.LeaveRequestViewModel
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+
 @AndroidEntryPoint
 class StaffRequestsFragment : Fragment() {
 
@@ -32,6 +33,7 @@ class StaffRequestsFragment : Fragment() {
 
     private val viewModel: LeaveRequestViewModel by viewModels()
     private lateinit var leaveRequestsAdapter: MyLeaveRequestsAdapter
+    private lateinit var layoutManager: LinearLayoutManager
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentStaffRequestsBinding.inflate(inflater, container, false)
@@ -56,10 +58,28 @@ class StaffRequestsFragment : Fragment() {
                 item.leaveRequestId?.let { id -> showDeleteConfirmDialog(id) }
             }
         )
+        val mLayoutManager = LinearLayoutManager(requireContext())
+        layoutManager = mLayoutManager
 
         binding.rvLeaveRequests.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = leaveRequestsAdapter
+            this.layoutManager = mLayoutManager
+            this.adapter = leaveRequestsAdapter
+
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+
+                    if (dy > 0) {
+                        val visibleItemCount = mLayoutManager.childCount
+                        val totalItemCount = mLayoutManager.itemCount
+                        val pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition()
+
+                        if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
+                            viewModel.loadNextPage()
+                        }
+                    }
+                }
+            })
         }
     }
 
@@ -73,6 +93,7 @@ class StaffRequestsFragment : Fragment() {
 
         lifecycleScope.launch {
             viewModel.isLoading.collectLatest { isLoading ->
+                // Loading này chỉ hiển thị ở trang đầu tiên cho đỡ bị block UI khi loadmore
                 binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
             }
         }
@@ -85,6 +106,7 @@ class StaffRequestsFragment : Fragment() {
                 }
             }
         }
+
         lifecycleScope.launch {
             viewModel.actionSuccessMessage.collectLatest { message ->
                 if (message != null) {
@@ -110,7 +132,6 @@ class StaffRequestsFragment : Fragment() {
         val dialog = builder.create()
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialogBinding.btnDialogCancel.setOnClickListener {
             dialog.dismiss()
         }

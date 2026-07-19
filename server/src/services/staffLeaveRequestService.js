@@ -270,21 +270,32 @@ const getStaffShifts = async (accountId, { startDate, endDate }) => {
     }));
 }
 
-const getStaffLeaveRequests = async (accountId, statusFilter) => {
+const getStaffLeaveRequests = async (accountId, statusFilter, page = 1, limit = 10) => {
     const staff = await checkStaff(accountId);
     const filter = { staffId: staff._id };
     if (statusFilter) {
         filter.status = statusFilter;
     }
 
-    const leaveRequests = await LeaveRequest.find(filter)
-        .populate({
-            path: 'staffShiftId',
-            select: 'workDate shift'
-        })
-        .sort({ createdAt: -1 });
+    // Tính toán số lượng bỏ qua
+    const skip = (parseInt(page) - 1) * parseInt(limit);
 
-    return leaveRequests.map(item => ({
+    // Chạy song song cả đếm tổng và lấy data cho nhanh
+    const [totalItems, leaveRequests] = await Promise.all([
+        LeaveRequest.countDocuments(filter),
+        LeaveRequest.find(filter)
+            .populate({
+                path: 'staffShiftId',
+                select: 'workDate shift'
+            })
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(parseInt(limit))
+    ]);
+
+    const totalPages = Math.ceil(totalItems / limit);
+
+    const mappedData = leaveRequests.map(item => ({
         leaveRequestId: item._id,
         shiftId: item.staffShiftId?._id || null,
         workDate: item.staffShiftId?.workDate || null,
@@ -294,6 +305,15 @@ const getStaffLeaveRequests = async (accountId, statusFilter) => {
         rejectReason: item.rejectReason,
         createdAt: item.createdAt
     }));   
+
+    // Trả thêm thông tin phân trang ra ngoài
+    return {
+        docs: mappedData,
+        totalItems,
+        totalPages,
+        currentPage: parseInt(page),
+        limit: parseInt(limit)
+    };
 }
 
 const updatePendingReason = async(accountId, leaveRequestId, reason) => {
