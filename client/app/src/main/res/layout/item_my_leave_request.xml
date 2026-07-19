@@ -1,159 +1,202 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardLeaveRequest"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="12dp"
-    android:layout_marginHorizontal="10dp"
+    android:layout_marginBottom="10dp"
+    android:layout_marginHorizontal="12dp"
     app:cardBackgroundColor="@color/bg_surface"
-    app:cardCornerRadius="14dp"
+    app:cardCornerRadius="16dp"
     app:strokeColor="@color/border_subtle"
     app:strokeWidth="1dp"
-    app:cardElevation="2dp">
+    app:cardElevation="0dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="wrap_content">
 
-        <!-- HEADER-->
-        <RelativeLayout
-            android:layout_width="match_parent"
+        <!-- THANH VIỀN MÀU ĐỘNG Ở SÁT CẠNH TRÁI (Indicator Bar) -->
+        <View
+            android:id="@+id/vStatusIndicator"
+            android:layout_width="4dp"
+            android:layout_height="0dp"
+            android:background="@color/color_gold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- KHỐI NỘI DUNG CHÍNH -->
+        <!-- ICON TRÒN (Mặt trời/Mặt trăng) -->
+        <ImageView
+            android:id="@+id/imgLeaveIcon"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_circle_glass"
+            android:padding="10dp"
+            android:src="@drawable/ic_event"
+            app:tint="@color/color_gold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/vStatusIndicator" />
+
+        <!-- TIÊU ĐỀ CA LÀM VIỆC -->
+        <TextView
+            android:id="@+id/tvLeaveShift"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp">
+            android:layout_marginStart="12dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="@id/imgLeaveIcon"
+            app:layout_constraintStart_toEndOf="@id/imgLeaveIcon"
+            app:layout_constraintEnd_toStartOf="@id/tvLeaveStatusBadge"
+            android:layout_marginEnd="12dp"
+            tools:text="Morning Shift" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_alignParentStart="true"
-                android:layout_toStartOf="@id/tvLeaveStatusBadge"
-                android:layout_marginEnd="8dp">
+        <!-- NGÀY THÁNG XIN NGHỈ -->
+        <LinearLayout
+            android:id="@+id/layoutDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="4dp"
+            app:layout_constraintTop_toBottomOf="@id/tvLeaveShift"
+            app:layout_constraintStart_toStartOf="@id/tvLeaveShift">
 
-                <TextView
-                    android:id="@+id/tvLeaveShift"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Morning Shift"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginTop="4dp">
-
-                    <ImageView
-                        android:layout_width="14dp"
-                        android:layout_height="14dp"
-                        android:src="@drawable/ic_clock"
-                        app:tint="@color/color_gold" />
-
-                    <TextView
-                        android:id="@+id/tvLeaveDate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="6dp"
-                        android:text="20 Jul 2026"
-                        android:textColor="@color/auto_color_E2E8F0"
-                        android:textSize="13sp" />
-                </LinearLayout>
-            </LinearLayout>
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:src="@drawable/ic_clock"
+                app:tint="@color/auto_color_94A3B8" />
 
             <TextView
-                android:id="@+id/tvLeaveStatusBadge"
+                android:id="@+id/tvLeaveDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerInParent="true"
-                android:text="Pending"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp" />
-        </RelativeLayout>
+                android:layout_marginStart="6dp"
+                android:textColor="@color/auto_color_94A3B8"
+                android:textSize="13sp"
+                tools:text="Mon, Jul 20, 2026" />
+        </LinearLayout>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        <!-- BADGE TRẠNG THÁI -->
+        <TextView
+            android:id="@+id/tvLeaveStatusBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            app:layout_constraintTop_toTopOf="@id/imgLeaveIcon"
+            app:layout_constraintBottom_toBottomOf="@id/layoutDate"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="@string/status_unknown" />
 
+        <!-- ĐƯỜNG KẺ NGANG MỜ PHÂN CÁCH -->
+        <View
+            android:id="@+id/vLineDivider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/border_subtle"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/layoutDate"
+            app:layout_constraintStart_toStartOf="@id/imgLeaveIcon"
+            app:layout_constraintEnd_toEndOf="@id/tvLeaveStatusBadge"/>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_alignParentStart="true"
-                android:layout_toStartOf="@id/layoutPendingActions"
-                android:layout_marginEnd="12dp">
+        <!-- TIÊU ĐỀ LÝ DO NGHỈ -->
+        <TextView
+            android:id="@+id/lblReason"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/lbl_reason"
+            android:textColor="@color/auto_color_94A3B8"
+            android:textSize="12sp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@id/vLineDivider"
+            app:layout_constraintStart_toStartOf="@id/imgLeaveIcon" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Reason:"
-                    android:textColor="@color/auto_color_94A3B8"
-                    android:textSize="12sp" />
+        <!-- NỘI DUNG LÝ DO -->
+        <TextView
+            android:id="@+id/tvLeaveReason"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/auto_color_E2E8F0"
+            android:textSize="14sp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintTop_toBottomOf="@id/lblReason"
+            app:layout_constraintStart_toStartOf="@id/imgLeaveIcon"
+            app:layout_constraintEnd_toStartOf="@id/layoutPendingActions"
+            app:layout_constraintBottom_toTopOf="@id/layoutRejectReason"
+            android:layout_marginEnd="16dp"
+            tools:text="@string/no_reason_provided" />
 
-                <TextView
-                    android:id="@+id/tvLeaveReason"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="Family work"
-                    android:textColor="@color/auto_color_E2E8F0"
-                    android:textSize="14sp" />
-            </LinearLayout>
+        <!-- CỤM NÚT EDIT / DELETE -->
+        <LinearLayout
+            android:id="@+id/layoutPendingActions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toTopOf="@id/tvLeaveReason"
+            app:layout_constraintBottom_toBottomOf="@id/tvLeaveReason"
+            app:layout_constraintEnd_toEndOf="@id/vLineDivider">
 
-            <LinearLayout
-                android:id="@+id/layoutPendingActions"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:visibility="visible">
+            <ImageView
+                android:id="@+id/btnEditLeave"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:padding="8dp"
+                android:src="@drawable/ic_edit"
+                android:background="@drawable/bg_circle_glass"
+                android:clickable="true"
+                android:focusable="true"
+                app:tint="@color/color_gold" />
 
-                <ImageView
-                    android:id="@+id/btnEditLeave"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:padding="4dp"
-                    android:src="@drawable/ic_edit"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    app:tint="@color/color_gold" />
+            <ImageView
+                android:id="@+id/btnDeleteLeave"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="8dp"
+                android:padding="8dp"
+                android:src="@drawable/ic_delete"
+                android:contentDescription="@string/title_delete_leave_request"
+                android:background="@drawable/bg_circle_glass"
+                android:clickable="true"
+                android:focusable="true"
+                app:tint="@color/color_red" />
+        </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/btnDeleteLeave"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_marginStart="8dp"
-                    android:padding="4dp"
-                    android:src="@drawable/ic_delete"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    app:tint="@color/color_red" />
-            </LinearLayout>
-        </RelativeLayout>
+        <!-- KHỐI LÝ DO TỪ CHỐI CỦA MANAGER -->
         <LinearLayout
             android:id="@+id/layoutRejectReason"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="10dp"
-            android:paddingTop="8dp"
-            android:visibility="gone">
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintTop_toBottomOf="@id/tvLeaveReason"
+            app:layout_constraintStart_toStartOf="@id/imgLeaveIcon"
+            app:layout_constraintEnd_toEndOf="@id/vLineDivider"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/border_subtle"
+                android:layout_marginBottom="10dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Reject reason:"
+                android:text="@string/lbl_reject_reason"
                 android:textColor="@color/auto_color_94A3B8"
                 android:textSize="12sp" />
 
@@ -161,11 +204,10 @@
                 android:id="@+id/tvRejectReason"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="Not enough staff"
-                android:textColor="@color/color_red"
-                android:textSize="14sp" />
+                android:layout_marginTop="4dp"
+                android:textSize="14sp"
+                tools:text="@string/no_reject_provided" />
         </LinearLayout>
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

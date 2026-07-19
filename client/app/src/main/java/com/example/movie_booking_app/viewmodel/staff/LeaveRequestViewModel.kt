@@ -44,6 +44,9 @@ class LeaveRequestViewModel@Inject constructor(private val repository: LeaveRequ
     private val _undoResult = MutableStateFlow<SimpleSuccessResponse?>(null)
     val undoResult: StateFlow<SimpleSuccessResponse?> = _undoResult.asStateFlow()
 
+    private val _actionSuccessMessage = MutableStateFlow<String?>(null)
+    val actionSuccessMessage: StateFlow<String?> = _actionSuccessMessage
+
     // --- Loading & Error UI ---
     private val _isLoading = MutableStateFlow<Boolean>(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
@@ -133,6 +136,36 @@ class LeaveRequestViewModel@Inject constructor(private val repository: LeaveRequ
         }
     }
 
+    fun updateLeaveReason(id: String, newReason: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            repository.updateLeaveRequestReason(id, newReason).collectLatest { result ->
+                _isLoading.value = false
+                result.onSuccess {
+                    _actionSuccessMessage.value = it.message
+                    loadMyLeaveRequests()
+                }.onFailure {
+                    _errorMessage.value = it.message
+                }
+            }
+        }
+    }
+
+    fun deleteLeaveRequest(id: String) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            repository.deleteLeaveRequest(id).collectLatest { result ->
+                _isLoading.value = false
+                result.onSuccess {
+                    _actionSuccessMessage.value = it.message
+                    loadMyLeaveRequests()
+                }.onFailure {
+                    _errorMessage.value = it.message
+                }
+            }
+        }
+    }
+
 
     fun clearError() {
         _errorMessage.value = null
@@ -155,5 +188,8 @@ class LeaveRequestViewModel@Inject constructor(private val repository: LeaveRequ
     }
     fun clearUndoState() {
         _rejectResult.value = null
+    }
+    fun clearSuccessMessage() {
+        _actionSuccessMessage.value = null 
     }
 }

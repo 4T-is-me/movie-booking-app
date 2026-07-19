@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="@drawable/bg_tab_container">
+
+    <TextView
+        android:id="@+id/tvDialogTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/title_edit_leave_request"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Ô hiển thị Ngày (Read-only) -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_work_date"
+        android:textColor="@color/text_dialog_disabled"
+        android:textSize="12sp" />
+    <EditText
+        android:id="@+id/etDialogWorkDate"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="12dp"
+        android:paddingHorizontal="12dp"
+        android:textColor="@color/text_light_gray"
+        android:background="@drawable/bg_circle_glass"
+        android:textSize="14sp"
+        android:focusable="false"
+        android:clickable="false"
+        android:longClickable="false" />
+
+    <!-- Ô hiển thị Ca làm (Read-only) -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_shift"
+        android:textColor="@color/text_dialog_disabled"
+        android:textSize="12sp" />
+    <EditText
+        android:id="@+id/etDialogShift"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_circle_glass"
+        android:paddingHorizontal="12dp"
+        android:textColor="@color/text_light_gray"
+        android:textSize="14sp"
+        android:focusable="false"
+        android:clickable="false"
+        android:longClickable="false" />
+
+    <!-- Ô nhập Lý do (Được quyền chỉnh sửa) -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_reason_to_edit"
+        android:textColor="@color/auto_color_94A3B8"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+    <EditText
+        android:id="@+id/etDialogReason"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="60dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/bg_circle_glass"
+        android:padding="12dp"
+        android:hint="@string/hint_enter_reason"
+        android:textColorHint="@color/text_light_gray"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:inputType="textMultiLine"
+        android:gravity="top|start" />
+
+    <!-- KHỐI BUTTON: Cancel & Save (Nằm ngang ở đáy) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <!-- Nút Hủy (Button bình thường) -->
+        <Button
+            android:id="@+id/btnDialogCancel"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="@string/btn_cancel"
+            android:textColor="@color/text_light_gray"
+            android:backgroundTint="@color/border_subtle"
+            android:textSize="14sp"
+            android:textAllCaps="false" />
+
+        <!-- Nút Lưu (Button bình thường) -->
+        <Button
+            android:id="@+id/btnDialogSave"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="@string/btn_save"
+            android:backgroundTint="@color/color_gold"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textAllCaps="false" />
+    </LinearLayout>
+
+</LinearLayout>

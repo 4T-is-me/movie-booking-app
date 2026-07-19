@@ -85,7 +85,7 @@
                 android:layout_weight="1"
                 android:backgroundTint="@color/color_gold"
                 android:text="@string/dialog_submit"
-                android:textColor="#1A1A1A"
+                android:textColor="@color/black"
                 android:textStyle="bold" />
         </LinearLayout>
 

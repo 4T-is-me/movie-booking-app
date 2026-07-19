@@ -5,14 +5,22 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.movie_booking_app.R
+import com.example.movie_booking_app.data.model.response.LeaveRequestResponse
+import com.example.movie_booking_app.databinding.DialogDeleteLeaveRequestBinding
+import com.example.movie_booking_app.databinding.DialogEditLeaveRequestBinding
 import com.example.movie_booking_app.databinding.FragmentStaffRequestsBinding
+import com.example.movie_booking_app.utils.DateUtils
 import com.example.movie_booking_app.view.adapter.MyLeaveRequestsAdapter
 import com.example.movie_booking_app.viewmodel.staff.LeaveRequestViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -42,10 +50,10 @@ class StaffRequestsFragment : Fragment() {
     private fun setupRecyclerView() {
         leaveRequestsAdapter = MyLeaveRequestsAdapter(
             onEditClick = { item ->
-                Toast.makeText(requireContext(), "Edit requested for ID: ${item.leaveRequestId}", Toast.LENGTH_SHORT).show()
+                showEditDialog(item)
             },
             onDeleteClick = { item ->
-                Toast.makeText(requireContext(), "Delete requested for ID: ${item.leaveRequestId}", Toast.LENGTH_SHORT).show()
+                item.leaveRequestId?.let { id -> showDeleteConfirmDialog(id) }
             }
         )
 
@@ -58,7 +66,6 @@ class StaffRequestsFragment : Fragment() {
     private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.leaveRequests.collectLatest { list ->
-                Log.d("list",list.toString() )
                 leaveRequestsAdapter.submitList(list)
                 binding.txtNoData.visibility = if (list.isEmpty()) View.VISIBLE else View.GONE
             }
@@ -78,6 +85,74 @@ class StaffRequestsFragment : Fragment() {
                 }
             }
         }
+        lifecycleScope.launch {
+            viewModel.actionSuccessMessage.collectLatest { message ->
+                if (message != null) {
+                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                    viewModel.clearSuccessMessage()
+                }
+            }
+        }
+    }
+
+    private fun showEditDialog(item: LeaveRequestResponse) {
+        val context = requireContext()
+        val requestId = item.leaveRequestId ?: return
+
+        val dialogBinding = DialogEditLeaveRequestBinding.inflate(layoutInflater)
+        dialogBinding.etDialogWorkDate.setText(DateUtils.formatMovieDate(item.workDate))
+        dialogBinding.etDialogShift.setText("${item.shift} Shift")
+        dialogBinding.etDialogReason.setText(item.reason ?: "")
+        dialogBinding.etDialogReason.setSelection(dialogBinding.etDialogReason.text.length)
+
+        val builder = AlertDialog.Builder(context)
+        builder.setView(dialogBinding.root)
+        val dialog = builder.create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialogBinding.btnDialogCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialogBinding.btnDialogSave.setOnClickListener {
+            val newReason = dialogBinding.etDialogReason.text.toString().trim()
+
+            if (newReason.isNotEmpty()) {
+                viewModel.updateLeaveReason(requestId, newReason)
+                dialog.dismiss()
+            } else {
+                dialogBinding.etDialogReason.error = getString(R.string.error_empty_reason)
+            }
+        }
+        dialog.show()
+        val displayMetrics = resources.displayMetrics
+        val width = (displayMetrics.widthPixels * 0.85).toInt()
+        val height = WindowManager.LayoutParams.WRAP_CONTENT
+        dialog.window?.setLayout(width, height)
+    }
+
+    private fun showDeleteConfirmDialog(requestId: String) {
+        val dialogBinding = DialogDeleteLeaveRequestBinding.inflate(layoutInflater)
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setView(dialogBinding.root)
+
+        val dialog = builder.create()
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialogBinding.btnDeleteDialogCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialogBinding.btnDeleteDialogConfirm.setOnClickListener {
+            viewModel.deleteLeaveRequest(requestId)
+            dialog.dismiss()
+        }
+
+        dialog.show()
+        val displayMetrics = resources.displayMetrics
+        val width = (displayMetrics.widthPixels * 0.85).toInt()
+        val height = WindowManager.LayoutParams.WRAP_CONTENT
+        dialog.window?.setLayout(width, height)
     }
 
     override fun onDestroyView() {

@@ -91,10 +91,45 @@ const getMyLeaveRequests = async (req, res, next) => {
     }
 }
 
+const updatePendingReason = async (req, res, next) => {
+    try {
+        const accountId  = req.user.accountId;
+        const { id } = req.params;
+        const { reason } = req.body;
+
+        const result = await StaffLeaveRequestService.updatePendingReason(accountId, id, reason);
+
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            message: "Leave request updated successfully.",
+        })
+    } catch (error) {
+        next(error);
+    }
+}
+const deletePendingRequest = async (req, res, next) => {
+    try {
+        const accountId = req.user.accountId;
+        const { id } = req.params;
+        
+        const result = await StaffLeaveRequestService.deletePendingRequest(accountId, id);
+
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            message: "Leave request deleted successfully.",
+        })
+        
+    } catch (error) {
+        next(error);
+    }
+}
+
 export const staffLeaveRequestController = {
     createLeaveRequest,
     getReplacementShifts,
     acceptReplacementShift,
     getStaffShifts,
-    getMyLeaveRequests
+    getMyLeaveRequests,
+    updatePendingReason,
+    deletePendingRequest
 }

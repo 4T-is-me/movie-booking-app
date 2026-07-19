@@ -296,10 +296,53 @@ const getStaffLeaveRequests = async (accountId, statusFilter) => {
     }));   
 }
 
+const updatePendingReason = async(accountId, leaveRequestId, reason) => {
+    const staff = await checkStaff(accountId);
+    const leaveRequest = await LeaveRequest.findById(leaveRequestId)
+    if(!leaveRequest) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Leave request not found!");
+    }
+    const checkLeaveRequest = await checkShiftOwner(staff._id, leaveRequest.staffId, "You are not authorized to edit this request.")
+    
+    //check status
+    if(leaveRequest.status !== "Pending") {
+        throw new ApiError(StatusCodes.CONFLICT, "Only pending leave requests can be edited.");
+    }
+    leaveRequest.reason = reason;
+
+    await leaveRequest.save();
+
+    return { 
+        success: true, 
+        message: "Leave request updated successfully." 
+    };
+}
+
+const deletePendingRequest = async(accountId, leaveRequestId) => {
+    const staff = await checkStaff(accountId);
+    const leaveRequest = await LeaveRequest.findById(leaveRequestId)
+    if(!leaveRequest) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Leave request not found!");
+    }
+    const checkLeaveRequest = await checkShiftOwner(staff._id, leaveRequest.staffId, "You are not authorized to edit this request.")
+    //check status
+    if(leaveRequest.status !== "Pending") {
+        throw new ApiError(StatusCodes.CONFLICT, "Only pending leave requests can be edited.");
+    }
+    await LeaveRequest.findByIdAndDelete(leaveRequestId);    
+
+    return { 
+        success: true, 
+        message: "Leave request deleted successfully." 
+    };
+}
+
 export const StaffLeaveRequestService = {
     createLeaveRequest,
     getReplacementShifts,
     acceptReplacementShift,
     getStaffShifts,
-    getStaffLeaveRequests
+    getStaffLeaveRequests,
+    updatePendingReason,
+    deletePendingRequest
 }

@@ -4,6 +4,7 @@ import com.example.movie_booking_app.data.model.request.CreateLeaveRequest
 import com.example.movie_booking_app.data.model.request.RejectLeaveRequest
 import com.example.movie_booking_app.data.model.response.AcceptShiftResponse
 import com.example.movie_booking_app.data.model.response.CreateLeaveResponse
+import com.example.movie_booking_app.data.model.response.GenericMessageResponse
 import com.example.movie_booking_app.data.model.response.LeaveRequestResponse
 import com.example.movie_booking_app.data.model.response.StaffLeaveRequestListResponse
 import com.example.movie_booking_app.data.model.response.ManagerLeaveRequestListResponse
@@ -12,6 +13,7 @@ import com.example.movie_booking_app.data.model.response.ReplacementShiftRespons
 import com.example.movie_booking_app.data.model.response.SimpleSuccessResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -43,5 +45,12 @@ interface LeaveRequestApi {
 
     @PATCH("/api/manager/staff-shifts/leave-requests/{id}/undo")
     suspend fun undoLeaveRequest(@Path("id") leaveRequestId: String) : Response<SimpleSuccessResponse>
+
+    @PATCH("/api/staffs/leave-requests/{id}")
+    suspend fun updateLeaveRequestReason(@Path("id") leaveRequestId: String, @Body body: Map<String, String>) : Response<GenericMessageResponse>
+
+    @DELETE("/api/staffs/leave-requests/{id}")
+    suspend fun deleteLeaveRequest(@Path("id") leaveRequestId: String): Response<GenericMessageResponse>
+
 
 }
