@@ -16,10 +16,10 @@ object Constants {
     const val RANK_GOLD = 10000000L
     const val RANK_SILVER = 5000000L
 
-    const val MORNING = "08:00 - 12:00"
-    const val AFTERNOON = "12:00 - 16:00"
-    const val EVENING = "16:00 - 20:00"
-    const val NIGHT = "20:00 - 00:00"
+    const val MORNING = "08:00AM - 12:00PM"
+    const val AFTERNOON = "12:00PM - 04:00PM"
+    const val EVENING = "04:00PM - 08:00PM"
+    const val NIGHT = "08:00PM - 12:00AM"
     const val FULLTIME = "08h–22h"
     const val MAX_SHIFT_OF_DATE = 4
     val SHIFTS = listOf("Morning", "Afternoon", "Evening", "Night")
@@ -27,9 +27,13 @@ object Constants {
 
     val STATUS_REQUEST = listOf("pending", "approved", "rejected")
 
+    val  ERROR_DUPLICATE_SHIFT =  "ERROR_DUPLICATE_SHIFT"
+    val ERROR_UNKNOWN = "ERROR_UNKNOWN"
     object ComboPrice {
         const val SINGLE_COMBO = 80_000
         const val DOUBLE_COMBO = 120_000
     }
 }
+
+
 

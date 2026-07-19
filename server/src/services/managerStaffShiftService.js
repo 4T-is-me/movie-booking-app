@@ -555,7 +555,8 @@ const getLeaveRequestForManager = async (accountId, { status }) => {
         workDate: formatDate(item.staffShiftId?.workDate),
         reason: item.reason,
         status: item.status,
-        createdAt: item.createdAt
+        createdAt: item.createdAt,
+        isShiftTaken: item.staffShiftId?.status !== "NeedReplacement"
     }));
 
 }

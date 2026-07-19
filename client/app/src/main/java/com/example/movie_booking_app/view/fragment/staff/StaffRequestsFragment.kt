@@ -73,7 +73,6 @@ class StaffRequestsFragment : Fragment() {
                         val visibleItemCount = mLayoutManager.childCount
                         val totalItemCount = mLayoutManager.itemCount
                         val pastVisibleItems = mLayoutManager.findFirstVisibleItemPosition()
-
                         if ((visibleItemCount + pastVisibleItems) >= totalItemCount) {
                             viewModel.loadNextPage()
                         }

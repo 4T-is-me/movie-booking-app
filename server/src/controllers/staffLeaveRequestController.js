@@ -77,15 +77,16 @@ const getStaffShifts = async (req, res, next) => {
 
 const getMyLeaveRequests = async (req, res, next) => {
     try {
-        
         const accountId = req.user.accountId;
-        const { status } = req.query;
-        const result = await StaffLeaveRequestService.getStaffLeaveRequests(accountId, status);
-    return res.status(StatusCodes.OK).json({
-        success: true,
-        message: "Successfully get leave requests.",
-        data: result
-    })
+        const { status, page = 1, limit = 10 } = req.query; 
+        
+        const result = await StaffLeaveRequestService.getStaffLeaveRequests(accountId, status, page, limit);
+        
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            message: "Successfully get leave requests.",
+            data: result 
+        });
     } catch (error) {
         next(error);
     }

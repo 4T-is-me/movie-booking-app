@@ -994,7 +994,7 @@
 
     <!-- UI Format Strings -->
     <string name="format_shift_date">Date: %1$s</string>
-    <string name="format_shift_detail">Shift: %1$s (%2$s)</string>
+    <string name="format_shift_detail">%1$s (%2$s)</string>
     <string name="format_rating">⭐ %1$.1f</string>
     <!-- Spinner Options -->
     <string-array name="shift_duration_options">
@@ -1069,4 +1069,17 @@
     <string name="no_reason_provided">No reason provided</string>
     <string name="no_reject_provided">No reject provided.</string>
     <string name="status_unknown">Unknown</string>
+
+    <string name="error_unknown">An unknown error occurred.</string>
+    <string name="error_cannot_accept_shift">Cannot accept this replacement shift.</string>
+    <string name="error_duplicate_shift">You already have a shift at this time. Cannot accept this replacement!</string>
+    <string name="success_accept_shift">Replacement shift accepted successfully!</string>
+    <string name="error_invalid_shift_id">Invalid Shift ID.</string>
+    <string name="error_cannot_accept_own_shift">You cannot accept your own replacement shift!</string>
+
+    <!--  Undo Bar Manager -->
+    <string name="msg_shift_taken_by_another">Shift has been taken by another staff</string>
+    <string name="action_accept_replacement">Accept replacement</string>
+    <string name="action_request_time_off">Request time off</string>
+
 </resources>

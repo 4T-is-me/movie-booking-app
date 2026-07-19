@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="14dp"
+    app:cardBackgroundColor="@color/bg_surface"
+    app:cardCornerRadius="16dp"
+    app:strokeColor="@color/border_subtle"
+    app:strokeWidth="1dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <!-- CỘT TRÁI: Đã đồng bộ sang Badge Date lồng nhau -->
+        <LinearLayout
+            android:layout_width="64dp"
+            android:layout_height="76dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="@drawable/bg_date_item"
+            android:padding="4dp">
+
+            <TextView
+                android:id="@+id/tvBadgeDayName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.05"
+                android:text="MON" />
+
+            <TextView
+                android:id="@+id/tvBadgeDayNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:layout_marginVertical="1dp"
+                android:text="20" />
+
+            <TextView
+                android:id="@+id/tvBadgeMonthName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp"
+                android:text="Jul" />
+        </LinearLayout>
+
+        <!-- CỘT PHẢI: Chi tiết ca cần đổi -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="16dp"
+            android:orientation="vertical">
+
+            <!-- Dòng 1: Tên ca & Badge Trạng thái nhận diện -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp">
+
+                <TextView
+                    android:id="@+id/tvReplaceShiftName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:text="Morning Shift" />
+
+                <!-- Trạng thái mặc định cho mục đổi ca -->
+                <TextView
+                    android:id="@+id/tvShiftStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:text="Need Replacement"
+                    android:textColor="@color/color_gold"
+                    android:textSize="9sp"
+                    android:textStyle="bold"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="4dp" />
+            </RelativeLayout>
+
+            <!-- Dòng 2: Giờ giấc làm việc -->
+            <LinearLayout
+                android:id="@+id/layoutShiftTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="6dp">
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/ic_clock"
+                    app:tint="@color/text_secondary" />
+
+                <TextView
+                    android:id="@+id/tvShiftTimeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="13sp"
+                    android:text="08:00 AM - 12:00 PM" />
+            </LinearLayout>
+
+            <!-- Dòng 3: Tên nhân viên & Vị trí -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="4dp">
+
+                <TextView
+                    android:id="@+id/tvReplaceStaffName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nguyễn Văn A"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="  •  "
+                    android:textColor="@color/text_dialog_hint" />
+
+                <TextView
+                    android:id="@+id/tvReplacePosition"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cashier"
+                    android:textColor="@color/auto_color_94A3B8"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+
+
+            <!-- Khối đáy: Giờ Approved & Nút bấm dạng TextButton đồng bộ hoàn toàn -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp">
+
+                <TextView
+                    android:id="@+id/tvApprovedAt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="Approved: 19/07/2026"
+                    android:textColor="@color/text_dialog_hint"
+                    android:textSize="11sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAcceptShift"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:layout_alignParentEnd="true"
+                    android:text="Accept"
+                    android:textColor="@color/color_gold"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textAllCaps="false"
+                    android:padding="0dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp" />
+            </RelativeLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

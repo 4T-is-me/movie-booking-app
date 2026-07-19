@@ -356,4 +356,13 @@
     <color name="border_dialog_input">#334155</color>
     <color name="text_dialog_hint">#64748B</color>
     <color name="text_dialog_disabled">#94A3B8</color>
+
+    <!-- text Badge and Action Button -->
+    <color name="status_rose_red">#F43F5E</color>
+    <color name="status_gold_yellow">#F5C518</color>
+    <color name="status_light_rose">#FB7185</color>
+
+    <!-- background Badge -->
+    <color name="bg_badge_rose_red">#1AF43F5E</color>
+    <color name="bg_badge_gold_yellow">#1AF5C518</color>
 </resources>

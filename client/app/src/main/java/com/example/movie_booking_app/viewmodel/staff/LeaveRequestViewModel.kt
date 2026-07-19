@@ -2,6 +2,7 @@ package com.example.movie_booking_app.viewmodel.staff
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.AcceptShiftResponse
 import com.example.movie_booking_app.data.model.response.CreateLeaveResponse
 import com.example.movie_booking_app.data.model.response.LeaveRequestResponse
@@ -9,6 +10,7 @@ import com.example.movie_booking_app.data.model.response.ManagerLeaveRequestResp
 import com.example.movie_booking_app.data.model.response.ReplacementShiftResponse
 import com.example.movie_booking_app.data.model.response.SimpleSuccessResponse
 import com.example.movie_booking_app.data.repository.LeaveRequestRepository
+import com.example.movie_booking_app.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -125,8 +127,21 @@ class LeaveRequestViewModel @Inject constructor(private val repository: LeaveReq
 
     fun acceptReplacementShift(shiftId: String) {
         viewModelScope.launch {
-            repository.acceptReplacementShift(shiftId).collect { response ->
-                _acceptShiftResult.value = response
+            _isLoading.value = true
+            _errorMessage.value = null
+
+            try {
+                repository.acceptReplacementShift(shiftId).collect { response ->
+                    _isLoading.value = false
+                    if (response != null) {
+                        _acceptShiftResult.value = response
+                    } else {
+                        _errorMessage.value = Constants.ERROR_DUPLICATE_SHIFT
+                    }
+                }
+            } catch (exception: Exception) {
+                _isLoading.value = false
+                _errorMessage.value = exception.message ?: Constants.ERROR_UNKNOWN
             }
         }
     }
@@ -196,7 +211,7 @@ class LeaveRequestViewModel @Inject constructor(private val repository: LeaveReq
     fun undoLeaveRequest(leaveRequestId: String) {
         viewModelScope.launch {
             repository.undoLeaveRequest(leaveRequestId).collect { response ->
-                _undoResult.value = response // Fix lỗi: Trước đó gán lầm sang _rejectResult
+                _undoResult.value = response
             }
         }
     }
