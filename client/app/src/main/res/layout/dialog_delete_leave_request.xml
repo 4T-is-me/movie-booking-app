@@ -6,7 +6,6 @@
     android:padding="24dp"
     android:background="@drawable/bg_tab_container">
 
-    <!-- Tiêu đề Dialog -->
     <TextView
         android:id="@+id/tvDeleteDialogTitle"
         android:layout_width="match_parent"
@@ -17,7 +16,6 @@
         android:textStyle="bold"
         android:layout_marginBottom="8dp"/>
 
-    <!-- Nội dung cảnh báo xác nhận -->
     <TextView
         android:id="@+id/tvDeleteDialogMessage"
         android:layout_width="match_parent"
@@ -27,14 +25,12 @@
         android:textSize="14sp"
         android:layout_marginBottom="24dp"/>
 
-    <!-- KHỐI BUTTON: Cancel & Delete xếp ngang hàng -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="end">
 
-        <!-- Nút Hủy (Button bình thường) -->
         <Button
             android:id="@+id/btnDeleteDialogCancel"
             android:layout_width="0dp"
@@ -47,7 +43,6 @@
             android:textSize="14sp"
             android:textAllCaps="false" />
 
-        <!-- Nút Xóa (Đổi màu sang Red để cảnh báo hành động nguy hiểm) -->
         <Button
             android:id="@+id/btnDeleteDialogConfirm"
             android:layout_width="0dp"

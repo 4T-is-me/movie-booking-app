@@ -16,7 +16,6 @@
         android:textStyle="bold"
         android:layout_marginBottom="16dp"/>
 
-    <!-- Ô hiển thị Ngày (Read-only) -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -37,7 +36,6 @@
         android:clickable="false"
         android:longClickable="false" />
 
-    <!-- Ô hiển thị Ca làm (Read-only) -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -58,7 +56,6 @@
         android:clickable="false"
         android:longClickable="false" />
 
-    <!-- Ô nhập Lý do (Được quyền chỉnh sửa) -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -82,14 +79,12 @@
         android:inputType="textMultiLine"
         android:gravity="top|start" />
 
-    <!-- KHỐI BUTTON: Cancel & Save (Nằm ngang ở đáy) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="end">
 
-        <!-- Nút Hủy (Button bình thường) -->
         <Button
             android:id="@+id/btnDialogCancel"
             android:layout_width="0dp"
@@ -102,7 +97,6 @@
             android:textSize="14sp"
             android:textAllCaps="false" />
 
-        <!-- Nút Lưu (Button bình thường) -->
         <Button
             android:id="@+id/btnDialogSave"
             android:layout_width="0dp"
