@@ -1082,4 +1082,9 @@
     <string name="action_accept_replacement">Accept replacement</string>
     <string name="action_request_time_off">Request time off</string>
 
+    <!-- Ticket Scanner Custom Strings -->
+    <string name="ticket_validator_title">Ticket Validator</string>
+    <string name="ticket_validator_subtitle">Lumina Staff Member</string>
+    <string name="ticket_validator_instruction">Align QR Code inside the frame to scan</string>
+    <string name="ticket_validator_manual_input">Enter Booking Code</string>
 </resources>
