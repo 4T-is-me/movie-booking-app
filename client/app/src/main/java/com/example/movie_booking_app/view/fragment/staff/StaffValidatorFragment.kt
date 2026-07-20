@@ -301,7 +301,7 @@ class StaffValidatorFragment : Fragment() {
         val dismissAction = View.OnClickListener {
             dialog.dismiss()
             viewModel.resetResult()
-            isScanningEnabled = true
+            parentFragmentManager.popBackStack()
         }
         bindingDialog.btnDismiss.setOnClickListener(dismissAction)
         bindingDialog.btnCloseIcon.setOnClickListener(dismissAction)
