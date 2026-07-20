@@ -284,7 +284,12 @@ class StaffValidatorFragment : Fragment() {
             bindingDialog.tvDialogTitle.text = "Validation Failed"
             bindingDialog.tvDialogTitle.setTextColor(ContextCompat.getColor(context, R.color.seat_sold))
             
-            bindingDialog.tvMovieName.text = response.message ?: "Invalid Ticket"
+            val actualMessage = if (!response.success && !response.errors.isNullOrEmpty()) {
+                response.errors.firstOrNull()?.message ?: response.message
+            } else {
+                response.message
+            }
+            bindingDialog.tvMovieName.text = actualMessage ?: "Invalid Ticket"
             bindingDialog.tvCinemaRoom.text = "Please check the booking code or payment status."
             bindingDialog.tvShowtime.visibility = View.GONE
             bindingDialog.tvSeats.visibility = View.GONE
@@ -293,11 +298,13 @@ class StaffValidatorFragment : Fragment() {
             bindingDialog.tvCheckedInTime.visibility = View.GONE
         }
 
-        bindingDialog.btnDismiss.setOnClickListener {
+        val dismissAction = View.OnClickListener {
             dialog.dismiss()
             viewModel.resetResult()
             isScanningEnabled = true
         }
+        bindingDialog.btnDismiss.setOnClickListener(dismissAction)
+        bindingDialog.btnCloseIcon.setOnClickListener(dismissAction)
 
         dialog.show()
     }

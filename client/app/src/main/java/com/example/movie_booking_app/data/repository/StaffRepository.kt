@@ -34,12 +34,12 @@ class StaffRepository @Inject constructor(private val api: StaffApi) {
                 val parsedError = try {
                     com.google.gson.Gson().fromJson(errorMsg, com.example.movie_booking_app.data.model.response.CheckInTicketResponse::class.java)
                 } catch (e: Exception) {
-                    com.example.movie_booking_app.data.model.response.CheckInTicketResponse(false, errorMsg, null)
+                    com.example.movie_booking_app.data.model.response.CheckInTicketResponse(false, errorMsg, null, null)
                 }
                 emit(parsedError)
             }
         } catch (e: Exception) {
-            emit(com.example.movie_booking_app.data.model.response.CheckInTicketResponse(false, e.message ?: "Network error", null))
+            emit(com.example.movie_booking_app.data.model.response.CheckInTicketResponse(false, e.message ?: "Network error", null, null))
         }
     }
 }

@@ -24,8 +24,14 @@ data class CheckInTicketData(
     val finalAmount: Double?
 )
 
+data class ErrorItem(
+    val field: String?,
+    val message: String?
+)
+
 data class CheckInTicketResponse(
     val success: Boolean,
     val message: String?,
+    val errors: List<ErrorItem>?,
     val data: CheckInTicketData?
 )
