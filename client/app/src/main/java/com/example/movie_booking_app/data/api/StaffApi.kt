@@ -1,5 +1,7 @@
 package com.example.movie_booking_app.data.api
 
+import com.example.movie_booking_app.data.model.request.CheckInTicketRequest
+import com.example.movie_booking_app.data.model.response.CheckInTicketResponse
 import com.example.movie_booking_app.data.model.response.ShiftResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -20,4 +22,8 @@ interface StaffApi {
         @Query("endDate") endDate: String? = null
     ): Response<ShiftResponse>
 
+    @POST("api/staff/tickets/check-in")
+    suspend fun checkInTicket(
+        @Body request: CheckInTicketRequest
+    ): Response<CheckInTicketResponse>
 }
