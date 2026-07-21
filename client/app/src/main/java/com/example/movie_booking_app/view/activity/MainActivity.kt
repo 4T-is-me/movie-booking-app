@@ -49,21 +49,18 @@ class MainActivity : BaseActivity() {
         android.util.Log.d("MAIN_DEBUG", "AutoLogin check - token: ${token?.take(10)}..., role: $role")
         
         if (!token.isNullOrEmpty()) {
-            if (role.equals("Admin", ignoreCase = true)) {
-                val intent = Intent(this, AdminActivity::class.java)
+            val destinationActivity = when {
+                role.equals("Admin", ignoreCase = true) -> AdminActivity::class.java
+                role.equals("Manager", ignoreCase = true) || role.equals("Cinema Manager", ignoreCase = true) -> ManagerActivity::class.java
+                role.equals("Staff", ignoreCase = true) || role.equals("Employee", ignoreCase = true) -> StaffActivity::class.java
+                else -> null
+            }
+
+            if (destinationActivity != null) {
+                val intent = Intent(this, destinationActivity)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
-                finish()
-                return
-            } else if (role.equals("Manager", ignoreCase = true) || role.equals("Cinema Manager", ignoreCase = true)) {
-                val intent = Intent(this, ManagerActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
-                finish()
-                return
-            } else if (role.equals("Staff", ignoreCase = true) || role.equals("Employee", ignoreCase = true)) {
-                val intent = Intent(this, StaffActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                // Preserve notification extras
+                this.intent.extras?.let { intent.putExtras(it) }
                 startActivity(intent)
                 finish()
                 return

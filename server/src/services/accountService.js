@@ -9,7 +9,7 @@ import { OAuth2Client } from 'google-auth-library'
 import { Otp } from '../models/otpModel.js'
 import { sendEmail } from '../utils/sendEmail.js'
 import { Role } from '../models/rolesModel.js'
-import { notificationService } from './notificationService.js'
+import { NotificationService } from './notificationService.js'
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID || 'PLACEHOLDER_CLIENT_ID')
 
@@ -415,7 +415,7 @@ const registerFcmToken = async (accountId, fcmToken) => {
     }
 
     // Auto-subscribe the registered token to the 'promotions' topic for broadcasting
-    await notificationService.subscribeToPromotions(fcmToken.trim())
+    await NotificationService.subscribeToPromotions(fcmToken.trim())
 
     return { success: true, message: 'FCM token registered successfully' }
 }

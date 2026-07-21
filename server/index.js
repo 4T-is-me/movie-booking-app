@@ -89,6 +89,7 @@ const startServer = async () => {
     await CleanUpJobs.startSeatCleanupJob();
     await CleanUpJobs.updateMovieStatus();
     await CleanUpJobs.updateStaffShiftStatus();
+    await CleanUpJobs.autoRejectAndAbsentJob();
     await ShowtimeReminderJob.startShowtimeReminderJob();
 
     app.listen(PORT, () => {

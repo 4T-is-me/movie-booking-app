@@ -5,7 +5,9 @@ import ApiError from "../utils/ApiError.js";
 import { StatusCodes } from 'http-status-codes';
 import {constants} from "../utils/Constants.js";
 import { Manager } from "../models/managerModel.js";
+import {NotificationService} from "./notificationService.js";
 import mongoose from "mongoose";
+
 
 const checkStaff = async(accountId) => {
     const currentStaff = await Staff.findOne({accountId})
@@ -45,58 +47,84 @@ const checkShiftOwner = (shiftStaffId, currentStaffId, message) => {
 
 
 // create leave request
-const createLeaveRequest = async(accountId, {staffShiftId, reason}) => {
-    
-    // check staff
-    const staff = await checkStaff(accountId)
+const createLeaveRequest = async (accountId, { staffShiftId, reason }) => {
+    const staff = await checkStaff(accountId);
+    const shift = await checkShift(staffShiftId);
 
-    // check shift
-    const shift = await checkShift(staffShiftId)
+    // Check shift belong to staff
+    checkShiftOwner(shift.staffId, staff._id, "You can only request time off for your own shifts!");
 
-    //check shift belong to staff
-    checkShiftOwner(shift.staffId, staff._id,"You can only request time off for your own shifts!")
-
-    //only assigned shift can request
-    if(shift.status !== "Assigned") {
-        throw new ApiError(StatusCodes.UNAUTHORIZED, "Only assigned shifts can be requested for leave.")
+    if (shift.originalStaffId) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "Replacement shifts cannot be requested for leave.");
     }
 
-    //check time shift 
-    const now = new Date()
-    const shiftDate = new Date(shift.workDate)
+    if (shift.status !== "Assigned") {
+        throw new ApiError(StatusCodes.UNAUTHORIZED, "Only assigned shifts can be requested for leave.");
+    }
 
-    //set start shift time 
+    const now = new Date();
+    const shiftDate = new Date(shift.workDate);
+
+    const shiftDateLocalStr = new Date(shift.workDate).toISOString().split('T')[0];
+    const todayLocalStr = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+
+    if (shiftDateLocalStr <= todayLocalStr) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "Cannot request leave on the same day as the shift!");
+    }
+
     const startHour = constants.SHIFT_START_HOURS[shift.shift] || 0;
     const shiftStartTime = new Date(shiftDate);
     shiftStartTime.setUTCHours(startHour, 0, 0, 0);
 
-    //reject if start time <= now
-    if(shiftStartTime <= now) {
-        throw new ApiError(StatusCodes.UNAUTHORIZED, "Cannot request leave for a past or currently active shift!")
+    if (shiftStartTime <= now) {
+        throw new ApiError(StatusCodes.UNAUTHORIZED, "Cannot request leave for a past or currently active shift!");
     }
 
-    //check duplicate leave request
     const existingLeaveRequest = await LeaveRequest.findOne({
         staffShiftId,
         status: { $in: ["Pending", "Approved"] }
-    })
+    });
     
-    if(existingLeaveRequest) {
-        throw new ApiError(StatusCodes.CONFLICT, "You have already requested leave for this shift!")
+    if (existingLeaveRequest) {
+        throw new ApiError(StatusCodes.CONFLICT, "You have already requested leave for this shift!");
     }
 
-    //create leaveRequest
     const leaveRequest = await LeaveRequest.create({
         staffId: staff._id,
         staffShiftId,
-        reason,
+        reason: reason || "No reason provided",
         status: "Pending"
-    })
+    });
+
+    // Gửi thông báo cho Managers (chuẩn hóa `message`)
+    try {
+        const manager = await Manager.findOne({ cinemaId: staff.cinemaId }).populate("accountId");
+        if (manager && manager.accountId) {
+            const workDateStr = new Date(shift.workDate).toLocaleDateString('vi-VN');
+            // Lấy ID chuẩn của account
+            const managerAccountId = manager.accountId._id || manager.accountId;
+            
+            await NotificationService.createNotification({
+                accountId: managerAccountId,
+                title: "New Leave Request!",
+                message: `${staff.fullName || 'A staff member'} has requested leave for the shift on ${workDateStr} (${shift.shift}).`,
+                type: "LEAVE_REQUEST_CREATED",
+                metadata: { 
+                    leaveRequestId: leaveRequest._id.toString(), // Đã fix lỗi newLeaveRequest -> leaveRequest
+                    shiftId: shift._id.toString()
+                }
+            });
+        }
+    } catch (err) {
+        console.error("Error notifying manager of new leave request:", err);
+    }
+
     return {
         leaveRequestId: leaveRequest._id,
         status: leaveRequest.status
     };
-}
+};
+
 
 // get replacement shifts - staff
 const getReplacementShifts = async (accountId) => {
@@ -140,71 +168,74 @@ const getReplacementShifts = async (accountId) => {
 }
 
 // accept replacement shift - staff
-const acceptReplacementShift = async(accountId, shiftId) => {
-    //check staff
-    const currentStaff = await checkStaff(accountId)
+const acceptReplacementShift = async (accountId, shiftId) => {
+    // Check staff
+    const currentStaff = await checkStaff(accountId);
 
-    //find shift
-    const shift = await checkShift(shiftId)
+    // Find shift
+    const shift = await checkShift(shiftId);
 
-    //check shift status
-    if(shift.status !== "NeedReplacement") {
-        throw new ApiError(StatusCodes.CONFLICT, "This shift has already been assigned or is no longer available!")
+    // Check shift status
+    if (shift.status !== "NeedReplacement") {
+        throw new ApiError(StatusCodes.CONFLICT, "This shift has already been assigned or is no longer available!");
     }
-    // not accept my shift
+    
+    // Not accept my own shift
     checkNotOwnShift(shift.staffId, currentStaff._id, "You cannot accept your own shift!");
     checkTheSameCinema(shift.cinemaId, currentStaff.cinemaId, "You can only accept shifts within your assigned cinema!");
 
-    const workDateObj = new Date(shift.workDate)
-    const startOfDay = new Date(workDateObj.setUTCHours(0, 0, 0, 0))
-    const endOfDay = new Date(workDateObj.setUTCHours(23, 59, 59, 999))
+    const workDateObj = new Date(shift.workDate);
+    const startOfDay = new Date(workDateObj.setUTCHours(0, 0, 0, 0));
+    const endOfDay = new Date(workDateObj.setUTCHours(23, 59, 59, 999));
 
-    // check duplicate shift
+    // Check duplicate shift
     const existingShift = await StaffShift.findOne({
         staffId: currentStaff._id,
         workDate: { $gte: startOfDay, $lte: endOfDay },
         shift: shift.shift
+    });
 
-    })
-
-    if(existingShift) {
-        throw new ApiError(StatusCodes.CONFLICT, `You already have a '${shift.shift}' shift on this date.`)
+    if (existingShift) {
+        throw new ApiError(StatusCodes.CONFLICT, "You already have a shift at this time.");
     }
 
-    // check limit shift in a day
+    // Check limit shift in a day
     const dailyShiftCount = await StaffShift.countDocuments({
         staffId: currentStaff._id,
         workDate: { $gte: startOfDay, $lte: endOfDay }
-    })
-    if(dailyShiftCount >= constants.MAX_SHIFT_LEAVE_PER_DAY) {
-        throw new ApiError(StatusCodes.CONFLICT, "You cannot work more than 3 shifts in a single day.")
+    });
+    
+    if (dailyShiftCount >= constants.MAX_SHIFT_LEAVE_PER_DAY) {
+        throw new ApiError(StatusCodes.CONFLICT, "You cannot work more than 3 shifts in a single day.");
     }
 
-    //check B has leaveRequest approved the same shift in a day
+    // Check B has leaveRequest approved the same shift in a day
     const approvedRequests = await LeaveRequest.find({
         staffId: currentStaff._id,
         status: "Approved"
-    }).populate("staffShiftId")
+    }).populate("staffShiftId");
 
     const isBOnApprovedLeave = approvedRequests.some(leave => {
-        const s = leave.staffShiftId
-        if(!s) return false
-        const isSameShift = new Date(s.workDate).getTime() === startOfDay.getTime()
-        return isSameShift && s.shift === shift.shift
-    })
+        const s = leave.staffShiftId;
+        if (!s) return false;
+        const isSameShift = new Date(s.workDate).getTime() === startOfDay.getTime();
+        return isSameShift && s.shift === shift.shift;
+    });
 
-    if(isBOnApprovedLeave) {
-        throw new ApiError(StatusCodes.CONFLICT, "You cannot accept a shift on a time block where you have an approved leave!")
+    if (isBOnApprovedLeave) {
+        throw new ApiError(StatusCodes.CONFLICT, "You cannot accept a shift on a time block where you have an approved leave!");
     }
 
-    //Transaction avoid Race Condition
+    const previousOwnerId = shift.staffId; // Lấy ID nhân viên cũ trước khi gán mới
+
+    // Transaction avoid Race Condition
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
         const updatedShift = await StaffShift.findOneAndUpdate(
             {
-            _id: shiftId,
-            status: "NeedReplacement"
+                _id: shiftId,
+                status: "NeedReplacement"
             },
             {
                 $set: {
@@ -213,22 +244,37 @@ const acceptReplacementShift = async(accountId, shiftId) => {
                     originalStaffId: shift.originalStaffId || shift.staffId
                 }
             },
-            {new: true, session}
-        )
-        //updatedShift === null => other staff accept this shift
-        if(!updatedShift) {
-            throw new ApiError(StatusCodes.CONFLICT, "This shift has already been taken by another staff member!")
+            { new: true, session }
+        );
+
+        if (!updatedShift) {
+            throw new ApiError(StatusCodes.CONFLICT, "This shift has already been taken by another staff member!");
         }
         await session.commitTransaction();
+
+        // Gửi thông báo cho nhân viên gốc đã được thay thế (chuẩn hóa `message`)
+        Staff.findById(previousOwnerId).populate("accountId").then(originalStaff => {
+            if (originalStaff?.accountId) {
+                const targetAccountId = originalStaff.accountId._id || originalStaff.accountId;
+                NotificationService.createNotification({
+                    accountId: targetAccountId,
+                    title: "Someone else has taken over the shift!",
+                    message: `${currentStaff.fullName || 'A colleague'} has picked up your shift on ${new Date(shift.workDate).toLocaleDateString('vi-VN')}.`,
+                    type: "SHIFT_REPLACED",
+                    metadata: { shiftId: shift._id.toString() }
+                }).catch(err => console.error("Error sending notification to original staff:", err));
+            }
+        });
+        
         return { success: true, data: updatedShift };
         
     } catch (error) {
-        session.abortTransaction();
-        throw error
+        await session.abortTransaction();
+        throw error;
     } finally {
         await session.endSession();
     }
-}
+};
 
 
 const getStaffShifts = async (accountId, { startDate, endDate }) => {

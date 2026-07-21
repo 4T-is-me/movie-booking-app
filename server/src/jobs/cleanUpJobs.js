@@ -3,6 +3,7 @@ import { constants } from "../utils/constants.js";
 import { Movie } from "../models/movieModel.js";
 import { ScheduleSeat } from "../models/scheduleSeatModel.js";
 import { StaffShift } from "../models/staffShiftModel.js";
+import { LeaveRequest } from "../models/leaveRequestModel.js";
  const startSeatCleanupJob  = async () => {
   const now = new Date();
 
@@ -150,10 +151,73 @@ const resolveMaintenanceTimeouts = async () => {
 cron.schedule("*/5 * * * *", resolveMaintenanceTimeouts); // Chạy mỗi 5 phút
 
 
+// Auto Reject Pending Leave Requests when shifts start
+const autoRejectAndAbsentJob = async () => {
+  try {
+    const now = new Date();
+
+    const pendingRequests = await LeaveRequest.find({
+      status: "Pending"
+    }).populate("staffShiftId");
+
+    const bulkOps = [];
+
+    for (const req of pendingRequests) {
+      const shift = req.staffShiftId;
+      if (!shift) continue;
+
+      const workDate = new Date(shift.workDate);
+      const startTime = new Date(workDate);
+
+      switch (shift.shift) {
+        case constants.SHIFTS[0]:
+          startTime.setHours(8, 0, 0, 0);
+          break;
+        case constants.SHIFTS[1]:
+          startTime.setHours(12, 0, 0, 0);
+          break;
+        case constants.SHIFTS[2]:
+          startTime.setHours(16, 0, 0, 0);
+          break;
+        case constants.SHIFTS[3]:
+          startTime.setHours(20, 0, 0, 0);
+          break;
+        default:
+          continue;
+      }
+
+      if (startTime <= now) {
+        bulkOps.push({
+          updateOne: {
+            filter: { _id: req._id },
+            update: {
+              $set: {
+                status: "Rejected",
+                rejectReason: "Request expired because the shift has already started."
+              }
+            }
+          }
+        });
+      }
+    }
+
+    if (bulkOps.length > 0) {
+      await LeaveRequest.bulkWrite(bulkOps);
+      console.log(
+        `[Cron Job] Auto rejected ${bulkOps.length} expired leave requests.`
+      );
+    }
+  } catch (error) {
+    console.error("[Cron Job Error]", error);
+  }
+};
+
+cron.schedule("*/1 * * * *", autoRejectAndAbsentJob);
+
 export const CleanUpJobs = {
   startSeatCleanupJob,
   updateMovieStatus,
   updateStaffShiftStatus,
-  resolveMaintenanceTimeouts
-
+  resolveMaintenanceTimeouts,
+  autoRejectAndAbsentJob
 };

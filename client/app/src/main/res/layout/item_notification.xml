@@ -58,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:textColor="@color/text_secondary"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:ellipsize="end"
                 android:maxLines="3"
                 tools:text="Congratulations! You have booked tickets for Avatar." />

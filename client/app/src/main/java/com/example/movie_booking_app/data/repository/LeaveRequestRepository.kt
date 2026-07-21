@@ -61,16 +61,17 @@ class LeaveRequestRepository @Inject constructor(private val api: LeaveRequestAp
         }
     }
 
-    fun acceptReplacementShift(shiftId: String) : Flow<AcceptShiftResponse?> = flow {
+    fun acceptReplacementShift(shiftId: String) : Flow<Result<AcceptShiftResponse?>> = flow {
         try {
             val response = api.acceptReplacementShift(shiftId)
             if(response.isSuccessful) {
-                emit(response.body())
+                emit(Result.success(response.body()))
             }else {
-                emit(null)
+                val errorMsg = response.errorBody()?.string() ?: "Failed to accept replacement shift"
+                emit(Result.failure(Exception(errorMsg)))
             }
         }catch (e: Exception) {
-            emit(null)
+            emit(Result.failure(e))
         }
     }
 

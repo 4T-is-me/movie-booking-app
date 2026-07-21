@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const notificationSchema = new mongoose.Schema({
-    recipientId: { type: mongoose.Schema.Types.ObjectId, ref: 'Member', required: true },
+    recipientId: { type: mongoose.Schema.Types.ObjectId, ref: 'Account', required: true },
     title: { type: String, required: true }, // Tiêu đề thông báo
     message: { type: String, required: true }, // Nội dung hiển thị
     isRead: { type: Boolean, default: false }, // Đánh dấu đã đọc

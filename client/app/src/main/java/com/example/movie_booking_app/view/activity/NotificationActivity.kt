@@ -41,13 +41,26 @@ class NotificationActivity : AppCompatActivity() {
 
         // If launched via notification click from background, extract the payload and persist it
         val title = intent.getStringExtra("title")
-        val body = intent.getStringExtra("body") ?: ""
-        val type = intent.getStringExtra("type") ?: NotificationItem.TYPE_GENERAL
-        val referenceId = intent.getStringExtra("referenceId")
+            ?: intent.getStringExtra("gcm.notification.title")
+            ?: intent.getStringExtra("google.c.a.c_l") // Some FCM versions use this for title
+            ?: "Notification"
 
-        if (!title.isNullOrEmpty()) {
+        val body = intent.getStringExtra("body")
+            ?: intent.getStringExtra("message")
+            ?: intent.getStringExtra("gcm.notification.body")
+            ?: ""
+
+        val type = intent.getStringExtra("type")
+            ?: intent.getStringExtra("notificationType")
+            ?: NotificationItem.TYPE_GENERAL
+
+        val referenceId = intent.getStringExtra("referenceId")
+            ?: intent.getStringExtra("refId")
+
+        if (title != "Notification" || !body.isNullOrEmpty()) {
             val loaded = NotificationLocalStorage.getAll(this)
-            val alreadyExists = loaded.any { it.title == title && it.body == body }
+            // Check for duplicates within a short time window or by content
+            val alreadyExists = loaded.take(5).any { it.title == title && it.body == body }
             if (!alreadyExists) {
                 val item = NotificationItem(
                     title = title,

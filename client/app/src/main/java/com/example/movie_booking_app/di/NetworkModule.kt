@@ -12,6 +12,7 @@ import com.example.movie_booking_app.data.api.ProfileApi
 import com.example.movie_booking_app.data.api.ManagerRoomApi
 import com.example.movie_booking_app.data.api.MemberApi
 import com.example.movie_booking_app.data.api.LeaveRequestApi
+import com.example.movie_booking_app.data.api.NotificationApi
 import com.example.movie_booking_app.data.api.RetrofitClient
 import dagger.Module
 import dagger.Provides
@@ -99,5 +100,11 @@ object NetworkModule {
     @Singleton
     fun provideLeaveRequestApi(): LeaveRequestApi {
         return RetrofitClient.leaveRequestApi
+    }
+
+    @Provides
+    @Singleton
+    fun notificationApi(): NotificationApi {
+        return RetrofitClient.notificationApi
     }
 }

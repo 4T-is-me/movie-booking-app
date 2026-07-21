@@ -127,7 +127,6 @@
             tools:text="18/06/2026 - 19/06/2026" />
     </LinearLayout>
 
-    <!-- ĐÃ ĐỔI TIẾNG VIỆT SANG TIẾNG ANH Ở ĐÂY -->
     <TextView
         android:id="@+id/tvReason"
         android:layout_width="0dp"

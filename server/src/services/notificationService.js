@@ -3,6 +3,7 @@ import { Account } from '../models/accountModel.js'
 import { Showtime } from '../models/showTimeModel.js'
 import { Movie } from '../models/movieModel.js'
 import { CinemaRoom } from '../models/cinemaRoomModel.js'
+import { Notification } from '../models/notificationModel.js'
 
 /**
  * Sends a push notification to a specific user.
@@ -28,6 +29,8 @@ const sendToDevice = async (token, title, body, data = {}) => {
             }
         }
 
+        // BỎ KEY notification, ĐỂ CHỈ GỬI DATA PAYLOAD
+        // Điều này ép Android Service luôn chui vào onMessageReceived() để lưu Local
         const message = {
             token: token,
             notification: {
@@ -141,9 +144,120 @@ const sendBookingSuccessNotification = async (accountId, booking) => {
     }
 }
 
-export const notificationService = {
+/**
+ * Creates notification in DB and pushes to Android device
+ */
+const createNotification = async ({ accountId, title, message, body, type = 'general', metadata = {}, expireDays = 30 }) => {
+    try {
+        const account = await Account.findById(accountId);
+        if (!account) {
+            console.error(`[Notification Error] Account not found with ID: ${accountId}`);
+            return null;
+        }
+
+        const notificationContent = message || body || 'You have a new notification';
+
+        const newNotification = await Notification.create({
+            recipientId: account._id,
+            title: title || 'Notification',
+            message: notificationContent,
+            type,
+            metadata,
+            expireAt: new Date(Date.now() + expireDays * 24 * 60 * 60 * 1000)
+        });
+
+        if (account.fcmToken) {
+            try {
+                // Map metadata thành string và chuẩn hóa referenceId
+                const stringifiedMetadata = {
+                    notificationId: String(newNotification._id),
+                    type: String(type),
+                    referenceId: String(metadata.leaveRequestId || metadata.id || metadata.referenceId || '')
+                };
+
+                Object.keys(metadata).forEach(key => {
+                    stringifiedMetadata[key] = String(metadata[key]);
+                });
+
+                await sendToDevice(
+                    account.fcmToken,
+                    title || 'Notification',
+                    notificationContent,
+                    stringifiedMetadata
+                );
+            } catch (fcmError) {
+                console.error(`[FCM Push Error] Failed to push to account ${accountId}:`, fcmError);
+            }
+        }
+
+        return newNotification;
+    } catch (error) {
+        console.error("[Notification Service Error]:", error);
+        return null; 
+    }
+}
+
+const getStaffNotifications = async (staffId, query) => {
+    const page = parseInt(query.page, 10) || 1;
+    const limit = parseInt(query.limit, 10) || 10;
+    const skip = (page - 1) * limit;
+
+    const filter = { recipientId: staffId };
+
+    // Lọc theo trạng thái đã đọc hay chưa (nếu client truyền lên ?isRead=false)
+    if (query.isRead !== undefined) {
+        filter.isRead = query.isRead === 'true';
+    }
+
+    // Lọc theo loại thông báo (nếu client truyền ?type=ACTION_REQUIRED)
+    if (query.type) {
+        filter.type = query.type;
+    }
+
+    const [notifications, total, unreadCount] = await Promise.all([
+        Notification.find(filter)
+            .sort({ createdAt: -1 }) // Mới nhất lên đầu
+            .skip(skip)
+            .limit(limit)
+            .lean(),
+        Notification.countDocuments(filter),
+        Notification.countDocuments({ recipientId: staffId, isRead: false })
+    ]);
+
+    return {
+        notifications,
+        pagination: {
+            total,
+            page,
+            limit,
+            totalPages: Math.ceil(total / limit)
+        },
+        unreadCount
+    };
+};
+
+const markAsRead = async (notificationId, staffId) => {
+    return await Notification.findOneAndUpdate(
+        { _id: notificationId, recipientId: staffId },
+        { isRead: true },
+        { new: true }
+    );
+};
+
+
+const markAllAsRead = async (staffId) => {
+    return await Notification.updateMany(
+        { recipientId: staffId, isRead: false },
+        { isRead: true }
+    );
+};
+export const NotificationService = {
     sendToDevice,
     sendToTopic,
     subscribeToPromotions,
-    sendBookingSuccessNotification
+    sendBookingSuccessNotification,
+    createNotification,
+    getStaffNotifications,
+    markAsRead,
+    markAllAsRead
 }

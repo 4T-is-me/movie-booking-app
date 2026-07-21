@@ -17,7 +17,6 @@
         android:padding="16dp"
         android:gravity="center_vertical">
 
-        <!-- CỘT TRÁI: Đã đồng bộ sang Badge Date lồng nhau -->
         <LinearLayout
             android:layout_width="64dp"
             android:layout_height="76dp"
@@ -55,7 +54,6 @@
                 android:text="Jul" />
         </LinearLayout>
 
-        <!-- CỘT PHẢI: Chi tiết ca cần đổi -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -63,7 +61,6 @@
             android:layout_marginStart="16dp"
             android:orientation="vertical">
 
-            <!-- Dòng 1: Tên ca & Badge Trạng thái nhận diện -->
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -78,7 +75,6 @@
                     android:textStyle="bold"
                     android:text="Morning Shift" />
 
-                <!-- Trạng thái mặc định cho mục đổi ca -->
                 <TextView
                     android:id="@+id/tvShiftStatus"
                     android:layout_width="wrap_content"
@@ -92,7 +88,6 @@
                     android:paddingVertical="4dp" />
             </RelativeLayout>
 
-            <!-- Dòng 2: Giờ giấc làm việc -->
             <LinearLayout
                 android:id="@+id/layoutShiftTime"
                 android:layout_width="match_parent"
@@ -117,7 +112,6 @@
                     android:text="08:00 AM - 12:00 PM" />
             </LinearLayout>
 
-            <!-- Dòng 3: Tên nhân viên & Vị trí -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -150,7 +144,7 @@
 
 
 
-            <!-- Khối đáy: Giờ Approved & Nút bấm dạng TextButton đồng bộ hoàn toàn -->
+    
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
