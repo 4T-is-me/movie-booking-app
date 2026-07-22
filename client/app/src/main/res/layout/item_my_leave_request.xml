@@ -131,7 +131,7 @@
             android:layout_marginEnd="16dp"
             tools:text="@string/no_reason_provided" />
 
-        <!-- CỤM NÚT EDIT / DELETE -->
+        <!--  EDIT / DELETE -->
         <LinearLayout
             android:id="@+id/layoutPendingActions"
             android:layout_width="wrap_content"
@@ -167,7 +167,7 @@
                 app:tint="@color/color_red" />
         </LinearLayout>
 
-        <!-- KHỐI LÝ DO TỪ CHỐI CỦA MANAGER -->
+
         <LinearLayout
             android:id="@+id/layoutRejectReason"
             android:layout_width="0dp"

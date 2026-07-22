@@ -15,22 +15,30 @@ import { env } from './environment.js'
 
 let app = null
 
-// Prevent re-initializing if the module is imported multiple times
 if (getApps().length === 0) {
     if (!env.FIREBASE_PROJECT_ID || !env.FIREBASE_CLIENT_EMAIL || !env.FIREBASE_PRIVATE_KEY) {
         console.error('Firebase credentials are missing in the environment configurations.')
     } else {
         try {
-            // Replace literal \n string with actual newline characters
-            const privateKey = env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
-            
+            let privateKey = env.FIREBASE_PRIVATE_KEY;
+
+            // 1. Tháo ngoặc kép thừa ở 2 đầu nếu có
+            if (privateKey.startsWith('"') && privateKey.endsWith('"')) {
+                privateKey = privateKey.slice(1, -1);
+            }
+
+            // 2. Chuyển chuỗi literal \n thành xuống dòng thực tế (nếu chưa giải mã)
+            // Dùng regex để replace cả \\n lẫn \n cho an toàn
+            privateKey = privateKey.replace(/\\n/g, '\n');
+
             app = initializeApp({
                 credential: cert({
                     projectId: env.FIREBASE_PROJECT_ID,
                     clientEmail: env.FIREBASE_CLIENT_EMAIL,
                     privateKey: privateKey
                 })
-            })
+            });
+            
             console.log('Firebase Admin SDK initialized successfully via Environment Variables.')
         } catch (error) {
             console.error('Failed to initialize Firebase Admin SDK:', error.message)

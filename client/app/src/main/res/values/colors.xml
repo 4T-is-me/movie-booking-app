@@ -366,6 +366,12 @@
     <color name="bg_badge_rose_red">#1AF43F5E</color>
     <color name="bg_badge_gold_yellow">#1AF5C518</color>
 
+    <color name="unread_item_bg">#10000000</color>
+
+    <color name="badge_bg_red">#FF3B30</color>
+    <color name="badge_text_white">#FFFFFF</color>
+
+
     <!-- Ticket Scanner Custom Colors -->
     <color name="scanner_dim_overlay">#B30F172A</color>
     <color name="text_slate_200">#E2E8F0</color>

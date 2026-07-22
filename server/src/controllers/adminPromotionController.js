@@ -1,5 +1,5 @@
 import * as adminPromotionService from '../services/adminPromotionService.js';
-import { notificationService } from '../services/notificationService.js';
+import { NotificationService } from '../services/notificationService.js';
 
 export const getPromotions = async (req, res) => {
     try {
@@ -32,7 +32,7 @@ export const createPromotion = async (req, res) => {
         const notifTitle = `New Promotion: ${title}!`;
         const notifBody = `Get amazing offers: ${detail}. Enter coupon code "${couponCode}" when booking. Valid until ${formattedDate}.`;
         
-        notificationService.sendToTopic('promotions', notifTitle, notifBody, {
+        NotificationService.sendToTopic('promotions', notifTitle, notifBody, {
             type: 'promotion',
             referenceId: promotion._id.toString()
         }).catch(err => {
@@ -103,7 +103,7 @@ export const broadcastPushNotification = async (req, res) => {
         if (referenceId) dataPayload.referenceId = referenceId;
 
         // Send to topic promotions so everyone subscribed gets it
-        await notificationService.sendToTopic('promotions', title, body, dataPayload);
+        await NotificationService.sendToTopic('promotions', title, body, dataPayload);
 
         return res.status(200).json({ success: true, message: 'Custom broadcast notification sent successfully.' });
     } catch (error) {

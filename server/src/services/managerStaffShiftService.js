@@ -4,9 +4,9 @@ import { StaffShift } from "../models/staffShiftModel.js";
 import { LeaveRequest } from "../models/leaveRequestModel.js";
 import { StatusCodes } from "http-status-codes";
 import { constants } from "../utils/Constants.js";
-// import { LeaveRequest } from "../models/leaveRequestModel.js";
-import ApiError from "../utils/ApiError.js";
+import {NotificationService} from "./notificationService.js";
 import { formatDate } from "../utils/formatters.js";
+import ApiError from "../utils/ApiError.js";
 import mongoose from "mongoose";
 
 const checkManager = async (accountId) => {
@@ -121,29 +121,37 @@ const getShifts = async (accountId, query) => {
     }));
 
 }
-
-//unfinished
 const updateShifts = async (accountId, shiftId, updateData) => {
     const { staffId, shift, status } = updateData;
 
     const manager = await checkManager(accountId);
 
+    // 1. Kiểm tra sự tồn tại của ca làm
     const currentShift = await StaffShift.findById(shiftId);
     if (!currentShift) {
         throw new ApiError(StatusCodes.NOT_FOUND, "Shift not found!");
     }
 
+    // 2. Chặn chỉnh sửa nếu ca đã Completed hoặc Absent
+    if (["Completed", "Absent"].includes(currentShift.status)) {
+        throw new ApiError(
+            StatusCodes.CONFLICT, 
+            `Shifts with status '${currentShift.status}' can no longer be edited.`
+        );
+    }
+
+    // 3. Kiểm tra quyền quản lý theo Cinema
     if (currentShift.cinemaId.toString() !== manager.cinemaId.toString()) {
         throw new ApiError(StatusCodes.FORBIDDEN, "You can only update shifts for staff members belonging to your own cinema.");
     }
     checkCinemaPermission(manager.cinemaId, currentShift.cinemaId);
 
     const fixedWorkDate = currentShift.workDate;
+    let newStaffId = currentShift.staffId;
+    let newShift = currentShift.shift;
+    const oldStaffId = currentShift.staffId; // Lưu vết nhân viên cũ
 
-    let newStaffId = currentShift.staffId
-    let newShift = currentShift.shift
-
-    //Nếu có thay đổi Nhân viên
+    // 4. Validate nhân viên mới nếu có thay đổi
     if (staffId && staffId !== currentShift.staffId.toString()) {
         const staff = await Staff.findById(staffId);
         if (!staff) {
@@ -156,15 +164,12 @@ const updateShifts = async (accountId, shiftId, updateData) => {
         newStaffId = staff._id;
     }
 
-    //update shift
     if (shift) {
         newShift = shift;
     }
 
-    //Validate nếu có sự thay đổi về Người hoặc Ca
+    // 5. Validate trùng lặp ca, nghỉ phép, giới hạn ca
     if (staffId || shift) {
-
-        // Check: Kiểm tra trùng lặp (Nhân viên đã làm ca này trong ngày này chưa)
         const duplicate = await StaffShift.findOne({
             _id: { $ne: shiftId },
             staffId: newStaffId,
@@ -175,7 +180,6 @@ const updateShifts = async (accountId, shiftId, updateData) => {
             throw new ApiError(StatusCodes.CONFLICT, "This staff has already been assigned this shift for the day.");
         }
 
-        // Check: Kiểm tra lịch nghỉ phép (Theo đúng cặp ngày + ca mới)
         const approvedLeave = await LeaveRequest.findOne({
             staffId: newStaffId,
             workDate: fixedWorkDate,
@@ -186,7 +190,6 @@ const updateShifts = async (accountId, shiftId, updateData) => {
             throw new ApiError(StatusCodes.CONFLICT, "This staff has been approved for leave on this specific shift.");
         }
 
-        // Check: Kiểm tra giới hạn ca làm trong ngày (Tối đa 2 ca/ngày)
         const currentShiftsCount = await StaffShift.countDocuments({
             _id: { $ne: shiftId },
             staffId: newStaffId,
@@ -196,33 +199,76 @@ const updateShifts = async (accountId, shiftId, updateData) => {
             throw new ApiError(StatusCodes.BAD_REQUEST, "This staff worked a maximum of two shifts on this day.");
         }
     }
-    //update
-    currentShift.staffId = newStaffId;
+
+    // 6. Cập nhật dữ liệu
+    const isStaffChanged = staffId && newStaffId.toString() !== oldStaffId.toString();
+    if (isStaffChanged) {
+        currentShift.originalStaffId ??= currentShift.staffId;
+        currentShift.staffId = newStaffId;
+    }
+
     currentShift.shift = newShift;
 
     if (status) {
         currentShift.status = status;
     }
+
     await currentShift.save();
+    
+    // 7. Gửi thông báo khi Manager update ca làm
+    const workDateStr = new Date(fixedWorkDate).toLocaleDateString('vi-VN');
+    
+    if (isStaffChanged) {
+        Staff.findById(newStaffId).then(newStaff => {
+            if (newStaff?.accountId) {
+                NotificationService.createNotification({
+                    accountId: newStaff.accountId,
+                    title: "New shift assigned!",
+                    message: `You have been assigned to a shift on ${workDateStr} (Shift ${newShift}).`,
+                    type: "SHIFT_ASSIGNED",
+                    metadata: { shiftId: currentShift._id.toString() }
+                }).catch(err => console.error("Error notifying new staff:", err));
+            }
+        });
+    } else {
+        Staff.findById(oldStaffId).then(staff => {
+            if (staff?.accountId) {
+                NotificationService.createNotification({
+                    accountId: staff.accountId,
+                    title: "Shift schedule updated!",
+                    message: `Your shift schedule on ${workDateStr} has been updated by the manager.`,
+                    type: "SHIFT_UPDATED",
+                    metadata: { shiftId: currentShift._id.toString() }
+                }).catch(err => console.error("Error notifying updated staff:", err));
+            }
+        });
+    }
+
+    // 8. Trả về kết quả
     const populatedShift = await StaffShift.findById(currentShift._id)
         .populate({
             path: 'staffId',
             select: 'fullName position phone'
+        })
+        .populate({
+            path: 'originalStaffId',
+            select: 'fullName'
         })
         .lean();
 
     return {
         shiftId: populatedShift._id,
         staffId: populatedShift.staffId?._id,
-        fullName: populatedShift.staffId?.fullName || "",
+        staffName: populatedShift.staffId?.fullName || "",
         position: populatedShift.staffId?.position || "",
         phone: populatedShift.staffId?.phone || "",
         workDate: populatedShift.workDate.toISOString().split('T')[0],
         shift: populatedShift.shift,
-        status: populatedShift.status
+        status: populatedShift.status,
+        originalStaffId: populatedShift.originalStaffId?._id || null,
+        originalFullName: populatedShift.originalStaffId?.fullName || ""
     };
-}
-
+};
 
 
 //aggregate current shifts for the day at the cinema
@@ -329,7 +375,6 @@ const getStaffForManager = async (accountId) => {
         })
         .lean();
 
-        console.log(staffList);
     const activeStaffList = staffList
         .filter(s => s.accountId && s.accountId.status === 1) 
         .map(s => ({
@@ -561,31 +606,32 @@ const getLeaveRequestForManager = async (accountId, { status }) => {
 
 }
 
-
 const approveLeaveRequest = async (accountId, leaveRequestId) => {
     const manager = await checkManager(accountId);
 
-    const leaveRequest = await LeaveRequest.findById(leaveRequestId).populate("staffShiftId");
+    const leaveRequest = await LeaveRequest.findById(leaveRequestId).populate("staffShiftId").populate("staffId");
     if (!leaveRequest) {
         throw new ApiError(StatusCodes.NOT_FOUND, "Leave request not found");
     }
-    const shift = leaveRequest.staffShiftId
+    const shift = leaveRequest.staffShiftId;
     if (!shift) {
         throw new ApiError(StatusCodes.NOT_FOUND, "Shift not found!");
     }
-    //Check cinema permission
+    
+    // Check cinema permission
     checkCinemaPermission(manager.cinemaId, shift.cinemaId);
-    //Check  LeaveRequest status(only approve pending request)
+    
+    // Check LeaveRequest status (only approve pending request)
     if (leaveRequest.status !== "Pending") {
         throw new ApiError(StatusCodes.CONFLICT, `Cannot approve a request with status '${leaveRequest.status}'!`);
     }
 
-    //check staffShift status
+    // Check staffShift status
     if (shift.status !== "Assigned") {
         throw new ApiError(StatusCodes.CONFLICT, `Shift is already in '${shift.status}' status.`);
     }
 
-    //transaction
+    // Transaction
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
@@ -607,64 +653,110 @@ const approveLeaveRequest = async (accountId, leaveRequestId) => {
             { session }
         );
 
-        // commit Transaction
+        // Commit Transaction
         await session.commitTransaction();
+
+        const staffAccount = leaveRequest.staffId?.accountId;
+        const targetAccountId = staffAccount?._id || staffAccount;
+        console.log("--> Debug Push Notification Staff Account ID:", targetAccountId);  
+
+        // Gửi thông báo chuẩn hóa dùng `message`
+        if (targetAccountId) {
+            const workDateStr = leaveRequest.staffShiftId?.workDate 
+                ? new Date(leaveRequest.staffShiftId.workDate).toLocaleDateString('vi-VN')
+                : '';
+
+            await NotificationService.createNotification({
+                accountId: targetAccountId.toString(),
+                title: "Leave Request Approved!",
+                message: `Your leave request for shift on ${workDateStr} has been approved.`,
+                type: "LEAVE_REQUEST_APPROVED",
+                metadata: {
+                    leaveRequestId: leaveRequest._id.toString(),
+                    shiftId: leaveRequest.staffShiftId?._id?.toString() || ""
+                }
+            });
+            console.log("--> Notification sent successfully to staff!");
+        }
         return { success: true };
 
     } catch (error) {
         await session.abortTransaction();
         throw error;
     } finally {
-        // close session
         session.endSession();
     }
+};
 
-}
+
 //reject leaveRequest - manager
-const rejectLeaveRequest = async (accountId, leaveRequestId,{ rejectReason }) => {
-
+const rejectLeaveRequest = async (accountId, leaveRequestId, { rejectReason }) => {
     const manager = await checkManager(accountId);
-    const leaveRequest = await LeaveRequest.findById(leaveRequestId).populate("staffShiftId");
+    const leaveRequest = await LeaveRequest.findById(leaveRequestId).populate("staffShiftId").populate("staffId");
     if (!leaveRequest) {
         throw new ApiError(StatusCodes.NOT_FOUND, "Leave request not found!");
     }
 
-    const shift = leaveRequest.staffShiftId
+    const shift = leaveRequest.staffShiftId;
     if (!shift) {
         throw new ApiError(StatusCodes.NOT_FOUND, "Associated shift not found!");
     }
-    //check permission
+    
+    // Check permission
     checkCinemaPermission(manager.cinemaId, shift.cinemaId);
-    //check status
+    
+    // Check status
     if (leaveRequest.status !== "Pending") {
         throw new ApiError(StatusCodes.CONFLICT, `This leave request has already been ${leaveRequest.status.toLowerCase()}!`);
     }
+    
+    const formattedReason = rejectReason && rejectReason.trim() !== "" ? rejectReason : "No specific reason provided.";
 
     leaveRequest.status = "Rejected";
     leaveRequest.managerId = manager._id;
-    leaveRequest.rejectReason = rejectReason && rejectReason.trim() !== "" ? rejectReason : "No specific reason provided.";
+    leaveRequest.rejectReason = formattedReason;
     leaveRequest.approvedAt = new Date();
     await leaveRequest.save();
 
+    // Gửi thông báo chuẩn hóa dùng `message`
+    if (leaveRequest.staffId?.accountId) {
+        NotificationService.createNotification({
+            accountId: leaveRequest.staffId.accountId,
+            title: "Shift leave request denied!",
+            message: `Your request for time off for the shift on ${new Date(shift.workDate).toLocaleDateString('vi-VN')} has been rejected. Reason: ${formattedReason}`,
+            type: "LEAVE_REQUEST_REJECTED",
+            metadata: { leaveRequestId: leaveRequest._id.toString() }
+        }).catch(err => console.error("Error sending rejection notification:", err));
+    }
+
     return { success: true };
-}
+};
 
 const undoLeaveRequest = async (accountId, leaveRequestId) => {
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
         const manager = await checkManager(accountId);
-        const leaveRequest = await LeaveRequest.findById(leaveRequestId).populate("staffShiftId").session(session);
-        if(!leaveRequest) {
+        
+        // Populate thêm staffId để lấy accountId gửi notification
+        const leaveRequest = await LeaveRequest.findById(leaveRequestId)
+            .populate("staffShiftId")
+            .populate("staffId")
+            .session(session);
+
+        if (!leaveRequest) {
             throw new ApiError(StatusCodes.NOT_FOUND, "Leave request not found!");
         }
+
         const shift = leaveRequest.staffShiftId;
-        if(!shift) {
+        if (!shift) {
             throw new ApiError(StatusCodes.NOT_FOUND, "Associated shift not found!");
         }
-        //check permission
+
+        // Check permission
         checkCinemaPermission(manager.cinemaId, shift.cinemaId);
-        //check status
+
+        // Check status
         if (leaveRequest.status === "Pending") {
             throw new ApiError(StatusCodes.CONFLICT, "This leave request is already pending!");
         }
@@ -674,7 +766,6 @@ const undoLeaveRequest = async (accountId, leaveRequestId) => {
                 throw new ApiError(StatusCodes.CONFLICT, "Cannot undo because another staff has already accepted this shift or shift is processed!");
             }
 
-            
             shift.status = 'Assigned';
             await shift.save({ session });
         } 
@@ -685,20 +776,32 @@ const undoLeaveRequest = async (accountId, leaveRequestId) => {
         leaveRequest.rejectReason = null; 
 
         await leaveRequest.save({ session });
+        
         await session.commitTransaction();
         session.endSession();
 
-        return leaveRequest
+        // GỬI THÔNG BÁO CHO NHÂN VIÊN (Gọi sau khi commit transaction)
+        if (leaveRequest.staffId?.accountId) {
+            const workDateStr = new Date(shift.workDate).toLocaleDateString('vi-VN');
+            
+            NotificationService.createNotification({
+                accountId: leaveRequest.staffId.accountId,
+                title: "Leave request status updated!",
+                message: `Your leave request for the shift on ${workDateStr} has been reset to Pending status by the manager.`,
+                type: "LEAVE_REQUEST_UPDATED",
+                metadata: { leaveRequestId: leaveRequest._id.toString() }
+            }).catch(err => console.error("Error sending undo leave request notification:", err));
+        }
+
+        return leaveRequest;
 
     } catch (error) {
         await session.abortTransaction();
         throw error;
-    }finally {
+    } finally {
         session.endSession();
     }
-}
-
-
+};
 
 export const ManagerStaffShiftService = {
     updateShifts,

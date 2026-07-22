@@ -20,8 +20,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import androidx.activity.result.contract.ActivityResultContracts
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -137,11 +140,23 @@ class LoginActivity : AppCompatActivity() {
                         binding.pbLoading.visibility = View.GONE
                         Toast.makeText(this@LoginActivity, "Login successful", Toast.LENGTH_SHORT).show()
 
-                        val username = binding.edtUsername.text.toString().trim()
-                        val enteredOrDbUser = state.username
+                        val loggedInUsername = state.username.ifEmpty {
+                            binding.edtUsername.text.toString().trim()
+                        }
 
-                        lifecycleScope.launch(Dispatchers.IO) {
-                            fcmTokenHelper.registerCurrentToken("LoginActivity")
+                        if (loggedInUsername.isNotEmpty()) {
+                            getSharedPreferences("app_prefs", MODE_PRIVATE)
+                                .edit()
+                                .putString("username", loggedInUsername)
+                                .apply()
+
+                            Log.d("LOGIN_DEBUG", "Saved username to app_prefs: $loggedInUsername")
+                        }
+
+                        CoroutineScope(Dispatchers.IO).launch {
+                            withContext(NonCancellable) {
+                                fcmTokenHelper.registerCurrentToken("LoginActivity")
+                            }
                         }
                         val roleName = state.role ?: ""
 

@@ -131,12 +131,12 @@ class LeaveRequestViewModel @Inject constructor(private val repository: LeaveReq
             _errorMessage.value = null
 
             try {
-                repository.acceptReplacementShift(shiftId).collect { response ->
+                repository.acceptReplacementShift(shiftId).collect { result ->
                     _isLoading.value = false
-                    if (response != null) {
+                    result.onSuccess { response ->
                         _acceptShiftResult.value = response
-                    } else {
-                        _errorMessage.value = Constants.ERROR_DUPLICATE_SHIFT
+                    }.onFailure { exception ->
+                        _errorMessage.value = exception.message ?: Constants.ERROR_UNKNOWN
                     }
                 }
             } catch (exception: Exception) {

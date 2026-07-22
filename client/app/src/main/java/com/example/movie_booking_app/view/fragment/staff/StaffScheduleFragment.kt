@@ -407,17 +407,24 @@ class StaffScheduleFragment : Fragment() {
                             binding.btnShiftAction.visibility = View.GONE
                         }
                         else -> {
-                            // Assigned
+                            val badgeStatus = item.status ?: Constants.STATUS_SHIFT[1]
                             setDynamicBadge(
                                 binding.tvShiftStatus,
-                                Constants.STATUS_SHIFT[1],
+                                badgeStatus,
                                 ContextCompat.getColor(context, R.color.status_gold_yellow),
                                 ContextCompat.getColor(context, R.color.bg_badge_gold_yellow)
                             )
-                            binding.btnShiftAction.visibility = View.VISIBLE
-                            binding.btnShiftAction.text = context?.getString(R.string.action_request_time_off)
-                            binding.btnShiftAction.setTextColor(ContextCompat.getColor(context, R.color.status_light_rose))
-                            binding.btnShiftAction.setOnClickListener { onRequestTimeOff(item) }
+                            val todayStr = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(java.util.Date())
+                            val cleanDate = if (item.workDate?.contains("T") == true) item.workDate.substringBefore("T") else item.workDate
+
+                            if (badgeStatus != Constants.STATUS_SHIFT[1] || (cleanDate != null && cleanDate <= todayStr)) {
+                                binding.btnShiftAction.visibility = View.GONE
+                            } else {
+                                binding.btnShiftAction.visibility = View.VISIBLE
+                                binding.btnShiftAction.text = context?.getString(R.string.action_request_time_off)
+                                binding.btnShiftAction.setTextColor(ContextCompat.getColor(context, R.color.status_light_rose))
+                                binding.btnShiftAction.setOnClickListener { onRequestTimeOff(item) }
+                            }
                         }
                     }
                 }

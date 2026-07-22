@@ -2,7 +2,7 @@ import cron from "node-cron";
 import { Booking } from "../models/bookingModel.js";
 import { Showtime } from "../models/showTimeModel.js";
 import { Account } from "../models/accountModel.js";
-import { notificationService } from "../services/notificationService.js";
+import { NotificationService } from "../services/notificationService.js";
 import { getShowtimeTimeRange } from "../utils/formatters.js";
 
 const runShowtimeReminder = async () => {
@@ -51,7 +51,7 @@ const runShowtimeReminder = async () => {
                         const title = 'Upcoming Showtime Reminder!';
                         const body = `Your movie "${movieName}" is starting soon at ${showTimeStr} in Room ${roomName}. Please prepare to join!`;
 
-                        await notificationService.sendToDevice(account.fcmToken, title, body, {
+                        await NotificationService.sendToDevice(account.fcmToken, title, body, {
                             type: 'booking',
                             referenceId: booking._id.toString()
                         });

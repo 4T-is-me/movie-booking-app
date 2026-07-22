@@ -24,7 +24,9 @@ data class ShiftItemResponse (
     val shift: String? = null,
     var status: String? = null,
     val rating: Double? =null,
-    val kpiPoints: Int? =null
+    val kpiPoints: Int? =null,
+    val originalStaffId: String? = null,
+    val originalFullName: String? = null
 )
 
 data class ManagerStaffItem(
@@ -45,4 +47,4 @@ data class ManagerStaffListResponse(
     val success: Boolean,
     val message: String,
     val data: ManagerStaffListData?
-)
+)

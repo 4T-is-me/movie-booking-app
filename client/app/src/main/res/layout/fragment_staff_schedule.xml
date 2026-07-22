@@ -84,7 +84,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
 
-            <!-- 1. DANH SÁCH CẦN THAY CA (Đứng trên Weekly Shifts) -->
             <TextView
                 android:id="@+id/tvNeedReplacementHeader"
                 android:layout_width="wrap_content"
@@ -96,7 +95,7 @@
                 android:letterSpacing="0.05"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="12dp"
-                android:visibility="gone" /> <!-- Mặc định ẩn, chỉ hiện nếu có data -->
+                android:visibility="gone" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvNeedReplacementShifts"
@@ -106,7 +105,7 @@
                 android:visibility="gone"
                 tools:listitem="@layout/item_staff_schedule_shift" />
 
-            <!-- 2. DANH SÁCH LỊCH LÀM VIỆC TUẦN -->
+            
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

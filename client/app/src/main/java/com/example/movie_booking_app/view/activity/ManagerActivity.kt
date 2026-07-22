@@ -49,6 +49,32 @@ class ManagerActivity : AppCompatActivity() {
         observeDashboardData()
         setupNavigationEvents()
         binding.tvGreeting.text = getGreetingMessage()
+
+        // Handle incoming notifications
+        handleIncomingIntent(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleIncomingIntent(intent)
+    }
+
+    private fun handleIncomingIntent(intent: Intent?) {
+        val type = intent?.getStringExtra("type") ?: intent?.getStringExtra("notificationType")
+        val referenceId = intent?.getStringExtra("referenceId") ?: intent?.getStringExtra("refId")
+        val title = intent?.getStringExtra("title") ?: intent?.getStringExtra("gcm.notification.title")
+        val body = intent?.getStringExtra("body") ?: intent?.getStringExtra("message")
+
+        if (!type.isNullOrEmpty() || !referenceId.isNullOrEmpty() || !title.isNullOrEmpty()) {
+            val destIntent = Intent(this, NotificationActivity::class.java).apply {
+                putExtra("type", type)
+                putExtra("referenceId", referenceId)
+                putExtra("title", title)
+                putExtra("body", body)
+            }
+            startActivity(destIntent)
+        }
     }
 
     private fun setUpRecyclerView() {
