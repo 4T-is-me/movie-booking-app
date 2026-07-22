@@ -13,6 +13,7 @@ import com.example.movie_booking_app.data.model.request.OtpRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 
 class ForgotPasswordActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,7 +26,7 @@ class ForgotPasswordActivity : AppCompatActivity() {
         btnSend.setOnClickListener {
             val email = edtEmail.text.toString().trim()
             if (email.isEmpty()) {
-                Toast.makeText(this, "Please enter email", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.please_enter_email), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -37,18 +38,25 @@ class ForgotPasswordActivity : AppCompatActivity() {
                     withContext(Dispatchers.Main) {
                         btnSend.isEnabled = true
                         if (response.isSuccessful) {
-                            Toast.makeText(this@ForgotPasswordActivity, "OTP sent successfully", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@ForgotPasswordActivity, getString(R.string.otp_sent_successfully), Toast.LENGTH_SHORT).show()
                             val intent = Intent(this@ForgotPasswordActivity, VerifyOtpActivity::class.java)
                             intent.putExtra("email", email)
                             startActivity(intent)
                         } else {
-                            Toast.makeText(this@ForgotPasswordActivity, "Error sending OTP", Toast.LENGTH_SHORT).show()
+                            try {
+                                val errorBody = response.errorBody()?.string()
+                                val jsonObject = JSONObject(errorBody ?: "")
+                                val message = jsonObject.getString("message")
+                                Toast.makeText(this@ForgotPasswordActivity, message, Toast.LENGTH_SHORT).show()
+                            } catch (e: Exception) {
+                                Toast.makeText(this@ForgotPasswordActivity, getString(R.string.error_sending_otp), Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
                         btnSend.isEnabled = true
-                        Toast.makeText(this@ForgotPasswordActivity, "Connection error", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@ForgotPasswordActivity, getString(R.string.connection_error), Toast.LENGTH_SHORT).show()
                     }
                 }
             }

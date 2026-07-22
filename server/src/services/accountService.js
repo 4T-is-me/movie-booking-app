@@ -3,6 +3,8 @@ import mongoose from 'mongoose'
 import ApiError from '../utils/ApiError.js'
 import { Account } from '../models/accountModel.js'
 import { Member } from '../models/memberModel.js'
+import { Manager } from '../models/managerModel.js'
+import { Staff } from '../models/staffModel.js'
 import { jwtProvider } from '../utils/jwtProvider.js'
 import bcryptjs from 'bcryptjs'
 import { OAuth2Client } from 'google-auth-library'
@@ -115,6 +117,8 @@ const getProfile = async (accountId) => {
     const account = await Account.findById(accountId)
         .populate('roleId')
         .populate('memberInfo')
+        .populate('managerInfo')
+        .populate('staffInfo')
         .select('-passwordHash -passwordSalt -refreshToken')
         .lean({ virtuals: true });
 
@@ -122,16 +126,20 @@ const getProfile = async (accountId) => {
         throw new ApiError(StatusCodes.NOT_FOUND, 'Account not found');
     }
 
+    const fullName = account.memberInfo?.fullName || account.managerInfo?.fullName || account.staffInfo?.fullName;
+    const phone = account.memberInfo?.phoneNumber || account.managerInfo?.phoneNumber || account.staffInfo?.phone;
+    const identityCard = account.memberInfo?.identityCard || account.managerInfo?.identityCard || account.staffInfo?.identityCard;
+
     return {
         accountId: account._id.toString(),
         username: account.username,
-        fullName: account.memberInfo?.fullName,
+        fullName: fullName,
         email: account.email,
-        phone: account.memberInfo?.phoneNumber,
-        address: account.memberInfo?.address,
+        phone: phone,
+        address: account.memberInfo?.address || account.staffInfo?.address,
         dob: account.memberInfo?.dateOfBirth,
         gender: account.memberInfo?.gender,
-        identityCard: account.memberInfo?.identityCard,
+        identityCard: identityCard,
         score: account.memberInfo?.rewardPoints || 0,
         rewardPoints: account.memberInfo?.rewardPoints || 0,
         membershipRank: account.memberInfo?.membershipRank || 'bronze',
@@ -147,7 +155,21 @@ const getProfile = async (accountId) => {
 }
 
 const updateProfile = async (accountId, reqBody) => {
+    // Validation
+    if (reqBody.fullName !== undefined) {
+        if (!reqBody.fullName || reqBody.fullName.trim() === '') {
+            throw new ApiError(StatusCodes.BAD_REQUEST, 'Full name cannot be empty');
+        }
+        if (/\d/.test(reqBody.fullName)) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, 'Full name cannot contain numbers');
+        }
+    }
+
     if (reqBody.email) {
+        const emailRegex = /^[^\s@]+@gmail\.com$/;
+        if (!emailRegex.test(reqBody.email)) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, 'Email must end with @gmail.com');
+        }
         const existedEmail = await Account.findOne({ email: reqBody.email, _id: { $ne: accountId } });
         if (existedEmail) {
             throw new ApiError(StatusCodes.CONFLICT, 'Email already exists');
@@ -157,6 +179,10 @@ const updateProfile = async (accountId, reqBody) => {
 
     const memberUpdate = {};
     if (reqBody.phone) {
+        const phoneRegex = /^0[0-9]{9}$/;
+        if (!phoneRegex.test(reqBody.phone)) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, 'Phone number must be exactly 10 digits and start with 0');
+        }
         const existedPhone = await Member.findOne({ phoneNumber: reqBody.phone, accountId: { $ne: accountId } });
         if (existedPhone) {
             throw new ApiError(StatusCodes.CONFLICT, 'Phone number already exists');
@@ -193,7 +219,21 @@ const updateProfile = async (accountId, reqBody) => {
     }
 
     if (Object.keys(memberUpdate).length > 0) {
-        await Member.findOneAndUpdate({ accountId: accountId }, memberUpdate);
+        const account = await Account.findById(accountId).populate('roleId');
+        const roleName = account.roleId ? (account.roleId.name || account.roleId.roleName || 'Customer') : 'Customer';
+        
+        if (roleName === 'Manager') {
+            await Manager.findOneAndUpdate({ accountId: accountId }, memberUpdate);
+        } else if (roleName === 'Staff') {
+            const staffUpdate = { ...memberUpdate };
+            if (staffUpdate.phoneNumber) {
+                staffUpdate.phone = staffUpdate.phoneNumber;
+                delete staffUpdate.phoneNumber;
+            }
+            await Staff.findOneAndUpdate({ accountId: accountId }, staffUpdate);
+        } else {
+            await Member.findOneAndUpdate({ accountId: accountId }, memberUpdate);
+        }
     }
 
     return await getProfile(accountId);
@@ -220,6 +260,20 @@ const changePassword = async (accountId, reqBody) => {
     await account.save();
 
     return { success: true };
+}
+
+const resetPassword = async (reqBody) => {
+    const { email, newPassword } = reqBody;
+    const account = await Account.findOne({ email });
+    if (!account) {
+        throw new ApiError(StatusCodes.NOT_FOUND, 'Tài khoản không tồn tại');
+    }
+
+    const hashedPassword = await bcryptjs.hash(newPassword, 10);
+    account.passwordHash = hashedPassword;
+    await account.save();
+
+    return { success: true, message: 'Đổi mật khẩu thành công' };
 }
 
 const googleLogin = async (idToken) => {
@@ -427,6 +481,7 @@ export const accountService = {
     getProfile,
     updateProfile,
     changePassword,
+    resetPassword,
     verifyOtp,
     sendOtp,
     registerFcmToken

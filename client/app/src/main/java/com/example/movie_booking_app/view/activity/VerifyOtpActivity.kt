@@ -16,6 +16,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.movie_booking_app.R
+import com.example.movie_booking_app.databinding.ActivityVerifyOtpBinding
 import com.example.movie_booking_app.viewmodel.OtpUiState
 import com.example.movie_booking_app.viewmodel.OtpViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,40 +26,33 @@ import kotlinx.coroutines.launch
 class VerifyOtpActivity : AppCompatActivity() {
 
     private val viewModel: OtpViewModel by viewModels()
-    private lateinit var btnVerify: Button
-    private lateinit var pbLoading: ProgressBar
-    private lateinit var tvError: TextView
+    private lateinit var binding: ActivityVerifyOtpBinding
     private lateinit var email: String
     private lateinit var type: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_verify_otp)
+        binding = ActivityVerifyOtpBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         email = intent.getStringExtra("email") ?: ""
         type = intent.getStringExtra("type") ?: "forgot_password"
-        val tvMessage = findViewById<TextView>(R.id.tvOtpMessage)
-        tvMessage.text = "Enter 6-digit OTP sent to:\n$email"
-
-        val ivBack = findViewById<ImageView>(R.id.ivBack)
-        ivBack.setOnClickListener { finish() }
-
-        btnVerify = findViewById(R.id.btnVerifyOtp)
-        pbLoading = findViewById(R.id.pbLoading)
-        tvError = findViewById(R.id.tvError)
+        
+        binding.tvOtpMessage.text = "Enter 6-digit OTP sent to:\n$email"
+        binding.ivBack.setOnClickListener { finish() }
 
         val otpBoxes = arrayOf(
-            findViewById<EditText>(R.id.edtOtp1),
-            findViewById<EditText>(R.id.edtOtp2),
-            findViewById<EditText>(R.id.edtOtp3),
-            findViewById<EditText>(R.id.edtOtp4),
-            findViewById<EditText>(R.id.edtOtp5),
-            findViewById<EditText>(R.id.edtOtp6)
+            binding.edtOtp1,
+            binding.edtOtp2,
+            binding.edtOtp3,
+            binding.edtOtp4,
+            binding.edtOtp5,
+            binding.edtOtp6
         )
 
         setupOtpInputs(otpBoxes)
 
-        btnVerify.setOnClickListener {
+        binding.btnVerifyOtp.setOnClickListener {
             val otpCode = otpBoxes.joinToString("") { it.text.toString() }
             if (otpCode.length != 6) {
                 showError("Please enter all 6 digits of OTP")
@@ -105,16 +99,16 @@ class VerifyOtpActivity : AppCompatActivity() {
             viewModel.uiState.collect { state ->
                 when (state) {
                     is OtpUiState.Idle -> {
-                        btnVerify.isEnabled = true
-                        pbLoading.visibility = View.GONE
+                        binding.btnVerifyOtp.isEnabled = true
+                        binding.pbLoading.visibility = View.GONE
                     }
                     is OtpUiState.Loading -> {
-                        btnVerify.isEnabled = false
-                        pbLoading.visibility = View.VISIBLE
+                        binding.btnVerifyOtp.isEnabled = false
+                        binding.pbLoading.visibility = View.VISIBLE
                     }
                     is OtpUiState.Success -> {
-                        btnVerify.isEnabled = true
-                        pbLoading.visibility = View.GONE
+                        binding.btnVerifyOtp.isEnabled = true
+                        binding.pbLoading.visibility = View.GONE
                         Toast.makeText(this@VerifyOtpActivity, "Verification successful!", Toast.LENGTH_SHORT).show()
                         
                         if (type == "register") {
@@ -129,8 +123,8 @@ class VerifyOtpActivity : AppCompatActivity() {
                         finish()
                     }
                     is OtpUiState.Error -> {
-                        btnVerify.isEnabled = true
-                        pbLoading.visibility = View.GONE
+                        binding.btnVerifyOtp.isEnabled = true
+                        binding.pbLoading.visibility = View.GONE
                         showError(state.message)
                         viewModel.resetState()
                     }
@@ -140,11 +134,11 @@ class VerifyOtpActivity : AppCompatActivity() {
     }
 
     private fun showError(message: String) {
-        tvError.text = message
-        tvError.visibility = View.VISIBLE
+        binding.tvError.text = message
+        binding.tvError.visibility = View.VISIBLE
     }
 
     private fun hideError() {
-        tvError.visibility = View.GONE
+        binding.tvError.visibility = View.GONE
     }
 }

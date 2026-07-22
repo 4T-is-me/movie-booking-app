@@ -40,6 +40,7 @@ authRouter.post('/google', accountController.googleLogin)
 authRouter.post('/forgot-password/send-otp', accountController.sendOtp)
 authRouter.post('/forgot-password/verify-otp', accountController.verifyOtp)
 authRouter.post('/verify-otp', accountController.verifyOtp)
+authRouter.post('/reset-password', accountController.resetPassword)
 
 const accountRouter = express.Router()
 accountRouter.get('/profile', authMiddleware.isAuthorized, accountController.getProfile)
