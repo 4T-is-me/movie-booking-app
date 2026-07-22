@@ -2,9 +2,10 @@ package com.example.movie_booking_app.view.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.movie_booking_app.R
@@ -22,23 +23,25 @@ class ForgotPasswordActivity : AppCompatActivity() {
 
         val edtEmail = findViewById<EditText>(R.id.edtEmailOtp)
         val btnSend = findViewById<Button>(R.id.btnSendOtp)
+        val pbLoading = findViewById<ProgressBar>(R.id.pbLoading)
 
         btnSend.setOnClickListener {
             val email = edtEmail.text.toString().trim()
             if (email.isEmpty()) {
-                Toast.makeText(this, getString(R.string.please_enter_email), Toast.LENGTH_SHORT).show()
+                showAlert("Thông báo", getString(R.string.please_enter_email))
                 return@setOnClickListener
             }
 
             btnSend.isEnabled = false
+            pbLoading.visibility = View.VISIBLE
             lifecycleScope.launch(Dispatchers.IO) {
                 try {
                     val request = OtpRequest(email)
                     val response = RetrofitClient.authApi.sendOtp(request)
                     withContext(Dispatchers.Main) {
                         btnSend.isEnabled = true
+                        pbLoading.visibility = View.GONE
                         if (response.isSuccessful) {
-                            Toast.makeText(this@ForgotPasswordActivity, getString(R.string.otp_sent_successfully), Toast.LENGTH_SHORT).show()
                             val intent = Intent(this@ForgotPasswordActivity, VerifyOtpActivity::class.java)
                             intent.putExtra("email", email)
                             startActivity(intent)
@@ -47,19 +50,30 @@ class ForgotPasswordActivity : AppCompatActivity() {
                                 val errorBody = response.errorBody()?.string()
                                 val jsonObject = JSONObject(errorBody ?: "")
                                 val message = jsonObject.getString("message")
-                                Toast.makeText(this@ForgotPasswordActivity, message, Toast.LENGTH_SHORT).show()
+                                showAlert("Lỗi", message)
                             } catch (e: Exception) {
-                                Toast.makeText(this@ForgotPasswordActivity, getString(R.string.error_sending_otp), Toast.LENGTH_SHORT).show()
+                                showAlert("Lỗi", getString(R.string.error_sending_otp))
                             }
                         }
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
                         btnSend.isEnabled = true
-                        Toast.makeText(this@ForgotPasswordActivity, getString(R.string.connection_error), Toast.LENGTH_SHORT).show()
+                        pbLoading.visibility = View.GONE
+                        showAlert("Lỗi mạng", getString(R.string.connection_error))
                     }
                 }
             }
         }
+    }
+
+    private fun showAlert(title: String, message: String, onSuccess: (() -> Unit)? = null) {
+        val dialog = com.example.movie_booking_app.view.dialog.ErrorDialog(
+            context = this,
+            title = title,
+            message = message,
+            onOkClicked = onSuccess
+        )
+        dialog.show()
     }
 }

@@ -9,6 +9,10 @@
     <color name="purple_200">#BB86FC</color>
     <color name="purple_500">#6200EE</color>
 
+    <!-- Custom Dialog Colors -->
+    <color name="dialog_bg_dark">#1E1E1E</color>
+    <color name="text_gray_light">#A1A1AA</color>
+
     <!-- Design Tokens: Background -->
     <color name="bg_primary">#0A0A0A</color>
     <color name="bg_surface">#1A1A1A</color>

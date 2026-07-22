@@ -30,6 +30,7 @@
     <string name="change_language">Change language</string>
     <string name="change_password">Change password</string>
     <string name="list_title">List</string>
+    <string name="error_dialog_title">Lỗi</string>
 
     <!-- Auth Team Strings -->
     <string name="login_subtitle">Login to continue booking movies</string>
