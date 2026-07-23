@@ -4,7 +4,7 @@ import com.example.movie_booking_app.data.model.entity.Booking
 
 data class BookingUiState(
     val booking: Booking? = null,
-    val countdownText: String = "15:00",
+    val countdownText: String = "10:00",
     val isCountdownExpired: Boolean = false,
     val isLoading: Boolean = false,
     val error: String? = null,
