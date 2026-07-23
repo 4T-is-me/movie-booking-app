@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter
 
+import com.example.movie_booking_app.databinding.ItemCinemaRoomBinding
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -19,8 +20,8 @@ class CinemaRoomsAdapter(
 ) : ListAdapter<CinemaRoom, CinemaRoomsAdapter.RoomViewHolder>(RoomDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RoomViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_cinema_room, parent, false)
-        return RoomViewHolder(view, onRoomClick, onEditClick, onToggleStatusClick)
+        val binding = ItemCinemaRoomBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return RoomViewHolder(binding, onRoomClick, onEditClick, onToggleStatusClick)
     }
 
     override fun onBindViewHolder(holder: RoomViewHolder, position: Int) {
@@ -28,17 +29,15 @@ class CinemaRoomsAdapter(
         holder.bind(room)
     }
 
-    class RoomViewHolder(
-        itemView: View,
-        private val onRoomClick: (CinemaRoom) -> Unit,
+    class RoomViewHolder(private val binding: ItemCinemaRoomBinding, private val onRoomClick: (CinemaRoom) -> Unit,
         private val onEditClick: (CinemaRoom) -> Unit,
         private val onToggleStatusClick: (CinemaRoom) -> Unit
-    ) : RecyclerView.ViewHolder(itemView) {
-        private val tvRoomName: TextView = itemView.findViewById(R.id.tvRoomName)
-        private val tvStatusChip: TextView = itemView.findViewById(R.id.tvStatusChip)
-        private val tvRoomType: TextView = itemView.findViewById(R.id.tvRoomType)
-        private val tvCapacity: TextView = itemView.findViewById(R.id.tvCapacity)
-        private val ivOptions: View = itemView.findViewById(R.id.ivOptions)
+    ) : RecyclerView.ViewHolder(binding.root) {
+        private val tvRoomName: TextView = binding.tvRoomName
+        private val tvStatusChip: TextView = binding.tvStatusChip
+        private val tvRoomType: TextView = binding.tvRoomType
+        private val tvCapacity: TextView = binding.tvCapacity
+        private val ivOptions: View = binding.ivOptions
 
         fun bind(room: CinemaRoom) {
             tvRoomName.text = room.roomName

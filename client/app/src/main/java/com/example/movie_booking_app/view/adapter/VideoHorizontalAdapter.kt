@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter
 
+import com.example.movie_booking_app.databinding.ItemVideoHorizontalBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,17 +19,17 @@ class VideoHorizontalAdapter(
 ) : ListAdapter<Movie, VideoHorizontalAdapter.ViewHolder>(MovieDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_video_horizontal, parent, false)
-        return ViewHolder(view, onClick)
+        val binding = ItemVideoHorizontalBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(binding, onClick)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class ViewHolder(view: View, val onClick: (Movie) -> Unit) : RecyclerView.ViewHolder(view) {
-        private val imgVideoThumbnail: ShapeableImageView = view.findViewById(R.id.imgVideoThumbnail)
-        private val tvVideoName: TextView = view.findViewById(R.id.tvVideoName)
+    class ViewHolder(private val binding: ItemVideoHorizontalBinding, val onClick: (Movie) -> Unit) : RecyclerView.ViewHolder(binding.root) {
+        private val imgVideoThumbnail: ShapeableImageView = binding.imgVideoThumbnail
+        private val tvVideoName: TextView = binding.tvVideoName
 
         fun bind(movie: Movie) {
             tvVideoName.text = movie.movieName

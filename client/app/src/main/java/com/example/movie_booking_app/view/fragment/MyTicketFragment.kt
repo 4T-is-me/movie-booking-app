@@ -145,24 +145,18 @@ class MyTicketFragment : Fragment() {
     }
 
     private fun showQrDialog(item: BookingHistoryItem) {
+        val dialogBinding = com.example.movie_booking_app.databinding.DialogQrCodeBinding.inflate(layoutInflater)
         val dialog = android.app.Dialog(requireContext())
-        dialog.setContentView(com.example.movie_booking_app.R.layout.dialog_qr_code)
+        dialog.setContentView(dialogBinding.root)
         dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
         dialog.setCancelable(true)
 
-        val tvMovieTitle = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvMovieTitle)
-        val tvBookingCode = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvBookingCode)
-        val tvDateTime = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDateTime)
-        val tvCinemaRoom = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvCinemaRoom)
-        val ivQrCode = dialog.findViewById<android.widget.ImageView>(com.example.movie_booking_app.R.id.ivQrCode)
-        val btnClose = dialog.findViewById<com.google.android.material.button.MaterialButton>(com.example.movie_booking_app.R.id.btnClose)
+        dialogBinding.tvMovieTitle.text = item.movie
+        dialogBinding.tvBookingCode.text = "Booking ID: ${item.bookingCode}"
+        dialogBinding.tvDateTime.text = "${item.showDate} • ${item.showtime}"
+        dialogBinding.tvCinemaRoom.text = "${item.cinemaName} • ${item.roomName}"
 
-        tvMovieTitle.text = item.movie
-        tvBookingCode.text = "Booking ID: ${item.bookingCode}"
-        tvDateTime.text = "${item.showDate} • ${item.showtime}"
-        tvCinemaRoom.text = "${item.cinemaName} • ${item.roomName}"
-
-        btnClose.setOnClickListener {
+        dialogBinding.btnClose.setOnClickListener {
             dialog.dismiss()
         }
 
@@ -177,23 +171,23 @@ class MyTicketFragment : Fragment() {
                     }
                     if (isAdded && !isDetached && _binding != null) {
                         if (bitmap != null) {
-                            ivQrCode.setImageBitmap(bitmap)
+                            dialogBinding.ivQrCode.setImageBitmap(bitmap)
                         } else {
-                            ivQrCode.setImageResource(com.example.movie_booking_app.R.drawable.ic_ticket)
+                            dialogBinding.ivQrCode.setImageResource(com.example.movie_booking_app.R.drawable.ic_ticket)
                         }
                         dialog.show()
                     }
                 } catch (e: Exception) {
                     android.util.Log.e("MyTicketFragment", "Error decoding QR Code", e)
                     if (isAdded && !isDetached && _binding != null) {
-                        ivQrCode.setImageResource(com.example.movie_booking_app.R.drawable.ic_ticket)
+                        dialogBinding.ivQrCode.setImageResource(com.example.movie_booking_app.R.drawable.ic_ticket)
                         android.widget.Toast.makeText(requireContext(), "Unable to load QR Code.", android.widget.Toast.LENGTH_SHORT).show()
                         dialog.show()
                     }
                 }
             }
         } else {
-            ivQrCode.setImageResource(com.example.movie_booking_app.R.drawable.ic_ticket)
+            dialogBinding.ivQrCode.setImageResource(com.example.movie_booking_app.R.drawable.ic_ticket)
             dialog.show()
         }
     }

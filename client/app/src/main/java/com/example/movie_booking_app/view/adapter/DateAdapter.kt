@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter
 
+import com.example.movie_booking_app.databinding.ItemShowDateBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,17 +17,17 @@ class DateAdapter(
 ) : ListAdapter<ShowDate, DateAdapter.DateViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DateViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_show_date, parent, false)
-        return DateViewHolder(view)
+        val binding = ItemShowDateBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return DateViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: DateViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    inner class DateViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val tvMonth: TextView = view.findViewById(R.id.tvMonth)
-        private val tvDay: TextView = view.findViewById(R.id.tvDay)
+    inner class DateViewHolder(private val binding: ItemShowDateBinding) : RecyclerView.ViewHolder(binding.root) {
+        private val tvMonth: TextView = binding.tvMonth
+        private val tvDay: TextView = binding.tvDay
 
         fun bind(date: ShowDate) {
             tvMonth.text = date.dayOfWeek

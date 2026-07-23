@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter
 
+import com.example.movie_booking_app.databinding.ItemMovieGridBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,22 +24,22 @@ class MovieGridAdapter(
 ) : ListAdapter<Movie, MovieGridAdapter.GridViewHolder>(MovieDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GridViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_movie_grid, parent, false)
-        return GridViewHolder(view, onClick)
+        val binding = ItemMovieGridBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return GridViewHolder(binding, onClick)
     }
 
     override fun onBindViewHolder(holder: GridViewHolder, position: Int) {
         holder.bind(getItem(position), isNowPlaying)
     }
 
-    class GridViewHolder(view: View, private val onClick: (Movie) -> Unit) : RecyclerView.ViewHolder(view) {
-        private val imgPoster: ImageView = view.findViewById(R.id.imgPoster)
-        private val tvTitle: TextView = view.findViewById(R.id.tvMovieNameVn)
-        private val tvTitleEn: TextView = view.findViewById(R.id.tvMovieNameEn)
-        private val tvRow1: TextView = view.findViewById(R.id.tvTextRow1)
-        private val tvRow2: TextView = view.findViewById(R.id.tvTextRow2)
-        private val tvRow3: TextView = view.findViewById(R.id.tvTextRow3)
-        private val btnViewSchedule: Button = view.findViewById(R.id.btnViewSchedule)
+    class GridViewHolder(private val binding: ItemMovieGridBinding, private val onClick: (Movie) -> Unit) : RecyclerView.ViewHolder(binding.root) {
+        private val imgPoster: ImageView = binding.imgPoster
+        private val tvTitle: TextView = binding.tvMovieNameVn
+        private val tvTitleEn: TextView = binding.tvMovieNameEn
+        private val tvRow1: TextView = binding.tvTextRow1
+        private val tvRow2: TextView = binding.tvTextRow2
+        private val tvRow3: TextView = binding.tvTextRow3
+        private val btnViewSchedule: Button = binding.btnViewSchedule
 
         fun bind(movie: Movie, isNowPlaying: Boolean) {
             tvTitle.text = movie.movieName

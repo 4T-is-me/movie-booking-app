@@ -58,20 +58,15 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupHeader() {
-        val headerView = binding.layoutHeader.root
-        val edtSearch = headerView.findViewById<EditText>(R.id.edtSearch)
-        val btnLogin = headerView.findViewById<View>(R.id.btnLogin)
-        val layoutNotificationBell = headerView.findViewById<View>(R.id.layoutNotificationBell)
-
-        edtSearch.addTextChangedListener { text ->
+        binding.layoutHeader.edtSearch.addTextChangedListener { text ->
             viewModel.searchMovies(text?.toString() ?: "")
         }
 
-        btnLogin.setOnClickListener {
+        binding.layoutHeader.btnLogin.setOnClickListener {
             startActivity(Intent(context, LoginActivity::class.java))
         }
 
-        layoutNotificationBell.setOnClickListener {
+        binding.layoutHeader.layoutNotificationBell.setOnClickListener {
             startActivity(Intent(context, NotificationActivity::class.java))
         }
 
@@ -84,24 +79,18 @@ class HomeFragment : Fragment() {
         val name = sharedPref.getString("username", "User") ?: "User"
         val isLoggedIn = !sharedPref.getString("auth_token", null).isNullOrEmpty()
 
-        val headerView = binding.layoutHeader.root
-        val tvHi = headerView.findViewById<TextView>(R.id.tvHi)
-        val btnLogin = headerView.findViewById<View>(R.id.btnLogin)
-        val layoutNotificationBell = headerView.findViewById<View>(R.id.layoutNotificationBell)
-        val viewBellBadge = headerView.findViewById<View>(R.id.viewBellBadge)
-
-        tvHi.text = "Hi, $name 👋"
+        binding.layoutHeader.tvHi.text = "Hi, $name 👋"
 
         if (isLoggedIn) {
-            btnLogin.visibility = View.GONE
-            layoutNotificationBell.visibility = View.VISIBLE
+            binding.layoutHeader.btnLogin.visibility = View.GONE
+            binding.layoutHeader.layoutNotificationBell.visibility = View.VISIBLE
             
             // Check for unread notifications to show green badge dot
             val hasUnread = NotificationLocalStorage.getAll(context).any { !it.isRead }
-            viewBellBadge.visibility = if (hasUnread) View.VISIBLE else View.GONE
+            binding.layoutHeader.viewBellBadge.visibility = if (hasUnread) View.VISIBLE else View.GONE
         } else {
-            btnLogin.visibility = View.VISIBLE
-            layoutNotificationBell.visibility = View.GONE
+            binding.layoutHeader.btnLogin.visibility = View.VISIBLE
+            binding.layoutHeader.layoutNotificationBell.visibility = View.GONE
         }
     }
 

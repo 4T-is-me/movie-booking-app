@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter
 
+import com.example.movie_booking_app.databinding.ItemAdminSeatBinding
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -18,8 +19,8 @@ class AdminSeatAdapter(
 ) : ListAdapter<Seat, AdminSeatAdapter.SeatViewHolder>(SeatDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SeatViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_admin_seat, parent, false)
-        return SeatViewHolder(view)
+        val binding = ItemAdminSeatBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return SeatViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: SeatViewHolder, position: Int) {
@@ -28,8 +29,8 @@ class AdminSeatAdapter(
         holder.itemView.setOnClickListener { onSeatClick(seat) }
     }
 
-    class SeatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val tvSeatCode: TextView = itemView.findViewById(R.id.tvSeatCode)
+    class SeatViewHolder(private val binding: ItemAdminSeatBinding) : RecyclerView.ViewHolder(binding.root) {
+        private val tvSeatCode: TextView = binding.tvSeatCode
 
         fun bind(seat: Seat) {
             tvSeatCode.text = "${seat.row}${seat.number}"

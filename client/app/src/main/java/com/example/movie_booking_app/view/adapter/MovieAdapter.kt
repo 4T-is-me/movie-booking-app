@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter
 
+import com.example.movie_booking_app.databinding.ItemMovieBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,20 +19,20 @@ class MovieAdapter(
 ) : ListAdapter<Movie, MovieAdapter.MovieViewHolder>(MovieDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_movie, parent, false)
-        return MovieViewHolder(view, onClick)
+        val binding = ItemMovieBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return MovieViewHolder(binding, onClick)
     }
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class MovieViewHolder(view: View, val onClick: (Movie) -> Unit) : RecyclerView.ViewHolder(view) {
-        private val imgPoster: ShapeableImageView = view.findViewById(R.id.imgPoster)
-        private val tvNameVn: TextView = view.findViewById(R.id.tvMovieNameVn)
-        private val tvNameEn: TextView = view.findViewById(R.id.tvMovieNameEn)
-        private val tvGenre: TextView = view.findViewById(R.id.tvGenre)
-        private val tvReleaseDate: TextView = view.findViewById(R.id.tvReleaseDate)
+    class MovieViewHolder(private val binding: ItemMovieBinding, val onClick: (Movie) -> Unit) : RecyclerView.ViewHolder(binding.root) {
+        private val imgPoster: ShapeableImageView = binding.imgPoster
+        private val tvNameVn: TextView = binding.tvMovieNameVn
+        private val tvNameEn: TextView = binding.tvMovieNameEn
+        private val tvGenre: TextView = binding.tvGenre
+        private val tvReleaseDate: TextView = binding.tvReleaseDate
 
         fun bind(movie: Movie) {
             tvNameVn.text = movie.movieName

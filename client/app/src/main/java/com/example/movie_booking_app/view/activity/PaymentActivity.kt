@@ -274,22 +274,19 @@ class PaymentActivity : AppCompatActivity() {
     }
 
     private fun showPremiumSuccessDialog(message: String, onDismiss: () -> Unit) {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_success, null)
-        val tvMessage = dialogView.findViewById<android.widget.TextView>(R.id.tvDialogMessage)
-        val btnOk = dialogView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnDialogOk)
-        val imgCheck = dialogView.findViewById<android.widget.ImageView>(R.id.imgCheckCircle)
+        val dialogBinding = com.example.movie_booking_app.databinding.DialogSuccessBinding.inflate(layoutInflater)
 
-        tvMessage.text = message
+        dialogBinding.tvDialogMessage.text = message
 
         val dialog = AlertDialog.Builder(this)
-            .setView(dialogView)
+            .setView(dialogBinding.root)
             .setCancelable(false)
             .create()
 
         // Make background transparent to see rounded card corners
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        btnOk.setOnClickListener {
+        dialogBinding.btnDialogOk.setOnClickListener {
             dialog.dismiss()
             onDismiss()
         }
@@ -297,9 +294,9 @@ class PaymentActivity : AppCompatActivity() {
         dialog.show()
 
         // Check icon pops with a small bounce animation
-        imgCheck.scaleX = 0f
-        imgCheck.scaleY = 0f
-        imgCheck.animate()
+        dialogBinding.imgCheckCircle.scaleX = 0f
+        dialogBinding.imgCheckCircle.scaleY = 0f
+        dialogBinding.imgCheckCircle.animate()
             .scaleX(1f)
             .scaleY(1f)
             .setDuration(500)

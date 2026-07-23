@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter
 
+import com.example.movie_booking_app.databinding.ItemPromoSeeAllBinding
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -28,23 +29,23 @@ import com.example.movie_booking_app.view.activity.PromotionDetailActivity
 class PromoSeeAllAdapter : ListAdapter<Promo, PromoSeeAllAdapter.PromoViewHolder>(PromoDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PromoViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_promo_see_all, parent, false)
-        return PromoViewHolder(view)
+        val binding = ItemPromoSeeAllBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return PromoViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: PromoViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class PromoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val imgPromoBanner: ImageView = view.findViewById(R.id.imgPromoBanner)
-        private val tvPromoTitle: TextView = view.findViewById(R.id.tvPromoTitle)
-        private val tvDiscountValue: TextView = view.findViewById(R.id.tvDiscountValue)
-        private val tvPromoDetail: TextView = view.findViewById(R.id.tvPromoDetail)
-        private val tvMinOrderValue: TextView = view.findViewById(R.id.tvMinOrderValue)
-        private val tvCouponCode: TextView = view.findViewById(R.id.tvCouponCode)
-        private val btnCopyCode: com.google.android.material.button.MaterialButton = view.findViewById(R.id.btnCopyCode)
-        private val tvPromoDateRange: TextView = view.findViewById(R.id.tvPromoDateRange)
+    class PromoViewHolder(private val binding: ItemPromoSeeAllBinding) : RecyclerView.ViewHolder(binding.root) {
+        private val imgPromoBanner: ImageView = binding.imgPromoBanner
+        private val tvPromoTitle: TextView = binding.tvPromoTitle
+        private val tvDiscountValue: TextView = binding.tvDiscountValue
+        private val tvPromoDetail: TextView = binding.tvPromoDetail
+        private val tvMinOrderValue: TextView = binding.tvMinOrderValue
+        private val tvCouponCode: TextView = binding.tvCouponCode
+        private val btnCopyCode: com.google.android.material.button.MaterialButton = binding.btnCopyCode
+        private val tvPromoDateRange: TextView = binding.tvPromoDateRange
 
         fun bind(promo: Promo) {
             tvPromoTitle.text = promo.title

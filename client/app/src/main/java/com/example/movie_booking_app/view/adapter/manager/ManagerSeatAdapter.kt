@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter.manager
 
+import com.example.movie_booking_app.databinding.ItemManagerSeatBinding
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -14,8 +15,8 @@ class ManagerSeatAdapter(
 ) : RecyclerView.Adapter<ManagerSeatAdapter.SeatViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SeatViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_manager_seat, parent, false)
-        return SeatViewHolder(view)
+        val binding = ItemManagerSeatBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return SeatViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: SeatViewHolder, position: Int) {
@@ -25,8 +26,8 @@ class ManagerSeatAdapter(
 
     override fun getItemCount(): Int = seats.size
 
-    class SeatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val tvSeatName: View = itemView.findViewById(R.id.tvSeatName)
+    class SeatViewHolder(private val binding: ItemManagerSeatBinding) : RecyclerView.ViewHolder(binding.root) {
+        private val tvSeatName: View = binding.tvSeatName
 
         fun bind(seat: ManagerSeat) {
             

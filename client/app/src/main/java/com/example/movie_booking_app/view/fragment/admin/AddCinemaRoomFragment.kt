@@ -17,6 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
+import com.example.movie_booking_app.databinding.FragmentAddCinemaRoomBinding
 import com.example.movie_booking_app.view.adapter.SeatPreviewAdapter
 import com.example.movie_booking_app.viewmodel.AddCinemaRoomViewModel
 import com.google.android.material.button.MaterialButton
@@ -48,6 +49,9 @@ class AddCinemaRoomFragment : Fragment() {
     private val viewModel: AddCinemaRoomViewModel by viewModels()
     private lateinit var seatPreviewAdapter: SeatPreviewAdapter
 
+    private var _binding: FragmentAddCinemaRoomBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var tvTitle: TextView
     private lateinit var btnBack: View
     private lateinit var etRoomName: TextInputEditText
@@ -75,31 +79,32 @@ class AddCinemaRoomFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_add_cinema_room, container, false)
+    ): View {
+        _binding = FragmentAddCinemaRoomBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         // Bind Views
-        tvTitle = view.findViewById(R.id.tvTitle)
-        btnBack = view.findViewById(R.id.btnBack)
-        etRoomName = view.findViewById(R.id.etRoomName)
-        actvRoomType = view.findViewById(R.id.actvRoomType)
-        actvScreenType = view.findViewById(R.id.actvScreenType)
-        actvStatus = view.findViewById(R.id.actvStatus)
-        etCapacity = view.findViewById(R.id.etCapacity)
-        etRows = view.findViewById(R.id.etRows)
-        etColumns = view.findViewById(R.id.etColumns)
-        tvPreviewHeader = view.findViewById(R.id.tvPreviewHeader)
-        tvScreen = view.findViewById(R.id.tvScreen)
-        layoutLegend = view.findViewById(R.id.layoutLegend)
-        rvSeatPreview = view.findViewById(R.id.rvSeatPreview)
-        tvErrorMessage = view.findViewById(R.id.tvErrorMessage)
-        btnCancel = view.findViewById(R.id.btnCancel)
-        btnSave = view.findViewById(R.id.btnSave)
-        pbLoading = view.findViewById(R.id.pbLoading)
+        tvTitle = binding.tvTitle
+        btnBack = binding.btnBack
+        etRoomName = binding.etRoomName
+        actvRoomType = binding.actvRoomType
+        actvScreenType = binding.actvScreenType
+        actvStatus = binding.actvStatus
+        etCapacity = binding.etCapacity
+        etRows = binding.etRows
+        etColumns = binding.etColumns
+        tvPreviewHeader = binding.tvPreviewHeader
+        tvScreen = binding.tvScreen
+        layoutLegend = binding.layoutLegend
+        rvSeatPreview = binding.rvSeatPreview
+        tvErrorMessage = binding.tvErrorMessage
+        btnCancel = binding.btnCancel
+        btnSave = binding.btnSave
+        pbLoading = binding.pbLoading
 
         if (roomId != null) {
             tvTitle.text = "Edit Room"
@@ -331,5 +336,10 @@ class AddCinemaRoomFragment : Fragment() {
                 parentFragmentManager.popBackStack()
             }
             .show()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
