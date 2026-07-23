@@ -118,22 +118,19 @@ class AdminPromotionFragment : Fragment() {
     }
 
     private fun showDeleteConfirmationDialog(promotion: AdminPromotion) {
+        val dialogBinding = com.example.movie_booking_app.databinding.DialogConfirmDeletePromotionBinding.inflate(layoutInflater)
         val dialog = android.app.Dialog(requireContext())
-        dialog.setContentView(com.example.movie_booking_app.R.layout.dialog_confirm_delete_promotion)
+        dialog.setContentView(dialogBinding.root)
         dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
         dialog.setCancelable(true)
 
-        val tvDeleteMessage = dialog.findViewById<android.widget.TextView>(com.example.movie_booking_app.R.id.tvDeleteMessage)
-        val btnCancel = dialog.findViewById<com.google.android.material.button.MaterialButton>(com.example.movie_booking_app.R.id.btnCancelDelete)
-        val btnConfirm = dialog.findViewById<com.google.android.material.button.MaterialButton>(com.example.movie_booking_app.R.id.btnConfirmDelete)
+        dialogBinding.tvDeleteMessage.text = "Are you sure you want to delete the promotion \"${promotion.title}\"?"
 
-        tvDeleteMessage.text = "Are you sure you want to delete the promotion \"${promotion.title}\"?"
-
-        btnCancel.setOnClickListener {
+        dialogBinding.btnCancelDelete.setOnClickListener {
             dialog.dismiss()
         }
 
-        btnConfirm.setOnClickListener {
+        dialogBinding.btnConfirmDelete.setOnClickListener {
             dialog.dismiss()
             viewModel.deletePromotion(promotion.id)
         }

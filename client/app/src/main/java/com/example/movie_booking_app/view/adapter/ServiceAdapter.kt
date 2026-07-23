@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter
 
+import com.example.movie_booking_app.databinding.ItemServicesBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,17 +16,17 @@ import com.google.android.material.imageview.ShapeableImageView
 class ServiceAdapter : ListAdapter<Service, ServiceAdapter.ServiceViewHolder>(ServiceDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ServiceViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_services, parent, false)
-        return ServiceViewHolder(view)
+        val binding = ItemServicesBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ServiceViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ServiceViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class ServiceViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val imgIcon: ShapeableImageView = view.findViewById(R.id.imgServiceIcon)
-        private val tvName: TextView = view.findViewById(R.id.tvServiceName)
+    class ServiceViewHolder(private val binding: ItemServicesBinding) : RecyclerView.ViewHolder(binding.root) {
+        private val imgIcon: ShapeableImageView = binding.imgServiceIcon
+        private val tvName: TextView = binding.tvServiceName
 
         fun bind(service: Service) {
             tvName.text = service.name

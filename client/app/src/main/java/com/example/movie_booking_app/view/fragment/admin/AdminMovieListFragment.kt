@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
@@ -13,19 +11,18 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Movie
+import com.example.movie_booking_app.databinding.FragmentAdminMovieListBinding
+import com.example.movie_booking_app.databinding.DialogConfirmDeleteStaffBinding
 import com.example.movie_booking_app.view.adapter.AdminMovieAdapter
 import com.example.movie_booking_app.viewmodel.MovieViewModel
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.widget.Button
-import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import android.widget.TextView
 
 @AndroidEntryPoint
 class AdminMovieListFragment : Fragment() {
@@ -35,6 +32,9 @@ class AdminMovieListFragment : Fragment() {
     private var allMovies: List<Movie> = emptyList()
     private var selectedTab = TAB_ACTIVE
 
+    private var _binding: FragmentAdminMovieListBinding? = null
+    private val binding get() = _binding!!
+
     companion object {
         private const val TAB_ACTIVE = "active"
         private const val TAB_INACTIVE = "inactive"
@@ -43,18 +43,13 @@ class AdminMovieListFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_admin_movie_list, container, false)
+    ): View {
+        _binding = FragmentAdminMovieListBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val rvAdminMovies = view.findViewById<RecyclerView>(R.id.rvAdminMovies)
-        val fabAddMovie = view.findViewById<FloatingActionButton>(R.id.fabAddMovie)
-        val etSearchMovie = view.findViewById<EditText>(R.id.etSearchMovie)
-        val tabActiveMovie = view.findViewById<TextView>(R.id.tabActiveMovie)
-        val tabInactiveMovie = view.findViewById<TextView>(R.id.tabInactiveMovie)
 
         adapter = AdminMovieAdapter(
             onEditClick = { movie ->
@@ -73,23 +68,23 @@ class AdminMovieListFragment : Fragment() {
             }
         )
 
-        rvAdminMovies.layoutManager = LinearLayoutManager(context)
-        rvAdminMovies.adapter = adapter
+        binding.rvAdminMovies.layoutManager = LinearLayoutManager(context)
+        binding.rvAdminMovies.adapter = adapter
 
-        etSearchMovie.addTextChangedListener { text ->
+        binding.etSearchMovie.addTextChangedListener { text ->
             adapter.submitList(getFilteredMovies(allMovies, text?.toString().orEmpty()))
         }
 
-        tabActiveMovie.setOnClickListener {
+        binding.tabActiveMovie.setOnClickListener {
             switchTab(TAB_ACTIVE)
             viewModel.loadAdminMovies("active")
         }
-        tabInactiveMovie.setOnClickListener {
+        binding.tabInactiveMovie.setOnClickListener {
             switchTab(TAB_INACTIVE)
             viewModel.loadAdminMovies("deleted")
         }
 
-        fabAddMovie.setOnClickListener {
+        binding.fabAddMovie.setOnClickListener {
             // TODO: Open Add Movie Fragment
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, AdminCreateMovieFragment())
@@ -102,22 +97,19 @@ class AdminMovieListFragment : Fragment() {
     }
 
     private fun showDeleteConfirmationDialog(movie: Movie) {
+        val dialogBinding = DialogConfirmDeleteStaffBinding.inflate(layoutInflater)
         val dialog = Dialog(requireContext())
-        dialog.setContentView(R.layout.dialog_confirm_delete_staff)
+        dialog.setContentView(dialogBinding.root)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.setCancelable(true)
 
-        val tvDeleteMessage = dialog.findViewById<TextView>(R.id.tvDeleteMessage)
-        val btnCancel = dialog.findViewById<MaterialButton>(R.id.btnCancelDelete)
-        val btnConfirm = dialog.findViewById<MaterialButton>(R.id.btnConfirmDelete)
+        dialogBinding.tvDeleteMessage.text = "Are you sure you want to delete the movie \"${movie.movieName}\"?"
 
-        tvDeleteMessage.text = "Are you sure you want to delete the movie \"${movie.movieName}\"?"
-
-        btnCancel.setOnClickListener {
+        dialogBinding.btnCancelDelete.setOnClickListener {
             dialog.dismiss()
         }
 
-        btnConfirm.setOnClickListener {
+        dialogBinding.btnConfirmDelete.setOnClickListener {
             dialog.dismiss()
             movie.id?.let { viewModel.deleteMovie(it) }
         }
@@ -155,9 +147,9 @@ class AdminMovieListFragment : Fragment() {
 
     private fun refreshMovieList() {
         val isActive = selectedTab == TAB_ACTIVE
-        updateTabStyle(requireView().findViewById(R.id.tabActiveMovie), isActive)
-        updateTabStyle(requireView().findViewById(R.id.tabInactiveMovie), !isActive)
-        adapter.submitList(getFilteredMovies(allMovies, requireView().findViewById<EditText>(R.id.etSearchMovie).text.toString().trim()))
+        updateTabStyle(binding.tabActiveMovie, isActive)
+        updateTabStyle(binding.tabInactiveMovie, !isActive)
+        adapter.submitList(getFilteredMovies(allMovies, binding.etSearchMovie.text.toString().trim()))
     }
 
     private fun updateTabStyle(tabView: TextView, isActive: Boolean) {
@@ -181,5 +173,10 @@ class AdminMovieListFragment : Fragment() {
             }
             matchesSearch && matchesTab
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

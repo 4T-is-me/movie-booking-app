@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.movie_booking_app.R
+import com.example.movie_booking_app.databinding.FragmentAdminCreateMovieBinding
 import com.example.movie_booking_app.data.model.request.AddMovieRequest
 import com.example.movie_booking_app.viewmodel.MovieViewModel
 import com.example.movie_booking_app.utils.DateUtils
@@ -35,10 +36,13 @@ class AdminCreateMovieFragment : Fragment() {
 
     private var selectedPosterUri: android.net.Uri? = null
     
+    private var _binding: FragmentAdminCreateMovieBinding? = null
+    private val binding get() = _binding!!
+
     private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         if (uri != null) {
             selectedPosterUri = uri
-            view?.findViewById<android.widget.ImageView>(R.id.ivPosterPreview)?.let { iv ->
+            _binding?.ivPosterPreview?.let { iv ->
                 Glide.with(this).load(uri).into(iv)
             }
         }
@@ -62,25 +66,25 @@ class AdminCreateMovieFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_admin_create_movie, container, false)
-        setupViews(view)
-        return view
+    ): View {
+        _binding = FragmentAdminCreateMovieBinding.inflate(inflater, container, false)
+        setupViews()
+        return binding.root
     }
 
-    private fun setupViews(view: View) {
-        val tvFormTitle = view.findViewById<TextView>(R.id.tvFormTitle)
-        val edtMovieName = view.findViewById<TextInputEditText>(R.id.edtMovieName)
-        val edtDuration = view.findViewById<TextInputEditText>(R.id.edtDuration)
-        val edtReleaseDate = view.findViewById<TextInputEditText>(R.id.edtReleaseDate)
-        val edtEndDate = view.findViewById<TextInputEditText>(R.id.edtEndDate)
-        val spnLanguage = view.findViewById<AutoCompleteTextView>(R.id.spnLanguage)
+    private fun setupViews() {
+        val tvFormTitle = binding.tvFormTitle
+        val edtMovieName = binding.edtMovieName
+        val edtDuration = binding.edtDuration
+        val edtReleaseDate = binding.edtReleaseDate
+        val edtEndDate = binding.edtEndDate
+        val spnLanguage = binding.spnLanguage
 
-        val edtDirector = view.findViewById<TextInputEditText>(R.id.edtDirector)
-        val edtActors = view.findViewById<TextInputEditText>(R.id.edtActors)
-        val edtDescription = view.findViewById<TextInputEditText>(R.id.edtDescription)
-        val ivPosterPreview = view.findViewById<ImageView>(R.id.ivPosterPreview)
-        val btnSubmit = view.findViewById<Button>(R.id.btnSubmitMovie)
+        val edtDirector = binding.edtDirector
+        val edtActors = binding.edtActors
+        val edtDescription = binding.edtDescription
+        val ivPosterPreview = binding.ivPosterPreview
+        val btnSubmit = binding.btnSubmitMovie
 
         // Setup Date Picker logic
         val displaySdf = SimpleDateFormat("dd/MM/yyyy", Locale.US)
@@ -114,12 +118,12 @@ class AdminCreateMovieFragment : Fragment() {
         }
 
         // Setup Genres Chips
-        val chipGroupGenres = view.findViewById<ChipGroup>(R.id.chipGroupGenres)
+        val chipGroupGenres = binding.chipGroupGenres
         
         // Setup Censorship Dropdown
         val censorshipOptions = arrayOf("P (General Audience)", "K (Children Under 13)", "T13 (13+)", "T16 (16+)", "T18 (18+)", "C (Banned)")
         val censorshipCodes = arrayOf("P", "K", "T13", "T16", "T18", "C")
-        val spnCensorship = view.findViewById<AutoCompleteTextView>(R.id.spnCensorship)
+        val spnCensorship = binding.spnCensorship
         val censorshipAdapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_dropdown_item_1line,
@@ -129,7 +133,7 @@ class AdminCreateMovieFragment : Fragment() {
 
         // Setup Country Search Dropdown
         val countryOptions = arrayOf("Vietnam", "USA", "Korea", "Japan", "China", "UK", "France", "India", "Thailand")
-        val edtCountry = view.findViewById<AutoCompleteTextView>(R.id.edtCountry)
+        val edtCountry = binding.edtCountry
         val countryAdapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_dropdown_item_1line,
@@ -200,7 +204,7 @@ class AdminCreateMovieFragment : Fragment() {
             chipGroupGenres.addView(chip)
         }
 
-        val btnChoosePoster = view.findViewById<Button>(R.id.btnChoosePoster)
+        val btnChoosePoster = binding.btnChoosePoster
         btnChoosePoster.setOnClickListener {
             pickImageLauncher.launch("image/*")
         }
@@ -304,5 +308,10 @@ class AdminCreateMovieFragment : Fragment() {
             }
             parentFragmentManager.popBackStack()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

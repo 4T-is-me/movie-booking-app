@@ -1,11 +1,10 @@
 package com.example.movie_booking_app.view.adapter.admin
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.movie_booking_app.R
+import com.example.movie_booking_app.databinding.ItemStatsTableBinding
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -20,8 +19,8 @@ class StatsTableAdapter : RecyclerView.Adapter<StatsTableAdapter.StatsViewHolder
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StatsViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(android.R.layout.simple_list_item_2, parent, false)
-        return StatsViewHolder(view)
+        val binding = ItemStatsTableBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return StatsViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: StatsViewHolder, position: Int) {
@@ -36,8 +35,8 @@ class StatsTableAdapter : RecyclerView.Adapter<StatsTableAdapter.StatsViewHolder
 
     override fun getItemCount(): Int = items.size
 
-    class StatsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val tvLabel: TextView = view.findViewById(android.R.id.text1)
-        val tvValue: TextView = view.findViewById(android.R.id.text2)
+    class StatsViewHolder(private val binding: ItemStatsTableBinding) : RecyclerView.ViewHolder(binding.root) {
+        val tvLabel: TextView = binding.tvLabel
+        val tvValue: TextView = binding.tvValue
     }
 }

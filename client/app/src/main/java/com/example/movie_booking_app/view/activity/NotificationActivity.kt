@@ -16,6 +16,7 @@ import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.local.NotificationItem
 import com.example.movie_booking_app.data.local.NotificationLocalStorage
 import com.example.movie_booking_app.databinding.ActivityNotificationBinding
+import com.example.movie_booking_app.databinding.ItemNotificationBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
@@ -143,9 +144,10 @@ class NotificationActivity : AppCompatActivity() {
     ) : RecyclerView.Adapter<NotificationAdapter.NotifViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotifViewHolder {
-            val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_notification, parent, false)
-            return NotifViewHolder(view)
+            val binding = ItemNotificationBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
+            )
+            return NotifViewHolder(binding)
         }
 
         override fun onBindViewHolder(holder: NotifViewHolder, position: Int) {
@@ -154,17 +156,11 @@ class NotificationActivity : AppCompatActivity() {
 
         override fun getItemCount(): Int = list.size
 
-        class NotifViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            private val layoutContainer: View = itemView.findViewById(R.id.layoutContainer)
-            private val ivNotifIcon: ImageView = itemView.findViewById(R.id.ivNotifIcon)
-            private val tvNotifTitle: TextView = itemView.findViewById(R.id.tvNotifTitle)
-            private val tvNotifBody: TextView = itemView.findViewById(R.id.tvNotifBody)
-            private val tvNotifTime: TextView = itemView.findViewById(R.id.tvNotifTime)
-            private val viewUnreadIndicator: View = itemView.findViewById(R.id.viewUnreadIndicator)
+        class NotifViewHolder(private val binding: ItemNotificationBinding) : RecyclerView.ViewHolder(binding.root) {
 
             fun bind(item: NotificationItem, onClick: (NotificationItem) -> Unit) {
-                tvNotifTitle.text = item.title
-                tvNotifBody.text = item.body
+                binding.tvNotifTitle.text = item.title
+                binding.tvNotifBody.text = item.body
 
                 // Set type-specific icon
                 val iconRes = when (item.type) {
@@ -172,10 +168,10 @@ class NotificationActivity : AppCompatActivity() {
                     NotificationItem.TYPE_PROMOTION -> R.drawable.ic_gift
                     else -> R.drawable.ic_notifications
                 }
-                ivNotifIcon.setImageResource(iconRes)
+                binding.ivNotifIcon.setImageResource(iconRes)
 
                 // Unread dot indicator
-                viewUnreadIndicator.visibility = if (item.isRead) View.GONE else View.VISIBLE
+                binding.viewUnreadIndicator.visibility = if (item.isRead) View.GONE else View.VISIBLE
 
                 // Relative times formatting (e.g. "5 minutes ago")
                 val relativeTime = DateUtils.getRelativeTimeSpanString(
@@ -183,9 +179,9 @@ class NotificationActivity : AppCompatActivity() {
                     System.currentTimeMillis(),
                     DateUtils.MINUTE_IN_MILLIS
                 )
-                tvNotifTime.text = relativeTime
+                binding.tvNotifTime.text = relativeTime
 
-                layoutContainer.setOnClickListener {
+                binding.layoutContainer.setOnClickListener {
                     onClick(item)
                 }
             }

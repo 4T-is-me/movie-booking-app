@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter
 
+import com.example.movie_booking_app.databinding.ItemAdminRoomBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +16,8 @@ class AdminRoomAdapter(
 ) : ListAdapter<CinemaRoom, AdminRoomAdapter.RoomViewHolder>(RoomDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RoomViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_admin_room, parent, false)
-        return RoomViewHolder(view)
+        val binding = ItemAdminRoomBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return RoomViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: RoomViewHolder, position: Int) {
@@ -25,10 +26,10 @@ class AdminRoomAdapter(
         holder.itemView.setOnClickListener { onRoomClick(room) }
     }
 
-    class RoomViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val tvRoomName: TextView = itemView.findViewById(R.id.tvRoomName)
-        private val tvTotalSeats: TextView = itemView.findViewById(R.id.tvTotalSeats)
-        private val tvRoomHint: TextView = itemView.findViewById(R.id.tvRoomHint)
+    class RoomViewHolder(private val binding: ItemAdminRoomBinding) : RecyclerView.ViewHolder(binding.root) {
+        private val tvRoomName: TextView = binding.tvRoomName
+        private val tvTotalSeats: TextView = binding.tvTotalSeats
+        private val tvRoomHint: TextView = binding.tvRoomHint
 
         fun bind(room: CinemaRoom) {
             tvRoomName.text = room.roomName

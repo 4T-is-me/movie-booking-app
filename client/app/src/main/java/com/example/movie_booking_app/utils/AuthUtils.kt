@@ -6,24 +6,21 @@ import android.content.Intent
 import android.widget.Toast
 import com.example.movie_booking_app.data.local.TokenManager
 import com.example.movie_booking_app.view.activity.LoginActivity
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 object AuthUtils {
 
     fun showLogoutConfirmationDialog(activity: Activity) {
+        val binding = com.example.movie_booking_app.databinding.DialogConfirmLogoutBinding.inflate(activity.layoutInflater)
         val dialog = android.app.Dialog(activity)
-        dialog.setContentView(com.example.movie_booking_app.R.layout.dialog_confirm_logout)
+        dialog.setContentView(binding.root)
         dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
         dialog.setCancelable(true)
 
-        val btnCancel = dialog.findViewById<com.google.android.material.button.MaterialButton>(com.example.movie_booking_app.R.id.btnCancelLogout)
-        val btnConfirm = dialog.findViewById<com.google.android.material.button.MaterialButton>(com.example.movie_booking_app.R.id.btnConfirmLogout)
-
-        btnCancel.setOnClickListener {
+        binding.btnCancelLogout.setOnClickListener {
             dialog.dismiss()
         }
 
-        btnConfirm.setOnClickListener {
+        binding.btnConfirmLogout.setOnClickListener {
             dialog.dismiss()
             performLogout(activity)
         }

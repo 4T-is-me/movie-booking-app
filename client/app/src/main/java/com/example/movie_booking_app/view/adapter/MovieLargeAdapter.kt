@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter
 
+import com.example.movie_booking_app.databinding.ItemMovieLargeBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,8 +24,8 @@ class MovieLargeAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieLargeViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_movie_large, parent, false)
-        return MovieLargeViewHolder(view, onClick)
+        val binding = ItemMovieLargeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return MovieLargeViewHolder(binding, onClick)
     }
 
     override fun onBindViewHolder(holder: MovieLargeViewHolder, position: Int) {
@@ -34,12 +35,12 @@ class MovieLargeAdapter(
         }
     }
 
-    class MovieLargeViewHolder(view: View, val onClick: (Movie) -> Unit) : RecyclerView.ViewHolder(view) {
-        private val imgPoster: ShapeableImageView = view.findViewById(R.id.imgPosterLarge)
-        private val tvNameVn: TextView = view.findViewById(R.id.tvMovieNameVnLarge)
-        private val tvNameEn: TextView = view.findViewById(R.id.tvMovieNameEnLarge)
-        private val tvRating: TextView = view.findViewById(R.id.tvRatingLarge)
-        private val tvVersion: TextView = view.findViewById(R.id.tvVersionLarge)
+    class MovieLargeViewHolder(private val binding: ItemMovieLargeBinding, val onClick: (Movie) -> Unit) : RecyclerView.ViewHolder(binding.root) {
+        private val imgPoster: ShapeableImageView = binding.imgPosterLarge
+        private val tvNameVn: TextView = binding.tvMovieNameVnLarge
+        private val tvNameEn: TextView = binding.tvMovieNameEnLarge
+        private val tvRating: TextView = binding.tvRatingLarge
+        private val tvVersion: TextView = binding.tvVersionLarge
 
         fun bind(movie: Movie) {
             tvNameVn.text = movie.movieName
