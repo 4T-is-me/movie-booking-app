@@ -75,7 +75,8 @@ class VideoListAdapter(
 
         fun bind(movie: Movie, isPlaying: Boolean) {
             tvVideoTitle.text = movie.movieName
-            tvMovieInfo.text = "${movie.language ?: "English"} • ${movie.duration ?: 120} mins"
+            val durationStr = itemView.context.getString(com.example.movie_booking_app.R.string.duration_mins, (movie.duration ?: 120).toString())
+            tvMovieInfo.text = "${movie.language ?: "English"} • $durationStr"
 
             Glide.with(itemView.context)
                 .load(movie.poster)

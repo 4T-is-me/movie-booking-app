@@ -52,7 +52,7 @@ class StaffMovieAdapter(
             
             // Format Info: Genre | Duration
             val genreStr = movie.movieGenre?.joinToString(", ") ?: ""
-            val durationStr = if (movie.duration != null) "${movie.duration}m" else "N/A"
+            val durationStr = if (movie.duration != null) itemView.context.getString(com.example.movie_booking_app.R.string.duration_mins, movie.duration.toString()) else "N/A"
             tvMovieInfo.text = "$genreStr | $durationStr"
 
             // Rating & Votes

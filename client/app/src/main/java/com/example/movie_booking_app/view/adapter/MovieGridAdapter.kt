@@ -45,7 +45,8 @@ class MovieGridAdapter(
             tvTitleEn.text = movie.movieName // develop model only has movieName
             
             tvRow1.text = (movie.rating?.toString() ?: "N/A")
-            tvRow2.text = "${movie.duration ?: 0} min • " + (movie.censorship ?: "2D")
+            val durationStr = itemView.context.getString(com.example.movie_booking_app.R.string.duration_mins, (movie.duration ?: 0).toString())
+            tvRow2.text = "$durationStr • " + (movie.censorship ?: "2D")
             tvRow3.text = com.example.movie_booking_app.utils.DateUtils.formatMovieDate(movie.releaseDate)
 
             Glide.with(itemView.context)

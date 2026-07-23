@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
-class ResetPasswordActivity : AppCompatActivity() {
+class ResetPasswordActivity : BaseActivity() {
     private lateinit var email: String
 
     override fun onCreate(savedInstanceState: Bundle?) {

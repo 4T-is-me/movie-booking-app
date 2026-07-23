@@ -113,7 +113,8 @@ class BookingDetailActivity : AppCompatActivity() {
         binding.tvMovieTitle.text = detail.movie?.movieName ?: "-"
         val duration = detail.movie?.duration ?: 0
         val genres = detail.movie?.movieGenre?.joinToString(", ") ?: ""
-        binding.tvDurationGenre.text = "${duration} mins • ${genres.ifEmpty { "-" }}"
+        val durationStr = getString(com.example.movie_booking_app.R.string.duration_mins, duration.toString())
+        binding.tvDurationGenre.text = "$durationStr • ${genres.ifEmpty { "-" }}"
 
         // Poster
         val url = detail.movie?.poster ?: ""

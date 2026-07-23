@@ -90,7 +90,7 @@ class HomeFragment : Fragment() {
         val layoutNotificationBell = headerView.findViewById<View>(R.id.layoutNotificationBell)
         val viewBellBadge = headerView.findViewById<View>(R.id.viewBellBadge)
 
-        tvHi.text = "Hi, $name 👋"
+        tvHi.text = context.getString(R.string.hi_user, name)
 
         if (isLoggedIn) {
             btnLogin.visibility = View.GONE

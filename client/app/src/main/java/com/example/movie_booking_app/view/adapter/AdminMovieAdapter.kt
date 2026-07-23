@@ -37,7 +37,7 @@ class AdminMovieAdapter(
 
         fun bind(movie: Movie) {
             tvTitle.text = movie.movieName
-            tvDuration.text = "${movie.duration ?: 0} mins"
+            tvDuration.text = itemView.context.getString(com.example.movie_booking_app.R.string.duration_mins, (movie.duration ?: 0).toString())
 
             Glide.with(itemView.context)
                 .load(movie.poster)

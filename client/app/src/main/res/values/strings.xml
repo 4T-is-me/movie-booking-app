@@ -1100,4 +1100,9 @@
     <string name="error_sending_otp">Error sending OTP</string>
     <string name="connection_error">Connection error</string>
     <string name="reset_password_success">Password has been reset successfully. Please login.</string>
+    <string name="booking_id_format">Booking ID: %1$s</string>
+    <string name="duration_mins">%1$s mins</string>
+    <string name="duration_format_hm">%1$dh%2$dm</string>
+    <string name="duration_format_h">%1$dh</string>
+    <string name="duration_format_m">%1$dm</string>
 </resources>
