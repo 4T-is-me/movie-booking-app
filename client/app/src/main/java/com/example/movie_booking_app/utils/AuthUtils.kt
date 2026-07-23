@@ -14,6 +14,10 @@ object AuthUtils {
         val dialog = android.app.Dialog(activity)
         dialog.setContentView(binding.root)
         dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
+        dialog.window?.setLayout(
+            (320 * activity.resources.displayMetrics.density).toInt(),
+            android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+        )
         dialog.setCancelable(true)
 
         binding.btnCancelLogout.setOnClickListener {
