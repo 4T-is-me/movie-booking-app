@@ -23,7 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class VerifyOtpActivity : BaseActivity() {
+class VerifyOtpActivity : EnglishBaseActivity() {
 
     private val viewModel: OtpViewModel by viewModels()
     private lateinit var binding: ActivityVerifyOtpBinding

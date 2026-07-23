@@ -205,5 +205,4 @@
     <string name="duration_mins">%1$s 分</string>
     <string name="duration_format_hm">%1$d時間%2$d分</string>
     <string name="duration_format_h">%1$d時間</string>
-    <string name="duration_format_m">%1$d分</string>
 </resources>

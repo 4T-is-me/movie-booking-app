@@ -205,5 +205,4 @@
     <string name="duration_mins">%1$s phút</string>
     <string name="duration_format_hm">%1$d giờ %2$d phút</string>
     <string name="duration_format_h">%1$d giờ</string>
-    <string name="duration_format_m">%1$d phút</string>
 </resources>

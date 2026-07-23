@@ -26,7 +26,7 @@ import java.util.Locale
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class RegisterActivity : BaseActivity() {
+class RegisterActivity : EnglishBaseActivity() {
 
     private lateinit var binding: ActivityRegisterBinding
     private val viewModel: RegisterViewModel by viewModels()
