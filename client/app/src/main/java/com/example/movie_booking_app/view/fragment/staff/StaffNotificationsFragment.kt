@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.data.model.response.NotificationItemResponse
@@ -23,7 +23,8 @@ class StaffNotificationsFragment : Fragment() {
     private var _binding: FragmentStaffNotificationsBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: NotificationViewModel by viewModels()
+    // Thay đổi từ viewModels() -> activityViewModels() để dùng chung ViewModel với StaffActivity
+    private val viewModel: NotificationViewModel by activityViewModels()
     private lateinit var adapter: StaffNotifAdapter
 
     override fun onCreateView(
