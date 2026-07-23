@@ -1,54 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:paddingVertical="8dp">
 
-    <!-- Day Label (VD: Mon, Tue) -->
-    <TextView
-        android:id="@+id/tvDayName"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:text="@string/auto_str_mon_1"
-        android:textColor="@color/auto_color_FFFFFF"
-        android:textSize="14sp"
-        android:textStyle="bold" />
-
-    <!-- Shift Box -->
+    <!-- Cột Thứ & Ngày bên trái -->
     <LinearLayout
-        android:id="@+id/layoutShiftBox"
-        android:layout_width="0dp"
-        android:layout_height="36dp"
-        android:layout_weight="1"
-        android:background="@drawable/bg_shift_box_gold"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="12dp"
-        android:visibility="visible">
+        android:layout_width="45dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:gravity="center"
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tvShiftDetail"
+            android:id="@+id/tvDayOfWeek"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/auto_str_morning_08_14"
-            android:textColor="@color/text_light_gray"
-            android:textSize="13sp"
-            android:textStyle="bold" />
+            android:textColor="@color/auto_color_FFFFFF"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:text="Mon" />
+
+        <TextView
+            android:id="@+id/tvDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textColor="@color/text_secondary"
+            android:textSize="11sp"
+            tools:text="14 Jul" />
     </LinearLayout>
 
-    <!-- Day Off Label  -->
-    <TextView
-        android:id="@+id/tvDayOff"
+    <!-- Đường vạch chia dọc -->
+    <View
+        android:layout_width="1.5dp"
+        android:layout_height="55dp"
+        android:layout_marginHorizontal="5dp"
+        android:background="@color/divider_yellow_alpha" />
+
+    <!-- Card chứa thông tin Ca làm việc -->
+    <LinearLayout
+        android:id="@+id/layoutShiftContainer"
         android:layout_width="0dp"
-        android:layout_height="36dp"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:gravity="center_vertical|end"
-        android:paddingEnd="12dp"
-        android:text="@string/auto_str_day_off"
-        android:textColor="@color/auto_color_FF9800"
-        android:textSize="13sp"
-        android:textStyle="bold"
-        android:visibility="gone" />
+        android:background="@drawable/bg_shift_item"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="12dp">
+
+        <!-- Nền Icon bo góc -->
+        <FrameLayout
+            android:id="@+id/layoutIconBg"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_icon_sun">
+
+            <ImageView
+                android:id="@+id/ivShiftIcon"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_sun"
+                app:tint="@color/tint_sun_yellow" />
+        </FrameLayout>
+
+        <!-- Tên ca làm việc -->
+        <TextView
+            android:id="@+id/tvShiftName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:textColor="@color/auto_color_FFFFFF"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            tools:text="Morning - Night" />
+
+        <!-- Badge DAY OFF -->
+        <TextView
+            android:id="@+id/tvDayOffBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_badge_day_off"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:text="@string/auto_str_day_off_manager"
+            android:textColor="@color/tint_sun_yellow"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+    </LinearLayout>
 
 </LinearLayout>
