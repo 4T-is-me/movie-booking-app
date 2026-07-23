@@ -370,6 +370,7 @@
     <string name="auto_str_attendance_rate">Attendance Rate</string>
     <string name="auto_str_95">95%</string>
     <string name="auto_str_this_week_s_schedule">THIS WEEK\'S SCHEDULE</string>
+    <string name="auto_str_day_off_manager">DAY OFF</string>
     <string name="auto_str_staff_management">Staff Management</string>
     <string name="auto_str_staff_list">Staff List</string>
     <string name="auto_str_leave_requests_2">Leave Requests</string>
