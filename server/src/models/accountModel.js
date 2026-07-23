@@ -29,6 +29,10 @@ const accountSchema = new mongoose.Schema({
         type: String,
         default: null
     },
+    fcmTokens: {
+        type: [String],
+        default: []
+    },
 
     // 2. Personal information group has been moved to members collection
 

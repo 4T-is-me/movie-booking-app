@@ -183,12 +183,18 @@ export const MaintenanceService = {
       
       const member = await Member.findById(memberId).session(session);
       if (member && member.accountId) {
-        const account = await Account.findById(member.accountId).select('fcmToken').session(session);
-        if (account && account.fcmToken) {
-           await notificationService.sendToDevice(account.fcmToken, title, message, {
-             type: 'MAINTENANCE_ACTION_REQUIRED',
-             bookingId: bookingId.toString()
-           });
+        const account = await Account.findById(member.accountId).select('fcmToken fcmTokens').session(session);
+        if (account) {
+          const tokens = account.fcmTokens && account.fcmTokens.length > 0 
+              ? account.fcmTokens 
+              : (account.fcmToken ? [account.fcmToken] : [])
+          
+          if (tokens.length > 0) {
+             await notificationService.sendToDevice(tokens, title, message, {
+               type: 'MAINTENANCE_ACTION_REQUIRED',
+               bookingId: bookingId.toString()
+             });
+          }
         }
       }
     } catch (err) {
@@ -219,12 +225,18 @@ export const MaintenanceService = {
       
       const member = await Member.findById(memberId).session(session);
       if (member && member.accountId) {
-        const account = await Account.findById(member.accountId).select('fcmToken').session(session);
-        if (account && account.fcmToken) {
-           await notificationService.sendToDevice(account.fcmToken, title, message, {
-             type: 'MAINTENANCE_CANCELLED',
-             bookingId: bookingId.toString()
-           });
+        const account = await Account.findById(member.accountId).select('fcmToken fcmTokens').session(session);
+        if (account) {
+          const tokens = account.fcmTokens && account.fcmTokens.length > 0 
+              ? account.fcmTokens 
+              : (account.fcmToken ? [account.fcmToken] : [])
+          
+          if (tokens.length > 0) {
+             await notificationService.sendToDevice(tokens, title, message, {
+               type: 'MAINTENANCE_CANCELLED',
+               bookingId: bookingId.toString()
+             });
+          }
         }
       }
     } catch (err) {
