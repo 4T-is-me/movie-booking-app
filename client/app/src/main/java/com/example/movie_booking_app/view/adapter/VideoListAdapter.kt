@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter
 
+import com.example.movie_booking_app.databinding.ItemVideoVerticalBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,8 +44,8 @@ class VideoListAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_video_vertical, parent, false)
-        return VideoViewHolder(view)
+        val binding = ItemVideoVerticalBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return VideoViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: VideoViewHolder, position: Int) {
@@ -63,13 +64,13 @@ class VideoListAdapter(
         }
     }
 
-    inner class VideoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val youtubePlayerView: YouTubePlayerView = view.findViewById(R.id.youtubePlayerView)
-        val imgThumbnail: ShapeableImageView = view.findViewById(R.id.imgThumbnail)
-        val viewOverlay: View = view.findViewById(R.id.viewOverlay)
-        val btnPlay: View = view.findViewById(R.id.btnPlay)
-        val tvVideoTitle: TextView = view.findViewById(R.id.tvVideoTitle)
-        val tvMovieInfo: TextView = view.findViewById(R.id.tvMovieInfo)
+    inner class VideoViewHolder(private val binding: ItemVideoVerticalBinding) : RecyclerView.ViewHolder(binding.root) {
+        val youtubePlayerView: YouTubePlayerView = binding.youtubePlayerView
+        val imgThumbnail: ShapeableImageView = binding.imgThumbnail
+        val viewOverlay: View = binding.viewOverlay
+        val btnPlay: View = binding.btnPlay
+        val tvVideoTitle: TextView = binding.tvVideoTitle
+        val tvMovieInfo: TextView = binding.tvMovieInfo
         
         private var isPlayerInitialized = false
 

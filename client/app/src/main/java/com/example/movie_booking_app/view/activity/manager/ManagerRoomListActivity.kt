@@ -3,14 +3,11 @@ package com.example.movie_booking_app.view.activity.manager
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
-import android.widget.ProgressBar
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.movie_booking_app.R
+import com.example.movie_booking_app.databinding.ActivityManagerRoomListBinding
 import com.example.movie_booking_app.view.adapter.manager.ManagerRoomAdapter
 import com.example.movie_booking_app.viewmodel.manager.ManagerRoomViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,17 +17,15 @@ import kotlinx.coroutines.launch
 class ManagerRoomListActivity : AppCompatActivity() {
 
     private val viewModel: ManagerRoomViewModel by viewModels()
+    private lateinit var binding: ActivityManagerRoomListBinding
     private lateinit var adapter: ManagerRoomAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_manager_room_list)
+        binding = ActivityManagerRoomListBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val rvRooms = findViewById<RecyclerView>(R.id.rvRooms)
-        val progressBar = findViewById<ProgressBar>(R.id.progressBar)
-        val ivBack = findViewById<ImageView>(R.id.ivBack)
-
-        ivBack.setOnClickListener { finish() }
+        binding.ivBack.setOnClickListener { finish() }
 
         adapter = ManagerRoomAdapter(
             onRoomClick = { room ->
@@ -51,8 +46,8 @@ class ManagerRoomListActivity : AppCompatActivity() {
             }
         )
 
-        rvRooms.layoutManager = LinearLayoutManager(this)
-        rvRooms.adapter = adapter
+        binding.rvRooms.layoutManager = LinearLayoutManager(this)
+        binding.rvRooms.adapter = adapter
 
         lifecycleScope.launch {
             viewModel.rooms.collect { rooms ->
@@ -62,7 +57,7 @@ class ManagerRoomListActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             viewModel.isLoading.collect { isLoading ->
-                progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+                binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
             }
         }
 

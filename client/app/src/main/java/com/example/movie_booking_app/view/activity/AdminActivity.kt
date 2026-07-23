@@ -1,98 +1,86 @@
 package com.example.movie_booking_app.view.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.Fragment
-import com.example.movie_booking_app.R
-
-import com.example.movie_booking_app.view.fragment.admin.AdminMovieListFragment
-import com.example.movie_booking_app.view.fragment.admin.AdminCinemasFragment
-import com.example.movie_booking_app.view.fragment.admin.AdminStatsFragment
-import com.example.movie_booking_app.view.fragment.admin.AdminStaffFragment
-import com.example.movie_booking_app.view.fragment.admin.AdminStaffTabsFragment
-import com.example.movie_booking_app.view.fragment.admin.AdminPromotionFragment
-import com.google.android.material.navigation.NavigationView
-import dagger.hilt.android.AndroidEntryPoint
 import androidx.activity.viewModels
+import androidx.core.view.GravityCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.example.movie_booking_app.viewmodel.AuthViewModel
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.api.AuthEvent
+import com.example.movie_booking_app.databinding.ActivityAdminBinding
+import com.example.movie_booking_app.view.fragment.admin.AdminCinemasFragment
+import com.example.movie_booking_app.view.fragment.admin.AdminMovieListFragment
+import com.example.movie_booking_app.view.fragment.admin.AdminPromotionFragment
+import com.example.movie_booking_app.view.fragment.admin.AdminStaffTabsFragment
+import com.example.movie_booking_app.view.fragment.admin.AdminStatsFragment
+import com.example.movie_booking_app.viewmodel.AuthViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import android.content.Intent
 
 @AndroidEntryPoint
 class AdminActivity : BaseActivity() {
 
-    private lateinit var drawerLayout: DrawerLayout
-    private lateinit var navigationView: NavigationView
-    private lateinit var tvHeaderTitle: TextView
+    private lateinit var binding: ActivityAdminBinding
     private val authViewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_admin)
-
-        drawerLayout = findViewById(R.id.drawerLayout)
-        navigationView = findViewById(R.id.navigationView)
-        tvHeaderTitle = findViewById(R.id.tvHeaderTitle)
+        binding = ActivityAdminBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         observeAuthEvents()
 
-        val ivMenu = findViewById<ImageView>(R.id.ivMenu)
-        ivMenu.setOnClickListener {
-            drawerLayout.openDrawer(GravityCompat.START)
+        binding.ivMenu.setOnClickListener {
+            binding.drawerLayout.openDrawer(GravityCompat.START)
         }
 
-        navigationView.setNavigationItemSelectedListener { item ->
+        binding.navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_movies -> {
-                    tvHeaderTitle.text = getString(R.string.auto_str_movies)
+                    binding.tvHeaderTitle.text = getString(R.string.auto_str_movies)
                     loadFragment(AdminMovieListFragment())
                 }
                 R.id.nav_dashboard -> {
-                    tvHeaderTitle.text = getString(R.string.auto_str_dashboard)
+                    binding.tvHeaderTitle.text = getString(R.string.auto_str_dashboard)
                     loadFragment(AdminStatsFragment())
                 }
                 R.id.nav_employees -> {
-                    tvHeaderTitle.text = getString(R.string.admin_staff_members_title)
+                    binding.tvHeaderTitle.text = getString(R.string.admin_staff_members_title)
                     loadFragment(AdminStaffTabsFragment.newInstance(0))
                 }
                 R.id.nav_rooms -> {
-                    tvHeaderTitle.text = "Cinemas"
+                    binding.tvHeaderTitle.text = "Cinemas"
                     loadFragment(AdminCinemasFragment())
                 }
                 R.id.nav_promotions -> {
-                    tvHeaderTitle.text = getString(R.string.auto_str_promotions)
+                    binding.tvHeaderTitle.text = getString(R.string.auto_str_promotions)
                     loadFragment(AdminPromotionFragment())
                 }
                 R.id.nav_members -> {
-                    tvHeaderTitle.text = getString(R.string.admin_tab_members)
+                    binding.tvHeaderTitle.text = getString(R.string.admin_tab_members)
                     loadFragment(com.example.movie_booking_app.view.fragment.admin.MemberListFragment())
                 }
                 R.id.nav_settings -> {
-                    tvHeaderTitle.text = getString(R.string.admin_settings_title)
+                    binding.tvHeaderTitle.text = getString(R.string.admin_settings_title)
                     loadFragment(BlankFragment())
                 }
                 R.id.nav_logout -> {
                     com.example.movie_booking_app.utils.AuthUtils.showLogoutConfirmationDialog(this)
                 }
             }
-            drawerLayout.closeDrawer(GravityCompat.START)
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
 
         // Set default selection to Dashboard (AdminStatsFragment)
         if (savedInstanceState == null) {
-            navigationView.setCheckedItem(R.id.nav_dashboard)
-            tvHeaderTitle.text = getString(R.string.auto_str_dashboard)
+            binding.navigationView.setCheckedItem(R.id.nav_dashboard)
+            binding.tvHeaderTitle.text = getString(R.string.auto_str_dashboard)
             loadFragment(AdminStatsFragment())
         }
     }
@@ -115,8 +103,6 @@ class AdminActivity : BaseActivity() {
             }
         }
     }
-
-
 
     // A simple fragment that shows nothing
     class BlankFragment : Fragment() {

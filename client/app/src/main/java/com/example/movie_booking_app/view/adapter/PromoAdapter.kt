@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter
 
+import com.example.movie_booking_app.databinding.ItemPromoBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,16 +16,16 @@ import com.example.movie_booking_app.data.model.entity.Promo
 class PromoAdapter : ListAdapter<Promo, PromoAdapter.PromoViewHolder>(PromoDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PromoViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_promo, parent, false)
-        return PromoViewHolder(view)
+        val binding = ItemPromoBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return PromoViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: PromoViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class PromoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val imgPromo: ImageView = view.findViewById(R.id.imgPromo)
+    class PromoViewHolder(private val binding: ItemPromoBinding) : RecyclerView.ViewHolder(binding.root) {
+        private val imgPromo: ImageView = binding.imgPromo
 
         fun bind(promo: Promo) {
             Glide.with(itemView.context)

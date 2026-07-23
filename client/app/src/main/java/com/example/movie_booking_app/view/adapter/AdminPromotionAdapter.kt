@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter
 
+import com.example.movie_booking_app.databinding.ItemAdminPromotionBinding
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
@@ -23,24 +24,23 @@ class AdminPromotionAdapter(
 ) : ListAdapter<AdminPromotion, AdminPromotionAdapter.AdminPromotionViewHolder>(AdminPromotionDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdminPromotionViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_admin_promotion, parent, false)
-        return AdminPromotionViewHolder(view)
+        val binding = ItemAdminPromotionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return AdminPromotionViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: AdminPromotionViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    inner class AdminPromotionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val tvPromoTitle: TextView = view.findViewById(R.id.tvPromoTitle)
-        private val tvPromoStatus: TextView = view.findViewById(R.id.tvPromoStatus)
-        private val tvPromoDetail: TextView = view.findViewById(R.id.tvPromoDetail)
-        private val tvCouponCode: TextView = view.findViewById(R.id.tvCouponCode)
-        private val tvDiscountValue: TextView = view.findViewById(R.id.tvDiscountValue)
-        private val tvPromoDateRange: TextView = view.findViewById(R.id.tvPromoDateRange)
-        private val btnEditPromo: android.widget.ImageButton = view.findViewById(R.id.btnEditPromo)
-        private val btnDeletePromo: android.widget.ImageButton = view.findViewById(R.id.btnDeletePromo)
+    inner class AdminPromotionViewHolder(private val binding: ItemAdminPromotionBinding) : RecyclerView.ViewHolder(binding.root) {
+        private val tvPromoTitle: TextView = binding.tvPromoTitle
+        private val tvPromoStatus: TextView = binding.tvPromoStatus
+        private val tvPromoDetail: TextView = binding.tvPromoDetail
+        private val tvCouponCode: TextView = binding.tvCouponCode
+        private val tvDiscountValue: TextView = binding.tvDiscountValue
+        private val tvPromoDateRange: TextView = binding.tvPromoDateRange
+        private val btnEditPromo: android.widget.ImageButton = binding.btnEditPromo
+        private val btnDeletePromo: android.widget.ImageButton = binding.btnDeletePromo
 
         fun bind(promotion: AdminPromotion) {
             btnEditPromo.setOnClickListener { onEditClick(promotion) }

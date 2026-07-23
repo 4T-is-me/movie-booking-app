@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.example.movie_booking_app.R
+import com.example.movie_booking_app.databinding.FragmentCinemaRoomsBinding
 import com.example.movie_booking_app.view.adapter.CinemaRoomsAdapter
 import com.example.movie_booking_app.viewmodel.CinemaRoomsViewModel
 import com.google.android.material.button.MaterialButton
@@ -42,6 +43,9 @@ class CinemaRoomsFragment : Fragment() {
     private val viewModel: CinemaRoomsViewModel by viewModels()
     private lateinit var adapter: CinemaRoomsAdapter
 
+    private var _binding: FragmentCinemaRoomsBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var rvRooms: RecyclerView
     private lateinit var shimmerContainer: ShimmerFrameLayout
@@ -65,28 +69,29 @@ class CinemaRoomsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_cinema_rooms, container, false)
+    ): View {
+        _binding = FragmentCinemaRoomsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Initialize Views
-        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout)
-        rvRooms = view.findViewById(R.id.rvRooms)
-        shimmerContainer = view.findViewById(R.id.shimmerContainer)
-        layoutEmptyState = view.findViewById(R.id.layoutEmptyState)
-        layoutErrorState = view.findViewById(R.id.layoutErrorState)
-        tvTotalRooms = view.findViewById(R.id.tvTotalRooms)
-        tvTotalCinemaSeats = view.findViewById(R.id.tvTotalCinemaSeats)
-        tvRegularSeats = view.findViewById(R.id.tvRegularSeats)
-        tvVipSeats = view.findViewById(R.id.tvVipSeats)
-        tvCoupleSeats = view.findViewById(R.id.tvCoupleSeats)
-        btnAddRoom = view.findViewById(R.id.btnAddRoom)
-        btnEmptyAddRoom = view.findViewById(R.id.btnEmptyAddRoom)
-        btnRetry = view.findViewById(R.id.btnRetry)
-        btnBack = view.findViewById(R.id.btnBack)
+        // Initialize Views from binding
+        swipeRefreshLayout = binding.swipeRefreshLayout
+        rvRooms = binding.rvRooms
+        shimmerContainer = binding.shimmerContainer
+        layoutEmptyState = binding.layoutEmptyState
+        layoutErrorState = binding.layoutErrorState
+        tvTotalRooms = binding.tvTotalRooms
+        tvTotalCinemaSeats = binding.tvTotalCinemaSeats
+        tvRegularSeats = binding.tvRegularSeats
+        tvVipSeats = binding.tvVipSeats
+        tvCoupleSeats = binding.tvCoupleSeats
+        btnAddRoom = binding.btnAddRoom
+        btnEmptyAddRoom = binding.btnEmptyAddRoom
+        btnRetry = binding.btnRetry
+        btnBack = binding.btnBack
 
         // Set up RecyclerView
         adapter = CinemaRoomsAdapter(
@@ -216,5 +221,10 @@ class CinemaRoomsFragment : Fragment() {
             layoutEmptyState.visibility = View.GONE
             swipeRefreshLayout.visibility = View.VISIBLE
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter.manager
 
+import com.example.movie_booking_app.databinding.ItemManagerSeatRowBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,8 +20,8 @@ class ManagerSeatRowAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RowViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_manager_seat_row, parent, false)
-        return RowViewHolder(view)
+        val binding = ItemManagerSeatRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return RowViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: RowViewHolder, position: Int) {
@@ -30,9 +31,9 @@ class ManagerSeatRowAdapter(
 
     override fun getItemCount(): Int = rows.size
 
-    class RowViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val tvRowName: TextView = itemView.findViewById(R.id.tvRowName)
-        private val rvSeats: RecyclerView = itemView.findViewById(R.id.rvSeats)
+    class RowViewHolder(private val binding: ItemManagerSeatRowBinding) : RecyclerView.ViewHolder(binding.root) {
+        private val tvRowName: TextView = binding.tvRowName
+        private val rvSeats: RecyclerView = binding.rvSeats
 
         fun bind(row: ManagerSeatRow) {
             tvRowName.text = row.row

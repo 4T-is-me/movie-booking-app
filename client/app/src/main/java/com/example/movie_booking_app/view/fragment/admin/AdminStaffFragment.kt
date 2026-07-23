@@ -109,22 +109,19 @@ class AdminStaffFragment : Fragment() {
     }
 
     private fun showDeleteConfirmationDialog(staff: Staff) {
+        val dialogBinding = com.example.movie_booking_app.databinding.DialogConfirmDeleteStaffBinding.inflate(layoutInflater)
         val dialog = android.app.Dialog(requireContext())
-        dialog.setContentView(R.layout.dialog_confirm_delete_staff)
+        dialog.setContentView(dialogBinding.root)
         dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
         dialog.setCancelable(true)
 
-        val tvDeleteMessage = dialog.findViewById<android.widget.TextView>(R.id.tvDeleteMessage)
-        val btnCancel = dialog.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnCancelDelete)
-        val btnConfirm = dialog.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnConfirmDelete)
+        dialogBinding.tvDeleteMessage.text = getString(R.string.admin_confirm_delete_staff_msg, currentRole, staff.fullName ?: "")
 
-        tvDeleteMessage.text = getString(R.string.admin_confirm_delete_staff_msg, currentRole, staff.fullName ?: "")
-
-        btnCancel.setOnClickListener {
+        dialogBinding.btnCancelDelete.setOnClickListener {
             dialog.dismiss()
         }
 
-        btnConfirm.setOnClickListener {
+        dialogBinding.btnConfirmDelete.setOnClickListener {
             dialog.dismiss()
             staff.id?.let { viewModel.deleteStaff(it) }
         }
@@ -133,43 +130,28 @@ class AdminStaffFragment : Fragment() {
     }
 
     private fun showStaffDetailDialog(staff: Staff) {
+        val dialogBinding = com.example.movie_booking_app.databinding.DialogDetailStaffBinding.inflate(layoutInflater)
         val dialog = android.app.Dialog(requireContext())
-        dialog.setContentView(R.layout.dialog_detail_staff)
+        dialog.setContentView(dialogBinding.root)
         dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
         dialog.setCancelable(true)
 
-        val tvDetailUsername = dialog.findViewById<android.widget.TextView>(R.id.tvDetailUsername)
-        val tvDetailFullName = dialog.findViewById<android.widget.TextView>(R.id.tvDetailFullName)
-        val tvDetailPosition = dialog.findViewById<android.widget.TextView>(R.id.tvDetailPosition)
-        val tvDetailEmail = dialog.findViewById<android.widget.TextView>(R.id.tvDetailEmail)
-        val tvDetailPhone = dialog.findViewById<android.widget.TextView>(R.id.tvDetailPhone)
-        val tvDetailDob = dialog.findViewById<android.widget.TextView>(R.id.tvDetailDob)
-        val tvDetailGender = dialog.findViewById<android.widget.TextView>(R.id.tvDetailGender)
-        val tvDetailIdentityCard = dialog.findViewById<android.widget.TextView>(R.id.tvDetailIdentityCard)
-        val tvDetailAddress = dialog.findViewById<android.widget.TextView>(R.id.tvDetailAddress)
-        val tvDetailSalary = dialog.findViewById<android.widget.TextView>(R.id.tvDetailSalary)
-        val tvDetailStartDate = dialog.findViewById<android.widget.TextView>(R.id.tvDetailStartDate)
-        val tvDetailKpi = dialog.findViewById<android.widget.TextView>(R.id.tvDetailKpi)
-        val tvDetailTicketSold = dialog.findViewById<android.widget.TextView>(R.id.tvDetailTicketSold)
-        val tvDetailRating = dialog.findViewById<android.widget.TextView>(R.id.tvDetailRating)
-        val btnClose = dialog.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnCloseDetail)
+        dialogBinding.tvDetailUsername.text = staff.username ?: getString(R.string.user_name_placeholder)
+        dialogBinding.tvDetailFullName.text = staff.fullName ?: getString(R.string.user_name_placeholder)
+        dialogBinding.tvDetailPosition.text = staff.position ?: getString(R.string.user_name_placeholder)
+        dialogBinding.tvDetailEmail.text = staff.email ?: getString(R.string.user_name_placeholder)
+        dialogBinding.tvDetailPhone.text = staff.phone ?: getString(R.string.user_name_placeholder)
+        dialogBinding.tvDetailDob.text = staff.dob?.take(10) ?: getString(R.string.user_name_placeholder)
+        dialogBinding.tvDetailGender.text = staff.gender ?: getString(R.string.user_name_placeholder)
+        dialogBinding.tvDetailIdentityCard.text = staff.identityCard ?: getString(R.string.user_name_placeholder)
+        dialogBinding.tvDetailAddress.text = staff.address ?: getString(R.string.user_name_placeholder)
+        dialogBinding.tvDetailSalary.text = staff.salary?.let { String.format(Locale.getDefault(), getString(R.string.admin_currency_format), it) } ?: getString(R.string.user_name_placeholder)
+        dialogBinding.tvDetailStartDate.text = staff.startDate?.take(10) ?: getString(R.string.user_name_placeholder)
+        dialogBinding.tvDetailKpi.text = staff.kpiPoints?.toString() ?: "0"
+        dialogBinding.tvDetailTicketSold.text = staff.ticketSold?.toString() ?: "0"
+        dialogBinding.tvDetailRating.text = staff.rating?.toString() ?: "0.0"
 
-        tvDetailUsername.text = staff.username ?: getString(R.string.user_name_placeholder)
-        tvDetailFullName.text = staff.fullName ?: getString(R.string.user_name_placeholder)
-        tvDetailPosition.text = staff.position ?: getString(R.string.user_name_placeholder)
-        tvDetailEmail.text = staff.email ?: getString(R.string.user_name_placeholder)
-        tvDetailPhone.text = staff.phone ?: getString(R.string.user_name_placeholder)
-        tvDetailDob.text = staff.dob?.take(10) ?: getString(R.string.user_name_placeholder)
-        tvDetailGender.text = staff.gender ?: getString(R.string.user_name_placeholder)
-        tvDetailIdentityCard.text = staff.identityCard ?: getString(R.string.user_name_placeholder)
-        tvDetailAddress.text = staff.address ?: getString(R.string.user_name_placeholder)
-        tvDetailSalary.text = staff.salary?.let { String.format(Locale.getDefault(), getString(R.string.admin_currency_format), it) } ?: getString(R.string.user_name_placeholder)
-        tvDetailStartDate.text = staff.startDate?.take(10) ?: getString(R.string.user_name_placeholder)
-        tvDetailKpi.text = staff.kpiPoints?.toString() ?: "0"
-        tvDetailTicketSold.text = staff.ticketSold?.toString() ?: "0"
-        tvDetailRating.text = staff.rating?.toString() ?: "0.0"
-
-        btnClose.setOnClickListener {
+        dialogBinding.btnCloseDetail.setOnClickListener {
             dialog.dismiss()
         }
 

@@ -375,4 +375,16 @@
     <!-- Ticket Scanner Custom Colors -->
     <color name="scanner_dim_overlay">#B30F172A</color>
     <color name="text_slate_200">#E2E8F0</color>
+
+    <!-- Dark Theme Backgrounds -->
+    <color name="bg_shift_card">#1F1F1F</color>
+    <color name="bg_shift_card_stroke">#2A2A2A</color>
+    <color name="bg_icon_sun_fill">#2B2213</color>
+    <color name="bg_icon_night_fill">#261C2C</color>
+
+    <!-- Accent Colors & Tints -->
+    <color name="divider_yellow_alpha">#40D4AF37</color>
+    <color name="tint_sun_yellow">#E5A93C</color>
+    <color name="tint_night_purple">#B388FF</color>
+    <color name="badge_day_off_stroke">#80E5A93C</color>
 </resources>

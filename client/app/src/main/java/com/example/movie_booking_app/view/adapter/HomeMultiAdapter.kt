@@ -87,7 +87,6 @@ class HomeMultiAdapter(
         }
     }
 
-
     class NowPlayingViewHolder(
         private val binding: LayoutHomeNowPlayingBinding,
         onSeeAll: (String) -> Unit,
@@ -100,20 +99,13 @@ class HomeMultiAdapter(
             binding.vpNowPlaying.adapter = adapter
             binding.tvSeeAllNowPlaying.setOnClickListener { onSeeAll("Now Playing") }
             
-            // Set offscreen page limit to render adjacent pages
             binding.vpNowPlaying.offscreenPageLimit = 3
             
-            // Set page transformer for peeking scale and alpha effect
             binding.vpNowPlaying.setPageTransformer { page, position ->
                 val r = 1 - Math.abs(position)
-                // Scale effect
                 page.scaleY = 0.85f + r * 0.15f
                 page.scaleX = 0.85f + r * 0.15f
-                
-                // Alpha effect
                 page.alpha = 0.5f + r * 0.5f
-                
-                // Adjust horizontal spacing (pull adjacent pages closer)
                 val density = page.context.resources.displayMetrics.density
                 page.translationX = position * -32 * density
             }

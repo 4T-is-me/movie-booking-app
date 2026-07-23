@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter
 
+import com.example.movie_booking_app.databinding.ItemMovieNewsBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,18 +17,18 @@ import com.google.android.material.imageview.ShapeableImageView
 class MovieNewsAdapter : ListAdapter<MovieNews, MovieNewsAdapter.NewsViewHolder>(NewsDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_movie_news, parent, false)
-        return NewsViewHolder(view)
+        val binding = ItemMovieNewsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return NewsViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class NewsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val imgPoster: ShapeableImageView = view.findViewById(R.id.imgNews)
-        private val tvTitle: TextView = view.findViewById(R.id.tvNewsTitle)
-        private val tvDate: TextView = view.findViewById(R.id.tvNewsDate)
+    class NewsViewHolder(private val binding: ItemMovieNewsBinding) : RecyclerView.ViewHolder(binding.root) {
+        private val imgPoster: ShapeableImageView = binding.imgNews
+        private val tvTitle: TextView = binding.tvNewsTitle
+        private val tvDate: TextView = binding.tvNewsDate
 
         fun bind(news: MovieNews) {
             tvTitle.text = news.title

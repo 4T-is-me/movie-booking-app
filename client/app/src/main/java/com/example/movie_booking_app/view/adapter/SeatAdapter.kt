@@ -1,7 +1,6 @@
 package com.example.movie_booking_app.view.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.ListAdapter
@@ -11,6 +10,8 @@ import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Seat
 import com.example.movie_booking_app.data.model.entity.SeatStatus
 import com.example.movie_booking_app.data.model.entity.SeatType
+import com.example.movie_booking_app.databinding.ItemSeatBinding
+import com.example.movie_booking_app.databinding.ItemSeatCoupleBinding
 
 class SeatAdapter(
     private val onSeatClick: (Seat) -> Unit
@@ -25,11 +26,11 @@ class SeatAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == VIEW_TYPE_COUPLE) {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_seat_couple, parent, false)
-            CoupleSeatViewHolder(view)
+            val binding = ItemSeatCoupleBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            CoupleSeatViewHolder(binding)
         } else {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_seat, parent, false)
-            NormalSeatViewHolder(view)
+            val binding = ItemSeatBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            NormalSeatViewHolder(binding)
         }
     }
 
@@ -39,8 +40,8 @@ class SeatAdapter(
         else if (holder is NormalSeatViewHolder) holder.bind(seat)
     }
 
-    inner class NormalSeatViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val tvSeat: TextView = view.findViewById(R.id.tvSeat)
+    inner class NormalSeatViewHolder(private val binding: ItemSeatBinding) : RecyclerView.ViewHolder(binding.root) {
+        private val tvSeat: TextView = binding.tvSeat
         fun bind(seat: Seat) {
             tvSeat.text = seat.label
             tvSeat.setBackgroundResource(seat.getBackgroundResource())
@@ -51,9 +52,9 @@ class SeatAdapter(
         }
     }
 
-    inner class CoupleSeatViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val tvSeatLeft: TextView = view.findViewById(R.id.tvSeatLeft)
-        private val tvSeatRight: TextView = view.findViewById(R.id.tvSeatRight)
+    inner class CoupleSeatViewHolder(private val binding: ItemSeatCoupleBinding) : RecyclerView.ViewHolder(binding.root) {
+        private val tvSeatLeft: TextView = binding.tvSeatLeft
+        private val tvSeatRight: TextView = binding.tvSeatRight
         
         fun bind(seat: Seat) {
             val background = seat.getBackgroundResource()

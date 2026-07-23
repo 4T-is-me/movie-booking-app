@@ -419,10 +419,8 @@ const generateShift = async (accountId, dateRange, config = {}, shiftsFromFE = [
     };
 };
 const getWeekRange = (inputDate) => {
-    // Ensure we have a valid Date object
     let date = new Date(inputDate);
 
-    // Defensive check if input is invalid or undefined
     if (!inputDate || isNaN(date.getTime())) {
         date = new Date();
     }
@@ -430,15 +428,16 @@ const getWeekRange = (inputDate) => {
     // Clone date object to prevent side-effects
     const utcDate = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
 
-    // UTC Day: 0 (Sun), 1 (Mon), ..., 6 (Sat)
     const dayOfWeek = utcDate.getUTCDay();
-    const distanceToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
 
     const monday = new Date(utcDate);
-    monday.setUTCDate(utcDate.getUTCDate() - distanceToMonday);
+    monday.setUTCDate(utcDate.getUTCDate() + diffToMonday);
+    monday.setUTCHours(0, 0, 0, 0); // 00:00:00 UTC
 
     const sunday = new Date(monday);
     sunday.setUTCDate(monday.getUTCDate() + 6);
+    sunday.setUTCHours(23, 59, 59, 999); // 23:59:59 UTC
 
     return { monday, sunday };
 };
@@ -451,12 +450,12 @@ const formatDateString = (dateInput) => {
 
 
 const getStaffDetailService = async (accountId, shiftId) => {
-    //check manager
+    // 1. Check manager permission
     const manager = await checkManager(accountId);
     const targetShift = await StaffShift.findById(shiftId)
         .populate({
             path: 'staffId',
-            populate: { path: 'accountId', select: 'status' } // get status from account
+            populate: { path: 'accountId', select: 'status' }
         })
         .lean();
 
@@ -464,7 +463,6 @@ const getStaffDetailService = async (accountId, shiftId) => {
         throw new ApiError(StatusCodes.NOT_FOUND, "Shift information not found.");
     }
 
-    // Check xem ca này có thuộc Cinema của Manager không
     checkCinemaPermission(manager.cinemaId, targetShift.cinemaId);
 
     const staff = targetShift.staffId;
@@ -472,6 +470,7 @@ const getStaffDetailService = async (accountId, shiftId) => {
         throw new ApiError(StatusCodes.NOT_FOUND, "There is no staff member assigned to this shift yet.");
     }
 
+    // 2. Lấy danh sách ca làm trong tuần
     const shiftDate = new Date(targetShift.workDate);
     const { monday, sunday } = getWeekRange(shiftDate);
 
@@ -480,42 +479,50 @@ const getStaffDetailService = async (accountId, shiftId) => {
         workDate: { $gte: monday, $lte: sunday }
     }).lean();
 
+    // Sắp xếp ca làm theo thứ tự thời gian chuẩn
+    const shiftOrder = { Morning: 1, Afternoon: 2, Evening: 3, Night: 4 };
+    shiftsInWeek.sort((a, b) => {
+        const timeA = new Date(a.workDate).getTime();
+        const timeB = new Date(b.workDate).getTime();
+        if (timeA !== timeB) return timeA - timeB;
+        return (shiftOrder[a.shift] || 99) - (shiftOrder[b.shift] || 99);
+    });
 
-    // Map data 7 day
+    // Helper format ngày ra dạng: "14 Jul"
+    const formatDisplayDate = (date) => {
+        const d = new Date(date);
+        const day = d.getUTCDate();
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const month = monthNames[d.getUTCMonth()];
+        return `${day} ${month}`;
+    };
+
+    // 3. Map dữ liệu lịch 7 ngày
     const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     const weekSchedule = daysOfWeek.map((dayName, index) => {
         const currentDate = new Date(monday);
         currentDate.setUTCDate(monday.getUTCDate() + index);
-        const dateStr = formatDateString(currentDate);
-        const shiftOrder = {
-            Morning: 1,
-            Afternoon: 2,
-            Evening: 3,
-            Night: 4
-        };
 
-        shiftsInWeek.sort((a, b) => {
-            if (a.workDate.getTime() !== b.workDate.getTime()) {
-                return a.workDate - b.workDate;
-            }
-
-            return shiftOrder[a.shift] - shiftOrder[b.shift];
-        });
-
+        // Chuẩn hóa YYYY-MM-DD để so sánh chính xác ngày
+        const isoDateStr = currentDate.toISOString().split('T')[0];
 
         const matchedShifts = shiftsInWeek.filter(
-            s => formatDateString(new Date(s.workDate)) === dateStr
+            s => new Date(s.workDate).toISOString().split('T')[0] === isoDateStr
         );
+
+        // Đảm bảo các ca trùng trong ngày luôn được sắp xếp lại từ Sáng -> Đêm trước khi join
+        matchedShifts.sort((a, b) => (shiftOrder[a.shift] || 99) - (shiftOrder[b.shift] || 99));
+
         const shiftNames = matchedShifts.map(s => s.shift);
 
         return {
             day: dayName,
-            date: dateStr,
+            date: formatDisplayDate(currentDate), // Trả về dạng: "14 Jul"
             shift: shiftNames.length > 0 ? shiftNames.join(" - ") : null
         };
     });
 
-    //cal Attendance Rate
+    // 4. Tính Attendance Rate
     const [completedCount, absentCount] = await Promise.all([
         StaffShift.countDocuments({ staffId: staff._id, status: 'Completed' }),
         StaffShift.countDocuments({ staffId: staff._id, status: 'Absent' })
@@ -524,16 +531,14 @@ const getStaffDetailService = async (accountId, shiftId) => {
     const totalEvaluated = completedCount + absentCount;
     const attendanceRate = totalEvaluated > 0
         ? Number(((completedCount / totalEvaluated) * 100).toFixed(1))
-        : 100.0; // Defaults to 100% if no shifts have ended yet
+        : 100.0;
 
     return {
-        // Information on the current shift
         shiftId: targetShift._id,
-        workDate: formatDateString(new Date(targetShift.workDate)),
+        workDate: formatDisplayDate(targetShift.workDate),
         shift: targetShift.shift,
         shiftStatus: targetShift.status,
 
-        // Information about the employee working that shift
         staffInfo: {
             staffId: staff._id,
             fullName: staff.fullName,
@@ -546,11 +551,9 @@ const getStaffDetailService = async (accountId, shiftId) => {
             attendanceRate
         },
 
-        //That employee's weekly schedule
         weekSchedule
     };
-}
-const getLeaveRequestForManager = async (accountId, { status }) => {
+};const getLeaveRequestForManager = async (accountId, { status }) => {
     const manager = await checkManager(accountId);
     const cinemaId = manager.cinemaId
 
