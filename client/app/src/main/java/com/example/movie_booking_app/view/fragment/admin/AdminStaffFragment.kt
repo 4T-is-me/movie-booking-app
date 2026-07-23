@@ -115,6 +115,7 @@ class AdminStaffFragment : Fragment() {
         dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
         dialog.setCancelable(true)
 
+        dialogBinding.tvDeleteTitle.text = getString(R.string.auto_str_delete_account)
         dialogBinding.tvDeleteMessage.text = getString(R.string.admin_confirm_delete_staff_msg, currentRole, staff.fullName ?: "")
 
         dialogBinding.btnCancelDelete.setOnClickListener {

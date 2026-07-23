@@ -16,7 +16,8 @@ import com.example.movie_booking_app.data.model.entity.Movie
 
 class AdminMovieAdapter(
     private val onEditClick: (Movie) -> Unit,
-    private val onDeleteClick: (Movie) -> Unit
+    private val onDeleteClick: (Movie) -> Unit,
+    private val onRestoreClick: (Movie) -> Unit
 ) : ListAdapter<Movie, AdminMovieAdapter.AdminMovieViewHolder>(MovieDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdminMovieViewHolder {
@@ -34,6 +35,7 @@ class AdminMovieAdapter(
         private val tvDuration: TextView = binding.tvMovieDuration
         private val btnEdit: ImageButton = binding.btnEditMovie
         private val btnDelete: ImageButton = binding.btnDeleteMovie
+        private val btnRestore: ImageButton = binding.btnRestoreMovie
 
         fun bind(movie: Movie) {
             tvTitle.text = movie.movieName
@@ -45,12 +47,14 @@ class AdminMovieAdapter(
                 .error(android.R.drawable.ic_menu_report_image)
                 .into(ivPoster)
 
-            val isInactive = movie.isDeleted == true
-            btnDelete.visibility = if (isInactive) View.GONE else View.VISIBLE
-            btnDelete.isEnabled = !isInactive
+            val isDeleted = movie.isDeleted == true
+            btnDelete.visibility = if (isDeleted) View.GONE else View.VISIBLE
+            btnRestore.visibility = if (isDeleted) View.VISIBLE else View.GONE
+            btnEdit.visibility = if (isDeleted) View.GONE else View.VISIBLE
 
             btnEdit.setOnClickListener { onEditClick(movie) }
             btnDelete.setOnClickListener { onDeleteClick(movie) }
+            btnRestore.setOnClickListener { onRestoreClick(movie) }
         }
     }
 
