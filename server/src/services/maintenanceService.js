@@ -252,7 +252,6 @@ export const MaintenanceService = {
         });
         await scoreHistory.save();
       }
-      // Giải phóng ghế
       await ScheduleSeat.deleteMany({
         showtimeId: booking.showtimeId,
         seatId: { $in: booking.seatIds }
@@ -262,14 +261,12 @@ export const MaintenanceService = {
       throw new Error("Invalid action");
     }
     
-    // Xóa/ẩn thông báo
     await Notification.deleteOne({ "metadata.bookingId": booking._id });
     return booking;
   },
 
-  // Module 4: Khôi phục Lịch chiếu
   async previewRestoredSchedule(roomId) {
-    const startTimePatch = new Date(Date.now() + 2 * 60 * 60 * 1000); // Hiện tại + 2 tiếng
+    const startTimePatch = new Date(Date.now() + 2 * 60 * 60 * 1000); 
     const showtimes = await Showtime.find({
       roomId: roomId,
       status: { $in: ['suspended', 'cancelled'] },
