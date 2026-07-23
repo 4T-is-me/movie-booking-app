@@ -182,7 +182,7 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
     console.log(`[DEBUG] New totalSpent: ${member.totalSpent}`);
     console.log(`[DEBUG] Previous rewardPoints: ${prevRewardPoints}`);
     console.log(`[DEBUG] New rewardPoints: ${member.rewardPoints}`);
-    console.log(`[DEBUG] New rewardPoints: ${useScore}`)
+    console.log(`[DEBUG] New useScore: ${useScore}`)
     console.log(`[DEBUG] New membershipRank: ${member.membershipRank}`);
     console.log(`[DEBUG] finalAmount to charge: ${finalAmount}`);
 
