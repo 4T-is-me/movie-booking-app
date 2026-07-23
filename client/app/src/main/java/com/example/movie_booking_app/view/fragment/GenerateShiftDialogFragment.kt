@@ -25,7 +25,6 @@ import java.time.temporal.TemporalAdjusters
 class GenerateShiftDialogFragment(
     private val staffList: List<ManagerStaffItem>,
     private val cinemaId: String,
-    // Sửa ở đây: Pass thêm 2 callback onSuccess và onError để Dialog tự xử lý đóng/mở & báo lỗi
     private val onSaveClick: (request: GenerateShiftRequest, onSuccess: () -> Unit, onError: (String) -> Unit) -> Unit
 ) : DialogFragment() {
 
@@ -166,15 +165,12 @@ class GenerateShiftDialogFragment(
 
                 binding.btnConfirmGenerate.isEnabled = false
 
-                // Gọi callback và truyền xử lý cho Fragment mẹ
                 onSaveClick(
                     requestPayload,
                     {
-                        // Gọi khi API thành công -> Đóng dialog
                         dismiss()
                     },
                     { errorMsg ->
-                        // Gọi khi API lỗi (ví dụ dính 400 trùng lịch) -> Hiện lỗi trên Dialog
                         handleApiError(errorMsg)
                     }
                 )
