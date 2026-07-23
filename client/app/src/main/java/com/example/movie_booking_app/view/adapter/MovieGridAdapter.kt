@@ -30,14 +30,23 @@ class MovieGridAdapter(
         private val onClick: (Movie) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
+        val tvTitle = binding.tvMovieNameVn
+        val tvTitleEn = binding.tvMovieNameEn
+        val tvRow1 = binding.tvTextRow1
+        val tvRow2 = binding.tvTextRow2
+        val tvRow3 = binding.tvTextRow3
+        val imgPoster = binding.imgPoster
+        val btnViewSchedule = binding.btnViewSchedule
+        val root = binding.root
+
         fun bind(movie: Movie, isNowPlaying: Boolean) {
-            tvTitle.text = movie.movieName
-            tvTitleEn.text = movie.movieName // develop model only has movieName
-            
-            tvRow1.text = (movie.rating?.toString() ?: "N/A")
-            val durationStr = itemView.context.getString(com.example.movie_booking_app.R.string.duration_mins, (movie.duration ?: 0).toString())
-            tvRow2.text = "$durationStr • " + (movie.censorship ?: "2D")
-            tvRow3.text = com.example.movie_booking_app.utils.DateUtils.formatMovieDate(movie.releaseDate)
+                tvTitle.text = movie.movieName
+                tvTitleEn.text = movie.movieName // develop model only has movieName
+                
+                tvRow1.text = (movie.rating?.toString() ?: "N/A")
+                val durationStr = itemView.context.getString(com.example.movie_booking_app.R.string.duration_mins, (movie.duration ?: 0).toString())
+                tvRow2.text = "$durationStr • " + (movie.censorship ?: "2D")
+                tvRow3.text = com.example.movie_booking_app.utils.DateUtils.formatMovieDate(movie.releaseDate)
 
                 Glide.with(itemView.context)
                     .load(movie.poster)
@@ -47,7 +56,6 @@ class MovieGridAdapter(
 
                 btnViewSchedule.setOnClickListener { onClick(movie) }
                 root.setOnClickListener { onClick(movie) }
-            }
         }
     }
 

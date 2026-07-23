@@ -16,11 +16,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
+import com.example.movie_booking_app.R
+
 class ForgotPasswordActivity : EnglishBaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityForgotPasswordBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_forgot_password)
 
         val edtEmail = findViewById<EditText>(R.id.edtEmailOtp)
         val btnSend = findViewById<Button>(R.id.btnSendOtp)
