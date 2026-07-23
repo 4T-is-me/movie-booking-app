@@ -3,6 +3,7 @@ package com.example.movie_booking_app.view.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -120,39 +121,33 @@ class HomeMultiAdapter(
 
         fun bind(movies: List<Movie>, isLoading: Boolean) { 
             with(binding) {
-                if (isLoading) {
-                    shimmerNowPlaying.visibility = View.VISIBLE
-                    shimmerNowPlaying.startShimmer()
-                    layoutContentNowPlaying.visibility = View.GONE
-                } else {
-                    shimmerNowPlaying.stopShimmer()
-                    shimmerNowPlaying.visibility = View.GONE
-                    layoutContentNowPlaying.visibility = View.VISIBLE
-                    if (movies.isNotEmpty()) {
-                        val isFirstSubmit = adapter.currentList.isEmpty()
-                        adapter.submitList(movies) {
-                            if (isFirstSubmit) {
-                                val size = movies.size
-                                val middle = size * 500
-                                vpNowPlaying.setCurrentItem(middle, false)
-                            }
+                shimmerNowPlaying.isVisible = isLoading
+                if (isLoading) shimmerNowPlaying.startShimmer() else shimmerNowPlaying.stopShimmer()
+                
+                layoutContentNowPlaying.isVisible = !isLoading
+                if (!isLoading && movies.isNotEmpty()) {
+                    val isFirstSubmit = adapter.currentList.isEmpty()
+                    adapter.submitList(movies) {
+                        if (isFirstSubmit) {
+                            val size = movies.size
+                            vpNowPlaying.setCurrentItem(size * 500, false)
                         }
-                        if (!isCallbackAdded) {
-                            isCallbackAdded = true
-                            vpNowPlaying.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-                                override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                                    val size = movies.size
-                                    if (size > 1) {
-                                        layoutIndicatorNowPlaying.post {
-                                            val totalScrollableWidth = layoutIndicatorNowPlaying.width - viewIndicatorNowPlayingThumb.width
-                                            val progress = ((position % size) + positionOffset) / (size - 1)
-                                            val safeProgress = progress.coerceIn(0f, 1f)
-                                            viewIndicatorNowPlayingThumb.translationX = safeProgress * totalScrollableWidth
-                                        }
+                    }
+                    if (!isCallbackAdded) {
+                        isCallbackAdded = true
+                        vpNowPlaying.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                                val size = movies.size
+                                if (size > 1) {
+                                    layoutIndicatorNowPlaying.post {
+                                        val totalScrollableWidth = layoutIndicatorNowPlaying.width - viewIndicatorNowPlayingThumb.width
+                                        val progress = ((position % size) + positionOffset) / (size - 1)
+                                        val safeProgress = progress.coerceIn(0f, 1f)
+                                        viewIndicatorNowPlayingThumb.translationX = safeProgress * totalScrollableWidth
                                     }
                                 }
-                            })
-                        }
+                            }
+                        })
                     }
                 }
             }
@@ -171,16 +166,13 @@ class HomeMultiAdapter(
         }
         fun bind(movies: List<Movie>, isLoading: Boolean) { 
             with(binding) {
-                if (isLoading) {
-                    shimmerComingSoon.visibility = View.VISIBLE
-                    shimmerComingSoon.startShimmer()
-                    rvComingSoon.visibility = View.GONE
-                } else {
-                    shimmerComingSoon.stopShimmer()
-                    shimmerComingSoon.visibility = View.GONE
-                    rvComingSoon.visibility = View.VISIBLE
-                    if (movies.isNotEmpty()) adapter.submitList(movies) 
-                }
+                shimmerComingSoon.isVisible = isLoading
+                if (isLoading) shimmerComingSoon.startShimmer() else shimmerComingSoon.stopShimmer()
+                
+                rvComingSoon.isVisible = !isLoading && movies.isNotEmpty()
+                root.isVisible = isLoading || movies.isNotEmpty()
+                
+                if (!isLoading && movies.isNotEmpty()) adapter.submitList(movies)
             }
         }
     }
@@ -196,16 +188,11 @@ class HomeMultiAdapter(
         }
         fun bind(promos: List<Promo>, isLoading: Boolean) { 
             with(binding) {
-                if (isLoading) {
-                    shimmerPromo.visibility = View.VISIBLE
-                    shimmerPromo.startShimmer()
-                    vpPromo.visibility = View.GONE
-                } else {
-                    shimmerPromo.stopShimmer()
-                    shimmerPromo.visibility = View.GONE
-                    vpPromo.visibility = View.VISIBLE
-                    if (promos.isNotEmpty()) adapter.submitList(promos) 
-                }
+                shimmerPromo.isVisible = isLoading
+                if (isLoading) shimmerPromo.startShimmer() else shimmerPromo.stopShimmer()
+                
+                vpPromo.isVisible = !isLoading && promos.isNotEmpty()
+                if (!isLoading && promos.isNotEmpty()) adapter.submitList(promos)
             }
         }
     }
