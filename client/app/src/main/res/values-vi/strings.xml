@@ -157,4 +157,52 @@
     <string name="admin_identity_card">Số CCCD/CMND</string>
     <string name="admin_address">Địa chỉ</string>
     <string name="admin_actions">Hành động</string>
+    <string name="auto_str_select_your_preferred_language">Chọn ngôn ngữ</string>
+    <string name="auto_str_change_password_1">Đổi mật khẩu</string>
+    <string name="auto_str_update_your_password_securely">Cập nhật mật khẩu bảo mật</string>
+    <string name="auto_str_purchase_history">Lịch sử giao dịch</string>
+    <string name="auto_str_view_your_booked_tickets_and_p">Xem các vé đã đặt</string>
+    <string name="auto_str_logout">Đăng xuất</string>
+    <string name="auto_str_sign_out_of_your_account">Đăng xuất khỏi tài khoản</string>
+    <!-- Logout Dialog Strings -->
+    <string name="dialog_logout_title">Đăng xuất</string>
+    <string name="dialog_logout_message">Bạn có chắc chắn muốn đăng xuất khỏi hệ thống không?</string>
+    <string name="dialog_logout_cancel">Hủy</string>
+    <string name="dialog_logout_confirm">Đăng xuất</string>
+    <!-- Profile & Ticket Strings -->
+    <string name="auto_str_reward_points_1">Điểm thưởng</string>
+    <string name="auto_str_reward_points_2">Điểm thưởng</string>
+    <string name="auto_str_check_and_redeem_your_loyalty">Kiểm tra và đổi điểm thưởng</string>
+    <string name="auto_str_total_spent">Tổng chi tiêu</string>
+    <string name="auto_str_change_language">Đổi ngôn ngữ</string>
+    <string name="auto_str_my_ticket">Vé của tôi</string>
+    <string name="auto_str_view_ticket">Xem vé</string>
+    <string name="auto_str_view_qr">Xem QR</string>
+    <string name="login">Đăng nhập</string>
+    <string name="remember_me">Ghi nhớ đăng nhập</string>
+
+    <string name="auto_str_showtime_info">THÔNG TIN SUẤT CHIẾU</string>
+    <string name="auto_str_cinema">Rạp</string>
+    <string name="auto_str_room">Phòng</string>
+    <string name="auto_str_date">Ngày</string>
+    <string name="auto_str_time">Giờ</string>
+    <string name="auto_str_seats">Ghế</string>
+    <string name="seat_type_label">Loại ghế</string>
+    <string name="booking_detail_selected_combo">COMBO ĐÃ CHỌN</string>
+    <string name="booking_detail_combo_none">Không có</string>
+    <string name="booking_detail_combo_total">Tổng Combo</string>
+    <string name="auto_str_payment_details">CHI TIẾT THANH TOÁN</string>
+    <string name="auto_str_tickets_subtotal">Tiền vé</string>
+    <string name="auto_str_combos_subtotal">Tiền combo</string>
+    <string name="auto_str_discount_promo50">Giảm giá (PROMO50)</string>
+    <string name="auto_str_reward_points_earned">Điểm thưởng nhận được</string>
+    <string name="auto_str_payment_method">Phương thức thanh toán</string>
+    <string name="auto_str_total_paid">Tổng thanh toán</string>
+    <string name="auto_str_booking_qr_code">Mã QR đặt vé</string>
+    <string name="auto_str_show_this_code_to_the_cinema_s">Đưa mã này cho nhân viên rạp</string>
+    <string name="auto_str_close_1">Đóng</string>
+    <string name="booking_id_format">Mã đặt vé: %1$s</string>
+    <string name="duration_mins">%1$s phút</string>
+    <string name="duration_format_hm">%1$d giờ %2$d phút</string>
+    <string name="duration_format_h">%1$d giờ</string>
 </resources>

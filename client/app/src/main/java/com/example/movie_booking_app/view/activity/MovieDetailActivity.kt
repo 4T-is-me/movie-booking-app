@@ -284,13 +284,13 @@ class MovieDetailActivity : AppCompatActivity() {
     }
 
     private fun formatDuration(minutes: Int?): String {
-        if (minutes == null || minutes <= 0) return "0m"
+        if (minutes == null || minutes <= 0) return getString(com.example.movie_booking_app.R.string.duration_format_m, 0)
         val h = minutes / 60
         val m = minutes % 60
         return when {
-            h > 0 && m > 0 -> "${h}h${m}m"
-            h > 0 -> "${h}h"
-            else -> "${m}m"
+            h > 0 && m > 0 -> getString(com.example.movie_booking_app.R.string.duration_format_hm, h, m)
+            h > 0 -> getString(com.example.movie_booking_app.R.string.duration_format_h, h)
+            else -> getString(com.example.movie_booking_app.R.string.duration_format_m, m)
         }
     }
 

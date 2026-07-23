@@ -42,20 +42,26 @@ const runShowtimeReminder = async () => {
             // Check if the showtime is within [now - 5m, now + 30m]
             if (startTime >= fiveMinutesAgo && startTime <= thirtyMinutesFromNow) {
                 try {
-                    const account = await Account.findById(booking.memberId.accountId);
-                    if (account && account.fcmToken) {
-                        const movieName = booking.showtimeId.movieId?.movieName || 'Movie';
-                        const roomName = booking.showtimeId.roomId?.roomName || 'Theater';
-                        const showTimeStr = getShowtimeTimeRange(booking.showtimeId);
+                    const account = await Account.findById(booking.memberId.accountId).select('username fcmToken fcmTokens');
+                    if (account) {
+                        const tokens = account.fcmTokens && account.fcmTokens.length > 0 
+                            ? account.fcmTokens 
+                            : (account.fcmToken ? [account.fcmToken] : [])
+                        
+                        if (tokens.length > 0) {
+                            const movieName = booking.showtimeId.movieId?.movieName || 'Movie';
+                            const roomName = booking.showtimeId.roomId?.roomName || 'Theater';
+                            const showTimeStr = getShowtimeTimeRange(booking.showtimeId);
 
-                        const title = 'Upcoming Showtime Reminder!';
-                        const body = `Your movie "${movieName}" is starting soon at ${showTimeStr} in Room ${roomName}. Please prepare to join!`;
+                            const title = 'Upcoming Showtime Reminder!';
+                            const body = `Your movie "${movieName}" is starting soon at ${showTimeStr} in Room ${roomName}. Please prepare to join!`;
 
-                        await NotificationService.sendToDevice(account.fcmToken, title, body, {
-                            type: 'booking',
-                            referenceId: booking._id.toString()
-                        });
-                        console.log(`[Reminder] Sent showtime reminder to user ${account.username} for booking ${booking.bookingCode}`);
+                            await NotificationService.sendToDevice(tokens, title, body, {
+                                type: 'booking',
+                                referenceId: booking._id.toString()
+                            });
+                            console.log(`[Reminder] Sent showtime reminder to user ${account.username} for booking ${booking.bookingCode}`);
+                        }
                     }
                 } catch (err) {
                     console.error(`[Reminder] Failed to send reminder for booking ${booking.bookingCode}:`, err.message);

@@ -13,40 +13,60 @@ import { Notification } from '../models/notificationModel.js'
  * @param {string} body - Notification body text.
  * @param {Object} [data] - Optional metadata payload (e.g., { type: 'booking', referenceId: '...' }).
  */
-const sendToDevice = async (token, title, body, data = {}) => {
+const sendToDevice = async (tokens, title, body, data = {}) => {
     if (!messaging) {
         console.warn('Firebase Admin SDK is not initialized. Skipping notification.')
         return
     }
-    if (!token) return
+    if (!tokens) return
 
-    try {
-        // Ensure all values in the data payload are strings to prevent Firebase validation errors
-        const stringData = {}
-        for (const [key, val] of Object.entries(data)) {
-            if (val !== undefined && val !== null) {
-                stringData[key] = String(val)
+    const tokenList = Array.isArray(tokens) ? tokens : [tokens]
+    const validTokens = tokenList.filter(t => t && typeof t === 'string' && t.trim() !== '')
+    if (validTokens.length === 0) return
+
+    for (const token of validTokens) {
+        try {
+            // Ensure all values in the data payload are strings to prevent Firebase validation errors
+            const stringData = {}
+            for (const [key, val] of Object.entries(data)) {
+                if (val !== undefined && val !== null) {
+                    stringData[key] = String(val)
+                }
+            }
+
+            const message = {
+                token: token,
+                notification: {
+                    title: title,
+                    body: body
+                },
+                data: {
+                    title: String(title),
+                    body: String(body),
+                    ...stringData
+                }
+            }
+            const response = await messaging.send(message)
+            console.log(`Successfully sent message to device: ${response}`)
+        } catch (error) {
+            console.error(`Error sending message to device (${token.substring(0, 10)}...): ${error.message}`)
+            // Clean up invalid or unregistered tokens from the database to keep it clean
+            if (
+                error.code === 'messaging/registration-token-not-registered' ||
+                error.code === 'messaging/invalid-registration' ||
+                error.message.includes('not registered') ||
+                error.message.includes('invalid-registration')
+            ) {
+                console.log(`Removing unregistered/invalid token from database: ${token.substring(0, 10)}...`)
+                await Account.updateMany(
+                    { $or: [{ fcmToken: token }, { fcmTokens: token }] },
+                    { 
+                        $set: { fcmToken: null },
+                        $pull: { fcmTokens: token }
+                    }
+                )
             }
         }
-
-        // BỎ KEY notification, ĐỂ CHỈ GỬI DATA PAYLOAD
-        // Điều này ép Android Service luôn chui vào onMessageReceived() để lưu Local
-        const message = {
-            token: token,
-            notification: {
-                title: title,
-                body: body
-            },
-            data: {
-                title: String(title),
-                body: String(body),
-                ...stringData
-            }
-        }
-        const response = await messaging.send(message)
-        console.log(`Successfully sent message to device: ${response}`)
-    } catch (error) {
-        console.error(`Error sending message to device: ${error.message}`)
     }
 }
 
@@ -116,8 +136,12 @@ const subscribeToPromotions = async (token) => {
  */
 const sendBookingSuccessNotification = async (accountId, booking) => {
     try {
-        const account = await Account.findById(accountId).select('fcmToken')
-        if (!account || !account.fcmToken) {
+        const account = await Account.findById(accountId).select('fcmToken fcmTokens')
+        const tokens = account?.fcmTokens && account.fcmTokens.length > 0 
+            ? account.fcmTokens 
+            : (account?.fcmToken ? [account.fcmToken] : [])
+
+        if (tokens.length === 0) {
             console.log(`No FCM token found for account ${accountId}. Skipping booking notification.`)
             return
         }
@@ -135,7 +159,7 @@ const sendBookingSuccessNotification = async (accountId, booking) => {
         const title = 'Booking successful!'
         const body = `Congratulations! You have successfully booked tickets for the movie "${movieName}". Room: ${roomName}, Seats: ${seats}. Enjoy your movie!`
 
-        await sendToDevice(account.fcmToken, title, body, {
+        await sendToDevice(tokens, title, body, {
             type: 'booking',
             referenceId: booking._id.toString()
         })
@@ -166,7 +190,11 @@ const createNotification = async ({ accountId, title, message, body, type = 'gen
             expireAt: new Date(Date.now() + expireDays * 24 * 60 * 60 * 1000)
         });
 
-        if (account.fcmToken) {
+        const tokens = account.fcmTokens && account.fcmTokens.length > 0 
+            ? account.fcmTokens 
+            : (account.fcmToken ? [account.fcmToken] : [])
+
+        if (tokens.length > 0) {
             try {
                 // Map metadata thành string và chuẩn hóa referenceId
                 const stringifiedMetadata = {
@@ -180,7 +208,7 @@ const createNotification = async ({ accountId, title, message, body, type = 'gen
                 });
 
                 await sendToDevice(
-                    account.fcmToken,
+                    tokens,
                     title || 'Notification',
                     notificationContent,
                     stringifiedMetadata

@@ -71,9 +71,9 @@ class ProfileViewModel @Inject constructor(
     /**
      * Updates the user profile.
      */
-    fun updateProfile(email: String?, phone: String?, address: String?) {
+    fun updateProfile(fullName: String? = null, email: String?, phone: String?, address: String?) {
         viewModelScope.launch {
-            val request = UpdateProfileRequest(email, phone, address)
+            val request = UpdateProfileRequest(email = email, phone = phone, address = address, fullName = fullName)
             repository.updateProfile(request)
                 .onStart {
                     _isLoading.value = true

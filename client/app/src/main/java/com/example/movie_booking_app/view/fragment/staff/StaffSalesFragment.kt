@@ -242,7 +242,7 @@ class StaffSalesFragment : Fragment() {
 
                     binding.tvSelectedMovieTitle.text = selectedMovie.movieName
                     val genreStr = selectedMovie.movieGenre?.joinToString(", ") ?: ""
-                    val durationStr = if (selectedMovie.duration != null) "${selectedMovie.duration}m" else "N/A"
+                    val durationStr = if (selectedMovie.duration != null) requireContext().getString(com.example.movie_booking_app.R.string.duration_mins, selectedMovie.duration.toString()) else "N/A"
                     binding.tvSelectedMovieInfo.text = "$genreStr | $durationStr"
                     binding.tvSelectedMovieRating.text = String.format("%.1f", selectedMovie.rating ?: 0.0)
 

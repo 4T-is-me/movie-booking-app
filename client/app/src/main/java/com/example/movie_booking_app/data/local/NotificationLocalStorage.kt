@@ -20,9 +20,7 @@ object NotificationLocalStorage {
     private val gson = Gson()
 
     private fun getPrefs(context: Context): SharedPreferences {
-        val sharedPref = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        val username = sharedPref.getString("username", "guest") ?: "guest"
-        return context.getSharedPreferences("${PREF_NAME}_$username", Context.MODE_PRIVATE)
+        return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
     }
 
     // ─────────────────────────── WRITE ───────────────────────────

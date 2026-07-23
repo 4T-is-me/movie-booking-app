@@ -13,7 +13,9 @@ import java.util.Locale
 open class BaseActivity : AppCompatActivity() {
 
     override fun attachBaseContext(newBase: Context) {
-        val locale = Locale("en")
+        val prefs = newBase.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        val langCode = prefs.getString("language_code", "en") ?: "en"
+        val locale = Locale(langCode)
         val config = newBase.resources.configuration
         config.setLocale(locale)
         val context = newBase.createConfigurationContext(config)

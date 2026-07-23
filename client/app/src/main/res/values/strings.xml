@@ -30,6 +30,7 @@
     <string name="change_language">Change language</string>
     <string name="change_password">Change password</string>
     <string name="list_title">List</string>
+    <string name="error_dialog_title">Lỗi</string>
 
     <!-- Auth Team Strings -->
     <string name="login_subtitle">Login to continue booking movies</string>
@@ -1088,4 +1089,20 @@
     <string name="ticket_validator_subtitle">Lumina Staff Member</string>
     <string name="ticket_validator_instruction">Align QR Code inside the frame to scan</string>
     <string name="ticket_validator_manual_input">Enter Booking Code</string>
+    <!-- Reset Password and Forgot Password strings -->
+    <string name="reset_password_title">Reset Password</string>
+    <string name="reset_password_subtitle">Create a new password for your account</string>
+    <string name="reset_password_btn">Reset Password</string>
+    <string name="new_password_label">New Password</string>
+    <string name="confirm_new_password_label">Confirm New Password</string>
+    <string name="please_enter_email">Please enter email</string>
+    <string name="otp_sent_successfully">OTP sent successfully</string>
+    <string name="error_sending_otp">Error sending OTP</string>
+    <string name="connection_error">Connection error</string>
+    <string name="reset_password_success">Password has been reset successfully. Please login.</string>
+    <string name="booking_id_format">Booking ID: %1$s</string>
+    <string name="duration_mins">%1$s mins</string>
+    <string name="duration_format_hm">%1$dh%2$dm</string>
+    <string name="duration_format_h">%1$dh</string>
+    <string name="duration_format_m">%1$dm</string>
 </resources>

@@ -27,19 +27,6 @@ interface AdminApiService {
 
     @POST("api/admin/movies")
     suspend fun createMovie(@Body request: AddMovieRequest): Response<Unit>
-
-//    val movieName: String,
-//    val duration: Int,
-//    val releaseDate: String,
-//    val endDate: String? = null,
-//    val movieGenre: List<String>,
-//    val language: String,
-//    val censorship: String,
-//    val description: String? = null,
-//    val director: List<String>,
-//    val actors: List<String>,
-//    val country: String,
-//    val status: String = "coming_soon",
     @Multipart
     @POST("api/admin/movies")
     suspend fun createMovieWithPoster(
