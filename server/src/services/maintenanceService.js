@@ -9,7 +9,6 @@ import { Notification } from '../models/notificationModel.js';
 import { ScoreHistory } from '../models/scoreHistoryModel.js';
 
 export const MaintenanceService = {
-  // Module 1: Xử lý Kỹ thuật khi Phòng Hỏng (Active -> Maintenance)
   async handleRoomMaintenance(roomId) {
     const session = await mongoose.startSession();
     session.startTransaction();
@@ -19,7 +18,6 @@ export const MaintenanceService = {
       
       const now = new Date();
       
-      // Tìm các suất chiếu trong tương lai của phòng này
       const showtimes = await Showtime.find({
         roomId: room._id,
         startTime: { $gt: now },
@@ -27,25 +25,22 @@ export const MaintenanceService = {
       }).session(session);
 
       for (const showtime of showtimes) {
-        // Đóng băng suất chiếu gốc
         showtime.status = 'suspended';
         await showtime.save({ session });
 
-        // 2. Lấy danh sách booking của suất chiếu này (đã thanh toán)
         const bookings = await Booking.find({
           showtimeId: showtime._id,
           paymentStatus: 'paid'
         }).session(session);
 
         if (bookings.length === 0) {
-          continue; // 0 vé -> Đổi status suất chiếu thành suspended là đủ
+          continue; 
         }
 
         for (const booking of bookings) {
           let resolved = false;
 
-          // CÁCH A: Đổi phòng
-          // 1. Tìm phòng trống
+        
           const availableRooms = await CinemaRoom.find({
             cinemaId: room.cinemaId,
             status: 'active',
@@ -53,7 +48,6 @@ export const MaintenanceService = {
           }).session(session);
 
           for (const newRoom of availableRooms) {
-            // Kiểm tra xem phòng mới có rảnh không (đơn giản hóa: không có showtime trùng)
             const conflictingShowtime = await Showtime.findOne({
               roomId: newRoom._id,
               $or: [
@@ -71,7 +65,6 @@ export const MaintenanceService = {
               }).session(session);
 
               if (newSeats.length === booking.seatNames.length) {
-                // Đủ ghế, tạo suất chiếu mới (Clone)
                 const newShowtime = new Showtime({
                   cinemaId: showtime.cinemaId,
                   roomId: newRoom._id,
@@ -84,7 +77,6 @@ export const MaintenanceService = {
                 });
                 await newShowtime.save({ session });
 
-                // Giải phóng schedule_seats cũ và tạo mới
                 await ScheduleSeat.deleteMany({
                   showtimeId: showtime._id,
                   seatId: { $in: booking.seatIds }
@@ -100,13 +92,11 @@ export const MaintenanceService = {
                 }));
                 await ScheduleSeat.insertMany(newScheduleSeats, { session });
 
-                // Cập nhật booking
                 booking.showtimeId = newShowtime._id;
                 booking.seatIds = newSeats.map(s => s._id);
-                booking.paymentStatus = 'pending'; // Chuyển sang chờ xác nhận (ACTION_REQUIRED)
+                booking.paymentStatus = 'pending'; 
                 await booking.save({ session });
                 
-                // Gửi thông báo (sẽ implement thực tế Firebase sau)
                 await this.createNotification(booking.memberId, booking._id, newRoom._id, newShowtime._id, showtime.endTime, session);
                 resolved = true;
                 break;
@@ -116,11 +106,6 @@ export const MaintenanceService = {
 
           if (resolved) continue;
 
-          // CÁCH B: Gộp suất (Đơn giản hóa logic tìm suất trùng giờ)
-          // ... Logic gộp suất tương tự Cách A nhưng tìm showtime khác thay vì tạo mới.
-          // Để ngắn gọn, nếu Cách A thất bại, ta đi thẳng vào Fallback Cách C
-
-          // CÁCH C: Fallback - Hủy vé hoàn điểm
           booking.paymentStatus = 'refunded_to_points';
           
           const member = await Member.findById(booking.memberId).session(session);
@@ -145,7 +130,6 @@ export const MaintenanceService = {
 
           await booking.save({ session });
           
-          // Gửi thông báo hủy vé hoàn điểm cho Cách C
           await this.createCancelNotification(booking.memberId, booking._id, booking.finalAmount, session);
         }
       }
@@ -176,7 +160,6 @@ export const MaintenanceService = {
     });
     await notification.save({ session });
     
-    // Gửi Push Notification thực tế qua Firebase
     try {
       const { notificationService } = await import('./notificationService.js');
       const { Account } = await import('../models/accountModel.js');
@@ -218,7 +201,6 @@ export const MaintenanceService = {
     });
     await notification.save({ session });
     
-    // Gửi Push Notification thực tế qua Firebase
     try {
       const { notificationService } = await import('./notificationService.js');
       const { Account } = await import('../models/accountModel.js');
