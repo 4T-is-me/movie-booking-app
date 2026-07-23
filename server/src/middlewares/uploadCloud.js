@@ -25,7 +25,13 @@ const uploadIfMultipart = (req, res, next) => {
     if (!isMultipartRequest(req)) {
         return next();
     }
-    return upload.single('poster')(req, res, next);
+    return upload.any()(req, res, (err) => {
+        if (err) return next(err);
+        if (req.files && req.files.length > 0) {
+            req.file = req.files[0];
+        }
+        next();
+    });
 };
 
 const normalizeMultipartBody = (req, res, next) => {

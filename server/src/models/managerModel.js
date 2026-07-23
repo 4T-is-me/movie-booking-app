@@ -42,9 +42,14 @@ const managerSchema = new mongoose.Schema({
     startDate: {
         type: Date,
         required: true
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
     }
 }, {
     versionKey: false,
+    timestamps: true,
     collection: 'managers'
 });
 

@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
 import com.example.movie_booking_app.utils.DateUtils
+import kotlin.math.roundToInt
 
 @AndroidEntryPoint
 class PaymentActivity : AppCompatActivity() {
@@ -322,6 +323,6 @@ class PaymentActivity : AppCompatActivity() {
 
     private fun dpToPx(dp: Int): Int {
         val density = resources.displayMetrics.density
-        return Math.round(dp * density)
+        return (dp * density).roundToInt()
     }
 }

@@ -1,12 +1,13 @@
 import mongoose from "mongoose";
 
 const cinemaSchema = new mongoose.Schema({
-    cinemaName: {type : String, required: true },
-    address: {type: String, required: true },
-    city: {type: String, required: true },
-    hotline: {type: String, required: true },
-    image: {type: String},
-    status: {type: String, default: 'active'} // active, inactive
-}, {versionKey: false, collection: 'cinemas'});
+    cinemaName: { type: String, required: true },
+    address: { type: String, required: true },
+    city: { type: String, required: true },
+    hotline: { type: String, required: true },
+    image: { type: String },
+    status: { type: String, default: 'active' }, // active, inactive
+    isDeleted: { type: Boolean, default: false }
+}, { versionKey: false, timestamps: true, collection: 'cinemas' });
 
 export const Cinema = mongoose.model('Cinema', cinemaSchema);
