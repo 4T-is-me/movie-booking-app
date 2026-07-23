@@ -5,11 +5,33 @@ import com.example.movie_booking_app.data.model.entity.Cinema
 import com.example.movie_booking_app.data.model.request.AddCinemaRequest
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import org.json.JSONObject
+import retrofit2.Response
 import javax.inject.Inject
 
 class CinemasRepositoryImpl @Inject constructor(
     private val adminApi: AdminApiService
 ) : CinemasRepository {
+
+    private fun parseError(response: Response<*>): String {
+        return try {
+            val errorBodyStr = response.errorBody()?.string()
+            if (!errorBodyStr.isNullOrBlank()) {
+                val json = JSONObject(errorBodyStr)
+                if (json.has("message") && !json.isNull("message")) {
+                    json.getString("message")
+                } else if (json.has("error") && !json.isNull("error")) {
+                    json.getString("error")
+                } else {
+                    "Operation failed (${response.code()})"
+                }
+            } else {
+                "Operation failed (${response.code()})"
+            }
+        } catch (e: Exception) {
+            "Operation failed (${response.code()})"
+        }
+    }
 
     override suspend fun getCinemas(): List<Cinema> {
         return try {
@@ -24,12 +46,16 @@ class CinemasRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun createCinema(request: AddCinemaRequest): Boolean {
+    override suspend fun createCinema(request: AddCinemaRequest): Result<Unit> {
         return try {
             val response = adminApi.createCinema(request)
-            response.isSuccessful
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception(parseError(response)))
+            }
         } catch (e: Exception) {
-            false
+            Result.failure(Exception(e.localizedMessage ?: "Network error"))
         }
     }
 
@@ -40,12 +66,16 @@ class CinemasRepositoryImpl @Inject constructor(
         hotline: RequestBody,
         status: RequestBody,
         poster: MultipartBody.Part?
-    ): Boolean {
+    ): Result<Unit> {
         return try {
             val response = adminApi.createCinemaWithImage(cinemaName, address, city, hotline, status, poster)
-            response.isSuccessful
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception(parseError(response)))
+            }
         } catch (e: Exception) {
-            false
+            Result.failure(Exception(e.localizedMessage ?: "Network error"))
         }
     }
 
@@ -62,12 +92,16 @@ class CinemasRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updateCinema(id: String, request: AddCinemaRequest): Boolean {
+    override suspend fun updateCinema(id: String, request: AddCinemaRequest): Result<Unit> {
         return try {
             val response = adminApi.updateCinema(id, request)
-            response.isSuccessful
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception(parseError(response)))
+            }
         } catch (e: Exception) {
-            false
+            Result.failure(Exception(e.localizedMessage ?: "Network error"))
         }
     }
 
@@ -79,12 +113,16 @@ class CinemasRepositoryImpl @Inject constructor(
         hotline: RequestBody,
         status: RequestBody,
         poster: MultipartBody.Part?
-    ): Boolean {
+    ): Result<Unit> {
         return try {
             val response = adminApi.updateCinemaWithImage(id, cinemaName, address, city, hotline, status, poster)
-            response.isSuccessful
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception(parseError(response)))
+            }
         } catch (e: Exception) {
-            false
+            Result.failure(Exception(e.localizedMessage ?: "Network error"))
         }
     }
 

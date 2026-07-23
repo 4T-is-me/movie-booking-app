@@ -66,8 +66,25 @@ class AddCinemaViewModel @Inject constructor(
         val stat = status.value
         val img = image.value.trim()
 
-        if (name.isEmpty() || addr.isEmpty() || cit.isEmpty() || hot.isEmpty()) {
-            _errorMessage.value = "Please fill in all required fields"
+        if (name.isEmpty()) {
+            _errorMessage.value = "Cinema name is required"
+            return
+        }
+        if (addr.isEmpty()) {
+            _errorMessage.value = "Address is required"
+            return
+        }
+        if (cit.isEmpty()) {
+            _errorMessage.value = "City/Province is required"
+            return
+        }
+        if (hot.isEmpty()) {
+            _errorMessage.value = "Hotline/Phone number is required"
+            return
+        }
+        val phoneRegex = Regex("^[0-9\\-\\+\\s]{8,15}$")
+        if (!phoneRegex.matches(hot)) {
+            _errorMessage.value = "Invalid phone number format"
             return
         }
 
@@ -76,7 +93,7 @@ class AddCinemaViewModel @Inject constructor(
             _errorMessage.value = null
             try {
                 val currentId = cinemaId.value
-                val success = if (currentId != null) {
+                val result = if (currentId != null) {
                     if (posterPart != null) {
                         repository.updateCinemaWithImage(
                             currentId,
@@ -121,10 +138,10 @@ class AddCinemaViewModel @Inject constructor(
                     }
                 }
 
-                if (success) {
+                if (result.isSuccess) {
                     _isSuccess.value = true
                 } else {
-                    _errorMessage.value = if (currentId != null) "Failed to update cinema" else "Failed to create cinema"
+                    _errorMessage.value = result.exceptionOrNull()?.message ?: (if (currentId != null) "Failed to update cinema" else "Failed to create cinema")
                 }
             } catch (e: Exception) {
                 _errorMessage.value = e.message ?: "An error occurred"

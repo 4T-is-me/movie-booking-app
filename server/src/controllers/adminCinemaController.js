@@ -1,6 +1,8 @@
 import { adminCinemaService } from "../services/adminCinemaService.js";
 import { StatusCodes } from "http-status-codes";
 
+const PHONE_REGEX = /^[0-9\-\+\s]{8,15}$/;
+
 // POST /api/admin/cinemas
 const createCinema = async (req, res, next) => {
     let { cinemaName, address, city, hotline, image, status } = req.body;
@@ -9,6 +11,13 @@ const createCinema = async (req, res, next) => {
             return res.status(StatusCodes.BAD_REQUEST).json({
                 success: false,
                 message: "Missing required fields: cinemaName, address, city, hotline"
+            });
+        }
+
+        if (!PHONE_REGEX.test(hotline.trim())) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                success: false,
+                message: "Invalid phone number format."
             });
         }
 
@@ -26,7 +35,7 @@ const createCinema = async (req, res, next) => {
             data: result
         });
     } catch (error) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: `Internal server error: ${error.message}` });
+        next(error);
     }
 };
 
@@ -36,7 +45,7 @@ const getAllCinemas = async (req, res, next) => {
         const cinemas = await adminCinemaService.handleGetAllCinemas();
         return res.status(StatusCodes.OK).json({ success: true, data: cinemas });
     } catch (error) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: `Internal server error: ${error.message}` });
+        next(error);
     }
 };
 
@@ -49,7 +58,7 @@ const getCinemaDetails = async (req, res, next) => {
         }
         return res.status(StatusCodes.OK).json({ success: true, data: cinema });
     } catch (error) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: `Internal server error: ${error.message}` });
+        next(error);
     }
 };
 
@@ -57,6 +66,13 @@ const updateCinema = async (req, res, next) => {
     try {
         const { id } = req.params;
         let { cinemaName, address, city, hotline, image, status } = req.body;
+
+        if (hotline && !PHONE_REGEX.test(hotline.trim())) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                success: false,
+                message: "Invalid phone number format."
+            });
+        }
 
         const updateData = {
             cinemaName,
@@ -72,7 +88,7 @@ const updateCinema = async (req, res, next) => {
         const result = await adminCinemaService.handleUpdateCinema(id, updateData);
         return res.status(StatusCodes.OK).json({ success: true, data: result });
     } catch (error) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: `Internal server error: ${error.message}` });
+        next(error);
     }
 };
 
@@ -86,7 +102,7 @@ const toggleCinemaStatus = async (req, res, next) => {
         const result = await adminCinemaService.handleToggleCinemaStatus(id, status);
         return res.status(StatusCodes.OK).json({ success: true, data: result });
     } catch (error) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: `Internal server error: ${error.message}` });
+        next(error);
     }
 };
 
