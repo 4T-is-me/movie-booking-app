@@ -82,6 +82,14 @@ class AdminStaffFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (_binding != null) {
+            val query = binding.etSearchStaff.text.toString().trim()
+            viewModel.loadStaff(query.ifEmpty { null }, showLoading = false)
+        }
+    }
+
     private fun setupRecyclerView() {
         adapter = AdminStaffAdapter(
             onDetailClick = { staff ->
