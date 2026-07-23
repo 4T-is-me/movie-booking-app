@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.movie_booking_app.R
+import com.example.movie_booking_app.databinding.FragmentAddCinemaBinding
 import com.example.movie_booking_app.viewmodel.AddCinemaViewModel
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
@@ -47,6 +48,9 @@ class AddCinemaFragment : Fragment() {
 
     private var cinemaId: String? = null
     private val viewModel: AddCinemaViewModel by viewModels()
+
+    private var _binding: FragmentAddCinemaBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var tvTitle: TextView
     private lateinit var btnBack: View
@@ -79,26 +83,27 @@ class AddCinemaFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_add_cinema, container, false)
+    ): View {
+        _binding = FragmentAddCinemaBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        tvTitle = view.findViewById(R.id.tvTitle)
-        btnBack = view.findViewById(R.id.btnBack)
-        etCinemaName = view.findViewById(R.id.etCinemaName)
-        etAddress = view.findViewById(R.id.etAddress)
-        etCity = view.findViewById(R.id.etCity)
-        etHotline = view.findViewById(R.id.etHotline)
-        ivCinemaPreview = view.findViewById(R.id.ivCinemaPreview)
-        btnPickImage = view.findViewById(R.id.btnPickImage)
-        actvStatus = view.findViewById(R.id.actvStatus)
-        tvErrorMessage = view.findViewById(R.id.tvErrorMessage)
-        btnCancel = view.findViewById(R.id.btnCancel)
-        btnSave = view.findViewById(R.id.btnSave)
-        pbLoading = view.findViewById(R.id.pbLoading)
+        tvTitle = binding.tvTitle
+        btnBack = binding.btnBack
+        etCinemaName = binding.etCinemaName
+        etAddress = binding.etAddress
+        etCity = binding.etCity
+        etHotline = binding.etHotline
+        ivCinemaPreview = binding.ivCinemaPreview
+        btnPickImage = binding.btnPickImage
+        actvStatus = binding.actvStatus
+        tvErrorMessage = binding.tvErrorMessage
+        btnCancel = binding.btnCancel
+        btnSave = binding.btnSave
+        pbLoading = binding.pbLoading
 
         if (cinemaId != null) {
             tvTitle.text = "Edit Cinema"
@@ -296,5 +301,10 @@ class AddCinemaFragment : Fragment() {
             e.printStackTrace()
             null
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

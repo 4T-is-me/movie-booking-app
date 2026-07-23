@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter
 
+import com.example.movie_booking_app.databinding.ItemStaffPromotionBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,21 +16,19 @@ class StaffPromotionAdapter(
 ) : ListAdapter<Promo, StaffPromotionAdapter.PromoViewHolder>(PromoDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PromoViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_staff_promotion, parent, false)
-        return PromoViewHolder(view, onPromoClick)
+        val binding = ItemStaffPromotionBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return PromoViewHolder(binding, onPromoClick)
     }
 
     override fun onBindViewHolder(holder: PromoViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class PromoViewHolder(
-        view: View,
-        private val onPromoClick: (Promo) -> Unit
-    ) : RecyclerView.ViewHolder(view) {
-        private val tvStaffPromoTitle: TextView = view.findViewById(R.id.tvStaffPromoTitle)
-        private val tvStaffPromoDetail: TextView = view.findViewById(R.id.tvStaffPromoDetail)
-        private val tvStaffPromoCode: TextView = view.findViewById(R.id.tvStaffPromoCode)
+    class PromoViewHolder(private val binding: ItemStaffPromotionBinding, private val onPromoClick: (Promo) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
+        private val tvStaffPromoTitle: TextView = binding.tvStaffPromoTitle
+        private val tvStaffPromoDetail: TextView = binding.tvStaffPromoDetail
+        private val tvStaffPromoCode: TextView = binding.tvStaffPromoCode
 
         fun bind(promo: Promo) {
             tvStaffPromoTitle.text = promo.title

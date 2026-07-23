@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter
 
+import com.example.movie_booking_app.databinding.ItemAdminMovieBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,21 +20,20 @@ class AdminMovieAdapter(
 ) : ListAdapter<Movie, AdminMovieAdapter.AdminMovieViewHolder>(MovieDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdminMovieViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_admin_movie, parent, false)
-        return AdminMovieViewHolder(view)
+        val binding = ItemAdminMovieBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return AdminMovieViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: AdminMovieViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    inner class AdminMovieViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val ivPoster: ImageView = view.findViewById(R.id.ivMoviePoster)
-        private val tvTitle: TextView = view.findViewById(R.id.tvMovieTitle)
-        private val tvDuration: TextView = view.findViewById(R.id.tvMovieDuration)
-        private val btnEdit: ImageButton = view.findViewById(R.id.btnEditMovie)
-        private val btnDelete: ImageButton = view.findViewById(R.id.btnDeleteMovie)
+    inner class AdminMovieViewHolder(private val binding: ItemAdminMovieBinding) : RecyclerView.ViewHolder(binding.root) {
+        private val ivPoster: ImageView = binding.ivMoviePoster
+        private val tvTitle: TextView = binding.tvMovieTitle
+        private val tvDuration: TextView = binding.tvMovieDuration
+        private val btnEdit: ImageButton = binding.btnEditMovie
+        private val btnDelete: ImageButton = binding.btnDeleteMovie
 
         fun bind(movie: Movie) {
             tvTitle.text = movie.movieName

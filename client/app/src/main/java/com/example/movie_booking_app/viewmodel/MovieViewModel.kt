@@ -117,25 +117,21 @@ class MovieViewModel @Inject constructor(
             ) { movies, promos, services, news ->
                 val list = mutableListOf<HomeItem>()
                 
-                // Now Playing Section: Flexible filtering on Client side
-                val nowPlaying = movies.filter {
-                    val s = it.status?.lowercase() ?: ""
-                    (s.contains("showing") || s == "active" || s == "now_showing")
-                }
+                // Helper to filter status
+                fun Movie.hasStatus(vararg keys: String) = keys.any { status?.lowercase()?.contains(it) == true }
+
+                // Now Playing Section
+                val nowPlaying = movies.filter { it.hasStatus("showing", "active") }
                 list.add(HomeItem.NowPlayingSection(
                     nowPlaying.ifEmpty { null },
                     isLoading = nowPlaying.isEmpty() && promos.isEmpty()
                 ))
                 
-                // Coming Soon Section: Flexible filtering on Client side
-                val comingSoon = movies.filter {
-                    val s = it.status?.lowercase() ?: ""
-                    (s.contains("coming") || s.contains("soon") || s == "upcoming" || s == "inactive")
+                // Coming Soon Section: Hide if empty
+                val comingSoon = movies.filter { it.hasStatus("coming", "soon", "upcoming", "inactive") }
+                if (comingSoon.isNotEmpty()) {
+                    list.add(HomeItem.ComingSoonSection(comingSoon, isLoading = false))
                 }
-                list.add(HomeItem.ComingSoonSection(
-                    comingSoon.ifEmpty { null },
-                    isLoading = comingSoon.isEmpty() && promos.isEmpty()
-                ))
                 
                 list.add(HomeItem.PromoSection(promos.ifEmpty { null }, isLoading = promos.isEmpty()))
                 list.add(HomeItem.ServiceSection(services.ifEmpty { null }, isLoading = services.isEmpty()))

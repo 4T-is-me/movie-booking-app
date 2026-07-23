@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter
 
+import com.example.movie_booking_app.databinding.ItemReviewBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,18 +21,18 @@ class ReviewAdapter(
     @Suppress("UNUSED_PARAMETER") items: List<ReviewItem> = emptyList()
 ) : ListAdapter<ReviewItem, ReviewAdapter.ReviewViewHolder>(ReviewDiffCallback()) {
 
-    inner class ReviewViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val tvAvatarText: TextView = view.findViewById(R.id.tvAvatarText)
-        val ivAvatarImage: com.google.android.material.imageview.ShapeableImageView = view.findViewById(R.id.ivAvatarImage)
-        val tvName: TextView = view.findViewById(R.id.tvReviewerName)
-        val tvDate: TextView = view.findViewById(R.id.tvReviewDate)
-        val tvRating: TextView = view.findViewById(R.id.tvReviewRating)
-        val tvComment: TextView = view.findViewById(R.id.tvReviewComment)
+    inner class ReviewViewHolder(private val binding: ItemReviewBinding) : RecyclerView.ViewHolder(binding.root) {
+        val tvAvatarText: TextView = binding.tvAvatarText
+        val ivAvatarImage: com.google.android.material.imageview.ShapeableImageView = binding.ivAvatarImage
+        val tvName: TextView = binding.tvReviewerName
+        val tvDate: TextView = binding.tvReviewDate
+        val tvRating: TextView = binding.tvReviewRating
+        val tvComment: TextView = binding.tvReviewComment
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_review, parent, false)
-        return ReviewViewHolder(view)
+        val binding = ItemReviewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ReviewViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ReviewViewHolder, position: Int) {

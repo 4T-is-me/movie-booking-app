@@ -8,9 +8,9 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.api.RetrofitClient
 import com.example.movie_booking_app.data.model.request.OtpRequest
+import com.example.movie_booking_app.databinding.ActivityForgotPasswordBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -19,7 +19,8 @@ import org.json.JSONObject
 class ForgotPasswordActivity : EnglishBaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_forgot_password)
+        binding = ActivityForgotPasswordBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val edtEmail = findViewById<EditText>(R.id.edtEmailOtp)
         val btnSend = findViewById<Button>(R.id.btnSendOtp)

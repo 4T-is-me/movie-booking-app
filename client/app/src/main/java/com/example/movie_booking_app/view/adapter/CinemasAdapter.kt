@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter
 
+import com.example.movie_booking_app.databinding.ItemCinemaRoomBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,26 +18,23 @@ class CinemasAdapter(
 ) : ListAdapter<Cinema, CinemasAdapter.CinemaViewHolder>(CinemaDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CinemaViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_cinema_room, parent, false)
-        return CinemaViewHolder(view, onCinemaClick, onEditClick, onToggleStatusClick)
+        val binding = ItemCinemaRoomBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return CinemaViewHolder(binding, onCinemaClick, onEditClick, onToggleStatusClick)
     }
 
     override fun onBindViewHolder(holder: CinemaViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class CinemaViewHolder(
-        itemView: View,
-        private val onClick: (Cinema) -> Unit,
+    class CinemaViewHolder(private val binding: ItemCinemaRoomBinding, private val onClick: (Cinema) -> Unit,
         private val onEdit: (Cinema) -> Unit,
         private val onToggleStatus: (Cinema) -> Unit
-    ) : RecyclerView.ViewHolder(itemView) {
-        private val tvRoomName: TextView = itemView.findViewById(R.id.tvRoomName)
-        private val tvStatusChip: TextView = itemView.findViewById(R.id.tvStatusChip)
-        private val tvCapacity: TextView = itemView.findViewById(R.id.tvCapacity)
-        private val tvRoomType: TextView = itemView.findViewById(R.id.tvRoomType)
-        private val ivOptions: View = itemView.findViewById(R.id.ivOptions)
+    ) : RecyclerView.ViewHolder(binding.root) {
+        private val tvRoomName: TextView = binding.tvRoomName
+        private val tvStatusChip: TextView = binding.tvStatusChip
+        private val tvCapacity: TextView = binding.tvCapacity
+        private val tvRoomType: TextView = binding.tvRoomType
+        private val ivOptions: View = binding.ivOptions
 
         fun bind(cinema: Cinema) {
             tvRoomName.text = cinema.cinemaName ?: "N/A"

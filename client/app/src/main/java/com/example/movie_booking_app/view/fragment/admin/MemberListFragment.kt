@@ -76,33 +76,23 @@ class MemberListFragment : Fragment() {
     }
 
     private fun showMemberDetailDialog(member: MemberItem) {
+        val dialogBinding = com.example.movie_booking_app.databinding.DialogDetailMemberBinding.inflate(layoutInflater)
         val dialog = android.app.Dialog(requireContext())
-        dialog.setContentView(R.layout.dialog_detail_member)
+        dialog.setContentView(dialogBinding.root)
         dialog.window?.setBackgroundDrawable(ContextCompat.getDrawable(requireContext(), android.R.color.transparent))
         dialog.setCancelable(true)
 
-        val tvDetailUsername = dialog.findViewById<TextView>(R.id.tvDetailUsername)
-        val tvDetailFullName = dialog.findViewById<TextView>(R.id.tvDetailFullName)
-        val tvDetailEmail = dialog.findViewById<TextView>(R.id.tvDetailEmail)
-        val tvDetailPhone = dialog.findViewById<TextView>(R.id.tvDetailPhone)
-        val tvDetailIdentityCard = dialog.findViewById<TextView>(R.id.tvDetailIdentityCard)
-        val tvDetailAddress = dialog.findViewById<TextView>(R.id.tvDetailAddress)
-        val tvDetailRank = dialog.findViewById<TextView>(R.id.tvDetailRank)
-        val tvDetailPoints = dialog.findViewById<TextView>(R.id.tvDetailPoints)
-        val tvDetailTotalSpent = dialog.findViewById<TextView>(R.id.tvDetailTotalSpent)
-        val btnClose = dialog.findViewById<MaterialButton>(R.id.btnCloseDetail)
+        dialogBinding.tvDetailUsername.text = member.account?.username ?: getString(R.string.user_name_placeholder)
+        dialogBinding.tvDetailFullName.text = member.fullName ?: getString(R.string.user_name_placeholder)
+        dialogBinding.tvDetailEmail.text = member.account?.email ?: getString(R.string.user_name_placeholder)
+        dialogBinding.tvDetailPhone.text = member.phoneNumber ?: getString(R.string.user_name_placeholder)
+        dialogBinding.tvDetailIdentityCard.text = member.identityCard ?: getString(R.string.user_name_placeholder)
+        dialogBinding.tvDetailAddress.text = member.address ?: getString(R.string.user_name_placeholder)
+        dialogBinding.tvDetailRank.text = member.membershipRank ?: getString(R.string.admin_default_rank)
+        dialogBinding.tvDetailPoints.text = String.format(Locale.getDefault(), "%,d", member.rewardPoints ?: 0)
+        dialogBinding.tvDetailTotalSpent.text = String.format(Locale.getDefault(), "%,.0f ₫", member.totalSpent ?: 0.0)
 
-        tvDetailUsername.text = member.account?.username ?: getString(R.string.user_name_placeholder)
-        tvDetailFullName.text = member.fullName ?: getString(R.string.user_name_placeholder)
-        tvDetailEmail.text = member.account?.email ?: getString(R.string.user_name_placeholder)
-        tvDetailPhone.text = member.phoneNumber ?: getString(R.string.user_name_placeholder)
-        tvDetailIdentityCard.text = member.identityCard ?: getString(R.string.user_name_placeholder)
-        tvDetailAddress.text = member.address ?: getString(R.string.user_name_placeholder)
-        tvDetailRank.text = member.membershipRank ?: getString(R.string.admin_default_rank)
-        tvDetailPoints.text = String.format(Locale.getDefault(), "%,d", member.rewardPoints ?: 0)
-        tvDetailTotalSpent.text = String.format(Locale.getDefault(), "%,.0f ₫", member.totalSpent ?: 0.0)
-
-        btnClose.setOnClickListener { dialog.dismiss() }
+        dialogBinding.btnCloseDetail.setOnClickListener { dialog.dismiss() }
         dialog.show()
     }
 
@@ -143,33 +133,28 @@ class MemberListFragment : Fragment() {
 
     private fun showConfirmToggleStatusDialog(member: MemberItem) {
         val isActive = member.account?.status != 0
+        val dialogBinding = com.example.movie_booking_app.databinding.DialogConfirmToggleMemberBinding.inflate(layoutInflater)
         val dialog = android.app.Dialog(requireContext())
-        dialog.setContentView(R.layout.dialog_confirm_toggle_member)
+        dialog.setContentView(dialogBinding.root)
         dialog.window?.setBackgroundDrawable(ContextCompat.getDrawable(requireContext(), android.R.color.transparent))
         dialog.setCancelable(true)
 
-        val ivIcon = dialog.findViewById<ImageView>(R.id.ivConfirmIcon)
-        val tvTitle = dialog.findViewById<TextView>(R.id.tvConfirmTitle)
-        val tvMessage = dialog.findViewById<TextView>(R.id.tvConfirmMessage)
-        val btnCancel = dialog.findViewById<MaterialButton>(R.id.btnCancelToggle)
-        val btnConfirm = dialog.findViewById<MaterialButton>(R.id.btnConfirmToggle)
-
         if (isActive) {
-            ivIcon.setImageResource(android.R.drawable.ic_menu_delete)
-            ivIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.yellow))
-            tvTitle.text = getString(R.string.admin_delete_member)
-            tvMessage.text = getString(R.string.admin_confirm_delete_member_msg, member.fullName ?: "")
-            btnConfirm.text = getString(R.string.admin_delete)
+            dialogBinding.ivConfirmIcon.setImageResource(android.R.drawable.ic_menu_delete)
+            dialogBinding.ivConfirmIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.yellow))
+            dialogBinding.tvConfirmTitle.text = getString(R.string.admin_delete_member)
+            dialogBinding.tvConfirmMessage.text = getString(R.string.admin_confirm_delete_member_msg, member.fullName ?: "")
+            dialogBinding.btnConfirmToggle.text = getString(R.string.admin_delete)
         } else {
-            ivIcon.setImageResource(android.R.drawable.ic_menu_rotate)
-            ivIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.color_green_status))
-            tvTitle.text = getString(R.string.admin_reactivate_member)
-            tvMessage.text = getString(R.string.admin_confirm_unlock_msg, member.fullName ?: "")
-            btnConfirm.text = getString(R.string.admin_reactivate)
+            dialogBinding.ivConfirmIcon.setImageResource(android.R.drawable.ic_menu_rotate)
+            dialogBinding.ivConfirmIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.color_green_status))
+            dialogBinding.tvConfirmTitle.text = getString(R.string.admin_reactivate_member)
+            dialogBinding.tvConfirmMessage.text = getString(R.string.admin_confirm_unlock_msg, member.fullName ?: "")
+            dialogBinding.btnConfirmToggle.text = getString(R.string.admin_reactivate)
         }
 
-        btnCancel.setOnClickListener { dialog.dismiss() }
-        btnConfirm.setOnClickListener {
+        dialogBinding.btnCancelToggle.setOnClickListener { dialog.dismiss() }
+        dialogBinding.btnConfirmToggle.setOnClickListener {
             dialog.dismiss()
             val newStatus = if (isActive) 0 else 1
             member.id?.let { viewModel.updateMemberStatus(it, newStatus) }

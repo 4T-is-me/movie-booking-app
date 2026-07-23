@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter
 
+import com.example.movie_booking_app.databinding.ItemSeatPreviewBinding
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
@@ -17,19 +18,17 @@ class SeatPreviewAdapter(
 ) : ListAdapter<SeatPreview, SeatPreviewAdapter.SeatViewHolder>(SeatDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SeatViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_seat_preview, parent, false)
-        return SeatViewHolder(view, onSeatClick)
+        val binding = ItemSeatPreviewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return SeatViewHolder(binding, onSeatClick)
     }
 
     override fun onBindViewHolder(holder: SeatViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class SeatViewHolder(
-        itemView: View,
-        private val onSeatClick: (Int) -> Unit
-    ) : RecyclerView.ViewHolder(itemView) {
-        private val tvSeatLabel: TextView = itemView.findViewById(R.id.tvSeatLabel)
+    class SeatViewHolder(private val binding: ItemSeatPreviewBinding, private val onSeatClick: (Int) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
+        private val tvSeatLabel: TextView = binding.tvSeatLabel
 
         init {
             itemView.setOnClickListener {

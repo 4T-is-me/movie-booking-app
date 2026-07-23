@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.example.movie_booking_app.R
+import com.example.movie_booking_app.databinding.FragmentAdminCinemasBinding
 import com.example.movie_booking_app.view.adapter.CinemasAdapter
 import com.example.movie_booking_app.viewmodel.AdminCinemasViewModel
 import com.google.android.material.button.MaterialButton
@@ -26,6 +27,9 @@ class AdminCinemasFragment : Fragment() {
 
     private val viewModel: AdminCinemasViewModel by viewModels()
     private lateinit var adapter: CinemasAdapter
+
+    private var _binding: FragmentAdminCinemasBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var rvCinemas: RecyclerView
@@ -41,23 +45,24 @@ class AdminCinemasFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_admin_cinemas, container, false)
+    ): View {
+        _binding = FragmentAdminCinemasBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout)
-        rvCinemas = view.findViewById(R.id.rvCinemas)
-        shimmerContainer = view.findViewById(R.id.shimmerContainer)
-        layoutEmptyState = view.findViewById(R.id.layoutEmptyState)
-        layoutErrorState = view.findViewById(R.id.layoutErrorState)
-        tvTotalCinemas = view.findViewById(R.id.tvTotalCinemas)
-        btnAddCinema = view.findViewById(R.id.btnAddCinema)
-        btnEmptyAddCinema = view.findViewById(R.id.btnEmptyAddCinema)
-        btnRetry = view.findViewById(R.id.btnRetry)
-        searchView = view.findViewById(R.id.searchView)
+        swipeRefreshLayout = binding.swipeRefreshLayout
+        rvCinemas = binding.rvCinemas
+        shimmerContainer = binding.shimmerContainer
+        layoutEmptyState = binding.layoutEmptyState
+        layoutErrorState = binding.layoutErrorState
+        tvTotalCinemas = binding.tvTotalCinemas
+        btnAddCinema = binding.btnAddCinema
+        btnEmptyAddCinema = binding.btnEmptyAddCinema
+        btnRetry = binding.btnRetry
+        searchView = binding.searchView
 
         adapter = CinemasAdapter(
             onCinemaClick = { cinema ->
@@ -168,5 +173,10 @@ class AdminCinemasFragment : Fragment() {
             layoutEmptyState.visibility = View.GONE
             swipeRefreshLayout.visibility = View.VISIBLE
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

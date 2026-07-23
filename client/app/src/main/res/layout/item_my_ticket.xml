@@ -62,7 +62,7 @@
                     android:ellipsize="end"
                     tools:text="Doctor Strange in the Multiverse of Madness" />
 
-                <!-- Badges Layout (Upcoming + Payment Completed) -->
+                <!-- Badges Layout (Upcoming Status Only) -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -83,21 +83,6 @@
                         android:paddingVertical="3dp"
                         android:background="@drawable/bg_rounded_badge"
                         android:backgroundTint="@color/color_green_status_bg" />
-
-                    <!-- Payment Completed Badge -->
-                    <TextView
-                        android:id="@+id/tvBadgePaid"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="6dp"
-                        android:text="@string/auto_str_completed"
-                        android:textColor="@color/auto_color_2F6FED"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:paddingHorizontal="8dp"
-                        android:paddingVertical="3dp"
-                        android:background="@drawable/bg_rounded_badge"
-                        android:backgroundTint="@color/auto_color_1A2F6FED" />
                 </LinearLayout>
 
                 <!-- Info Rows -->

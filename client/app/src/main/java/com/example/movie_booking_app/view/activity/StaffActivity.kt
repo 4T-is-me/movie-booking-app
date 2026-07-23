@@ -1,88 +1,80 @@
 package com.example.movie_booking_app.view.activity
 
+import android.content.Intent
 import android.os.Bundle
-import android.widget.ImageView
-import android.widget.TextView
+import android.view.View
+import androidx.activity.viewModels
 import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.movie_booking_app.R
+import com.example.movie_booking_app.data.api.AuthEvent
+import com.example.movie_booking_app.databinding.ActivityStaffBinding
+import com.example.movie_booking_app.databinding.LayoutMenuBadgeBinding
+import com.example.movie_booking_app.view.fragment.staff.StaffNotificationsFragment
+import com.example.movie_booking_app.view.fragment.staff.StaffProfileFragment
 import com.example.movie_booking_app.view.fragment.staff.StaffRequestsFragment
 import com.example.movie_booking_app.view.fragment.staff.StaffSalesFragment
 import com.example.movie_booking_app.view.fragment.staff.StaffScheduleFragment
-import com.example.movie_booking_app.view.fragment.staff.StaffValidatorFragment
-import com.example.movie_booking_app.view.fragment.staff.StaffNotificationsFragment
-import com.example.movie_booking_app.view.fragment.staff.StaffProfileFragment
 import com.example.movie_booking_app.view.fragment.staff.StaffSettingsFragment
-import com.google.android.material.navigation.NavigationView
-import dagger.hilt.android.AndroidEntryPoint
-import android.content.Intent
-import android.view.View
-import androidx.activity.viewModels
-import androidx.lifecycle.lifecycleScope
+import com.example.movie_booking_app.view.fragment.staff.StaffValidatorFragment
 import com.example.movie_booking_app.viewmodel.AuthViewModel
-import com.example.movie_booking_app.data.api.AuthEvent
 import com.example.movie_booking_app.viewmodel.NotificationViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class StaffActivity : BaseActivity() {
 
-    private lateinit var drawerLayout: DrawerLayout
-    private lateinit var navigationView: NavigationView
-    private lateinit var tvHeaderTitle: TextView
+    private lateinit var binding: ActivityStaffBinding
     private val authViewModel: AuthViewModel by viewModels()
     private val notificationViewModel: NotificationViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_staff)
+        binding = ActivityStaffBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        drawerLayout = findViewById(R.id.drawerLayout)
-        navigationView = findViewById(R.id.navigationView)
-        tvHeaderTitle = findViewById(R.id.tvHeaderTitle)
-
-        val ivMenu = findViewById<ImageView>(R.id.ivMenu)
-        ivMenu.setOnClickListener {
-            drawerLayout.openDrawer(GravityCompat.START)
+        binding.ivMenu.setOnClickListener {
+            binding.drawerLayout.openDrawer(GravityCompat.START)
         }
 
-        navigationView.setNavigationItemSelectedListener { item ->
+        binding.navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_staff_checkin -> {
-                    tvHeaderTitle.text = "Ticket Validator"
+                    binding.tvHeaderTitle.text = "Ticket Validator"
                     loadFragment(StaffValidatorFragment())
                 }
                 R.id.nav_staff_sales -> {
-                    tvHeaderTitle.text = "Ticket Sales"
+                    binding.tvHeaderTitle.text = "Ticket Sales"
                     loadFragment(StaffSalesFragment())
                 }
                 R.id.nav_staff_schedule -> {
-                    tvHeaderTitle.text = "Work Schedule"
+                    binding.tvHeaderTitle.text = "Work Schedule"
                     loadFragment(StaffScheduleFragment())
                 }
                 R.id.nav_staff_requests -> {
-                    tvHeaderTitle.text = "Leave Requests"
+                    binding.tvHeaderTitle.text = "Leave Requests"
                     loadFragment(StaffRequestsFragment())
                 }
                 R.id.nav_staff_notifications -> {
-                    tvHeaderTitle.text = "Notifications"
+                    binding.tvHeaderTitle.text = "Notifications"
                     loadFragment(StaffNotificationsFragment())
                 }
                 R.id.nav_staff_profile -> {
-                    tvHeaderTitle.text = "My Profile"
+                    binding.tvHeaderTitle.text = "My Profile"
                     loadFragment(StaffProfileFragment())
                 }
                 R.id.nav_staff_settings -> {
-                    tvHeaderTitle.text = "Settings"
+                    binding.tvHeaderTitle.text = "Settings"
                     loadFragment(StaffSettingsFragment())
                 }
                 R.id.nav_staff_logout -> {
                     com.example.movie_booking_app.utils.AuthUtils.showLogoutConfirmationDialog(this)
                 }
             }
-            drawerLayout.closeDrawer(GravityCompat.START)
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
 
@@ -136,8 +128,8 @@ class StaffActivity : BaseActivity() {
     }
 
     private fun loadDefaultFragment() {
-        navigationView.setCheckedItem(R.id.nav_staff_schedule)
-        tvHeaderTitle.text = "Work Schedule"
+        binding.navigationView.setCheckedItem(R.id.nav_staff_schedule)
+        binding.tvHeaderTitle.text = "Work Schedule"
         loadFragment(StaffScheduleFragment())
     }
 
@@ -168,17 +160,18 @@ class StaffActivity : BaseActivity() {
             }
         }
     }
+
     // Update the red UI badge on the navigation item
     private fun updateNotificationBadge(count: Int) {
-        val menuItem = navigationView.menu.findItem(R.id.nav_staff_notifications)
+        val menuItem = binding.navigationView.menu.findItem(R.id.nav_staff_notifications)
         val actionView = menuItem?.actionView ?: return
-        val tvBadge = actionView.findViewById<TextView>(R.id.tvNotificationBadge) ?: return
+        val badgeBinding = LayoutMenuBadgeBinding.bind(actionView)
 
         if (count > 0) {
-            tvBadge.visibility = View.VISIBLE
-            tvBadge.text = if (count > 99) "99+" else count.toString()
+            badgeBinding.tvNotificationBadge.visibility = View.VISIBLE
+            badgeBinding.tvNotificationBadge.text = if (count > 99) "99+" else count.toString()
         } else {
-            tvBadge.visibility = View.GONE
+            badgeBinding.tvNotificationBadge.visibility = View.GONE
         }
     }
 }

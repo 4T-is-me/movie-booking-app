@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter
 
+import com.example.movie_booking_app.databinding.ItemStaffMovieCardBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,8 +27,8 @@ class StaffMovieAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_staff_movie_card, parent, false)
-        return MovieViewHolder(view, onMovieClick)
+        val binding = ItemStaffMovieCardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return MovieViewHolder(binding, onMovieClick)
     }
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
@@ -35,17 +36,15 @@ class StaffMovieAdapter(
         holder.bind(movie, movie.id == selectedMovieId)
     }
 
-    inner class MovieViewHolder(
-        view: View,
-        private val onClick: (Movie) -> Unit
-    ) : RecyclerView.ViewHolder(view) {
-        private val cardMovie: MaterialCardView = view.findViewById(R.id.cardMovie)
-        private val imgPoster: ImageView = view.findViewById(R.id.imgPoster)
-        private val tvMovieTitle: TextView = view.findViewById(R.id.tvMovieTitle)
-        private val tvMovieInfo: TextView = view.findViewById(R.id.tvMovieInfo)
-        private val tvMovieRating: TextView = view.findViewById(R.id.tvMovieRating)
-        private val tvMovieVotes: TextView = view.findViewById(R.id.tvMovieVotes)
-        private val tvNowPlayingBadge: TextView = view.findViewById(R.id.tvNowPlayingBadge)
+    inner class MovieViewHolder(private val binding: ItemStaffMovieCardBinding, private val onClick: (Movie) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
+        private val cardMovie: MaterialCardView = binding.cardMovie
+        private val imgPoster: ImageView = binding.imgPoster
+        private val tvMovieTitle: TextView = binding.tvMovieTitle
+        private val tvMovieInfo: TextView = binding.tvMovieInfo
+        private val tvMovieRating: TextView = binding.tvMovieRating
+        private val tvMovieVotes: TextView = binding.tvMovieVotes
+        private val tvNowPlayingBadge: TextView = binding.tvNowPlayingBadge
 
         fun bind(movie: Movie, isSelected: Boolean) {
             tvMovieTitle.text = movie.movieName

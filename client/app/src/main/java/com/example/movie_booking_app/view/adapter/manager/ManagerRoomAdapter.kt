@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter.manager
 
+import com.example.movie_booking_app.databinding.ItemManagerRoomBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,29 +17,26 @@ class ManagerRoomAdapter(
 ) : ListAdapter<ManagerRoom, ManagerRoomAdapter.RoomViewHolder>(RoomDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RoomViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_manager_room, parent, false)
-        return RoomViewHolder(view, onRoomClick)
+        val binding = ItemManagerRoomBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return RoomViewHolder(binding, onRoomClick)
     }
 
     override fun onBindViewHolder(holder: RoomViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class RoomViewHolder(
-        itemView: View,
-        private val onRoomClick: (ManagerRoom) -> Unit
-    ) : RecyclerView.ViewHolder(itemView) {
-        private val tvRoomName: TextView = itemView.findViewById(R.id.tvRoomName)
-        private val tvTotalSeats: TextView = itemView.findViewById(R.id.tvTotalSeats)
-        private val tvStdCount: TextView = itemView.findViewById(R.id.tvStdCount)
-        private val tvVipCount: TextView = itemView.findViewById(R.id.tvVipCount)
-        private val tvCoupleCount: TextView = itemView.findViewById(R.id.tvCoupleCount)
-        private val tvOperating: TextView = itemView.findViewById(R.id.tvOperating)
-        private val tvRoomUnavailable: TextView = itemView.findViewById(R.id.tvRoomUnavailable)
-        private val flIcon: View = itemView.findViewById(R.id.flIcon)
-        private val ivMovie: android.widget.ImageView = itemView.findViewById(R.id.ivMovie)
-        private val btnManage: View = itemView.findViewById(R.id.btnManage)
+    class RoomViewHolder(private val binding: ItemManagerRoomBinding, private val onRoomClick: (ManagerRoom) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
+        private val tvRoomName: TextView = binding.tvRoomName
+        private val tvTotalSeats: TextView = binding.tvTotalSeats
+        private val tvStdCount: TextView = binding.tvStdCount
+        private val tvVipCount: TextView = binding.tvVipCount
+        private val tvCoupleCount: TextView = binding.tvCoupleCount
+        private val tvOperating: TextView = binding.tvOperating
+        private val tvRoomUnavailable: TextView = binding.tvRoomUnavailable
+        private val flIcon: View = binding.flIcon
+        private val ivMovie: android.widget.ImageView = binding.ivMovie
+        private val btnManage: View = binding.btnManage
 
         fun bind(room: ManagerRoom) {
             tvRoomName.text = room.roomName

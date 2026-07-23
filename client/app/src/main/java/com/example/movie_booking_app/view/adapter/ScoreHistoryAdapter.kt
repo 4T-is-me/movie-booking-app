@@ -41,18 +41,20 @@ class ScoreHistoryAdapter(private var list: List<ScoreHistory> = emptyList()) : 
             val backgroundDeduct = ContextCompat.getColor(holder.itemView.context, R.color.backgroundDeduct)
             val iconDeduct = ContextCompat.getColor(holder.itemView.context, R.color.iconDeduct)
 
-            if (item.earnedPoints > 0){
-                tvPointsValue.text = "+${item.earnedPoints} pts"
-                tvPointsValue.setTextColor(textPlus)
-                iconContainer.setCardBackgroundColor(backgroundPlus)
-                ivHistoryIcon.setImageResource(R.drawable.ic_add)
-                ivHistoryIcon.setColorFilter(iconPlus)
-            } else {
+            val isDeduct = item.usedPoints > 0 || item.reason == "USE_SCORE"
+
+            if (isDeduct) {
                 tvPointsValue.text = "-${item.usedPoints} pts"
                 tvPointsValue.setTextColor(deduct)
                 iconContainer.setCardBackgroundColor(backgroundDeduct)
                 ivHistoryIcon.setImageResource(R.drawable.ic_remove)
                 ivHistoryIcon.setColorFilter(iconDeduct)
+            } else {
+                tvPointsValue.text = "+${item.earnedPoints} pts"
+                tvPointsValue.setTextColor(textPlus)
+                iconContainer.setCardBackgroundColor(backgroundPlus)
+                ivHistoryIcon.setImageResource(R.drawable.ic_add)
+                ivHistoryIcon.setColorFilter(iconPlus)
             }
         }
     }

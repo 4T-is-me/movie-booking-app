@@ -565,20 +565,17 @@ class StaffSalesFragment : Fragment() {
     }
 
     private fun showSuccessDialog(message: String) {
-        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_success, null)
-        val tvMessage = dialogView.findViewById<android.widget.TextView>(R.id.tvDialogMessage)
-        val btnOk = dialogView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnDialogOk)
-
-        tvMessage.text = message
+        val dialogBinding = com.example.movie_booking_app.databinding.DialogSuccessBinding.inflate(layoutInflater)
+        dialogBinding.tvDialogMessage.text = message
 
         val dialog = AlertDialog.Builder(requireContext())
-            .setView(dialogView)
+            .setView(dialogBinding.root)
             .setCancelable(false)
             .create()
 
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        btnOk.setOnClickListener {
+        dialogBinding.btnDialogOk.setOnClickListener {
             dialog.dismiss()
             viewModel.selectMovie(null)
         }
