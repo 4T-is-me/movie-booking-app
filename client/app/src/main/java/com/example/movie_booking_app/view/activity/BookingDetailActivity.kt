@@ -129,8 +129,18 @@ class BookingDetailActivity : AppCompatActivity() {
             .into(binding.ivPoster)
 
         // Membership
-        val rank = detail.membershipRank ?: "Bronze"
-        binding.tvMembershipRank.text = "${rank.trim().uppercase()} MEMBER"
+        val rank = detail.membershipRank ?: "bronze"
+        val rankClean = rank.trim().lowercase()
+        val formattedRank = rankClean.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+        binding.tvMembershipRank.text = "$formattedRank Member"
+
+        val badgeColor = when (rankClean) {
+            "gold" -> Color.parseColor("#F5C542")
+            "silver" -> Color.parseColor("#C0C0C0")
+            else -> Color.parseColor("#CD7F32") // bronze
+        }
+        binding.tvMembershipRank.setTextColor(badgeColor)
+        binding.cardMembershipRank.strokeColor = badgeColor
 
         // Showtime details
         binding.tvCinema.text = detail.cinema?.cinemaName ?: "-"
