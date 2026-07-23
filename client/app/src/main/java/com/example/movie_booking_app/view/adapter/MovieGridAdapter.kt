@@ -31,13 +31,13 @@ class MovieGridAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(movie: Movie, isNowPlaying: Boolean) {
-            with(binding) {
-                tvMovieNameVn.text = movie.movieName
-                tvMovieNameEn.text = movie.movieName // develop model only has movieName
-                
-                tvTextRow1.text = (movie.rating?.toString() ?: "N/A")
-                tvTextRow2.text = "${movie.duration ?: 0} min • " + (movie.censorship ?: "2D")
-                tvTextRow3.text = com.example.movie_booking_app.utils.DateUtils.formatMovieDate(movie.releaseDate)
+            tvTitle.text = movie.movieName
+            tvTitleEn.text = movie.movieName // develop model only has movieName
+            
+            tvRow1.text = (movie.rating?.toString() ?: "N/A")
+            val durationStr = itemView.context.getString(com.example.movie_booking_app.R.string.duration_mins, (movie.duration ?: 0).toString())
+            tvRow2.text = "$durationStr • " + (movie.censorship ?: "2D")
+            tvRow3.text = com.example.movie_booking_app.utils.DateUtils.formatMovieDate(movie.releaseDate)
 
                 Glide.with(itemView.context)
                     .load(movie.poster)

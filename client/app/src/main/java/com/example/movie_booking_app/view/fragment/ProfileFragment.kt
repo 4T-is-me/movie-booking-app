@@ -86,7 +86,26 @@ class ProfileFragment : Fragment() {
 
 
         binding.layoutChangeLanguage.setOnClickListener {
-            Toast.makeText(context, "Change Language Clicked", Toast.LENGTH_SHORT).show()
+            val languages = arrayOf("English", "Tiếng Việt", "日本語")
+            val langCodes = arrayOf("en", "vi", "ja")
+            val prefs = requireContext().getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+            val currentLang = prefs.getString("language_code", "en") ?: "en"
+            val checkedItem = langCodes.indexOf(currentLang).takeIf { it >= 0 } ?: 0
+
+            androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle(getString(com.example.movie_booking_app.R.string.auto_str_change_language))
+                .setSingleChoiceItems(languages, checkedItem) { dialog, which ->
+                    val selectedLang = langCodes[which]
+                    if (selectedLang != currentLang) {
+                        prefs.edit().putString("language_code", selectedLang).apply()
+                        // Restart app/activity to apply changes
+                        val intent = Intent(requireContext(), MainActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+                    }
+                    dialog.dismiss()
+                }
+                .show()
         }
         binding.layoutChangePassword.setOnClickListener {
             val intent = Intent(requireContext(), com.example.movie_booking_app.view.activity.ChangePasswordActivity::class.java)

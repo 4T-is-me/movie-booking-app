@@ -64,4 +64,18 @@ accountSchema.virtual('memberInfo', {
     justOne: true
 });
 
+accountSchema.virtual('managerInfo', {
+    ref: 'Manager',
+    localField: '_id',
+    foreignField: 'accountId',
+    justOne: true
+});
+
+accountSchema.virtual('staffInfo', {
+    ref: 'Staff',
+    localField: '_id',
+    foreignField: 'accountId',
+    justOne: true
+});
+
 export const Account = mongoose.model('Account', accountSchema);
