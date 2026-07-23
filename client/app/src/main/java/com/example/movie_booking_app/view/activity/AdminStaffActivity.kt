@@ -264,7 +264,7 @@ class AdminStaffActivity : BaseActivity() {
             }
             val address = binding.edtAddress.text.toString().trim()
             val statusText = binding.actvStatus.text.toString()
-            val statusVal = if (statusText.contains("Active") || statusText.contains("Active")) 1 else 0
+            val statusVal = if (statusText.equals("Active", ignoreCase = true)) 1 else 0
             val request = UpdateStaffRequest(
                 fullName = fullName,
                 email = email,
