@@ -14,6 +14,7 @@ import com.example.movie_booking_app.view.activity.BookingDetailActivity
 import com.example.movie_booking_app.view.activity.MainActivity
 import com.example.movie_booking_app.view.activity.PromotionDetailActivity
 import com.example.movie_booking_app.view.activity.NotificationActivity
+import com.example.movie_booking_app.view.activity.StaffActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.AndroidEntryPoint
@@ -88,6 +89,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         val body = remoteMessage.notification?.body
             ?: remoteMessage.data["body"]
+            ?: remoteMessage.data["message"]
             ?: ""
 
         Log.d(TAG, "Notification → title=$title | body=$body")
@@ -95,38 +97,50 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         // ── 2. Extract routing info from data payload ─────────────
         val type        = remoteMessage.data[NotificationItem.KEY_TYPE]        ?: NotificationItem.TYPE_GENERAL
         val referenceId = remoteMessage.data[NotificationItem.KEY_REFERENCE_ID]
+        val shiftId     = remoteMessage.data[NotificationItem.KEY_SHIFT_ID]
+        val leaveRequestId = remoteMessage.data[NotificationItem.KEY_LEAVE_REQUEST_ID]
 
-        Log.d(TAG, "Routing → type=$type | referenceId=$referenceId")
+        Log.d(TAG, "Routing → type=$type | referenceId=$referenceId | shiftId=$shiftId | leaveRequestId=$leaveRequestId")
 
         // ── 3. Persist locally ────────────────────────────────────
         val item = NotificationItem(
             title       = title,
             body        = body,
             type        = type,
-            referenceId = referenceId
+            referenceId = referenceId,
+            shiftId     = shiftId,
+            leaveRequestId = leaveRequestId
         )
         NotificationLocalStorage.save(applicationContext, item)
         Log.d(TAG, "Notification saved locally (id=${item.id})")
 
         // ── 4. Show system-tray notification ──────────────────────
-        showSystemNotification(title, body, type, referenceId, item.id)
+        showSystemNotification(title, body, type, referenceId, shiftId, leaveRequestId, item.id)
+
+        // Send local broadcast to update UI immediately
+        val broadcastIntent = Intent("com.example.movie_booking_app.NEW_NOTIFICATION").apply {
+            putExtra("type", type)
+            putExtra("referenceId", referenceId)
+            putExtra("shiftId", shiftId)
+            putExtra("leaveRequestId", leaveRequestId)
+            putExtra("title", title)
+            putExtra("body", body)
+        }
+        sendBroadcast(broadcastIntent)
     }
 
     // ────────────────────────── System Notification ─────────────
 
     /**
      * Builds and posts a styled [NotificationCompat] to the system tray.
-     *
-     * Tapping the notification navigates to:
-     * - `booking`   → [BookingDetailActivity] with `BOOKING_ID` extra
-     * - `promotion` → [PromotionDetailActivity] with the promotion ID
-     * - `general`   → [MainActivity]
      */
     private fun showSystemNotification(
         title: String,
         body: String,
         type: String,
         referenceId: String?,
+        shiftId: String?,
+        leaveRequestId: String?,
         itemId: Long
     ) {
         val notificationManager =
@@ -134,7 +148,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         ensureChannelExists(notificationManager)
 
-        val pendingIntent = buildPendingIntent(type, referenceId, itemId)
+        val pendingIntent = buildPendingIntent(type, referenceId, shiftId, leaveRequestId, title, body, itemId)
 
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification_small)
@@ -178,19 +192,32 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     private fun buildPendingIntent(
         type: String,
         referenceId: String?,
+        shiftId: String?,
+        leaveRequestId: String?,
+        title: String,
+        body: String,
         itemId: Long
     ): PendingIntent {
         val flags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
 
-        // Always target NotificationActivity directly
-        val destIntent = Intent(this, NotificationActivity::class.java).apply {
+        val isStaffNotif = type == "SHIFT_ASSIGNED" || type == "SHIFT_UPDATED" ||
+                type == "LEAVE_APPROVED" || type == "LEAVE_REJECTED" || type == "LEAVE_CANCELLED" ||
+                type.startsWith("LEAVE_") || type.startsWith("SHIFT_")
+
+        val targetActivity = if (isStaffNotif) StaffActivity::class.java else NotificationActivity::class.java
+
+        val destIntent = Intent(this, targetActivity).apply {
             putExtra("type", type)
             putExtra("referenceId", referenceId)
+            putExtra("shiftId", shiftId)
+            putExtra("leaveRequestId", leaveRequestId)
+            putExtra("title", title)
+            putExtra("body", body)
         }
 
-        // Create a back stack so pressing Back from NotificationActivity opens MainActivity
+        val parentActivity = if (isStaffNotif) StaffActivity::class.java else MainActivity::class.java
         val stackBuilder = androidx.core.app.TaskStackBuilder.create(this).apply {
-            addNextIntentWithParentStack(Intent(this@MyFirebaseMessagingService, MainActivity::class.java))
+            addNextIntentWithParentStack(Intent(this@MyFirebaseMessagingService, parentActivity))
             addNextIntent(destIntent)
         }
 

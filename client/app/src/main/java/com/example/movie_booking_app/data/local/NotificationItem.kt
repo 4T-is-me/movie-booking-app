@@ -8,6 +8,8 @@ package com.example.movie_booking_app.data.local
  * @param body       Notification body text from FCM payload.
  * @param type       Routing type: "booking", "promotion", "general".
  * @param referenceId Optional ID for deep-linking (bookingId, promotionId, etc.).
+ * @param shiftId     Optional ID for staff shift.
+ * @param leaveRequestId Optional ID for staff leave requests.
  * @param timestamp  Unix epoch millis when the notification arrived.
  * @param isRead     Whether the user has opened/seen this notification.
  */
@@ -17,6 +19,8 @@ data class NotificationItem(
     val body: String,
     val type: String = TYPE_GENERAL,
     val referenceId: String? = null,
+    val shiftId: String? = null,
+    val leaveRequestId: String? = null,
     val timestamp: Long = System.currentTimeMillis(),
     val isRead: Boolean = false
 ) {
@@ -26,7 +30,9 @@ data class NotificationItem(
         const val TYPE_GENERAL   = "general"
 
         // Keys expected inside RemoteMessage.data payload
-        const val KEY_TYPE         = "type"
-        const val KEY_REFERENCE_ID = "referenceId"
+        const val KEY_TYPE             = "type"
+        const val KEY_REFERENCE_ID     = "referenceId"
+        const val KEY_SHIFT_ID         = "shiftId"
+        const val KEY_LEAVE_REQUEST_ID = "leaveRequestId"
     }
 }

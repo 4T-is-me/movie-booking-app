@@ -107,7 +107,8 @@ class PaymentViewModel @Inject constructor(
     private fun recalculateTotals() {
         val ticketSub = _uiState.value.ticketSubtotal
         val comboSub = (combo1Quantity * Constants.ComboPrice.SINGLE_COMBO) + (combo2Quantity * Constants.ComboPrice.DOUBLE_COMBO)
-        
+
+        // thay bằng kotlin.Math.floor(thay all) - no java
         val subtotal = ticketSub + comboSub
         val promotionDiscount = when (discountType) {
             "percentage" -> Math.floor(subtotal * (discountValue / 100.0)).toInt()
