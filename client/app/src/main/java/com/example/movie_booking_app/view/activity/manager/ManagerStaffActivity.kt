@@ -162,7 +162,7 @@ class ManagerStaffActivity : AppCompatActivity() {
             val dialog = GenerateShiftDialogFragment(
                 staffList = activeStaffList,
                 cinemaId = cinemaId,
-                onSaveClick = { requestPayload ->
+                onSaveClick = { requestPayload, _, _ ->
                     viewModel.saveGeneratedShifts(requestPayload)
                 }
             )

@@ -46,12 +46,12 @@ class StaffNotificationsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.loadNotifications()
+        viewModel.fetchStaffNotifications()
     }
 
     private fun setupSwipeRefresh() {
         binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.loadNotifications()
+            viewModel.fetchStaffNotifications()
         }
     }
 
@@ -79,7 +79,7 @@ class StaffNotificationsFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.notifications.collectLatest { list ->
+            viewModel.mergedNotifications.collectLatest { list ->
                 Log.d("test", list.toString())
                 if (list.isEmpty()) {
                     showEmpty()

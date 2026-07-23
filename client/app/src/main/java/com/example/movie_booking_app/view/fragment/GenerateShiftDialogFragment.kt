@@ -25,7 +25,7 @@ import java.time.temporal.TemporalAdjusters
 class GenerateShiftDialogFragment(
     private val staffList: List<ManagerStaffItem>,
     private val cinemaId: String,
-    private val onSaveClick: (GenerateShiftRequest) -> Unit
+    private val onSaveClick: (request: GenerateShiftRequest, onSuccess: () -> Unit, onError: (String) -> Unit) -> Unit
 ) : DialogFragment() {
 
     private var _binding: FragmentGenerateShiftDialogBinding? = null
@@ -162,10 +162,25 @@ class GenerateShiftDialogFragment(
                         )
                     }
                 )
-                onSaveClick(requestPayload)
-                dismiss()
+
+                binding.btnConfirmGenerate.isEnabled = false
+
+                onSaveClick(
+                    requestPayload,
+                    {
+                        dismiss()
+                    },
+                    { errorMsg ->
+                        handleApiError(errorMsg)
+                    }
+                )
             }
         }
+    }
+
+    fun handleApiError(errorMessage: String) {
+        binding.btnConfirmGenerate.isEnabled = true
+        showError(errorMessage)
     }
 
     private fun setupDurationSpinner() {

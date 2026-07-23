@@ -16,6 +16,11 @@ class NotificationRepository @Inject constructor(
     private val api: NotificationApi
 ) {
 
+    // Retrieve staff notifications from API Server.
+    fun getStaffNotifications(page: Int? = null, limit: Int? = null, isRead: Boolean? = null, type: String? = null): Flow<NotificationResponse?> {
+        return getNotifications(page, limit, isRead, type)
+    }
+
     // Retrieve a paginated list of notifications.
     fun getNotifications(page: Int? = null, limit: Int? = null, isRead: Boolean? = null, type: String? = null): Flow<NotificationResponse?> = flow {
         try {
