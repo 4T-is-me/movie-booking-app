@@ -167,7 +167,7 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
     member.totalSpent += finalAmount;
 
     // Update membership rank
-    if (member.totalSpent >= 20000000) {
+    if (member.totalSpent >= 10000000) {
       member.membershipRank = "gold";
     } else if (member.totalSpent >= 5000000) {
       member.membershipRank = "silver";
@@ -182,6 +182,7 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
     console.log(`[DEBUG] New totalSpent: ${member.totalSpent}`);
     console.log(`[DEBUG] Previous rewardPoints: ${prevRewardPoints}`);
     console.log(`[DEBUG] New rewardPoints: ${member.rewardPoints}`);
+    console.log(`[DEBUG] New rewardPoints: ${useScore}`)
     console.log(`[DEBUG] New membershipRank: ${member.membershipRank}`);
     console.log(`[DEBUG] finalAmount to charge: ${finalAmount}`);
 

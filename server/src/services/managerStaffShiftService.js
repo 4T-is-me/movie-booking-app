@@ -419,10 +419,8 @@ const generateShift = async (accountId, dateRange, config = {}, shiftsFromFE = [
     };
 };
 const getWeekRange = (inputDate) => {
-    // Ensure we have a valid Date object
     let date = new Date(inputDate);
 
-    // Defensive check if input is invalid or undefined
     if (!inputDate || isNaN(date.getTime())) {
         date = new Date();
     }
@@ -430,15 +428,16 @@ const getWeekRange = (inputDate) => {
     // Clone date object to prevent side-effects
     const utcDate = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
 
-    // UTC Day: 0 (Sun), 1 (Mon), ..., 6 (Sat)
     const dayOfWeek = utcDate.getUTCDay();
-    const distanceToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    const diffToMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
 
     const monday = new Date(utcDate);
-    monday.setUTCDate(utcDate.getUTCDate() - distanceToMonday);
+    monday.setUTCDate(utcDate.getUTCDate() + diffToMonday);
+    monday.setUTCHours(0, 0, 0, 0); // 00:00:00 UTC
 
     const sunday = new Date(monday);
     sunday.setUTCDate(monday.getUTCDate() + 6);
+    sunday.setUTCHours(23, 59, 59, 999); // 23:59:59 UTC
 
     return { monday, sunday };
 };
