@@ -250,7 +250,7 @@ class SelectSeatViewModel @Inject constructor(
     }
 
     private fun startCountdown(showtimeId: String, seatIds: List<String>) {
-        timerManager.startTimer(900)
+        timerManager.startTimer(600)
         countdownCollectJob?.cancel()
         countdownCollectJob = viewModelScope.launch {
             timerManager.isExpired.collect { expired ->
