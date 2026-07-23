@@ -503,6 +503,10 @@ const handleGetbookingDetail = async (bookingId, accountId) => {
   const cinema = showtime.cinemaId;
   const cinemaRoom = showtime.roomId;
 
+  // Find score history for earned points
+  const scoreHistory = await ScoreHistory.findOne({ bookingId: booking._id });
+  const earnedPoints = scoreHistory ? scoreHistory.earnedPoints : Math.floor(((booking.finalAmount || 0) * 0.05) / 10);
+
   //map data
   const responseBookingDetail = {
     bookingId: booking._id,
@@ -544,6 +548,8 @@ const handleGetbookingDetail = async (bookingId, accountId) => {
       finalAmount: booking.finalAmount || 0,
       paymentMethod: booking.paymentMethod || ""
     },
+    earnedPoints: earnedPoints,
+    membershipRank: member.membershipRank || "bronze",
     status: booking.paymentStatus || ""
   }
   return responseBookingDetail;
