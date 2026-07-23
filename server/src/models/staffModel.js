@@ -14,7 +14,8 @@ const staffSchema = new mongoose.Schema({
     totalRatings: {type: Number, default: 0},
     totalStars: {type: Number, default: 0},
     startDate: {type: Date,  required: true},
-    address: {type: String}
-}, { versionKey: false, collection: 'staffs' });
+    address: {type: String},
+    isDeleted: {type: Boolean, default: false}
+}, { versionKey: false, timestamps: true, collection: 'staffs' });
 
 export const Staff = mongoose.model('Staff', staffSchema);

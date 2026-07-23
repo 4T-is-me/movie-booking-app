@@ -22,5 +22,6 @@ data class BookingUiState(
     val selectedPaymentMethod: String? = null,
     val availablePoints: Int = 0,
     val useRewardPoints: Boolean = false,
-    val rewardDiscount: Int = 0
+    val rewardDiscount: Int = 0,
+    val earnedPoints: Int = 0
 )

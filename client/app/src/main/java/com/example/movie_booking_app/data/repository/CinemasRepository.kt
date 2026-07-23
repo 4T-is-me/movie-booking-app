@@ -7,7 +7,7 @@ import okhttp3.RequestBody
 
 interface CinemasRepository {
     suspend fun getCinemas(): List<Cinema>
-    suspend fun createCinema(request: AddCinemaRequest): Boolean
+    suspend fun createCinema(request: AddCinemaRequest): Result<Unit>
     
     suspend fun createCinemaWithImage(
         cinemaName: RequestBody,
@@ -16,10 +16,10 @@ interface CinemasRepository {
         hotline: RequestBody,
         status: RequestBody,
         poster: MultipartBody.Part?
-    ): Boolean
+    ): Result<Unit>
 
     suspend fun getCinemaDetails(id: String): Cinema?
-    suspend fun updateCinema(id: String, request: AddCinemaRequest): Boolean
+    suspend fun updateCinema(id: String, request: AddCinemaRequest): Result<Unit>
 
     suspend fun updateCinemaWithImage(
         id: String,
@@ -29,7 +29,7 @@ interface CinemasRepository {
         hotline: RequestBody,
         status: RequestBody,
         poster: MultipartBody.Part?
-    ): Boolean
+    ): Result<Unit>
 
     suspend fun updateCinemaStatus(id: String, status: String): Boolean
 }

@@ -26,10 +26,13 @@ export const createStaff = async (req, res) => {
 
         return res.status(201).json({ success: true, data: staff, message: 'Staff account created successfully.' });
     } catch (error) {
+        if (error.statusCode) {
+            return res.status(error.statusCode).json({ success: false, message: error.message });
+        }
         if (error.code === 11000) {
             return res.status(400).json({ success: false, message: 'Data already exists (Username, Email, Identity Card, or this Cinema already has a Manager).' });
         }
-        return res.status(500).json({ success: false, message: 'Internal server error.', error: error.message });
+        return res.status(500).json({ success: false, message: error.message || 'Internal server error.' });
     }
 };
 

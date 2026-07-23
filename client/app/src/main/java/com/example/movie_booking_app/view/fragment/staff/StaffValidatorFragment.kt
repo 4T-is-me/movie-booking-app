@@ -28,6 +28,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.CheckInTicketResponse
 import com.example.movie_booking_app.databinding.DialogCheckInResultBinding
+import com.example.movie_booking_app.databinding.DialogManualCheckInBinding
 import com.example.movie_booking_app.databinding.FragmentStaffValidatorBinding
 import com.example.movie_booking_app.viewmodel.staff.StaffValidatorViewModel
 import com.google.mlkit.vision.barcode.BarcodeScanning
@@ -206,44 +207,42 @@ class StaffValidatorFragment : Fragment() {
         val context = requireContext()
         val builder = AlertDialog.Builder(context, R.style.CustomAlertDialogTheme)
         
-        val input = EditText(context).apply {
-            hint = "Enter 18-digit code (e.g. MBD-...)"
-            setHintTextColor(ContextCompat.getColor(context, R.color.text_muted))
-            setTextColor(ContextCompat.getColor(context, R.color.text_primary))
-            setPadding(48, 40, 48, 40)
-            setBackgroundResource(R.drawable.bg_input_dark)
-        }
-
-        val container = android.widget.FrameLayout(context).apply {
-            addView(input)
-        }
-
-        val dialog = builder
-            .setTitle("Manual Check-in")
-            .setView(container)
-            .setPositiveButton("Confirm") { d, _ ->
-                val code = input.text.toString().trim()
-                if (code.isNotEmpty()) {
-                    handleCheckIn(code)
-                } else {
-                    isScanningEnabled = true
-                }
-                d.dismiss()
-            }
-            .setNegativeButton("Cancel") { d, _ ->
-                isScanningEnabled = true
-                d.dismiss()
-            }
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_manual_check_in, null)
+        val bindingDialog = DialogManualCheckInBinding.bind(dialogView)
+        
+        val dialog = builder.setView(dialogView)
             .setOnCancelListener {
                 isScanningEnabled = true
             }
             .create()
 
+        bindingDialog.btnConfirm.setOnClickListener {
+            val code = bindingDialog.edtBookingCode.text.toString().trim()
+            if (code.isNotEmpty()) {
+                handleCheckIn(code)
+            } else {
+                isScanningEnabled = true
+            }
+            dialog.dismiss()
+        }
+
+        bindingDialog.btnCancel.setOnClickListener {
+            isScanningEnabled = true
+            dialog.dismiss()
+        }
+
+        bindingDialog.btnCloseIcon.setOnClickListener {
+            isScanningEnabled = true
+            dialog.dismiss()
+        }
+
         dialog.show()
-        
-        // Custom colors for dialog buttons
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(context, R.color.accent_primary))
-        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(ContextCompat.getColor(context, R.color.text_secondary))
+
+        // Enforce explicit dialog width to prevent layout collapsing
+        dialog.window?.let { window ->
+            val width = (320 * context.resources.displayMetrics.density).toInt()
+            window.setLayout(width, android.view.ViewGroup.LayoutParams.WRAP_CONTENT)
+        }
     }
 
     private fun showResultDialog(response: CheckInTicketResponse) {
@@ -307,6 +306,12 @@ class StaffValidatorFragment : Fragment() {
         bindingDialog.btnCloseIcon.setOnClickListener(dismissAction)
 
         dialog.show()
+
+        // Enforce explicit dialog width to prevent layout collapsing
+        dialog.window?.let { window ->
+            val width = (320 * context.resources.displayMetrics.density).toInt()
+            window.setLayout(width, android.view.ViewGroup.LayoutParams.WRAP_CONTENT)
+        }
     }
 
     private fun formatShowDate(dateStr: String?): String {

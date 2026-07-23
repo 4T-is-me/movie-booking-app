@@ -49,9 +49,14 @@ const accountSchema = new mongoose.Schema({
     registerDate: {
         type: Date,
         default: Date.now
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
     }
 }, {
     versionKey: false,
+    timestamps: true,
     collection: 'accounts',
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
