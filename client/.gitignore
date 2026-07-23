@@ -15,3 +15,5 @@
 local.properties
 .idea/
 gradle/gradle-daemon-jvm.properties
+.env
+
