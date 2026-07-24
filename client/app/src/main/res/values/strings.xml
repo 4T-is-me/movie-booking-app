@@ -1089,6 +1089,15 @@
     <string name="ticket_validator_subtitle">Lumina Staff Member</string>
     <string name="ticket_validator_instruction">Align QR Code inside the frame to scan</string>
     <string name="ticket_validator_manual_input">Enter Booking Code</string>
+
+    <!-- Movie Management Dialogs -->
+    <string name="auto_str_confirmation">Confirmation</string>
+    <string name="auto_str_cancel_dialog">Cancel</string>
+    <string name="auto_str_confirm_dialog">Confirm</string>
+    <string name="auto_str_restore_movie_title">Restore Movie</string>
+    <string name="auto_str_delete_movie_title">Delete Movie</string>
+    <string name="auto_str_restore_confirm_msg">Are you sure you want to restore the movie \"%1$s\" to active list?</string>
+    <string name="auto_str_delete_confirm_msg">Are you sure you want to delete the movie \"%1$s\"?</string>
     <!-- Reset Password and Forgot Password strings -->
     <string name="reset_password_title">Reset Password</string>
     <string name="reset_password_subtitle">Create a new password for your account</string>
