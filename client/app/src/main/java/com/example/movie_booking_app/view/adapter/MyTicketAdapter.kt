@@ -16,7 +16,8 @@ import java.util.Locale
 
 class MyTicketAdapter(
     private val onViewTicketClick: (BookingHistoryItem) -> Unit,
-    private val onViewQrClick: (BookingHistoryItem) -> Unit
+    private val onViewQrClick: (BookingHistoryItem) -> Unit,
+    private val onRateStaffClick: ((BookingHistoryItem) -> Unit)? = null
 ) : ListAdapter<BookingHistoryItem, MyTicketAdapter.ViewHolder>(MyTicketDiffCallback()) {
 
     fun updateData(newItems: List<BookingHistoryItem>) {
@@ -31,7 +32,7 @@ class MyTicketAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position), onViewTicketClick, onViewQrClick)
+        holder.bind(getItem(position), onViewTicketClick, onViewQrClick, onRateStaffClick)
     }
 
     class ViewHolder(
@@ -41,7 +42,8 @@ class MyTicketAdapter(
         fun bind(
             item: BookingHistoryItem,
             onViewTicketClick: (BookingHistoryItem) -> Unit,
-            onViewQrClick: (BookingHistoryItem) -> Unit
+            onViewQrClick: (BookingHistoryItem) -> Unit,
+            onRateStaffClick: ((BookingHistoryItem) -> Unit)?
         ) {
             binding.tvMovieTitle.text = item.movie
             binding.tvShowDate.text = item.showDate
@@ -82,6 +84,16 @@ class MyTicketAdapter(
             }
             binding.btnViewQr.setOnClickListener {
                 onViewQrClick(item)
+            }
+
+            // Show Rate Staff button only if checked in and not yet rated
+            if (item.checkedIn == true && item.isStaffRated == false) {
+                binding.btnRateStaff.visibility = android.view.View.VISIBLE
+                binding.btnRateStaff.setOnClickListener {
+                    onRateStaffClick?.invoke(item)
+                }
+            } else {
+                binding.btnRateStaff.visibility = android.view.View.GONE
             }
         }
     }

@@ -6,6 +6,7 @@ import { Promotion } from "../models/promotionModel.js";
 import { Showtime } from "../models/showTimeModel.js";
 import { Movie } from "../models/movieModel.js";
 import { Cinema } from "../models/cinemaModel.js";
+import { Staff } from "../models/staffModel.js";
 import { ScoreHistory } from "../models/scoreHistoryModel.js";
 import { ticketUtils } from "../utils/ticketUtils.js";
 import { promotionService } from "./promotionService.js";
@@ -372,7 +373,9 @@ const handleGetMyTickets = async (accountId, page = 1, limit = 10) => {
       paymentStatus: booking.paymentStatus || "pending",
       createdAt: booking.createdAt ? formatDate(booking.createdAt, true) : "",
       qrCodeData: booking.qrCodeData || "",
-      paymentMethod: booking.paymentMethod || ""
+      paymentMethod: booking.paymentMethod || "",
+      isStaffRated: booking.isStaffRated || false,
+      checkedIn: booking.checkedIn || false
     };
   });
 
@@ -435,7 +438,9 @@ const handleGetHistory = async (accountId, page = 1, limit = 10) => {
       paymentStatus: booking.paymentStatus || "pending",
       createdAt: booking.createdAt ? formatDate(booking.createdAt, true) : "",
       qrCodeData: booking.qrCodeData || "",
-      paymentMethod: booking.paymentMethod || ""
+      paymentMethod: booking.paymentMethod || "",
+      isStaffRated: booking.isStaffRated || false,
+      checkedIn: booking.checkedIn || false
     };
   });
 
@@ -555,6 +560,45 @@ const handleGetbookingDetail = async (bookingId, accountId) => {
   return responseBookingDetail;
 }
 
+const handleRateStaff = async (bookingId, accountId, rating) => {
+  const member = await Member.findOne({ accountId });
+  if (!member) throw new ApiError(StatusCodes.NOT_FOUND, "Member not found");
+
+  const booking = await Booking.findOne({ _id: bookingId, memberId: member._id });
+  if (!booking) throw new ApiError(StatusCodes.NOT_FOUND, "Booking not found");
+
+  if (booking.isStaffRated) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, "Staff already rated for this booking");
+  }
+
+  if (!booking.checkedInBy) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, "Cannot rate staff before check-in");
+  }
+
+  const staff = await Staff.findById(booking.checkedInBy);
+  if (!staff) throw new ApiError(StatusCodes.NOT_FOUND, "Staff member not found");
+
+  // Update staff rating
+  const newTotalStars = (staff.totalStars || 0) + rating;
+  const newTotalRatings = (staff.totalRatings || 0) + 1;
+  const newRating = newTotalStars / newTotalRatings;
+
+  await Staff.findByIdAndUpdate(staff._id, {
+    $set: {
+      totalStars: newTotalStars,
+      totalRatings: newTotalRatings,
+      rating: newRating
+    }
+  });
+
+  // Update booking
+  booking.isStaffRated = true;
+  booking.staffRating = rating;
+  await booking.save();
+
+  return { rating: newRating, totalRatings: newTotalRatings };
+}
+
 export const bookingService = {
   handleHoldSeats,
   handleConfirmBooking,
@@ -562,5 +606,6 @@ export const bookingService = {
   handleGetScoreHistory,
   handleReleaseBooking,
   handleGetbookingDetail,
-  handleGetMyTickets
+  handleGetMyTickets,
+  handleRateStaff
 };

@@ -15,4 +15,8 @@ class MyTicketRepository @Inject constructor(
     fun getMyTickets(): Flow<Response<BookingHistoryResponse>> = flow {
         emit(paymentApi.getMyTickets())
     }
+
+    suspend fun rateStaff(bookingId: String, rating: Int): Response<okhttp3.ResponseBody> {
+        return paymentApi.rateStaff(bookingId, mapOf("rating" to rating))
+    }
 }

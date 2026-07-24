@@ -1105,4 +1105,12 @@
     <string name="duration_format_hm">%1$dh%2$dm</string>
     <string name="duration_format_h">%1$dh</string>
     <string name="duration_format_m">%1$dm</string>
+
+    <!-- Staff Rating Strings -->
+    <string name="rate_staff_title">Rate our staff</string>
+    <string name="rate_staff_subtitle">How was your service experience?</string>
+    <string name="submit_rating_btn">Submit</string>
+    <string name="please_select_rating">Please select a rating</string>
+    <string name="rating_submitted_success">Rating submitted!</string>
+    <string name="btn_rate_staff">Rate Staff</string>
 </resources>

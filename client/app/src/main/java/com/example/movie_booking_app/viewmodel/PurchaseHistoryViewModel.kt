@@ -5,8 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.response.BookingHistoryItem
 import com.example.movie_booking_app.data.repository.PurchaseHistoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,6 +27,9 @@ class PurchaseHistoryViewModel @Inject constructor(
 
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error.asStateFlow()
+
+    private val _rateSuccess = MutableSharedFlow<Boolean>()
+    val rateSuccess: SharedFlow<Boolean> = _rateSuccess.asSharedFlow()
 
     fun loadHistory() {
         viewModelScope.launch {
@@ -46,6 +52,22 @@ class PurchaseHistoryViewModel @Inject constructor(
             } catch (e: Exception) {
                 _isLoading.value = false
                 _error.value = "Network error: ${e.localizedMessage ?: "Unknown error"}"
+            }
+        }
+    }
+
+    fun rateStaff(bookingId: String, rating: Int) {
+        viewModelScope.launch {
+            try {
+                val response = repository.rateStaff(bookingId, rating)
+                if (response.isSuccessful) {
+                    _rateSuccess.emit(true)
+                    loadHistory()
+                } else {
+                    _error.value = "Failed to submit rating: ${response.code()}"
+                }
+            } catch (e: Exception) {
+                _error.value = "Rating error: ${e.localizedMessage}"
             }
         }
     }
