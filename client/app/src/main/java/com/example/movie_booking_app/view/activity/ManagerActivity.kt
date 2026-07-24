@@ -221,8 +221,7 @@ class ManagerActivity : AppCompatActivity() {
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
         binding.tvViewAll.setOnClickListener {
-//      putExtra("EXTRA_FULL_SHOWTIMES", ArrayList(listShowtime))
-            Toast.makeText(this, "No showtimes available to view", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, com.example.movie_booking_app.view.activity.manager.ManagerAutoSchedulingActivity::class.java))
         }
         binding.layoutSchedule.setOnClickListener {
             startActivity(Intent(this, com.example.movie_booking_app.view.activity.manager.ManagerAutoSchedulingActivity::class.java))
@@ -255,6 +254,9 @@ class ManagerActivity : AppCompatActivity() {
                 }
                 R.id.nav_schedule -> {
                     startActivity(Intent(this, com.example.movie_booking_app.view.activity.manager.ManagerAutoSchedulingActivity::class.java))
+                }
+                R.id.nav_profile -> {
+                    startActivity(Intent(this, ManagerProfileActivity::class.java))
                 }
                 else -> Toast.makeText(this, "Feature coming soon", Toast.LENGTH_SHORT).show()
             }

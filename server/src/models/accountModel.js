@@ -29,6 +29,10 @@ const accountSchema = new mongoose.Schema({
         type: String,
         default: null
     },
+    fcmTokens: {
+        type: [String],
+        default: []
+    },
 
     // 2. Personal information group has been moved to members collection
 
@@ -45,9 +49,14 @@ const accountSchema = new mongoose.Schema({
     registerDate: {
         type: Date,
         default: Date.now
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
     }
 }, {
     versionKey: false,
+    timestamps: true,
     collection: 'accounts',
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
@@ -55,6 +64,20 @@ const accountSchema = new mongoose.Schema({
 
 accountSchema.virtual('memberInfo', {
     ref: 'Member',
+    localField: '_id',
+    foreignField: 'accountId',
+    justOne: true
+});
+
+accountSchema.virtual('managerInfo', {
+    ref: 'Manager',
+    localField: '_id',
+    foreignField: 'accountId',
+    justOne: true
+});
+
+accountSchema.virtual('staffInfo', {
+    ref: 'Staff',
     localField: '_id',
     foreignField: 'accountId',
     justOne: true

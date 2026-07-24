@@ -152,7 +152,7 @@ class MyTicketFragment : Fragment() {
         dialog.setCancelable(true)
 
         dialogBinding.tvMovieTitle.text = item.movie
-        dialogBinding.tvBookingCode.text = "Booking ID: ${item.bookingCode}"
+        dialogBinding.tvBookingCode.text = requireContext().getString(com.example.movie_booking_app.R.string.booking_id_format, item.bookingCode)
         dialogBinding.tvDateTime.text = "${item.showDate} • ${item.showtime}"
         dialogBinding.tvCinemaRoom.text = "${item.cinemaName} • ${item.roomName}"
 

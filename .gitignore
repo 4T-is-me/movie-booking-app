@@ -3,6 +3,7 @@
 # IDE files
 .idea/
 *.iml
+.env
 
 AGENTS.md
 issues.md

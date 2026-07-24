@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.example.movie_booking_app.utils.Constants
+import kotlin.math.floor
 
 @HiltViewModel
 class PaymentViewModel @Inject constructor(
@@ -56,7 +57,7 @@ class PaymentViewModel @Inject constructor(
                 }
                 .collect { profile ->
                     _uiState.value = _uiState.value.copy(
-                        availablePoints = profile.rewardPoints ?: 0
+                        availablePoints = maxOf(0, profile.rewardPoints ?: 0)
                     )
                     recalculateTotals()
                 }
@@ -93,45 +94,45 @@ class PaymentViewModel @Inject constructor(
     }
 
     fun updateCombo1Quantity(quantity: Int) {
-        if (quantity < 0) return
-        combo1Quantity = quantity
+        combo1Quantity = maxOf(0, quantity)
         recalculateTotals()
     }
 
     fun updateCombo2Quantity(quantity: Int) {
-        if (quantity < 0) return
-        combo2Quantity = quantity
+        combo2Quantity = maxOf(0, quantity)
         recalculateTotals()
     }
 
     private fun recalculateTotals() {
-        val ticketSub = _uiState.value.ticketSubtotal
-        val comboSub = (combo1Quantity * Constants.ComboPrice.SINGLE_COMBO) + (combo2Quantity * Constants.ComboPrice.DOUBLE_COMBO)
+        val ticketSub = maxOf(0, _uiState.value.ticketSubtotal)
+        val comboSub = maxOf(0, (combo1Quantity * Constants.ComboPrice.SINGLE_COMBO) + (combo2Quantity * Constants.ComboPrice.DOUBLE_COMBO))
         
         val subtotal = ticketSub + comboSub
-        val promotionDiscount = when (discountType) {
-            "percentage" -> Math.floor(subtotal * (discountValue / 100.0)).toInt()
+        val rawPromotionDiscount = when (discountType) {
+            "percentage" -> floor(subtotal * (discountValue / 100.0)).toInt()
             "fixed" -> discountValue.toInt()
-            else -> {
-                Math.floor(subtotal * (discountLevelPercent / 100.0)).toInt()
-            }
+            else -> floor(subtotal * (discountLevelPercent / 100.0)).toInt()
         }
+        val promotionDiscount = minOf(maxOf(0, rawPromotionDiscount), subtotal)
         
-        val afterPromotion = subtotal - promotionDiscount
+        val afterPromotion = maxOf(0, subtotal - promotionDiscount)
+        val availablePointsVal = maxOf(0, _uiState.value.availablePoints) * 10
         val rewardDiscount = if (_uiState.value.useRewardPoints) {
-            Math.min(_uiState.value.availablePoints * 10, afterPromotion)
+            minOf(availablePointsVal, afterPromotion)
         } else {
             0
         }
         
-        val fee = _uiState.value.bookingFee
-        val grandTotal = subtotal + fee - promotionDiscount - rewardDiscount
+        val fee = maxOf(0, _uiState.value.bookingFee)
+        val grandTotal = maxOf(0, subtotal + fee - promotionDiscount - rewardDiscount)
+        val pointsEarned = floor((grandTotal * 0.05) / 10.0).toInt()
 
         _uiState.value = _uiState.value.copy(
             comboSubtotal = comboSub,
             discountAmount = promotionDiscount,
             rewardDiscount = rewardDiscount,
-            grandTotal = grandTotal
+            grandTotal = grandTotal,
+            earnedPoints = pointsEarned
         )
     }
 

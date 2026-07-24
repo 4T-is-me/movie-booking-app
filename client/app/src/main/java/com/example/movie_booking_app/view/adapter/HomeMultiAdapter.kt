@@ -3,25 +3,17 @@ package com.example.movie_booking_app.view.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Movie
 import com.example.movie_booking_app.data.model.entity.MovieNews
 import com.example.movie_booking_app.data.model.entity.Promo
 import com.example.movie_booking_app.data.model.entity.Service
 import com.example.movie_booking_app.data.model.ui.HomeItem
-import com.facebook.shimmer.ShimmerFrameLayout
-import com.example.movie_booking_app.databinding.LayoutHomeNowPlayingBinding
-import com.example.movie_booking_app.databinding.LayoutHomeComingSoonBinding
-import com.example.movie_booking_app.databinding.LayoutHomePromoBinding
-import com.example.movie_booking_app.databinding.LayoutHomeServicesBinding
-import com.example.movie_booking_app.databinding.LayoutHomeMovieNewsBinding
-import com.example.movie_booking_app.databinding.LayoutHomeVideosBinding
-import com.example.movie_booking_app.databinding.LayoutHomeEmptyStateBinding
+import com.example.movie_booking_app.databinding.*
 
 class HomeMultiAdapter(
     private val onSeeAllClicked: (String) -> Unit,
@@ -100,22 +92,16 @@ class HomeMultiAdapter(
         onSeeAll: (String) -> Unit,
         onMovie: (Movie) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
-        private val viewPager: ViewPager2 = binding.vpNowPlaying
-        private val tvSeeAll: TextView = binding.tvSeeAllNowPlaying
-        private val indicatorTrack: View = binding.layoutIndicatorNowPlaying
-        private val indicatorThumb: View = binding.viewIndicatorNowPlayingThumb
-        private val layoutContent: View = binding.layoutContentNowPlaying
-        private val shimmer: ShimmerFrameLayout = binding.shimmerNowPlaying
         private val adapter = MovieLargeAdapter(onMovie)
         private var isCallbackAdded = false
 
         init { 
-            viewPager.adapter = adapter
-            tvSeeAll.setOnClickListener { onSeeAll("Now Playing") }
+            binding.vpNowPlaying.adapter = adapter
+            binding.tvSeeAllNowPlaying.setOnClickListener { onSeeAll("Now Playing") }
             
-            viewPager.offscreenPageLimit = 3
+            binding.vpNowPlaying.offscreenPageLimit = 3
             
-            viewPager.setPageTransformer { page, position ->
+            binding.vpNowPlaying.setPageTransformer { page, position ->
                 val r = 1 - Math.abs(position)
                 page.scaleY = 0.85f + r * 0.15f
                 page.scaleX = 0.85f + r * 0.15f
@@ -126,34 +112,30 @@ class HomeMultiAdapter(
         }
 
         fun bind(movies: List<Movie>, isLoading: Boolean) { 
-            if (isLoading) {
-                shimmer.visibility = View.VISIBLE
-                shimmer.startShimmer()
-                layoutContent.visibility = View.GONE
-            } else {
-                shimmer.stopShimmer()
-                shimmer.visibility = View.GONE
-                layoutContent.visibility = View.VISIBLE
-                if (movies.isNotEmpty()) {
+            with(binding) {
+                shimmerNowPlaying.isVisible = isLoading
+                if (isLoading) shimmerNowPlaying.startShimmer() else shimmerNowPlaying.stopShimmer()
+                
+                layoutContentNowPlaying.isVisible = !isLoading
+                if (!isLoading && movies.isNotEmpty()) {
                     val isFirstSubmit = adapter.currentList.isEmpty()
                     adapter.submitList(movies) {
                         if (isFirstSubmit) {
                             val size = movies.size
-                            val middle = size * 500
-                            viewPager.setCurrentItem(middle, false)
+                            vpNowPlaying.setCurrentItem(size * 500, false)
                         }
                     }
                     if (!isCallbackAdded) {
                         isCallbackAdded = true
-                        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                        vpNowPlaying.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
                             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
                                 val size = movies.size
                                 if (size > 1) {
-                                    indicatorTrack.post {
-                                        val totalScrollableWidth = indicatorTrack.width - indicatorThumb.width
+                                    layoutIndicatorNowPlaying.post {
+                                        val totalScrollableWidth = layoutIndicatorNowPlaying.width - viewIndicatorNowPlayingThumb.width
                                         val progress = ((position % size) + positionOffset) / (size - 1)
                                         val safeProgress = progress.coerceIn(0f, 1f)
-                                        indicatorThumb.translationX = safeProgress * totalScrollableWidth
+                                        viewIndicatorNowPlayingThumb.translationX = safeProgress * totalScrollableWidth
                                     }
                                 }
                             }
@@ -169,24 +151,20 @@ class HomeMultiAdapter(
         onSeeAll: (String) -> Unit,
         onMovie: (Movie) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
-        private val recyclerView: RecyclerView = binding.rvComingSoon
-        private val tvSeeAll: TextView = binding.tvSeeAllComingSoon
-        private val shimmer: ShimmerFrameLayout = binding.shimmerComingSoon
         private val adapter = MovieAdapter(onMovie)
         init { 
-            recyclerView.adapter = adapter
-            tvSeeAll.setOnClickListener { onSeeAll("Coming Soon") }
+            binding.rvComingSoon.adapter = adapter
+            binding.tvSeeAllComingSoon.setOnClickListener { onSeeAll("Coming Soon") }
         }
         fun bind(movies: List<Movie>, isLoading: Boolean) { 
-            if (isLoading) {
-                shimmer.visibility = View.VISIBLE
-                shimmer.startShimmer()
-                recyclerView.visibility = View.GONE
-            } else {
-                shimmer.stopShimmer()
-                shimmer.visibility = View.GONE
-                recyclerView.visibility = View.VISIBLE
-                if (movies.isNotEmpty()) adapter.submitList(movies) 
+            with(binding) {
+                shimmerComingSoon.isVisible = isLoading
+                if (isLoading) shimmerComingSoon.startShimmer() else shimmerComingSoon.stopShimmer()
+                
+                rvComingSoon.isVisible = !isLoading && movies.isNotEmpty()
+                root.isVisible = isLoading || movies.isNotEmpty()
+                
+                if (!isLoading && movies.isNotEmpty()) adapter.submitList(movies)
             }
         }
     }
@@ -195,24 +173,18 @@ class HomeMultiAdapter(
         private val binding: LayoutHomePromoBinding,
         onSeeAll: (String) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
-        private val viewPager: ViewPager2 = binding.vpPromo
-        private val tvSeeAll: TextView = binding.tvSeeAllPromo
-        private val shimmer: ShimmerFrameLayout = binding.shimmerPromo
         private val adapter = PromoAdapter()
         init { 
-            viewPager.adapter = adapter
-            tvSeeAll.setOnClickListener { onSeeAll("Promo") }
+            binding.vpPromo.adapter = adapter
+            binding.tvSeeAllPromo.setOnClickListener { onSeeAll("Promo") }
         }
         fun bind(promos: List<Promo>, isLoading: Boolean) { 
-            if (isLoading) {
-                shimmer.visibility = View.VISIBLE
-                shimmer.startShimmer()
-                viewPager.visibility = View.GONE
-            } else {
-                shimmer.stopShimmer()
-                shimmer.visibility = View.GONE
-                viewPager.visibility = View.VISIBLE
-                if (promos.isNotEmpty()) adapter.submitList(promos) 
+            with(binding) {
+                shimmerPromo.isVisible = isLoading
+                if (isLoading) shimmerPromo.startShimmer() else shimmerPromo.stopShimmer()
+                
+                vpPromo.isVisible = !isLoading && promos.isNotEmpty()
+                if (!isLoading && promos.isNotEmpty()) adapter.submitList(promos)
             }
         }
     }
@@ -221,12 +193,10 @@ class HomeMultiAdapter(
         private val binding: LayoutHomeServicesBinding,
         onSeeAll: (String) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
-        private val recyclerView: RecyclerView = binding.rvServices
-        private val tvSeeAll: TextView = binding.tvSeeAllService
         private val adapter = ServiceAdapter()
         init { 
-            recyclerView.adapter = adapter
-            tvSeeAll.setOnClickListener { onSeeAll("Service") }
+            binding.rvServices.adapter = adapter
+            binding.tvSeeAllService.setOnClickListener { onSeeAll("Service") }
         }
         fun bind(services: List<Service>, isLoading: Boolean) { 
             if (services.isNotEmpty()) adapter.submitList(services) 
@@ -237,12 +207,10 @@ class HomeMultiAdapter(
         private val binding: LayoutHomeMovieNewsBinding,
         onSeeAll: (String) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
-        private val recyclerView: RecyclerView = binding.rvMovieNews
-        private val tvSeeAll: TextView = binding.tvSeeAllNews
         private val adapter = MovieNewsAdapter()
         init { 
-            recyclerView.adapter = adapter
-            tvSeeAll.setOnClickListener { onSeeAll("News") }
+            binding.rvMovieNews.adapter = adapter
+            binding.tvSeeAllNews.setOnClickListener { onSeeAll("News") }
         }
         fun bind(news: List<MovieNews>, isLoading: Boolean) { 
             if (news.isNotEmpty()) adapter.submitList(news) 
@@ -254,21 +222,19 @@ class HomeMultiAdapter(
         onSeeAll: (String) -> Unit,
         onMovie: (Movie) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
-        private val recyclerView: RecyclerView = binding.rvVideos
-        private val tvSeeAll: TextView = binding.tvSeeAllVideos
         private val adapter = VideoHorizontalAdapter { movie ->
             onSeeAll("Videos")
         }
         init {
-            recyclerView.adapter = adapter
-            tvSeeAll.setOnClickListener { onSeeAll("Videos") }
+            binding.rvVideos.adapter = adapter
+            binding.tvSeeAllVideos.setOnClickListener { onSeeAll("Videos") }
         }
         fun bind(movies: List<Movie>, isLoading: Boolean) {
             if (movies.isNotEmpty()) adapter.submitList(movies)
         }
     }
 
-    class EmptyViewHolder(private val binding: LayoutHomeEmptyStateBinding) : RecyclerView.ViewHolder(binding.root)
+    class EmptyViewHolder(binding: LayoutHomeEmptyStateBinding) : RecyclerView.ViewHolder(binding.root)
 
     class HomeItemDiffCallback : DiffUtil.ItemCallback<HomeItem>() {
         override fun areItemsTheSame(oldItem: HomeItem, newItem: HomeItem): Boolean {

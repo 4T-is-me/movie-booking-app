@@ -3,6 +3,7 @@ package com.example.movie_booking_app.data.api
 
 import com.example.movie_booking_app.data.model.request.LoginRequest
 import com.example.movie_booking_app.data.model.request.RegisterRequest
+import com.example.movie_booking_app.data.model.request.ResetPasswordRequest
 import com.example.movie_booking_app.data.model.response.LoginResponse
 import com.example.movie_booking_app.data.model.response.RegisterResponse
 
@@ -28,4 +29,7 @@ interface AuthApi {
 
     @POST("api/auth/google")
     suspend fun googleLogin(@Body request: Map<String, String>): Response<LoginResponse>
+
+    @POST("api/auth/reset-password")
+    suspend fun resetPassword(@Body request: ResetPasswordRequest): Response<okhttp3.ResponseBody>
 }

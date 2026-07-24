@@ -61,6 +61,18 @@ const changePassword = async (req, res, next) => {
     }
 }
 
+const resetPassword = async (req, res, next) => {
+    try {
+        const result = await accountService.resetPassword(req.body);
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        if (error.statusCode) {
+            return res.status(error.statusCode).json({ success: false, message: error.message });
+        }
+        next(error);
+    }
+}
+
 const googleLogin = async (req, res, next) => {
     try {
         const { idToken } = req.body
@@ -122,6 +134,7 @@ export const accountController = {
     getProfile,
     updateProfile,
     changePassword,
+    resetPassword,
     sendOtp,
     verifyOtp,
     registerFcmToken

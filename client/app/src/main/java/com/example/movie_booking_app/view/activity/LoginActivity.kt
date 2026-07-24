@@ -28,7 +28,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : EnglishBaseActivity() {
 
     private lateinit var binding: ActivityLoginBinding
     private val viewModel: LoginViewModel by viewModels()
@@ -79,6 +79,7 @@ class LoginActivity : AppCompatActivity() {
         binding.edtUsername.addTextChangedListener { hideError() }
         binding.edtPassword.addTextChangedListener { hideError() }
 
+        //mentor note: validate in login at the same resigter
         binding.btnLogin.setOnClickListener {
             val username = binding.edtUsername.text.toString().trim()
             val password = binding.edtPassword.text.toString()
@@ -91,7 +92,8 @@ class LoginActivity : AppCompatActivity() {
                 showError("Please enter password")
                 return@setOnClickListener
             }
-
+            // remove Log.d(use ... chạy debug)
+            // bắt logic cccd 9 - 12 số
             Log.d("LOGIN_DEBUG", "Username: $username")
             hideError()
 
@@ -152,11 +154,9 @@ class LoginActivity : AppCompatActivity() {
 
                             Log.d("LOGIN_DEBUG", "Saved username to app_prefs: $loggedInUsername")
                         }
-
-                        CoroutineScope(Dispatchers.IO).launch {
-                            withContext(NonCancellable) {
-                                fcmTokenHelper.registerCurrentToken("LoginActivity")
-                            }
+                        // use lifeCycle
+                        lifecycleScope.launch(Dispatchers.IO + NonCancellable) {
+                            fcmTokenHelper.registerCurrentToken("LoginActivity")
                         }
                         val roleName = state.role ?: ""
 

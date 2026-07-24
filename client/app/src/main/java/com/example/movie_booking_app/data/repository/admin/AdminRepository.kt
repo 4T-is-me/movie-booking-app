@@ -26,32 +26,52 @@ class AdminRepository @Inject constructor(
     suspend fun getMonthlyRevenue(year: Int) = api.getMonthlyRevenue(year)
     suspend fun getMovieRevenue() = api.getMovieRevenue()
 
+    private fun parseError(response: Response<*>, fallback: String): String {
+        return try {
+            val errorBodyStr = response.errorBody()?.string()
+            if (!errorBodyStr.isNullOrBlank()) {
+                val json = org.json.JSONObject(errorBodyStr)
+                if (json.has("message") && !json.isNull("message")) {
+                    json.getString("message")
+                } else if (json.has("error") && !json.isNull("error")) {
+                    json.getString("error")
+                } else {
+                    fallback
+                }
+            } else {
+                fallback
+            }
+        } catch (e: Exception) {
+            fallback
+        }
+    }
+
     // Staff Management Flow-based
     fun getStaffListFlow(page: Int? = null, limit: Int? = null, search: String? = null, role: String? = null) = flow {
         val response = api.getStaffList(page, limit, search, role)
         if (response.isSuccessful && response.body() != null) {
             emit(response.body()!!.data?.staffs ?: emptyList())
         } else {
-            throw Exception(response.errorBody()?.string() ?: "Failed to load staff list")
+            throw Exception(parseError(response, "Failed to load staff list"))
         }
     }
 
     fun createStaffFlow(request: CreateStaffRequest) = flow {
         val response = api.createStaff(request)
         if (response.isSuccessful) emit(Unit)
-        else throw Exception(response.errorBody()?.string() ?: "Failed to create staff")
+        else throw Exception(parseError(response, "Failed to create staff"))
     }
 
     fun updateStaffFlow(id: String, request: UpdateStaffRequest) = flow {
         val response = api.updateStaff(id, request)
         if (response.isSuccessful) emit(Unit)
-        else throw Exception(response.errorBody()?.string() ?: "Failed to update staff")
+        else throw Exception(parseError(response, "Failed to update staff"))
     }
 
     fun deleteStaffFlow(id: String) = flow {
         val response = api.deleteStaff(id)
         if (response.isSuccessful) emit(Unit)
-        else throw Exception(response.errorBody()?.string() ?: "Failed to delete staff")
+        else throw Exception(parseError(response, "Failed to delete staff"))
     }
 
     // Member Management Flow-based

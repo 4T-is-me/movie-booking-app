@@ -1,14 +1,18 @@
 package com.example.movie_booking_app.view.activity
 
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.api.AuthEvent
+import com.example.movie_booking_app.data.local.FcmTokenHelper
 import com.example.movie_booking_app.databinding.ActivityStaffBinding
 import com.example.movie_booking_app.databinding.LayoutMenuBadgeBinding
 import com.example.movie_booking_app.view.fragment.staff.StaffNotificationsFragment
@@ -23,6 +27,7 @@ import com.example.movie_booking_app.viewmodel.NotificationViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class StaffActivity : BaseActivity() {
@@ -31,10 +36,24 @@ class StaffActivity : BaseActivity() {
     private val authViewModel: AuthViewModel by viewModels()
     private val notificationViewModel: NotificationViewModel by viewModels()
 
+    @Inject
+    lateinit var fcmTokenHelper: FcmTokenHelper
+
+    private val notificationReceiver = object : android.content.BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            notificationViewModel.fetchStaffNotifications()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityStaffBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Register FCM Registration Token
+        lifecycleScope.launch {
+            fcmTokenHelper.registerCurrentToken("StaffActivity")
+        }
 
         binding.ivMenu.setOnClickListener {
             binding.drawerLayout.openDrawer(GravityCompat.START)
@@ -85,12 +104,27 @@ class StaffActivity : BaseActivity() {
 
         observeAuthEvents()
         observeNotificationUnreadCount()
-        notificationViewModel.loadNotifications()
+        notificationViewModel.fetchStaffNotifications()
     }
 
     override fun onResume() {
         super.onResume()
-        notificationViewModel.loadNotifications()
+        notificationViewModel.fetchStaffNotifications()
+        ContextCompat.registerReceiver(
+            this,
+            notificationReceiver,
+            IntentFilter("com.example.movie_booking_app.NEW_NOTIFICATION"),
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
+    }
+
+    override fun onPause() {
+        super.onPause()
+        try {
+            unregisterReceiver(notificationReceiver)
+        } catch (e: Exception) {
+            // Ignore
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -110,7 +144,15 @@ class StaffActivity : BaseActivity() {
         val title = intent.getStringExtra("title")
         val body = intent.getStringExtra("body")
 
-        if (!type.isNullOrEmpty() || !referenceId.isNullOrEmpty() || !title.isNullOrEmpty()) {
+        val isStaffNotif = type == "SHIFT_ASSIGNED" || type == "SHIFT_UPDATED" ||
+                type == "LEAVE_APPROVED" || type == "LEAVE_REJECTED" || type == "LEAVE_CANCELLED" ||
+                type?.startsWith("LEAVE_") == true || type?.startsWith("SHIFT_") == true
+
+        if (isStaffNotif) {
+            binding.navigationView.setCheckedItem(R.id.nav_staff_notifications)
+            binding.tvHeaderTitle.text = "Notifications"
+            loadFragment(StaffNotificationsFragment())
+        } else if (!type.isNullOrEmpty() || !referenceId.isNullOrEmpty() || !title.isNullOrEmpty()) {
             // First load default fragment so backstack is valid
             loadDefaultFragment()
 

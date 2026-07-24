@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.ActivityVerifyOtpBinding
 import com.example.movie_booking_app.viewmodel.OtpUiState
 import com.example.movie_booking_app.viewmodel.OtpViewModel
@@ -18,7 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class VerifyOtpActivity : AppCompatActivity() {
+class VerifyOtpActivity : EnglishBaseActivity() {
 
     private val viewModel: OtpViewModel by viewModels()
     private lateinit var binding: ActivityVerifyOtpBinding
@@ -32,8 +33,8 @@ class VerifyOtpActivity : AppCompatActivity() {
 
         email = intent.getStringExtra("email") ?: ""
         type = intent.getStringExtra("type") ?: "forgot_password"
+        
         binding.tvOtpMessage.text = "Enter 6-digit OTP sent to:\n$email"
-
         binding.ivBack.setOnClickListener { finish() }
 
         val otpBoxes = arrayOf(

@@ -4,6 +4,8 @@ import { Manager } from '../models/managerModel.js';
 import { Role } from '../models/rolesModel.js';
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import ApiError from '../utils/ApiError.js';
+import { StatusCodes } from 'http-status-codes';
 
 export const getStaffList = async (arg1, arg2, arg3) => {
     let page = 1;
@@ -153,17 +155,17 @@ export const createStaff = async (accountData, staffData) => {
             ]
         }).lean();
         if (!roleDoc) {
-            throw new Error('Role does not exist in the system.');
+            throw new ApiError(StatusCodes.BAD_REQUEST, 'Role does not exist in the system.');
         }
         targetRoleId = roleDoc._id;
     } else if (roleId) {
         const roleDoc = await Role.findById(roleId).lean();
         if (!roleDoc) {
-            throw new Error('Role does not exist in the system.');
+            throw new ApiError(StatusCodes.BAD_REQUEST, 'Role does not exist in the system.');
         }
         const rName = roleDoc.roleName || roleDoc.name || '';
         if (rName.toLowerCase() !== 'employee' && rName.toLowerCase() !== 'manager') {
-            throw new Error('Invalid role. Only Staff (Employee) or Manager are accepted.');
+            throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid role. Only Staff (Employee) or Manager are accepted.');
         }
         targetRoleId = roleDoc._id;
     } else {
@@ -174,16 +176,66 @@ export const createStaff = async (accountData, staffData) => {
             ]
         }).lean();
         if (!roleDoc) {
-            throw new Error('Default role for Staff (Employee) not found.');
+            throw new ApiError(StatusCodes.BAD_REQUEST, 'Default role for Staff (Employee) not found.');
         }
         targetRoleId = roleDoc._id;
+    }
+
+    const isManager = !!(role && role.toLowerCase() === 'manager');
+
+    // --- Pre-checks BEFORE database mutation ---
+    // 1. Check duplicate username or email in Account
+    const existingAccount = await Account.findOne({
+        $or: [
+            { username: { $regex: new RegExp(`^${accountData.username.trim()}$`, 'i') } },
+            { email: { $regex: new RegExp(`^${accountData.email.trim()}$`, 'i') } }
+        ]
+    });
+    if (existingAccount) {
+        if (existingAccount.username.toLowerCase() === accountData.username.trim().toLowerCase()) {
+            throw new ApiError(StatusCodes.CONFLICT, 'Username already exists.');
+        } else {
+            throw new ApiError(StatusCodes.CONFLICT, 'Email already exists.');
+        }
+    }
+
+    if (isManager) {
+        // 2. Check if cinema already has a Manager assigned
+        const existingManagerForCinema = await Manager.findOne({
+            cinemaId: staffData.cinemaId,
+            isDeleted: { $ne: true }
+        });
+        if (existingManagerForCinema) {
+            throw new ApiError(StatusCodes.CONFLICT, 'This cinema already has an assigned Manager.');
+        }
+
+        // 3. Check duplicate phone or identityCard in Managers
+        const existingMgrPhoneOrCard = await Manager.findOne({
+            $or: [
+                { phoneNumber: staffData.phone },
+                { identityCard: staffData.identityCard }
+            ]
+        });
+        if (existingMgrPhoneOrCard) {
+            if (existingMgrPhoneOrCard.phoneNumber === staffData.phone) {
+                throw new ApiError(StatusCodes.CONFLICT, 'Phone number already exists.');
+            } else {
+                throw new ApiError(StatusCodes.CONFLICT, 'Identity card already exists.');
+            }
+        }
+    } else {
+        // Check duplicate identityCard in Staff
+        const existingStaff = await Staff.findOne({ identityCard: staffData.identityCard });
+        if (existingStaff) {
+            throw new ApiError(StatusCodes.CONFLICT, 'Identity card already exists.');
+        }
     }
 
     // 1. Create Account first
     const hashedPassword = await bcrypt.hash(accountData.password, 10);
     const newAccount = new Account({
-        username: accountData.username,
-        email: accountData.email,
+        username: accountData.username.trim(),
+        email: accountData.email.trim(),
         passwordHash: hashedPassword,
         roleId: targetRoleId,
         status: 1
@@ -193,26 +245,33 @@ export const createStaff = async (accountData, staffData) => {
 
     // 2. Create Staff or Manager linked with Account
     let savedRecord;
-    let isManager = false;
-    if (role && role.toLowerCase() === 'manager') {
-        isManager = true;
-        const newManager = new Manager({
-            accountId: savedAccount._id,
-            cinemaId: staffData.cinemaId,
-            fullName: staffData.fullName,
-            phoneNumber: staffData.phone,
-            identityCard: staffData.identityCard,
-            salary: staffData.salary,
-            revenueTarget: 100000000, // Default revenue target for new managers
-            startDate: staffData.startDate
-        });
-        savedRecord = await newManager.save();
-    } else {
-        const newStaff = new Staff({
-            ...staffData,
-            accountId: savedAccount._id
-        });
-        savedRecord = await newStaff.save();
+    try {
+        if (isManager) {
+            const newManager = new Manager({
+                accountId: savedAccount._id,
+                cinemaId: staffData.cinemaId,
+                fullName: staffData.fullName,
+                phoneNumber: staffData.phone,
+                identityCard: staffData.identityCard,
+                salary: staffData.salary,
+                revenueTarget: 100000000, // Default revenue target for new managers
+                startDate: staffData.startDate
+            });
+            savedRecord = await newManager.save();
+        } else {
+            const newStaff = new Staff({
+                ...staffData,
+                accountId: savedAccount._id
+            });
+            savedRecord = await newStaff.save();
+        }
+    } catch (saveError) {
+        // Rollback saved account on record failure
+        await Account.findByIdAndDelete(savedAccount._id);
+        if (saveError.code === 11000) {
+            throw new ApiError(StatusCodes.CONFLICT, 'Data already exists (Username, Email, Identity Card, Phone, or Cinema already has a Manager).');
+        }
+        throw saveError;
     }
 
     // Return record populated with full information

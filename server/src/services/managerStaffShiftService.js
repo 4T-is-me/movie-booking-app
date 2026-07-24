@@ -393,22 +393,46 @@ const getStaffForManager = async (accountId) => {
 };
 
 const generateShift = async (accountId, dateRange, config = {}, shiftsFromFE = []) => {
-    // Vì thuật toán đã chạy ở FE, service ở đây đóng vai trò Validate & Insert dữ liệu thô nhận được từ FE
     if (!shiftsFromFE || !Array.isArray(shiftsFromFE) || shiftsFromFE.length === 0) {
         throw new ApiError(StatusCodes.BAD_REQUEST, "No shift data provided for insertion.");
     }
 
-    // B1: Chuẩn hóa định dạng dữ liệu & Ép kiểu từ chuỗi String sang Date object trong DB
+    // 1. Lấy startDate và endDate từ dateRange hoặc tự tính từ danh sách ca nhận được
+    const start = dateRange?.startDate 
+        ? new Date(dateRange.startDate) 
+        : new Date(shiftsFromFE[0].workDate);
+        
+    const end = dateRange?.endDate 
+        ? new Date(dateRange.endDate) 
+        : new Date(shiftsFromFE[shiftsFromFE.length - 1].workDate);
+
+    // Chuẩn hóa mốc thời gian về đầu ngày start và cuối ngày end
+    start.setUTCHours(0, 0, 0, 0);
+    end.setUTCHours(23, 59, 59, 999);
+
+    
+    const existingShiftsCount = await StaffShift.countDocuments({
+        workDate: { $gte: start, $lte: end }
+    });
+
+    if (existingShiftsCount > 0) {
+        throw new ApiError(
+            StatusCodes.BAD_REQUEST, 
+            `Shifts for the selected period (${start.toISOString().split('T')[0]} to ${end.toISOString().split('T')[0]}) have already been generated!`
+        );
+    }
+
+    // 3. Nếu chưa có, tiến hành chuẩn hóa dữ liệu
     const formattedShifts = shiftsFromFE.map(item => ({
         staffId: item.staffId,
         cinemaId: item.cinemaId,
-        workDate: new Date(item.workDate), // Ép kiểu string "yyyy-MM-dd" về Date UTC 00:00:00
+        workDate: new Date(item.workDate),
         shift: item.shift,
         status: item.status || 'Assigned',
         isHoliday: item.isHoliday || false
     }));
 
-    // B2: Thực hiện insert hàng loạt (Bulk Insert) xuống MongoDB với hiệu năng tối ưu
+    // 4. Insert hàng loạt vào MongoDB
     const docs = await StaffShift.insertMany(formattedShifts);
 
     return {
@@ -417,8 +441,7 @@ const generateShift = async (accountId, dateRange, config = {}, shiftsFromFE = [
         endDate: dateRange?.endDate,
         message: `Successfully allocated and saved ${docs.length} shifts into database.`
     };
-};
-const getWeekRange = (inputDate) => {
+};const getWeekRange = (inputDate) => {
     let date = new Date(inputDate);
 
     if (!inputDate || isNaN(date.getTime())) {

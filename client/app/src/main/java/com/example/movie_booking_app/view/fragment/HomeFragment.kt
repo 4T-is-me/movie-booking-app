@@ -79,7 +79,13 @@ class HomeFragment : Fragment() {
         val name = sharedPref.getString("username", "User") ?: "User"
         val isLoggedIn = !sharedPref.getString("auth_token", null).isNullOrEmpty()
 
-        binding.layoutHeader.tvHi.text = "Hi, $name 👋"
+        val headerView = binding.layoutHeader.root
+        val tvHi = headerView.findViewById<TextView>(R.id.tvHi)
+        val btnLogin = headerView.findViewById<View>(R.id.btnLogin)
+        val layoutNotificationBell = headerView.findViewById<View>(R.id.layoutNotificationBell)
+        val viewBellBadge = headerView.findViewById<View>(R.id.viewBellBadge)
+
+        tvHi.text = context.getString(R.string.hi_user, name)
 
         if (isLoggedIn) {
             binding.layoutHeader.btnLogin.visibility = View.GONE

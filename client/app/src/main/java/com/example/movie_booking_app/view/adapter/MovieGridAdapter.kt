@@ -1,14 +1,7 @@
 package com.example.movie_booking_app.view.adapter
 
-import com.example.movie_booking_app.databinding.ItemMovieGridBinding
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -16,7 +9,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Movie
-import com.google.android.material.imageview.ShapeableImageView
+import com.example.movie_booking_app.databinding.ItemMovieGridBinding
 
 class MovieGridAdapter(
     private val isNowPlaying: Boolean,
@@ -32,31 +25,37 @@ class MovieGridAdapter(
         holder.bind(getItem(position), isNowPlaying)
     }
 
-    class GridViewHolder(private val binding: ItemMovieGridBinding, private val onClick: (Movie) -> Unit) : RecyclerView.ViewHolder(binding.root) {
-        private val imgPoster: ImageView = binding.imgPoster
-        private val tvTitle: TextView = binding.tvMovieNameVn
-        private val tvTitleEn: TextView = binding.tvMovieNameEn
-        private val tvRow1: TextView = binding.tvTextRow1
-        private val tvRow2: TextView = binding.tvTextRow2
-        private val tvRow3: TextView = binding.tvTextRow3
-        private val btnViewSchedule: Button = binding.btnViewSchedule
+    class GridViewHolder(
+        private val binding: ItemMovieGridBinding,
+        private val onClick: (Movie) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        val tvTitle = binding.tvMovieNameVn
+        val tvTitleEn = binding.tvMovieNameEn
+        val tvRow1 = binding.tvTextRow1
+        val tvRow2 = binding.tvTextRow2
+        val tvRow3 = binding.tvTextRow3
+        val imgPoster = binding.imgPoster
+        val btnViewSchedule = binding.btnViewSchedule
+        val root = binding.root
 
         fun bind(movie: Movie, isNowPlaying: Boolean) {
-            tvTitle.text = movie.movieName
-            tvTitleEn.text = movie.movieName // develop model only has movieName
-            
-            tvRow1.text = (movie.rating?.toString() ?: "N/A")
-            tvRow2.text = "${movie.duration ?: 0} min • " + (movie.censorship ?: "2D")
-            tvRow3.text = com.example.movie_booking_app.utils.DateUtils.formatMovieDate(movie.releaseDate)
+                tvTitle.text = movie.movieName
+                tvTitleEn.text = movie.movieName // develop model only has movieName
+                
+                tvRow1.text = (movie.rating?.toString() ?: "N/A")
+                val durationStr = itemView.context.getString(com.example.movie_booking_app.R.string.duration_mins, (movie.duration ?: 0).toString())
+                tvRow2.text = "$durationStr • " + (movie.censorship ?: "2D")
+                tvRow3.text = com.example.movie_booking_app.utils.DateUtils.formatMovieDate(movie.releaseDate)
 
-            Glide.with(itemView.context)
-                .load(movie.poster)
-                .placeholder(R.color.card_dark)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(imgPoster)
+                Glide.with(itemView.context)
+                    .load(movie.poster)
+                    .placeholder(R.color.card_dark)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(imgPoster)
 
-            btnViewSchedule.setOnClickListener { onClick(movie) }
-            itemView.setOnClickListener { onClick(movie) }
+                btnViewSchedule.setOnClickListener { onClick(movie) }
+                root.setOnClickListener { onClick(movie) }
         }
     }
 

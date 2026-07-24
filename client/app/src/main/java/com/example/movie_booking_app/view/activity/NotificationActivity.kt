@@ -2,6 +2,7 @@ package com.example.movie_booking_app.view.activity
 
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
@@ -31,6 +33,12 @@ class NotificationActivity : AppCompatActivity() {
     private lateinit var binding: ActivityNotificationBinding
     private lateinit var adapter: NotificationAdapter
     private var notificationList = mutableListOf<NotificationItem>()
+
+    private val notificationReceiver = object : android.content.BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            loadNotifications()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +66,9 @@ class NotificationActivity : AppCompatActivity() {
         val referenceId = intent.getStringExtra("referenceId")
             ?: intent.getStringExtra("refId")
 
+        val shiftId = intent.getStringExtra("shiftId")
+        val leaveRequestId = intent.getStringExtra("leaveRequestId")
+
         if (title != "Notification" || !body.isNullOrEmpty()) {
             val loaded = NotificationLocalStorage.getAll(this)
             // Check for duplicates within a short time window or by content
@@ -67,13 +78,35 @@ class NotificationActivity : AppCompatActivity() {
                     title = title,
                     body = body,
                     type = type,
-                    referenceId = referenceId
+                    referenceId = referenceId,
+                    shiftId = shiftId,
+                    leaveRequestId = leaveRequestId
                 )
                 NotificationLocalStorage.save(this, item)
             }
         }
 
         loadNotifications()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadNotifications()
+        ContextCompat.registerReceiver(
+            this,
+            notificationReceiver,
+            IntentFilter("com.example.movie_booking_app.NEW_NOTIFICATION"),
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
+    }
+
+    override fun onPause() {
+        super.onPause()
+        try {
+            unregisterReceiver(notificationReceiver)
+        } catch (e: Exception) {
+            // Ignore
+        }
     }
 
     private fun setupToolbar() {

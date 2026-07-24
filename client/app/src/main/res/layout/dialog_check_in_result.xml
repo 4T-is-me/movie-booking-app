@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="16dp"
+    app:cardCornerRadius="18dp"
     app:cardElevation="8dp"
     app:cardBackgroundColor="@color/bg_surface">
 
@@ -18,6 +18,8 @@
             android:id="@+id/btnCloseIcon"
             android:layout_width="36dp"
             android:layout_height="36dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp"
             android:src="@drawable/ic_close_white"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/auto_str_close"
@@ -27,8 +29,8 @@
         <!-- Status Icon -->
         <ImageView
             android:id="@+id/imgStatusIcon"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
             android:src="@drawable/ic_check_circle_gold"
             android:contentDescription="@string/ticket_validator_title"
             app:layout_constraintTop_toTopOf="parent"
@@ -44,7 +46,7 @@
             android:layout_marginTop="12dp"
             tools:text="Ticket Validated"
             android:textColor="@color/accent_primary"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold"
             android:gravity="center"
             app:layout_constraintTop_toBottomOf="@id/imgStatusIcon"
@@ -62,19 +64,21 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Details Container -->
+        <!-- Details Container (Boarding Pass styled card) -->
         <LinearLayout
             android:id="@+id/detailsLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="start"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:padding="16dp"
+            android:background="@drawable/bg_card_dark"
             app:layout_constraintTop_toBottomOf="@id/dialogDivider"
             app:layout_constraintBottom_toTopOf="@id/btnDismiss"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginBottom="16dp">
+            app:layout_constraintEnd_toEndOf="parent">
 
             <!-- Movie Name -->
             <TextView
@@ -83,7 +87,7 @@
                 android:layout_height="wrap_content"
                 tools:text="Spiderman: No Way Home"
                 android:textColor="@color/text_primary"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <!-- Cinema & Room -->
@@ -91,40 +95,58 @@
                 android:id="@+id/tvCinemaRoom"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="6dp"
                 tools:text="Galaxy Nguyen Du • Room 1 (2D)"
                 android:textColor="@color/text_secondary"
                 android:textSize="14sp" />
+
+            <!-- Inner Divider -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/border_subtle"
+                android:layout_marginVertical="12dp" />
 
             <!-- Date & Time -->
             <TextView
                 android:id="@+id/tvShowtime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
+                android:gravity="center_vertical"
+                android:drawableStart="@drawable/ic_calendar_month_24"
+                android:drawablePadding="10dp"
+                app:drawableTint="@color/text_secondary"
                 tools:text="Date: 2026-07-20 • Time: 18:30"
                 android:textColor="@color/text_secondary"
-                android:textSize="14sp" />
+                android:textSize="13sp" />
 
             <!-- Seats -->
             <TextView
                 android:id="@+id/tvSeats"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:drawableStart="@drawable/ic_seat"
+                android:drawablePadding="10dp"
+                app:drawableTint="@color/text_secondary"
                 tools:text="Seats: A1, A2"
                 android:textColor="@color/text_secondary"
-                android:textSize="14sp" />
+                android:textSize="13sp" />
 
             <!-- Combos -->
             <TextView
                 android:id="@+id/tvCombos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:drawableStart="@drawable/ic_gift"
+                android:drawablePadding="10dp"
+                app:drawableTint="@color/text_secondary"
                 tools:text="Combos: Popcorn x1, Coke x2"
                 android:textColor="@color/text_secondary"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:visibility="gone" />
 
             <!-- Booking Code -->
@@ -132,17 +154,25 @@
                 android:id="@+id/tvBookingCode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:drawableStart="@drawable/ic_ticket"
+                android:drawablePadding="10dp"
+                app:drawableTint="@color/text_secondary"
                 tools:text="Code: MBD-123456"
                 android:textColor="@color/text_secondary"
-                android:textSize="14sp" />
+                android:textSize="13sp" />
 
             <!-- Checked In Time -->
             <TextView
                 android:id="@+id/tvCheckedInTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:drawableStart="@drawable/baseline_check_circle_24"
+                android:drawablePadding="10dp"
+                app:drawableTint="@color/seat_selected"
                 tools:text="Checked In: 18:35:20"
                 android:textColor="@color/seat_selected"
                 android:textSize="13sp"
