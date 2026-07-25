@@ -17,6 +17,8 @@ const bookingSchema = new mongoose.Schema({
     checkedIn: { type: Boolean, default: false },
     checkedInAt: { type: Date },
     checkedInBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Staff' },
+    isStaffRated: { type: Boolean, default: false },
+    staffRating: { type: Number },
     disCountAmount: { type: Number, default: 0 },
     finalAmount: { type: Number, required: true }, // after discount
     reminded30M: { type: Boolean, default: false },
