@@ -308,7 +308,7 @@ class PaymentActivity : AppCompatActivity() {
     private fun showExpiredDialog() {
         AlertDialog.Builder(this)
             .setTitle("Booking Session Expired")
-            .setMessage("Your 15-minute booking window has expired. Please select seats again.")
+            .setMessage("Your 10-minute booking window has expired. Please select seats again.")
             .setCancelable(false)
             .setPositiveButton("OK") { _, _ ->
                 finish() // Returns back to SelectSeatActivity

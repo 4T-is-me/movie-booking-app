@@ -33,7 +33,7 @@ import { staffRoute } from './src/routes/staffRoutes.js';
 import { errorHandlingMiddleware } from './src/middlewares/errorHandlingMiddleware.js'
 import './src/config/firebaseAdmin.js'  // Initialize Firebase Admin SDK at startup;
 import { ShowtimeReminderJob } from './src/jobs/showtimeReminderJob.js';
-
+import payrollRoutes from './src/routes/payrollRoutes.js';
 
 
 const app = express();
@@ -72,6 +72,7 @@ app.use('/api/staffs/leave-requests', staffLeaveRequestRoutes);
 app.use('/api/staff', staffRoute.staffRouter);
 app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/payrolls', payrollRoutes);
 
 
 app.get('/api/cinemas', async (req, res) => {

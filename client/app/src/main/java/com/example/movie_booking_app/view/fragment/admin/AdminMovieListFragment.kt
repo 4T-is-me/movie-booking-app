@@ -65,6 +65,9 @@ class AdminMovieListFragment : Fragment() {
             },
             onDeleteClick = { movie ->
                 showDeleteConfirmationDialog(movie)
+            },
+            onRestoreClick = { movie ->
+                showRestoreConfirmationDialog(movie)
             }
         )
 
@@ -103,7 +106,8 @@ class AdminMovieListFragment : Fragment() {
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.setCancelable(true)
 
-        dialogBinding.tvDeleteMessage.text = "Are you sure you want to delete the movie \"${movie.movieName}\"?"
+        dialogBinding.tvDeleteTitle.text = getString(R.string.auto_str_delete_movie_title)
+        dialogBinding.tvDeleteMessage.text = getString(R.string.auto_str_delete_confirm_msg, movie.movieName)
 
         dialogBinding.btnCancelDelete.setOnClickListener {
             dialog.dismiss()
@@ -111,7 +115,37 @@ class AdminMovieListFragment : Fragment() {
 
         dialogBinding.btnConfirmDelete.setOnClickListener {
             dialog.dismiss()
-            movie.id?.let { viewModel.deleteMovie(it) }
+            val currentStatus = if (selectedTab == TAB_ACTIVE) "active" else "deleted"
+            movie.id?.let { viewModel.deleteMovie(it, currentStatus) }
+        }
+
+        dialog.show()
+    }
+
+    private fun showRestoreConfirmationDialog(movie: Movie) {
+        val dialogBinding = DialogConfirmDeleteStaffBinding.inflate(layoutInflater)
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(dialogBinding.root)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setCancelable(true)
+
+        // Customize the dialog for restoration
+        dialogBinding.tvDeleteTitle.text = getString(R.string.auto_str_restore_movie_title)
+        dialogBinding.tvDeleteMessage.text = getString(R.string.auto_str_restore_confirm_msg, movie.movieName)
+        dialogBinding.ivDeleteIcon.setImageResource(android.R.drawable.ic_menu_rotate)
+        dialogBinding.btnConfirmDelete.text = getString(R.string.auto_str_confirm_dialog)
+        
+        dialogBinding.btnCancelDelete.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialogBinding.btnConfirmDelete.setOnClickListener {
+            dialog.dismiss()
+            val request = com.example.movie_booking_app.data.model.request.UpdateMovieRequest(
+                isDeleted = false
+            )
+            val currentStatus = if (selectedTab == TAB_ACTIVE) "active" else "deleted"
+            movie.id?.let { viewModel.updateMovie(it, request, null, currentStatus) }
         }
 
         dialog.show()
@@ -127,7 +161,11 @@ class AdminMovieListFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.movieActionSuccess.collect { success ->
-                val message = if (success) "Movie deleted successfully" else "Failed to delete movie"
+                val message = if (success) {
+                    if (selectedTab == TAB_ACTIVE) "Movie deleted successfully" else "Movie restored successfully"
+                } else {
+                    if (selectedTab == TAB_ACTIVE) "Failed to delete movie" else "Failed to restore movie"
+                }
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             }
         }
