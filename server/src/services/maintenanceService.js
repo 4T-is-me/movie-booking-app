@@ -20,9 +20,10 @@ export const MaintenanceService = {
 
       const showtimes = await Showtime.find({
         roomId: room._id,
-        endTime: { $gt: now },
-        status: { $ne: 'suspended' }
+        isDeleted: false
       }).session(session);
+
+      console.log(`[DEBUG] handleRoomMaintenance: found ${showtimes.length} showtimes for room ${room.roomName}`);
 
       for (const showtime of showtimes) {
         const bookings = await Booking.find({
@@ -30,26 +31,35 @@ export const MaintenanceService = {
           paymentStatus: 'paid'
         }).session(session);
 
+        console.log(`[DEBUG] Showtime ${showtime._id} (${showtime.showTime}): bookings count = ${bookings.length}`);
+
         if (bookings.length === 0) {
-          // Xóa suất chiếu (và các ghế đang được giữ nếu có) khỏi CSDL nếu chưa có vé thanh toán
+          console.log(`[DEBUG] Showtime ${showtime._id} has 0 bookings. Deleting...`);
           await ScheduleSeat.deleteMany({ showtimeId: showtime._id }).session(session);
           await Showtime.deleteOne({ _id: showtime._id }).session(session);
           continue;
         }
 
-        // Với các suất chiếu đã có booking, giữ nguyên không xóa mà chuyển sang trạng thái suspended để dời phòng
+        if (showtime.endTime <= now) {
+          console.log(`[DEBUG] Showtime ${showtime._id} is in the past. Skipping...`);
+          continue;
+        }
+
+        // Với các suất chiếu ở tương lai đã có booking, chuyển sang trạng thái suspended để dời phòng
         showtime.status = 'suspended';
         await showtime.save({ session });
+        console.log(`[DEBUG] Suspended showtime ${showtime._id}`);
 
         for (const booking of bookings) {
           let resolved = false;
-
 
           const availableRooms = await CinemaRoom.find({
             cinemaId: room.cinemaId,
             status: 'active',
             _id: { $ne: room._id }
           }).session(session);
+
+          console.log(`[DEBUG] Booking ${booking._id}: found ${availableRooms.length} available rooms`);
 
           for (const newRoom of availableRooms) {
             const conflictingShowtime = await Showtime.findOne({
@@ -61,12 +71,16 @@ export const MaintenanceService = {
               status: { $in: ['published', 'draft'] }
             }).session(session);
 
+            console.log(`[DEBUG] Room ${newRoom.roomName}: conflicting showtime = ${conflictingShowtime ? conflictingShowtime._id : 'None'}`);
+
             if (!conflictingShowtime) {
               // Seat Mapping
               const newSeats = await Seat.find({
                 roomId: newRoom._id,
                 seatName: { $in: booking.seatNames }
               }).session(session);
+
+              console.log(`[DEBUG] Room ${newRoom.roomName}: seats found = ${newSeats.length}/${booking.seatNames.length}`);
 
               if (newSeats.length === booking.seatNames.length) {
                 const newShowtime = new Showtime({
@@ -80,6 +94,7 @@ export const MaintenanceService = {
                   status: 'published'
                 });
                 await newShowtime.save({ session });
+                console.log(`[DEBUG] Created new showtime ${newShowtime._id} in room ${newRoom.roomName}`);
 
                 await ScheduleSeat.deleteMany({
                   showtimeId: showtime._id,
@@ -98,10 +113,11 @@ export const MaintenanceService = {
 
                 booking.showtimeId = newShowtime._id;
                 booking.seatIds = newSeats.map(s => s._id);
-                booking.paymentStatus = 'pending';
+                booking.paymentStatus = 'paid'; // Giữ nguyên trạng thái paid, không chuyển thành pending
                 await booking.save({ session });
+                console.log(`[DEBUG] Updated booking ${booking._id} with new showtime and seats`);
 
-                await this.createNotification(booking.memberId, booking._id, newRoom._id, newShowtime._id, showtime.endTime, session);
+                await this.createAutoTransferNotification(booking.memberId, booking._id, room.roomName, newRoom.roomName, showtime.endTime, session);
                 resolved = true;
                 break;
               }
@@ -110,6 +126,7 @@ export const MaintenanceService = {
 
           // Added by Antigravity - Incident Management (Cách B) - 2026-07-23
           if (!resolved) {
+            console.log(`[DEBUG] Booking ${booking._id} not resolved via Room Switch. Trying alternative showtimes...`);
             const timeWindow = 15 * 60 * 1000;
             const targetMinTime = new Date(showtime.startTime.getTime() - timeWindow);
             const targetMaxTime = new Date(showtime.startTime.getTime() + timeWindow);
@@ -231,7 +248,7 @@ export const MaintenanceService = {
     await notification.save({ session });
 
     try {
-      const { notificationService } = await import('./notificationService.js');
+      const { NotificationService } = await import('./notificationService.js');
       const { Account } = await import('../models/accountModel.js');
 
       const member = await Member.findById(memberId).session(session);
@@ -243,7 +260,7 @@ export const MaintenanceService = {
             : (account.fcmToken ? [account.fcmToken] : [])
 
           if (tokens.length > 0) {
-            await notificationService.sendToDevice(tokens, title, message, {
+            await NotificationService.sendToDevice(tokens, title, message, {
               type: 'MAINTENANCE_ACTION_REQUIRED',
               bookingId: bookingId.toString()
             });
@@ -252,6 +269,47 @@ export const MaintenanceService = {
       }
     } catch (err) {
       console.error("Error sending push notification for maintenance:", err);
+    }
+  },
+
+  async createAutoTransferNotification(memberId, bookingId, oldRoomName, newRoomName, endTime, session) {
+    const expireAt = new Date(endTime.getTime() + 24 * 60 * 60 * 1000); // 24h sau suất chiếu
+
+    const title = "Thông báo tự động đổi phòng chiếu";
+    const message = `Suất chiếu của bạn đã được chuyển từ phòng ${oldRoomName} sang phòng ${newRoomName} do sự cố bảo trì phòng chiếu. Vé của bạn vẫn giữ nguyên hiệu lực.`;
+
+    const notification = new Notification({
+      recipientId: memberId,
+      title: title,
+      message: message,
+      type: "SYSTEM_ALERT",
+      metadata: { bookingId },
+      expireAt
+    });
+    await notification.save({ session });
+
+    try {
+      const { NotificationService } = await import('./notificationService.js');
+      const { Account } = await import('../models/accountModel.js');
+
+      const member = await Member.findById(memberId).session(session);
+      if (member && member.accountId) {
+        const account = await Account.findById(member.accountId).select('fcmToken fcmTokens').session(session);
+        if (account) {
+          const tokens = account.fcmTokens && account.fcmTokens.length > 0
+            ? account.fcmTokens
+            : (account.fcmToken ? [account.fcmToken] : [])
+
+          if (tokens.length > 0) {
+            await NotificationService.sendToDevice(tokens, title, message, {
+              type: 'MAINTENANCE_AUTO_TRANSFERRED',
+              bookingId: bookingId.toString()
+            });
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Error sending push notification for auto maintenance:", err);
     }
   },
 
@@ -272,7 +330,7 @@ export const MaintenanceService = {
     await notification.save({ session });
 
     try {
-      const { notificationService } = await import('./notificationService.js');
+      const { NotificationService } = await import('./notificationService.js');
       const { Account } = await import('../models/accountModel.js');
 
       const member = await Member.findById(memberId).session(session);
@@ -284,7 +342,7 @@ export const MaintenanceService = {
             : (account.fcmToken ? [account.fcmToken] : [])
 
           if (tokens.length > 0) {
-            await notificationService.sendToDevice(tokens, title, message, {
+            await NotificationService.sendToDevice(tokens, title, message, {
               type: 'MAINTENANCE_CANCELLED',
               bookingId: bookingId.toString()
             });

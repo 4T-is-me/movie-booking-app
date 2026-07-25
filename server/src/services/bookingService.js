@@ -16,7 +16,7 @@ import { StatusCodes } from "http-status-codes";
 import ApiError from "../utils/ApiError.js";
 import { formatDate, getShowtimeTimeRange } from "../utils/formatters.js";
 import { format } from "path";
-import { NotificationService }from "./notificationService.js";
+import { NotificationService } from "./notificationService.js";
 
 //handle hold-seats
 const handleHoldSeats = async ({ accountId, showtimeId, seatIds }) => {
@@ -303,7 +303,7 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
 
     // Trigger FCM notification asynchronously so it does not delay checkout response
     NotificationService.sendBookingSuccessNotification(member.accountId, booking[0]).catch(err => {
-        console.error('Failed to send booking success notification:', err.message)
+      console.error('Failed to send booking success notification:', err.message)
     })
 
     return result;
