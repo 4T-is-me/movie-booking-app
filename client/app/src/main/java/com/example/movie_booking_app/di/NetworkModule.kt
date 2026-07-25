@@ -13,6 +13,7 @@ import com.example.movie_booking_app.data.api.ManagerRoomApi
 import com.example.movie_booking_app.data.api.MemberApi
 import com.example.movie_booking_app.data.api.LeaveRequestApi
 import com.example.movie_booking_app.data.api.NotificationApi
+import com.example.movie_booking_app.data.api.PayrollApiService
 import com.example.movie_booking_app.data.api.RetrofitClient
 import dagger.Module
 import dagger.Provides
@@ -106,5 +107,11 @@ object NetworkModule {
     @Singleton
     fun notificationApi(): NotificationApi {
         return RetrofitClient.notificationApi
+    }
+
+    @Provides
+    @Singleton
+    fun providePayrollApi(): PayrollApiService {
+        return RetrofitClient.payrollApi
     }
 }

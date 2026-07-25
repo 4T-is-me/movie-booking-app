@@ -1114,4 +1114,63 @@
     <string name="duration_format_hm">%1$dh%2$dm</string>
     <string name="duration_format_h">%1$dh</string>
     <string name="duration_format_m">%1$dm</string>
+
+    <string name="payroll_detail">Payroll Detail</string>
+    <string name="period">Period</string>
+    <string name="salary_breakdown">Salary Breakdown</string>
+    <string name="shift_salary">Shift Salary</string>
+    <string name="shift_details">Shift Details</string>
+    <string name="shift_morning">Morning</string>
+    <string name="shift_afternoon">Afternoon</string>
+    <string name="shift_evening">Evening</string>
+    <string name="shift_night">Night</string>
+    <string name="shift_absent">Absent</string>
+    <string name="penalty">Penalty</string>
+    <string name="bonus">Bonus</string>
+    <string name="base_salary">Base Salary</string>
+    <string name="revenue_bonus">Revenue Bonus</string>
+    <string name="total_salary">Total Salary</string>
+    <string name="mark_as_paid">Mark as Paid</string>
+
+    <!-- Code Strings -->
+    <string name="invalid_payroll_id">Invalid payroll ID</string>
+    <string name="user_name_placeholder_employe">Employee</string>
+    <string name="role_staff">Staff</string>
+    <string name="not_available">N/A</string>
+    <string name="status_paid">PAID</string>
+    <string name="status_draft">DRAFT</string>
+    <string name="payroll_period_format">%1$02d/%2$d</string>
+    <string name="shift_count_singular">%1$d shift</string>
+    <string name="shift_count_plural">%1$d shifts</string>
+    <string name="minus_amount_format">- %1$s</string>
+    <string name="plus_amount_format">+ %1$s</string>
+    <string name="error_payroll_already_generated">Payroll for this month/year has already been generated!</string>
+    <string name="msg_please_select_month_year">Please select month and year</string>
+    <string name="month_january">January</string>
+    <string name="month_february">February</string>
+    <string name="month_march">March</string>
+    <string name="month_april">April</string>
+    <string name="month_may">May</string>
+    <string name="month_june">June</string>
+    <string name="month_july">July</string>
+    <string name="month_august">August</string>
+    <string name="month_september">September</string>
+    <string name="month_october">October</string>
+    <string name="month_november">November</string>
+    <string name="month_december">December</string>
+    <string name="all_label">All</string>
+    <string name="month_format">Month %1$d</string>
+    <string name="all_status">All Status</string>
+    <string name="all_cinemas">All Cinemas</string>
+    <string name="unknown">Unknown</string>
+    <string name="my_cinema">My Cinema</string>
+    <string name="error_fetch_cinema_assignment">Failed to determine your cinema assignment</string>
+    <string name="error_load_payrolls">Failed to load payrolls</string>
+    <string name="error_load_payroll_details">Failed to load payroll details</string>
+    <string name="msg_payroll_generated_success">Payroll generated successfully</string>
+    <string name="error_generate_payroll_failed">Failed to generate payroll</string>
+    <string name="msg_payroll_marked_paid">Payroll marked as paid</string>
+    <string name="error_update_payment_status">Failed to update payment status</string>
+    <string name="title_payrolls">Payrolls</string>
+
 </resources>
