@@ -391,8 +391,18 @@ const handleUpdateRoom = async (roomId, { roomName, roomType, screenType, rowsCo
             }
             room.screenType = finalScreenType;
         }
-        if (status) room.status = status;
-
+        if (status && status !== room.status) {
+            room.status = status;
+            if (status === 'maintenance') {
+                try {
+                    const { MaintenanceService } = await import('./maintenanceService.js');
+                    await MaintenanceService.handleRoomMaintenance(roomId);
+                } catch (err) {
+                    console.error("Error running maintenance workflow from admin API:", err);
+                }
+            }
+        }
+        
         let layoutChanged = false;
         if (rowsCount !== undefined && colsCount !== undefined) {
             const finalRows = Number(rowsCount);

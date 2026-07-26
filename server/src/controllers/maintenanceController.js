@@ -1,5 +1,8 @@
 import { MaintenanceService } from '../services/maintenanceService.js';
 import { StatusCodes } from 'http-status-codes';
+import ApiError from '../utils/ApiError.js';
+import { Booking } from '../models/bookingModel.js';
+import { Member } from '../models/memberModel.js';
 
 export const MaintenanceController = {
   // Bật/tắt bảo trì phòng (Giả lập trigger bảo trì phòng)
@@ -18,6 +21,17 @@ export const MaintenanceController = {
     try {
       const { id } = req.params;
       const { action } = req.body; // 'accept' or 'decline'
+      
+      // Ownership check (STT 17)
+      const booking = await Booking.findById(id);
+      if (!booking) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Booking not found");
+      }
+      const member = await Member.findById(booking.memberId);
+      if (!member || member.accountId.toString() !== req.user.accountId.toString()) {
+        throw new ApiError(StatusCodes.FORBIDDEN, "Access Denied: You do not own this booking!");
+      }
+
       const result = await MaintenanceService.resolveUserAction(id, action);
       res.status(StatusCodes.OK).json({ success: true, data: result });
     } catch (error) {
