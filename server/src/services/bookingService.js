@@ -331,7 +331,7 @@ const handleGetMyTickets = async (accountId, page = 1, limit = 10) => {
 
   const bookingQuery = {
     memberId: member._id,
-    paymentStatus: { $regex: /^paid$/i },
+    paymentStatus: { $in: ['paid', 'confirmed_transfer', 'successful'] },
     showtimeId: { $in: activeShowtimeIds }
   };
 
@@ -396,7 +396,7 @@ const handleGetHistory = async (accountId, page = 1, limit = 10) => {
 
   const bookingQuery = {
     memberId: member._id,
-    paymentStatus: { $regex: /^paid$/i },
+    paymentStatus: { $in: ['paid', 'confirmed_transfer', 'successful'] },
     showtimeId: { $in: pastShowtimeIds }
   };
 

@@ -9,37 +9,56 @@ import { ScheduleSeat } from '../models/scheduleSeatModel.js';
 import { Member } from '../models/memberModel.js';
 import { Notification } from '../models/notificationModel.js';
 import { ScoreHistory } from '../models/scoreHistoryModel.js';
+import { Movie } from '../models/movieModel.js';
 
 export const MaintenanceService = {
-  async handleRoomMaintenance(roomId) {
-    const session = await mongoose.startSession();
-    session.startTransaction();
+  async handleRoomMaintenance(roomId, options = {}) {
+    const isDryRun = !!options.dryRun;
+    let session = null;
+    if (!isDryRun) {
+      session = await mongoose.startSession();
+      session.startTransaction();
+    }
+
+    const report = {
+      roomId,
+      roomName: '',
+      dryRun: isDryRun,
+      showtimesScanned: 0,
+      showtimesProcessed: [],
+      anomalies: []
+    };
+
     try {
-      const room = await CinemaRoom.findById(roomId).session(session);
+      const roomQuery = CinemaRoom.findById(roomId);
+      const room = isDryRun ? await roomQuery : await roomQuery.session(session);
       if (!room) throw new Error("Room not found");
+      report.roomName = room.roomName;
 
       const now = new Date();
 
-      const showtimes = await Showtime.find({
-        roomId: room._id,
-        isDeleted: false
-      }).session(session);
+      const stQuery = Showtime.find({ roomId: room._id, isDeleted: false, endTime: { $gt: now } });
+      const showtimes = isDryRun ? await stQuery : await stQuery.session(session);
+      report.showtimesScanned = showtimes.length;
 
-      console.log(`[DEBUG] handleRoomMaintenance: found ${showtimes.length} showtimes for room ${room.roomName}`);
+      console.log(`[DEBUG] handleRoomMaintenance (${isDryRun ? 'DRY-RUN' : 'LIVE'}): found ${showtimes.length} showtimes for room ${room.roomName}`);
 
       for (const showtime of showtimes) {
-        const bookings = await Booking.find({
+        const bkQuery = Booking.find({
           showtimeId: showtime._id,
-          paymentStatus: 'paid',
+          paymentStatus: { $in: ['paid', 'successful'] },
           checkedIn: { $ne: true }
-        }).session(session);
+        });
+        const bookings = isDryRun ? await bkQuery : await bkQuery.session(session);
 
         console.log(`[DEBUG] Showtime ${showtime._id} (${showtime.showTime}): bookings count = ${bookings.length}`);
 
         if (bookings.length === 0) {
-          console.log(`[DEBUG] Showtime ${showtime._id} has 0 bookings. Deleting...`);
-          await ScheduleSeat.deleteMany({ showtimeId: showtime._id }).session(session);
-          await Showtime.deleteOne({ _id: showtime._id }).session(session);
+          console.log(`[DEBUG] Showtime ${showtime._id} has 0 bookings. ${isDryRun ? 'Skipping (dry-run)' : 'Cancelling showtime (preserving DB document)...'}`);
+          if (!isDryRun) {
+            showtime.status = 'cancelled';
+            await showtime.save({ session });
+          }
           continue;
         }
 
@@ -49,29 +68,54 @@ export const MaintenanceService = {
         }
 
         // Suspend showtime
-        showtime.status = 'suspended';
-        await showtime.save({ session });
-        console.log(`[DEBUG] Suspended showtime ${showtime._id}`);
+        if (!isDryRun) {
+          showtime.status = 'suspended';
+          await showtime.save({ session });
+        }
+        console.log(`[DEBUG] ${isDryRun ? '[DRY-RUN] Would suspend' : 'Suspended'} showtime ${showtime._id}`);
 
-        // --- STEP 1: Gather original seat counts (VIP vs Regular) ---
-        const seatIds = bookings.flatMap(b => b.seatIds);
-        const bookedSeats = await Seat.find({ _id: { $in: seatIds } }).session(session);
+        // --- STEP 1: Gather original seat counts (VIP vs Regular vs Couple) & detect anomalies ---
+        const seatIds = bookings.flatMap(b => b.seatIds || []);
+        const sQuery = Seat.find({ _id: { $in: seatIds } });
+        const bookedSeats = isDryRun ? await sQuery : await sQuery.session(session);
         const bookedSeatsMap = {};
         bookedSeats.forEach(s => {
-          bookedSeatsMap[s._id.toString()] = s.seatType; // 'VIP' or 'Regular'
+          bookedSeatsMap[s._id.toString()] = s;
+        });
+
+        // Data anomaly check
+        bookings.forEach(b => {
+          if (!b.seatIds || b.seatIds.length === 0) {
+            report.anomalies.push({ type: 'MISSING_SEAT_IDS', bookingId: b._id, showtimeId: showtime._id });
+          }
+          (b.seatIds || []).forEach(sid => {
+            const seat = bookedSeatsMap[sid.toString()];
+            if (!seat) {
+              report.anomalies.push({ type: 'SEAT_NOT_FOUND_IN_DB', seatId: sid, bookingId: b._id, showtimeId: showtime._id });
+            } else if (seat.price == null || seat.price === 0) {
+              report.anomalies.push({ type: 'SEAT_PRICE_NULL_OR_ZERO', seatId: sid, seatName: seat.seatName, bookingId: b._id });
+            }
+          });
         });
 
         let soVeVIP = 0;
         let soVeThuong = 0;
+        let soCapDoi = 0; // số cặp ghế đôi (1 cặp = 1 booking 2 ghế Couple)
         bookings.forEach(b => {
-          b.seatIds.forEach(sid => {
-            const stype = bookedSeatsMap[sid.toString()] || 'Regular';
-            if (stype === 'VIP') soVeVIP++;
-            else soVeThuong++;
-          });
+          const seatTypes = b.seatIds.map(sid => (bookedSeatsMap[sid.toString()] || {}).seatType || 'Regular');
+          const isCouple = seatTypes.length >= 2 && seatTypes.every(t => t === 'Couple');
+          if (isCouple) {
+            soCapDoi++;
+          } else {
+            seatTypes.forEach(stype => {
+              if (stype === 'VIP') soVeVIP++;
+              else soVeThuong++;
+            });
+          }
         });
-        const tongSoVe = soVeVIP + soVeThuong;
-        console.log(`[DEBUG] Total tickets: ${tongSoVe} (VIP: ${soVeVIP}, Regular: ${soVeThuong})`);
+        // tongSoVe = tổng số ghế vật lý cần bố trí
+        const tongSoVe = soVeVIP + soVeThuong + (soCapDoi * 2);
+        console.log(`[DEBUG] Total tickets: ${tongSoVe} (VIP: ${soVeVIP}, Regular: ${soVeThuong}, Couple pairs: ${soCapDoi})`);
 
         // Find available rooms
         const availableRooms = await CinemaRoom.find({
@@ -104,64 +148,72 @@ export const MaintenanceService = {
             }).session(session);
 
             if (newSeats.length === allSeatNames.length) {
-              // Yes! We can clone the showtime here.
-              const newShowtime = new Showtime({
-                cinemaId: showtime.cinemaId,
-                roomId: newRoom._id,
-                movieId: showtime.movieId,
-                showDate: showtime.showDate,
-                startTime: showtime.startTime,
-                endTime: showtime.endTime,
-                ticketPrice: showtime.ticketPrice,
-                status: 'published'
-              });
-              await newShowtime.save({ session });
-
-              // Re-populate all seats in ScheduleSeat for the new room so it's a complete showtime
-              const allRoomSeats = await Seat.find({ roomId: newRoom._id }).session(session);
+              const allRoomSeats = isDryRun ? await Seat.find({ roomId: newRoom._id }) : await Seat.find({ roomId: newRoom._id }).session(session);
               const newSeatsMap = {};
               newSeats.forEach(s => {
                 newSeatsMap[s.seatName] = s._id;
               });
 
-              // Delete old schedule seats for this showtime's bookings
-              await ScheduleSeat.deleteMany({
-                showtimeId: showtime._id,
-                seatId: { $in: seatIds }
-              }).session(session);
+              if (!isDryRun) {
+                // Yes! We can clone the showtime here.
+                const newShowtime = new Showtime({
+                  cinemaId: showtime.cinemaId,
+                  roomId: newRoom._id,
+                  movieId: showtime.movieId,
+                  showDate: showtime.showDate,
+                  startTime: showtime.startTime,
+                  endTime: showtime.endTime,
+                  ticketPrice: showtime.ticketPrice,
+                  status: 'published'
+                });
+                await newShowtime.save({ session });
 
-              // Update each booking
-              for (const booking of bookings) {
-                const member = await Member.findById(booking.memberId).session(session);
-                const bookingNewSeatIds = booking.seatNames.map(sname => newSeatsMap[sname]);
+                // Delete old schedule seats for this showtime's bookings
+                await ScheduleSeat.deleteMany({
+                  showtimeId: showtime._id,
+                  seatId: { $in: seatIds }
+                }).session(session);
 
-                const newScheduleSeats = bookingNewSeatIds.map(sid => ({
+                // Update each booking
+                for (const booking of bookings) {
+                  const member = await Member.findById(booking.memberId).session(session);
+                  const bookingNewSeatIds = booking.seatNames.map(sname => newSeatsMap[sname]);
+
+                  const newScheduleSeats = bookingNewSeatIds.map(sid => ({
+                    showtimeId: newShowtime._id,
+                    seatId: sid,
+                    accountId: member ? member.accountId : null,
+                    status: 'booked'
+                  }));
+                  await ScheduleSeat.insertMany(newScheduleSeats, { session });
+
+                  booking.showtimeId = newShowtime._id;
+                  booking.seatIds = bookingNewSeatIds;
+                  booking.paymentStatus = 'paid';
+                  await booking.save({ session });
+
+                  await this.createAutoTransferNotification(booking.memberId, booking._id, room.roomName, newRoom.roomName, showtime.endTime, session);
+                }
+
+                // Create default ScheduleSeat for all other empty seats in the new room
+                const assignedSeatIdsStr = newSeats.map(s => s._id.toString());
+                const emptyRoomSeats = allRoomSeats.filter(s => !assignedSeatIdsStr.includes(s._id.toString()));
+                const defaultScheduleSeats = emptyRoomSeats.map(s => ({
                   showtimeId: newShowtime._id,
-                  seatId: sid,
-                  accountId: member ? member.accountId : null,
-                  status: 'booked'
+                  seatId: s._id,
+                  status: 1
                 }));
-                await ScheduleSeat.insertMany(newScheduleSeats, { session });
-
-                booking.showtimeId = newShowtime._id;
-                booking.seatIds = bookingNewSeatIds;
-                booking.paymentStatus = 'paid'; // Auto-confirm, no change in paymentStatus
-                await booking.save({ session });
-
-                await this.createAutoTransferNotification(booking.memberId, booking._id, room.roomName, newRoom.roomName, showtime.endTime, session);
+                if (defaultScheduleSeats.length > 0) {
+                  await ScheduleSeat.insertMany(defaultScheduleSeats, { session });
+                }
               }
 
-              // Create default ScheduleSeat for all other empty seats in the new room
-              const assignedSeatIdsStr = newSeats.map(s => s._id.toString());
-              const emptyRoomSeats = allRoomSeats.filter(s => !assignedSeatIdsStr.includes(s._id.toString()));
-              const defaultScheduleSeats = emptyRoomSeats.map(s => ({
-                showtimeId: newShowtime._id,
-                seatId: s._id,
-                status: 1
-              }));
-              if (defaultScheduleSeats.length > 0) {
-                await ScheduleSeat.insertMany(defaultScheduleSeats, { session });
-              }
+              report.showtimesProcessed.push({
+                showtimeId: showtime._id,
+                action: 'AUTO_ROOM_SWITCH',
+                targetRoomName: newRoom.roomName,
+                bookingsCount: bookings.length
+              });
 
               resolved = true;
               break;
@@ -202,7 +254,9 @@ export const MaintenanceService = {
           const emptySeats = altRoomSeats.filter(s => !bookedSeatIds.includes(s._id.toString()));
           const emptyVip = emptySeats.filter(s => s.seatType === 'VIP');
           const emptyRegular = emptySeats.filter(s => s.seatType === 'Regular');
-          const tongGheTrong = emptySeats.length;
+          const emptyCouple = emptySeats.filter(s => s.seatType === 'Couple');
+          // tongGheTrong = tổng ghế vật lý trống (mỗi ghế Couple là 1 đơn vị vật lý)
+          const tongGheTrong = emptyVip.length + emptyRegular.length + emptyCouple.length;
 
           if (tongGheTrong >= tongSoVe) {
             candidates.push({
@@ -211,6 +265,7 @@ export const MaintenanceService = {
               emptySeats,
               emptyVip,
               emptyRegular,
+              emptyCouple,
               tongGheTrong
             });
           }
@@ -220,47 +275,67 @@ export const MaintenanceService = {
 
         if (candidates.length === 0) {
           // --- STEP 3a: No Candidate Fits -> Refund All ---
-          console.log(`[DEBUG] No candidate showtimes fit. Refunding all bookings.`);
+          console.log(`[DEBUG] No candidate showtimes fit. Refunding all bookings (${isDryRun ? 'DRY-RUN' : 'LIVE'}).`);
           for (const booking of bookings) {
-            booking.paymentStatus = 'refunded_to_points';
-
-            const member = await Member.findById(booking.memberId).session(session);
             const refundPoints = Math.round(booking.finalAmount / 10);
 
-            if (member) {
-              member.rewardPoints += refundPoints;
-              await member.save({ session });
+            if (!isDryRun) {
+              booking.paymentStatus = 'refunded_to_points';
+              const member = await Member.findById(booking.memberId).session(session);
 
-              const scoreHistory = new ScoreHistory({
-                memberId: member._id,
-                bookingId: booking._id,
-                earnedPoints: refundPoints,
-                remainingPoints: member.rewardPoints,
-                reason: "Hoàn điểm 100% do hủy suất chiếu (bảo trì phòng và không có phòng thay thế)"
-              });
-              await scoreHistory.save({ session });
+              if (member) {
+                member.rewardPoints += refundPoints;
+                await member.save({ session });
+
+                const scoreHistory = new ScoreHistory({
+                  memberId: member._id,
+                  bookingId: booking._id,
+                  earnedPoints: refundPoints,
+                  remainingPoints: member.rewardPoints,
+                  reason: "Hoàn điểm 100% do hủy suất chiếu (bảo trì phòng và không có phòng thay thế)"
+                });
+                await scoreHistory.save({ session });
+              }
+
+              await ScheduleSeat.deleteMany({
+                showtimeId: showtime._id,
+                seatId: { $in: booking.seatIds }
+              }).session(session);
+
+              await booking.save({ session });
+              await this.createCancelNotification(booking.memberId, booking._id, refundPoints, session);
             }
-
-            await ScheduleSeat.deleteMany({
-              showtimeId: showtime._id,
-              seatId: { $in: booking.seatIds }
-            }).session(session);
-
-            await booking.save({ session });
-
-            await this.createCancelNotification(booking.memberId, booking._id, refundPoints, session);
           }
+          report.showtimesProcessed.push({
+            showtimeId: showtime._id,
+            action: 'FULL_REFUND_NO_ALT_SHOWTIME',
+            totalBookings: bookings.length
+          });
           continue; // Done with this showtime
         }
 
         // Rank candidates
-        // Priority 1: gV >= soVeVIP
-        // Priority 2: largest gV
+        // Priority 0: đủ cặp ghế Đôi (không thể thay thế dễ dàng)
+        // Priority 1: đủ VIP
+        // Priority 2: số VIP trống nhiều nhất
         candidates.sort((a, b) => {
-          const matchA = a.emptyVip.length >= soVeVIP ? 1 : 0;
-          const matchB = b.emptyVip.length >= soVeVIP ? 1 : 0;
-          if (matchA !== matchB) return matchB - matchA; // Match first
-          return b.emptyVip.length - a.emptyVip.length; // Largest VIP count next
+          // Priority 0 (TC22): Ưu tiên phòng đủ ghế Đôi
+          if (soCapDoi > 0) {
+            const hasEnoughCoupleA = Math.floor(a.emptyCouple.length / 2) >= soCapDoi ? 1 : 0;
+            const hasEnoughCoupleB = Math.floor(b.emptyCouple.length / 2) >= soCapDoi ? 1 : 0;
+            if (hasEnoughCoupleA !== hasEnoughCoupleB) return hasEnoughCoupleB - hasEnoughCoupleA;
+          }
+
+          // Priority 1 (TC28): Ưu tiên phòng khớp hạng HOÀN TOÀN (Đủ cả VIP và Thường)
+          const matchExactA = (a.emptyVip.length >= soVeVIP && a.emptyRegular.length >= soVeThuong) ? 1 : 0;
+          const matchExactB = (b.emptyVip.length >= soVeVIP && b.emptyRegular.length >= soVeThuong) ? 1 : 0;
+          if (matchExactA !== matchExactB) return matchExactB - matchExactA;
+
+          // Priority 2 (TC05): Chọn phòng có nhiều ghế VIP trống nhất
+          if (b.emptyVip.length !== a.emptyVip.length) return b.emptyVip.length - a.emptyVip.length;
+
+          // Priority 3 (TC29 Tie-break): Nếu ngang điểm, chọn theo thứ tự roomId tăng dần trong DB
+          return a.altRoom._id.toString().localeCompare(b.altRoom._id.toString());
         });
 
         const bestCandidate = candidates[0];
@@ -359,12 +434,15 @@ export const MaintenanceService = {
 
         let emptyVips = [...bestCandidate.emptyVip];
         let emptyRegulars = sortSeatsByBeauty(bestCandidate.emptyRegular);
+        let emptyCouples = sortSeatsByBeauty(bestCandidate.emptyCouple);
 
         // Delete old schedule seats for original bookings
-        await ScheduleSeat.deleteMany({
-          showtimeId: showtime._id,
-          seatId: { $in: seatIds }
-        }).session(session);
+        if (!isDryRun) {
+          await ScheduleSeat.deleteMany({
+            showtimeId: showtime._id,
+            seatId: { $in: seatIds }
+          }).session(session);
+        }
 
         // Process bookings one by one
         for (const booking of sortedBookings) {
@@ -377,153 +455,273 @@ export const MaintenanceService = {
           let assignedNewSeats = [];
           let downgradedVipCount = 0;
           let upgradedRegularCount = 0;
+          let downgradedCoupleCount = 0; // số cặp đôi bị hạ hạng
+          let coupleDowngradeType = ''; // 'VIP' | 'Regular' | 'separated'
           let refundPoints = 0;
 
-          // Attempt consecutive allocation for group bookings (N >= 2) of the same seat type
-          let consecutiveFound = false;
-          if (booking.seatIds.length >= 2) {
-            const firstType = bookingSeats[0].seatType;
-            const allSameType = bookingSeats.every(s => s.seatType === firstType);
-            
-            if (allSameType) {
-              const targetEmptySeats = firstType === 'VIP' ? emptyVips : emptyRegulars;
-              const consecutiveRun = findConsecutiveSeats(targetEmptySeats, booking.seatIds.length);
-              if (consecutiveRun) {
-                assignedNewSeats = consecutiveRun;
-                consecutiveFound = true;
-                
-                // Remove assigned seats from correct array
-                const assignedIdsStr = assignedNewSeats.map(s => s._id.toString());
-                if (firstType === 'VIP') {
-                  emptyVips = emptyVips.filter(s => !assignedIdsStr.includes(s._id.toString()));
-                } else {
-                  emptyRegulars = emptyRegulars.filter(s => !assignedIdsStr.includes(s._id.toString()));
-                }
-              }
-            }
-          }
+          const seatTypesInBooking = bookingSeats.map(s => s.seatType);
+          const isCouple = seatTypesInBooking.length >= 2 && seatTypesInBooking.every(t => t === 'Couple');
 
-          // Fallback to default one-by-one allocation
-          if (!consecutiveFound) {
-            for (const oldSeatId of booking.seatIds) {
-              const oldSeat = bookingSeatsMap[oldSeatId.toString()];
-              if (oldSeat.seatType === 'VIP') {
-                if (emptyVips.length > 0) {
-                  assignedNewSeats.push(emptyVips.shift());
+          // ---- COUPLE SEAT HANDLING (Case D & E) ----
+          let consecutiveFound = false;
+          if (isCouple) {
+            const numSeatsNeeded = booking.seatIds.length; // = 2 cho 1 cặp đôi
+            const avgOldPrice = bookingSeats.reduce((sum, s) => sum + s.price, 0) / bookingSeats.length;
+
+            // Case D: còn đủ ghế Couple liền kề
+            const coupleConsecutive = findConsecutiveSeats(emptyCouples, numSeatsNeeded);
+            if (coupleConsecutive) {
+              assignedNewSeats = coupleConsecutive;
+              consecutiveFound = true;
+              const assignedIdsStr = assignedNewSeats.map(s => s._id.toString());
+              emptyCouples = emptyCouples.filter(s => !assignedIdsStr.includes(s._id.toString()));
+            } else {
+              // Case E: hết ghế Couple - hạ hạng
+              downgradedCoupleCount++;
+
+              // Ưu tiên 1: 2 ghế VIP liền kề
+              const vipConsecutive = findConsecutiveSeats(emptyVips, numSeatsNeeded);
+              if (vipConsecutive) {
+                assignedNewSeats = vipConsecutive;
+                consecutiveFound = true;
+                coupleDowngradeType = 'VIP';
+                const assignedIdsStr = assignedNewSeats.map(s => s._id.toString());
+                emptyVips = emptyVips.filter(s => !assignedIdsStr.includes(s._id.toString()));
+                // Hoàn chênh lệch theo từng ghế
+                assignedNewSeats.forEach(newSeat => {
+                  const diff = avgOldPrice - newSeat.price;
+                  if (diff > 0) refundPoints += Math.round(diff / 10);
+                });
+              } else {
+                // Ưu tiên 2: 2 ghế Thường liền kề
+                const regularConsecutive = findConsecutiveSeats(emptyRegulars, numSeatsNeeded);
+                if (regularConsecutive) {
+                  assignedNewSeats = regularConsecutive;
+                  consecutiveFound = true;
+                  coupleDowngradeType = 'Regular';
+                  const assignedIdsStr = assignedNewSeats.map(s => s._id.toString());
+                  emptyRegulars = emptyRegulars.filter(s => !assignedIdsStr.includes(s._id.toString()));
+                  assignedNewSeats.forEach(newSeat => {
+                    const diff = avgOldPrice - newSeat.price;
+                    if (diff > 0) refundPoints += Math.round(diff / 10);
+                  });
                 } else {
-                  // Downgrade to regular
-                  const regularSeat = emptyRegulars.shift();
-                  assignedNewSeats.push(regularSeat);
-                  downgradedVipCount++;
-                  const priceDiff = oldSeat.price - regularSeat.price;
-                  if (priceDiff > 0) {
-                    refundPoints += Math.round(priceDiff / 10);
+                  // Fallback: xếp rải rác 2 ghế gần nhau nhất (consecutiveFound = false -> cảnh báo)
+                  coupleDowngradeType = 'separated';
+                  for (let i = 0; i < numSeatsNeeded; i++) {
+                    let seat = null;
+                    if (emptyVips.length > 0) {
+                      seat = emptyVips.shift();
+                    } else if (emptyRegulars.length > 0) {
+                      seat = emptyRegulars.shift();
+                    } else {
+                      seat = emptyCouples.shift();
+                    }
+                    if (seat) {
+                      assignedNewSeats.push(seat);
+                      const diff = avgOldPrice - seat.price;
+                      if (diff > 0) refundPoints += Math.round(diff / 10);
+                    }
                   }
                 }
-              } else {
-                // Regular
-                if (emptyRegulars.length > 0) {
-                  assignedNewSeats.push(emptyRegulars.shift());
-                } else {
-                  // Upgrade to VIP
-                  assignedNewSeats.push(emptyVips.shift());
-                  upgradedRegularCount++;
-                }
               }
             }
           }
 
-          const member = await Member.findById(booking.memberId).session(session);
-          const bulkOps = assignedNewSeats.map(seat => ({
-            updateOne: {
-              filter: { showtimeId: altSt._id, seatId: seat._id },
-              update: {
-                $set: {
-                  status: 'booked',
-                  accountId: member ? member.accountId : null
+          // ---- VIP / REGULAR HANDLING (existing logic) ----
+          if (!isCouple) {
+            // Attempt consecutive allocation for group bookings (N >= 2) of the same seat type
+            if (booking.seatIds.length >= 2) {
+              const firstType = bookingSeats[0].seatType;
+              const allSameType = bookingSeats.every(s => s.seatType === firstType);
+
+              if (allSameType && firstType !== 'Couple') {
+                const targetEmptySeats = firstType === 'VIP' ? emptyVips : emptyRegulars;
+                const consecutiveRun = findConsecutiveSeats(targetEmptySeats, booking.seatIds.length);
+                if (consecutiveRun) {
+                  assignedNewSeats = consecutiveRun;
+                  consecutiveFound = true;
+
+                  const assignedIdsStr = assignedNewSeats.map(s => s._id.toString());
+                  if (firstType === 'VIP') {
+                    emptyVips = emptyVips.filter(s => !assignedIdsStr.includes(s._id.toString()));
+                  } else {
+                    emptyRegulars = emptyRegulars.filter(s => !assignedIdsStr.includes(s._id.toString()));
+                  }
                 }
-              },
-              upsert: true
+              }
             }
-          }));
-          await ScheduleSeat.bulkWrite(bulkOps, { session });
+
+            // Fallback to default one-by-one allocation
+            if (!consecutiveFound) {
+              for (const oldSeatId of booking.seatIds) {
+                const oldSeat = bookingSeatsMap[oldSeatId.toString()];
+                if (oldSeat.seatType === 'VIP') {
+                  if (emptyVips.length > 0) {
+                    assignedNewSeats.push(emptyVips.shift());
+                  } else {
+                    // Downgrade to regular
+                    const regularSeat = emptyRegulars.shift();
+                    assignedNewSeats.push(regularSeat);
+                    downgradedVipCount++;
+                    const priceDiff = oldSeat.price - regularSeat.price;
+                    if (priceDiff > 0) {
+                      refundPoints += Math.round(priceDiff / 10);
+                    }
+                  }
+                } else {
+                  // Regular or Couple seat fallback
+                  if (emptyRegulars.length > 0) {
+                    assignedNewSeats.push(emptyRegulars.shift());
+                  } else if (emptyVips.length > 0) {
+                    // Upgrade to VIP
+                    assignedNewSeats.push(emptyVips.shift());
+                    upgradedRegularCount++;
+                  } else if (emptyCouples.length > 0) {
+                    assignedNewSeats.push(emptyCouples.shift());
+                  }
+                }
+              }
+            }
+          }
 
           const newSeatNames = assignedNewSeats.map(s => s.seatName);
           const newSeatIds = assignedNewSeats.map(s => s._id);
 
-          // Update booking immediately to pending
-          booking.showtimeId = altSt._id;
-          booking.seatIds = newSeatIds;
-          booking.seatNames = newSeatNames;
-          booking.paymentStatus = 'pending';
-          await booking.save({ session });
+          // Generate voucher code & message template accurately reflecting change nature
+          let voucherType = 'SAME_CLASS_TRANSFER';
+          let voucherPrefix = 'VCH_TRANSFER_';
 
-          // Generate voucher code (Mock)
-          const voucherCode = 'VCH_AUTO_' + Math.random().toString(36).substring(2, 8).toUpperCase();
+          if (downgradedCoupleCount > 0) {
+            voucherType = 'COUPLE_DOWNGRADE_PREMIUM';
+            voucherPrefix = 'VCH_COUPLE_PREMIUM_';
+          } else if (downgradedVipCount > 0) {
+            voucherType = 'STANDARD_DOWNGRADE';
+            voucherPrefix = 'VCH_DOWNGRADE_';
+          } else if (upgradedRegularCount > 0) {
+            voucherType = 'FREE_UPGRADE';
+            voucherPrefix = 'VCH_UPGRADE_';
+          } else {
+            voucherType = 'SAME_CLASS_TRANSFER';
+            voucherPrefix = 'VCH_TRANSFER_';
+          }
 
-          // Title & message template
+          const voucherCode = voucherPrefix + Math.random().toString(36).substring(2, 8).toUpperCase();
+
           const title = "Sự cố phòng chiếu - Cần xác nhận dời vé";
           let changeDetailsMsg = "";
-          if (downgradedVipCount > 0) {
+          if (downgradedCoupleCount > 0) {
+            if (coupleDowngradeType === 'VIP') {
+              changeDetailsMsg = `Ghế đôi của bạn được chuyển sang 2 ghế VIP liền kề [${newSeatNames.join(', ')}] tại phòng ${altRoom.roomName}. Chúng tôi hoàn lại ${refundPoints * 10} VNĐ (${refundPoints} điểm) chênh lệch + 1 Voucher đền bù hạng cao hơn.`;
+            } else if (coupleDowngradeType === 'Regular') {
+              changeDetailsMsg = `Ghế đôi của bạn được chuyển sang 2 ghế Thường liền kề [${newSeatNames.join(', ')}] tại phòng ${altRoom.roomName}. Chúng tôi hoàn lại ${refundPoints * 10} VNĐ (${refundPoints} điểm) chênh lệch + 1 Voucher đền bù hạng cao hơn.`;
+            } else {
+              changeDetailsMsg = `Ghế đôi của bạn được chuyển sang 2 ghế [${newSeatNames.join(', ')}] tại phòng ${altRoom.roomName}. Chúng tôi hoàn lại ${refundPoints * 10} VNĐ (${refundPoints} điểm) chênh lệch + 1 Voucher đền bù hạng cao hơn.`;
+            }
+          } else if (downgradedVipCount > 0) {
             changeDetailsMsg = `Ghế VIP của bạn được chuyển sang ghế thường [${newSeatNames.join(', ')}] và hoàn lại ${refundPoints * 10} VNĐ (${refundPoints} điểm) + 1 Voucher đền bù.`;
           } else if (upgradedRegularCount > 0) {
             changeDetailsMsg = `Ghế Thường của bạn được nâng hạng lên ghế VIP [${newSeatNames.join(', ')}] miễn phí + 1 Voucher đền bù.`;
           } else {
             changeDetailsMsg = `Ghế của bạn được chuyển sang [${newSeatNames.join(', ')}] cùng hạng + 1 Voucher đền bù.`;
           }
+
           const isSeparated = booking.seatIds.length >= 2 && !consecutiveFound;
-          const separationWarning = isSeparated ? " (Do phòng mới không đủ cụm ghế liền kề, nhóm của bạn buộc phải xếp tách ghế. Rất mong bạn thông cảm.)" : "";
-          const message = `Suất chiếu [Tên phim] tại phòng ${room.roomName} gặp sự cố. Chúng tôi đã chuyển sang phòng ${altRoom.roomName} cùng khung giờ. ${changeDetailsMsg}${separationWarning} Bạn có đồng ý đổi phòng chiếu không?`;
+          const separationWarning = isSeparated
+            ? (downgradedCoupleCount > 0
+                ? " Lưu ý: do phòng mới không còn đủ ghế liền kề, 2 ghế của bạn sẽ không ngồi cạnh nhau. Xin lỗi vì sự bất tiện này."
+                : " (Do phòng mới không đủ cụm ghế liền kề, nhóm của bạn buộc phải xếp tách ghế. Rất mong bạn thông cảm.)")
+            : "";
+          const movie = session ? await Movie.findById(showtime.movieId).session(session) : await Movie.findById(showtime.movieId);
+          const movieTitle = movie ? (movie.movieName || movie.title || 'Phim') : 'Phim';
+          const message = `Suất chiếu ${movieTitle} tại phòng ${room.roomName} gặp sự cố. Chúng tôi đã chuyển sang phòng ${altRoom.roomName} cùng khung giờ. ${changeDetailsMsg}${separationWarning} Bạn có đồng ý đổi phòng chiếu không?`;
 
-          // Store proposal details in notification metadata
-          const expireAt = new Date(altSt.endTime.getTime() + 24 * 60 * 60 * 1000);
-          const notification = new Notification({
-            recipientId: booking.memberId,
-            title: title,
-            message: message,
-            type: "ACTION_REQUIRED",
-            metadata: {
-              bookingId: booking._id,
-              newRoomId: altRoom._id,
-              newShowtimeId: altSt._id,
-              pointsRefundAmount: refundPoints,
-              voucherCode: voucherCode,
-              downgradedVipCount
-            },
-            expireAt
-          });
-          await notification.save({ session });
+          if (!isDryRun) {
+            const mQuery = Member.findById(booking.memberId);
+            const member = isDryRun ? await mQuery : await mQuery.session(session);
+            const bulkOps = assignedNewSeats.map(seat => ({
+              updateOne: {
+                filter: { showtimeId: altSt._id, seatId: seat._id },
+                update: {
+                  $set: {
+                    status: 'booked',
+                    accountId: member ? member.accountId : null
+                  }
+                },
+                upsert: true
+              }
+            }));
+            await ScheduleSeat.bulkWrite(bulkOps, { session });
 
-          // Send FCM push notification
-          try {
-            const { NotificationService } = await import('./notificationService.js');
-            const { Account } = await import('../models/accountModel.js');
-            if (member && member.accountId) {
-              const account = await Account.findById(member.accountId).select('fcmToken fcmTokens').session(session);
-              if (account) {
-                const tokens = account.fcmTokens && account.fcmTokens.length > 0
-                  ? account.fcmTokens
-                  : (account.fcmToken ? [account.fcmToken] : []);
-                if (tokens.length > 0) {
-                  await NotificationService.sendToDevice(tokens, title, message, {
-                    type: 'MAINTENANCE_ACTION_REQUIRED',
-                    bookingId: booking._id.toString()
-                  });
+            booking.showtimeId = altSt._id;
+            booking.seatIds = newSeatIds;
+            booking.seatNames = newSeatNames;
+            booking.paymentStatus = 'pending';
+            await booking.save({ session });
+
+            const expireAt = new Date(altSt.endTime.getTime() + 24 * 60 * 60 * 1000);
+            const notification = new Notification({
+              recipientId: booking.memberId,
+              title: title,
+              message: message,
+              type: "ACTION_REQUIRED",
+              metadata: {
+                bookingId: booking._id,
+                newRoomId: altRoom._id,
+                newShowtimeId: altSt._id,
+                pointsRefundAmount: refundPoints,
+                voucherCode: voucherCode,
+                voucherType: voucherType,
+                downgradedVipCount,
+                downgradedCoupleCount
+              },
+              expireAt
+            });
+            await notification.save({ session });
+
+            // Send FCM push notification
+            try {
+              const { NotificationService } = await import('./notificationService.js');
+              const { Account } = await import('../models/accountModel.js');
+              if (member && member.accountId) {
+                const account = await Account.findById(member.accountId).select('fcmToken fcmTokens').session(session);
+                if (account) {
+                  const tokens = account.fcmTokens && account.fcmTokens.length > 0
+                    ? account.fcmTokens
+                    : (account.fcmToken ? [account.fcmToken] : []);
+                  if (tokens.length > 0) {
+                    await NotificationService.sendToDevice(tokens, title, message, {
+                      type: 'MAINTENANCE_ACTION_REQUIRED',
+                      bookingId: booking._id.toString()
+                    });
+                  }
                 }
               }
+            } catch (err) {
+              console.error("[DEBUG] FCM error during alternative showtime notify:", err);
             }
-          } catch (err) {
-            console.error("[DEBUG] FCM error during alternative showtime notify:", err);
           }
         }
+
+        report.showtimesProcessed.push({
+          showtimeId: showtime._id,
+          action: 'PROPOSE_TRANSFER_ALTERNATIVE_ROOM',
+          targetRoomName: altRoom.roomName,
+          targetShowtimeId: altSt._id,
+          bookingsCount: bookings.length
+        });
       }
 
-      await session.commitTransaction();
-      session.endSession();
-      return { success: true, message: 'Room maintenance handled' };
+      if (!isDryRun && session) {
+        await session.commitTransaction();
+        session.endSession();
+      }
+      return report;
     } catch (error) {
-      await session.abortTransaction();
-      session.endSession();
+      if (session) {
+        try { await session.abortTransaction(); } catch (e) {}
+        try { session.endSession(); } catch (e) {}
+      }
       throw error;
     }
   },
@@ -548,9 +746,11 @@ export const MaintenanceService = {
       const { NotificationService } = await import('./notificationService.js');
       const { Account } = await import('../models/accountModel.js');
 
-      const member = await Member.findById(memberId).session(session);
+      const mQuery = Member.findById(memberId);
+      const member = session ? await mQuery.session(session) : await mQuery;
       if (member && member.accountId) {
-        const account = await Account.findById(member.accountId).select('fcmToken fcmTokens').session(session);
+        const aQuery = Account.findById(member.accountId).select('fcmToken fcmTokens');
+        const account = session ? await aQuery.session(session) : await aQuery;
         if (account) {
           const tokens = account.fcmTokens && account.fcmTokens.length > 0
             ? account.fcmTokens
@@ -559,7 +759,8 @@ export const MaintenanceService = {
           if (tokens.length > 0) {
             await NotificationService.sendToDevice(tokens, title, message, {
               type: 'MAINTENANCE_ACTION_REQUIRED',
-              bookingId: bookingId.toString()
+              bookingId: bookingId.toString(),
+              referenceId: bookingId.toString()
             });
           }
         }
@@ -589,9 +790,11 @@ export const MaintenanceService = {
       const { NotificationService } = await import('./notificationService.js');
       const { Account } = await import('../models/accountModel.js');
 
-      const member = await Member.findById(memberId).session(session);
+      const mQuery = Member.findById(memberId);
+      const member = session ? await mQuery.session(session) : await mQuery;
       if (member && member.accountId) {
-        const account = await Account.findById(member.accountId).select('fcmToken fcmTokens').session(session);
+        const aQuery = Account.findById(member.accountId).select('fcmToken fcmTokens');
+        const account = session ? await aQuery.session(session) : await aQuery;
         if (account) {
           const tokens = account.fcmTokens && account.fcmTokens.length > 0
             ? account.fcmTokens
@@ -659,23 +862,31 @@ export const MaintenanceService = {
 
     const booking = await Booking.findOneAndUpdate(
       { _id: bookingId, paymentStatus: 'pending' },
-      { $set: { paymentStatus: action === 'accept' ? 'confirmed_transfer' : 'refunded_to_points' } },
-      { new: true }
+      { $set: { paymentStatus: action === 'accept' ? 'paid' : 'refunded_to_points' } },
+      { returnDocument: 'after' }
     );
     if (!booking) {
       throw new ApiError(StatusCodes.CONFLICT, "Booking not found or not in pending transfer state");
     }
 
-    const notification = await Notification.findOne({ "metadata.bookingId": booking._id });
+    const notification = await Notification.findOne({
+      $or: [
+        { "metadata.bookingId": booking._id },
+        { "metadata.bookingId": booking._id.toString() }
+      ]
+    });
+
+    const { Promotion } = await import('../models/promotionModel.js');
+    const { NotificationService } = await import('./notificationService.js');
+    const { Account } = await import('../models/accountModel.js');
+
+    const member = await Member.findById(booking.memberId);
 
     if (action === 'accept') {
-      // Read metadata from notification for compensation
-      if (notification && notification.metadata) {
-        const { pointsRefundAmount, voucherCode } = notification.metadata;
-        const member = await Member.findById(booking.memberId);
-        
-        if (member) {
-          // If they were downgraded, refund the price difference
+      if (member) {
+        // Read metadata from notification for price difference refund
+        if (notification && notification.metadata) {
+          const { pointsRefundAmount } = notification.metadata;
           if (pointsRefundAmount > 0) {
             member.rewardPoints += pointsRefundAmount;
             await member.save();
@@ -689,26 +900,77 @@ export const MaintenanceService = {
             });
             await scoreHistory.save();
           }
+        }
 
-          // Send voucher notification to user
-          const title = "Mã voucher đền bù đổi phòng";
-          const message = `Cảm ơn bạn đã đồng ý đổi phòng chiếu. Chúng tôi gửi tặng bạn 1 voucher xem phim miễn phí, mã: ${voucherCode}, hạn sử dụng 30 ngày.`;
-          const expireAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-          const vNotification = new Notification({
-            recipientId: booking.memberId,
-            title: title,
-            message: message,
-            type: "PROMOTION",
-            metadata: { voucherCode },
-            expireAt
+        // 1. Query a VALID, non-deleted, active, non-expired promotion code with available usages from MongoDB
+        const now = new Date();
+        let promo = await Promotion.findOne({
+          isDeleted: { $ne: true },
+          startDate: { $lte: now },
+          endDate: { $gte: now },
+          $or: [
+            { maxUsage: -1 },
+            { $expr: { $lt: ["$usageCount", "$maxUsage"] } }
+          ]
+        });
+
+        // Fallback: If no valid active promo found, find any non-deleted promo
+        if (!promo) {
+          promo = await Promotion.findOne({ isDeleted: { $ne: true } });
+        }
+
+        // Fallback 2: Create a standard compensation promo in MongoDB if DB has no promotions
+        if (!promo) {
+          promo = await Promotion.create({
+            title: "Voucher Đền Bù Dời Phòng",
+            detail: "Voucher đền bù do hỗ trợ dời phòng chiếu bảo trì",
+            couponCode: "VCH_COMPENSATION_" + Date.now().toString().slice(-6),
+            discountType: "fixed",
+            discountValue: 50000,
+            minOrderValue: 0,
+            maxUsage: 100,
+            usageCount: 0,
+            startDate: new Date(Date.now() - 24 * 60 * 60 * 1000),
+            endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
           });
-          await vNotification.save();
+        }
+
+        const finalVoucherCode = promo.couponCode;
+        const validUntilStr = promo.endDate ? new Date(promo.endDate).toLocaleDateString('vi-VN') : '30 ngày';
+        const title = "Mã voucher đền bù đổi phòng";
+        const message = `Cảm ơn bạn đã đồng ý đổi phòng chiếu. Chúng tôi gửi tặng bạn 1 voucher xem phim, mã: ${finalVoucherCode} (Hạn sử dụng đến ${validUntilStr}).`;
+
+        const expireAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+        const vNotification = new Notification({
+          recipientId: booking.memberId,
+          title: title,
+          message: message,
+          type: "PROMOTION",
+          metadata: { voucherCode: finalVoucherCode, promotionId: promo._id.toString() },
+          expireAt
+        });
+        await vNotification.save();
+
+        // 2. Send REAL FCM Push Notification to User's Mobile Device
+        if (member.accountId) {
+          const account = await Account.findById(member.accountId).select('fcmToken fcmTokens');
+          if (account) {
+            const tokens = account.fcmTokens && account.fcmTokens.length > 0
+              ? account.fcmTokens
+              : (account.fcmToken ? [account.fcmToken] : []);
+            if (tokens.length > 0) {
+              await NotificationService.sendToDevice(tokens, title, message, {
+                type: 'promotion',
+                referenceId: promo._id.toString(),
+                voucherCode: finalVoucherCode
+              });
+            }
+          }
         }
       }
     } else if (action === 'decline') {
-      const member = await Member.findById(booking.memberId);
+      const refundPoints = Math.round(booking.finalAmount / 10);
       if (member) {
-        const refundPoints = Math.round(booking.finalAmount / 10);
         member.rewardPoints += refundPoints;
         await member.save();
 
@@ -728,8 +990,33 @@ export const MaintenanceService = {
         seatId: { $in: booking.seatIds }
       });
 
-      // Send cancel notification
-      await this.createCancelNotification(booking.memberId, booking._id, Math.round(booking.finalAmount / 10), null);
+      // Send FCM push notification & DB notification for Decline
+      const title = "Xác nhận từ chối dời vé";
+      const message = `Bạn đã từ chối đổi phòng chiếu. Hệ thống đã hoàn lại 100% điểm thưởng (${refundPoints} điểm) vào ví của bạn.`;
+      const dNotification = new Notification({
+        recipientId: booking.memberId,
+        title: title,
+        message: message,
+        type: "SYSTEM_ALERT",
+        metadata: { bookingId: booking._id.toString(), refundPoints },
+        expireAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+      });
+      await dNotification.save();
+
+      if (member && member.accountId) {
+        const account = await Account.findById(member.accountId).select('fcmToken fcmTokens');
+        if (account) {
+          const tokens = account.fcmTokens && account.fcmTokens.length > 0
+            ? account.fcmTokens
+            : (account.fcmToken ? [account.fcmToken] : []);
+          if (tokens.length > 0) {
+            await NotificationService.sendToDevice(tokens, title, message, {
+              type: 'general',
+              bookingId: booking._id.toString()
+            });
+          }
+        }
+      }
     }
 
     if (notification) {

@@ -97,6 +97,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         // ── 2. Extract routing info from data payload ─────────────
         val type        = remoteMessage.data[NotificationItem.KEY_TYPE]        ?: NotificationItem.TYPE_GENERAL
         val referenceId = remoteMessage.data[NotificationItem.KEY_REFERENCE_ID]
+            ?: remoteMessage.data["bookingId"]
+            ?: remoteMessage.data["refId"]
         val shiftId     = remoteMessage.data[NotificationItem.KEY_SHIFT_ID]
         val leaveRequestId = remoteMessage.data[NotificationItem.KEY_LEAVE_REQUEST_ID]
 
