@@ -14,6 +14,8 @@ bookingRouter.get('/score-history', authMiddleware.isAuthorized, bookingControll
 bookingRouter.get('/my-tickets', authMiddleware.isAuthorized, bookingController.handleGetMyTickets)
 // POST /api/booking/:id - get booking detail
 bookingRouter.get('/:id', authMiddleware.isAuthorized, bookingController.handleGetBookingDetail)
+// POST /api/booking/:id/rate-staff - rate staff
+bookingRouter.post('/:id/rate-staff', authMiddleware.isAuthorized, bookingController.handleRateStaff)
 export const bookingRoute = {
     bookingRouter
 }

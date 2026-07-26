@@ -33,6 +33,8 @@ object Constants {
         const val SINGLE_COMBO = 80_000
         const val DOUBLE_COMBO = 120_000
     }
+
+    val STATUS_PAYROLL = listOf("All Status", "Draft", "Paid")
 }
 
 

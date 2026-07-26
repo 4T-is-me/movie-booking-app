@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.example.movie_booking_app.R
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -68,6 +70,9 @@ class MyTicketFragment : Fragment() {
             },
             onViewQrClick = { item ->
                 showQrDialog(item)
+            },
+            onRateStaffClick = { item ->
+                showRateStaffDialog(item.bookingId)
             }
         )
         binding.rvActiveTickets.adapter = adapter
@@ -142,6 +147,37 @@ class MyTicketFragment : Fragment() {
                 }
             }
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.rateSuccess.collect { success ->
+                    if (success) {
+                        Toast.makeText(requireContext(), getString(R.string.rating_submitted_success), Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showRateStaffDialog(bookingId: String) {
+        val dialog = com.google.android.material.bottomsheet.BottomSheetDialog(requireContext())
+        val dialogView = layoutInflater.inflate(R.layout.dialog_rate_staff, null)
+        dialog.setContentView(dialogView)
+
+        val ratingBar = dialogView.findViewById<android.widget.RatingBar>(R.id.ratingBar)
+        val btnSubmit = dialogView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnSubmitRating)
+
+        btnSubmit.setOnClickListener {
+            val rating = ratingBar.rating.toInt()
+            if (rating > 0) {
+                viewModel.rateStaff(bookingId, rating)
+                dialog.dismiss()
+            } else {
+                Toast.makeText(requireContext(), getString(R.string.please_select_rating), Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        dialog.show()
     }
 
     private fun showQrDialog(item: BookingHistoryItem) {

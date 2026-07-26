@@ -134,9 +134,26 @@
             android:textColor="@color/auto_color_F5C542"
             android:textSize="15sp"
             android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/btnRateStaff"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="4dp"
+            tools:text="200,000 ₫" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRateStaff"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:paddingHorizontal="12dp"
+            android:text="@string/btn_rate_staff"
+            android:textColor="@color/black"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:backgroundTint="@color/gold_selected"
+            app:cornerRadius="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            tools:text="200,000 ₫" />
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

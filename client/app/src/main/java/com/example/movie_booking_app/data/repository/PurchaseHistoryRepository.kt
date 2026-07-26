@@ -15,4 +15,8 @@ class PurchaseHistoryRepository @Inject constructor(
     fun getPurchaseHistory(): Flow<Response<BookingHistoryResponse>> = flow {
         emit(paymentApi.getBookingHistory())
     }
+
+    suspend fun rateStaff(bookingId: String, rating: Int): Response<okhttp3.ResponseBody> {
+        return paymentApi.rateStaff(bookingId, mapOf("rating" to rating))
+    }
 }

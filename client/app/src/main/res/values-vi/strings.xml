@@ -160,8 +160,9 @@
     <string name="auto_str_select_your_preferred_language">Chọn ngôn ngữ</string>
     <string name="auto_str_change_password_1">Đổi mật khẩu</string>
     <string name="auto_str_update_your_password_securely">Cập nhật mật khẩu bảo mật</string>
-    <string name="auto_str_purchase_history">Lịch sử giao dịch</string>
-    <string name="auto_str_view_your_booked_tickets_and_p">Xem các vé đã đặt</string>
+    <string name="auto_str_purchase_history">Lịch sử mua hàng</string>
+    <string name="auto_str_purchase_history_1">Lịch sử mua hàng</string>
+    <string name="auto_str_view_your_booked_tickets_and_p">Xem các vé đã đặt và lịch sử</string>
     <string name="auto_str_logout">Đăng xuất</string>
     <string name="auto_str_sign_out_of_your_account">Đăng xuất khỏi tài khoản</string>
     <!-- Logout Dialog Strings -->
@@ -205,4 +206,12 @@
     <string name="duration_mins">%1$s phút</string>
     <string name="duration_format_hm">%1$d giờ %2$d phút</string>
     <string name="duration_format_h">%1$d giờ</string>
+
+    <!-- Staff Rating Strings -->
+    <string name="rate_staff_title">Đánh giá nhân viên</string>
+    <string name="rate_staff_subtitle">Trải nghiệm dịch vụ của bạn thế nào?</string>
+    <string name="submit_rating_btn">Gửi đánh giá</string>
+    <string name="please_select_rating">Vui lòng chọn số sao</string>
+    <string name="rating_submitted_success">Cảm ơn bạn đã đánh giá!</string>
+    <string name="btn_rate_staff">Đánh giá</string>
 </resources>
