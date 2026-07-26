@@ -5,12 +5,4 @@
 *.iml
 .env
 
-AGENTS.md
-issues.md
-TEST_AGENT.md
-TEST_AGENT_FRONTEND.md
-TEST_AGENT_BACKEND_REVIEW.md
-ROLES_AND_PERMISSIONS.md
-Auto_Scheduling.md
-solve_for_room_maintenance.md
-Test
+folder
