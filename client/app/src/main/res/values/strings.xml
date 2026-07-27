@@ -1181,5 +1181,21 @@
     <string name="msg_payroll_marked_paid">Payroll marked as paid</string>
     <string name="error_update_payment_status">Failed to update payment status</string>
     <string name="title_payrolls">Payrolls</string>
+    <string name="payroll_title">Payroll</string>
+    <string name="current_month_payroll">Current Month Payroll</string>
+    <string name="label_manager">Manager</string>
+    <string name="employee_payroll">Employee Payroll</string>
+    <string name="search_staff_hint">Search staff...</string>
+    <string name="no_payroll_data_found">No payroll data found.</string>
+    <string name="generate_payroll">Generate Payroll</string>
+    <string name="select_month_year_generate_payroll">Select the month and year to generate payroll</string>
+    <string name="label_month">Month</string>
+    <string name="label_year">Year</string>
+    <string name="label_cinema">Cinema</string>
+    <string name="generate_payroll_period">Generate Payroll for this Period</string>
+    <string name="no_payrolls_found">No payrolls found</string>
+    <string name="try_adjusting_filters">Try adjusting the filters above</string>
+    <string name="generated_at">Generated At</string>
+    <string name="paid_at">Paid At</string>
 
 </resources>

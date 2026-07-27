@@ -6,6 +6,7 @@ import { LeaveRequest } from "../models/leaveRequestModel.js";
 import { Showtime } from "../models/showTimeModel.js";
 import { Booking } from "../models/bookingModel.js";
 import { constants } from '../utils/Constants.js';
+import { PayrollConfig } from '../models/PayrollConfigModel.js';
 
 /**
  * Tính lương cho 1 Staff
@@ -14,6 +15,13 @@ const calculateStaffPayroll = async (staff, month, year) => {
   const startDate = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0, 0));
   const endDate = new Date(Date.UTC(year, month, 0, 23, 59, 59, 999));
 
+  // 1. Lấy Config từ DB (giả định đã insert trong Compass)
+  const config = await PayrollConfig.findOne();
+  
+  if (!config) {
+    throw new Error('Payroll configuration (PayrollConfig) has not been set up in the database!');
+  }
+
   const shifts = await StaffShift.find({
     staffId: staff._id,
     workDate: { $gte: startDate, $lte: endDate },
@@ -21,7 +29,17 @@ const calculateStaffPayroll = async (staff, month, year) => {
 
   let shiftSalary = 0;
   let penalty = 0;
-  const bonus = 0;
+  let bonus = 0;
+
+  // Tính thưởng Manager
+  if (staff.role === 'Manager') {
+    bonus += config.managerRevenueBonus || 0;
+  }
+
+  // Chuyển Map thành Plain Object nếu lưu bằng Mongoose Map
+  const shiftRates = config.shiftRates instanceof Map 
+    ? Object.fromEntries(config.shiftRates) 
+    : (config.shiftRates || {});
 
   for (const shift of shifts) {
     if (!shift.originalStaffId) {
@@ -35,12 +53,12 @@ const calculateStaffPayroll = async (staff, month, year) => {
       }
     }
 
-    const baseRate = constants.SHIFT_RATES[shift.shift] || 0;
+    const baseRate = shiftRates[shift.shift] || 0;
 
     if (shift.status === 'Completed') {
       let earned = baseRate;
       if (shift.isHoliday) {
-        earned *= constants.HOLIDAY_MULTIPLIER;
+        earned *= config.holidayMultiplier || 1;
       }
       shiftSalary += earned;
     } else if (shift.status === 'Absent') {
@@ -239,10 +257,64 @@ const getStaffShiftCount = async (staffId, month, year) => {
   return shiftCount;
 };
 
+const getManagerPayrolls = async (accountId, filter = {}) => {
+    const manager = await Manager.findOne({ accountId });
+
+    if (!manager) {
+        throw new Error("Manager not found");
+    }
+
+    const query = {
+        cinemaId: manager.cinemaId,
+        ...filter
+    };
+
+    const payrolls = await Payroll.find(query)
+        .populate("cinemaId", "_id cinemaName")
+        .lean();
+
+    return await Promise.all(
+        payrolls.map(async payroll => ({
+            ...payroll,
+            employeeId: await getEmployeeInfo(payroll.employeeId)
+        }))
+    );
+};
+
+const getMyPayroll = async (accountId) => {
+
+    let employee =
+        await Staff.findOne({ accountId }).select("_id");
+
+    if (!employee) {
+        employee = await Manager.findOne({ accountId }).select("_id");
+    }
+
+    if (!employee) {
+        throw new Error("Employee not found");
+    }
+
+    const payrolls = await Payroll.find({
+        employeeId: employee._id
+    })
+        .populate("cinemaId", "_id cinemaName")
+        .sort({ year: -1, month: -1 })
+        .lean();
+
+    return await Promise.all(
+        payrolls.map(async payroll => ({
+            ...payroll,
+            employeeId: await getEmployeeInfo(payroll.employeeId)
+        }))
+    );
+};
+
 export const payrollService = {
   generatePayroll,
   calculateStaffPayroll,
   calculateManagerPayroll,
   getEmployeeInfo,
-  getStaffShiftCount
+  getStaffShiftCount,
+  getManagerPayrolls,
+  getMyPayroll
 };

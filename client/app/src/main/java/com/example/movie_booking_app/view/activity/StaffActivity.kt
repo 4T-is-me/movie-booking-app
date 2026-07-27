@@ -20,7 +20,7 @@ import com.example.movie_booking_app.view.fragment.staff.StaffProfileFragment
 import com.example.movie_booking_app.view.fragment.staff.StaffRequestsFragment
 import com.example.movie_booking_app.view.fragment.staff.StaffSalesFragment
 import com.example.movie_booking_app.view.fragment.staff.StaffScheduleFragment
-import com.example.movie_booking_app.view.fragment.staff.StaffSettingsFragment
+import com.example.movie_booking_app.view.fragment.staff.StaffPayrollFragment
 import com.example.movie_booking_app.view.fragment.staff.StaffValidatorFragment
 import com.example.movie_booking_app.viewmodel.AuthViewModel
 import com.example.movie_booking_app.viewmodel.NotificationViewModel
@@ -86,8 +86,8 @@ class StaffActivity : BaseActivity() {
                     loadFragment(StaffProfileFragment())
                 }
                 R.id.nav_staff_settings -> {
-                    binding.tvHeaderTitle.text = "Settings"
-                    loadFragment(StaffSettingsFragment())
+                    binding.tvHeaderTitle.text = "Payroll"
+                    loadFragment(StaffPayrollFragment())
                 }
                 R.id.nav_staff_logout -> {
                     com.example.movie_booking_app.utils.AuthUtils.showLogoutConfirmationDialog(this)

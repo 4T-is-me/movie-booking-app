@@ -44,13 +44,9 @@ class PayrollAdapter(
             // Cinema
             binding.tvCinemaName.text = item.cinema?.cinemaName ?: ""
 
-            // Avatar
-            Glide.with(binding.ivAvatar.context)
-                .load(item.employee?.image)
-                .placeholder(R.drawable.ic_profile)
-                .error(R.drawable.ic_profile)
-                .circleCrop()
-                .into(binding.ivAvatar)
+            // Avatar Text Initials
+            val fullName = item.employee?.fullName ?: item.employee?.username ?: ""
+            binding.tvAvatarText.text = com.example.movie_booking_app.utils.NameFormatter.getAvatarInitials(fullName)
 
             // Total salary – VND format
             binding.tvTotalSalary.text = formatVnd(item.totalSalary)

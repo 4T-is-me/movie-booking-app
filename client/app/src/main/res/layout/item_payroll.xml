@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="80dp"
     android:background="@drawable/bg_shift_item"
@@ -8,15 +9,26 @@
     android:layout_marginBottom="10dp"
     android:padding="12dp">
 
-    <!-- Avatar -->
-    <ImageView
-        android:id="@+id/ivAvatar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@drawable/ic_profile"
+    <!-- Avatar Frame -->
+    <FrameLayout
+        android:id="@+id/avatarFrame"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:background="@drawable/bg_tab_active"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tvAvatarText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="@color/bg_primary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:text="NT" />
+    </FrameLayout>
 
     <!-- Name & Role -->
     <LinearLayout
@@ -28,7 +40,7 @@
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/layoutRight"
-        app:layout_constraintStart_toEndOf="@id/ivAvatar"
+        app:layout_constraintStart_toEndOf="@id/avatarFrame"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
