@@ -178,15 +178,6 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
 
     const paymentStatus = "paid";
 
-    console.log(`[DEBUG] User ID (memberId): ${member._id}`);
-    console.log(`[DEBUG] Previous totalSpent: ${prevTotalSpent}`);
-    console.log(`[DEBUG] New totalSpent: ${member.totalSpent}`);
-    console.log(`[DEBUG] Previous rewardPoints: ${prevRewardPoints}`);
-    console.log(`[DEBUG] New rewardPoints: ${member.rewardPoints}`);
-    console.log(`[DEBUG] New useScore: ${useScore}`)
-    console.log(`[DEBUG] New membershipRank: ${member.membershipRank}`);
-    console.log(`[DEBUG] finalAmount to charge: ${finalAmount}`);
-
     const memberUpdateResult = await Member.updateOne(
       { _id: member._id },
       {
@@ -199,12 +190,8 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
       { session }
     );
 
-    console.log(`[DEBUG] Result of Member.updateOne(): matchedCount = ${memberUpdateResult.matchedCount}, modifiedCount = ${memberUpdateResult.modifiedCount}`);
-
     const ticketCode = await ticketUtils.generateTicketCode();
     const qrCodeData = await ticketUtils.generateQRCode(ticketCode);
-
-    console.log(`[DEBUG] Invoking Booking.create() for memberId=${member._id}, showtimeId=${showtimeId}, paymentStatus=${paymentStatus}, finalAmount=${finalAmount}`);
 
     // create booking
     const booking = await Booking.create(
@@ -229,8 +216,6 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
       ],
       { session },
     );
-
-    console.log(`[DEBUG] Booking.create() finished. bookingId=${booking[0]._id}, paymentStatus=${booking[0].paymentStatus}`);
 
     // update seat
     await ScheduleSeat.updateMany(
@@ -300,16 +285,12 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
     };
 
     await session.commitTransaction();
-    console.log(`[DEBUG] Transaction committed successfully for booking ${booking[0]._id}. commitTransaction() executed.`);
 
     // Trigger FCM notification asynchronously so it does not delay checkout response
-    NotificationService.sendBookingSuccessNotification(member.accountId, booking[0]).catch(err => {
-      console.error('Failed to send booking success notification:', err.message)
-    })
+    NotificationService.sendBookingSuccessNotification(member.accountId, booking[0]).catch(() => {})
 
     return result;
   } catch (error) {
-    console.error("[DEBUG] Transaction aborted due to error:", error.message);
     await session.abortTransaction();
     throw error;
   } finally {
