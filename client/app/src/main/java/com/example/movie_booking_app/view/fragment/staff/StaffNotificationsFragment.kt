@@ -1,7 +1,7 @@
 package com.example.movie_booking_app.view.fragment.staff
 
 import android.os.Bundle
-import android.util.Log
+import timber.log.Timber
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -80,7 +80,7 @@ class StaffNotificationsFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.mergedNotifications.collectLatest { list ->
-                Log.d("test", list.toString())
+                Timber.tag("test").d(list.toString())
                 if (list.isEmpty()) {
                     showEmpty()
                 } else {

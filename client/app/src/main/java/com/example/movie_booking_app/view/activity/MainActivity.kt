@@ -2,6 +2,7 @@ package com.example.movie_booking_app.view.activity
 
 import android.content.Intent
 import android.os.Bundle
+import timber.log.Timber
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -46,7 +47,7 @@ class MainActivity : BaseActivity() {
         val token = sharedPref.getString("auth_token", null)
         val role = sharedPref.getString("role", "") ?: ""
         
-        android.util.Log.d("MAIN_DEBUG", "AutoLogin check - token: ${token?.take(10)}..., role: $role")
+        Timber.tag("MAIN_DEBUG").d("AutoLogin check - token: ${token?.take(10)}..., role: $role")
         
         if (!token.isNullOrEmpty()) {
             val destinationActivity = when {

@@ -1,6 +1,6 @@
 package com.example.movie_booking_app.data.repository
 
-import android.util.Log
+import timber.log.Timber
 import com.example.movie_booking_app.data.api.LeaveRequestApi
 import com.example.movie_booking_app.data.model.request.CreateLeaveRequest
 import com.example.movie_booking_app.data.model.request.RejectLeaveRequest
@@ -133,7 +133,7 @@ class LeaveRequestRepository @Inject constructor(private val api: LeaveRequestAp
                 emit(Result.success(response.body()!!))
             } else {
                 emit(Result.failure(Exception(response.errorBody()?.string() ?: "Update failed")))
-                Log.d("testfailed", response.body()?.message.toString())
+                Timber.tag("testfailed").d(response.body()?.message.toString())
             }
 
         }catch (e: Exception){
