@@ -186,20 +186,7 @@ class MovieDetailActivity : AppCompatActivity() {
                                 .error(android.R.drawable.stat_notify_error)
                                 .into(binding.imgPoster)
 
-                            if (movie.hasWatched == true) {
-                                binding.btnWriteReview.visibility = View.VISIBLE
-                                binding.btnWriteReview.setOnClickListener {
-                                    val intent = Intent(this@MovieDetailActivity, WriteReviewActivity::class.java).apply {
-                                        putExtra("movieId", movieId)
-                                        putExtra("movieTitle", movie.movieName ?: "")
-                                        putExtra("moviePoster", movie.poster ?: "")
-                                        putExtra("movieGenre", movie.movieGenre?.joinToString(", ") ?: "")
-                                    }
-                                    startActivityForResult(intent, REQUEST_WRITE_REVIEW)
-                                }
-                            } else {
-                                binding.btnWriteReview.visibility = View.GONE
-                            }
+                             binding.btnWriteReview.visibility = View.GONE
                         }
                     }
                 }

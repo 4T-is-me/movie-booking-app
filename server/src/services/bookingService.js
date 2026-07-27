@@ -16,8 +16,8 @@ import mongoose from "mongoose";
 import { StatusCodes } from "http-status-codes";
 import ApiError from "../utils/ApiError.js";
 import { formatDate, getShowtimeTimeRange } from "../utils/formatters.js";
-import { format } from "path";
 import { NotificationService } from "./notificationService.js";
+import { Review } from "../models/reviewModel.js";
 
 //handle hold-seats
 const handleHoldSeats = async ({ accountId, showtimeId, seatIds }) => {
@@ -398,6 +398,9 @@ const handleGetHistory = async (accountId, page = 1, limit = 10) => {
     .limit(limit)
     .lean();
 
+  const reviews = await Review.find({ accountId }).lean();
+  const reviewedMovieIds = new Set(reviews.map(r => r.movieId.toString()));
+
   const mappedBookings = bookings.map(booking => {
     const showtime = booking.showtimeId;
     const movie = showtime?.movieId;
@@ -408,6 +411,9 @@ const handleGetHistory = async (accountId, page = 1, limit = 10) => {
       bookingId: booking._id,
       bookingCode: booking.bookingCode,
       movie: movie?.movieName || "",
+      movieId: movie?._id || "",
+      movieGenre: movie?.movieGenre || [],
+      isMovieRated: movie ? reviewedMovieIds.has(movie._id.toString()) : false,
       poster: movie?.poster || "",
       showDate: showtime?.showDate ? formatDate(showtime.showDate) : "",
       showtime: getShowtimeTimeRange(showtime),

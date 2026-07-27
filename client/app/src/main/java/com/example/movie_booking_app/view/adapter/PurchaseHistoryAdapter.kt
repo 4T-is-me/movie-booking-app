@@ -16,7 +16,8 @@ import java.util.Locale
 class PurchaseHistoryAdapter(
     private var items: List<BookingHistoryItem> = emptyList(),
     private val onItemClick: ((BookingHistoryItem) -> Unit)? = null,
-    private val onRateStaffClick: ((BookingHistoryItem) -> Unit)? = null
+    private val onRateStaffClick: ((BookingHistoryItem) -> Unit)? = null,
+    private val onRateMovieClick: ((BookingHistoryItem) -> Unit)? = null
 ) : RecyclerView.Adapter<PurchaseHistoryAdapter.ViewHolder>() {
 
     fun updateData(newItems: List<BookingHistoryItem>) {
@@ -35,7 +36,7 @@ class PurchaseHistoryAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(items[position], onItemClick, onRateStaffClick)
+        holder.bind(items[position], onItemClick, onRateStaffClick, onRateMovieClick)
     }
 
     override fun getItemCount(): Int = items.size
@@ -47,7 +48,8 @@ class PurchaseHistoryAdapter(
         fun bind(
             item: BookingHistoryItem,
             onItemClick: ((BookingHistoryItem) -> Unit)?,
-            onRateStaffClick: ((BookingHistoryItem) -> Unit)?
+            onRateStaffClick: ((BookingHistoryItem) -> Unit)?,
+            onRateMovieClick: ((BookingHistoryItem) -> Unit)?
         ) {
             binding.tvMovieTitle.text = item.movie
             binding.tvBookingCode.text = "Code: ${item.bookingCode}"
@@ -91,6 +93,16 @@ class PurchaseHistoryAdapter(
                 }
             } else {
                 binding.btnRateStaff.visibility = android.view.View.GONE
+            }
+
+            // Show Rate Movie button only if not yet rated
+            if (item.isMovieRated == false) {
+                binding.btnRateMovie.visibility = android.view.View.VISIBLE
+                binding.btnRateMovie.setOnClickListener {
+                    onRateMovieClick?.invoke(item)
+                }
+            } else {
+                binding.btnRateMovie.visibility = android.view.View.GONE
             }
         }
     }
