@@ -943,8 +943,8 @@
     <string name="auto_str_screen_type">Screen Type *</string>
     <string name="auto_str_status_3">Status *</string>
     <string name="auto_str_capacity">Capacity *</string>
-    <string name="auto_str_rows_1_26">Rows (1-26)</string>
-    <string name="auto_str_columns_1_30">Columns (1-30)</string>
+    <string name="auto_str_rows_1_26">Rows (1-8)</string>
+    <string name="auto_str_columns_1_30">Columns (1-10)</string>
     <string name="auto_str_movie_name_required">Movie Name (*)</string>
     <string name="auto_str_director_s_comma_separated_admin">Director(s) - Comma separated</string>
     <string name="auto_str_actors_comma_separated_admin">Actors - Comma separated</string>

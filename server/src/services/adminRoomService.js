@@ -40,6 +40,14 @@ const handleCreateRoom = async ({ cinemaId, roomName, roomType, screenType, rows
                 "Invalid screen type! It must be 2D, 3D or IMAX!"
             );
         }
+        //validate rows and columns limit
+        if (!rowsCount || rowsCount < 1 || rowsCount > 8) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "Rows must be between 1 and 8.");
+        }
+        if (!colsCount || colsCount < 1 || colsCount > 10) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, "Columns must be between 1 and 10.");
+        }
+
         //total seats
         const totalSeats = rowsCount * colsCount;
 
@@ -407,6 +415,12 @@ const handleUpdateRoom = async (roomId, { roomName, roomType, screenType, rowsCo
         if (rowsCount !== undefined && colsCount !== undefined) {
             const finalRows = Number(rowsCount);
             const finalCols = Number(colsCount);
+            if (finalRows < 1 || finalRows > 8) {
+                throw new ApiError(StatusCodes.BAD_REQUEST, "Rows must be between 1 and 8.");
+            }
+            if (finalCols < 1 || finalCols > 10) {
+                throw new ApiError(StatusCodes.BAD_REQUEST, "Columns must be between 1 and 10.");
+            }
             if (finalRows !== room.rowsCount || finalCols !== room.colsCount || seatsInput) {
                 room.rowsCount = finalRows;
                 room.colsCount = finalCols;
