@@ -184,6 +184,12 @@
             android:exported="false"
             android:theme="@style/Theme.Moviebookingapp" />
 
+        <activity
+            android:name=".view.activity.ChatActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp"
+            android:windowSoftInputMode="adjustResize" />
+
     </application>
 
 </manifest>
