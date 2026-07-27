@@ -114,4 +114,10 @@ object NetworkModule {
     fun providePayrollApi(): PayrollApiService {
         return RetrofitClient.payrollApi
     }
+
+    @Provides
+    @Singleton
+    fun provideChatApi(): com.example.movie_booking_app.data.api.ChatApi {
+        return RetrofitClient.chatApi
+    }
 }

@@ -34,6 +34,8 @@ import { errorHandlingMiddleware } from './src/middlewares/errorHandlingMiddlewa
 import './src/config/firebaseAdmin.js'  // Initialize Firebase Admin SDK at startup;
 import { ShowtimeReminderJob } from './src/jobs/showtimeReminderJob.js';
 import payrollRoutes from './src/routes/payrollRoutes.js';
+// Added by User - ChatBot AI feature - 2026-07-26
+import chatRoutes from './Chat_Bot_AI/routes/chatRoutes.js';
 
 
 const app = express();
@@ -73,6 +75,9 @@ app.use('/api/staff', staffRoute.staffRouter);
 app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/payrolls', payrollRoutes);
+// Added by User - ChatBot AI feature - 2026-07-26
+app.use('/api/chat', chatRoutes);
+
 
 
 app.get('/api/cinemas', async (req, res) => {
