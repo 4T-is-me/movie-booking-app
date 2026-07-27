@@ -196,8 +196,11 @@ class MyTicketFragment : Fragment() {
             dialog.dismiss()
         }
 
+        dialog.show()
+
         val qr = item.qrCodeData
         if (!qr.isNullOrEmpty()) {
+            dialogBinding.ivQrCode.setImageResource(com.example.movie_booking_app.R.drawable.ic_ticket)
             viewLifecycleOwner.lifecycleScope.launch {
                 try {
                     val bitmap = withContext(Dispatchers.Default) {
@@ -205,26 +208,23 @@ class MyTicketFragment : Fragment() {
                         val imageBytes = android.util.Base64.decode(cleanBase64, android.util.Base64.DEFAULT)
                         android.graphics.BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
                     }
-                    if (isAdded && !isDetached && _binding != null) {
+                    if (isAdded && !isDetached && _binding != null && dialog.isShowing) {
                         if (bitmap != null) {
                             dialogBinding.ivQrCode.setImageBitmap(bitmap)
                         } else {
                             dialogBinding.ivQrCode.setImageResource(com.example.movie_booking_app.R.drawable.ic_ticket)
                         }
-                        dialog.show()
                     }
                 } catch (e: Exception) {
                     android.util.Log.e("MyTicketFragment", "Error decoding QR Code", e)
-                    if (isAdded && !isDetached && _binding != null) {
+                    if (isAdded && !isDetached && _binding != null && dialog.isShowing) {
                         dialogBinding.ivQrCode.setImageResource(com.example.movie_booking_app.R.drawable.ic_ticket)
                         android.widget.Toast.makeText(requireContext(), "Unable to load QR Code.", android.widget.Toast.LENGTH_SHORT).show()
-                        dialog.show()
                     }
                 }
             }
         } else {
             dialogBinding.ivQrCode.setImageResource(com.example.movie_booking_app.R.drawable.ic_ticket)
-            dialog.show()
         }
     }
 }
