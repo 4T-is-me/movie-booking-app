@@ -1,17 +1,23 @@
 package com.example.movie_booking_app.view.adapter
 
+import android.graphics.Color
+import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.ChatMessage
 
-class ChatAdapter : ListAdapter<ChatMessage, RecyclerView.ViewHolder>(DiffCallback) {
+class ChatAdapter(
+    private val onCinemaSelected: ((String) -> Unit)? = null
+) : ListAdapter<ChatMessage, RecyclerView.ViewHolder>(DiffCallback) {
 
     companion object {
         private const val VIEW_TYPE_USER = 1
@@ -43,7 +49,7 @@ class ChatAdapter : ListAdapter<ChatMessage, RecyclerView.ViewHolder>(DiffCallba
             UserMessageViewHolder(view)
         } else {
             val view = inflater.inflate(R.layout.item_chat_message_bot, parent, false)
-            BotMessageViewHolder(view)
+            BotMessageViewHolder(view, onCinemaSelected)
         }
     }
 
@@ -66,22 +72,113 @@ class ChatAdapter : ListAdapter<ChatMessage, RecyclerView.ViewHolder>(DiffCallba
         }
     }
 
-    class BotMessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class BotMessageViewHolder(
+        itemView: View,
+        private val onCinemaSelected: ((String) -> Unit)?
+    ) : RecyclerView.ViewHolder(itemView) {
         private val tvContent: TextView = itemView.findViewById(R.id.tvMessageContent)
         private val tvTime: TextView = itemView.findViewById(R.id.tvMessageTime)
         private val pbLoading: ProgressBar = itemView.findViewById(R.id.pbBotLoading)
+        private val llCinemaOptionsContainer: LinearLayout = itemView.findViewById(R.id.llCinemaOptionsContainer)
 
         fun bind(message: ChatMessage) {
             if (message.isLoading) {
                 pbLoading.visibility = View.VISIBLE
                 tvContent.visibility = View.GONE
                 tvTime.visibility = View.GONE
+                llCinemaOptionsContainer.visibility = View.GONE
             } else {
                 pbLoading.visibility = View.GONE
                 tvContent.visibility = View.VISIBLE
                 tvTime.visibility = View.VISIBLE
                 tvContent.text = message.content
                 tvTime.text = message.timestamp
+
+                // Hiển thị danh sách Nút chọn rạp (Cinema Buttons) kèm địa chỉ bên trong nút
+                val cinemaList = message.cinemaOptions
+
+                if (!cinemaList.isNullOrEmpty()) {
+                    llCinemaOptionsContainer.removeAllViews()
+                    llCinemaOptionsContainer.visibility = View.VISIBLE
+
+                    cinemaList.forEach { cinema ->
+                        val cardBtn = LinearLayout(itemView.context).apply {
+                            orientation = LinearLayout.VERTICAL
+                            setPadding(32, 20, 32, 20)
+                            background = ContextCompat.getDrawable(context, R.drawable.bg_cinema_button)
+                            
+                            val params = LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                            ).apply {
+                                setMargins(0, 8, 0, 8)
+                            }
+                            layoutParams = params
+
+                            // Title: 🎭 Tên rạp — Thành phố
+                            val tvTitle = TextView(context).apply {
+                                val headerText = if (cinema.city.isNotBlank()) "🎭 ${cinema.cinemaName} — ${cinema.city}" else "🎭 ${cinema.cinemaName}"
+                                text = headerText
+                                setTextColor(Color.parseColor("#F5C518"))
+                                textSize = 14f
+                                setTypeface(null, Typeface.BOLD)
+                            }
+                            addView(tvTitle)
+
+                            // Subtitle: 📍 Địa chỉ chi tiết của rạp
+                            if (cinema.address.isNotBlank()) {
+                                val tvAddress = TextView(context).apply {
+                                    text = "📍 ${cinema.address}"
+                                    setTextColor(Color.parseColor("#B0B3C6"))
+                                    textSize = 12f
+                                    setPadding(0, 4, 0, 0)
+                                }
+                                addView(tvAddress)
+                            }
+
+                            setOnClickListener {
+                                onCinemaSelected?.invoke(cinema.cinemaName)
+                            }
+                        }
+                        llCinemaOptionsContainer.addView(cardBtn)
+                    }
+                } else {
+                    // Fallback parse text cũ nếu message không có cinemaOptions
+                    val cinemaRegex = Regex("""\*\*\d+\.\*\*\s*🎭\s*\*\*([^*]+)\*\*""")
+                    val matches = cinemaRegex.findAll(message.content).map { it.groupValues[1].trim() }.toList()
+
+                    if (matches.isNotEmpty()) {
+                        llCinemaOptionsContainer.removeAllViews()
+                        llCinemaOptionsContainer.visibility = View.VISIBLE
+
+                        matches.forEach { cinemaName ->
+                            val btn = TextView(itemView.context).apply {
+                                text = "🍿 Xem lịch chiếu tại: $cinemaName"
+                                setTextColor(Color.parseColor("#F5C518"))
+                                textSize = 13f
+                                setTypeface(null, Typeface.BOLD)
+                                setPadding(28, 18, 28, 18)
+                                background = ContextCompat.getDrawable(context, R.drawable.bg_cinema_button)
+                                
+                                val params = LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                                ).apply {
+                                    setMargins(0, 6, 0, 6)
+                                }
+                                layoutParams = params
+
+                                setOnClickListener {
+                                    onCinemaSelected?.invoke(cinemaName)
+                                }
+                            }
+                            llCinemaOptionsContainer.addView(btn)
+                        }
+                    } else {
+                        llCinemaOptionsContainer.removeAllViews()
+                        llCinemaOptionsContainer.visibility = View.GONE
+                    }
+                }
             }
         }
     }

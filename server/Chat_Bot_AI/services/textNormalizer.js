@@ -72,7 +72,7 @@ const dictionaryTokens = [
  */
 export const removeVietnameseTones = (str) => {
   if (!str) return '';
-  let result = str;
+  let result = str.replace(/[\u200B-\u200D\uFEFF\u00A0]/g, '');
   result = result.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, 'a');
   result = result.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, 'e');
   result = result.replace(/ì|í|ị|ỉ|ĩ/g, 'i');
@@ -137,8 +137,8 @@ export const segmentStickyText = (text = '') => {
 export const normalizeText = (rawText) => {
   if (!rawText || typeof rawText !== 'string') return '';
   
-  // 1. Chuyển thành chữ thường và xóa khoảng trắng thừa ở 2 đầu
-  let text = rawText.trim().toLowerCase();
+  // 1. Chuyển thành chữ thường, xóa zero-width spaces và khoảng trắng thừa ở 2 đầu
+  let text = rawText.replace(/[\u200B-\u200D\uFEFF\u00A0]/g, '').trim().toLowerCase();
 
   // 2. Bỏ dấu tiếng Việt
   text = removeVietnameseTones(text);

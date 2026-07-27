@@ -9,10 +9,18 @@ data class ChatRequest(
     val sessionId: String? = null
 )
 
+data class CinemaOptionDto(
+    val _id: String? = null,
+    val cinemaName: String? = null,
+    val address: String? = null,
+    val city: String? = null
+)
+
 data class ChatResponse(
     val success: Boolean,
     val reply: String? = null,
     val matchedIntent: String? = null,
+    val cinemaOptions: List<CinemaOptionDto>? = null,
     val message: String? = null
 )
 

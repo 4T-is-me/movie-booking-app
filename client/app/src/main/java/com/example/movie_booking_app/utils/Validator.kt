@@ -6,27 +6,35 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-object Validator {
+    fun validateLoginId(loginId: String?): Int? {
+        val trimmed = loginId?.trim() ?: ""
+        return if (trimmed.isEmpty()) R.string.error_username_required else null
+    }
 
     fun validateUsername(username: String?): Int? {
         val trimmed = username?.trim() ?: ""
         return when {
             trimmed.isEmpty() -> R.string.error_username_required
             trimmed.length !in 3..30 -> R.string.error_username_length
+            !trimmed.matches(Regex("^[a-zA-Z0-9_]+$")) -> R.string.error_username_invalid
             else -> null
         }
     }
 
     fun validateFullName(fullName: String?): Int? {
         val trimmed = fullName?.trim() ?: ""
-        return if (trimmed.isEmpty()) R.string.error_fullname_required else null
+        return when {
+            trimmed.isEmpty() -> R.string.error_fullname_required
+            trimmed.contains(Regex("\\d")) -> R.string.error_fullname_invalid
+            else -> null
+        }
     }
 
     fun validateEmail(email: String?): Int? {
         val trimmed = email?.trim() ?: ""
         return when {
             trimmed.isEmpty() -> R.string.error_email_required
-            !Patterns.EMAIL_ADDRESS.matcher(trimmed).matches() -> R.string.error_email_invalid
+            !Patterns.EMAIL_ADDRESS.matcher(trimmed).matches() || !trimmed.endsWith("@gmail.com", ignoreCase = true) -> R.string.error_email_invalid
             else -> null
         }
     }
@@ -67,7 +75,7 @@ object Validator {
         val trimmed = idCard?.trim() ?: ""
         return when {
             trimmed.isEmpty() -> R.string.error_idcard_required
-            trimmed.length != 9 && trimmed.length != 12 -> R.string.error_idcard_invalid
+            !trimmed.matches(Regex("^[0-9]{9}$|^[0-9]{12}$")) -> R.string.error_idcard_invalid
             else -> null
         }
     }

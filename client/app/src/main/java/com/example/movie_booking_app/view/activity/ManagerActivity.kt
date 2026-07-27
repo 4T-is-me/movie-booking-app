@@ -113,6 +113,9 @@ class ManagerActivity : AppCompatActivity() {
                     val tvManager = data.managerId.slice(0..2).uppercase()
                     binding.tvAllRoom.text = "MGR-${tvManager}  ${kpi.allScreenToday} Rooms"
                     binding.tvManagerName.text = data.managerName
+                    if (!data.cinemaName.isNullOrEmpty()) {
+                        binding.tvCinemaName.text = data.cinemaName
+                    }
 
                     binding.tvRevenue.text = currencyFormatter.format(kpi.revenueToday)
                     binding.tvTicketsSold.text =kpi.ticketSoldToday.toString()

@@ -50,7 +50,9 @@ const ticketPriceKeywords = [
   'gia bao nhieu',
   've bao nhieu',
   'bang gia ve',
-  'gia 1 ve'
+  'gia 1 ve',
+  'gia ve bao nhieu',
+  've gia bao nhieu'
 ];
 
 // Các từ khóa hỏi khuyến mãi / ưu đãi
@@ -127,7 +129,17 @@ const movieInfoKeywords = [
   'thoi luong phim',
   'xem thong tin',
   'review phim',
-  'danh gia phim'
+  'danh gia phim',
+  'cho toi hoi phim',
+  'cho minh hoi phim',
+  'cho toi hoi ve phim',
+  'cho minh hoi ve phim',
+  'cho hoi phim',
+  'cho toi xem phim',
+  'thong tin ve phim',
+  'cho toi hoi',
+  'toi hoi phim',
+  'khong phai phim'
 ];
 
 // Các từ khóa ngoài chủ đề (off-topic) phổ biến
@@ -387,9 +399,9 @@ const directorActorKeywords = [
 ];
 
 /**
- * Trích xuất thứ tự số phim từ câu hỏi ordinal (vd: "phim thứ 2", "phim số 1", "phim đầu tiên")
+ * Trích xuất thứ tự số phim từ câu hỏi ordinal (vd: "phim thứ 2", "phim số 1", "phim đầu tiên", "phim cuối cùng")
  * @param {string} normalizedMsg - Tin nhắn đã chuẩn hóa
- * @returns {number|null} 1-based index (vd: 1, 2, 3...) hoặc null
+ * @returns {number|null} 1-based index (vd: 1, 2, 3...) hoặc -1 cho phim cuối cùng, hoặc null
  */
 export const extractMovieOrdinalIndex = (normalizedMsg = '') => {
   const norm = normalizedMsg.trim().toLowerCase();
@@ -401,13 +413,83 @@ export const extractMovieOrdinalIndex = (normalizedMsg = '') => {
     if (val >= 1 && val <= 10) return val;
   }
 
-  if (norm.includes('dau tien') || norm.includes('thu nhat') || norm.includes('so 1')) return 1;
-  if (norm.includes('thu hai') || norm.includes('so 2')) return 2;
-  if (norm.includes('thu ba') || norm.includes('so 3')) return 3;
-  if (norm.includes('thu tu') || norm.includes('so 4')) return 4;
-  if (norm.includes('thu nam') || norm.includes('so 5')) return 5;
+  if (/\b(dau tien|thu nhat|so 1|phim dau)\b/i.test(norm)) return 1;
+  if (/\b(thu hai|so 2|phim hai)\b/i.test(norm)) return 2;
+  if (/\b(thu ba|so 3|phim ba)\b/i.test(norm)) return 3;
+  if (/\b(thu tu|so 4|phim tu)\b/i.test(norm)) return 4;
+  if (/\b(thu nam|so 5|phim nam)\b/i.test(norm)) return 5;
+  if (/\b(cuoi cung|phim cuoi)\b/i.test(norm)) return -1; // -1 đại diện cho phim cuối cùng
 
   return null;
+};
+
+/**
+ * Nhận diện Sub-Intent cho câu hỏi tiếp nối (Follow-up Questions)
+ * @param {string} normalizedMsg - Tin nhắn đã chuẩn hóa
+ * @returns {'showtime'|'ticket_price'|'director'|'actor'|'director_actor'|'info'}
+ */
+export const detectContextualSubIntent = (normalizedMsg = '') => {
+  const norm = normalizedMsg.toLowerCase();
+
+  // 1. Hỏi suất chiếu / lịch chiếu / giờ chiếu / chiếu ở đâu
+  if (['chieu', 'suat', 'may gio', 'khi nao', 'lich chieu', 'rap nao', 'chieu o dau', 'gio chieu', 'moi gio'].some(kw => norm.includes(kw))) {
+    return 'showtime';
+  }
+
+  // 2. Hỏi giá vé
+  if (['gia ve', 'bao nhieu tien', 've bao nhieu', 'tien ve', 'gia bao nhieu', 've'].some(kw => norm.includes(kw))) {
+    return 'ticket_price';
+  }
+
+  // 3. Hỏi Đạo diễn
+  if (['dao dien', 'ai lam dao dien'].some(kw => norm.includes(kw))) {
+    return 'director';
+  }
+
+  // 4. Hỏi Diễn viên
+  if (['dien vien', 'ai dong', 'dien vien nao', 'dien vien gi', 'co nhung dien vien nao'].some(kw => norm.includes(kw))) {
+    return 'actor';
+  }
+
+  // 5. Hỏi Thể loại / Thời lượng / Nội dung / Chi tiết (Mặc định)
+  return 'info';
+};
+
+/**
+ * Kiểm tra xem tin nhắn có phải là câu hỏi thuộc tính tiếp nối ẩn (implicit follow-up) về bộ phim đang có trong context hay không
+ * @param {string} normalizedMsg - Tin nhắn đã chuẩn hóa
+ * @param {Array} lastMovies - Danh sách phim trong session context
+ * @returns {boolean}
+ */
+export const isImplicitContextualFollowUp = (normalizedMsg = '', lastMovies = []) => {
+  if (!lastMovies || lastMovies.length === 0) return false;
+
+  const norm = normalizedMsg.toLowerCase().trim();
+
+  // Danh sách các mẫu câu hỏi thuộc tính ngắn tiếp nối
+  const implicitPatterns = [
+    'co dien vien nao', 'co nhung dien vien nao', 'dien vien la ai', 'ai dong', 'ai la dien vien', 'dien vien nao',
+    'dao dien la ai', 'ai lam dao dien', 'ai la dao dien', 'dao dien nao',
+    'thoi luong bao nhieu', 'bao nhieu phut', 'dai bao nhieu phut', 'dai bao nhieu',
+    'the loai gi', 'thuoc the loai gi', 'the loai nao',
+    'noi dung gi', 'tom tat noi dung', 'noi dung nhu the nao', 'noi dung ra sao',
+    'gia ve bao nhieu', 've bao nhieu tien', 'tien ve bao nhieu',
+    'chieu may gio', 'may gio chieu', 'suat chieu may gio', 'khi nao chieu', 'chieu o dau'
+  ];
+
+  // 1. Nếu tin nhắn khớp trực tiếp với các mẫu câu hỏi tiếp nối ngắn
+  if (implicitPatterns.some(p => norm === p || norm.includes(p))) {
+    return true;
+  }
+
+  // 2. Nếu câu ngắn (dưới 35 ký tự) và hỏi chung về "dien vien" hoặc "dao dien" mà KHÔNG chứa tên người riêng rõ ràng
+  if (norm.length <= 35 && (norm.includes('dien vien') || norm.includes('dao dien'))) {
+    if (['ai', 'nao', 'gi', 'co', 'nhung'].some(w => norm.includes(w))) {
+      return true;
+    }
+  }
+
+  return false;
 };
 
 /**
@@ -468,6 +550,9 @@ const findMatchedMoods = (normalizedMsg) => {
 const extractMovieSearchQuery = (rawMsg, normalizedMsg) => {
   let extracted = normalizedMsg;
 
+  // Xóa cụm phủ định ban đầu (vd: "khong phai phim A, toi hoi phim B co")
+  extracted = extracted.replace(/^khong phai (phim\s+)?[a-z0-9\s]+\s*(thay|khong|ma|voi|nhung|chuyen sang|toi hoi|toi muon|xem|co)\s*/ig, '');
+
   for (const kw of movieInfoKeywords) {
     if (extracted.includes(kw)) {
       extracted = extracted.replace(kw, '');
@@ -475,8 +560,8 @@ const extractMovieSearchQuery = (rawMsg, normalizedMsg) => {
   }
 
   extracted = extracted
-    .replace(/^(cho (toi|minh) (xem|hoi|biet)|muon (xem|biet)|cho hoi|xem|tin|phim)\s+/i, '')
-    .replace(/\s+(the nao|nhu the nao|nhu nao|la gi|ra sao)$/i, '')
+    .replace(/^(gio thi|bay gio thi|gio cho (toi|minh)|bay gio|gio|a thoi|thoi|a|cho (toi|minh) (hoi|biet|xem)|muon (xem|biet)|cho hoi|xem|tin|phim|ve phim|hoi ve phim|toi hoi phim)\s+/ig, '')
+    .replace(/\s+(thi sao|the nao|nhu the nao|nhu nao|la gi|ra sao|vay|nhe|ha|a|co)$/ig, '')
     .trim();
 
   return extracted || normalizedMsg;
@@ -501,8 +586,26 @@ export const classifyIntent = (normalizedMsg, rawMsg = '') => {
     };
   }
 
-  // 0.5. TỪ KHÓA NGOÀI CHỦ ĐỀ (OFF-TOPIC) -> Ngắt sớm để không bị nhầm intent
-  const isOffTopic = offTopicKeywords.some(kw => normalizedMsg.includes(kw));
+  // 0.1. Hỏi giá vé (Ticket Price Query)
+  const hasExplicitScheduleKw = ['lich chieu', 'suat chieu', 'phim dang chieu'].some(kw => normalizedMsg.includes(kw));
+  if (!hasExplicitScheduleKw) {
+    const inputWords = normalizedMsg.split(/\s+/).filter(Boolean);
+    const isTicketPrice = ticketPriceKeywords.some(kw => {
+      if (normalizedMsg.includes(kw)) return true;
+      const kwTokens = kw.split(/\s+/);
+      return isPhraseFuzzyMatch(inputWords, kwTokens);
+    });
+    if (isTicketPrice) {
+      return {
+        intent: 'ticket_price_query',
+        confidence: 0.95
+      };
+    }
+  }
+
+  // 0.5. TỪ KHÓA NGOÀI CHỦ ĐỀ (OFF-TOPIC) -> Ngắt sớm trừ khi có từ khóa thuộc ngữ cảnh điện ảnh
+  const hasMovieDomainContext = ['phim', 'suat', 'chieu', 'rap', 've', 'actor', 'director', 'dao dien', 'dien vien', 'gia ve', 'thoi luong'].some(kw => normalizedMsg.includes(kw));
+  const isOffTopic = !hasMovieDomainContext && offTopicKeywords.some(kw => normalizedMsg.includes(kw));
   if (isOffTopic) {
     return {
       intent: 'fallback',
@@ -510,10 +613,9 @@ export const classifyIntent = (normalizedMsg, rawMsg = '') => {
     };
   }
 
-  // 0.6. Tra cứu theo Ordinal Index ("phim thứ 2", "phim số 1", "phim đầu tiên")
+  // 0.6. Tra cứu theo Ordinal Index ("phim thứ 2", "phim số 1", "phim đầu tiên", "phim cuối cùng")
   const ordinalIndex = extractMovieOrdinalIndex(normalizedMsg);
-  // Chỉ nhận diện ordinal khi câu chứa từ khóa "phim", "xem", "suat", "cho" hoặc chỉ có số đơn lẻ
-  if (ordinalIndex !== null && (normalizedMsg.includes('phim') || normalizedMsg.includes('xem') || normalizedMsg.includes('suat') || normalizedMsg.includes('thu') || normalizedMsg.includes('so') || /^\d+$/.test(normalizedMsg.trim()))) {
+  if (ordinalIndex !== null && (normalizedMsg.includes('phim') || normalizedMsg.includes('xem') || normalizedMsg.includes('suat') || normalizedMsg.includes('thu') || normalizedMsg.includes('so') || normalizedMsg.includes('dau') || normalizedMsg.includes('cuoi') || /^\d+$/.test(normalizedMsg.trim()))) {
     return {
       intent: 'movie_ordinal_query',
       ordinalIndex,
@@ -641,25 +743,12 @@ export const classifyIntent = (normalizedMsg, rawMsg = '') => {
     };
   }
 
-  // 4. Hỏi giá vé (Ticket Price Query - Hỗ trợ So khớp mờ Fuzzy)
-  const inputWords = normalizedMsg.split(/\s+/).filter(Boolean);
-  const isTicketPrice = ticketPriceKeywords.some(kw => {
-    if (normalizedMsg.includes(kw)) return true;
-    const kwTokens = kw.split(/\s+/);
-    return isPhraseFuzzyMatch(inputWords, kwTokens);
-  });
-  if (isTicketPrice) {
-    return {
-      intent: 'ticket_price_query',
-      confidence: 0.9
-    };
-  }
-
   // 5. Hỏi khuyến mãi (Promotion Query - Hỗ trợ So khớp mờ Fuzzy)
+  const promoInputWords = normalizedMsg.split(/\s+/).filter(Boolean);
   const isPromotion = promotionKeywords.some(kw => {
     if (normalizedMsg.includes(kw)) return true;
     const kwTokens = kw.split(/\s+/);
-    return isPhraseFuzzyMatch(inputWords, kwTokens);
+    return isPhraseFuzzyMatch(promoInputWords, kwTokens);
   });
   if (isPromotion) {
     return {

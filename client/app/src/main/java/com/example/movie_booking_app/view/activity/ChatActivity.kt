@@ -51,7 +51,9 @@ class ChatActivity : BaseActivity() {
     }
 
     private fun setupRecyclerView() {
-        chatAdapter = ChatAdapter()
+        chatAdapter = ChatAdapter { selectedCinemaName ->
+            viewModel.sendMessage(selectedCinemaName, sessionId)
+        }
         val layoutManager = LinearLayoutManager(this).apply {
             stackFromEnd = true
         }

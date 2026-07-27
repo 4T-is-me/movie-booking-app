@@ -87,9 +87,10 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                         binding.tvLoadingText.text = "Saved successfully!"
                         kotlinx.coroutines.delay(1500)
                         binding.layoutLoading.visibility = android.view.View.GONE
+                        binding.btnSave.isEnabled = true
                         
                         Toast.makeText(this@ManagerAutoSchedulingActivity, "Showtimes saved to Database!", Toast.LENGTH_SHORT).show()
-                        finish()
+                        fetchExistingShowtimes(currentWeekStart, currentWeekStart.plusDays(6))
                     } else {
                         binding.layoutLoading.visibility = android.view.View.GONE
                         binding.btnSave.isEnabled = true

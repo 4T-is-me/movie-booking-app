@@ -15,6 +15,7 @@ data class DashboardData(
     val managerId: String,
     val managerName: String,
     val cinemaId: String,
+    val cinemaName: String? = null,
     val kpiSummary: KpiSummary,
     val todayShowtimes: List<ShowtimeTodayResponse>,
     val weeklyRevenue: List<WeeklyRevenueResponse>

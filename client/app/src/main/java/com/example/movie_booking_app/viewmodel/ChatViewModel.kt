@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.ChatMessage
+import com.example.movie_booking_app.data.model.CinemaOption
 import com.example.movie_booking_app.data.repository.ChatRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -55,7 +56,22 @@ class ChatViewModel @Inject constructor(
             result.fold(
                 onSuccess = { response ->
                     val reply = response.reply ?: "Rất tiếc, không nhận được câu trả lời từ hệ thống."
-                    chatRepository.addMessage(ChatMessage(role = "bot", content = reply, timestamp = timeFormat.format(Date())))
+                    val cinemaOpts = response.cinemaOptions?.map { dto ->
+                        CinemaOption(
+                            _id = dto._id ?: "",
+                            cinemaName = dto.cinemaName ?: "",
+                            address = dto.address ?: "",
+                            city = dto.city ?: ""
+                        )
+                    }
+                    chatRepository.addMessage(
+                        ChatMessage(
+                            role = "bot",
+                            content = reply,
+                            timestamp = timeFormat.format(Date()),
+                            cinemaOptions = cinemaOpts
+                        )
+                    )
                 },
                 onFailure = { error ->
                     val errorMsg = error.localizedMessage ?: "Có lỗi kết nối xảy ra. Vui lòng kiểm tra lại mạng."

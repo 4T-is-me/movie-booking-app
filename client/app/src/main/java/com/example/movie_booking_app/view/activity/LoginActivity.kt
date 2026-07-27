@@ -85,7 +85,7 @@ class LoginActivity : EnglishBaseActivity() {
             val username = binding.edtUsername.text.toString().trim()
             val password = binding.edtPassword.text.toString()
 
-            val usernameError = Validator.validateUsername(username)
+            val usernameError = Validator.validateLoginId(username)
             if (usernameError != null) {
                 showError(getString(usernameError))
                 return@setOnClickListener

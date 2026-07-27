@@ -174,14 +174,17 @@ export const buildMoodResponse = (movies = [], matchedMoods = []) => {
  * Phản hồi danh sách lịch chiếu phim hôm nay (hoặc mốc ngày chỉ định)
  * @param {Array} moviesWithShowtimes - Danh sách phim kèm array showtimes
  * @param {string} dateTitle - Nhãn ngày (vd: 'HÔM NAY', 'NGÀY MAI', 'CUỐI TUẦN')
+ * @param {string} cinemaName - Tên rạp đã chọn (tùy chọn)
  * @returns {string}
  */
-export const buildScheduleResponse = (moviesWithShowtimes = [], dateTitle = 'HÔM NAY') => {
+export const buildScheduleResponse = (moviesWithShowtimes = [], dateTitle = 'HÔM NAY', cinemaName = '') => {
+  const cinemaHeader = cinemaName ? ` TẠI ${cinemaName.toUpperCase()}` : '';
+
   if (!moviesWithShowtimes || moviesWithShowtimes.length === 0) {
-    return `📅 Rất tiếc, rạp hiện chưa cập nhật lịch chiếu cho (${dateTitle.toUpperCase()}). Vui lòng quay lại sau hoặc chọn mốc ngày khác bạn nhé! 🍿`;
+    return `📅 Rất tiếc, rạp hiện chưa cập nhật lịch chiếu cho (${dateTitle.toUpperCase()})${cinemaHeader}. Vui lòng quay lại sau hoặc chọn mốc ngày khác bạn nhé! 🍿`;
   }
 
-  let reply = `🎬 **DANH SÁCH PHIM VÀ LỊCH CHIẾU (${dateTitle.toUpperCase()})** 🍿\n\n`;
+  let reply = `🎬 **DANH SÁCH PHIM VÀ LỊCH CHIẾU (${dateTitle.toUpperCase()})${cinemaHeader}** 🍿\n\n`;
 
   moviesWithShowtimes.forEach((m, idx) => {
     reply += `📌 **${idx + 1}. ${m.movieName}**\n`;
@@ -224,6 +227,126 @@ export const buildMovieInfoResponse = (movie = null, searchQuery = '') => {
   reply += `\n📝 **Nội dung:** ${movie.description || 'Đang cập nhật...'}\n\n`;
   reply += `Bạn có muốn mình hỗ trợ xem lịch chiếu của phim này không ạ? 🎟️`;
 
+  return reply;
+};
+
+/**
+ * Phản hồi danh sách suất chiếu của duy nhất một bộ phim theo các rạp
+ * @param {Object} movie - Object thông tin phim
+ * @param {Array} showtimes - Danh sách suất chiếu từ DB
+ * @returns {string}
+ */
+export const buildMovieShowtimeDetailResponse = (movie, showtimes = []) => {
+  if (!movie) return buildFallbackResponse();
+
+  let reply = `🎬 **LỊCH CHIẾU PHIM: ${movie.movieName.toUpperCase()}** 🍿\n\n`;
+  if (movie.duration) reply += `• **Thời lượng:** ${movie.duration} phút\n`;
+  if (movie.movieGenre && movie.movieGenre.length > 0) reply += `• **Thể loại:** ${movie.movieGenre.join(', ')}\n`;
+
+  if (!showtimes || showtimes.length === 0) {
+    reply += `\n📅 Rất tiếc, bộ phim **"${movie.movieName}"** hiện chưa có suất chiếu tiếp theo được xếp lịch. Vui lòng tham khảo các phim khác nhé! 🎟️`;
+    return reply;
+  }
+
+  // Nhóm suất chiếu theo từng rạp
+  const cinemaMap = new Map();
+  showtimes.forEach(st => {
+    const cinemaName = st.cinemaId?.cinemaName || 'Rạp chiếu';
+    if (!cinemaMap.has(cinemaName)) {
+      cinemaMap.set(cinemaName, []);
+    }
+    let timeStr = st.showTime || '';
+    if (!timeStr && st.startTime) {
+      timeStr = new Date(st.startTime).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Ho_Chi_Minh' });
+    }
+    if (timeStr && !cinemaMap.get(cinemaName).includes(timeStr)) {
+      cinemaMap.get(cinemaName).push(timeStr);
+    }
+  });
+
+  reply += `\n📌 **Danh sách suất chiếu theo rạp:**\n\n`;
+  for (const [cinemaName, times] of cinemaMap.entries()) {
+    reply += `🎭 **${cinemaName}**\n`;
+    reply += `• **Giờ chiếu:** ${times.join(' | ')}\n\n`;
+  }
+
+  reply += `👉 Bạn nhắn *"đặt vé"* để được hướng dẫn mua vé cho suất chiếu này nhé! 😉`;
+  return reply;
+};
+
+/**
+ * Phản hồi giá vé riêng cho bộ phim được chỉ định
+ * @param {Object} movie - Phim cần tra cứu
+ * @param {Object} ticketPriceData - Dữ liệu giá vé
+ * @returns {string}
+ */
+export const buildTicketPriceForMovieResponse = (movie, ticketPriceData) => {
+  if (!movie) return buildFallbackResponse();
+  let reply = `🎫 **BẢNG GIÁ VÉ XEM PHIM: ${movie.movieName.toUpperCase()}** 🍿\n\n`;
+  reply += `• **Giá vé tiêu chuẩn:** ${ticketPriceData?.formattedShowtimePrices || '75.000 VNĐ - 110.000 VNĐ / vé'}\n`;
+  if (ticketPriceData?.formattedSeatPrices) {
+    reply += `• **Theo loại ghế:** ${ticketPriceData.formattedSeatPrices}\n`;
+  }
+  reply += `\n💡 Giá vé được áp dụng cho bộ phim **${movie.movieName}** tại tất cả các rạp chiếu.`;
+  return reply;
+};
+
+/**
+ * Phản hồi chi tiết Đạo diễn / Diễn viên của duy nhất một bộ phim cụ thể
+ * @param {Object} movie - Object thông tin phim
+ * @param {'director'|'actor'|'all'} queryType - Loại thông tin tra cứu
+ * @returns {string}
+ */
+export const buildMovieDirectorActorDetailResponse = (movie, queryType = 'all') => {
+  if (!movie) return buildFallbackResponse();
+
+  const directorStr = Array.isArray(movie.director) ? movie.director.join(', ') : (movie.director || 'Đang cập nhật');
+  const actorList = movie.actors || movie.actor;
+  const actorStr = Array.isArray(actorList) ? actorList.join(', ') : (actorList || 'Đang cập nhật');
+
+  let reply = '';
+  if (queryType === 'director') {
+    reply = `🎬 **ĐẠO DIỄN PHIM: ${movie.movieName.toUpperCase()}** 🎥\n\n`;
+    reply += `• **Đạo diễn:** ${directorStr}\n`;
+    if (actorStr !== 'Đang cập nhật') {
+      reply += `• **Dàn diễn viên chính:** ${actorStr}\n`;
+    }
+  } else if (queryType === 'actor') {
+    reply = `🎭 **DÀN DIỄN VIÊN PHIM: ${movie.movieName.toUpperCase()}** 🌟\n\n`;
+    reply += `• **Diễn viên:** ${actorStr}\n`;
+    if (directorStr !== 'Đang cập nhật') {
+      reply += `• **Đạo diễn:** ${directorStr}\n`;
+    }
+  } else {
+    reply = `🎬 **ĐẠO DIỄN & DIỄN VIÊN PHIM: ${movie.movieName.toUpperCase()}** 🍿\n\n`;
+    reply += `• **Đạo diễn:** ${directorStr}\n`;
+    reply += `• **Dàn diễn viên:** ${actorStr}\n`;
+  }
+
+  if (movie.duration) reply += `• **Thời lượng:** ${movie.duration} phút\n`;
+  if (movie.movieGenre && movie.movieGenre.length > 0) reply += `• **Thể loại:** ${movie.movieGenre.join(', ')}\n`;
+
+  reply += `\nBạn có muốn xem lịch chiếu hoặc giá vé của phim này không ạ? 🎟️`;
+  return reply;
+};
+
+/**
+ * Phản hồi hỏi lại người dùng làm rõ khi ngữ cảnh có nhiều phim (Ambiguous Context)
+ * @param {Array} movies - Danh sách phim vừa gợi ý
+ * @returns {string}
+ */
+export const buildAmbiguousMovieClarificationResponse = (movies = []) => {
+  if (!movies || movies.length === 0) {
+    return buildFallbackResponse();
+  }
+
+  let reply = `😊 **Bạn đang muốn tra cứu thông tin / suất chiếu của bộ phim nào trong danh sách vừa gợi ý ạ?** 🍿\n\n`;
+  movies.forEach((m, idx) => {
+    reply += `📌 **${idx + 1}. ${m.movieName}**`;
+    if (m.movieGenre && m.movieGenre.length > 0) reply += ` — ${m.movieGenre.join(', ')}`;
+    reply += `\n`;
+  });
+  reply += `\n👉 Bạn nhắn **tên phim** hoặc **số thứ tự** (ví dụ: *"phim thứ 1"*, *"phim số 2"*) để mình hỗ trợ thông tin chính xác cho bạn nhé! 😉`;
   return reply;
 };
 
@@ -286,17 +409,9 @@ export const buildCinemaSelectionRequest = (cinemas = []) => {
       `Bạn vui lòng thử lại sau hoặc liên hệ hotline rạp để được hỗ trợ nhé! 🙏`;
   }
 
-  let reply = `🏟️ **BẠN MUỐN XEM Ở RẠP NÀO?** 🎬\n\n`;
-  reply += `Hiện rạp phim đang hoạt động tại các địa điểm sau:\n\n`;
+  let reply = `🏟️ **BẠN MUỐN XEM LỊCH CHIẾU TẠI RẠP NÀO?** 🎬\n\n`;
+  reply += `Vui lòng bấm chọn rạp chiếu bên dưới để xem danh sách suất chiếu nhé:`;
 
-  cinemas.forEach((c, idx) => {
-    reply += `**${idx + 1}.** 🎭 **${c.cinemaName}**`;
-    if (c.city) reply += ` — ${c.city}`;
-    if (c.address) reply += `\n    📍 ${c.address}`;
-    reply += `\n\n`;
-  });
-
-  reply += `👉 Bạn nhắn **số thứ tự** hoặc **tên rạp** để mình tra suất chiếu từ bây giờ đến hết ngày nhé! 😊`;
   return reply;
 };
 

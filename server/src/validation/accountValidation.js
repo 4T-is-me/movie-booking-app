@@ -2,18 +2,64 @@ import Joi from 'joi'
 import { StatusCodes } from 'http-status-codes'
 import ApiError from '../utils/ApiError.js'
 
+const validateAge = (value, helpers) => {
+    if (!value) return value;
+    const today = new Date();
+    const dob = new Date(value);
+    if (dob > today) {
+        return helpers.message('Date of birth cannot be in the future');
+    }
+    let age = today.getFullYear() - dob.getFullYear();
+    const monthDiff = today.getMonth() - dob.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+        age--;
+    }
+    if (age < 15) {
+        return helpers.message('You must be at least 15 years old');
+    }
+    if (age > 80) {
+        return helpers.message('Age cannot exceed 80 years');
+    }
+    return value;
+}
+
 const register = async (req, res, next) => {
     const correctCondition = Joi.object({
-        username: Joi.string().required().min(3).max(30).trim().strict(),
-        email: Joi.string().required().email().trim().strict(),
-        password: Joi.string().required().min(6).strict(),
-        fullName: Joi.string().required().trim().strict(),
-        gender: Joi.string().required().trim().strict(),
-        dateOfBirth: Joi.date().required(),
-        phoneNumber: Joi.string().pattern(/^0\d{9}$/).required().trim().strict(),
-        identityCard: Joi.string().required().length(12).pattern(/^[0-9]+$/).trim().strict(),
-        address: Joi.string().trim().strict(),
-        image: Joi.string().trim().strict()
+        username: Joi.string().required().min(3).max(30).pattern(/^[a-zA-Z0-9_]+$/).trim().strict().messages({
+            'string.pattern.base': 'Username can only contain letters, numbers, and underscores (_)',
+            'string.min': 'Username must be at least 3 characters',
+            'string.max': 'Username cannot exceed 30 characters',
+            'any.required': 'Username is required'
+        }),
+        email: Joi.string().required().pattern(/^[a-zA-Z0-9._%+-]+@gmail\.com$/).trim().strict().messages({
+            'string.pattern.base': 'Email must be a valid address ending with @gmail.com',
+            'any.required': 'Email is required'
+        }),
+        password: Joi.string().required().min(6).strict().messages({
+            'string.min': 'Password must be at least 6 characters',
+            'any.required': 'Password is required'
+        }),
+        fullName: Joi.string().required().pattern(/^[^\d]+$/).trim().strict().messages({
+            'string.pattern.base': 'Full name cannot contain numbers',
+            'any.required': 'Full name is required'
+        }),
+        gender: Joi.string().required().trim().strict().messages({
+            'any.required': 'Gender is required'
+        }),
+        dateOfBirth: Joi.date().required().custom(validateAge).messages({
+            'any.required': 'Date of birth is required',
+            'date.base': 'Invalid date format'
+        }),
+        phoneNumber: Joi.string().pattern(/^0\d{9}$/).required().trim().strict().messages({
+            'string.pattern.base': 'Phone number must be 10 digits starting with 0',
+            'any.required': 'Phone number is required'
+        }),
+        identityCard: Joi.string().required().pattern(/^[0-9]{9}$|^[0-9]{12}$/).trim().strict().messages({
+            'string.pattern.base': 'Identity card must be 9 or 12 digits',
+            'any.required': 'Identity card is required'
+        }),
+        address: Joi.string().trim().strict().allow('', null),
+        image: Joi.string().trim().strict().allow('', null)
     })
 
     try {
@@ -27,8 +73,13 @@ const register = async (req, res, next) => {
 
 const login = async (req, res, next) => {
     const correctCondition = Joi.object({
-        email: Joi.string().required().trim().strict(),
-        password: Joi.string().required().min(6).strict()
+        email: Joi.string().required().trim().strict().messages({
+            'any.required': 'Username, email or phone is required'
+        }),
+        password: Joi.string().required().min(6).strict().messages({
+            'string.min': 'Password must be at least 6 characters',
+            'any.required': 'Password is required'
+        })
     })
 
     try {
@@ -42,13 +93,23 @@ const login = async (req, res, next) => {
 
 const updateProfile = async (req, res, next) => {
     const correctCondition = Joi.object({
-        email: Joi.string().email().trim().strict(),
-        phone: Joi.string().pattern(/^0\d{9}$/).trim().strict(),
+        email: Joi.string().pattern(/^[a-zA-Z0-9._%+-]+@gmail\.com$/).trim().strict().messages({
+            'string.pattern.base': 'Email must end with @gmail.com'
+        }),
+        phone: Joi.string().pattern(/^0\d{9}$/).trim().strict().messages({
+            'string.pattern.base': 'Phone number must be 10 digits starting with 0'
+        }),
         address: Joi.string().trim().strict().allow('', null),
-        fullName: Joi.string().trim().strict(),
-        dob: Joi.date().allow('', null),
+        fullName: Joi.string().pattern(/^[^\d]+$/).trim().strict().messages({
+            'string.pattern.base': 'Full name cannot contain numbers'
+        }),
+        dob: Joi.date().custom(validateAge).allow('', null).messages({
+            'date.base': 'Invalid date format'
+        }),
         gender: Joi.string().trim().strict().allow('', null),
-        identityCard: Joi.string().length(12).pattern(/^[0-9]+$/).trim().strict(),
+        identityCard: Joi.string().pattern(/^[0-9]{9}$|^[0-9]{12}$/).trim().strict().messages({
+            'string.pattern.base': 'Identity card must be 9 or 12 digits'
+        }),
         favoriteCinema: Joi.string().trim().strict().allow('', null),
         favoriteGenres: Joi.array().items(Joi.string().trim().strict()).allow(null),
         avatar: Joi.string().trim().strict().allow('', null)
@@ -65,8 +126,13 @@ const updateProfile = async (req, res, next) => {
 
 const changePassword = async (req, res, next) => {
     const correctCondition = Joi.object({
-        currentPassword: Joi.string().required().strict(),
-        newPassword: Joi.string().required().min(6).strict()
+        currentPassword: Joi.string().required().strict().messages({
+            'any.required': 'Current password is required'
+        }),
+        newPassword: Joi.string().required().min(6).strict().messages({
+            'string.min': 'New password must be at least 6 characters',
+            'any.required': 'New password is required'
+        })
     })
 
     try {
@@ -84,3 +150,4 @@ export const accountValidation = {
     updateProfile,
     changePassword
 }
+

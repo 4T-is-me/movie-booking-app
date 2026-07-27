@@ -75,14 +75,16 @@
     <!-- Registration Validation Errors -->
     <string name="error_username_required">Username is required</string>
     <string name="error_username_length">Username must be 3-30 characters</string>
+    <string name="error_username_invalid">Username only letters, numbers, and underscore _</string>
     <string name="error_fullname_required">Full Name is required</string>
+    <string name="error_fullname_invalid">Full name cannot contain numbers</string>
     <string name="error_dob_required">Date of birth is required</string>
     <string name="error_dob_future">Date of birth cannot be in the future</string>
     <string name="error_dob_min_age">You must be at least 15 years old</string>
     <string name="error_dob_max_age">Age cannot exceed 80 years</string>
     <string name="error_dob_invalid">Invalid date format (dd/MM/yyyy)</string>
     <string name="error_email_required">Email is required</string>
-    <string name="error_email_invalid">Invalid email format</string>
+    <string name="error_email_invalid">Must be valid @gmail.com email</string>
     <string name="error_phone_required">Phone is required</string>
     <string name="error_phone_invalid">Must be 10 digits starting with 0</string>
     <string name="error_password_required">Password is required</string>

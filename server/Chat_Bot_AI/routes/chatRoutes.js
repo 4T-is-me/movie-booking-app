@@ -7,7 +7,7 @@
 
 import express from 'express';
 import { normalizeText } from '../services/textNormalizer.js';
-import { classifyIntent } from '../services/intentClassifier.js';
+import { classifyIntent, detectContextualSubIntent, isImplicitContextualFollowUp } from '../services/intentClassifier.js';
 import {
   findMoviesByMood,
   getTodayShowtimes,
@@ -16,9 +16,12 @@ import {
   getTicketPricesFromDB,
   getCinemasFromDB,
   getUpcomingShowtimesByCinema,
+  getShowtimesByCinemaAndDate,
+  getShowtimesByMovieId,
   getTopRatedMovies,
   findMoviesByDirectorOrActor,
-  sanitizeMovieForResponse
+  sanitizeMovieForResponse,
+  getMovieDetailMatches
 } from '../services/movieMatcher.js';
 import { maskPIIData } from '../config/securityGuardrails.js';
 import {
@@ -41,7 +44,11 @@ import {
   buildMovieComparisonResponse,
   buildDirectorActorResponse,
   buildNegatedMoodResponse,
-  buildEmptyMessageResponse
+  buildEmptyMessageResponse,
+  buildMovieShowtimeDetailResponse,
+  buildTicketPriceForMovieResponse,
+  buildAmbiguousMovieClarificationResponse,
+  buildMovieDirectorActorDetailResponse
 } from '../services/responseBuilder.js';
 
 const router = express.Router();
@@ -57,7 +64,7 @@ const lastSuggestedMoviesMap = new Map();
 
 /**
  * Lưu trạng thái chờ multi-turn: Map<sessionId, PendingContext>
- * PendingContext: { step: 'awaiting_cinema_selection', cinemaList: Array, createdAt: number }
+ * PendingContext: { step: 'awaiting_cinema_selection', cinemaList: Array, targetDate, dateTitle, isUpcomingOnly, createdAt: number }
  * Tự động hết hạn sau 3 phút nếu người dùng không chọn rạp
  */
 const pendingContextMap = new Map();
@@ -73,9 +80,11 @@ const RATE_LIMIT_WINDOW_MS = 60 * 1000; // Trong vòng 1 phút
 export const resetChatbotSessionState = () => {
   sessionHistoryMap.clear();
   rateLimitMap.clear();
-  pendingContextMap.clear();
   lastSuggestedMoviesMap.clear();
+  pendingContextMap.clear();
 };
+
+export { lastSuggestedMoviesMap, pendingContextMap };
 
 /**
  * Kiểm tra rate limit đơn giản theo sessionId
@@ -233,34 +242,61 @@ router.post('/', async (req, res) => {
       const cinemaList = activePending.cinemaList || [];
       let selectedCinema = null;
 
-      // Thử nhận diện bằng số thứ tự ("1", "2", ...)
-      const numMatch = normalizedMessage.trim().match(/^(\d+)$/);
-      if (numMatch) {
-        const idx = parseInt(numMatch[1], 10) - 1;
-        if (idx >= 0 && idx < cinemaList.length) {
-          selectedCinema = cinemaList[idx];
+      const rawMsgTrim = message.trim();
+      const msgLower = normalizedMessage.toLowerCase();
+      const rawMsgLower = rawMsgTrim.toLowerCase();
+
+      // 1. Thử nhận diện bằng _id (khi client truyền _id từ button click)
+      selectedCinema = cinemaList.find(c => c._id && c._id.toString() === rawMsgTrim);
+
+      // 2. Thử nhận diện bằng tên rạp khớp chính xác (khi client truyền tên rạp từ button click)
+      if (!selectedCinema) {
+        selectedCinema = cinemaList.find(c => {
+          const rawName = (c.cinemaName || '').toLowerCase().trim();
+          const nameNorm = normalizeText(c.cinemaName).toLowerCase();
+          return rawName === rawMsgLower || nameNorm === msgLower;
+        });
+      }
+
+      // 3. Thử nhận diện bằng số thứ tự ("1", "2", ...)
+      if (!selectedCinema) {
+        const numMatch = normalizedMessage.trim().match(/^(\d+)$/);
+        if (numMatch) {
+          const idx = parseInt(numMatch[1], 10) - 1;
+          if (idx >= 0 && idx < cinemaList.length) {
+            selectedCinema = cinemaList[idx];
+          }
         }
       }
 
-      // Thử nhận diện bằng tên rạp (fuzzy: includes)
+      // 4. Thử nhận diện bằng tên rạp / thành phố (fuzzy: includes)
       if (!selectedCinema) {
-        const msgLower = normalizedMessage.toLowerCase();
         selectedCinema = cinemaList.find(c => {
           const nameNorm = normalizeText(c.cinemaName).toLowerCase();
           const cityNorm = normalizeText(c.city || '').toLowerCase();
+          const rawName = (c.cinemaName || '').toLowerCase();
           return nameNorm.includes(msgLower) || msgLower.includes(nameNorm) ||
+                 rawName.includes(rawMsgLower) || rawMsgLower.includes(rawName) ||
                  cityNorm.includes(msgLower) || msgLower.includes(cityNorm);
         });
       }
 
       if (selectedCinema) {
-        // Đã chọn được rạp → Query phim sắp chiếu
+        // Đã chọn được rạp → Query lịch chiếu hoặc suất chiếu sắp tới theo rạp đã chọn
         pendingContextMap.delete(effectiveSessionId);
-        const now = new Date();
-        const upcomingMovies = await getUpcomingShowtimesByCinema(selectedCinema._id);
-        reply = buildUpcomingShowtimeResponse(upcomingMovies, selectedCinema.cinemaName, now);
-        matchedMovies = upcomingMovies;
-      } else if (intent === 'upcoming_showtime_query') {
+        if (activePending.isUpcomingOnly) {
+          const now = new Date();
+          const upcomingMovies = await getUpcomingShowtimesByCinema(selectedCinema._id);
+          reply = buildUpcomingShowtimeResponse(upcomingMovies, selectedCinema.cinemaName, now);
+          matchedMovies = upcomingMovies;
+        } else {
+          const targetDate = activePending.targetDate || null;
+          const dateTitle = activePending.dateTitle || 'hôm nay';
+          const scheduleMovies = await getShowtimesByCinemaAndDate(selectedCinema._id, targetDate);
+          reply = buildScheduleResponse(scheduleMovies, dateTitle, selectedCinema.cinemaName);
+          matchedMovies = scheduleMovies;
+        }
+      } else if (intent === 'upcoming_showtime_query' || intent === 'schedule_query') {
         reply = buildCinemaSelectionRequest(cinemaList);
       } else {
         pendingContextMap.delete(effectiveSessionId);
@@ -273,15 +309,84 @@ router.post('/', async (req, res) => {
           : [];
         if (cleanMatchedMovies.length > 0) lastSuggestedMoviesMap.set(effectiveSessionId, cleanMatchedMovies);
 
-        return res.json({
+        const resObj = {
           success: true,
           reply,
-          matchedIntent: 'upcoming_showtime_result',
+          matchedIntent: selectedCinema
+            ? (activePending.isUpcomingOnly ? 'upcoming_showtime_result' : 'schedule_result')
+            : 'cinema_selection_request',
           matchedMovies: cleanMatchedMovies
-        });
+        };
+
+        if (!selectedCinema && cinemaList.length > 0) {
+          resObj.cinemaOptions = cinemaList.map(c => ({
+            _id: c._id,
+            cinemaName: c.cinemaName,
+            address: c.address || '',
+            city: c.city || ''
+          }));
+        }
+
+        return res.json(resObj);
       }
     }
     // === HẾT XỬ LÝ MULTI-TURN ===
+
+    // === XỬ LÝ CONTEXTUAL PRONOUN & IMPLICIT FOLLOW-UP QUERY (phim đó, phim này, nó, có diễn viên nào, đạo diễn là ai...) ===
+    const hasPronounRef = ['phim do', 'phim nay', 'bo phim do', 'phim day', 'bo phim nay', 'no chieu', 'no gia ve', 'no la phim', 'no dao dien', 'noi dung phim do'].some(kw => normalizedMessage.includes(kw));
+    const lastMovies = lastSuggestedMoviesMap.get(effectiveSessionId) || [];
+    const isImplicitFollowUp = isImplicitContextualFollowUp(normalizedMessage, lastMovies);
+
+    if ((hasPronounRef || isImplicitFollowUp) && intent !== 'movie_ordinal_query') {
+
+      if (lastMovies.length === 1) {
+        // Rõ ràng 100%: Chỉ có đúng 1 phim được nhắc trước đó
+        const targetMovie = lastMovies[0];
+        matchedMovies = [targetMovie];
+        const subIntent = detectContextualSubIntent(normalizedMessage);
+
+        if (subIntent === 'showtime') {
+          const showtimes = await getShowtimesByMovieId(targetMovie._id);
+          reply = buildMovieShowtimeDetailResponse(targetMovie, showtimes);
+        } else if (subIntent === 'ticket_price') {
+          const priceData = await getTicketPricesFromDB();
+          reply = buildTicketPriceForMovieResponse(targetMovie, priceData);
+        } else if (subIntent === 'director' || subIntent === 'actor' || subIntent === 'director_actor') {
+          reply = buildMovieDirectorActorDetailResponse(targetMovie, subIntent);
+        } else {
+          reply = buildMovieInfoResponse(targetMovie, targetMovie.movieName);
+        }
+      } else if (lastMovies.length > 1) {
+        // Ngữ cảnh chưa rõ ràng (nhiều hơn 1 phim) -> Hỏi lại người dùng làm rõ
+        reply = buildAmbiguousMovieClarificationResponse(lastMovies);
+        matchedMovies = lastMovies;
+      } else {
+        // Chưa có lịch sử gợi ý phim trước đó -> lấy danh sách phim hot hôm nay để hỏi lại
+        const todayMovies = await getTodayShowtimes(5);
+        if (todayMovies.length > 0) {
+          reply = buildAmbiguousMovieClarificationResponse(todayMovies);
+          matchedMovies = todayMovies;
+        } else {
+          reply = buildFallbackResponse();
+        }
+      }
+
+      if (reply) {
+        saveMessageToHistory(effectiveSessionId, 'bot', reply);
+        const cleanMovies = matchedMovies.map(sanitizeMovieForResponse).filter(Boolean);
+        // CHỈ cập nhật cache nếu phản hồi trả về nhiều hơn 1 phim
+        if (cleanMovies.length > 1) {
+          lastSuggestedMoviesMap.set(effectiveSessionId, cleanMovies);
+        }
+        return res.json({
+          success: true,
+          reply,
+          matchedIntent: 'contextual_pronoun_resolution',
+          matchedMovies: cleanMovies
+        });
+      }
+    }
+    // === HẾT XỬ LÝ CONTEXTUAL PRONOUN ===
 
     // 5. Thực thi logic xử lý theo Intent
     switch (intent) {
@@ -325,21 +430,50 @@ router.post('/', async (req, res) => {
       }
 
       case 'movie_ordinal_query': {
-        const ordinalIndex = classification.ordinalIndex || 1;
         const lastMovies = lastSuggestedMoviesMap.get(effectiveSessionId) || [];
-        const targetMovie = lastMovies[ordinalIndex - 1];
+        let ordinalIndex = classification.ordinalIndex;
 
-        if (targetMovie) {
-          matchedMovies = [targetMovie];
-          reply = buildMovieInfoResponse(targetMovie, targetMovie.movieName);
+        if (lastMovies.length > 0) {
+          if (ordinalIndex === -1) {
+            ordinalIndex = lastMovies.length;
+          }
+
+          if (ordinalIndex > lastMovies.length || ordinalIndex < 1) {
+            reply = `📌 Danh sách vừa gợi ý chỉ có ${lastMovies.length} bộ phim, không có phim thứ ${ordinalIndex} đâu bạn ơi 😅\n\n👉 Bạn nhắn tên phim hoặc số thứ tự từ 1 đến ${lastMovies.length} để mình hỗ trợ nhé! 😉`;
+            break;
+          }
+
+          const targetMovie = lastMovies[ordinalIndex - 1];
+          if (targetMovie) {
+            matchedMovies = [targetMovie];
+            const subIntent = detectContextualSubIntent(normalizedMessage);
+
+            if (subIntent === 'showtime') {
+              const showtimes = await getShowtimesByMovieId(targetMovie._id);
+              reply = buildMovieShowtimeDetailResponse(targetMovie, showtimes);
+            } else if (subIntent === 'ticket_price') {
+              const priceData = await getTicketPricesFromDB();
+              reply = buildTicketPriceForMovieResponse(targetMovie, priceData);
+            } else if (subIntent === 'director' || subIntent === 'actor' || subIntent === 'director_actor') {
+              reply = buildMovieDirectorActorDetailResponse(targetMovie, subIntent);
+            } else {
+              reply = buildMovieInfoResponse(targetMovie, targetMovie.movieName);
+            }
+          }
         } else {
+          // Chưa có danh sách gợi ý trong session
           const todayMovies = await getTodayShowtimes(5);
-          const fallbackMovie = todayMovies[ordinalIndex - 1] || todayMovies[0];
-          if (fallbackMovie) {
-            matchedMovies = [fallbackMovie];
-            reply = buildMovieInfoResponse(fallbackMovie, fallbackMovie.movieName);
+          if (ordinalIndex === -1) ordinalIndex = todayMovies.length;
+          if (ordinalIndex > todayMovies.length || ordinalIndex < 1) {
+            reply = `📌 Danh sách hiện tại chỉ có ${todayMovies.length} bộ phim, không có phim thứ ${ordinalIndex} đâu bạn ơi 😅`;
           } else {
-            reply = buildFallbackResponse();
+            const targetMovie = todayMovies[ordinalIndex - 1];
+            if (targetMovie) {
+              matchedMovies = [targetMovie];
+              reply = buildMovieInfoResponse(targetMovie, targetMovie.movieName);
+            } else {
+              reply = buildFallbackResponse();
+            }
           }
         }
         break;
@@ -374,6 +508,7 @@ router.post('/', async (req, res) => {
         pendingContextMap.set(effectiveSessionId, {
           step: 'awaiting_cinema_selection',
           cinemaList,
+          isUpcomingOnly: true,
           createdAt: Date.now()
         });
         reply = buildCinemaSelectionRequest(cinemaList);
@@ -383,8 +518,16 @@ router.post('/', async (req, res) => {
       case 'schedule_query': {
         const targetDate = classification.targetDate || null;
         const dateTitle = classification.dateTitle || 'hôm nay';
-        matchedMovies = await getTodayShowtimes(5, targetDate);
-        reply = buildScheduleResponse(matchedMovies, dateTitle);
+        const cinemaList = await getCinemasFromDB();
+        pendingContextMap.set(effectiveSessionId, {
+          step: 'awaiting_cinema_selection',
+          cinemaList,
+          targetDate,
+          dateTitle,
+          isUpcomingOnly: false,
+          createdAt: Date.now()
+        });
+        reply = buildCinemaSelectionRequest(cinemaList);
         break;
       }
 
@@ -411,18 +554,32 @@ router.post('/', async (req, res) => {
 
       case 'movie_info_query': {
         const searchQuery = classification.searchQuery || normalizedMessage;
-        const movie = await getMovieDetail(searchQuery);
-        if (movie) matchedMovies = [movie];
-        reply = buildMovieInfoResponse(movie, searchQuery);
+        const matchResult = await getMovieDetailMatches(searchQuery);
+
+        if (matchResult.status === 'single') {
+          const movie = matchResult.movie;
+          matchedMovies = [movie];
+          reply = buildMovieInfoResponse(movie, searchQuery);
+        } else if (matchResult.status === 'multiple') {
+          matchedMovies = matchResult.movies;
+          reply = buildAmbiguousMovieClarificationResponse(matchResult.movies);
+        } else {
+          reply = buildMovieInfoResponse(null, searchQuery);
+        }
         break;
       }
 
       case 'movie_info_query_or_fallback': {
         const searchQuery = classification.searchQuery || normalizedMessage;
-        const movie = await getMovieDetail(searchQuery);
-        if (movie) {
+        const matchResult = await getMovieDetailMatches(searchQuery);
+
+        if (matchResult.status === 'single') {
+          const movie = matchResult.movie;
           matchedMovies = [movie];
           reply = buildMovieInfoResponse(movie, searchQuery);
+        } else if (matchResult.status === 'multiple') {
+          matchedMovies = matchResult.movies;
+          reply = buildAmbiguousMovieClarificationResponse(matchResult.movies);
         } else {
           reply = buildFallbackResponse();
         }
@@ -456,8 +613,9 @@ router.post('/', async (req, res) => {
       ? matchedMovies.map(sanitizeMovieForResponse).filter(Boolean)
       : [];
 
-    // Lưu danh sách phim vừa gợi ý vào session context để dùng cho các lượt tra cứu tiếp theo (vd: "phim thứ 2")
-    if (cleanMatchedMovies.length > 0) {
+    // Lưu danh sách/bộ phim vừa gợi ý hoặc tra cứu vào session context để dùng cho các lượt tra cứu tiếp theo
+    // Ghi đè toàn bộ cache với kết quả phim mới nhất bất kể 1 hay nhiều phim (movie_info_query, mood_query...)
+    if (cleanMatchedMovies.length > 0 && intent !== 'contextual_pronoun_resolution') {
       lastSuggestedMoviesMap.set(effectiveSessionId, cleanMatchedMovies);
     }
 
@@ -465,12 +623,27 @@ router.post('/', async (req, res) => {
     saveMessageToHistory(effectiveSessionId, 'bot', reply);
 
     // 7. Trả về JSON cho client
-    return res.json({
+    const resPayload = {
       success: true,
       reply,
       matchedIntent: intent,
       matchedMovies: cleanMatchedMovies
-    });
+    };
+
+    if (['upcoming_showtime_query', 'schedule_query'].includes(intent)) {
+      const activePendingCtx = pendingContextMap.get(effectiveSessionId);
+      const currentCinemaList = activePendingCtx?.cinemaList || [];
+      if (currentCinemaList.length > 0) {
+        resPayload.cinemaOptions = currentCinemaList.map(c => ({
+          _id: c._id,
+          cinemaName: c.cinemaName,
+          address: c.address || '',
+          city: c.city || ''
+        }));
+      }
+    }
+
+    return res.json(resPayload);
 
   } catch (error) {
     console.error('[Chatbot Route Error]:', error);

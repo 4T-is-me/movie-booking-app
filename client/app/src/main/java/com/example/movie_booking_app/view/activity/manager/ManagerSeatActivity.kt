@@ -83,10 +83,6 @@ class ManagerSeatActivity : AppCompatActivity() {
             currentStatus = "maintenance"
             updateStatusUI(currentStatus)
         }
-        binding.btnStatusClosed.setOnClickListener {
-            currentStatus = "inactive"
-            updateStatusUI(currentStatus)
-        }
 
         // Bind click for Edit Pricing
         binding.btnEditPricing.setOnClickListener {
@@ -116,11 +112,6 @@ class ManagerSeatActivity : AppCompatActivity() {
         binding.btnStatusMaintenance.backgroundTintList = null
         binding.btnStatusMaintenance.setTextColor(android.graphics.Color.parseColor("#94A3B8"))
         binding.btnStatusMaintenance.text = "Maintenance"
-        
-        binding.btnStatusClosed.background = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.bg_btn_status_unselected)
-        binding.btnStatusClosed.backgroundTintList = null
-        binding.btnStatusClosed.setTextColor(android.graphics.Color.parseColor("#94A3B8"))
-        binding.btnStatusClosed.text = "Closed"
 
         when (status.lowercase()) {
             "active", "operating", "open" -> {
@@ -146,11 +137,6 @@ class ManagerSeatActivity : AppCompatActivity() {
                 binding.tvTopStatus.text = "Closed"
                 binding.tvTopStatus.setTextColor(android.graphics.Color.parseColor("#EF4444"))
                 binding.tvTopStatus.background = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.bg_label_close)
-                
-                binding.btnStatusClosed.background = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.bg_btn_status_selected)
-                binding.btnStatusClosed.backgroundTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#33EF4444"))
-                binding.btnStatusClosed.setTextColor(android.graphics.Color.parseColor("#EF4444"))
-                binding.btnStatusClosed.text = "✓ Closed"
             }
         }
     }

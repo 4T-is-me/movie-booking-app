@@ -35,11 +35,17 @@ const infrastructureKeywords = [
   'source code',
   'system log',
   'drop()',
+  'drop table',
   'drop',
   'delete',
   'truncate',
   'or 1=1',
   'or 1 1',
+  "or '1'='1'",
+  "or '1'='1",
+  "admin' or",
+  "'; drop",
+  '--',
   '$ne',
   '$gt',
   '$gte',
@@ -51,8 +57,10 @@ const infrastructureKeywords = [
   '$regex',
   '{"$ne"',
   '{"$gt"',
+  '{"$where"',
   '"$ne":',
-  '"$gt":'
+  '"$gt":',
+  '"$where":'
 ];
 
 // Danh sách từ khóa liên quan đến quản trị & dữ liệu nội bộ/tài chính
