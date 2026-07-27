@@ -118,7 +118,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideMaintenanceApi(): MaintenanceApi {
-        return RetrofitClient.maintenanceApi
+    fun provideChatApi(): com.example.movie_booking_app.data.api.ChatApi {
+        return RetrofitClient.chatApi
     }
 }

@@ -11,7 +11,7 @@ object RetrofitClient {
     // Note for LDPlayer: If 10.0.2.2 doesn't work, change this to your PC's current IPv4 address (run ipconfig to check).
 
     // private const val BASE_URL = "http://192.168.9.49:5000/"
-    private const val BASE_URL = "http://10.88.54.29:5000/"
+    private const val BASE_URL = "http://10.88.54.124:5000/"
 
     // private const val BASE_URL = "http://10.88.54.26:5000/"
 
@@ -99,8 +99,14 @@ object RetrofitClient {
         instance.create(PayrollApiService::class.java)
     }
 
+    // Added by AI Assistant - Maintenance API support - 2026-07-26
     val maintenanceApi: MaintenanceApi by lazy {
         instance.create(MaintenanceApi::class.java)
+    }
+
+    // Added by AI Assistant - ChatBot AI API support - 2026-07-26
+    val chatApi: ChatApi by lazy {
+        instance.create(ChatApi::class.java)
     }
 }
 

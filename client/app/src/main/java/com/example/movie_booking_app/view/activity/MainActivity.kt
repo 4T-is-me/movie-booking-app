@@ -137,13 +137,15 @@ class MainActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         
-        // Added by AI for User – feature hide navbar – 2026-07-05
+        // Added by AI for User – feature hide navbar & AI chat FAB for logged-in users only – 2026-07-26
         val sharedPref = getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
         val token = sharedPref.getString("auth_token", null)
         if (token.isNullOrEmpty()) {
             binding.bottomNav.visibility = android.view.View.GONE
+            binding.fabAiChat.visibility = android.view.View.GONE
         } else {
             binding.bottomNav.visibility = android.view.View.VISIBLE
+            binding.fabAiChat.visibility = android.view.View.VISIBLE
         }
     }
 
@@ -177,6 +179,10 @@ class MainActivity : BaseActivity() {
         binding.btnNavMovie.setOnClickListener { navigateToSection("Now Playing") }
         binding.btnNavTicket.setOnClickListener { navigateToSection("Ticket") }
         binding.btnNavProfile.setOnClickListener { navigateToSection("Profile") }
+        binding.fabAiChat.setOnClickListener {
+            val intent = Intent(this, ChatActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     fun navigateToSection(section: String, force: Boolean = false) {
