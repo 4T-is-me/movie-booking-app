@@ -6,8 +6,7 @@ const newsSchema = new mongoose.Schema({
     image: { type: String },
     publishedAt: { type: Date, default: Date.now },
     movieId: { type: mongoose.Schema.Types.ObjectId, ref: 'Movie', default: null }, // Optional Movie tag
-    authorName: { type: String, default: "Cinema Club" },
-    authorAvatar: { type: String, default: "" },
+    authorId: { type: mongoose.Schema.Types.ObjectId, ref: 'Account', required: true },
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Account' }]
 }, { timestamps: true, versionKey: false, collection: 'news' });
 

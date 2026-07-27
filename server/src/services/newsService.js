@@ -6,7 +6,18 @@ import { StatusCodes } from 'http-status-codes';
 import mongoose from 'mongoose';
 
 const handleGetNews = async (currentAccountId = null) => {
-    const newsList = await News.find().sort({ publishedAt: -1 }).populate('movieId', 'movieName poster').lean();
+    const newsList = await News.find()
+        .sort({ publishedAt: -1 })
+        .populate('movieId', 'movieName poster')
+        .populate({
+            path: 'authorId',
+            populate: [
+                { path: 'managerInfo', select: 'fullName' },
+                { path: 'staffInfo', select: 'fullName' },
+                { path: 'memberInfo', select: 'fullName image' }
+            ]
+        })
+        .lean();
     const newsIds = newsList.map(n => n._id);
 
     // Group and count comments for all listed articles to avoid N+1 queries
@@ -20,8 +31,18 @@ const handleGetNews = async (currentAccountId = null) => {
         const likes = news.likes || [];
         const userLiked = currentAccountId ? likes.some(id => id.toString() === currentAccountId.toString()) : false;
         
+        const author = news.authorId || {};
+        const authorName = author.managerInfo?.fullName || 
+                           author.staffInfo?.fullName || 
+                           author.memberInfo?.fullName || 
+                           author.username || 
+                           "System Admin";
+        const authorAvatar = author.memberInfo?.image || "";
+
         return {
             ...news,
+            authorName,
+            authorAvatar,
             likesCount: likes.length,
             userLiked,
             commentsCount: commentCountMap.get(news._id.toString()) || 0
@@ -30,7 +51,17 @@ const handleGetNews = async (currentAccountId = null) => {
 };
 
 const handleGetNewsById = async (id, currentAccountId = null) => {
-    const item = await News.findById(id).populate('movieId').lean();
+    const item = await News.findById(id)
+        .populate('movieId')
+        .populate({
+            path: 'authorId',
+            populate: [
+                { path: 'managerInfo', select: 'fullName' },
+                { path: 'staffInfo', select: 'fullName' },
+                { path: 'memberInfo', select: 'fullName image' }
+            ]
+        })
+        .lean();
     if (!item) {
         throw new ApiError(StatusCodes.NOT_FOUND, 'News article not found.');
     }
@@ -39,8 +70,18 @@ const handleGetNewsById = async (id, currentAccountId = null) => {
     const likes = item.likes || [];
     const userLiked = currentAccountId ? likes.some(uid => uid.toString() === currentAccountId.toString()) : false;
 
+    const author = item.authorId || {};
+    const authorName = author.managerInfo?.fullName || 
+                       author.staffInfo?.fullName || 
+                       author.memberInfo?.fullName || 
+                       author.username || 
+                       "System Admin";
+    const authorAvatar = author.memberInfo?.image || "";
+
     return {
         ...item,
+        authorName,
+        authorAvatar,
         likesCount: likes.length,
         userLiked,
         commentsCount
