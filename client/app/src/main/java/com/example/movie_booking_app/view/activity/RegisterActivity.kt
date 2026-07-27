@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import javax.inject.Inject
+import com.example.movie_booking_app.utils.Validator
 
 @AndroidEntryPoint
 class RegisterActivity : EnglishBaseActivity() {
@@ -195,88 +196,48 @@ class RegisterActivity : EnglishBaseActivity() {
         var isValid = true
 
         val username = binding.edtUsername.text.toString().trim()
-        if (username.isEmpty()) {
-            binding.tilUsernameReg.error = getString(R.string.error_username_required)
-            isValid = false
-        } else if (username.length !in 3..30) {
-            binding.tilUsernameReg.error = getString(R.string.error_username_length)
-            isValid = false
-        } else {
-            binding.tilUsernameReg.error = null
-        }
+        val usernameError = Validator.validateUsername(username)
+        binding.tilUsernameReg.error = usernameError?.let { getString(it) }
+        if (usernameError != null) isValid = false
 
-        if (binding.edtFullName.text.toString().trim().isEmpty()) {
-            binding.tilFullName.error = getString(R.string.error_fullname_required)
-            isValid = false
-        } else {
-            binding.tilFullName.error = null
-        }
+        val fullName = binding.edtFullName.text.toString().trim()
+        val fullNameError = Validator.validateFullName(fullName)
+        binding.tilFullName.error = fullNameError?.let { getString(it) }
+        if (fullNameError != null) isValid = false
 
         if (!validateDobField(binding.edtDob, binding.tilDob)) {
             isValid = false
         }
 
         val email = binding.edtEmail.text.toString().trim()
-        if (email.isEmpty()) {
-            binding.tilEmail.error = getString(R.string.error_email_required)
-            isValid = false
-        } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            binding.tilEmail.error = getString(R.string.error_email_invalid)
-            isValid = false
-        } else {
-            binding.tilEmail.error = null
-        }
+        val emailError = Validator.validateEmail(email)
+        binding.tilEmail.error = emailError?.let { getString(it) }
+        if (emailError != null) isValid = false
 
         val phone = binding.edtPhone.text.toString().trim()
-        if (phone.isEmpty()) {
-            binding.tilPhone.error = getString(R.string.error_phone_required)
-            isValid = false
-        } else if (!phone.matches(Regex("^0\\d{9}$"))) {
-            binding.tilPhone.error = getString(R.string.error_phone_invalid)
-            isValid = false
-        } else {
-            binding.tilPhone.error = null
-        }
+        val phoneError = Validator.validatePhone(phone)
+        binding.tilPhone.error = phoneError?.let { getString(it) }
+        if (phoneError != null) isValid = false
 
         val password = binding.edtPassword.text.toString()
-        if (password.isEmpty()) {
-            binding.tilPassword.error = getString(R.string.error_password_required)
-            isValid = false
-        } else if (password.length < 6) {
-            binding.tilPassword.error = getString(R.string.error_password_length)
-            isValid = false
-        } else {
-            binding.tilPassword.error = null
-        }
+        val passwordError = Validator.validatePassword(password)
+        binding.tilPassword.error = passwordError?.let { getString(it) }
+        if (passwordError != null) isValid = false
 
         val confirmPassword = binding.edtConfirmPassword.text.toString()
-        if (confirmPassword.isEmpty()) {
-            binding.tilConfirmPassword.error = getString(R.string.error_confirm_password_required)
-            isValid = false
-        } else if (confirmPassword != password) {
-            binding.tilConfirmPassword.error = getString(R.string.error_confirm_password_mismatch)
-            isValid = false
-        } else {
-            binding.tilConfirmPassword.error = null
-        }
+        val confirmPasswordError = Validator.validateConfirmPassword(password, confirmPassword)
+        binding.tilConfirmPassword.error = confirmPasswordError?.let { getString(it) }
+        if (confirmPasswordError != null) isValid = false
 
-        if (binding.edtAddress.text.toString().trim().isEmpty()) {
-            binding.tilAddress.error = getString(R.string.error_address_required)
-            isValid = false
-        } else {
-            binding.tilAddress.error = null
-        }
+        val address = binding.edtAddress.text.toString().trim()
+        val addressError = Validator.validateAddress(address)
+        binding.tilAddress.error = addressError?.let { getString(it) }
+        if (addressError != null) isValid = false
 
         val idCard = binding.edtIdCard.text.toString().trim()
-        if (idCard.isEmpty()) {
-            binding.tilIdCard.error = getString(R.string.error_idcard_required)
-            isValid = false
-        } else if (idCard.length != 9 && idCard.length != 12) {
-            binding.tilIdCard.error = getString(R.string.error_idcard_invalid)
-            isValid = false
-        } else {
-            binding.tilIdCard.error = null
-        }
+        val idCardError = Validator.validateIdCard(idCard)
+        binding.tilIdCard.error = idCardError?.let { getString(it) }
+        if (idCardError != null) isValid = false
 
         return isValid
     }
@@ -340,60 +301,9 @@ class RegisterActivity : EnglishBaseActivity() {
 
     private fun validateDobField(edtDob: TextInputEditText, tilDob: TextInputLayout): Boolean {
         val dob = edtDob.text.toString().trim()
-        if (dob.isEmpty()) {
-            tilDob.error = getString(R.string.error_dob_required)
-            return false
-        }
-
-        val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.US)
-        formatter.isLenient = false
-
-        return try {
-            val parsedDate = formatter.parse(dob)
-            val today = Calendar.getInstance()
-            today.set(Calendar.HOUR_OF_DAY, 0)
-            today.set(Calendar.MINUTE, 0)
-            today.set(Calendar.SECOND, 0)
-            today.set(Calendar.MILLISECOND, 0)
-
-            val selectedCalendar = Calendar.getInstance()
-            selectedCalendar.time = parsedDate
-            selectedCalendar.set(Calendar.HOUR_OF_DAY, 0)
-            selectedCalendar.set(Calendar.MINUTE, 0)
-            selectedCalendar.set(Calendar.SECOND, 0)
-            selectedCalendar.set(Calendar.MILLISECOND, 0)
-
-            val maxValidDate = Calendar.getInstance()
-            maxValidDate.set(Calendar.HOUR_OF_DAY, 0)
-            maxValidDate.set(Calendar.MINUTE, 0)
-            maxValidDate.set(Calendar.SECOND, 0)
-            maxValidDate.set(Calendar.MILLISECOND, 0)
-            maxValidDate.add(Calendar.YEAR, -15)
-
-            val minValidDate = Calendar.getInstance()
-            minValidDate.set(Calendar.HOUR_OF_DAY, 0)
-            minValidDate.set(Calendar.MINUTE, 0)
-            minValidDate.set(Calendar.SECOND, 0)
-            minValidDate.set(Calendar.MILLISECOND, 0)
-            minValidDate.add(Calendar.YEAR, -80)
-
-            if (selectedCalendar.after(today)) {
-                tilDob.error = getString(R.string.error_dob_future)
-                false
-            } else if (selectedCalendar.after(maxValidDate)) {
-                tilDob.error = getString(R.string.error_dob_min_age)
-                false
-            } else if (selectedCalendar.before(minValidDate)) {
-                tilDob.error = getString(R.string.error_dob_max_age)
-                false
-            } else {
-                tilDob.error = null
-                true
-            }
-        } catch (_: Exception) {
-            tilDob.error = getString(R.string.error_dob_invalid)
-            false
-        }
+        val dobError = Validator.validateDob(dob)
+        tilDob.error = dobError?.let { getString(it) }
+        return dobError == null
     }
 
     private var hideNotificationRunnable: Runnable? = null

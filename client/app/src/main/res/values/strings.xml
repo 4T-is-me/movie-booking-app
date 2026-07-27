@@ -92,6 +92,8 @@
     <string name="error_address_required">Address is required</string>
     <string name="error_idcard_required">Identify card is required</string>
     <string name="error_idcard_invalid">Identity card must be 9 or 12 digits</string>
+    <string name="error_otp_invalid">Please enter all 6 digits of OTP</string>
+    <string name="error_coupon_invalid">Please enter a valid coupon code</string>
 
 
     <!-- Select Seat Activity Strings -->
