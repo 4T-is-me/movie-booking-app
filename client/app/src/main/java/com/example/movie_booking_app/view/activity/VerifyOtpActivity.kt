@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.ActivityVerifyOtpBinding
+import com.example.movie_booking_app.utils.Validator
 import com.example.movie_booking_app.viewmodel.OtpUiState
 import com.example.movie_booking_app.viewmodel.OtpViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,8 +51,9 @@ class VerifyOtpActivity : EnglishBaseActivity() {
 
         binding.btnVerifyOtp.setOnClickListener {
             val otpCode = otpBoxes.joinToString("") { it.text.toString() }
-            if (otpCode.length != 6) {
-                showError("Please enter all 6 digits of OTP")
+            val otpError = Validator.validateOtp(otpCode)
+            if (otpError != null) {
+                showError(getString(otpError))
                 return@setOnClickListener
             }
 

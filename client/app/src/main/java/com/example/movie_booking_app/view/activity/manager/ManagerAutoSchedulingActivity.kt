@@ -386,7 +386,8 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                 // Update global state and filter
                 allGeneratedShowtimes.removeAll { 
                     val d = java.time.LocalDate.parse(it.show_date)
-                    !d.isBefore(currentWeekStart) && !d.isAfter(currentWeekStart.plusDays(6)) && it.room_id == selectedRoomId
+                    !d.isBefore(currentWeekStart) && !d.isAfter(currentWeekStart.plusDays(6)) && 
+                    it.room_id == selectedRoomId && !d.isBefore(java.time.LocalDate.now())
                 }
                 allGeneratedShowtimes.addAll(schedule)
                 

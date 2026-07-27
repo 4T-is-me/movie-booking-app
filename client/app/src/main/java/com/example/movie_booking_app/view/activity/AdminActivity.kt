@@ -72,8 +72,8 @@ class AdminActivity : BaseActivity() {
                     loadFragment(com.example.movie_booking_app.view.fragment.admin.MemberListFragment())
                 }
                 R.id.nav_settings -> {
-                    binding.tvHeaderTitle.text = getString(R.string.admin_settings_title)
-                    loadFragment(BlankFragment())
+                    binding.tvHeaderTitle.text = "Payrolls"
+                    loadFragment(com.example.movie_booking_app.view.fragment.admin.AdminPayrollFragment())
                 }
                 R.id.nav_logout -> {
                     com.example.movie_booking_app.utils.AuthUtils.showLogoutConfirmationDialog(this)

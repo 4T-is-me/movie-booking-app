@@ -5,7 +5,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.util.Log
+import timber.log.Timber
 import androidx.core.app.NotificationCompat
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.api.FcmApi
@@ -62,7 +62,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
      */
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Log.d(TAG, "FCM token refreshed: $token")
+        Timber.tag(TAG).d("FCM token refreshed: $token")
         sendTokenToServer(token)
     }
 
@@ -80,7 +80,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
      */
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-        Log.d(TAG, "Message received from: ${remoteMessage.from}")
+        Timber.tag(TAG).d("Message received from: ${remoteMessage.from}")
 
         // ── 1. Extract title / body ──────────────────────────────
         val title = remoteMessage.notification?.title
@@ -92,15 +92,17 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             ?: remoteMessage.data["message"]
             ?: ""
 
-        Log.d(TAG, "Notification → title=$title | body=$body")
+        Timber.tag(TAG).d("Notification → title=$title | body=$body")
 
         // ── 2. Extract routing info from data payload ─────────────
         val type        = remoteMessage.data[NotificationItem.KEY_TYPE]        ?: NotificationItem.TYPE_GENERAL
         val referenceId = remoteMessage.data[NotificationItem.KEY_REFERENCE_ID]
+            ?: remoteMessage.data["bookingId"]
+            ?: remoteMessage.data["refId"]
         val shiftId     = remoteMessage.data[NotificationItem.KEY_SHIFT_ID]
         val leaveRequestId = remoteMessage.data[NotificationItem.KEY_LEAVE_REQUEST_ID]
 
-        Log.d(TAG, "Routing → type=$type | referenceId=$referenceId | shiftId=$shiftId | leaveRequestId=$leaveRequestId")
+        Timber.tag(TAG).d("Routing → type=$type | referenceId=$referenceId | shiftId=$shiftId | leaveRequestId=$leaveRequestId")
 
         // ── 3. Persist locally ────────────────────────────────────
         val item = NotificationItem(
@@ -112,7 +114,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             leaveRequestId = leaveRequestId
         )
         NotificationLocalStorage.save(applicationContext, item)
-        Log.d(TAG, "Notification saved locally (id=${item.id})")
+        Timber.tag(TAG).d("Notification saved locally (id=${item.id})")
 
         // ── 4. Show system-tray notification ──────────────────────
         showSystemNotification(title, body, type, referenceId, shiftId, leaveRequestId, item.id)
@@ -163,7 +165,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         // Use a unique notification ID so multiple messages stack in the tray
         val notifId = (itemId % Int.MAX_VALUE).toInt()
         notificationManager.notify(notifId, notification)
-        Log.d(TAG, "System notification posted (notifId=$notifId)")
+        Timber.tag(TAG).d("System notification posted (notifId=$notifId)")
     }
 
     /**
@@ -237,12 +239,12 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             try {
                 val response = fcmApi.registerFcmToken(RegisterFcmTokenRequest(token))
                 if (response.isSuccessful) {
-                    Log.d(TAG, "FCM token registered to server successfully.")
+                    Timber.tag(TAG).d("FCM token registered to server successfully.")
                 } else {
-                    Log.w(TAG, "Failed to register FCM token – HTTP ${response.code()}: ${response.message()}")
+                    Timber.tag(TAG).w("Failed to register FCM token – HTTP ${response.code()}: ${response.message()}")
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "Error sending FCM token to server: ${e.message}", e)
+                Timber.tag(TAG).e(e, "Error sending FCM token to server: ${e.message}")
             }
         }
     }

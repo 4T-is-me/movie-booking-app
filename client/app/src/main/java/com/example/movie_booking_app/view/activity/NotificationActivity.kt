@@ -21,6 +21,14 @@ import com.example.movie_booking_app.databinding.ActivityNotificationBinding
 import com.example.movie_booking_app.databinding.ItemNotificationBinding
 import dagger.hilt.android.AndroidEntryPoint
 
+import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
+import com.example.movie_booking_app.data.api.MaintenanceApi
+import com.example.movie_booking_app.data.api.ResolveMaintenanceRequest
+import com.example.movie_booking_app.data.api.RetrofitClient
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.launch
+
 /**
  * Activity displaying the user's local push notification history.
  *
@@ -65,6 +73,7 @@ class NotificationActivity : AppCompatActivity() {
 
         val referenceId = intent.getStringExtra("referenceId")
             ?: intent.getStringExtra("refId")
+            ?: intent.getStringExtra("bookingId")
 
         val shiftId = intent.getStringExtra("shiftId")
         val leaveRequestId = intent.getStringExtra("leaveRequestId")
@@ -126,21 +135,28 @@ class NotificationActivity : AppCompatActivity() {
             NotificationLocalStorage.markRead(this, item.id)
             loadNotifications() // refresh indicators
 
-            // Navigate to appropriate detail activity
-            if (!item.referenceId.isNullOrEmpty()) {
+            // Added by AI Assistant - Maintenance & Voucher Dialogs - 2026-07-26
+            val isVoucherOrPromo = item.type.equals("PROMOTION", ignoreCase = true) ||
+                    item.title.contains("Voucher", ignoreCase = true) ||
+                    item.title.contains("Khuyến mãi", ignoreCase = true) ||
+                    item.body.contains("Mã voucher", ignoreCase = true)
+
+            val isMaintenanceAction = !isVoucherOrPromo && (
+                    item.type.contains("MAINTENANCE_ACTION_REQUIRED", ignoreCase = true) ||
+                    item.type.equals("ACTION_REQUIRED", ignoreCase = true) ||
+                    (item.title.contains("Sự cố", ignoreCase = true) && item.title.contains("dời vé", ignoreCase = true))
+            )
+
+            if (isVoucherOrPromo) {
+                showVoucherDialog(item)
+            } else if (isMaintenanceAction) {
+                showMaintenanceDialog(item)
+            } else if (!item.referenceId.isNullOrEmpty()) {
                 when (item.type) {
                     NotificationItem.TYPE_BOOKING -> {
                         val intent = Intent(this, BookingDetailActivity::class.java).apply {
                             putExtra("BOOKING_ID", item.referenceId)
                             putExtra("FROM_NOTIFICATION", true)
-                        }
-                        startActivity(intent)
-                    }
-                    NotificationItem.TYPE_PROMOTION -> {
-                        // Open MainActivity redirected to the Promo section
-                        val intent = Intent(this, MainActivity::class.java).apply {
-                            putExtra("TARGET_SECTION", "Promo")
-                            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                         }
                         startActivity(intent)
                     }
@@ -150,6 +166,132 @@ class NotificationActivity : AppCompatActivity() {
 
         binding.rvNotifications.layoutManager = LinearLayoutManager(this)
         binding.rvNotifications.adapter = adapter
+    }
+
+    // Added by AI Assistant - Maintenance Action Dialog - 2026-07-26
+    private fun showMaintenanceDialog(item: NotificationItem) {
+        var bookingId = item.referenceId
+
+        if (!bookingId.isNullOrEmpty()) {
+            displayMaintenanceDialogUI(item, bookingId)
+        } else {
+            // Auto fetch bookingId from backend Notification API if missing locally
+            lifecycleScope.launch {
+                try {
+                    val res = RetrofitClient.notificationApi.getNotifications(limit = 10)
+                    if (res.isSuccessful && res.body() != null) {
+                        val items = res.body()?.data ?: emptyList()
+                        val match = items.firstOrNull { it.type == "ACTION_REQUIRED" || (it.metadata != null && it.metadata.containsKey("bookingId")) }
+                        val foundId = match?.metadata?.get("bookingId")?.toString()
+                        if (!foundId.isNullOrEmpty()) {
+                            bookingId = foundId
+                        }
+                    }
+                } catch (e: Exception) {
+                    // Ignore error
+                }
+                displayMaintenanceDialogUI(item, bookingId)
+            }
+        }
+    }
+
+    private fun displayMaintenanceDialogUI(item: NotificationItem, bookingId: String?) {
+        val dialog = android.app.Dialog(this)
+        dialog.requestWindowFeature(android.view.Window.FEATURE_NO_TITLE)
+
+        val dialogBinding = com.example.movie_booking_app.databinding.DialogMaintenanceActionBinding.inflate(layoutInflater)
+        dialog.setContentView(dialogBinding.root)
+
+        dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.90).toInt(),
+            android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+
+        dialogBinding.tvDialogTitle.text = item.title
+        dialogBinding.tvDialogMessage.text = item.body
+
+        if (!bookingId.isNullOrEmpty()) {
+            dialogBinding.btnAccept.setOnClickListener {
+                resolveMaintenanceAction(bookingId, "accept")
+                dialog.dismiss()
+            }
+
+            dialogBinding.btnDecline.setOnClickListener {
+                resolveMaintenanceAction(bookingId, "decline")
+                dialog.dismiss()
+            }
+        } else {
+            dialogBinding.btnAccept.visibility = android.view.View.GONE
+            dialogBinding.btnDecline.visibility = android.view.View.GONE
+        }
+
+        dialogBinding.tvDismiss.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+    // Added by AI Assistant - Pure Voucher/Promotion Info Dialog (No Accept/Decline, Only Close) - 2026-07-26
+    private fun showVoucherDialog(item: NotificationItem) {
+        val dialog = android.app.Dialog(this)
+        dialog.requestWindowFeature(android.view.Window.FEATURE_NO_TITLE)
+
+        val dialogBinding = com.example.movie_booking_app.databinding.DialogMaintenanceActionBinding.inflate(layoutInflater)
+        dialog.setContentView(dialogBinding.root)
+
+        dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
+        dialog.window?.setLayout(
+            (resources.displayMetrics.widthPixels * 0.90).toInt(),
+            android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+
+        dialogBinding.tvDialogTitle.text = item.title
+        dialogBinding.tvDialogMessage.text = item.body
+
+        // Hide Agree and Decline buttons completely for Voucher notifications
+        dialogBinding.btnAccept.visibility = android.view.View.GONE
+        dialogBinding.btnDecline.visibility = android.view.View.GONE
+
+        // Display a clean Exit Button
+        dialogBinding.tvDismiss.text = "✕  Đóng"
+        dialogBinding.tvDismiss.textSize = 16f
+        dialogBinding.tvDismiss.setTextColor(android.graphics.Color.parseColor("#F5C518"))
+        dialogBinding.tvDismiss.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+    private fun resolveMaintenanceAction(bookingId: String, action: String) {
+        lifecycleScope.launch {
+            try {
+                val response = RetrofitClient.maintenanceApi.resolveMaintenance(
+                    bookingId,
+                    ResolveMaintenanceRequest(action)
+                )
+                if (response.isSuccessful) {
+                    val msg = if (action == "accept") {
+                        "Cảm ơn bạn! Đã xác nhận dời vé thành công. Voucher đền bù đã được gửi vào ví."
+                    } else {
+                        "Đã từ chối dời vé! 100% số điểm thưởng đã được hoàn trả vào ví của bạn."
+                    }
+                    Toast.makeText(this@NotificationActivity, msg, Toast.LENGTH_LONG).show()
+                    loadNotifications()
+                } else {
+                    val errorMsg = if (response.code() == 409) {
+                        "Thông báo: Vé này đã được xác nhận hoặc hủy trước đó."
+                    } else {
+                        "Lỗi xử lý dời vé (Mã: ${response.code()})"
+                    }
+                    Toast.makeText(this@NotificationActivity, errorMsg, Toast.LENGTH_LONG).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@NotificationActivity, "Lỗi kết nối: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
     private fun loadNotifications() {
@@ -214,6 +356,9 @@ class NotificationActivity : AppCompatActivity() {
                 )
                 binding.tvNotifTime.text = relativeTime
 
+                binding.root.setOnClickListener {
+                    onClick(item)
+                }
                 binding.layoutContainer.setOnClickListener {
                     onClick(item)
                 }

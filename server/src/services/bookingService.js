@@ -6,6 +6,7 @@ import { Promotion } from "../models/promotionModel.js";
 import { Showtime } from "../models/showTimeModel.js";
 import { Movie } from "../models/movieModel.js";
 import { Cinema } from "../models/cinemaModel.js";
+import { Staff } from "../models/staffModel.js";
 import { ScoreHistory } from "../models/scoreHistoryModel.js";
 import { ticketUtils } from "../utils/ticketUtils.js";
 import { promotionService } from "./promotionService.js";
@@ -18,8 +19,8 @@ import mongoose from "mongoose";
 import { StatusCodes } from "http-status-codes";
 import ApiError from "../utils/ApiError.js";
 import { formatDate, getShowtimeTimeRange } from "../utils/formatters.js";
-import { format } from "path";
-import { NotificationService }from "./notificationService.js";
+import { NotificationService } from "./notificationService.js";
+import { Review } from "../models/reviewModel.js";
 
 //handle hold-seats
 const handleHoldSeats = async ({ accountId, showtimeId, seatIds }) => {
@@ -339,21 +340,6 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
       { session },
     );
 
-    // create score history
-    await ScoreHistory.create(
-      [
-        {
-          memberId: member._id,
-          bookingId: booking[0]._id,
-          usedPoints: pointUsed,
-          earnedPoints,
-          remainingPoints: member.rewardPoints,
-          reason: useScore ? "USE_SCORE" : "BUY_TICKET"
-        }
-      ],
-      { session }
-    );
-
     // Create PromotionUsage and update usageCount if promotion applied
     if (promotionId) {
       await PromotionUsage.create(
@@ -389,16 +375,12 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
     };
 
     await session.commitTransaction();
-    console.log(`[DEBUG] Transaction committed successfully for booking ${booking[0]._id}. commitTransaction() executed.`);
 
     // Trigger FCM notification asynchronously so it does not delay checkout response
-    NotificationService.sendBookingSuccessNotification(member.accountId, booking[0]).catch(err => {
-        console.error('Failed to send booking success notification:', err.message)
-    })
+    NotificationService.sendBookingSuccessNotification(member.accountId, booking[0]).catch(() => {})
 
     return result;
   } catch (error) {
-    console.error("[DEBUG] Transaction aborted due to error:", error.message);
     await session.abortTransaction();
     throw error;
   } finally {
@@ -420,7 +402,7 @@ const handleGetMyTickets = async (accountId, page = 1, limit = 10) => {
 
   const bookingQuery = {
     memberId: member._id,
-    paymentStatus: { $regex: /^paid$/i },
+    paymentStatus: { $in: ['paid', 'confirmed_transfer', 'successful'] },
     showtimeId: { $in: activeShowtimeIds }
   };
 
@@ -462,7 +444,9 @@ const handleGetMyTickets = async (accountId, page = 1, limit = 10) => {
       paymentStatus: booking.paymentStatus || "pending",
       createdAt: booking.createdAt ? formatDate(booking.createdAt, true) : "",
       qrCodeData: booking.qrCodeData || "",
-      paymentMethod: booking.paymentMethod || ""
+      paymentMethod: booking.paymentMethod || "",
+      isStaffRated: booking.isStaffRated || false,
+      checkedIn: booking.checkedIn || false
     };
   });
 
@@ -483,7 +467,7 @@ const handleGetHistory = async (accountId, page = 1, limit = 10) => {
 
   const bookingQuery = {
     memberId: member._id,
-    paymentStatus: { $regex: /^paid$/i },
+    paymentStatus: { $in: ['paid', 'confirmed_transfer', 'successful'] },
     showtimeId: { $in: pastShowtimeIds }
   };
 
@@ -504,6 +488,9 @@ const handleGetHistory = async (accountId, page = 1, limit = 10) => {
     .limit(limit)
     .lean();
 
+  const reviews = await Review.find({ accountId }).lean();
+  const reviewedMovieIds = new Set(reviews.map(r => r.movieId.toString()));
+
   const mappedBookings = bookings.map(booking => {
     const showtime = booking.showtimeId;
     const movie = showtime?.movieId;
@@ -514,6 +501,9 @@ const handleGetHistory = async (accountId, page = 1, limit = 10) => {
       bookingId: booking._id,
       bookingCode: booking.bookingCode,
       movie: movie?.movieName || "",
+      movieId: movie?._id || "",
+      movieGenre: movie?.movieGenre || [],
+      isMovieRated: movie ? reviewedMovieIds.has(movie._id.toString()) : false,
       poster: movie?.poster || "",
       showDate: showtime?.showDate ? formatDate(showtime.showDate) : "",
       showtime: getShowtimeTimeRange(showtime),
@@ -525,7 +515,9 @@ const handleGetHistory = async (accountId, page = 1, limit = 10) => {
       paymentStatus: booking.paymentStatus || "pending",
       createdAt: booking.createdAt ? formatDate(booking.createdAt, true) : "",
       qrCodeData: booking.qrCodeData || "",
-      paymentMethod: booking.paymentMethod || ""
+      paymentMethod: booking.paymentMethod || "",
+      isStaffRated: booking.isStaffRated || false,
+      checkedIn: booking.checkedIn || false
     };
   });
 
@@ -645,6 +637,45 @@ const handleGetbookingDetail = async (bookingId, accountId) => {
   return responseBookingDetail;
 }
 
+const handleRateStaff = async (bookingId, accountId, rating) => {
+  const member = await Member.findOne({ accountId });
+  if (!member) throw new ApiError(StatusCodes.NOT_FOUND, "Member not found");
+
+  const booking = await Booking.findOne({ _id: bookingId, memberId: member._id });
+  if (!booking) throw new ApiError(StatusCodes.NOT_FOUND, "Booking not found");
+
+  if (booking.isStaffRated) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, "Staff already rated for this booking");
+  }
+
+  if (!booking.checkedInBy) {
+    throw new ApiError(StatusCodes.BAD_REQUEST, "Cannot rate staff before check-in");
+  }
+
+  const staff = await Staff.findById(booking.checkedInBy);
+  if (!staff) throw new ApiError(StatusCodes.NOT_FOUND, "Staff member not found");
+
+  // Update staff rating
+  const newTotalStars = (staff.totalStars || 0) + rating;
+  const newTotalRatings = (staff.totalRatings || 0) + 1;
+  const newRating = newTotalStars / newTotalRatings;
+
+  await Staff.findByIdAndUpdate(staff._id, {
+    $set: {
+      totalStars: newTotalStars,
+      totalRatings: newTotalRatings,
+      rating: newRating
+    }
+  });
+
+  // Update booking
+  booking.isStaffRated = true;
+  booking.staffRating = rating;
+  await booking.save();
+
+  return { rating: newRating, totalRatings: newTotalRatings };
+}
+
 export const bookingService = {
   handleHoldSeats,
   handleConfirmBooking,
@@ -652,5 +683,6 @@ export const bookingService = {
   handleGetScoreHistory,
   handleReleaseBooking,
   handleGetbookingDetail,
-  handleGetMyTickets
+  handleGetMyTickets,
+  handleRateStaff
 };

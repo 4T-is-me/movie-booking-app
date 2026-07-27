@@ -38,4 +38,11 @@
         <item name="cornerSizeBottomLeft">0dp</item>
         <item name="cornerSizeBottomRight">0dp</item>
     </style>
+
+    <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorHint">@color/text_secondary</item>
+        <item name="editTextColor">@color/white</item>
+        <item name="android:editTextColor">@color/white</item>
+    </style>
 </resources>

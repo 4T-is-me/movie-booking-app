@@ -134,12 +134,22 @@ const resolveMaintenanceTimeouts = async () => {
       const diffMins = (now - createdAt) / (1000 * 60);
       
       if (diffMins >= 30) {
+        if (!notif.metadata || !notif.metadata.bookingId) {
+          await Notification.deleteOne({ _id: notif._id });
+          continue;
+        }
         // Đã quá 30 phút, tự động decline
         try {
           await MaintenanceService.resolveUserAction(notif.metadata.bookingId, 'decline');
           console.log(`Auto-declined maintenance transfer for booking ${notif.metadata.bookingId}`);
         } catch (e) {
-          console.error("Error auto-declining maintenance transfer:", e);
+          // Nếu booking đã được xử lý hoặc không còn ở trạng thái pending (Conflict 409), xóa thông báo mồ côi
+          if (e.statusCode === 409 || e.message?.includes('Booking not found')) {
+            await Notification.deleteOne({ _id: notif._id });
+            console.log(`Cleaned up stale ACTION_REQUIRED notification for booking ${notif.metadata.bookingId}`);
+          } else {
+            console.error("Error auto-declining maintenance transfer:", e);
+          }
         }
       }
     }

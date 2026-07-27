@@ -24,9 +24,21 @@ export const createShowtime = async (showtimeData) => {
         throw new Error('MovieNotFound');
     }
 
+    const room = await CinemaRoom.findById(roomId);
+    if (!room) {
+        throw new Error('RoomNotFound');
+    }
+    if (room.status === 'maintenance') {
+        throw new Error('MAINTENANCE_ROOM');
+    }
+
     const [hours, minutes] = showTime.split(':').map(Number);
     const startTime = new Date(showDate);
     startTime.setUTCHours(hours - 7, minutes, 0, 0); // Convert local +07:00 time to UTC
+
+    if (startTime < new Date()) {
+        throw new Error('PAST_SHOWTIME');
+    }
 
     const durationMinutes = movie.duration || 120;
     const endTime = new Date(startTime.getTime() + durationMinutes * 60 * 1000);
@@ -41,6 +53,7 @@ export const createShowtime = async (showtimeData) => {
         ticketPrice,
         startTime,
         endTime,
+        status: 'published',
         isDeleted: false
     });
     const savedShowtime = await showtime.save();
@@ -67,6 +80,7 @@ export const createBulkShowtimes = async (showtimesData) => {
     const createdShowtimes = [];
     const allScheduleSeats = [];
     const seatsCache = {};
+    const roomCache = {};
 
     for (const data of showtimesData) {
         const { movie_id, cinema_id, room_id, show_date, start_time, end_time, status, ticketPrice } = data;
@@ -90,6 +104,11 @@ export const createBulkShowtimes = async (showtimesData) => {
             endTime = new Date(`${endTimeRaw}+07:00`);
         }
 
+        if (startTime < new Date()) {
+            console.log(`Showtime at ${startTime} is in the past. Skipping.`);
+            continue;
+        }
+
         // Tự động tạo showTime dạng "HH:mm" từ startTimeRaw
         let showTime = "";
         if (typeof startTimeRaw === 'string') {
@@ -97,6 +116,17 @@ export const createBulkShowtimes = async (showtimesData) => {
             if (timePart) {
                 showTime = timePart.substring(0, 5); // Lấy "08:30"
             }
+        }
+
+        // Kiểm tra xem phòng có đang bảo trì không
+        if (!roomCache[roomId]) {
+            roomCache[roomId] = await CinemaRoom.findById(roomId);
+        }
+        
+        const room = roomCache[roomId];
+        if (!room || room.status === 'maintenance') {
+            console.log(`Room ${roomId} is in maintenance. Skipping showtime creation.`);
+            continue;
         }
 
         // Kiểm tra xem suất chiếu đã tồn tại chưa để tránh tạo trùng lặp
@@ -120,7 +150,7 @@ export const createBulkShowtimes = async (showtimesData) => {
             startTime,
             endTime,
             ticketPrice: ticketPrice || 80000, // Giá vé mặc định
-            status: status || 'draft', // Auto schedule thường lưu dưới dạng draft
+            status: status || 'published', // Nhấn save thì lưu published
             isDeleted: false
         });
         
@@ -157,6 +187,12 @@ export const createBulkShowtimes = async (showtimesData) => {
 
 
 export const getShowtimesAdmin = async ({ movieId, cinemaId, showDate, startDate, endDate, page = 1, limit = 20 }) => {
+    // Tự động chuyển các suất chiếu đã qua giờ chiếu thành Unpublished
+    await Showtime.updateMany(
+        { endTime: { $lt: new Date() }, status: 'published' },
+        { $set: { status: 'Unpublished' } }
+    );
+
     const filter = { isDeleted: false };
     if (movieId) filter.movieId = movieId;
     if (cinemaId) filter.cinemaId = cinemaId;

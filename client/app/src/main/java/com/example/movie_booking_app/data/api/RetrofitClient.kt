@@ -102,4 +102,18 @@ object RetrofitClient {
     val inventoryApi: InventoryApi by lazy {
         instance.create(InventoryApi::class.java)
     }
+
+    val payrollApi: PayrollApiService by lazy {
+        instance.create(PayrollApiService::class.java)
+    }
+
+    // Added by AI Assistant - Maintenance API support - 2026-07-26
+    val maintenanceApi: MaintenanceApi by lazy {
+        instance.create(MaintenanceApi::class.java)
+    }
+
+    // Added by AI Assistant - ChatBot AI API support - 2026-07-26
+    val chatApi: ChatApi by lazy {
+        instance.create(ChatApi::class.java)
+    }
 }

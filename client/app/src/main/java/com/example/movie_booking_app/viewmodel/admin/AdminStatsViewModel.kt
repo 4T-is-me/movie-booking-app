@@ -1,6 +1,6 @@
 package com.example.movie_booking_app.viewmodel.admin
 
-import android.util.Log
+import timber.log.Timber
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.admin.DailyRevenueItem
@@ -69,7 +69,7 @@ class AdminStatsViewModel @Inject constructor(
                     val movieRes = movieDef.await()
 
                     withContext(Dispatchers.Main) {
-                        Log.d("AdminStatsVM", "Overview response: ${overviewRes?.body()?.data}")
+                        Timber.tag("AdminStatsVM").d("Overview response: ${overviewRes?.body()?.data}")
                         
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
@@ -83,7 +83,7 @@ class AdminStatsViewModel @Inject constructor(
                     }
 
                 } catch (e: Exception) {
-                    Log.e("AdminStatsVM", "Error loading dashboard", e)
+                    Timber.tag("AdminStatsVM").e(e, "Error loading dashboard")
                     withContext(Dispatchers.Main) {
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,

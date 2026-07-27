@@ -391,4 +391,9 @@
     <color name="tint_sun_yellow">#E5A93C</color>
     <color name="tint_night_purple">#B388FF</color>
     <color name="badge_day_off_stroke">#80E5A93C</color>
+    <color name="color_paid_status">#10B981</color>
+    <color name="color_paid_status_bg">#1A10B981</color>
+    <color name="color_draft_status">#F5C518</color>
+    <color name="color_draft_status_bg">#1AF5C518</color>
+    <color name="color_dropdown_text">#222222</color>
 </resources>

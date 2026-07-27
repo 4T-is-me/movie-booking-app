@@ -72,16 +72,36 @@ object AutoSchedulingAlgorithm {
         isHoliday: Boolean,
         existingShowtimesForDay: List<ShowtimeDraft>
     ): List<ShowtimeDraft> {
+        // Chặn hoàn toàn nếu ngày xếp lịch nằm trong quá khứ
+        if (date.isBefore(LocalDate.now())) {
+            return emptyList()
+        }
+
         val isWeekend = date.dayOfWeek.value == 6 || date.dayOfWeek.value == 7 || isHoliday
         val isHighSeason = date.month == Month.JUNE || date.month == Month.JULY || date.month == Month.AUGUST
         
         val result = mutableListOf<ShowtimeDraft>()
+        val nowTime = LocalTime.now()
+        val isToday = date == LocalDate.now()
+
+        // Hàm điều chỉnh giờ bắt đầu của slot nếu là ngày hôm nay
+        fun getAdjustedStart(defaultStart: LocalTime): LocalTime {
+            return if (isToday && defaultStart.isBefore(nowTime)) {
+                nowTime
+            } else {
+                defaultStart
+            }
+        }
         
         if (isWeekend) {
             // Rule B: Weekend allocation (Sat - Sun)
             // 08:00 - 00:00 Continuous Bin Packing, prioritize Tier 1
-            for (room in rooms) {
-                fillSlot(room, date, LocalTime.of(8, 0), LocalTime.of(23, 59), Int.MAX_VALUE, movies, config, result, existingShowtimesForDay, preferLowTier = false)
+            val weekendStart = getAdjustedStart(LocalTime.of(8, 0))
+            val weekendEnd = LocalTime.of(23, 59)
+            if (weekendStart.isBefore(weekendEnd)) {
+                for (room in rooms) {
+                    fillSlot(room, date, weekendStart, weekendEnd, Int.MAX_VALUE, movies, config, result, existingShowtimesForDay, preferLowTier = false)
+                }
             }
         } else {
             // Rule A: Weekday & Seasonal allocation (Mon - Fri)
@@ -91,9 +111,23 @@ object AutoSchedulingAlgorithm {
                 // Afternoon (12:00 - 16:30): 2 slots (prefer low tier)
                 // Evening (17:00 - 00:00): Full, prioritize Tier 1
                 for (room in rooms) {
-                    fillSlot(room, date, LocalTime.of(8, 30), LocalTime.of(11, 45), 2, movies, config, result, existingShowtimesForDay, preferLowTier = true)
-                    fillSlot(room, date, LocalTime.of(12, 0), LocalTime.of(16, 30), 2, movies, config, result, existingShowtimesForDay, preferLowTier = true)
-                    fillSlot(room, date, LocalTime.of(17, 0), LocalTime.of(23, 59), Int.MAX_VALUE, movies, config, result, existingShowtimesForDay, preferLowTier = false)
+                    val morningStart = getAdjustedStart(LocalTime.of(8, 30))
+                    val morningEnd = LocalTime.of(11, 45)
+                    if (morningStart.isBefore(morningEnd)) {
+                        fillSlot(room, date, morningStart, morningEnd, 2, movies, config, result, existingShowtimesForDay, preferLowTier = true)
+                    }
+
+                    val afternoonStart = getAdjustedStart(LocalTime.of(12, 0))
+                    val afternoonEnd = LocalTime.of(16, 30)
+                    if (afternoonStart.isBefore(afternoonEnd)) {
+                        fillSlot(room, date, afternoonStart, afternoonEnd, 2, movies, config, result, existingShowtimesForDay, preferLowTier = true)
+                    }
+
+                    val eveningStart = getAdjustedStart(LocalTime.of(17, 0))
+                    val eveningEnd = LocalTime.of(23, 59)
+                    if (eveningStart.isBefore(eveningEnd)) {
+                        fillSlot(room, date, eveningStart, eveningEnd, Int.MAX_VALUE, movies, config, result, existingShowtimesForDay, preferLowTier = false)
+                    }
                 }
             } else {
                 // Low Season: 09:00 - 00:00
@@ -101,9 +135,23 @@ object AutoSchedulingAlgorithm {
                 // Afternoon (12:00 - 16:30): 2 slots (prefer low tier)
                 // Evening (17:00 - 00:00): Full, prioritize Tier 1
                 for (room in rooms) {
-                    fillSlot(room, date, LocalTime.of(9, 30), LocalTime.of(11, 45), 1, movies, config, result, existingShowtimesForDay, preferLowTier = true)
-                    fillSlot(room, date, LocalTime.of(12, 0), LocalTime.of(16, 30), 2, movies, config, result, existingShowtimesForDay, preferLowTier = true)
-                    fillSlot(room, date, LocalTime.of(17, 0), LocalTime.of(23, 59), Int.MAX_VALUE, movies, config, result, existingShowtimesForDay, preferLowTier = false)
+                    val morningStart = getAdjustedStart(LocalTime.of(9, 30))
+                    val morningEnd = LocalTime.of(11, 45)
+                    if (morningStart.isBefore(morningEnd)) {
+                        fillSlot(room, date, morningStart, morningEnd, 1, movies, config, result, existingShowtimesForDay, preferLowTier = true)
+                    }
+
+                    val afternoonStart = getAdjustedStart(LocalTime.of(12, 0))
+                    val afternoonEnd = LocalTime.of(16, 30)
+                    if (afternoonStart.isBefore(afternoonEnd)) {
+                        fillSlot(room, date, afternoonStart, afternoonEnd, 2, movies, config, result, existingShowtimesForDay, preferLowTier = true)
+                    }
+
+                    val eveningStart = getAdjustedStart(LocalTime.of(17, 0))
+                    val eveningEnd = LocalTime.of(23, 59)
+                    if (eveningStart.isBefore(eveningEnd)) {
+                        fillSlot(room, date, eveningStart, eveningEnd, Int.MAX_VALUE, movies, config, result, existingShowtimesForDay, preferLowTier = false)
+                    }
                 }
             }
         }

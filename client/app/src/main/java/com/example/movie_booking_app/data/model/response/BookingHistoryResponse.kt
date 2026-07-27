@@ -21,5 +21,10 @@ data class BookingHistoryItem(
     @SerializedName("paymentStatus") val paymentStatus: String,
     @SerializedName("createdAt") val createdAt: String,
     @SerializedName("qrCodeData") val qrCodeData: String? = null,
-    @SerializedName("paymentMethod") val paymentMethod: String? = null
+    @SerializedName("paymentMethod") val paymentMethod: String? = null,
+    @SerializedName("isStaffRated") val isStaffRated: Boolean? = false,
+    @SerializedName("checkedIn") val checkedIn: Boolean? = false,
+    @SerializedName("movieId") val movieId: String? = null,
+    @SerializedName("movieGenre") val movieGenre: List<String>? = null,
+    @SerializedName("isMovieRated") val isMovieRated: Boolean? = false
 )

@@ -117,7 +117,10 @@ class SelectSeatActivity : AppCompatActivity() {
                             movieName = intent.getStringExtra("movieName") ?: getString(R.string.unknown_movie),
                             moviePoster = intent.getStringExtra("moviePoster"),
                             movieGenre = intent.getStringExtra("movieGenre") ?: "",
-                            cinemaName = viewModel.cinemaName.value.takeIf { !it.isNullOrEmpty() } ?: intent.getStringExtra("cinemaName") ?: getString(R.string.cinema_center),
+                            cinemaName = viewModel.cinemaName.value.takeIf { !it.isNullOrEmpty() }
+                                ?: selectedTime?.cinemaId?.cinemaName?.takeIf { !it.isNullOrEmpty() }
+                                ?: intent.getStringExtra("cinemaName")
+                                ?: getString(R.string.cinema_center),
                             cinemaAddress = intent.getStringExtra("cinemaAddress") ?: "",
                             roomName = viewModel.cinemaRoomName.value.takeIf { !it.isNullOrEmpty() } ?: getString(R.string.default_room_name),
                             showDate = selectedDate?.id ?: "",
