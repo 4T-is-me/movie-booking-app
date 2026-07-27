@@ -21,6 +21,7 @@ import adminMemberRoutes from './src/routes/adminMemberRoutes.js';
 import promotionRoute from './src/routes/promotionRoute.js';
 import adminStatsRoutes from './src/routes/adminStatsRoutes.js';
 import adminPromotionRoutes from './src/routes/adminPromotionRoutes.js';
+import { adminInventoryRoutes } from './src/routes/adminInventoryRoutes.js';
 import adminShowDateRoutes from './src/routes/adminShowDateRoutes.js';
 import managerRoomRoutes from './src/routes/managerRoomRoutes.js';
 import managerDashboardRoutes from './src/routes/managerDashboardRoute.js';
@@ -30,6 +31,7 @@ import maintenanceRoutes from './src/routes/maintenanceRoutes.js';
 import notificationRoutes from './src/routes/notificationRoutes.js';
 import staffLeaveRequestRoutes from './src/routes/staffLeaveRequestRoutes.js';
 import { staffRoute } from './src/routes/staffRoutes.js';
+import { foodBeverageRoutes } from './src/routes/foodBeverageRoutes.js';
 import { errorHandlingMiddleware } from './src/middlewares/errorHandlingMiddleware.js'
 import './src/config/firebaseAdmin.js'  // Initialize Firebase Admin SDK at startup;
 import { ShowtimeReminderJob } from './src/jobs/showtimeReminderJob.js';
@@ -66,6 +68,7 @@ app.use('/api/admin/members', adminMemberRoutes);
 app.use('/api/admin/promotions', adminPromotionRoutes);
 app.use('/api/admin/show-dates', adminShowDateRoutes);
 app.use('/api/admin/stats', adminStatsRoutes);
+app.use('/api/admin/inventory', adminInventoryRoutes);
 app.use('/api/manager/rooms', managerRoomRoutes);
 app.use('/api/manager/dashboard', managerDashboardRoutes);
 app.use('/api/manager/reports', managerReportRoutes);
@@ -74,10 +77,10 @@ app.use('/api/staffs/leave-requests', staffLeaveRequestRoutes);
 app.use('/api/staff', staffRoute.staffRouter);
 app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/food-beverages', foodBeverageRoutes);
 app.use('/api/payrolls', payrollRoutes);
 // Added by User - ChatBot AI feature - 2026-07-26
 app.use('/api/chat', chatRoutes);
-
 
 
 app.get('/api/cinemas', async (req, res) => {
@@ -105,4 +108,4 @@ const startServer = async () => {
     });
 }
 
-startServer();  
+startServer();

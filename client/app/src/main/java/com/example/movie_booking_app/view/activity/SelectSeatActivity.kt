@@ -148,7 +148,7 @@ class SelectSeatActivity : AppCompatActivity() {
                             showtimeId = selectedTime?.id
                         )
 
-                        val intent = Intent(this@SelectSeatActivity, PaymentActivity::class.java).apply {
+                        val intent = Intent(this@SelectSeatActivity, SelectFoodActivity::class.java).apply {
                             putExtra("BOOKING_SESSION", booking)
                         }
                         startActivity(intent)

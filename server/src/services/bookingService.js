@@ -11,6 +11,9 @@ import { ScoreHistory } from "../models/scoreHistoryModel.js";
 import { ticketUtils } from "../utils/ticketUtils.js";
 import { promotionService } from "./promotionService.js";
 import { PromotionUsage } from "../models/promotionUsageModel.js";
+import { Inventory } from "../models/inventoryModel.js";
+import { FoodBeverage } from "../models/foodBeverageModel.js";
+import { InventoryLog } from "../models/inventoryLogModel.js";
 import crypto from "crypto";
 import mongoose from "mongoose";
 import { StatusCodes } from "http-status-codes";
@@ -120,6 +123,84 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
     const comboPrice = combos.reduce((total, combo) => total + combo.price * combo.quantity, 0,); //price combo
     const subTotal = ticketPrice + comboPrice; // ticket + combo price
 
+    // --- AUTOMATIC INVENTORY DEDUCTION ---
+    if (combos && combos.length > 0) {
+      // 1. Get cinemaId from showtime
+      const showtime = await Showtime.findById(showtimeId).session(session);
+      if (!showtime) throw new ApiError(StatusCodes.NOT_FOUND, "Showtime not found");
+      const cinemaId = showtime.cinemaId;
+
+      // 2. Consolidate deductions
+      const totalDeductions = {};
+      for (const comboReq of combos) {
+        const fbItem = await FoodBeverage.findById(comboReq.comboId).session(session);
+        if (!fbItem || !fbItem.isActive) {
+          throw new ApiError(StatusCodes.BAD_REQUEST, `F&B item ${comboReq.name} is no longer active`);
+        }
+        const deductions = fbItem.inventoryDeductions || [];
+        if (deductions.length > 0) {
+          deductions.forEach(deduction => {
+            const needed = (deduction.quantity || 0) * (comboReq.quantity || 0);
+            totalDeductions[deduction.itemCode] = (totalDeductions[deduction.itemCode] || 0) + needed;
+          });
+        }
+      }
+
+      // 3. Optimized Validation and Deduction (bulkWrite + Logging)
+      const itemCodes = Object.keys(totalDeductions);
+      if (itemCodes.length > 0) {
+        // Fetch current stock for all items at once
+        const currentInventories = await Inventory.find({
+          cinemaId: new mongoose.Types.ObjectId(cinemaId),
+          itemCode: { $in: itemCodes }
+        }).session(session);
+
+        const bulkOps = [];
+        const logEntries = [];
+
+        for (const itemCode of itemCodes) {
+          const neededQty = totalDeductions[itemCode];
+          if (neededQty <= 0) continue;
+
+          const inv = currentInventories.find(i => i.itemCode === itemCode);
+          if (!inv || inv.quantity < neededQty) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, `Sorry, some F&B items (Code: ${itemCode}) are out of stock.`);
+          }
+
+          // Prepare update operation
+          bulkOps.push({
+            updateOne: {
+              filter: { _id: inv._id, quantity: { $gte: neededQty } },
+              update: { $inc: { quantity: -neededQty } }
+            }
+          });
+
+          // Prepare log entry
+          logEntries.push({
+            cinemaId: cinemaId,
+            itemCode: itemCode,
+            type: 'SALE',
+            changeQuantity: -neededQty,
+            oldQuantity: inv.quantity,
+            newQuantity: inv.quantity - neededQty,
+            referenceId: null, // Will update with bookingId after creation
+            reason: `Order checkout`
+          });
+        }
+
+        if (bulkOps.length > 0) {
+          const bulkResult = await Inventory.bulkWrite(bulkOps, { session });
+          if (bulkResult.modifiedCount !== bulkOps.length) {
+            throw new ApiError(StatusCodes.CONFLICT, "Inventory conflict detected. Please try again.");
+          }
+          // Note: Logs will be inserted after booking ID is generated to have proper reference
+          session.userData = session.userData || {};
+          session.userData.pendingLogs = logEntries;
+        }
+      }
+    }
+    // --- END INVENTORY DEDUCTION ---
+
     //Promotion(if any)
     let promotionDiscount = 0;
     let promotionId = null;
@@ -217,6 +298,30 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
       { session },
     );
 
+    // create score history
+    await ScoreHistory.create(
+      [
+        {
+          memberId: member._id,
+          bookingId: booking[0]._id,
+          usedPoints: pointUsed,
+          earnedPoints,
+          remainingPoints: member.rewardPoints,
+          reason: useScore ? "USE_SCORE" : "BUY_TICKET"
+        }
+      ],
+      { session }
+    );
+
+    // Create Inventory Logs if any
+    if (session.userData && session.userData.pendingLogs) {
+      const logsToInsert = session.userData.pendingLogs.map(log => ({
+        ...log,
+        referenceId: booking[0]._id
+      }));
+      await InventoryLog.insertMany(logsToInsert, { session });
+    }
+
     // update seat
     await ScheduleSeat.updateMany(
       {
@@ -233,21 +338,6 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
         },
       },
       { session },
-    );
-
-    // create score history
-    await ScoreHistory.create(
-      [
-        {
-          memberId: member._id,
-          bookingId: booking[0]._id,
-          usedPoints: pointUsed,
-          earnedPoints,
-          remainingPoints: member.rewardPoints,
-          reason: useScore ? "USE_SCORE" : "BUY_TICKET"
-        }
-      ],
-      { session }
     );
 
     // Create PromotionUsage and update usageCount if promotion applied
