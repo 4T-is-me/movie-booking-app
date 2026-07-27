@@ -192,31 +192,33 @@ class EditProfileViewModel @Inject constructor(
         )
 
         viewModelScope.launch {
-            var apiDob = dob
-            if (dob.contains("/")) {
-                try {
-                    val displayFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                    val apiFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-                    displayFormat.parse(dob)?.let { parsedDate ->
-                        apiDob = apiFormat.format(parsedDate)
+            val req = withContext(Dispatchers.Default) {
+                var apiDob = dob
+                if (dob.contains("/")) {
+                    try {
+                        val displayFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                        val apiFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                        displayFormat.parse(dob)?.let { parsedDate ->
+                            apiDob = apiFormat.format(parsedDate)
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace()
                 }
-            }
 
-            val req = UpdateProfileRequest(
-                email = email,
-                phone = phone,
-                address = address,
-                fullName = fullName,
-                dob = apiDob,
-                gender = gender,
-                identityCard = identityCard,
-                favoriteCinema = favoriteCinema,
-                favoriteGenres = favoriteGenres,
-                avatar = _uiState.value.avatarUrl
-            )
+                UpdateProfileRequest(
+                    email = email,
+                    phone = phone,
+                    address = address,
+                    fullName = fullName,
+                    dob = apiDob,
+                    gender = gender,
+                    identityCard = identityCard,
+                    favoriteCinema = favoriteCinema,
+                    favoriteGenres = favoriteGenres,
+                    avatar = _uiState.value.avatarUrl
+                )
+            }
 
             repository.updateProfile(req)
                 .onStart {

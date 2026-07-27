@@ -2,8 +2,9 @@ package com.example.movie_booking_app.view.activity
 
 import android.content.Intent
 import android.os.Bundle
-import timber.log.Timber
 import android.view.View
+import timber.log.Timber
+import com.example.movie_booking_app.utils.Validator
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -84,12 +85,14 @@ class LoginActivity : EnglishBaseActivity() {
             val username = binding.edtUsername.text.toString().trim()
             val password = binding.edtPassword.text.toString()
 
-            if (username.isEmpty()) {
-                showError("Please enter username")
+            val usernameError = Validator.validateUsername(username)
+            if (usernameError != null) {
+                showError(getString(usernameError))
                 return@setOnClickListener
             }
-            if (password.isEmpty()) {
-                showError("Please enter password")
+            val passwordError = Validator.validatePassword(password)
+            if (passwordError != null) {
+                showError(getString(passwordError))
                 return@setOnClickListener
             }
             // remove Log.d(use ... chạy debug)
