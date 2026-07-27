@@ -11,13 +11,16 @@ import { ScoreHistory } from "../models/scoreHistoryModel.js";
 import { ticketUtils } from "../utils/ticketUtils.js";
 import { promotionService } from "./promotionService.js";
 import { PromotionUsage } from "../models/promotionUsageModel.js";
+import { Inventory } from "../models/inventoryModel.js";
+import { FoodBeverage } from "../models/foodBeverageModel.js";
+import { InventoryLog } from "../models/inventoryLogModel.js";
 import crypto from "crypto";
 import mongoose from "mongoose";
 import { StatusCodes } from "http-status-codes";
 import ApiError from "../utils/ApiError.js";
 import { formatDate, getShowtimeTimeRange } from "../utils/formatters.js";
-import { format } from "path";
 import { NotificationService } from "./notificationService.js";
+import { Review } from "../models/reviewModel.js";
 
 //handle hold-seats
 const handleHoldSeats = async ({ accountId, showtimeId, seatIds }) => {
@@ -120,6 +123,84 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
     const comboPrice = combos.reduce((total, combo) => total + combo.price * combo.quantity, 0,); //price combo
     const subTotal = ticketPrice + comboPrice; // ticket + combo price
 
+    // --- AUTOMATIC INVENTORY DEDUCTION ---
+    if (combos && combos.length > 0) {
+      // 1. Get cinemaId from showtime
+      const showtime = await Showtime.findById(showtimeId).session(session);
+      if (!showtime) throw new ApiError(StatusCodes.NOT_FOUND, "Showtime not found");
+      const cinemaId = showtime.cinemaId;
+
+      // 2. Consolidate deductions
+      const totalDeductions = {};
+      for (const comboReq of combos) {
+        const fbItem = await FoodBeverage.findById(comboReq.comboId).session(session);
+        if (!fbItem || !fbItem.isActive) {
+          throw new ApiError(StatusCodes.BAD_REQUEST, `F&B item ${comboReq.name} is no longer active`);
+        }
+        const deductions = fbItem.inventoryDeductions || [];
+        if (deductions.length > 0) {
+          deductions.forEach(deduction => {
+            const needed = (deduction.quantity || 0) * (comboReq.quantity || 0);
+            totalDeductions[deduction.itemCode] = (totalDeductions[deduction.itemCode] || 0) + needed;
+          });
+        }
+      }
+
+      // 3. Optimized Validation and Deduction (bulkWrite + Logging)
+      const itemCodes = Object.keys(totalDeductions);
+      if (itemCodes.length > 0) {
+        // Fetch current stock for all items at once
+        const currentInventories = await Inventory.find({
+          cinemaId: new mongoose.Types.ObjectId(cinemaId),
+          itemCode: { $in: itemCodes }
+        }).session(session);
+
+        const bulkOps = [];
+        const logEntries = [];
+
+        for (const itemCode of itemCodes) {
+          const neededQty = totalDeductions[itemCode];
+          if (neededQty <= 0) continue;
+
+          const inv = currentInventories.find(i => i.itemCode === itemCode);
+          if (!inv || inv.quantity < neededQty) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, `Sorry, some F&B items (Code: ${itemCode}) are out of stock.`);
+          }
+
+          // Prepare update operation
+          bulkOps.push({
+            updateOne: {
+              filter: { _id: inv._id, quantity: { $gte: neededQty } },
+              update: { $inc: { quantity: -neededQty } }
+            }
+          });
+
+          // Prepare log entry
+          logEntries.push({
+            cinemaId: cinemaId,
+            itemCode: itemCode,
+            type: 'SALE',
+            changeQuantity: -neededQty,
+            oldQuantity: inv.quantity,
+            newQuantity: inv.quantity - neededQty,
+            referenceId: null, // Will update with bookingId after creation
+            reason: `Order checkout`
+          });
+        }
+
+        if (bulkOps.length > 0) {
+          const bulkResult = await Inventory.bulkWrite(bulkOps, { session });
+          if (bulkResult.modifiedCount !== bulkOps.length) {
+            throw new ApiError(StatusCodes.CONFLICT, "Inventory conflict detected. Please try again.");
+          }
+          // Note: Logs will be inserted after booking ID is generated to have proper reference
+          session.userData = session.userData || {};
+          session.userData.pendingLogs = logEntries;
+        }
+      }
+    }
+    // --- END INVENTORY DEDUCTION ---
+
     //Promotion(if any)
     let promotionDiscount = 0;
     let promotionId = null;
@@ -178,15 +259,6 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
 
     const paymentStatus = "paid";
 
-    console.log(`[DEBUG] User ID (memberId): ${member._id}`);
-    console.log(`[DEBUG] Previous totalSpent: ${prevTotalSpent}`);
-    console.log(`[DEBUG] New totalSpent: ${member.totalSpent}`);
-    console.log(`[DEBUG] Previous rewardPoints: ${prevRewardPoints}`);
-    console.log(`[DEBUG] New rewardPoints: ${member.rewardPoints}`);
-    console.log(`[DEBUG] New useScore: ${useScore}`)
-    console.log(`[DEBUG] New membershipRank: ${member.membershipRank}`);
-    console.log(`[DEBUG] finalAmount to charge: ${finalAmount}`);
-
     const memberUpdateResult = await Member.updateOne(
       { _id: member._id },
       {
@@ -199,12 +271,8 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
       { session }
     );
 
-    console.log(`[DEBUG] Result of Member.updateOne(): matchedCount = ${memberUpdateResult.matchedCount}, modifiedCount = ${memberUpdateResult.modifiedCount}`);
-
     const ticketCode = await ticketUtils.generateTicketCode();
     const qrCodeData = await ticketUtils.generateQRCode(ticketCode);
-
-    console.log(`[DEBUG] Invoking Booking.create() for memberId=${member._id}, showtimeId=${showtimeId}, paymentStatus=${paymentStatus}, finalAmount=${finalAmount}`);
 
     // create booking
     const booking = await Booking.create(
@@ -230,7 +298,29 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
       { session },
     );
 
-    console.log(`[DEBUG] Booking.create() finished. bookingId=${booking[0]._id}, paymentStatus=${booking[0].paymentStatus}`);
+    // create score history
+    await ScoreHistory.create(
+      [
+        {
+          memberId: member._id,
+          bookingId: booking[0]._id,
+          usedPoints: pointUsed,
+          earnedPoints,
+          remainingPoints: member.rewardPoints,
+          reason: useScore ? "USE_SCORE" : "BUY_TICKET"
+        }
+      ],
+      { session }
+    );
+
+    // Create Inventory Logs if any
+    if (session.userData && session.userData.pendingLogs) {
+      const logsToInsert = session.userData.pendingLogs.map(log => ({
+        ...log,
+        referenceId: booking[0]._id
+      }));
+      await InventoryLog.insertMany(logsToInsert, { session });
+    }
 
     // update seat
     await ScheduleSeat.updateMany(
@@ -248,21 +338,6 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
         },
       },
       { session },
-    );
-
-    // create score history
-    await ScoreHistory.create(
-      [
-        {
-          memberId: member._id,
-          bookingId: booking[0]._id,
-          usedPoints: pointUsed,
-          earnedPoints,
-          remainingPoints: member.rewardPoints,
-          reason: useScore ? "USE_SCORE" : "BUY_TICKET"
-        }
-      ],
-      { session }
     );
 
     // Create PromotionUsage and update usageCount if promotion applied
@@ -300,16 +375,12 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
     };
 
     await session.commitTransaction();
-    console.log(`[DEBUG] Transaction committed successfully for booking ${booking[0]._id}. commitTransaction() executed.`);
 
     // Trigger FCM notification asynchronously so it does not delay checkout response
-    NotificationService.sendBookingSuccessNotification(member.accountId, booking[0]).catch(err => {
-      console.error('Failed to send booking success notification:', err.message)
-    })
+    NotificationService.sendBookingSuccessNotification(member.accountId, booking[0]).catch(() => {})
 
     return result;
   } catch (error) {
-    console.error("[DEBUG] Transaction aborted due to error:", error.message);
     await session.abortTransaction();
     throw error;
   } finally {
@@ -417,6 +488,9 @@ const handleGetHistory = async (accountId, page = 1, limit = 10) => {
     .limit(limit)
     .lean();
 
+  const reviews = await Review.find({ accountId }).lean();
+  const reviewedMovieIds = new Set(reviews.map(r => r.movieId.toString()));
+
   const mappedBookings = bookings.map(booking => {
     const showtime = booking.showtimeId;
     const movie = showtime?.movieId;
@@ -427,6 +501,9 @@ const handleGetHistory = async (accountId, page = 1, limit = 10) => {
       bookingId: booking._id,
       bookingCode: booking.bookingCode,
       movie: movie?.movieName || "",
+      movieId: movie?._id || "",
+      movieGenre: movie?.movieGenre || [],
+      isMovieRated: movie ? reviewedMovieIds.has(movie._id.toString()) : false,
       poster: movie?.poster || "",
       showDate: showtime?.showDate ? formatDate(showtime.showDate) : "",
       showtime: getShowtimeTimeRange(showtime),

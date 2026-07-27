@@ -3,7 +3,7 @@ package com.example.movie_booking_app.view.activity
 import android.content.Intent
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.util.Log
+import timber.log.Timber
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -37,7 +37,7 @@ class RewardPointsActivity : AppCompatActivity() {
         observeViewModel()
 
         val userProfile = intent.getSerializableExtra("USER_PROFILE") as? UserProfile
-        Log.d("member", userProfile.toString())
+        Timber.tag("member").d(userProfile.toString())
         userProfile?.let {
             val safeId = it.accountId?.takeLast(8)?.uppercase() ?: "UNKNOWN"
             binding.tvUserInfo.text = "${it.fullName ?: "-"} • $safeId"

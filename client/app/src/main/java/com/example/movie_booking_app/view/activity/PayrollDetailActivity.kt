@@ -1,7 +1,7 @@
 package com.example.movie_booking_app.view.activity
 
 import android.os.Bundle
-import android.util.Log
+import timber.log.Timber
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -129,6 +129,36 @@ class PayrollDetailActivity : AppCompatActivity() {
         binding.tvPeriod.text = getString(R.string.payroll_period_format, payroll.month, payroll.year)
         binding.tvTotalSalary.text = PayrollAdapter.formatVnd(payroll.totalSalary)
 
+        // 3.1. Generated At & Paid At dates
+        val inputFormat = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", java.util.Locale.US).apply {
+            timeZone = java.util.TimeZone.getTimeZone("UTC")
+        }
+        val outputFormat = java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault())
+
+        if (!payroll.generatedAt.isNullOrEmpty()) {
+            binding.layoutGeneratedAt.visibility = View.VISIBLE
+            binding.tvGeneratedAt.text = try {
+                val date = inputFormat.parse(payroll.generatedAt)
+                outputFormat.format(date!!)
+            } catch (e: Exception) {
+                payroll.generatedAt
+            }
+        } else {
+            binding.layoutGeneratedAt.visibility = View.GONE
+        }
+
+        if (!payroll.paidAt.isNullOrEmpty()) {
+            binding.layoutPaidAt.visibility = View.VISIBLE
+            binding.tvPaidAt.text = try {
+                val date = inputFormat.parse(payroll.paidAt)
+                outputFormat.format(date!!)
+            } catch (e: Exception) {
+                payroll.paidAt
+            }
+        } else {
+            binding.layoutPaidAt.visibility = View.GONE
+        }
+
         // 4. Role Check (Staff vs Manager)
         val isManager = (payroll.baseSalary ?: 0.0) > 0 ||
                 payroll.employee?.role?.contains("manager", ignoreCase = true) == true
@@ -150,7 +180,7 @@ class PayrollDetailActivity : AppCompatActivity() {
     }
 
     private fun bindStaffDetails(payroll: PayrollItem) {
-        Log.d("detail", payroll.shiftCount.toString())
+        Timber.tag("detail").d(payroll.shiftCount.toString())
         binding.layoutStaffDetails.visibility = View.VISIBLE
         binding.layoutManagerDetails.visibility = View.GONE
 

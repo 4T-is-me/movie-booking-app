@@ -1,6 +1,6 @@
 package com.example.movie_booking_app.data.local
 
-import android.util.Log
+import timber.log.Timber
 import com.example.movie_booking_app.data.api.FcmApi
 import com.example.movie_booking_app.data.model.request.RegisterFcmTokenRequest
 import com.google.firebase.messaging.FirebaseMessaging
@@ -40,16 +40,16 @@ class FcmTokenHelper @Inject constructor(
     suspend fun registerCurrentToken(callerTag: String = TAG) {
         try {
             val token = FirebaseMessaging.getInstance().token.await()
-            Log.d(callerTag, "FCM token fetched: ${token.take(10)}…")
+            Timber.tag(callerTag).d("FCM token fetched: ${token.take(10)}…")
 
             val response = fcmApi.registerFcmToken(RegisterFcmTokenRequest(token))
             if (response.isSuccessful) {
-                Log.d(callerTag, "FCM token registered successfully.")
+                Timber.tag(callerTag).d("FCM token registered successfully.")
             } else {
-                Log.w(callerTag, "FCM token registration failed – HTTP ${response.code()}: ${response.message()}")
+                Timber.tag(callerTag).w("FCM token registration failed – HTTP ${response.code()}: ${response.message()}")
             }
         } catch (e: Exception) {
-            Log.e(callerTag, "Failed to send FCM token: ${e.message}", e)
+            Timber.tag(callerTag).e(e, "Failed to send FCM token: ${e.message}")
         }
     }
 }

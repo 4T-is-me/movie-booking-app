@@ -277,7 +277,7 @@ class AddCinemaRoomFragment : Fragment() {
                     layoutLegend.visibility = View.VISIBLE
                     rvSeatPreview.visibility = View.VISIBLE
 
-                    val cols = viewModel.columnsStr.value.toIntOrNull() ?: 12
+                    val cols = viewModel.columnsStr.value.toIntOrNull() ?: 10
                     rvSeatPreview.layoutManager = GridLayoutManager(context, cols)
                     seatPreviewAdapter.submitList(seats)
                 } else {

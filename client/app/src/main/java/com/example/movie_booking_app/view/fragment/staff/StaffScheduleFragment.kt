@@ -4,7 +4,7 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.util.Log
+import timber.log.Timber
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -109,12 +109,12 @@ class StaffScheduleFragment : Fragment() {
     private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.shifts.collectLatest { shiftList ->
-                Log.d("StaffSchedule", "Received shifts count: ${shiftList.size}")
+                Timber.tag("StaffSchedule").d("Received shifts count: ${shiftList.size}")
                 staffShiftAdapter.submitList(shiftList)
 
                 // Set default display for today's selected date in calendar strip
                 val activeDate = dateAdapter.currentList.find { it.isSelected }?.id
-                Log.d("StaffSchedule", "Active date on load: $activeDate")
+                Timber.tag("StaffSchedule").d("Active date on load: $activeDate")
                 if (activeDate != null) {
                     updateTodayShiftCard(activeDate)
                 }
@@ -198,7 +198,7 @@ class StaffScheduleFragment : Fragment() {
         if (calendarDates.isNotEmpty()) {
             val startDate = calendarDates.first().id
             val endDate = calendarDates.last().id
-            Log.d("StaffSchedule", "Requesting shifts from $startDate to $endDate")
+            Timber.tag("StaffSchedule").d("Requesting shifts from $startDate to $endDate")
             viewModel.loadShifts(startDate, endDate)
             leaveRequestViewModel.loadReplacementShifts()
         }
@@ -206,7 +206,7 @@ class StaffScheduleFragment : Fragment() {
 
     private fun updateTodayShiftCard(selectedDateId: String) {
         val shifts = viewModel.shifts.value
-        Log.d("StaffSchedule", "Updating card for date: $selectedDateId. Total shifts: ${shifts.size}")
+        Timber.tag("StaffSchedule").d("Updating card for date: $selectedDateId. Total shifts: ${shifts.size}")
 
         // Filter out ALL duplicate dates
         val matchingShifts = shifts.filter {

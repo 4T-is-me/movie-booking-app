@@ -92,6 +92,8 @@
     <string name="error_address_required">Address is required</string>
     <string name="error_idcard_required">Identify card is required</string>
     <string name="error_idcard_invalid">Identity card must be 9 or 12 digits</string>
+    <string name="error_otp_invalid">Please enter all 6 digits of OTP</string>
+    <string name="error_coupon_invalid">Please enter a valid coupon code</string>
 
 
     <!-- Select Seat Activity Strings -->
@@ -944,8 +946,8 @@
     <string name="auto_str_screen_type">Screen Type *</string>
     <string name="auto_str_status_3">Status *</string>
     <string name="auto_str_capacity">Capacity *</string>
-    <string name="auto_str_rows_1_26">Rows (1-26)</string>
-    <string name="auto_str_columns_1_30">Columns (1-30)</string>
+    <string name="auto_str_rows_1_26">Rows (1-8)</string>
+    <string name="auto_str_columns_1_30">Columns (1-10)</string>
     <string name="auto_str_movie_name_required">Movie Name (*)</string>
     <string name="auto_str_director_s_comma_separated_admin">Director(s) - Comma separated</string>
     <string name="auto_str_actors_comma_separated_admin">Actors - Comma separated</string>
@@ -1118,6 +1120,39 @@
     <string name="duration_format_h">%1$dh</string>
     <string name="duration_format_m">%1$dm</string>
 
+    <!-- F&B and Inventory Management -->
+    <string name="fb_tab_all">All</string>
+    <string name="fb_tab_combo">Combo</string>
+    <string name="fb_tab_drink">Drink</string>
+    <string name="fb_tab_food">Food</string>
+    <string name="fb_in_stock">In stock: %1$d</string>
+    <string name="fb_max_stock_reached">Maximum stock reached</string>
+    <string name="fb_inventory_mgmt">Inventory Management</string>
+    <string name="fb_menu_mgmt">F&amp;B Menu Management</string>
+    <string name="fb_edit_product">Edit Product</string>
+    <string name="fb_add_product">Add New Product</string>
+    <string name="fb_select_image">Select Image</string>
+    <string name="fb_product_name">Product Name</string>
+    <string name="fb_category">Category</string>
+    <string name="fb_price_vnd">Price (VND)</string>
+    <string name="fb_description">Description</string>
+    <string name="fb_active_status">Active Status</string>
+    <string name="fb_combo_recipe">Combo Components (Recipe)</string>
+    <string name="fb_combo_recipe_desc">Select items that this combo will deduct from stock</string>
+    <string name="fb_refill_title">Refill %1$s</string>
+    <string name="fb_refill">Refill</string>
+    <string name="fb_current_stock">Current stock: %1$d</string>
+    <string name="fb_confirm">Confirm</string>
+    <string name="fb_qty_adjusted_max">Quantity adjusted to max stock</string>
+    <string name="fb_enter_qty">Enter Quantity</string>
+    <string name="fb_low_stock">Low Stock!</string>
+    <string name="fb_deactivate_title">Deactivate Product</string>
+    <string name="fb_deactivate_msg">Are you sure you want to deactivate %1$s?</string>
+    <string name="fb_refill_success">Refilled %1$s successfully</string>
+    <string name="fb_select_cinema">Select Cinema</string>
+    <string name="fb_enter_qty_hint">Enter quantity to add</string>
+    <string name="fb_reason_optional">Reason (optional)</string>
+
     <!-- Staff Rating Strings -->
     <string name="rate_staff_title">Rate our staff</string>
     <string name="rate_staff_subtitle">How was your service experience?</string>
@@ -1182,5 +1217,21 @@
     <string name="msg_payroll_marked_paid">Payroll marked as paid</string>
     <string name="error_update_payment_status">Failed to update payment status</string>
     <string name="title_payrolls">Payrolls</string>
+    <string name="payroll_title">Payroll</string>
+    <string name="current_month_payroll">Current Month Payroll</string>
+    <string name="label_manager">Manager</string>
+    <string name="employee_payroll">Employee Payroll</string>
+    <string name="search_staff_hint">Search staff...</string>
+    <string name="no_payroll_data_found">No payroll data found.</string>
+    <string name="generate_payroll">Generate Payroll</string>
+    <string name="select_month_year_generate_payroll">Select the month and year to generate payroll</string>
+    <string name="label_month">Month</string>
+    <string name="label_year">Year</string>
+    <string name="label_cinema">Cinema</string>
+    <string name="generate_payroll_period">Generate Payroll for this Period</string>
+    <string name="no_payrolls_found">No payrolls found</string>
+    <string name="try_adjusting_filters">Try adjusting the filters above</string>
+    <string name="generated_at">Generated At</string>
+    <string name="paid_at">Paid At</string>
 
 </resources>
