@@ -11,6 +11,7 @@ import com.example.movie_booking_app.data.api.PaymentApi
 import com.example.movie_booking_app.data.api.ProfileApi
 import com.example.movie_booking_app.data.api.ManagerRoomApi
 import com.example.movie_booking_app.data.api.MemberApi
+import com.example.movie_booking_app.data.api.FoodApi
 import com.example.movie_booking_app.data.api.LeaveRequestApi
 import com.example.movie_booking_app.data.api.NotificationApi
 import com.example.movie_booking_app.data.api.RetrofitClient
@@ -106,5 +107,17 @@ object NetworkModule {
     @Singleton
     fun notificationApi(): NotificationApi {
         return RetrofitClient.notificationApi
+    }
+
+    @Provides
+    @Singleton
+    fun provideFoodApi(): FoodApi {
+        return RetrofitClient.foodApi
+    }
+
+    @Provides
+    @Singleton
+    fun provideInventoryApi(): com.example.movie_booking_app.data.api.InventoryApi {
+        return RetrofitClient.inventoryApi
     }
 }

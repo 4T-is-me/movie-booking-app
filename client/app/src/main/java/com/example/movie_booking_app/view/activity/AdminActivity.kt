@@ -61,6 +61,12 @@ class AdminActivity : BaseActivity() {
                     binding.tvHeaderTitle.text = getString(R.string.auto_str_promotions)
                     loadFragment(AdminPromotionFragment())
                 }
+                R.id.nav_fb_menu -> {
+                    startActivity(Intent(this, com.example.movie_booking_app.view.activity.admin.AdminFoodMenuActivity::class.java))
+                }
+                R.id.nav_inventory -> {
+                    startActivity(Intent(this, com.example.movie_booking_app.view.activity.admin.AdminInventoryActivity::class.java))
+                }
                 R.id.nav_members -> {
                     binding.tvHeaderTitle.text = getString(R.string.admin_tab_members)
                     loadFragment(com.example.movie_booking_app.view.fragment.admin.MemberListFragment())

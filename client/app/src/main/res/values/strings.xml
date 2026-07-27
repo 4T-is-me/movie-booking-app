@@ -1105,4 +1105,37 @@
     <string name="duration_format_hm">%1$dh%2$dm</string>
     <string name="duration_format_h">%1$dh</string>
     <string name="duration_format_m">%1$dm</string>
+
+    <!-- F&B and Inventory Management -->
+    <string name="fb_tab_all">All</string>
+    <string name="fb_tab_combo">Combo</string>
+    <string name="fb_tab_drink">Drink</string>
+    <string name="fb_tab_food">Food</string>
+    <string name="fb_in_stock">In stock: %1$d</string>
+    <string name="fb_max_stock_reached">Maximum stock reached</string>
+    <string name="fb_inventory_mgmt">Inventory Management</string>
+    <string name="fb_menu_mgmt">F&amp;B Menu Management</string>
+    <string name="fb_edit_product">Edit Product</string>
+    <string name="fb_add_product">Add New Product</string>
+    <string name="fb_select_image">Select Image</string>
+    <string name="fb_product_name">Product Name</string>
+    <string name="fb_category">Category</string>
+    <string name="fb_price_vnd">Price (VND)</string>
+    <string name="fb_description">Description</string>
+    <string name="fb_active_status">Active Status</string>
+    <string name="fb_combo_recipe">Combo Components (Recipe)</string>
+    <string name="fb_combo_recipe_desc">Select items that this combo will deduct from stock</string>
+    <string name="fb_refill_title">Refill %1$s</string>
+    <string name="fb_refill">Refill</string>
+    <string name="fb_current_stock">Current stock: %1$d</string>
+    <string name="fb_confirm">Confirm</string>
+    <string name="fb_qty_adjusted_max">Quantity adjusted to max stock</string>
+    <string name="fb_enter_qty">Enter Quantity</string>
+    <string name="fb_low_stock">Low Stock!</string>
+    <string name="fb_deactivate_title">Deactivate Product</string>
+    <string name="fb_deactivate_msg">Are you sure you want to deactivate %1$s?</string>
+    <string name="fb_refill_success">Refilled %1$s successfully</string>
+    <string name="fb_select_cinema">Select Cinema</string>
+    <string name="fb_enter_qty_hint">Enter quantity to add</string>
+    <string name="fb_reason_optional">Reason (optional)</string>
 </resources>
