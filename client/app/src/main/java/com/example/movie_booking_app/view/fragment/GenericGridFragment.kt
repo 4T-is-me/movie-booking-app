@@ -15,6 +15,7 @@ import com.example.movie_booking_app.view.adapter.MovieNewsAdapter
 import com.example.movie_booking_app.view.adapter.PromoSeeAllAdapter
 import com.example.movie_booking_app.view.adapter.ServiceAdapter
 import com.example.movie_booking_app.view.activity.NewsDetailActivity
+import com.example.movie_booking_app.data.repository.NewsRepository
 import kotlinx.coroutines.launch
 
 class GenericGridFragment : Fragment() {
@@ -69,19 +70,33 @@ class GenericGridFragment : Fragment() {
             }
             "News" -> {
                 binding.rvGenericList.layoutManager = GridLayoutManager(context, 1)
-                val adapter = MovieNewsAdapter { news ->
-                    val intent = Intent(context, NewsDetailActivity::class.java).apply {
-                        putExtra("newsId", news.id)
-                        putExtra("title", news.title)
-                        putExtra("imageUrl", news.imageUrl)
-                        putExtra("date", news.date)
-                        putExtra("content", news.content ?: "")
-                        putExtra("movieId", news.movieId)
-                        putExtra("movieName", news.movieName)
-                        putExtra("moviePoster", news.moviePoster)
+                lateinit var adapter: MovieNewsAdapter
+                adapter = MovieNewsAdapter(
+                    onNewsClick = { news ->
+                        val intent = Intent(context, NewsDetailActivity::class.java).apply {
+                            putExtra("newsId", news.id)
+                            putExtra("title", news.title)
+                            putExtra("imageUrl", news.imageUrl)
+                            putExtra("date", news.date)
+                            putExtra("content", news.content ?: "")
+                            putExtra("movieId", news.movieId)
+                            putExtra("movieName", news.movieName)
+                            putExtra("moviePoster", news.moviePoster)
+                        }
+                        startActivity(intent)
+                    },
+                    onLikeClick = { news ->
+                        viewLifecycleOwner.lifecycleScope.launch {
+                            try {
+                                RepositoryProvider.provideNewsRepository().toggleNewsLike(news.id).collect {
+                                    movieRepository.getNews().collect { newList ->
+                                        adapter.submitList(newList)
+                                    }
+                                }
+                            } catch (_: Exception) {}
+                        }
                     }
-                    startActivity(intent)
-                }
+                )
                 binding.rvGenericList.adapter = adapter
                 viewLifecycleOwner.lifecycleScope.launch { movieRepository.getNews().collect { adapter.submitList(it) } }
             }

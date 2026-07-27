@@ -3,7 +3,8 @@ import { StatusCodes } from 'http-status-codes';
 
 const getNews = async (req, res, next) => {
     try {
-        const result = await newsService.handleGetNews();
+        const currentAccountId = req.user?.accountId || null;
+        const result = await newsService.handleGetNews(currentAccountId);
         return res.status(StatusCodes.OK).json({ success: true, data: result });
     } catch (error) {
         next(error);
@@ -13,7 +14,8 @@ const getNews = async (req, res, next) => {
 const getNewsById = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const result = await newsService.handleGetNewsById(id);
+        const currentAccountId = req.user?.accountId || null;
+        const result = await newsService.handleGetNewsById(id, currentAccountId);
         return res.status(StatusCodes.OK).json({ success: true, data: result });
     } catch (error) {
         next(error);
@@ -67,9 +69,26 @@ const toggleReaction = async (req, res, next) => {
     }
 };
 
+const toggleNewsLike = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const accountId = req.user.accountId;
+
+        const result = await newsService.handleToggleNewsLike({
+            newsId: id,
+            accountId
+        });
+
+        return res.status(StatusCodes.OK).json({ success: true, data: result });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const newsController = {
     getNews,
     getNewsById,
+    toggleNewsLike,
     getComments,
     createComment,
     toggleReaction

@@ -40,4 +40,13 @@ class NewsRepository @Inject constructor(
             throw Exception(response.errorBody()?.string() ?: "Failed to update reaction")
         }
     }.flowOn(Dispatchers.IO)
+
+    fun toggleNewsLike(newsId: String): Flow<com.example.movie_booking_app.data.model.response.NewsLikeData> = flow {
+        val response = newsApi.toggleNewsLike(newsId)
+        if (response.isSuccessful && response.body() != null) {
+            emit(response.body()!!.data!!)
+        } else {
+            throw Exception(response.errorBody()?.string() ?: "Failed to like article")
+        }
+    }.flowOn(Dispatchers.IO)
 }

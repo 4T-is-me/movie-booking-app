@@ -32,6 +32,11 @@ interface NewsApi {
         @Path("commentId") commentId: String,
         @Body request: ToggleReactionRequest
     ): Response<ReactionResponse>
+
+    @POST("api/news/{id}/like")
+    suspend fun toggleNewsLike(
+        @Path("id") newsId: String
+    ): Response<com.example.movie_booking_app.data.model.response.NewsLikeResponse>
 }
 
 data class CreateCommentRequest(

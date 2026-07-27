@@ -113,7 +113,12 @@ class MovieRepositoryRemoteImpl @Inject constructor(
                         content = item.content,
                         movieId = item.movie?.id,
                         movieName = item.movie?.movieName,
-                        moviePoster = item.movie?.poster
+                        moviePoster = item.movie?.poster,
+                        authorName = item.authorName,
+                        authorAvatar = item.authorAvatar,
+                        likesCount = item.likesCount ?: 0,
+                        userLiked = item.userLiked ?: false,
+                        commentsCount = item.commentsCount ?: 0
                     )
                 } ?: emptyList()
                 emit(list)

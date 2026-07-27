@@ -18,7 +18,12 @@ data class NewsItemResponse(
     @SerializedName("content") val content: String,
     @SerializedName("image") val image: String?,
     @SerializedName("publishedAt") val publishedAt: String,
-    @SerializedName("movieId") val movie: TaggedMovie?
+    @SerializedName("movieId") val movie: TaggedMovie?,
+    @SerializedName("authorName") val authorName: String?,
+    @SerializedName("authorAvatar") val authorAvatar: String?,
+    @SerializedName("likesCount") val likesCount: Int?,
+    @SerializedName("userLiked") val userLiked: Boolean?,
+    @SerializedName("commentsCount") val commentsCount: Int?
 )
 
 data class TaggedMovie(
@@ -64,4 +69,14 @@ data class ReactionsSummaryResponse(
 data class ReactionResponse(
     @SerializedName("success") val success: Boolean,
     @SerializedName("data") val data: ReactionsSummaryResponse?
+)
+
+data class NewsLikeResponse(
+    @SerializedName("success") val success: Boolean,
+    @SerializedName("data") val data: NewsLikeData?
+)
+
+data class NewsLikeData(
+    @SerializedName("likesCount") val likesCount: Int,
+    @SerializedName("userLiked") val userLiked: Boolean
 )

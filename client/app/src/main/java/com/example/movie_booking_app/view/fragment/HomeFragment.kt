@@ -128,6 +128,9 @@ class HomeFragment : Fragment() {
                     putExtra("moviePoster", news.moviePoster)
                 }
                 startActivity(intent)
+            },
+            onNewsLikeClicked = { news ->
+                viewModel.toggleNewsLike(news.id)
             }
         )
         binding.rvHome.adapter = homeAdapter

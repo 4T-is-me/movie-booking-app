@@ -3,17 +3,70 @@ import { Comment } from '../models/commentModel.js';
 import { Member } from '../models/memberModel.js';
 import ApiError from '../utils/ApiError.js';
 import { StatusCodes } from 'http-status-codes';
+import mongoose from 'mongoose';
 
-const handleGetNews = async () => {
-    return await News.find().sort({ publishedAt: -1 }).populate('movieId', 'movieName poster').lean();
+const handleGetNews = async (currentAccountId = null) => {
+    const newsList = await News.find().sort({ publishedAt: -1 }).populate('movieId', 'movieName poster').lean();
+    const newsIds = newsList.map(n => n._id);
+
+    // Group and count comments for all listed articles to avoid N+1 queries
+    const commentCounts = await Comment.aggregate([
+        { $match: { newsId: { $in: newsIds } } },
+        { $group: { _id: "$newsId", count: { $sum: 1 } } }
+    ]);
+    const commentCountMap = new Map(commentCounts.map(c => [c._id.toString(), c.count]));
+
+    return newsList.map(news => {
+        const likes = news.likes || [];
+        const userLiked = currentAccountId ? likes.some(id => id.toString() === currentAccountId.toString()) : false;
+        
+        return {
+            ...news,
+            likesCount: likes.length,
+            userLiked,
+            commentsCount: commentCountMap.get(news._id.toString()) || 0
+        };
+    });
 };
 
-const handleGetNewsById = async (id) => {
+const handleGetNewsById = async (id, currentAccountId = null) => {
     const item = await News.findById(id).populate('movieId').lean();
     if (!item) {
         throw new ApiError(StatusCodes.NOT_FOUND, 'News article not found.');
     }
-    return item;
+
+    const commentsCount = await Comment.countDocuments({ newsId: id });
+    const likes = item.likes || [];
+    const userLiked = currentAccountId ? likes.some(uid => uid.toString() === currentAccountId.toString()) : false;
+
+    return {
+        ...item,
+        likesCount: likes.length,
+        userLiked,
+        commentsCount
+    };
+};
+
+const handleToggleNewsLike = async ({ newsId, accountId }) => {
+    const news = await News.findById(newsId);
+    if (!news) {
+        throw new ApiError(StatusCodes.NOT_FOUND, 'News article not found.');
+    }
+
+    const accountObjId = new mongoose.Types.ObjectId(accountId.toString());
+    const existingIndex = news.likes.findIndex(id => id.toString() === accountId.toString());
+
+    if (existingIndex > -1) {
+        news.likes.splice(existingIndex, 1);
+    } else {
+        news.likes.push(accountObjId);
+    }
+
+    await news.save();
+    return {
+        likesCount: news.likes.length,
+        userLiked: news.likes.some(id => id.toString() === accountId.toString())
+    };
 };
 
 const handleGetComments = async (newsId) => {
@@ -157,6 +210,7 @@ const summarizeReactions = (reactions = [], currentAccountId = null) => {
 export const newsService = {
     handleGetNews,
     handleGetNewsById,
+    handleToggleNewsLike,
     handleGetComments,
     handleCreateComment,
     handleToggleReaction

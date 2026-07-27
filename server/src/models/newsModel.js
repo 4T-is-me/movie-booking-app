@@ -5,7 +5,10 @@ const newsSchema = new mongoose.Schema({
     content: { type: String, required: true },
     image: { type: String },
     publishedAt: { type: Date, default: Date.now },
-    movieId: { type: mongoose.Schema.Types.ObjectId, ref: 'Movie', default: null } // Optional Movie tag
+    movieId: { type: mongoose.Schema.Types.ObjectId, ref: 'Movie', default: null }, // Optional Movie tag
+    authorName: { type: String, default: "Cinema Club" },
+    authorAvatar: { type: String, default: "" },
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Account' }]
 }, { timestamps: true, versionKey: false, collection: 'news' });
 
 // Index for query performance on chronological loading

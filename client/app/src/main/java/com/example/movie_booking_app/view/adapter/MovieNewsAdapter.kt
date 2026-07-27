@@ -16,7 +16,8 @@ import com.example.movie_booking_app.data.model.entity.MovieNews
 import com.google.android.material.imageview.ShapeableImageView
 
 class MovieNewsAdapter(
-    private val onNewsClick: ((MovieNews) -> Unit)? = null
+    private val onNewsClick: ((MovieNews) -> Unit)? = null,
+    private val onLikeClick: ((MovieNews) -> Unit)? = null
 ) : ListAdapter<MovieNews, MovieNewsAdapter.NewsViewHolder>(NewsDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
@@ -25,12 +26,12 @@ class MovieNewsAdapter(
     }
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
-        holder.bind(getItem(position), onNewsClick)
+        holder.bind(getItem(position), onNewsClick, onLikeClick)
     }
 
     class NewsViewHolder(private val binding: ItemMovieNewsBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(news: MovieNews, onNewsClick: ((MovieNews) -> Unit)?) {
+        fun bind(news: MovieNews, onNewsClick: ((MovieNews) -> Unit)?, onLikeClick: ((MovieNews) -> Unit)?) {
             binding.tvNewsTitle.text = news.title
             
             val displayDate = if (news.date.contains("T")) {
@@ -39,7 +40,21 @@ class MovieNewsAdapter(
                 news.date
             }
             binding.tvPostMeta.text = "$displayDate • 🌐"
-            binding.tvAuthorName.text = "Cinema Club ✔️"
+            binding.tvAuthorName.text = news.authorName ?: "Cinema Club ✔️"
+
+            // Author Avatar loading
+            val avatarUrl = news.authorAvatar ?: ""
+            if (avatarUrl.isNotEmpty()) {
+                val fullAvatarUrl = if (avatarUrl.startsWith("http")) avatarUrl
+                                    else "${com.example.movie_booking_app.utils.Constants.BASE_URL.removeSuffix("/")}${avatarUrl}"
+                Glide.with(itemView.context)
+                    .load(fullAvatarUrl)
+                    .placeholder(R.drawable.bg_ai_avatar)
+                    .error(R.drawable.bg_ai_avatar)
+                    .into(binding.ivAuthorAvatar)
+            } else {
+                binding.ivAuthorAvatar.setImageResource(R.drawable.bg_ai_avatar)
+            }
 
             Glide.with(itemView.context)
                 .load(news.imageUrl)
@@ -75,6 +90,10 @@ class MovieNewsAdapter(
                 binding.layoutMovieTag.visibility = android.view.View.GONE
             }
 
+            // Real Social tallies from DB
+            binding.tvLikesTally.text = "👍❤️ ${news.likesCount}"
+            binding.tvCommentsTally.text = "${news.commentsCount} comments"
+
             // Click listener for details redirection
             itemView.setOnClickListener {
                 onNewsClick?.invoke(news)
@@ -83,17 +102,14 @@ class MovieNewsAdapter(
                 onNewsClick?.invoke(news)
             }
 
-            // Simple mock Like button color toggle
-            var isLiked = false
+            // Real Like state color mapping
+            val colorRes = if (news.userLiked) R.color.auto_color_F5C542 else R.color.white
+            val colorVal = androidx.core.content.ContextCompat.getColor(itemView.context, colorRes)
+            binding.ivLikeIcon.setColorFilter(colorVal)
+            binding.tvLikeText.setTextColor(colorVal)
+
             binding.btnLikePost.setOnClickListener {
-                isLiked = !isLiked
-                val colorRes = if (isLiked) R.color.auto_color_F5C542 else R.color.white
-                val colorVal = androidx.core.content.ContextCompat.getColor(itemView.context, colorRes)
-                binding.ivLikeIcon.setColorFilter(colorVal)
-                binding.tvLikeText.setTextColor(colorVal)
-                
-                // Toggle mock tallies
-                binding.tvLikesTally.text = if (isLiked) "👍❤️ 1.9k" else "👍❤️ 1.8k"
+                onLikeClick?.invoke(news)
             }
         }
     }

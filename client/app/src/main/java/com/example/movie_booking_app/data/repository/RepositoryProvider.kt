@@ -11,4 +11,8 @@ object RepositoryProvider {
     fun provideMovieRepository(): MovieRepository {
         return MovieRepositoryRemoteImpl(RetrofitClient.movieApi, RetrofitClient.adminApi, RetrofitClient.newsApi)
     }
+
+    fun provideNewsRepository(): NewsRepository {
+        return NewsRepository(RetrofitClient.newsApi)
+    }
 }
