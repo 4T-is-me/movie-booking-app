@@ -121,4 +121,10 @@ object NetworkModule {
     fun provideChatApi(): com.example.movie_booking_app.data.api.ChatApi {
         return RetrofitClient.chatApi
     }
+
+    @Provides
+    @Singleton
+    fun provideNewsApi(): com.example.movie_booking_app.data.api.NewsApi {
+        return RetrofitClient.newsApi
+    }
 }

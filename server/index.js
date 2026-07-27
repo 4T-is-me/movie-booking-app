@@ -36,6 +36,7 @@ import { ShowtimeReminderJob } from './src/jobs/showtimeReminderJob.js';
 import payrollRoutes from './src/routes/payrollRoutes.js';
 // Added by User - ChatBot AI feature - 2026-07-26
 import chatRoutes from './Chat_Bot_AI/routes/chatRoutes.js';
+import { newsRoute } from './src/routes/newsRoute.js';
 
 
 const app = express();
@@ -77,6 +78,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/payrolls', payrollRoutes);
 // Added by User - ChatBot AI feature - 2026-07-26
 app.use('/api/chat', chatRoutes);
+app.use('/api/news', newsRoute);
 
 
 

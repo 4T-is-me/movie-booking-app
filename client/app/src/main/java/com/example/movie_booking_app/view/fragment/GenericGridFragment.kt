@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import com.example.movie_booking_app.databinding.FragmentGenericListBinding
 import com.example.movie_booking_app.view.adapter.MovieNewsAdapter
 import com.example.movie_booking_app.view.adapter.PromoSeeAllAdapter
 import com.example.movie_booking_app.view.adapter.ServiceAdapter
+import com.example.movie_booking_app.view.activity.NewsDetailActivity
 import kotlinx.coroutines.launch
 
 class GenericGridFragment : Fragment() {
@@ -67,7 +69,19 @@ class GenericGridFragment : Fragment() {
             }
             "News" -> {
                 binding.rvGenericList.layoutManager = GridLayoutManager(context, 1)
-                val adapter = MovieNewsAdapter()
+                val adapter = MovieNewsAdapter { news ->
+                    val intent = Intent(context, NewsDetailActivity::class.java).apply {
+                        putExtra("newsId", news.id)
+                        putExtra("title", news.title)
+                        putExtra("imageUrl", news.imageUrl)
+                        putExtra("date", news.date)
+                        putExtra("content", news.content ?: "")
+                        putExtra("movieId", news.movieId)
+                        putExtra("movieName", news.movieName)
+                        putExtra("moviePoster", news.moviePoster)
+                    }
+                    startActivity(intent)
+                }
                 binding.rvGenericList.adapter = adapter
                 viewLifecycleOwner.lifecycleScope.launch { movieRepository.getNews().collect { adapter.submitList(it) } }
             }

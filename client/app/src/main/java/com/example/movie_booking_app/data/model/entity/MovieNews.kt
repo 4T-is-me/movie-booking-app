@@ -7,5 +7,9 @@ data class MovieNews(
     val id: String,
     val title: String,
     val imageUrl: String,
-    val date: String
+    val date: String,
+    val content: String? = null,
+    val movieId: String? = null,
+    val movieName: String? = null,
+    val moviePoster: String? = null
 )
