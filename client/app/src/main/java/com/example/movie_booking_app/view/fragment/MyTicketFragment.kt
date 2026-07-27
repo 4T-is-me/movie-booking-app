@@ -157,6 +157,16 @@ class MyTicketFragment : Fragment() {
                 }
             }
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.rateErrorMessage.collect { errorMsg ->
+                    errorMsg?.let {
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
     }
 
     private fun showRateStaffDialog(bookingId: String) {
@@ -165,12 +175,14 @@ class MyTicketFragment : Fragment() {
         dialog.setContentView(dialogView)
 
         val ratingBar = dialogView.findViewById<android.widget.RatingBar>(R.id.ratingBar)
+        val etComment = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etComment)
         val btnSubmit = dialogView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnSubmitRating)
 
         btnSubmit.setOnClickListener {
             val rating = ratingBar.rating.toInt()
+            val comment = etComment.text?.toString()?.trim()
             if (rating > 0) {
-                viewModel.rateStaff(bookingId, rating)
+                viewModel.rateStaff(bookingId, rating, comment)
                 dialog.dismiss()
             } else {
                 Toast.makeText(requireContext(), getString(R.string.please_select_rating), Toast.LENGTH_SHORT).show()

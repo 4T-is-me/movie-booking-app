@@ -133,24 +133,34 @@ class WriteReviewActivity : AppCompatActivity() {
     private fun observeViewModel() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.reviewActionSuccess.collect { success ->
-                    binding.progressBar.visibility = View.GONE
-                    binding.btnSubmitReview.isEnabled = true
+                launch {
+                    viewModel.reviewActionSuccess.collect { success ->
+                        binding.progressBar.visibility = View.GONE
+                        binding.btnSubmitReview.isEnabled = true
 
-                    if (success) {
-                        Toast.makeText(
-                            this@WriteReviewActivity,
-                            "Review submitted successfully! 🎉",
-                            Toast.LENGTH_LONG
-                        ).show()
-                        setResult(RESULT_OK)
-                        finish()
-                    } else {
-                        Toast.makeText(
-                            this@WriteReviewActivity,
-                            "Failed to submit review. Please try again.",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        if (success) {
+                            Toast.makeText(
+                                this@WriteReviewActivity,
+                                "Review submitted successfully! 🎉",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            setResult(RESULT_OK)
+                            finish()
+                        }
+                    }
+                }
+
+                launch {
+                    viewModel.reviewErrorMessage.collect { errorMsg ->
+                        if (errorMsg != null) {
+                            binding.progressBar.visibility = View.GONE
+                            binding.btnSubmitReview.isEnabled = true
+                            Toast.makeText(
+                                this@WriteReviewActivity,
+                                errorMsg,
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
                     }
                 }
             }
