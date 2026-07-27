@@ -49,6 +49,35 @@ class PayrollRepository @Inject constructor(
         }
     }
 
+    fun getManagerPayrolls(): Flow<Result<PayrollListResponse>> = flow {
+        try {
+            val response = api.getManagerPayrolls()
+            if (response.isSuccessful && response.body() != null) {
+                emit(Result.success(response.body()!!))
+            } else {
+                val errorMsg = response.errorBody()?.string() ?: "Failed to fetch manager payrolls"
+                emit(Result.failure(Exception(errorMsg)))
+            }
+        } catch (e: Exception) {
+            emit(Result.failure(e))
+        }
+    }
+
+    fun getStaffPayrolls(): Flow<Result<PayrollListResponse>> = flow {
+        try {
+            val response = api.getStaffPayrolls()
+            if (response.isSuccessful && response.body() != null) {
+                emit(Result.success(response.body()!!))
+            } else {
+                val errorMsg = response.errorBody()?.string() ?: "Failed to fetch staff payrolls"
+                emit(Result.failure(Exception(errorMsg)))
+            }
+        } catch (e: Exception) {
+            emit(Result.failure(e))
+        }
+    }
+
+
     fun getPayrollById(id: String): Flow<Result<PayrollDetailResponse>> = flow {
         try {
             val response = api.getPayrollById(id)

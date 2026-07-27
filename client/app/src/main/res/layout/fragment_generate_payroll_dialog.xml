@@ -11,8 +11,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Generate Payroll"
-        android:textColor="@color/auto_color_FFFFFF"
+        android:text="@string/generate_payroll"
+        android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold" />
 
@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="Select the month and year to generate payroll"
+        android:text="@string/select_month_year_generate_payroll"
         android:textColor="@color/text_secondary"
         android:textSize="13sp" />
 
@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="16dp"
-        android:background="@color/auto_color_1AFFFFFF" />
+        android:background="@color/white_transparent_10" />
 
     <!-- Month and Year Row -->
     <LinearLayout
@@ -50,7 +50,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Month"
+                android:text="@string/label_month"
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp"
                 android:textStyle="bold" />
@@ -76,7 +76,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Year"
+                android:text="@string/label_year"
                 android:textColor="@color/text_secondary"
                 android:textSize="12sp"
                 android:textStyle="bold" />
@@ -106,7 +106,7 @@
             android:layout_height="48dp"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:text="Cancel"
+            android:text="@string/dialog_cancel"
             android:textColor="@color/text_secondary"
             android:textStyle="bold" />
 
@@ -116,7 +116,7 @@
             android:layout_height="48dp"
             android:layout_weight="1"
             android:background="@drawable/bg_tab_active_gold"
-            android:text="Generate"
+            android:text="@string/auto_str_generate"
             android:textColor="@color/bg_primary"
             android:textStyle="bold" />
     </LinearLayout>

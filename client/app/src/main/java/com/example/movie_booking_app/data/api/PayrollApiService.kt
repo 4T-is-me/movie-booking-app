@@ -24,9 +24,15 @@ interface PayrollApiService {
         @Query("status") status: String?
     ): Response<PayrollListResponse>
 
+    @GET("/api/payrolls/manager")
+    suspend fun getManagerPayrolls(): Response<PayrollListResponse>
+
+    @GET("/api/payrolls/staff")
+    suspend fun getStaffPayrolls(): Response<PayrollListResponse>
     @GET("/api/payrolls/{id}")
     suspend fun getPayrollById( @Path("id") id: String): Response<PayrollDetailResponse>
 
     @PATCH("/api/payrolls/{id}/pay")
     suspend fun markAsPaid( @Path("id") id: String): Response<GenericMessageResponse>
 }
+
