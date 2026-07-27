@@ -26,7 +26,11 @@ data class UserProfileResponse(
     val favoriteCinema: String? = null,
     val favoriteGenres: List<String>? = null,
     val membershipRank: String? = null,
-    val totalSpent: Int? = null
+    val totalSpent: Int? = null,
+    @SerializedName("kpiPoints") val kpiPoints: Int? = null,
+    @SerializedName("ticketSold") val ticketSold: Int? = null,
+    @SerializedName("rating") val rating: Double? = null,
+    @SerializedName("totalRatings") val totalRatings: Int? = null
 ): Serializable
 
 /**
@@ -51,6 +55,10 @@ fun UserProfileResponse.toUserProfile(): UserProfile {
         favoriteCinema = favoriteCinema,
         favoriteGenres = favoriteGenres,
         membershipRank = membershipRank,
-        totalSpent = totalSpent
+        totalSpent = totalSpent,
+        kpiPoints = kpiPoints,
+        ticketSold = ticketSold,
+        rating = rating,
+        totalRatings = totalRatings
     )
 }

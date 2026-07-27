@@ -1,5 +1,6 @@
 import { Booking } from "../models/bookingModel.js";
 import { Staff } from "../models/staffModel.js";
+import { Member } from "../models/memberModel.js";
 import ApiError from "../utils/ApiError.js";
 import { StatusCodes } from 'http-status-codes';
 
@@ -87,6 +88,40 @@ const checkInTicket = async (accountId, { bookingCode }) => {
     };
 };
 
+const getMyRatings = async (accountId) => {
+    const staff = await checkStaff(accountId);
+
+    const ratings = await Booking.find({
+        checkedInBy: staff._id,
+        isStaffRated: true
+    })
+    .populate({
+        path: 'memberId',
+        select: 'fullName image',
+        populate: {
+            path: 'accountId',
+            select: 'username'
+        }
+    })
+    .sort({ updatedAt: -1 })
+    .lean();
+
+    return ratings.map(item => ({
+        _id: item._id.toString(),
+        rating: item.staffRating || 0,
+        content: item.staffComment || "",
+        createdAt: item.updatedAt || item.createdAt,
+        accountId: {
+            username: item.memberId?.accountId?.username || "Guest",
+            memberInfo: {
+                fullName: item.memberId?.fullName || "Anonymous",
+                image: item.memberId?.image || null
+            }
+        }
+    }));
+};
+
 export const staffService = {
-    checkInTicket
+    checkInTicket,
+    getMyRatings
 };

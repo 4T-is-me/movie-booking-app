@@ -17,6 +17,7 @@ import com.example.movie_booking_app.databinding.ActivityStaffBinding
 import com.example.movie_booking_app.databinding.LayoutMenuBadgeBinding
 import com.example.movie_booking_app.view.fragment.staff.StaffNotificationsFragment
 import com.example.movie_booking_app.view.fragment.staff.StaffProfileFragment
+import com.example.movie_booking_app.view.fragment.staff.StaffRatingFragment
 import com.example.movie_booking_app.view.fragment.staff.StaffRequestsFragment
 import com.example.movie_booking_app.view.fragment.staff.StaffSalesFragment
 import com.example.movie_booking_app.view.fragment.staff.StaffScheduleFragment
@@ -76,6 +77,10 @@ class StaffActivity : BaseActivity() {
                 R.id.nav_staff_requests -> {
                     binding.tvHeaderTitle.text = "Leave Requests"
                     loadFragment(StaffRequestsFragment())
+                }
+                R.id.nav_staff_ratings -> {
+                    binding.tvHeaderTitle.text = "My Ratings"
+                    loadFragment(StaffRatingFragment())
                 }
                 R.id.nav_staff_notifications -> {
                     binding.tvHeaderTitle.text = "Notifications"

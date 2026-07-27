@@ -637,7 +637,7 @@ const handleGetbookingDetail = async (bookingId, accountId) => {
   return responseBookingDetail;
 }
 
-const handleRateStaff = async (bookingId, accountId, rating) => {
+const handleRateStaff = async (bookingId, accountId, rating, comment) => {
   const member = await Member.findOne({ accountId });
   if (!member) throw new ApiError(StatusCodes.NOT_FOUND, "Member not found");
 
@@ -671,6 +671,7 @@ const handleRateStaff = async (bookingId, accountId, rating) => {
   // Update booking
   booking.isStaffRated = true;
   booking.staffRating = rating;
+  booking.staffComment = comment?.trim() || "";
   await booking.save();
 
   return { rating: newRating, totalRatings: newTotalRatings };

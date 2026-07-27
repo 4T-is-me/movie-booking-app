@@ -899,11 +899,14 @@
     <string name="auto_str_08_00_am_12_00_pm">08:00 AM - 12:00 PM</string>
     <string name="auto_str_ticket_counter_staff_member">Staff Member</string>
     <string name="auto_str_weekly_shifts">Weekly Shifts</string>
+    <string name="auto_str_your_comment">Your Comment (Optional)</string>
     <string name="auto_str_settings_placeholder">Settings Placeholder</string>
     <string name="auto_str_ticket_validator_placeholder">Ticket Validator Placeholder</string>
     <string name="auto_str_user">User</string>
     <string name="auto_str_2_days_ago">2 days ago</string>
     <string name="auto_str_this_is_a_sample_review_commen">This is a sample review comment about the movie...</string>
+    <string name="total_reviews_format">%d reviews</string>
+    <string name="nav_staff_ratings">My Ratings</string>
     <string name="auto_str_now_playing">NOW PLAYING</string>
     <string name="auto_str_16">16</string>
     <string name="auto_str_jul">Jul</string>
