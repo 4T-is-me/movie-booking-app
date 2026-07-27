@@ -4,7 +4,7 @@ import android.content.Intent
 import android.graphics.Color
 import com.github.mikephil.charting.data.Entry
 import android.os.Bundle
-import android.util.Log
+import timber.log.Timber
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -141,7 +141,7 @@ class ManagerActivity : AppCompatActivity() {
                     }
 
                     val weeklyData = data.weeklyRevenue.orEmpty()
-                    //Log.d("CheckShowtime", "Data: $weeklyData")
+                    //Timber.tag("CheckShowtime").d("Data: $weeklyData")
                     if(weeklyData.isNotEmpty()) {
                         setUpWeeklyChart(weeklyData)
                     }

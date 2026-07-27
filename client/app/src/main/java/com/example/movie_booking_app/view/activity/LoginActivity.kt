@@ -2,7 +2,7 @@ package com.example.movie_booking_app.view.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import timber.log.Timber
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -48,7 +48,7 @@ class LoginActivity : EnglishBaseActivity() {
                 showError("Google Sign-In failed: No ID token")
             }
         } catch (e: ApiException) {
-            Log.w("LOGIN_DEBUG", "Google sign in failed", e)
+            Timber.tag("LOGIN_DEBUG").w(e, "Google sign in failed")
             showError("Google Sign-In failed: ${e.statusCode}")
         }
     }
@@ -94,7 +94,7 @@ class LoginActivity : EnglishBaseActivity() {
             }
             // remove Log.d(use ... chạy debug)
             // bắt logic cccd 9 - 12 số
-            Log.d("LOGIN_DEBUG", "Username: $username")
+            Timber.tag("LOGIN_DEBUG").d("Username: $username")
             hideError()
 
             viewModel.login(LoginRequest(username, password))
@@ -108,7 +108,7 @@ class LoginActivity : EnglishBaseActivity() {
                 .build()
             googleSignInClient = GoogleSignIn.getClient(this, gso)
         } else {
-            Log.e("LOGIN_DEBUG", "GOOGLE_CLIENT_ID is missing in local.properties or .env")
+            Timber.tag("LOGIN_DEBUG").e("GOOGLE_CLIENT_ID is missing in local.properties or .env")
         }
 
         binding.btnGoogleLogin.setOnClickListener {
@@ -152,7 +152,7 @@ class LoginActivity : EnglishBaseActivity() {
                                 .putString("username", loggedInUsername)
                                 .apply()
 
-                            Log.d("LOGIN_DEBUG", "Saved username to app_prefs: $loggedInUsername")
+                            Timber.tag("LOGIN_DEBUG").d("Saved username to app_prefs: $loggedInUsername")
                         }
                         // use lifeCycle
                         lifecycleScope.launch(Dispatchers.IO + NonCancellable) {

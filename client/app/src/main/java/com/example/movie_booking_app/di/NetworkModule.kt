@@ -15,6 +15,7 @@ import com.example.movie_booking_app.data.api.LeaveRequestApi
 import com.example.movie_booking_app.data.api.NotificationApi
 import com.example.movie_booking_app.data.api.PayrollApiService
 import com.example.movie_booking_app.data.api.RetrofitClient
+import com.example.movie_booking_app.data.api.MaintenanceApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

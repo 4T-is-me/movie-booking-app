@@ -1,7 +1,7 @@
 package com.example.movie_booking_app.view.activity
 
 import android.os.Bundle
-import android.util.Log
+import timber.log.Timber
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -150,7 +150,7 @@ class PayrollDetailActivity : AppCompatActivity() {
     }
 
     private fun bindStaffDetails(payroll: PayrollItem) {
-        Log.d("detail", payroll.shiftCount.toString())
+        Timber.tag("detail").d(payroll.shiftCount.toString())
         binding.layoutStaffDetails.visibility = View.VISIBLE
         binding.layoutManagerDetails.visibility = View.GONE
 

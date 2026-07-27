@@ -1,6 +1,6 @@
 package com.example.movie_booking_app.data.repository
 
-import android.util.Log
+import timber.log.Timber
 import com.example.movie_booking_app.data.api.MovieApi
 import com.example.movie_booking_app.data.api.AdminApiService
 import com.example.movie_booking_app.data.model.entity.Movie
@@ -193,13 +193,13 @@ class MovieRepositoryRemoteImpl @Inject constructor(
             val response = adminApi.deleteMovie(id)
             if (!response.isSuccessful) {
                 val errorBody = response.errorBody()?.string()
-                Log.e("MovieRepoRemote", "Delete movie failed: ${response.code()} - $errorBody")
+                Timber.tag("MovieRepoRemote").e("Delete movie failed: ${response.code()} - $errorBody")
             } else {
-                Log.d("MovieRepoRemote", "Delete movie successful for id: $id")
+                Timber.tag("MovieRepoRemote").d("Delete movie successful for id: $id")
             }
             response.isSuccessful
         } catch (e: Exception) {
-            Log.e("MovieRepoRemote", "Delete movie exception: ${e.message}", e)
+            Timber.tag("MovieRepoRemote").e(e, "Delete movie exception: ${e.message}")
             false
         }
     }
