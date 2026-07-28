@@ -19,6 +19,7 @@ import com.example.movie_booking_app.data.model.entity.Cinema
 import com.example.movie_booking_app.databinding.FragmentAdminPayrollBinding
 import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.view.activity.PayrollDetailActivity
+import com.example.movie_booking_app.view.activity.PayrollConfigActivity
 import com.example.movie_booking_app.view.adapter.PayrollAdapter
 import com.example.movie_booking_app.view.fragment.GeneratePayrollDialogFragment
 import com.example.movie_booking_app.viewmodel.PayrollViewModel
@@ -157,8 +158,13 @@ class AdminPayrollFragment : Fragment() {
                 if (viewModel.isAdmin()) {
                     binding.btnGeneratePayroll.visibility = View.VISIBLE
                     binding.btnGeneratePayroll.setOnClickListener { showGenerateDialog() }
+                    binding.btnPayrollConfig.visibility = View.VISIBLE
+                    binding.btnPayrollConfig.setOnClickListener {
+                        startActivity(Intent(requireContext(), PayrollConfigActivity::class.java).putExtra(PayrollConfigActivity.EXTRA_IS_ADMIN, true))
+                    }
                 } else {
                     binding.btnGeneratePayroll.visibility = View.GONE
+                    binding.btnPayrollConfig.visibility = View.GONE
                 }
 
                 launch {

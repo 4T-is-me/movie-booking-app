@@ -21,6 +21,7 @@ import com.example.movie_booking_app.data.model.response.PayrollItem
 import com.example.movie_booking_app.databinding.FragmentManagerPayrollBinding
 import com.example.movie_booking_app.utils.NameFormatter
 import com.example.movie_booking_app.view.activity.PayrollDetailActivity
+import com.example.movie_booking_app.view.activity.PayrollConfigActivity
 import com.example.movie_booking_app.view.adapter.PayrollAdapter
 import com.example.movie_booking_app.viewmodel.manager.ManagerPayrollViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -52,6 +53,9 @@ class ManagerPayrollFragment : Fragment() {
 
         setupRecyclerView()
         setupFilters()
+        binding.btnPayrollConfig.setOnClickListener {
+            startActivity(Intent(requireContext(), PayrollConfigActivity::class.java).putExtra(PayrollConfigActivity.EXTRA_IS_ADMIN, false))
+        }
         observeViewModel()
         viewModel.loadManagerPayrolls()
     }

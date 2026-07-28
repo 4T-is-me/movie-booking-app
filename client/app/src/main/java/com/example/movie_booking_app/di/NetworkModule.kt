@@ -15,6 +15,7 @@ import com.example.movie_booking_app.data.api.FoodApi
 import com.example.movie_booking_app.data.api.LeaveRequestApi
 import com.example.movie_booking_app.data.api.NotificationApi
 import com.example.movie_booking_app.data.api.PayrollApiService
+import com.example.movie_booking_app.data.api.PayrollConfigApi
 import com.example.movie_booking_app.data.api.RetrofitClient
 import com.example.movie_booking_app.data.api.MaintenanceApi
 import com.example.movie_booking_app.data.api.ChatApi
@@ -133,7 +134,11 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideChatApi(): ChatApi {
+    fun providePayrollConfigApi(): PayrollConfigApi = RetrofitClient.payrollConfigApi
+
+    @Provides
+    @Singleton
+    fun provideChatApi(): com.example.movie_booking_app.data.api.ChatApi {
         return RetrofitClient.chatApi
     }
 

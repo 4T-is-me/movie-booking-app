@@ -115,6 +115,10 @@ object RetrofitClient {
 =======
 >>>>>>> origin/develop
 
+    val payrollConfigApi: PayrollConfigApi by lazy {
+        instance.create(PayrollConfigApi::class.java)
+    }
+
     // Added by AI Assistant - Maintenance API support - 2026-07-26
     val maintenanceApi: MaintenanceApi by lazy {
         instance.create(MaintenanceApi::class.java)

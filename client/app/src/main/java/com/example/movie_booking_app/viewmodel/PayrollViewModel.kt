@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import javax.inject.Inject
 
 @HiltViewModel
@@ -164,13 +165,15 @@ class PayrollViewModel @Inject constructor(
                         _generateResult.value = msg.ifEmpty { context.getString(R.string.msg_payroll_generated_success) }
                     }
                 }.onFailure { exception ->
-                    val errorMsg = exception.message ?: ""
-                    if (errorMsg.contains("already generated", ignoreCase = true) || 
-                        errorMsg.contains("exists", ignoreCase = true) ||
-                        errorMsg.contains("409", ignoreCase = true)) {
+                    val rawError = exception.message ?: ""
+                    val finalMsg = parseRawError(rawError) ?: rawError
+
+                    if (finalMsg.contains("already generated", ignoreCase = true) ||
+                        finalMsg.contains("exists", ignoreCase = true) ||
+                        finalMsg.contains("409", ignoreCase = true)) {
                         _errorMessage.value = context.getString(R.string.error_payroll_already_generated)
                     } else {
-                        _errorMessage.value = errorMsg.ifEmpty { context.getString(R.string.error_generate_payroll_failed) }
+                        _errorMessage.value = finalMsg.ifEmpty { context.getString(R.string.error_generate_payroll_failed) }
                     }
                 }
             }
@@ -187,9 +190,24 @@ class PayrollViewModel @Inject constructor(
                     // Reload detail
                     loadPayrollDetail(id)
                 }.onFailure { exception ->
-                    _errorMessage.value = exception.message ?: context.getString(R.string.error_update_payment_status)
+                    val rawError = exception.message ?: ""
+                    _errorMessage.value = parseRawError(rawError) ?: rawError.ifEmpty { context.getString(R.string.error_update_payment_status) }
                 }
             }
+        }
+    }
+
+    private fun parseRawError(rawError: String): String? {
+        return try {
+            val json = JSONObject(rawError)
+            val errors = json.optJSONArray("errors")
+            if (errors != null && errors.length() > 0) {
+                errors.getJSONObject(0).optString("message")
+            } else {
+                json.optString("message").let { if (it.isEmpty()) null else it }
+            }
+        } catch (e: Exception) {
+            null
         }
     }
 

@@ -4,7 +4,7 @@ const payrollConfigSchema = new mongoose.Schema(
   {
     shiftRates: {
       type: Map,
-      of: Number,
+      of: { type: Number, min: 0 },
       default: {
         Morning: 150000,
         Afternoon: 150000,
@@ -15,14 +15,16 @@ const payrollConfigSchema = new mongoose.Schema(
     holidayMultiplier: {
       type: Number,
       default: 1.5,
+      min: 1,
     },
     managerRevenueBonus: {
       type: Number,
       default: 2000000,
+      min: 0,
     },
     updatedBy: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Admin',
+      ref: 'Account',
     },
   },
   {

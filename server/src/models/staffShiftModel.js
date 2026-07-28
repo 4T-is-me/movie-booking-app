@@ -7,6 +7,9 @@ const staffShiftSchema = new mongoose.Schema({
     shift: { type: String, required: true },//'Morning', 'Afternoon', 'Evening', 'Night'
     status: { type: String, default: 'Assigned' }, //'Assigned', 'Completed', 'Absent', 'NeedReplacement'
     isHoliday: { type: Boolean, default: false },
+    shiftRate: { type: Number, min: 0 },
+    holidayMultiplier: { type: Number, min: 0 },
+    salary: { type: Number, min: 0 },
     originalStaffId: { type: mongoose.Schema.Types.ObjectId, ref: 'Staff' }
 }, {
     timestamps: true,
