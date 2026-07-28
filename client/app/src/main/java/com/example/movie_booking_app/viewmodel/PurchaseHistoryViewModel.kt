@@ -56,10 +56,10 @@ class PurchaseHistoryViewModel @Inject constructor(
         }
     }
 
-    fun rateStaff(bookingId: String, rating: Int) {
+    fun rateStaff(bookingId: String, rating: Int, comment: String? = null) {
         viewModelScope.launch {
             try {
-                val response = repository.rateStaff(bookingId, rating)
+                val response = repository.rateStaff(bookingId, rating, comment)
                 if (response.isSuccessful) {
                     _rateSuccess.emit(true)
                     loadHistory()

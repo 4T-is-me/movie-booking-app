@@ -95,8 +95,25 @@ object RetrofitClient {
         instance.create(NotificationApi::class.java)
     }
 
+    val foodApi: FoodApi by lazy {
+        instance.create(FoodApi::class.java)
+    }
+
+    val inventoryApi: InventoryApi by lazy {
+        instance.create(InventoryApi::class.java)
+    }
+
     val payrollApi: PayrollApiService by lazy {
         instance.create(PayrollApiService::class.java)
+    }
+
+    val maintenanceApi: MaintenanceApi by lazy {
+        instance.create(MaintenanceApi::class.java)
+    }
+
+
+    val payrollConfigApi: PayrollConfigApi by lazy {
+        instance.create(PayrollConfigApi::class.java)
     }
 
     // Added by AI Assistant - Maintenance API support - 2026-07-26
@@ -113,4 +130,3 @@ object RetrofitClient {
         instance.create(NewsApi::class.java)
     }
 }
-

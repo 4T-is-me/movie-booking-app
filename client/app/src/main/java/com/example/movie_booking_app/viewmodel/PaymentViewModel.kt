@@ -9,13 +9,7 @@ import com.example.movie_booking_app.data.model.request.ConfirmBookingRequest
 import com.example.movie_booking_app.data.repository.PaymentRepository
 import com.example.movie_booking_app.data.repository.ProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.example.movie_booking_app.utils.Constants
@@ -35,37 +29,34 @@ class PaymentViewModel @Inject constructor(
     private var discountType: String? = null
     private var discountValue = 0.0
 
-    private var combo1Quantity = 0
-    private var combo2Quantity = 0
-
     fun initBooking(booking: Booking) {
-        val total = booking.ticketTotal + booking.bookingFee
         _uiState.value = BookingUiState(
             booking = booking,
             ticketSubtotal = booking.ticketTotal,
-            grandTotal = total
+            comboSubtotal = booking.comboTotal,
+            grandTotal = booking.grandTotal,
+            bookingFee = booking.bookingFee
         )
         observeTimer()
         loadRewardPoints()
+        recalculateTotals()
     }
 
     private fun loadRewardPoints() {
         viewModelScope.launch {
             profileRepository.getUserProfile()
-                .catch { exception ->
-                    _uiState.value = _uiState.value.copy(availablePoints = 0)
-                }
+                .catch { _uiState.update { it.copy(availablePoints = 0) } }
                 .collect { profile ->
-                    _uiState.value = _uiState.value.copy(
-                        availablePoints = maxOf(0, profile.rewardPoints ?: 0)
-                    )
+                    _uiState.update { 
+                        it.copy(availablePoints = maxOf(0, profile.rewardPoints ?: 0))
+                    }
                     recalculateTotals()
                 }
         }
     }
 
     fun toggleRewardPoints(usePoints: Boolean) {
-        _uiState.value = _uiState.value.copy(useRewardPoints = usePoints)
+        _uiState.update { it.copy(useRewardPoints = usePoints) }
         recalculateTotals()
     }
 
@@ -74,38 +65,26 @@ class PaymentViewModel @Inject constructor(
             timerManager.remainingSeconds.collect { seconds ->
                 val minutes = seconds / 60
                 val secs = seconds % 60
-                val timeStr = String.format("%02d:%02d", minutes, secs)
-                _uiState.value = _uiState.value.copy(
-                    countdownText = timeStr
-                )
+                _uiState.update { it.copy(countdownText = String.format("%02d:%02d", minutes, secs)) }
             }
         }
         viewModelScope.launch {
             timerManager.isExpired.collect { expired ->
                 if (expired) {
-                    _uiState.value = _uiState.value.copy(isCountdownExpired = true)
+                    _uiState.update { it.copy(isCountdownExpired = true) }
                 }
             }
         }
     }
 
     fun selectPaymentMethod(method: String) {
-        _uiState.value = _uiState.value.copy(selectedPaymentMethod = method)
-    }
-
-    fun updateCombo1Quantity(quantity: Int) {
-        combo1Quantity = maxOf(0, quantity)
-        recalculateTotals()
-    }
-
-    fun updateCombo2Quantity(quantity: Int) {
-        combo2Quantity = maxOf(0, quantity)
-        recalculateTotals()
+        _uiState.update { it.copy(selectedPaymentMethod = method) }
     }
 
     private fun recalculateTotals() {
-        val ticketSub = maxOf(0, _uiState.value.ticketSubtotal)
-        val comboSub = maxOf(0, (combo1Quantity * Constants.ComboPrice.SINGLE_COMBO) + (combo2Quantity * Constants.ComboPrice.DOUBLE_COMBO))
+        val state = _uiState.value
+        val ticketSub = state.ticketSubtotal
+        val comboSub = state.comboSubtotal
         
         val subtotal = ticketSub + comboSub
         val rawPromotionDiscount = when (discountType) {
@@ -116,67 +95,67 @@ class PaymentViewModel @Inject constructor(
         val promotionDiscount = minOf(maxOf(0, rawPromotionDiscount), subtotal)
         
         val afterPromotion = maxOf(0, subtotal - promotionDiscount)
-        val availablePointsVal = maxOf(0, _uiState.value.availablePoints) * 10
-        val rewardDiscount = if (_uiState.value.useRewardPoints) {
+        val availablePointsVal = maxOf(0, state.availablePoints) * 10
+        val rewardDiscount = if (state.useRewardPoints) {
             minOf(availablePointsVal, afterPromotion)
         } else {
             0
         }
         
-        val fee = maxOf(0, _uiState.value.bookingFee)
+        val fee = state.bookingFee
         val grandTotal = maxOf(0, subtotal + fee - promotionDiscount - rewardDiscount)
         val pointsEarned = floor((grandTotal * 0.05) / 10.0).toInt()
 
-        _uiState.value = _uiState.value.copy(
-            comboSubtotal = comboSub,
+        _uiState.update { it.copy(
             discountAmount = promotionDiscount,
             rewardDiscount = rewardDiscount,
             grandTotal = grandTotal,
             earnedPoints = pointsEarned
-        )
+        ) }
     }
 
     fun removeCoupon() {
         discountLevelPercent = 0
         discountType = null
         discountValue = 0.0
-        _uiState.value = _uiState.value.copy(
+        _uiState.update { it.copy(
             couponApplied = false,
             couponSuccessMessage = null,
             couponError = null,
             promotionId = null,
             discountAmount = 0
-        )
+        ) }
         recalculateTotals()
     }
 
     fun applyCoupon(code: String) {
         if (code.trim().isEmpty()) {
-            _uiState.value = _uiState.value.copy(couponError = "Please enter a valid coupon code")
+            _uiState.update { it.copy(couponError = "Please enter a valid coupon code") }
             return
         }
 
         viewModelScope.launch {
             repository.applyPromotion(code)
                 .onStart {
-                    _uiState.value = _uiState.value.copy(isLoading = true, couponError = null, couponSuccessMessage = null)
+                    _uiState.update { it.copy(isLoading = true, couponError = null, couponSuccessMessage = null) }
                 }
                 .catch { exception ->
-                    _uiState.value = _uiState.value.copy(
+                    _uiState.update { it.copy(
                         isLoading = false,
                         couponError = exception.message ?: "Invalid or expired coupon"
-                    )
+                    ) }
                 }
                 .collect { response ->
-                    _uiState.value = _uiState.value.copy(
+                    discountLevelPercent = response.data?.discountLevel ?: 0
+                    discountType = response.data?.discountType
+                    discountValue = response.data?.discountValue ?: 0.0
+                    
+                    _uiState.update { it.copy(
                         isLoading = false,
                         couponApplied = true,
                         couponSuccessMessage = response.message ?: "Coupon applied!",
                         promotionId = response.data?.id
-                    )
-                    discountLevelPercent = response.data?.discountLevel ?: 0
-                    discountType = response.data?.discountType
-                    discountValue = response.data?.discountValue ?: 0.0
+                    ) }
                     recalculateTotals()
                 }
         }
@@ -187,22 +166,18 @@ class PaymentViewModel @Inject constructor(
         val booking = state.booking ?: return
 
         if (state.selectedPaymentMethod == null) {
-            _uiState.value = _uiState.value.copy(error = "Please select a payment method")
+            _uiState.update { it.copy(error = "Please select a payment method") }
             return
         }
 
         if (state.isCountdownExpired) {
-            _uiState.value = _uiState.value.copy(error = "Booking session expired")
+            _uiState.update { it.copy(error = "Booking session expired") }
             return
         }
 
-        val requestCombos = mutableListOf<ComboRequest>()
-        if (combo1Quantity > 0) {
-            requestCombos.add(ComboRequest("combo1", "Single Combo", combo1Quantity, Constants.ComboPrice.SINGLE_COMBO))
-        }
-        if (combo2Quantity > 0) {
-            requestCombos.add(ComboRequest("combo2", "Double Combo", combo2Quantity, Constants.ComboPrice.DOUBLE_COMBO))
-        }
+        val requestCombos = booking.combos?.map { 
+            ComboRequest(it.comboId, it.name, it.quantity, it.price)
+        } ?: emptyList()
 
         viewModelScope.launch {
             val request = ConfirmBookingRequest(
@@ -217,22 +192,22 @@ class PaymentViewModel @Inject constructor(
 
             repository.confirmBooking(request)
                 .onStart {
-                    _uiState.value = _uiState.value.copy(isCheckingOut = true, error = null)
+                    _uiState.update { it.copy(isCheckingOut = true, error = null) }
                 }
                 .catch { exception ->
                     val errorMsg = exception.message ?: "Checkout failed"
                     if (errorMsg.contains("Not enough reward points", ignoreCase = true)) {
-                        _uiState.value = _uiState.value.copy(
+                        _uiState.update { it.copy(
                             isCheckingOut = false,
                             useRewardPoints = false,
                             error = "You don't have enough reward points."
-                        )
+                        ) }
                         recalculateTotals()
                     } else {
-                        _uiState.value = _uiState.value.copy(
+                        _uiState.update { it.copy(
                             isCheckingOut = false,
                             error = errorMsg
-                        )
+                        ) }
                     }
                 }
                 .collect {
@@ -241,23 +216,19 @@ class PaymentViewModel @Inject constructor(
                     } catch (e: Exception) {
                         android.util.Log.e("PaymentViewModel", "Failed to refresh profile after checkout", e)
                     }
-                    _uiState.value = _uiState.value.copy(
+                    _uiState.update { it.copy(
                         isCheckingOut = false,
                         checkoutSuccess = true
-                    )
+                    ) }
                 }
         }
     }
 
     fun resetErrors() {
-        _uiState.value = _uiState.value.copy(
+        _uiState.update { it.copy(
             error = null,
             couponError = null,
             couponSuccessMessage = null
-        )
-    }
-
-    override fun onCleared() {
-        super.onCleared()
+        ) }
     }
 }

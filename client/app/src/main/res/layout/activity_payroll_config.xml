@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_primary"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="24dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="12dp"
+            android:paddingTop="12dp">
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/back"
+                android:padding="10dp"
+                android:src="@drawable/ic_back"
+                android:tint="@color/text_primary" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/payroll_config"
+                    android:textColor="@color/text_primary"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvConfigSubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/payroll_config_subtitle"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/ivEditIndicator"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@string/edit_payroll_config"
+                android:src="@drawable/ic_edit"
+                android:tint="@color/accent_primary" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvReadOnly"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_rounded_badge"
+            android:backgroundTint="@color/payroll_config_read_only"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="6dp"
+            android:text="@string/payroll_config_read_only"
+            android:textColor="@color/text_primary"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:background="@drawable/bg_circle_glass"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView style="@style/PayrollConfigFieldLabel" android:text="@string/morning_shift_rate" />
+            <EditText android:id="@+id/etMorningRate" style="@style/PayrollConfigFieldInput" android:inputType="numberDecimal" />
+            <TextView style="@style/PayrollConfigFieldLabel" android:text="@string/afternoon_shift_rate" />
+            <EditText android:id="@+id/etAfternoonRate" style="@style/PayrollConfigFieldInput" android:inputType="numberDecimal" />
+            <TextView style="@style/PayrollConfigFieldLabel" android:text="@string/evening_shift_rate" />
+            <EditText android:id="@+id/etEveningRate" style="@style/PayrollConfigFieldInput" android:inputType="numberDecimal" />
+            <TextView style="@style/PayrollConfigFieldLabel" android:text="@string/night_shift_rate" />
+            <EditText android:id="@+id/etNightRate" style="@style/PayrollConfigFieldInput" android:inputType="numberDecimal" />
+            <TextView style="@style/PayrollConfigFieldLabel" android:text="@string/holiday_multiplier" />
+            <EditText android:id="@+id/etHolidayMultiplier" style="@style/PayrollConfigFieldInput" android:inputType="numberDecimal" />
+            <TextView style="@style/PayrollConfigFieldLabel" android:text="@string/manager_revenue_bonus" />
+            <EditText android:id="@+id/etManagerRevenueBonus" style="@style/PayrollConfigFieldInput" android:inputType="numberDecimal" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnSaveConfig"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginHorizontal="20dp"
+            android:background="@drawable/bg_tab_active_gold"
+            android:text="@string/save_payroll_config"
+            android:textColor="@color/bg_primary"
+            android:textStyle="bold" />
+
+        <ProgressBar
+            android:id="@+id/progressConfig"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:visibility="gone" />
+    </LinearLayout>
+</ScrollView>

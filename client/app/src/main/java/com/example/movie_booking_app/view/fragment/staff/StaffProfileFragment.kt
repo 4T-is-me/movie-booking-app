@@ -8,10 +8,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.movie_booking_app.databinding.FragmentStaffProfileBinding
 import com.example.movie_booking_app.view.activity.ChangePasswordActivity
 import com.example.movie_booking_app.viewmodel.ProfileViewModel
+import com.example.movie_booking_app.viewmodel.staff.StaffScheduleViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -22,6 +25,7 @@ class StaffProfileFragment : Fragment() {
     private var _binding: FragmentStaffProfileBinding? = null
     private val binding get() = _binding!!
     private val viewModel: ProfileViewModel by viewModels()
+    private val scheduleViewModel: StaffScheduleViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,8 +40,17 @@ class StaffProfileFragment : Fragment() {
         
         setupListeners()
         observeViewModel()
-        
+        refreshProfileData()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshProfileData()
+    }
+
+    private fun refreshProfileData() {
         viewModel.loadUserProfile()
+        scheduleViewModel.loadShifts()
     }
 
     private fun setupListeners() {
@@ -99,7 +112,11 @@ class StaffProfileFragment : Fragment() {
                     binding.fieldEmail.setValue(it.email ?: "")
                     binding.fieldPhone.setValue(it.phone ?: "")
                     binding.fieldAddress.setValue(it.address ?: "")
-                    
+
+                    binding.tvStaffKpi.text = (it.kpiPoints ?: 0).toString()
+                    binding.tvStaffTickets.text = (it.ticketSold ?: 0).toString()
+                    binding.tvStaffRating.text = String.format(java.util.Locale.US, "%.1f", it.rating ?: 0.0)
+
                     val initials = it.fullName?.split(" ")
                         ?.mapNotNull { word -> word.firstOrNull()?.uppercase() }
                         ?.take(2)?.joinToString("") ?: "S"
@@ -124,10 +141,21 @@ class StaffProfileFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.updateSuccess.collectLatest { success ->
-                if (success) {
-                    com.google.android.material.snackbar.Snackbar.make(binding.root, "Profile updated successfully!", com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
-                    viewModel.resetUpdateSuccess()
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                scheduleViewModel.shifts.collectLatest { shifts ->
+                    if (shifts.isNotEmpty()) {
+                        val firstShift = shifts.first()
+                        // Update rating if not already set by profile API
+                        if (binding.tvStaffRating.text == "0.0" || binding.tvStaffRating.text == "0,0") {
+                            val rating = firstShift.rating ?: 0.0
+                            binding.tvStaffRating.text = String.format(java.util.Locale.US, "%.1f", rating)
+                        }
+                        // Update KPI if not already set
+                        if (binding.tvStaffKpi.text == "0") {
+                            val kpi = firstShift.kpiPoints ?: 0
+                            binding.tvStaffKpi.text = kpi.toString()
+                        }
+                    }
                 }
             }
         }

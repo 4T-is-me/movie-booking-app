@@ -70,6 +70,10 @@
             android:exported="true"
             android:theme="@style/Theme.Moviebookingapp" />
         <activity
+            android:name=".view.activity.SelectFoodActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp" />
+        <activity
             android:name=".view.activity.MovieDetailActivity"
             android:exported="true"
             android:theme="@style/Theme.Moviebookingapp" />
@@ -86,6 +90,16 @@
             android:exported="false"
             android:theme="@style/Theme.Moviebookingapp"
             android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".view.activity.admin.AdminInventoryActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".view.activity.admin.AdminFoodMenuActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp"
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".view.activity.AdminEditPromotionActivity"
@@ -186,6 +200,10 @@
 
         <activity
             android:name=".view.activity.PayrollDetailActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp" />
+        <activity
+            android:name=".view.activity.PayrollConfigActivity"
             android:exported="false"
             android:theme="@style/Theme.Moviebookingapp" />
 

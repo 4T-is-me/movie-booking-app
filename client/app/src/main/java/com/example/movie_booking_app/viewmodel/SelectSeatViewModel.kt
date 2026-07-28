@@ -24,6 +24,7 @@ class SelectSeatViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val movieId: String = savedStateHandle["movieId"] ?: ""
+    private val targetCinemaId: String? = savedStateHandle["cinemaId"]
 
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
@@ -79,9 +80,15 @@ class SelectSeatViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             repository.getMovieShowtimes(targetMovieId).collect { list ->
-                _allShowtimes.value = list
+                val filteredList = if (!targetCinemaId.isNullOrEmpty()) {
+                    val filtered = list.filter { showtime -> showtime.cinemaId?.id == targetCinemaId }
+                    if (filtered.isNotEmpty()) filtered else list
+                } else {
+                    list
+                }
+                _allShowtimes.value = filteredList
                 
-                if (list.isEmpty()) {
+                if (filteredList.isEmpty()) {
                     _isLoading.value = false
                     _errorMessage.emit(savedStateHandle.get<String>("error_no_showtimes") ?: "This movie has no available showtimes.")
                     return@collect

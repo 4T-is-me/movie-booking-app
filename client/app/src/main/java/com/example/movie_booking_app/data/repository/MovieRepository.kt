@@ -24,6 +24,7 @@ interface MovieRepository {
     suspend fun deleteMovie(id: String): Boolean
     fun getMovieDetailsById(id: String): Flow<Movie>
     fun getMovieShowtimes(movieId: String): Flow<List<Showtime>>
-    suspend fun submitReview(movieId: String, rating: Int, comment: String): Boolean
+    suspend fun submitReview(movieId: String, rating: Int, comment: String?): Boolean
+    suspend fun submitReviewWithResult(movieId: String, rating: Int, comment: String?): retrofit2.Response<com.example.movie_booking_app.data.api.ReviewSubmitResponse>
     suspend fun getMovieReviews(movieId: String, page: Int = 1, limit: Int = 5): List<ReviewItem>
 }

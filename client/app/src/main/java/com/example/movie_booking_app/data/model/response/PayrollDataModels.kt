@@ -26,15 +26,17 @@ data class PayrollItem(
     @SerializedName("cinemaId") val cinema: CinemaInfo?,
     @SerializedName("month") val month: Int,
     @SerializedName("year") val year: Int,
-    @SerializedName("status") val status: String, // "Draft" or "Paid"
-    @SerializedName("totalSalary") val totalSalary: Double,
-    
-    // Chi tiết cho Staff & Manager
+    @SerializedName("baseSalary") val baseSalary: Double? = 0.0,
     @SerializedName("shiftSalary") val shiftSalary: Double? = 0.0,
-    @SerializedName("shiftCount") val shiftCount: ShiftCountDetail? = null,
-    @SerializedName("penalty") val penalty: Double? = 0.0,
     @SerializedName("bonus") val bonus: Double? = 0.0,
-    @SerializedName("baseSalary") val baseSalary: Double? = 0.0
+    @SerializedName("penalty") val penalty: Double? = 0.0,
+    @SerializedName("totalSalary") val totalSalary: Double,
+    @SerializedName("status") val status: String, // "Draft" or "Paid"
+    @SerializedName("generatedAt") val generatedAt: String? = null,
+    @SerializedName("paidAt") val paidAt: String? = null,
+    
+    // Additional fields
+    @SerializedName("shiftCount") val shiftCount: ShiftCountDetail? = null
 ) : Serializable
 
 data class EmployeeInfo(
@@ -57,3 +59,4 @@ data class ShiftCountDetail(
     @SerializedName("night") val night: Int = 0,
     @SerializedName("absent") val absent: Int = 0
 ) : Serializable
+

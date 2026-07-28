@@ -10,6 +10,7 @@ import com.example.movie_booking_app.data.model.entity.Service
 import com.example.movie_booking_app.data.model.entity.Showtime
 import com.example.movie_booking_app.data.model.request.AddMovieRequest
 import com.example.movie_booking_app.data.model.request.UpdateMovieRequest
+import com.example.movie_booking_app.data.api.ReviewRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -232,13 +233,26 @@ class MovieRepositoryRemoteImpl @Inject constructor(
         }
     }
 
-    override suspend fun submitReview(movieId: String, rating: Int, comment: String): Boolean {
+    override suspend fun submitReview(movieId: String, rating: Int, comment: String?): Boolean {
         return try {
-            val response = api.submitReview(movieId, com.example.movie_booking_app.data.api.ReviewRequest(rating, comment))
-            response.isSuccessful
+            val response = api.submitReview(movieId, ReviewRequest(rating, comment))
+            if (!response.isSuccessful || response.body()?.success != true) {
+                val errorBody = response.errorBody()?.string() ?: response.body()?.message
+                Log.e("MovieRepoRemote", "Submit review failed: ${response.code()} - $errorBody")
+            }
+            response.isSuccessful && response.body()?.success == true
         } catch (e: Exception) {
+            Log.e("MovieRepoRemote", "Submit review exception: ${e.message}", e)
             false
         }
+    }
+
+    override suspend fun submitReviewWithResult(
+        movieId: String,
+        rating: Int,
+        comment: String?
+    ): retrofit2.Response<com.example.movie_booking_app.data.api.ReviewSubmitResponse> {
+        return api.submitReview(movieId, ReviewRequest(rating, comment))
     }
 
     override suspend fun getMovieReviews(movieId: String, page: Int, limit: Int): List<com.example.movie_booking_app.data.model.response.ReviewItem> {

@@ -125,14 +125,14 @@ const handleGetBookingDetail = async (req, res, next) => {
 const handleRateStaff = async (req, res, next) => {
     try {
         const bookingId = req.params.id;
-        const { rating } = req.body;
+        const { rating, comment } = req.body;
         const accountId = req.user?.accountId;
 
         if (!rating || rating < 1 || rating > 5) {
             throw new ApiError(StatusCodes.BAD_REQUEST, "Invalid rating. Must be between 1 and 5.");
         }
 
-        const result = await bookingService.handleRateStaff(bookingId, accountId, rating);
+        const result = await bookingService.handleRateStaff(bookingId, accountId, rating, comment);
         return res.status(StatusCodes.OK).json({
             success: true,
             message: "Staff rated successfully",

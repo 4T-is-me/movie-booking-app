@@ -16,7 +16,11 @@ class MyTicketRepository @Inject constructor(
         emit(paymentApi.getMyTickets())
     }
 
-    suspend fun rateStaff(bookingId: String, rating: Int): Response<okhttp3.ResponseBody> {
-        return paymentApi.rateStaff(bookingId, mapOf("rating" to rating))
+    suspend fun rateStaff(bookingId: String, rating: Int, comment: String?): Response<okhttp3.ResponseBody> {
+        val request = com.example.movie_booking_app.data.model.request.RateStaffRequest(
+            rating = rating,
+            comment = comment
+        )
+        return paymentApi.rateStaff(bookingId, request)
     }
 }

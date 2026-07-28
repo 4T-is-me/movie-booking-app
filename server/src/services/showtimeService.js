@@ -121,11 +121,21 @@ const getShowtimeSeats = async (showtimeId) => {
             )
         }));
 
+    let resolvedCinemaName = showtime.cinemaId?.cinemaName ?? null;
+    if (!resolvedCinemaName && (showtime.cinemaId || cinemaRoom?.cinemaId)) {
+        const cId = showtime.cinemaId?._id ?? showtime.cinemaId ?? cinemaRoom?.cinemaId;
+        if (cId) {
+            const cinemaDoc = await Cinema.findById(cId).lean();
+            resolvedCinemaName = cinemaDoc?.cinemaName ?? null;
+        }
+    }
+
     return {
         // --- Showtime info ---
         showtimeId: showtime._id,
         showDate: showtime.showDate,
         startTime: showtime.startTime,
+        showTime: showtime.showTime || showtime.startTime,
         endTime: showtime.endTime,
 
         // --- Movie info (populated) ---
@@ -139,7 +149,7 @@ const getShowtimeSeats = async (showtimeId) => {
 
         // --- Cinema / Room info ---
         cinemaId: showtime.cinemaId?._id ?? showtime.cinemaId,
-        cinemaName: showtime.cinemaId?.cinemaName ?? null,
+        cinemaName: resolvedCinemaName,
         cinemaRoom: cinemaRoom
             ? {
                 roomId: cinemaRoom._id,

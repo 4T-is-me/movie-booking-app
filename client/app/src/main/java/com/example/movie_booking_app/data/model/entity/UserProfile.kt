@@ -23,5 +23,9 @@ data class UserProfile(
     val registerDate: String? = null,
     val image: String? = null,
     val favoriteCinema: String? = null,
-    val favoriteGenres: List<String>? = null
+    val favoriteGenres: List<String>? = null,
+    val kpiPoints: Int? = null,
+    val ticketSold: Int? = null,
+    val rating: Double? = null,
+    val totalRatings: Int? = null
 ): Serializable

@@ -27,7 +27,7 @@ class AddCinemaRoomViewModel @Inject constructor(
     val roomType = MutableStateFlow("Standard")
     val screenType = MutableStateFlow("2D")
     val rowsStr = MutableStateFlow("8")
-    val columnsStr = MutableStateFlow("12")
+    val columnsStr = MutableStateFlow("10")
     val status = MutableStateFlow("active")
 
     private var isPrefilling = false
@@ -49,7 +49,7 @@ class AddCinemaRoomViewModel @Inject constructor(
         val r = rStr.toIntOrNull() ?: 0
         val c = cStr.toIntOrNull() ?: 0
         r * c
-    }.stateIn(viewModelScope, SharingStarted.Lazily, 96)
+    }.stateIn(viewModelScope, SharingStarted.Lazily, 80)
 
     init {
         // Automatically generate layout preview when rowsStr or columnsStr changes
@@ -60,7 +60,7 @@ class AddCinemaRoomViewModel @Inject constructor(
                 if (isPrefilling) {
                     return@collectLatest
                 }
-                if (r != null && r in 1..26 && c != null && c in 1..30) {
+                if (r != null && r in 1..8 && c != null && c in 1..10) {
                     generatePreview(r, c)
                 } else {
                     _previewSeats.value = emptyList()
@@ -145,12 +145,12 @@ class AddCinemaRoomViewModel @Inject constructor(
             _errorMessage.value = "Room name is required"
             return
         }
-        if (r == null || r < 1 || r > 26) {
-            _errorMessage.value = "Rows must be between 1 and 26"
+        if (r == null || r < 1 || r > 8) {
+            _errorMessage.value = "Rows must be between 1 and 8."
             return
         }
-        if (c == null || c < 1 || c > 30) {
-            _errorMessage.value = "Columns must be between 1 and 30"
+        if (c == null || c < 1 || c > 10) {
+            _errorMessage.value = "Columns must be between 1 and 10."
             return
         }
         if (configuredSeats.isEmpty()) {

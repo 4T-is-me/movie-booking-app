@@ -4,11 +4,9 @@ import com.example.movie_booking_app.databinding.ItemReviewBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.ReviewItem
 import java.time.Instant
 import java.time.ZoneId
@@ -21,14 +19,7 @@ class ReviewAdapter(
     @Suppress("UNUSED_PARAMETER") items: List<ReviewItem> = emptyList()
 ) : ListAdapter<ReviewItem, ReviewAdapter.ReviewViewHolder>(ReviewDiffCallback()) {
 
-    inner class ReviewViewHolder(private val binding: ItemReviewBinding) : RecyclerView.ViewHolder(binding.root) {
-        val tvAvatarText: TextView = binding.tvAvatarText
-        val ivAvatarImage: com.google.android.material.imageview.ShapeableImageView = binding.ivAvatarImage
-        val tvName: TextView = binding.tvReviewerName
-        val tvDate: TextView = binding.tvReviewDate
-        val tvRating: TextView = binding.tvReviewRating
-        val tvComment: TextView = binding.tvReviewComment
-    }
+    class ReviewViewHolder(val binding: ItemReviewBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewViewHolder {
         val binding = ItemReviewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -37,15 +28,17 @@ class ReviewAdapter(
 
     override fun onBindViewHolder(holder: ReviewViewHolder, position: Int) {
         val review = getItem(position)
-
+        val binding = holder.binding
+        
         // Get display name prioritizing fullName -> username -> "Anonymous"
         val displayName = review.accountId?.memberInfo?.fullName
             ?: review.accountId?.username
             ?: "Anonymous"
 
         // Avatar: get initial letter
-        holder.tvAvatarText.text = displayName.firstOrNull()?.uppercaseChar()?.toString() ?: "A"
-        holder.tvName.text = displayName
+        val initial = if (displayName.isNotEmpty()) displayName.substring(0, 1).uppercase() else "A"
+        binding.tvAvatarText.text = initial
+        binding.tvReviewerName.text = displayName
 
         // Load avatar image if exists
         val avatarUrl = review.accountId?.memberInfo?.image
@@ -54,22 +47,27 @@ class ReviewAdapter(
                 avatarUrl.startsWith("http") -> avatarUrl
                 else -> "${Constants.BASE_URL.removeSuffix("/")}/${avatarUrl.removePrefix("/")}"
             }
-            holder.ivAvatarImage.visibility = View.VISIBLE
+            binding.ivAvatarImage.visibility = View.VISIBLE
             Glide.with(holder.itemView.context)
                 .load(finalUrl)
-                .into(holder.ivAvatarImage)
+                .into(binding.ivAvatarImage)
         } else {
-            holder.ivAvatarImage.visibility = View.GONE
+            binding.ivAvatarImage.visibility = View.GONE
         }
 
         // Rating
-        holder.tvRating.text = review.rating.toString()
+        binding.tvReviewRating.text = java.lang.String.format(java.util.Locale.getDefault(), "%.1f", review.rating ?: 0.0)
 
         // Comment
-        holder.tvComment.text = review.comment ?: ""
+        if (!review.comment.isNullOrEmpty()) {
+            binding.tvReviewComment.text = review.comment
+            binding.tvReviewComment.visibility = View.VISIBLE
+        } else {
+            binding.tvReviewComment.visibility = View.GONE
+        }
 
         // Creation date
-        holder.tvDate.text = formatRelativeDate(review.createdAt)
+        binding.tvReviewDate.text = formatRelativeDate(review.createdAt)
     }
 
     private fun formatRelativeDate(isoString: String?): String {

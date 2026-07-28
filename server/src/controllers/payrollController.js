@@ -129,9 +129,53 @@ const markAsPaid = async (req, res, next) => {
   }
 };
 
+const getManagerPayrolls = async (req, res, next) => {
+    try {
+
+        const accountId = req.user.accountId;
+        const payrolls =
+            await payrollService.getManagerPayrolls(
+                accountId,
+                req.query
+            );
+
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            count: payrolls.length,
+            data: payrolls
+        });
+
+    } catch (err) {
+        next(err);
+    }
+};
+
+const getMyPayroll = async (req, res, next) => {
+
+    try {
+
+        const accountId = req.user.accountId;
+
+        const payrolls =
+            await payrollService.getMyPayroll(accountId);
+
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            count: payrolls.length,
+            data: payrolls
+        });
+
+    } catch (err) {
+        next(err);
+    }
+
+};
+
 export const payrollController = {
   generatePayroll,
   getAllPayrolls,
   getPayrollById,
-  markAsPaid
+  markAsPaid,
+  getManagerPayrolls,
+  getMyPayroll
 };
