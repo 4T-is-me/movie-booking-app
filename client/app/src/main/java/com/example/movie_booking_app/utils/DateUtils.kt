@@ -66,4 +66,31 @@ object DateUtils {
             }
         }
     }
+
+    fun formatDateTime(dateString: String?): String {
+        if (dateString.isNullOrEmpty()) return ""
+        return try {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault()).apply {
+                timeZone = TimeZone.getTimeZone("UTC")
+            }
+            val date = inputFormat.parse(dateString)
+            val outputFormat = SimpleDateFormat("HH:mm dd/MM/yyyy", Locale.getDefault()).apply {
+                timeZone = TimeZone.getTimeZone("Asia/Ho_Chi_Minh")
+            }
+            outputFormat.format(date!!)
+        } catch (e: Exception) {
+            try {
+                val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault()).apply {
+                    timeZone = TimeZone.getTimeZone("UTC")
+                }
+                val date = inputFormat.parse(dateString)
+                val outputFormat = SimpleDateFormat("HH:mm dd/MM/yyyy", Locale.getDefault()).apply {
+                    timeZone = TimeZone.getTimeZone("Asia/Ho_Chi_Minh")
+                }
+                outputFormat.format(date!!)
+            } catch (e2: Exception) {
+                dateString ?: ""
+            }
+        }
+    }
 }

@@ -120,6 +120,11 @@
             android:theme="@style/Theme.Moviebookingapp"
             android:windowSoftInputMode="adjustResize" />
         <activity
+            android:name=".view.activity.NewsDetailActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".view.activity.ScoreHistoryActivity"
             android:exported="false" />
         <activity

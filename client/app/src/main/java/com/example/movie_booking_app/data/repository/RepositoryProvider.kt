@@ -9,6 +9,10 @@ import com.example.movie_booking_app.data.api.RetrofitClient
 object RepositoryProvider {
 
     fun provideMovieRepository(): MovieRepository {
-        return MovieRepositoryRemoteImpl(RetrofitClient.movieApi, RetrofitClient.adminApi)
+        return MovieRepositoryRemoteImpl(RetrofitClient.movieApi, RetrofitClient.adminApi, RetrofitClient.newsApi)
+    }
+
+    fun provideNewsRepository(): NewsRepository {
+        return NewsRepository(RetrofitClient.newsApi)
     }
 }

@@ -17,7 +17,9 @@ import com.example.movie_booking_app.databinding.*
 
 class HomeMultiAdapter(
     private val onSeeAllClicked: (String) -> Unit,
-    private val onMovieClicked: (Movie) -> Unit
+    private val onMovieClicked: (Movie) -> Unit,
+    private val onNewsClicked: (MovieNews) -> Unit,
+    private val onNewsLikeClicked: (MovieNews) -> Unit
 ) : ListAdapter<HomeItem, RecyclerView.ViewHolder>(HomeItemDiffCallback()) {
 
     companion object {
@@ -50,7 +52,7 @@ class HomeMultiAdapter(
             typeComingSoon -> ComingSoonViewHolder(LayoutHomeComingSoonBinding.inflate(inflater, parent, false), onSeeAllClicked, onMovieClicked)
             typePromo -> PromoViewHolder(LayoutHomePromoBinding.inflate(inflater, parent, false), onSeeAllClicked)
             typeService -> ServiceViewHolder(LayoutHomeServicesBinding.inflate(inflater, parent, false), onSeeAllClicked)
-            typeNews -> NewsViewHolder(LayoutHomeMovieNewsBinding.inflate(inflater, parent, false), onSeeAllClicked)
+            typeNews -> NewsViewHolder(LayoutHomeMovieNewsBinding.inflate(inflater, parent, false), onSeeAllClicked, onNewsClicked, onNewsLikeClicked)
             typeVideos -> VideosViewHolder(LayoutHomeVideosBinding.inflate(inflater, parent, false), onSeeAllClicked, onMovieClicked)
             typeEmpty -> EmptyViewHolder(LayoutHomeEmptyStateBinding.inflate(inflater, parent, false))
             else -> throw IllegalArgumentException("Invalid ViewType")
@@ -205,11 +207,14 @@ class HomeMultiAdapter(
 
     class NewsViewHolder(
         private val binding: LayoutHomeMovieNewsBinding,
-        onSeeAll: (String) -> Unit
+        onSeeAll: (String) -> Unit,
+        onNewsClicked: (MovieNews) -> Unit,
+        onNewsLikeClicked: (MovieNews) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
-        private val adapter = MovieNewsAdapter()
+        private val adapter = MovieNewsAdapter(onNewsClicked, onNewsLikeClicked)
         init { 
             binding.rvMovieNews.adapter = adapter
+            (binding.rvMovieNews.itemAnimator as? androidx.recyclerview.widget.SimpleItemAnimator)?.supportsChangeAnimations = false
             binding.tvSeeAllNews.setOnClickListener { onSeeAll("News") }
         }
         fun bind(news: List<MovieNews>, isLoading: Boolean) { 

@@ -39,6 +39,7 @@ import payrollRoutes from './src/routes/payrollRoutes.js';
 import payrollConfigRoutes from './src/routes/payrollConfigRoutes.js';
 // Added by User - ChatBot AI feature - 2026-07-26
 import chatRoutes from './Chat_Bot_AI/routes/chatRoutes.js';
+import { newsRoute } from './src/routes/newsRoute.js';
 
 
 const app = express();
@@ -83,6 +84,7 @@ app.use('/api/payrolls', payrollRoutes);
 app.use('/api/admin/payroll-config', payrollConfigRoutes);
 // Added by User - ChatBot AI feature - 2026-07-26
 app.use('/api/chat', chatRoutes);
+app.use('/api/news', newsRoute);
 
 
 app.get('/api/cinemas', async (req, res) => {

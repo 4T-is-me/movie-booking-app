@@ -1,6 +1,7 @@
 package com.example.movie_booking_app.view.adapter
 
 import com.example.movie_booking_app.databinding.ItemMovieNewsBinding
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +15,10 @@ import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.MovieNews
 import com.google.android.material.imageview.ShapeableImageView
 
-class MovieNewsAdapter : ListAdapter<MovieNews, MovieNewsAdapter.NewsViewHolder>(NewsDiffCallback()) {
+class MovieNewsAdapter(
+    private val onNewsClick: ((MovieNews) -> Unit)? = null,
+    private val onLikeClick: ((MovieNews) -> Unit)? = null
+) : ListAdapter<MovieNews, MovieNewsAdapter.NewsViewHolder>(NewsDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
         val binding = ItemMovieNewsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -22,23 +26,91 @@ class MovieNewsAdapter : ListAdapter<MovieNews, MovieNewsAdapter.NewsViewHolder>
     }
 
     override fun onBindViewHolder(holder: NewsViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), onNewsClick, onLikeClick)
     }
 
     class NewsViewHolder(private val binding: ItemMovieNewsBinding) : RecyclerView.ViewHolder(binding.root) {
-        private val imgPoster: ShapeableImageView = binding.imgNews
-        private val tvTitle: TextView = binding.tvNewsTitle
-        private val tvDate: TextView = binding.tvNewsDate
 
-        fun bind(news: MovieNews) {
-            tvTitle.text = news.title
-            tvDate.text = news.date
+        fun bind(news: MovieNews, onNewsClick: ((MovieNews) -> Unit)?, onLikeClick: ((MovieNews) -> Unit)?) {
+            binding.tvNewsTitle.text = news.title
             
+            val displayDate = if (news.date.contains("T")) {
+                com.example.movie_booking_app.utils.DateUtils.formatDateTime(news.date)
+            } else {
+                news.date
+            }
+            binding.tvPostMeta.text = "$displayDate • 🌐"
+            binding.tvAuthorName.text = news.authorName ?: "Cinema Club ✔️"
+
+            // Author Avatar loading
+            val avatarUrl = news.authorAvatar ?: ""
+            if (avatarUrl.isNotEmpty()) {
+                val fullAvatarUrl = if (avatarUrl.startsWith("http")) avatarUrl
+                                    else "${com.example.movie_booking_app.utils.Constants.BASE_URL.removeSuffix("/")}${avatarUrl}"
+                Glide.with(itemView.context)
+                    .load(fullAvatarUrl)
+                    .placeholder(R.drawable.bg_ai_avatar)
+                    .error(R.drawable.bg_ai_avatar)
+                    .into(binding.ivAuthorAvatar)
+            } else {
+                binding.ivAuthorAvatar.setImageResource(R.drawable.bg_ai_avatar)
+            }
+
             Glide.with(itemView.context)
                 .load(news.imageUrl)
                 .placeholder(R.color.card_dark)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(imgPoster)
+                .transition(com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade())
+                .into(binding.imgNews)
+
+            // Setup Tagged Movie mini-card
+            if (!news.movieId.isNullOrEmpty()) {
+                binding.layoutMovieTag.visibility = android.view.View.VISIBLE
+                binding.tvMovieTagSubtitle.text = news.movieName ?: ""
+
+                val fullPosterUrl = when {
+                    news.moviePoster.isNullOrEmpty() -> ""
+                    news.moviePoster.startsWith("http") -> news.moviePoster
+                    else -> "${com.example.movie_booking_app.utils.Constants.BASE_URL.removeSuffix("/")}${news.moviePoster}"
+                }
+
+                Glide.with(itemView.context)
+                    .load(fullPosterUrl.ifEmpty { null })
+                    .placeholder(R.drawable.movie)
+                    .error(R.drawable.movie)
+                    .into(binding.ivMoviePoster)
+
+                // Open Movie details on card click
+                binding.layoutMovieTag.setOnClickListener {
+                    val intent = Intent(itemView.context, com.example.movie_booking_app.view.activity.MovieDetailActivity::class.java).apply {
+                        putExtra("movieId", news.movieId)
+                    }
+                    itemView.context.startActivity(intent)
+                }
+            } else {
+                binding.layoutMovieTag.visibility = android.view.View.GONE
+            }
+
+            // Real Social tallies from DB
+            binding.tvLikesTally.text = "👍❤️ ${news.likesCount}"
+            binding.tvCommentsTally.text = "${news.commentsCount} comments"
+
+            // Click listener for details redirection
+            itemView.setOnClickListener {
+                onNewsClick?.invoke(news)
+            }
+            binding.btnCommentPost.setOnClickListener {
+                onNewsClick?.invoke(news)
+            }
+
+            // Real Like state color mapping
+            val colorRes = if (news.userLiked) R.color.auto_color_F5C542 else R.color.white
+            val colorVal = androidx.core.content.ContextCompat.getColor(itemView.context, colorRes)
+            binding.ivLikeIcon.setColorFilter(colorVal)
+            binding.tvLikeText.setTextColor(colorVal)
+
+            binding.btnLikePost.setOnClickListener {
+                onLikeClick?.invoke(news)
+            }
         }
     }
 
