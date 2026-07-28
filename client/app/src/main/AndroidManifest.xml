@@ -183,6 +183,10 @@
             android:name=".view.activity.PayrollDetailActivity"
             android:exported="false"
             android:theme="@style/Theme.Moviebookingapp" />
+        <activity
+            android:name=".view.activity.PayrollConfigActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp" />
 
         <activity
             android:name=".view.activity.ChatActivity"

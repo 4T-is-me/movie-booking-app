@@ -1197,5 +1197,22 @@
     <string name="try_adjusting_filters">Try adjusting the filters above</string>
     <string name="generated_at">Generated At</string>
     <string name="paid_at">Paid At</string>
+    <string name="payroll_config">Payroll Configuration</string>
+    <string name="payroll_config_subtitle">Configure rates used for newly generated shifts</string>
+    <string name="payroll_config_read_only">View-only configuration</string>
+    <string name="payroll_config_admin_entry">Configure Payroll Rates</string>
+    <string name="payroll_config_manager_entry">View Payroll Rates</string>
+    <string name="holiday_multiplier">Holiday Multiplier</string>
+    <string name="manager_revenue_bonus">Manager Revenue Bonus</string>
+    <string name="save_payroll_config">Save Changes</string>
+    <string name="invalid_payroll_config">Enter valid non-negative rates, bonus, and a holiday multiplier of at least 1.</string>
+    <string name="payroll_config_saved">Payroll configuration saved.</string>
+    <string name="payroll_config_load_error">Unable to load payroll configuration.</string>
+    <string name="back">Back</string>
+    <string name="edit_payroll_config">Edit payroll configuration</string>
+    <string name="morning_shift_rate">Morning Shift Rate</string>
+    <string name="afternoon_shift_rate">Afternoon Shift Rate</string>
+    <string name="evening_shift_rate">Evening Shift Rate</string>
+    <string name="night_shift_rate">Night Shift Rate</string>
 
 </resources>

@@ -14,6 +14,7 @@ import com.example.movie_booking_app.data.api.MemberApi
 import com.example.movie_booking_app.data.api.LeaveRequestApi
 import com.example.movie_booking_app.data.api.NotificationApi
 import com.example.movie_booking_app.data.api.PayrollApiService
+import com.example.movie_booking_app.data.api.PayrollConfigApi
 import com.example.movie_booking_app.data.api.RetrofitClient
 import com.example.movie_booking_app.data.api.MaintenanceApi
 import dagger.Module
@@ -115,6 +116,10 @@ object NetworkModule {
     fun providePayrollApi(): PayrollApiService {
         return RetrofitClient.payrollApi
     }
+
+    @Provides
+    @Singleton
+    fun providePayrollConfigApi(): PayrollConfigApi = RetrofitClient.payrollConfigApi
 
     @Provides
     @Singleton

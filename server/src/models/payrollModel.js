@@ -14,6 +14,7 @@ const payrollSchema = new mongoose.Schema(
     status: { type: String,enum: ['Draft', 'Paid'],default: 'Draft'},
     generatedAt: {type: Date,default: Date.now},
     paidAt: {type: Date,default: null},
+    shiftIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'StaffShift' }],
   },
   {
     versionKey: false,

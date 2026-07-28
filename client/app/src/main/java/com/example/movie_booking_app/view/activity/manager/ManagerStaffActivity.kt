@@ -26,7 +26,6 @@ import com.example.movie_booking_app.databinding.DialogErrorCustomBinding
 import com.example.movie_booking_app.view.adapter.manager.ManagerLeaveRequestAdapter
 import com.example.movie_booking_app.view.adapter.manager.ManagerStaffShiftAdapter
 import com.example.movie_booking_app.view.fragment.GenerateShiftDialogFragment
-import com.example.movie_booking_app.view.fragment.GenerateShiftSuccessDialogFragment
 import com.example.movie_booking_app.view.fragment.StaffFilterBottomSheetFragment
 import com.example.movie_booking_app.view.fragment.UpdateShiftDialogFragment
 import com.example.movie_booking_app.view.fragment.staff.LeaveStatusFilterDialogFragment
@@ -179,11 +178,9 @@ class ManagerStaffActivity : AppCompatActivity() {
                 viewModel.generateShiftData.collectLatest { response ->
                     if(response != null) {
                         if (response.success) {
+                            (supportFragmentManager.findFragmentByTag("GenerateShiftDialogFragment") as? androidx.fragment.app.DialogFragment)?.dismiss()
                             viewModel.loadStaffShifts()
-                            val successDialog = GenerateShiftSuccessDialogFragment(response.data) {
-                                viewModel.loadStaffShifts()
-                            }
-                            successDialog.show(supportFragmentManager, "GenerateShiftSuccessDialogFragment")
+                            Toast.makeText(this@ManagerStaffActivity, getString(R.string.auto_str_success), Toast.LENGTH_SHORT).show()
                         } else {
                             showErrorDialog(response.message ?: getString(R.string.error_generate_shift_failed))
                         }

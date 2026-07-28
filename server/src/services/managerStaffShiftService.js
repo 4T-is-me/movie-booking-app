@@ -8,6 +8,7 @@ import {NotificationService} from "./notificationService.js";
 import { formatDate } from "../utils/formatters.js";
 import ApiError from "../utils/ApiError.js";
 import mongoose from "mongoose";
+import { payrollConfigService } from "./payrollConfigService.js";
 
 const checkManager = async (accountId) => {
     const manager = await Manager.findOne({ accountId })
@@ -393,24 +394,26 @@ const getStaffForManager = async (accountId) => {
 };
 
 const generateShift = async (accountId, dateRange, config = {}, shiftsFromFE = []) => {
-    if (!shiftsFromFE || !Array.isArray(shiftsFromFE) || shiftsFromFE.length === 0) {
+    if (!Array.isArray(shiftsFromFE) || shiftsFromFE.length === 0) {
         throw new ApiError(StatusCodes.BAD_REQUEST, "No shift data provided for insertion.");
     }
 
-    // 1. Lấy startDate và endDate từ dateRange hoặc tự tính từ danh sách ca nhận được
+    // 1. Xác định start & end date an toàn (kể cả khi shiftsFromFE không đúng thứ tự)
+    const workDates = shiftsFromFE.map(s => new Date(s.workDate).getTime());
+    
     const start = dateRange?.startDate 
         ? new Date(dateRange.startDate) 
-        : new Date(shiftsFromFE[0].workDate);
-        
+        : new Date(Math.min(...workDates));
+
     const end = dateRange?.endDate 
         ? new Date(dateRange.endDate) 
-        : new Date(shiftsFromFE[shiftsFromFE.length - 1].workDate);
+        : new Date(Math.max(...workDates));
 
-    // Chuẩn hóa mốc thời gian về đầu ngày start và cuối ngày end
+    // Chuẩn hóa về đầu ngày start và cuối ngày end (UTC)
     start.setUTCHours(0, 0, 0, 0);
     end.setUTCHours(23, 59, 59, 999);
 
-    
+    // 2. Kiểm tra dữ liệu đã tồn tại
     const existingShiftsCount = await StaffShift.countDocuments({
         workDate: { $gte: start, $lte: end }
     });
@@ -422,26 +425,47 @@ const generateShift = async (accountId, dateRange, config = {}, shiftsFromFE = [
         );
     }
 
-    // 3. Nếu chưa có, tiến hành chuẩn hóa dữ liệu
-    const formattedShifts = shiftsFromFE.map(item => ({
-        staffId: item.staffId,
-        cinemaId: item.cinemaId,
-        workDate: new Date(item.workDate),
-        shift: item.shift,
-        status: item.status || 'Assigned',
-        isHoliday: item.isHoliday || false
-    }));
+    // 3. Chuẩn hóa dữ liệu & tính lương
+    const payrollConfig = await payrollConfigService.getConfig();
+    const shiftRates = payrollConfig.shiftRates instanceof Map
+        ? Object.fromEntries(payrollConfig.shiftRates)
+        : (payrollConfig.shiftRates || {});
 
-    // 4. Insert hàng loạt vào MongoDB
+    const formattedShifts = shiftsFromFE.map(item => {
+        const shiftRate = Number(shiftRates[item.shift] || 0);
+        const isHoliday = Boolean(item.isHoliday);
+        
+        // Chỉ gán hệ số lễ khi thực sự là ngày lễ
+        const holidayMultiplier = isHoliday 
+            ? Number(payrollConfig.holidayMultiplier || 1) 
+            : 1;
+            
+        const salary = shiftRate * holidayMultiplier;
+
+        return {
+            staffId: item.staffId,
+            cinemaId: item.cinemaId,
+            workDate: new Date(item.workDate),
+            shift: item.shift,
+            status: item.status || 'Assigned',
+            isHoliday,
+            shiftRate,
+            holidayMultiplier,
+            salary
+        };
+    });
+
+    // 4. Insert hàng loạt
     const docs = await StaffShift.insertMany(formattedShifts);
 
     return {
         generated: docs.length,
-        startDate: dateRange?.startDate,
-        endDate: dateRange?.endDate,
+        startDate: start,
+        endDate: end,
         message: `Successfully allocated and saved ${docs.length} shifts into database.`
     };
-};const getWeekRange = (inputDate) => {
+};
+const getWeekRange = (inputDate) => {
     let date = new Date(inputDate);
 
     if (!inputDate || isNaN(date.getTime())) {
