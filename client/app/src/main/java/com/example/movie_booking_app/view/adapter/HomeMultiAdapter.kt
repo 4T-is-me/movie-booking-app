@@ -214,6 +214,7 @@ class HomeMultiAdapter(
         private val adapter = MovieNewsAdapter(onNewsClicked, onNewsLikeClicked)
         init { 
             binding.rvMovieNews.adapter = adapter
+            (binding.rvMovieNews.itemAnimator as? androidx.recyclerview.widget.SimpleItemAnimator)?.supportsChangeAnimations = false
             binding.tvSeeAllNews.setOnClickListener { onSeeAll("News") }
         }
         fun bind(news: List<MovieNews>, isLoading: Boolean) { 

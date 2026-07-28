@@ -134,6 +134,7 @@ class HomeFragment : Fragment() {
             }
         )
         binding.rvHome.adapter = homeAdapter
+        (binding.rvHome.itemAnimator as? androidx.recyclerview.widget.SimpleItemAnimator)?.supportsChangeAnimations = false
     }
 
     private fun observeViewModel() {

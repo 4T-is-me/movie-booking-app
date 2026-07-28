@@ -123,6 +123,7 @@ class NewsDetailActivity : AppCompatActivity() {
 
         binding.rvComments.layoutManager = LinearLayoutManager(this)
         binding.rvComments.adapter = adapter
+        (binding.rvComments.itemAnimator as? androidx.recyclerview.widget.SimpleItemAnimator)?.supportsChangeAnimations = false
 
         // Setup Send Comment trigger
         binding.btnSendComment.setOnClickListener {
