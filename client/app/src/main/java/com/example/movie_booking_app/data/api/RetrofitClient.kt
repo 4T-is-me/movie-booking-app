@@ -95,9 +95,25 @@ object RetrofitClient {
         instance.create(NotificationApi::class.java)
     }
 
+    val foodApi: FoodApi by lazy {
+        instance.create(FoodApi::class.java)
+    }
+
+    val inventoryApi: InventoryApi by lazy {
+        instance.create(InventoryApi::class.java)
+    }
+
     val payrollApi: PayrollApiService by lazy {
         instance.create(PayrollApiService::class.java)
     }
+<<<<<<< HEAD
+
+    val maintenanceApi: MaintenanceApi by lazy {
+        instance.create(MaintenanceApi::class.java)
+    }
+}
+=======
+>>>>>>> origin/develop
 
     val payrollConfigApi: PayrollConfigApi by lazy {
         instance.create(PayrollConfigApi::class.java)
@@ -113,4 +129,3 @@ object RetrofitClient {
         instance.create(ChatApi::class.java)
     }
 }
-

@@ -7,7 +7,6 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 data class LeaveRequestParams(
@@ -26,4 +25,7 @@ interface StaffApi {
     suspend fun checkInTicket(
         @Body request: CheckInTicketRequest
     ): Response<CheckInTicketResponse>
+
+    @GET("api/staff/my-ratings")
+    suspend fun getMyRatings(): Response<com.example.movie_booking_app.data.model.response.ReviewListResponse>
 }

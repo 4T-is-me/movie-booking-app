@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.movie_booking_app.databinding.FragmentPurchaseHistoryBinding
 import com.example.movie_booking_app.view.activity.BookingDetailActivity
+import com.example.movie_booking_app.view.activity.WriteReviewActivity
 import com.example.movie_booking_app.view.adapter.PurchaseHistoryAdapter
 import com.example.movie_booking_app.viewmodel.PurchaseHistoryViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -70,6 +71,15 @@ class PurchaseHistoryFragment : Fragment() {
             },
             onRateStaffClick = { item ->
                 showRateStaffDialog(item.bookingId)
+            },
+            onRateMovieClick = { item ->
+                val intent = Intent(requireContext(), WriteReviewActivity::class.java).apply {
+                    putExtra("movieId", item.movieId)
+                    putExtra("movieTitle", item.movie)
+                    putExtra("moviePoster", item.poster)
+                    putExtra("movieGenre", item.movieGenre?.joinToString(", ") ?: "")
+                }
+                startActivityForResult(intent, REQUEST_WRITE_REVIEW)
             }
         )
         binding.rvPurchaseHistory.adapter = adapter
@@ -157,12 +167,14 @@ class PurchaseHistoryFragment : Fragment() {
         dialog.setContentView(dialogView)
 
         val ratingBar = dialogView.findViewById<android.widget.RatingBar>(R.id.ratingBar)
+        val etComment = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etComment)
         val btnSubmit = dialogView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnSubmitRating)
 
         btnSubmit.setOnClickListener {
             val rating = ratingBar.rating.toInt()
+            val comment = etComment.text?.toString()?.trim()
             if (rating > 0) {
-                viewModel.rateStaff(bookingId, rating)
+                viewModel.rateStaff(bookingId, rating, comment)
                 dialog.dismiss()
             } else {
                 Toast.makeText(requireContext(), getString(R.string.please_select_rating), Toast.LENGTH_SHORT).show()
@@ -170,5 +182,16 @@ class PurchaseHistoryFragment : Fragment() {
         }
 
         dialog.show()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_WRITE_REVIEW && resultCode == android.app.Activity.RESULT_OK) {
+            viewModel.loadHistory()
+        }
+    }
+
+    companion object {
+        private const val REQUEST_WRITE_REVIEW = 101
     }
 }

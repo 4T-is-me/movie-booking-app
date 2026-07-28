@@ -10,10 +10,27 @@ const creatRoomWithSeats = async (req, res, next) => {
         const finalRows = rows || rowsCount;
         const finalCols = columns || colsCount;
 
-        if (!roomName || !roomType || !finalRows || !finalCols) {
+        if (!roomName || !roomType || finalRows === undefined || finalCols === undefined) {
             return res.status(StatusCodes.BAD_REQUEST).json({
                 success: false,
                 message: "Missing required fields: roomName, roomType, rows (or rowsCount), columns (or colsCount)"
+            });
+        }
+
+        const numRows = Number(finalRows);
+        const numCols = Number(finalCols);
+
+        if (isNaN(numRows) || numRows < 1 || numRows > 8) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                success: false,
+                message: "Rows must be between 1 and 8."
+            });
+        }
+
+        if (isNaN(numCols) || numCols < 1 || numCols > 10) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                success: false,
+                message: "Columns must be between 1 and 10."
             });
         }
 
@@ -46,6 +63,9 @@ const creatRoomWithSeats = async (req, res, next) => {
         });
         
     } catch (error) {
+        if (error.statusCode) {
+            return res.status(error.statusCode).json({ success: false, message: error.message });
+        }
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: `Internal server error: ${error.message}` });
     }
 }
@@ -117,6 +137,26 @@ const updateRoom = async (req, res, next) => {
         const finalRows = rows || rowsCount;
         const finalCols = columns || colsCount;
 
+        if (finalRows !== undefined) {
+            const numRows = Number(finalRows);
+            if (isNaN(numRows) || numRows < 1 || numRows > 8) {
+                return res.status(StatusCodes.BAD_REQUEST).json({
+                    success: false,
+                    message: "Rows must be between 1 and 8."
+                });
+            }
+        }
+
+        if (finalCols !== undefined) {
+            const numCols = Number(finalCols);
+            if (isNaN(numCols) || numCols < 1 || numCols > 10) {
+                return res.status(StatusCodes.BAD_REQUEST).json({
+                    success: false,
+                    message: "Columns must be between 1 and 10."
+                });
+            }
+        }
+
         const result = await adminRoomService.handleUpdateRoom(id, {
             roomName,
             roomType,
@@ -129,6 +169,9 @@ const updateRoom = async (req, res, next) => {
 
         return res.status(StatusCodes.OK).json({ success: true, data: result });
     } catch (error) {
+        if (error.statusCode) {
+            return res.status(error.statusCode).json({ success: false, message: error.message });
+        }
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: `Internal server error: ${error.message}` });
     }
 };

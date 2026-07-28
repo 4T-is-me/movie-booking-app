@@ -31,6 +31,9 @@ class MyTicketViewModel @Inject constructor(
     private val _rateSuccess = MutableSharedFlow<Boolean>()
     val rateSuccess: SharedFlow<Boolean> = _rateSuccess.asSharedFlow()
 
+    private val _rateErrorMessage = MutableSharedFlow<String?>()
+    val rateErrorMessage: SharedFlow<String?> = _rateErrorMessage.asSharedFlow()
+
     fun loadActiveTickets() {
         viewModelScope.launch {
             _isLoading.value = true
@@ -56,18 +59,25 @@ class MyTicketViewModel @Inject constructor(
         }
     }
 
-    fun rateStaff(bookingId: String, rating: Int) {
+    fun rateStaff(bookingId: String, rating: Int, comment: String? = null) {
         viewModelScope.launch {
             try {
-                val response = repository.rateStaff(bookingId, rating)
+                val response = repository.rateStaff(bookingId, rating, comment)
                 if (response.isSuccessful) {
                     _rateSuccess.emit(true)
                     loadActiveTickets()
                 } else {
-                    _error.value = "Failed to submit rating: ${response.code()}"
+                    val errorBody = response.errorBody()?.string() ?: ""
+                    val message = try {
+                        val json = com.google.gson.JsonParser.parseString(errorBody).asJsonObject
+                        json.get("message")?.asString ?: "Error ${response.code()}"
+                    } catch (_: Exception) {
+                        "Error ${response.code()}"
+                    }
+                    _rateErrorMessage.emit(message)
                 }
             } catch (e: Exception) {
-                _error.value = "Rating error: ${e.localizedMessage}"
+                _rateErrorMessage.emit("Network error: ${e.localizedMessage}")
             }
         }
     }

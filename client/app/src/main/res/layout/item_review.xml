@@ -3,18 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
-    app:cardBackgroundColor="@color/auto_color_1A1A1A"
-    app:cardCornerRadius="12dp"
+    android:layout_marginBottom="8dp"
+    app:cardBackgroundColor="#1A1A1A"
+    app:cardCornerRadius="8dp"
     app:cardElevation="2dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="14dp">
+        android:padding="12dp">
 
-        <!-- Avatar + Name + Date row -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -24,94 +23,91 @@
             <!-- Avatar Container -->
             <FrameLayout
                 android:layout_width="40dp"
-                android:layout_height="40dp">
+                android:layout_height="40dp"
+                android:layout_marginEnd="12dp">
 
-                <!-- Text Avatar (Initials) -->
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/ivAvatarImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone"
+                    app:shapeAppearanceOverlay="@style/CircleImageView" />
+
                 <TextView
                     android:id="@+id/tvAvatarText"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/bg_avatar_gold_circle"
                     android:gravity="center"
-                    android:text="@string/auto_str_a"
-                    android:textColor="@color/auto_color_000000"
+                    android:textColor="#000000"
                     android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <!-- Image Avatar -->
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/ivAvatarImage"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    app:shapeAppearanceOverlay="@style/CircleImageView"
-                    android:visibility="gone" />
-
+                    android:textStyle="bold"
+                    android:text="A" />
             </FrameLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
 
+                <!-- Tên khách hàng -->
                 <TextView
                     android:id="@+id/tvReviewerName"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/auto_str_user"
-                    android:textColor="@color/auto_color_FFFFFF"
+                    android:text="Customer Name"
+                    android:textColor="#FFFFFF"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tvReviewDate"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="@string/auto_str_2_days_ago"
-                    android:textColor="@color/auto_color_666666"
-                    android:textSize="12sp" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="2dp">
+
+                    <!-- Số sao -->
+                    <TextView
+                        android:id="@+id/tvReviewRating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="5.0"
+                        android:textColor="#F5C542"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_marginStart="4dp"
+                        android:src="@drawable/ic_star"
+                        app:tint="#F5C542" />
+                </LinearLayout>
             </LinearLayout>
 
-            <!-- Star rating on right -->
-            <LinearLayout
+            <!-- Ngày tháng -->
+            <TextView
+                android:id="@+id/tvReviewDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
-                    android:src="@drawable/ic_star"
-                    app:tint="@color/auto_color_FACC15" />
-
-                <TextView
-                    android:id="@+id/tvReviewRating"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
-                    android:text="@string/auto_str_5"
-                    android:textColor="@color/auto_color_FACC15"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
+                android:text="Date"
+                android:textColor="#88FFFFFF"
+                android:textSize="12sp" />
         </LinearLayout>
 
-        <!-- Comment text -->
+        <!-- Nội dung bình luận -->
         <TextView
             android:id="@+id/tvReviewComment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:lineSpacingExtra="3dp"
-            android:maxLines="4"
-            android:ellipsize="end"
-            android:text="@string/auto_str_this_is_a_sample_review_commen"
-            android:textColor="@color/auto_color_CCCCCC"
-            android:textSize="13sp" />
+            android:layout_marginTop="12dp"
+            android:text="Sample comment content..."
+            android:textColor="#CCCCCC"
+            android:textSize="14sp"
+            android:lineSpacingExtra="2dp" />
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

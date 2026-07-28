@@ -899,11 +899,14 @@
     <string name="auto_str_08_00_am_12_00_pm">08:00 AM - 12:00 PM</string>
     <string name="auto_str_ticket_counter_staff_member">Staff Member</string>
     <string name="auto_str_weekly_shifts">Weekly Shifts</string>
+    <string name="auto_str_your_comment">Your Comment (Optional)</string>
     <string name="auto_str_settings_placeholder">Settings Placeholder</string>
     <string name="auto_str_ticket_validator_placeholder">Ticket Validator Placeholder</string>
     <string name="auto_str_user">User</string>
     <string name="auto_str_2_days_ago">2 days ago</string>
     <string name="auto_str_this_is_a_sample_review_commen">This is a sample review comment about the movie...</string>
+    <string name="total_reviews_format">%d reviews</string>
+    <string name="nav_staff_ratings">My Ratings</string>
     <string name="auto_str_now_playing">NOW PLAYING</string>
     <string name="auto_str_16">16</string>
     <string name="auto_str_jul">Jul</string>
@@ -943,8 +946,8 @@
     <string name="auto_str_screen_type">Screen Type *</string>
     <string name="auto_str_status_3">Status *</string>
     <string name="auto_str_capacity">Capacity *</string>
-    <string name="auto_str_rows_1_26">Rows (1-26)</string>
-    <string name="auto_str_columns_1_30">Columns (1-30)</string>
+    <string name="auto_str_rows_1_26">Rows (1-8)</string>
+    <string name="auto_str_columns_1_30">Columns (1-10)</string>
     <string name="auto_str_movie_name_required">Movie Name (*)</string>
     <string name="auto_str_director_s_comma_separated_admin">Director(s) - Comma separated</string>
     <string name="auto_str_actors_comma_separated_admin">Actors - Comma separated</string>
@@ -1116,6 +1119,39 @@
     <string name="duration_format_hm">%1$dh%2$dm</string>
     <string name="duration_format_h">%1$dh</string>
     <string name="duration_format_m">%1$dm</string>
+
+    <!-- F&B and Inventory Management -->
+    <string name="fb_tab_all">All</string>
+    <string name="fb_tab_combo">Combo</string>
+    <string name="fb_tab_drink">Drink</string>
+    <string name="fb_tab_food">Food</string>
+    <string name="fb_in_stock">In stock: %1$d</string>
+    <string name="fb_max_stock_reached">Maximum stock reached</string>
+    <string name="fb_inventory_mgmt">Inventory Management</string>
+    <string name="fb_menu_mgmt">F&amp;B Menu Management</string>
+    <string name="fb_edit_product">Edit Product</string>
+    <string name="fb_add_product">Add New Product</string>
+    <string name="fb_select_image">Select Image</string>
+    <string name="fb_product_name">Product Name</string>
+    <string name="fb_category">Category</string>
+    <string name="fb_price_vnd">Price (VND)</string>
+    <string name="fb_description">Description</string>
+    <string name="fb_active_status">Active Status</string>
+    <string name="fb_combo_recipe">Combo Components (Recipe)</string>
+    <string name="fb_combo_recipe_desc">Select items that this combo will deduct from stock</string>
+    <string name="fb_refill_title">Refill %1$s</string>
+    <string name="fb_refill">Refill</string>
+    <string name="fb_current_stock">Current stock: %1$d</string>
+    <string name="fb_confirm">Confirm</string>
+    <string name="fb_qty_adjusted_max">Quantity adjusted to max stock</string>
+    <string name="fb_enter_qty">Enter Quantity</string>
+    <string name="fb_low_stock">Low Stock!</string>
+    <string name="fb_deactivate_title">Deactivate Product</string>
+    <string name="fb_deactivate_msg">Are you sure you want to deactivate %1$s?</string>
+    <string name="fb_refill_success">Refilled %1$s successfully</string>
+    <string name="fb_select_cinema">Select Cinema</string>
+    <string name="fb_enter_qty_hint">Enter quantity to add</string>
+    <string name="fb_reason_optional">Reason (optional)</string>
 
     <!-- Staff Rating Strings -->
     <string name="rate_staff_title">Rate our staff</string>

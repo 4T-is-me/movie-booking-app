@@ -3,18 +3,20 @@ package com.example.movie_booking_app.view.activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Booking
+import com.example.movie_booking_app.data.model.entity.ComboDetail
 import com.example.movie_booking_app.databinding.ActivityPaymentBinding
+import com.example.movie_booking_app.view.adapter.SelectedFBAdapter
 import com.example.movie_booking_app.viewmodel.PaymentViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,9 +31,8 @@ class PaymentActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPaymentBinding
     private val viewModel: PaymentViewModel by viewModels()
+    private lateinit var fbAdapter: SelectedFBAdapter
 
-    private var combo1Count = 0
-    private var combo2Count = 0
     private var isExpiredDialogShown = false
     private var isSuccessDialogShown = false
 
@@ -50,6 +51,7 @@ class PaymentActivity : AppCompatActivity() {
         viewModel.initBooking(booking)
 
         setupToolbar()
+        setupRecyclerView()
         setupClickListeners()
         observeViewModel()
     }
@@ -60,6 +62,14 @@ class PaymentActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupRecyclerView() {
+        fbAdapter = SelectedFBAdapter()
+        binding.rvFBItems.apply {
+            layoutManager = LinearLayoutManager(this@PaymentActivity)
+            adapter = fbAdapter
+        }
+    }
+
     private fun setupClickListeners() {
         // Payment methods click listeners
         binding.cardMoMo.setOnClickListener { viewModel.selectPaymentMethod("MoMo") }
@@ -67,34 +77,6 @@ class PaymentActivity : AppCompatActivity() {
         binding.cardShopeePay.setOnClickListener { viewModel.selectPaymentMethod("ShopeePay") }
         binding.cardATM.setOnClickListener { viewModel.selectPaymentMethod("ATM") }
         binding.cardInternational.setOnClickListener { viewModel.selectPaymentMethod("International") }
-
-        // Combo 1 Single Combo quantity selectors
-        binding.btnCombo1Minus.setOnClickListener {
-            if (combo1Count > 0) {
-                combo1Count--
-                binding.tvCombo1Qty.text = combo1Count.toString()
-                viewModel.updateCombo1Quantity(combo1Count)
-            }
-        }
-        binding.btnCombo1Plus.setOnClickListener {
-            combo1Count++
-            binding.tvCombo1Qty.text = combo1Count.toString()
-            viewModel.updateCombo1Quantity(combo1Count)
-        }
-
-        // Combo 2 Double Combo quantity selectors
-        binding.btnCombo2Minus.setOnClickListener {
-            if (combo2Count > 0) {
-                combo2Count--
-                binding.tvCombo2Qty.text = combo2Count.toString()
-                viewModel.updateCombo2Quantity(combo2Count)
-            }
-        }
-        binding.btnCombo2Plus.setOnClickListener {
-            combo2Count++
-            binding.tvCombo2Qty.text = combo2Count.toString()
-            viewModel.updateCombo2Quantity(combo2Count)
-        }
 
         // Apply Promotion Coupon
         binding.btnApplyCoupon.setOnClickListener {
@@ -135,7 +117,7 @@ class PaymentActivity : AppCompatActivity() {
                 viewModel.uiState.collect { state ->
                     // Loading overlay indicators
                     val isRunning = state.isLoading || state.isCheckingOut
-                    binding.layoutLoading.visibility = if (isRunning) View.VISIBLE else View.GONE
+                    binding.layoutLoading.isVisible = isRunning
                     binding.btnContinue.isEnabled = !state.isCheckingOut
 
                     // Reward Points availability and switch control
@@ -166,6 +148,12 @@ class PaymentActivity : AppCompatActivity() {
                         binding.tvSeatCount.text = "${booking.seatIds.size} seats"
                         binding.tvSeatType.text = booking.seatTypes.joinToString(", ")
 
+                        // Dynamic F&B items summary using RecyclerView
+                        val combos = booking.combos ?: emptyList()
+                        binding.tvFBTitle.isVisible = combos.isNotEmpty()
+                        binding.cardFBSummary.isVisible = combos.isNotEmpty()
+                        fbAdapter.submitList(combos)
+
                         // Load Movie Poster
                         booking.moviePoster?.let { poster ->
                             val posterUrl = if (poster.startsWith("http")) poster 
@@ -192,7 +180,6 @@ class PaymentActivity : AppCompatActivity() {
                     if (state.checkoutSuccess && !isSuccessDialogShown) {
                         isSuccessDialogShown = true
                         showPremiumSuccessDialog("Booking completed successfully!") {
-                            // Reload GET /profile from the server and navigate to Profile tab
                             val intent = Intent(this@PaymentActivity, MainActivity::class.java).apply {
                                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                                 putExtra("TARGET_SECTION", "Ticket")
@@ -212,10 +199,10 @@ class PaymentActivity : AppCompatActivity() {
 
                     // Reward points discount summary row
                     if (state.useRewardPoints && state.rewardDiscount > 0) {
-                        binding.layoutRewardDiscount.visibility = View.VISIBLE
+                        binding.layoutRewardDiscount.isVisible = true
                         binding.tvRewardDiscount.text = "-${formatCurrency(state.rewardDiscount)} (${state.rewardDiscount / 10} pts)"
                     } else {
-                        binding.layoutRewardDiscount.visibility = View.GONE
+                        binding.layoutRewardDiscount.isVisible = false
                     }
 
                     // Coupon validation messages & updates
@@ -276,25 +263,17 @@ class PaymentActivity : AppCompatActivity() {
 
     private fun showPremiumSuccessDialog(message: String, onDismiss: () -> Unit) {
         val dialogBinding = com.example.movie_booking_app.databinding.DialogSuccessBinding.inflate(layoutInflater)
-
         dialogBinding.tvDialogMessage.text = message
-
         val dialog = AlertDialog.Builder(this)
             .setView(dialogBinding.root)
             .setCancelable(false)
             .create()
-
-        // Make background transparent to see rounded card corners
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
         dialogBinding.btnDialogOk.setOnClickListener {
             dialog.dismiss()
             onDismiss()
         }
-
         dialog.show()
-
-        // Check icon pops with a small bounce animation
         dialogBinding.imgCheckCircle.scaleX = 0f
         dialogBinding.imgCheckCircle.scaleY = 0f
         dialogBinding.imgCheckCircle.animate()
@@ -311,7 +290,11 @@ class PaymentActivity : AppCompatActivity() {
             .setMessage("Your 10-minute booking window has expired. Please select seats again.")
             .setCancelable(false)
             .setPositiveButton("OK") { _, _ ->
-                finish() // Returns back to SelectSeatActivity
+                val intent = Intent(this, SelectSeatActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                }
+                startActivity(intent)
+                finish()
             }
             .show()
     }
