@@ -55,4 +55,30 @@ class ManagerRoomViewModel @Inject constructor(
             }
         }
     }
+
+    fun updateSeatStatus(roomId: String, seatId: String, status: String, onResult: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            repository.updateSeatStatus(roomId, seatId, status).collect { success ->
+                _isLoading.value = false
+                if (success) {
+                    loadRoomSeats(roomId)
+                }
+                onResult(success)
+            }
+        }
+    }
+
+    fun bulkUpdateSeatStatus(roomId: String, seatIds: List<String>, status: String, onResult: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            repository.bulkUpdateSeatStatus(roomId, seatIds, status).collect { success ->
+                _isLoading.value = false
+                if (success) {
+                    loadRoomSeats(roomId)
+                }
+                onResult(success)
+            }
+        }
+    }
 }

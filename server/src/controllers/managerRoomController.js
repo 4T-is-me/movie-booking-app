@@ -54,8 +54,47 @@ const updateRoom = async (req, res, next) => {
     }
 }
 
+const updateSeatStatus = async (req, res, next) => {
+    try {
+        const roomId = req.params.id;
+        const seatId = req.params.seatId;
+        const { status } = req.body;
+        const manager = await Manager.findOne({ accountId: req.user.accountId });
+        if (!manager) {
+            return res.status(StatusCodes.FORBIDDEN).json({ success: false, message: "Manager profile not found!" });
+        }
+        const updatedSeat = await managerRoomService.handleUpdateSeatStatus(roomId, seatId, manager.cinemaId, status);
+        return res.status(StatusCodes.OK).json({ success: true, message: "Update seat status successfully", data: updatedSeat });
+    } catch (error) {
+        if (error.statusCode) {
+            return res.status(error.statusCode).json({ success: false, message: error.message });
+        }
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: `Internal server error: ${error.message}` });
+    }
+}
+
+const bulkUpdateSeatStatus = async (req, res, next) => {
+    try {
+        const roomId = req.params.id;
+        const { seatIds, status } = req.body;
+        const manager = await Manager.findOne({ accountId: req.user.accountId });
+        if (!manager) {
+            return res.status(StatusCodes.FORBIDDEN).json({ success: false, message: "Manager profile not found!" });
+        }
+        const result = await managerRoomService.handleBulkUpdateSeatStatus(roomId, seatIds, manager.cinemaId, status);
+        return res.status(StatusCodes.OK).json({ success: true, message: "Bulk update seat status successfully", data: result });
+    } catch (error) {
+        if (error.statusCode) {
+            return res.status(error.statusCode).json({ success: false, message: error.message });
+        }
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ success: false, message: `Internal server error: ${error.message}` });
+    }
+}
+
 export const managerRoomController = {
     getManagerRooms,
     getRoomSeats,
-    updateRoom
+    updateRoom,
+    updateSeatStatus,
+    bulkUpdateSeatStatus
 }

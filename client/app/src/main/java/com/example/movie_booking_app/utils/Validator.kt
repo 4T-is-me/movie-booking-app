@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+object Validator {
+
     fun validateLoginId(loginId: String?): Int? {
         val trimmed = loginId?.trim() ?: ""
         return if (trimmed.isEmpty()) R.string.error_username_required else null

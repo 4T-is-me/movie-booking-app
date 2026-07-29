@@ -37,6 +37,10 @@ class ManagerSeatActivity : AppCompatActivity() {
     private var vipSeatsCount: Int = 0
     private var cplSeatsCount: Int = 0
 
+    private var isMultiSelectMode: Boolean = false
+    private val selectedSeatIds = mutableSetOf<String>()
+    private var currentSeatRows: List<ManagerSeatRow> = emptyList()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityManagerSeatBinding.inflate(layoutInflater)
@@ -94,11 +98,73 @@ class ManagerSeatActivity : AppCompatActivity() {
             saveAllChanges()
         }
 
+        // Multi-select actions
+        binding.btnToggleMultiSelect.setOnClickListener {
+            toggleMultiSelectMode(!isMultiSelectMode)
+        }
+
+        binding.btnDeselectAll.setOnClickListener {
+            selectedSeatIds.clear()
+            updateBulkActionsUI()
+            renderSeats(currentSeatRows)
+        }
+
+        binding.btnBulkActive.setOnClickListener {
+            applyBulkStatus("active")
+        }
+
+        binding.btnBulkMaintenance.setOnClickListener {
+            applyBulkStatus("maintenance")
+        }
+
         if (roomId != null) {
             viewModel.loadRoomSeats(roomId)
         }
 
         observeViewModel()
+    }
+
+    private fun toggleMultiSelectMode(enable: Boolean) {
+        isMultiSelectMode = enable
+        if (!enable) {
+            selectedSeatIds.clear()
+        }
+        binding.btnToggleMultiSelect.background = androidx.core.content.ContextCompat.getDrawable(
+            this,
+            if (enable) R.drawable.bg_btn_status_selected else R.drawable.bg_btn_status_unselected
+        )
+        binding.tvMultiSelectLabel.text = if (enable) "✓ Chọn nhiều" else "Chọn nhiều"
+        binding.tvMultiSelectLabel.setTextColor(
+            android.graphics.Color.parseColor(if (enable) "#38BDF8" else "#94A3B8")
+        )
+        updateBulkActionsUI()
+        renderSeats(currentSeatRows)
+    }
+
+    private fun updateBulkActionsUI() {
+        if (selectedSeatIds.isNotEmpty()) {
+            binding.cvBulkActions.visibility = View.VISIBLE
+            binding.tvSelectedCount.text = "Đã chọn ${selectedSeatIds.size} ghế"
+        } else {
+            binding.cvBulkActions.visibility = View.GONE
+        }
+    }
+
+    private fun applyBulkStatus(targetStatus: String) {
+        if (selectedSeatIds.isEmpty() || roomIdToUpdate.isEmpty()) return
+
+        val seatList = selectedSeatIds.toList()
+        val label = if (targetStatus == "maintenance") "Bảo trì" else "Hoạt động"
+
+        viewModel.bulkUpdateSeatStatus(roomIdToUpdate, seatList, targetStatus) { success ->
+            if (success) {
+                Toast.makeText(this, "Đã đổi ${seatList.size} ghế sang $label", Toast.LENGTH_SHORT).show()
+                selectedSeatIds.clear()
+                updateBulkActionsUI()
+            } else {
+                Toast.makeText(this, "Cập nhật trạng thái nhóm ghế thất bại", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun updateStatusUI(status: String) {
@@ -216,16 +282,80 @@ class ManagerSeatActivity : AppCompatActivity() {
     }
 
     private fun renderSeats(rows: List<ManagerSeatRow>) {
+        currentSeatRows = rows
         binding.llSeats.removeAllViews()
         for (row in rows) {
             val rowBinding = ItemManagerSeatRowBinding.inflate(layoutInflater, binding.llSeats, false)
             
             rowBinding.tvRowName.text = row.row
             rowBinding.rvSeats.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-            rowBinding.rvSeats.adapter = ManagerSeatAdapter(row.seats ?: emptyList())
+            rowBinding.rvSeats.adapter = ManagerSeatAdapter(
+                seats = row.seats ?: emptyList(),
+                selectedSeatIds = selectedSeatIds,
+                onSeatClick = { seat ->
+                    if (isMultiSelectMode) {
+                        if (selectedSeatIds.contains(seat.id)) {
+                            selectedSeatIds.remove(seat.id)
+                        } else {
+                            selectedSeatIds.add(seat.id)
+                        }
+                        updateBulkActionsUI()
+                        renderSeats(currentSeatRows)
+                    } else {
+                        showSeatStatusDialog(seat)
+                    }
+                },
+                onSeatLongClick = { seat ->
+                    if (!isMultiSelectMode) {
+                        toggleMultiSelectMode(true)
+                    }
+                    if (selectedSeatIds.contains(seat.id)) {
+                        selectedSeatIds.remove(seat.id)
+                    } else {
+                        selectedSeatIds.add(seat.id)
+                    }
+                    updateBulkActionsUI()
+                    renderSeats(currentSeatRows)
+                }
+            )
             
             binding.llSeats.addView(rowBinding.root)
         }
+    }
+
+    private fun showSeatStatusDialog(seat: com.example.movie_booking_app.data.model.response.ManagerSeat) {
+        val seatDisplayName = seat.seatName ?: "${seat.row ?: ""}${seat.col}"
+        val options = arrayOf("Hoạt động (Active)", "Bảo trì (Maintenance)")
+        val currentSelection = if (seat.status.equals("maintenance", ignoreCase = true)) 1 else 0
+
+        var selectedOption = currentSelection
+
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Đổi trạng thái ghế $seatDisplayName")
+            .setSingleChoiceItems(options, currentSelection) { _, which ->
+                selectedOption = which
+            }
+            .setPositiveButton("Xác nhận") { dialog, _ ->
+                val newStatus = if (selectedOption == 1) "maintenance" else "active"
+                if (newStatus != seat.status) {
+                    if (roomIdToUpdate.isNotEmpty()) {
+                        viewModel.updateSeatStatus(roomIdToUpdate, seat.id, newStatus) { success ->
+                            if (success) {
+                                val label = if (newStatus == "maintenance") "Bảo trì" else "Hoạt động"
+                                Toast.makeText(this, "Đã đổi ghế $seatDisplayName sang $label", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(this, "Cập nhật trạng thái ghế thất bại", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                }
+                dialog.dismiss()
+            }
+            .setNegativeButton("Hủy") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
     }
 
     private fun observeViewModel() {

@@ -15,7 +15,7 @@ const handleGetManagerRooms = async (cinemaId) => {
             { $match: matchStage },
             {
                 $lookup: {
-                    from: 'cinemas', 
+                    from: 'cinemas',
                     localField: 'cinemaId',
                     foreignField: '_id',
                     as: 'cinemaInfo'
@@ -24,7 +24,7 @@ const handleGetManagerRooms = async (cinemaId) => {
             {
                 $unwind: {
                     path: '$cinemaInfo',
-                    preserveNullAndEmptyArrays: true 
+                    preserveNullAndEmptyArrays: true
                 }
             },
             {
@@ -44,32 +44,32 @@ const handleGetManagerRooms = async (cinemaId) => {
             {
                 $group: {
                     _id: '$_id',
-                    roomName: {$first: '$roomName'},
-                    roomType: {$first: '$roomType'},
-                    status: {$first: '$status'},
-                    rowsCount: {$first: '$rowsCount'},
-                    colsCount: {$first: '$colsCount'},
-                    cinemaName: {$first: '$cinemaInfo.cinemaName'},
+                    roomName: { $first: '$roomName' },
+                    roomType: { $first: '$roomType' },
+                    status: { $first: '$status' },
+                    rowsCount: { $first: '$rowsCount' },
+                    colsCount: { $first: '$colsCount' },
+                    cinemaName: { $first: '$cinemaInfo.cinemaName' },
                     totalSeats: {
-                        $sum: {$cond: [{ $ifNull: ['$seats', false]}, 1, 0]} 
+                        $sum: { $cond: [{ $ifNull: ['$seats', false] }, 1, 0] }
                     },
                     vipSeats: {
-                        $sum: { $cond: [ { $eq: ['$seats.seatType', 'VIP'] }, 1, 0 ] }
+                        $sum: { $cond: [{ $eq: ['$seats.seatType', 'VIP'] }, 1, 0] }
                     },
                     regularSeats: {
-                        $sum: { $cond: [ { $eq: ['$seats.seatType', 'Regular'] }, 1, 0 ] }
+                        $sum: { $cond: [{ $eq: ['$seats.seatType', 'Regular'] }, 1, 0] }
                     },
                     coupleSeats: {
-                        $sum: { $cond: [ { $eq: ['$seats.seatType', 'Couple'] }, 1, 0 ] }
+                        $sum: { $cond: [{ $eq: ['$seats.seatType', 'Couple'] }, 1, 0] }
                     },
                     regularPrice: {
-                        $max: { $cond: [ { $eq: ['$seats.seatType', 'Regular'] }, '$seats.price', 0 ] }
+                        $max: { $cond: [{ $eq: ['$seats.seatType', 'Regular'] }, '$seats.price', 0] }
                     },
                     vipPrice: {
-                        $max: { $cond: [ { $eq: ['$seats.seatType', 'VIP'] }, '$seats.price', 0 ] }
+                        $max: { $cond: [{ $eq: ['$seats.seatType', 'VIP'] }, '$seats.price', 0] }
                     },
                     couplePrice: {
-                        $max: { $cond: [ { $eq: ['$seats.seatType', 'Couple'] }, '$seats.price', 0 ] }
+                        $max: { $cond: [{ $eq: ['$seats.seatType', 'Couple'] }, '$seats.price', 0] }
                     },
                     estFullCapacity: {
                         $sum: '$seats.price'
@@ -87,17 +87,17 @@ const handleGetManagerRooms = async (cinemaId) => {
 
 const handleGetRoomSeats = async (roomId, cinemaId) => {
     const room = await CinemaRoom.findOne({
-        _id: roomId, 
+        _id: roomId,
         cinemaId: cinemaId,
         isDeleted: false
     });
-    if(!room) {
+    if (!room) {
         throw new ApiError(StatusCodes.NOT_FOUND, "Room not found or does not belong to your cinema");
     }
-    const seats = await Seat.find({roomId: roomId, status: "active", isDeleted: false}).sort({row: 1, col: 1});
-    
+    const seats = await Seat.find({ roomId: roomId, isDeleted: false }).sort({ row: 1, col: 1 });
+
     const groupObject = seats.reduce((acc, seat) => {
-        if(!acc[seat.row]) {
+        if (!acc[seat.row]) {
             acc[seat.row] = { row: seat.row, seats: [] };
         }
         acc[seat.row].seats.push({
@@ -106,11 +106,11 @@ const handleGetRoomSeats = async (roomId, cinemaId) => {
             seatType: seat.seatType,
             row: seat.row,
             col: seat.col,
-            status: seat.status 
+            status: seat.status
         });
         return acc;
     }, {});
-    
+
     return Object.values(groupObject);
 }
 
@@ -120,7 +120,7 @@ const handleUpdateRoom = async (roomId, cinemaId, data) => {
         cinemaId: cinemaId,
         isDeleted: false
     });
-    if(!room) {
+    if (!room) {
         throw new ApiError(StatusCodes.NOT_FOUND, "Room not found or does not belong to your cinema");
     }
 
@@ -128,7 +128,7 @@ const handleUpdateRoom = async (roomId, cinemaId, data) => {
         const oldStatus = room.status;
         room.status = data.status;
         await room.save();
-        
+
         // Trigger maintenance workflow if status changed to maintenance
         if (data.status === 'maintenance') {
             try {
@@ -162,8 +162,65 @@ const handleUpdateRoom = async (roomId, cinemaId, data) => {
     return room;
 }
 
+const handleUpdateSeatStatus = async (roomId, seatId, cinemaId, status) => {
+    const room = await CinemaRoom.findOne({
+        _id: roomId,
+        cinemaId: cinemaId,
+        isDeleted: false
+    });
+    if (!room) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Room not found or does not belong to your cinema");
+    }
+
+    const validStatuses = ['active', 'maintenance', 'inactive'];
+    if (!validStatuses.includes(status)) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, `Invalid seat status. Allowed values: ${validStatuses.join(', ')}`);
+    }
+
+    const updatedSeat = await Seat.findOneAndUpdate(
+        { _id: seatId, roomId: roomId, isDeleted: false },
+        { $set: { status: status } },
+        { new: true }
+    );
+
+    if (!updatedSeat) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Seat not found in this room");
+    }
+
+    return updatedSeat;
+}
+
+const handleBulkUpdateSeatStatus = async (roomId, seatIds, cinemaId, status) => {
+    const room = await CinemaRoom.findOne({
+        _id: roomId,
+        cinemaId: cinemaId,
+        isDeleted: false
+    });
+    if (!room) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Room not found or does not belong to your cinema");
+    }
+
+    if (!Array.isArray(seatIds) || seatIds.length === 0) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, "seatIds must be a non-empty array");
+    }
+
+    const validStatuses = ['active', 'maintenance', 'inactive'];
+    if (!validStatuses.includes(status)) {
+        throw new ApiError(StatusCodes.BAD_REQUEST, `Invalid seat status. Allowed values: ${validStatuses.join(', ')}`);
+    }
+
+    const result = await Seat.updateMany(
+        { _id: { $in: seatIds }, roomId: roomId, isDeleted: false },
+        { $set: { status: status } }
+    );
+
+    return result;
+}
+
 export const managerRoomService = {
     handleGetManagerRooms,
     handleGetRoomSeats,
-    handleUpdateRoom
+    handleUpdateRoom,
+    handleUpdateSeatStatus,
+    handleBulkUpdateSeatStatus
 };

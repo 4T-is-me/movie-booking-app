@@ -48,4 +48,22 @@ class ManagerRoomRepository @Inject constructor(
             emit(false)
         }
     }.flowOn(Dispatchers.IO)
+
+    fun updateSeatStatus(roomId: String, seatId: String, status: String): Flow<Boolean> = flow {
+        try {
+            val response = api.updateSeatStatus(roomId, seatId, com.example.movie_booking_app.data.api.UpdateSeatStatusRequest(status))
+            emit(response.isSuccessful && response.body()?.success == true)
+        } catch (e: Exception) {
+            emit(false)
+        }
+    }.flowOn(Dispatchers.IO)
+
+    fun bulkUpdateSeatStatus(roomId: String, seatIds: List<String>, status: String): Flow<Boolean> = flow {
+        try {
+            val response = api.bulkUpdateSeatStatus(roomId, com.example.movie_booking_app.data.api.BulkUpdateSeatStatusRequest(seatIds, status))
+            emit(response.isSuccessful && response.body()?.success == true)
+        } catch (e: Exception) {
+            emit(false)
+        }
+    }.flowOn(Dispatchers.IO)
 }

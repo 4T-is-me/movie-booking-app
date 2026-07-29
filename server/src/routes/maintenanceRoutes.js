@@ -9,6 +9,7 @@ router.post('/bookings/:id/resolve-maintenance', authMiddleware.isAuthorized, Ma
 
 // Manager/Admin APIs (Room & Schedule Maintenance)
 router.post('/rooms/:roomId/trigger-maintenance', MaintenanceController.triggerMaintenance);
+router.post('/rooms/:roomId/handle-broken-seats', MaintenanceController.handleBrokenSeats);
 router.get('/rooms/:roomId/preview-restored-schedule', MaintenanceController.previewRestoredSchedule);
 router.post('/schedules/confirm-restored-schedule', MaintenanceController.confirmRestoredSchedule);
 
