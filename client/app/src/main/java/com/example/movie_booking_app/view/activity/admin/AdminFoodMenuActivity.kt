@@ -32,8 +32,11 @@ import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
+import java.text.NumberFormat
+import java.util.Locale
 
 @AndroidEntryPoint
 class AdminFoodMenuActivity : AppCompatActivity() {
@@ -237,16 +240,18 @@ class AdminFoodMenuActivity : AppCompatActivity() {
     }
 
     private fun getFileFromUri(uri: Uri): File? {
-        val inputStream = contentResolver.openInputStream(uri) ?: return null
-        // Optimized: Use a fixed name to avoid cluttering cache with multiple temp files
-        val file = File(cacheDir, "temp_food_upload.jpg")
-        val outputStream = FileOutputStream(file)
-        inputStream.use { input ->
-            outputStream.use { output ->
-                input.copyTo(output)
+        return try {
+            contentResolver.openInputStream(uri)?.use { input ->
+                val file = File(cacheDir, "temp_food_upload.jpg")
+                FileOutputStream(file).use { output ->
+                    input.copyTo(output)
+                }
+                file
             }
+        } catch (e: Exception) {
+            Timber.e(e, "Error creating temp file from URI")
+            null
         }
-        return file
     }
 
     private fun showDeleteConfirm(item: FoodBeverage) {

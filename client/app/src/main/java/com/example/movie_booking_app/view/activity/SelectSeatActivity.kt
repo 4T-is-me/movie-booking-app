@@ -73,7 +73,7 @@ class SelectSeatActivity : AppCompatActivity() {
         }
         binding.rvSeats.layoutManager = layoutManager
         binding.rvSeats.adapter = seatAdapter
-        binding.rvSeats.isNestedScrollingEnabled = false
+        // Optimization: Removing isNestedScrollingEnabled = false to allow view recycling
     }
 
     private fun setupListeners() {
@@ -191,7 +191,7 @@ class SelectSeatActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.totalPrice.collect { price ->
-                    binding.tvTotalAmount.text = formatCurrency(price)
+                    binding.tvTotalAmount.text = price.toVnd()
                 }
             }
         }
@@ -209,7 +209,7 @@ class SelectSeatActivity : AppCompatActivity() {
                 viewModel.timerManager.remainingSeconds.collect { seconds ->
                     val isActive = viewModel.timerManager.isActive.value
                     binding.tvCountdown.visibility = if (isActive) View.VISIBLE else View.GONE
-                    binding.tvCountdown.text = formatTime(seconds)
+                    binding.tvCountdown.text = seconds.toTimerFormat()
                 }
             }
         }
@@ -225,12 +225,6 @@ class SelectSeatActivity : AppCompatActivity() {
         }
     }
 
-    private fun formatTime(seconds: Int): String {
-        val minutes = seconds / 60
-        val remainingSeconds = seconds % 60
-        return String.format(Locale.getDefault(), "%02d:%02d", minutes, remainingSeconds)
-    }
-
     private fun showExpiredDialog() {
         val builder = androidx.appcompat.app.AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.title_expired))
@@ -243,9 +237,18 @@ class SelectSeatActivity : AppCompatActivity() {
         builder.setCancelable(false)
         builder.show()
     }
+}
 
-    private fun formatCurrency(amount: Int): String {
-        val formatter = NumberFormat.getInstance(Locale.GERMANY)
-        return "${formatter.format(amount)} VND"
-    }
+/**
+ * Local extensions for SelectSeatActivity
+ */
+private fun Int.toVnd(): String {
+    val formatter = NumberFormat.getInstance(Locale.GERMANY)
+    return "${formatter.format(this)} VND"
+}
+
+private fun Int.toTimerFormat(): String {
+    val minutes = this / 60
+    val seconds = this % 60
+    return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
 }

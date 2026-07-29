@@ -43,10 +43,11 @@ class SelectFoodViewModel @Inject constructor(
             repository.getMenu(showtimeId = currentShowtimeId)
                 .onStart { _uiState.update { it.copy(isLoading = true) } }
                 .collect { items ->
+                    val availableItems = items.filter { it.stock > 0 }
                     _uiState.update { 
                         it.copy(
-                            menuItems = items,
-                            filteredItems = items,
+                            menuItems = availableItems,
+                            filteredItems = availableItems,
                             isLoading = false
                         ) 
                     }

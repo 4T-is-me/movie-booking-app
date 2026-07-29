@@ -117,6 +117,7 @@ class FoodBeverageAdapter(
                     } else {
                         item.selectedQuantity = value
                     }
+                    updateQuantityOnly(item)
                     onQuantityChanged(item)
                 }
                 .setNegativeButton("Cancel", null)
