@@ -40,9 +40,10 @@ class AdminFoodAdapter(
 
                 if (!item.isActive) {
                     root.alpha = 0.5f
-                    tvName.text = "${item.name} (Inactive)"
+                    btnDelete.setImageResource(android.R.drawable.ic_menu_rotate)
                 } else {
                     root.alpha = 1.0f
+                    btnDelete.setImageResource(R.drawable.ic_delete)
                 }
 
                 val imageUrl = when {

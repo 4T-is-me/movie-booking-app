@@ -42,8 +42,14 @@ class AdminFoodMenuActivity : AppCompatActivity() {
     private val viewModel: AdminFoodViewModel by viewModels()
     private lateinit var menuAdapter: AdminFoodAdapter
     
+    private var selectedTab = TAB_ACTIVE
     private var selectedImageUri: Uri? = null
     private var dialogBinding: DialogAddEditFoodBinding? = null
+
+    companion object {
+        private const val TAB_ACTIVE = "active"
+        private const val TAB_INACTIVE = "inactive"
+    }
 
     private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -60,6 +66,7 @@ class AdminFoodMenuActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupUI()
+        setupTabs()
         observeViewModel()
     }
 
@@ -78,12 +85,47 @@ class AdminFoodMenuActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupTabs() {
+        binding.tabActiveFood.setOnClickListener { switchTab(TAB_ACTIVE) }
+        binding.tabInactiveFood.setOnClickListener { switchTab(TAB_INACTIVE) }
+    }
+
+    private fun switchTab(tab: String) {
+        if (selectedTab == tab) return
+        selectedTab = tab
+
+        val isActiveTab = (tab == TAB_ACTIVE)
+        updateTabStyle(binding.tabActiveFood, isActiveTab)
+        updateTabStyle(binding.tabInactiveFood, !isActiveTab)
+
+        val fullList = viewModel.uiState.value.menuItems
+        menuAdapter.submitList(getFilteredList(fullList))
+    }
+
+    private fun updateTabStyle(tabView: android.widget.TextView, isActive: Boolean) {
+        if (isActive) {
+            tabView.setBackgroundResource(R.drawable.bg_tab_active)
+            tabView.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.black))
+        } else {
+            tabView.background = null
+            tabView.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.text_gray))
+        }
+    }
+
+    private fun getFilteredList(fullList: List<FoodBeverage>): List<FoodBeverage> {
+        return if (selectedTab == TAB_ACTIVE) {
+            fullList.filter { it.isActive }
+        } else {
+            fullList.filter { !it.isActive }
+        }
+    }
+
     private fun observeViewModel() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     binding.progressBar.isVisible = state.isLoading
-                    menuAdapter.submitList(state.menuItems)
+                    menuAdapter.submitList(getFilteredList(state.menuItems))
 
                     state.error?.let {
                         Toast.makeText(this@AdminFoodMenuActivity, it, Toast.LENGTH_SHORT).show()
@@ -104,6 +146,8 @@ class AdminFoodMenuActivity : AppCompatActivity() {
         val binding = dialogBinding!!
         val isEdit = item != null
         selectedImageUri = null
+        
+        binding.switchActive.isVisible = !isEdit
 
         val categories = listOf("drink", "food", "combo")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories)
@@ -206,11 +250,31 @@ class AdminFoodMenuActivity : AppCompatActivity() {
     }
 
     private fun showDeleteConfirm(item: FoodBeverage) {
+        val isActive = item.isActive
+        val title = if (isActive) "Deactivate Product" else "Reactivate Product"
+        val message = if (isActive) 
+            "Are you sure you want to deactivate ${item.name}?" 
+        else 
+            "Are you sure you want to reactivate ${item.name}?"
+
         AlertDialog.Builder(this)
-            .setTitle("Deactivate Product")
-            .setMessage("Are you sure you want to deactivate ${item.name}?")
+            .setTitle(title)
+            .setMessage(message)
             .setPositiveButton("Yes") { _, _ ->
-                viewModel.deleteProduct(item.id)
+                if (isActive) {
+                    viewModel.deleteProduct(item.id)
+                } else {
+                    viewModel.saveProduct(
+                        id = item.id,
+                        name = item.name,
+                        price = item.price,
+                        category = item.category,
+                        description = item.description ?: "",
+                        isActive = true,
+                        imagePart = null,
+                        inventoryDeductions = item.inventoryDeductions ?: emptyList()
+                    )
+                }
             }
             .setNegativeButton("No", null)
             .show()

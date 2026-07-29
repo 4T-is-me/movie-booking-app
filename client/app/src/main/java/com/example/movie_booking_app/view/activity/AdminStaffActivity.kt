@@ -63,7 +63,13 @@ class AdminStaffActivity : BaseActivity() {
                 binding.edtPhone.setText(staff.phone)
                 binding.edtIdentityCard.setText(staff.identityCard)
                 binding.edtPosition.setText(staff.position)
-                binding.edtSalary.setText(staff.salary?.toString() ?: "")
+                
+                // Fix scientific notation bug (e.g. 1.5E7) by using BigDecimal toPlainString()
+                val salaryText = staff.salary?.let { 
+                    java.math.BigDecimal.valueOf(it).toPlainString().replace(Regex("\\.0$"), "")
+                } ?: ""
+                binding.edtSalary.setText(salaryText)
+
                 binding.edtStartDate.setText(staff.startDate?.take(10) ?: "")
                 binding.edtAddress.setText(staff.address)
                 
