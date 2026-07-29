@@ -1,6 +1,7 @@
 package com.example.movie_booking_app.data.repository
 
 import timber.log.Timber
+import android.util.Log
 import com.example.movie_booking_app.data.api.MovieApi
 import com.example.movie_booking_app.data.api.AdminApiService
 import com.example.movie_booking_app.data.model.entity.Movie
@@ -26,7 +27,8 @@ import javax.inject.Inject
  */
 class MovieRepositoryRemoteImpl @Inject constructor(
     private val api: MovieApi,
-    private val adminApi: AdminApiService
+    private val adminApi: AdminApiService,
+    private val newsApi: com.example.movie_booking_app.data.api.NewsApi
 ) : MovieRepository {
 
     override fun getMovies(status: String?, page: Int?, limit: Int?): Flow<List<Movie>> = flow {
@@ -98,9 +100,36 @@ class MovieRepositoryRemoteImpl @Inject constructor(
     }
 
     override fun getNews(): Flow<List<MovieNews>> = flow {
-        emit(listOf(
-            MovieNews("1", "Avatar 3 release date announced", "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500", "20.12.2023")
-        ))
+        try {
+            val response = newsApi.getNews()
+            if (response.isSuccessful) {
+                val list = response.body()?.data?.map { item ->
+                    val fullUrl = if (item.image?.startsWith("http") == true) item.image
+                    else "${com.example.movie_booking_app.utils.Constants.BASE_URL}${item.image?.removePrefix("/")}"
+
+                    MovieNews(
+                        id = item.id,
+                        title = item.title,
+                        imageUrl = fullUrl ?: "",
+                        date = item.publishedAt,
+                        content = item.content,
+                        movieId = item.movie?.id,
+                        movieName = item.movie?.movieName,
+                        moviePoster = item.movie?.poster,
+                        authorName = item.authorName,
+                        authorAvatar = item.authorAvatar,
+                        likesCount = item.likesCount ?: 0,
+                        userLiked = item.userLiked ?: false,
+                        commentsCount = item.commentsCount ?: 0
+                    )
+                } ?: emptyList()
+                emit(list)
+            } else {
+                emit(emptyList())
+            }
+        } catch (e: Exception) {
+            emit(emptyList())
+        }
     }
 
     override fun getMovieDetailsById(id: String): Flow<Movie> = flow {

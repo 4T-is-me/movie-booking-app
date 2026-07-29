@@ -21,7 +21,8 @@ import kotlin.collections.emptyList
 @HiltViewModel
 class MovieViewModel @Inject constructor(
     private val repository: MovieRepository,
-    private val profileRepository: ProfileRepository
+    private val profileRepository: ProfileRepository,
+    private val newsRepository: com.example.movie_booking_app.data.repository.NewsRepository
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -284,6 +285,17 @@ class MovieViewModel @Inject constructor(
             } catch (e: Exception) {
                 _movieReviews.value = emptyList()
             }
+        }
+    }
+    fun toggleNewsLike(newsId: String) {
+        viewModelScope.launch {
+            newsRepository.toggleNewsLike(newsId)
+                .catch { e ->
+                    // Log or handle error
+                }
+                .collect {
+                    loadHomeData()
+                }
         }
     }
 }

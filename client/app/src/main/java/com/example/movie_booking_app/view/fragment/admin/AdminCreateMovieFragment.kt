@@ -121,7 +121,7 @@ class AdminCreateMovieFragment : Fragment() {
         val chipGroupGenres = binding.chipGroupGenres
         
         // Setup Censorship Dropdown
-        val censorshipOptions = arrayOf("P (General Audience)", "K (Children Under 13)", "T13 (13+)", "T16 (16+)", "T18 (18+)", "C (Banned)")
+        val censorshipOptions = arrayOf("P (General Audience)", "K (Children Under 13)", "T13 (13+)", "T16 (16+)", "T18 (18+)")
         val censorshipCodes = arrayOf("P", "K", "T13", "T16", "T18", "C")
         val spnCensorship = binding.spnCensorship
         val censorshipAdapter = ArrayAdapter(
@@ -130,6 +130,7 @@ class AdminCreateMovieFragment : Fragment() {
             censorshipOptions
         )
         spnCensorship.setAdapter(censorshipAdapter)
+        spnCensorship.setOnClickListener { spnCensorship.showDropDown() }
 
         // Setup Country Search Dropdown
         val countryOptions = arrayOf("Vietnam", "USA", "Korea", "Japan", "China", "UK", "France", "India", "Thailand")
@@ -140,6 +141,7 @@ class AdminCreateMovieFragment : Fragment() {
             countryOptions
         )
         edtCountry.setAdapter(countryAdapter)
+        edtCountry.setOnClickListener { edtCountry.showDropDown() }
 
         // Setup Language Dropdown
         val languageOptions = arrayOf("Vietnamese (Dubbing)", "Vietnamese (Subtitle)", "English (Subtitle)", "English (Original)", "Korean (Subtitle)", "Japanese (Subtitle)")
@@ -149,6 +151,7 @@ class AdminCreateMovieFragment : Fragment() {
             languageOptions
         )
         spnLanguage.setAdapter(languageAdapter)
+        spnLanguage.setOnClickListener { spnLanguage.showDropDown() }
 
         // Pre-fill if editing
         editingMovie = arguments?.getSerializable("movie") as? com.example.movie_booking_app.data.model.entity.Movie
@@ -165,7 +168,7 @@ class AdminCreateMovieFragment : Fragment() {
             edtDirector.setText(movie.director?.joinToString(", "))
             edtActors.setText(movie.actors?.joinToString(", "))
             edtDescription.setText(movie.description)
-            edtCountry.setText(movie.country)
+            edtCountry.setText(movie.country, false)
             
             val cIndex = censorshipCodes.indexOf(movie.censorship)
             if (cIndex >= 0) {

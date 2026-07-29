@@ -210,7 +210,7 @@
                 android:id="@+id/edtCountry"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:completionThreshold="1"
+                android:inputType="none"
                 android:textColor="@color/white" />
         </com.google.android.material.textfield.TextInputLayout>
 

@@ -17,6 +17,7 @@ import com.example.movie_booking_app.databinding.FragmentMovieListBinding
 import com.example.movie_booking_app.view.activity.MainActivity
 import com.example.movie_booking_app.view.activity.LoginActivity
 import com.example.movie_booking_app.view.activity.MovieDetailActivity
+import com.example.movie_booking_app.view.activity.NewsDetailActivity
 import com.example.movie_booking_app.view.activity.NotificationActivity
 import com.example.movie_booking_app.view.activity.VideoListActivity
 import com.example.movie_booking_app.data.local.NotificationLocalStorage
@@ -114,9 +115,26 @@ class HomeFragment : Fragment() {
                 val intent = Intent(context, MovieDetailActivity::class.java)
                 intent.putExtra("movieId", movie.id)
                 startActivity(intent)
+            },
+            onNewsClicked = { news ->
+                val intent = Intent(context, NewsDetailActivity::class.java).apply {
+                    putExtra("newsId", news.id)
+                    putExtra("title", news.title)
+                    putExtra("imageUrl", news.imageUrl)
+                    putExtra("date", news.date)
+                    putExtra("content", news.content ?: "")
+                    putExtra("movieId", news.movieId)
+                    putExtra("movieName", news.movieName)
+                    putExtra("moviePoster", news.moviePoster)
+                }
+                startActivity(intent)
+            },
+            onNewsLikeClicked = { news ->
+                viewModel.toggleNewsLike(news.id)
             }
         )
         binding.rvHome.adapter = homeAdapter
+        (binding.rvHome.itemAnimator as? androidx.recyclerview.widget.SimpleItemAnimator)?.supportsChangeAnimations = false
     }
 
     private fun observeViewModel() {

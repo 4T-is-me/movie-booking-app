@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://tools.android.com/tools"
+    android:id="@+id/layoutCommentRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="10dp"
+    android:background="@android:color/transparent">
+
+    <!-- Avatar -->
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/ivCommenterAvatar"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:scaleType="centerCrop"
+        app:shapeAppearanceOverlay="@style/CircleImageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/bg_ai_avatar" />
+
+    <!-- Comment bubble container -->
+    <LinearLayout
+        android:id="@+id/layoutBubble"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:background="@drawable/bg_input_dark"
+        android:orientation="vertical"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="8dp"
+        app:layout_constraintStart_toEndOf="@id/ivCommenterAvatar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tvCommenterName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            tools:text="Jane Doe" />
+
+        <TextView
+            android:id="@+id/tvCommentContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:textColor="@color/auto_color_BBFFFFFF"
+            android:textSize="14sp"
+            tools:text="This is an insightful comment about the cinema screen size!" />
+    </LinearLayout>
+
+    <!-- Bottom Actions Row -->
+    <LinearLayout
+        android:id="@+id/layoutActions"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toStartOf="@id/layoutBubble"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutBubble">
+
+        <TextView
+            android:id="@+id/tvTimeAgo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/auto_color_88FFFFFF"
+            android:textSize="11sp"
+            tools:text="2h ago" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" • "
+            android:textColor="@color/auto_color_88FFFFFF"
+            android:textSize="11sp" />
+
+        <!-- Like / React link -->
+        <TextView
+            android:id="@+id/btnLikeComment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Like"
+            android:textColor="@color/auto_color_F5C542"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground"
+            android:paddingHorizontal="4dp"
+            tools:text="Like" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" • "
+            android:textColor="@color/auto_color_88FFFFFF"
+            android:textSize="11sp" />
+
+        <!-- Reply link -->
+        <TextView
+            android:id="@+id/btnReplyComment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reply"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground"
+            android:paddingHorizontal="4dp" />
+
+        <!-- Reactions summary display (e.g. 👍❤️ 3) -->
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:id="@+id/layoutReactionsDisplay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="#2E2E2E"
+            android:paddingHorizontal="6dp"
+            android:paddingVertical="2dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <TextView
+                android:id="@+id/tvReactionsCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                tools:text="👍❤️ 3" />
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

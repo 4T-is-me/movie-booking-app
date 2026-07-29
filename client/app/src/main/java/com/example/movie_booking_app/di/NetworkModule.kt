@@ -144,6 +144,12 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideNewsApi(): com.example.movie_booking_app.data.api.NewsApi {
+        return RetrofitClient.newsApi
+    }
+
+    @Provides
+    @Singleton
     fun provideMaintenanceApi(): MaintenanceApi {
         return RetrofitClient.maintenanceApi
     }
