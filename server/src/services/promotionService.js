@@ -9,20 +9,20 @@ const validateAndApplyPromotion = async (couponCode, accountId, orderTotal, sess
     }).session(session);
 
     if (!promotion) {
-        throw new ApiError(StatusCodes.NOT_FOUND, "Mã giảm giá không tồn tại hoặc đã bị xóa");
+        throw new ApiError(StatusCodes.NOT_FOUND, "Promotion code does not exist or has been deleted");
     }
 
     const now = new Date();
     if (now < promotion.startDate || now > promotion.endDate) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "Mã giảm giá không nằm trong thời gian áp dụng");
+        throw new ApiError(StatusCodes.BAD_REQUEST, "Promotion code is not within the validity period");
     }
 
     if (promotion.maxUsage !== -1 && promotion.usageCount >= promotion.maxUsage) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "Mã giảm giá đã hết lượt sử dụng");
+        throw new ApiError(StatusCodes.BAD_REQUEST, "Promotion code usage limit reached");
     }
 
     if (orderTotal < promotion.minOrderValue) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, `Đơn hàng chưa đạt giá trị tối thiểu để áp dụng mã giảm giá. Yêu cầu: ${promotion.minOrderValue}`);
+        throw new ApiError(StatusCodes.BAD_REQUEST, `Order does not meet the minimum value requirement to apply this promotion code. Required: ${promotion.minOrderValue}`);
     }
 
     let discountAmount = 0;
@@ -32,7 +32,7 @@ const validateAndApplyPromotion = async (couponCode, accountId, orderTotal, sess
         discountAmount = promotion.discountValue;
     }
 
-    // Đảm bảo giảm không quá giá trị đơn hàng
+    // Ensure discount does not exceed order total
     if (discountAmount > orderTotal) {
         discountAmount = orderTotal;
     }

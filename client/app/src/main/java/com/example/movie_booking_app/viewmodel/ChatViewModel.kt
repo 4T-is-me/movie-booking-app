@@ -54,11 +54,11 @@ class ChatViewModel @Inject constructor(
 
             result.fold(
                 onSuccess = { response ->
-                    val reply = response.reply ?: "Rất tiếc, không nhận được câu trả lời từ hệ thống."
+                    val reply = response.reply ?: "Sorry, no response received from the system."
                     chatRepository.addMessage(ChatMessage(role = "bot", content = reply, timestamp = timeFormat.format(Date())))
                 },
                 onFailure = { error ->
-                    val errorMsg = error.localizedMessage ?: "Có lỗi kết nối xảy ra. Vui lòng kiểm tra lại mạng."
+                    val errorMsg = error.localizedMessage ?: "A connection error occurred. Please check your network connection."
                     chatRepository.addMessage(ChatMessage(role = "bot", content = "⚠️ $errorMsg", timestamp = timeFormat.format(Date())))
                 }
             )

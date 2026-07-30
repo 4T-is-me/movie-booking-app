@@ -61,7 +61,7 @@ class ChatRepository @Inject constructor(
             if (response.isSuccessful && response.body() != null) {
                 Result.success(response.body()!!)
             } else {
-                val errorMsg = response.body()?.message ?: "Không thể kết nối với Trợ Lý AI (${response.code()})"
+                val errorMsg = response.body()?.message ?: "Could not connect to AI Assistant (${response.code()})"
                 Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {

@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const bookingSchema = new mongoose.Schema({
-    memberId: { type: mongoose.Schema.Types.ObjectId, ref: 'Member', required: true },
+    memberId: { type: mongoose.Schema.Types.ObjectId, ref: 'Member', required: false, default: null },
     showtimeId: { type: mongoose.Schema.Types.ObjectId, ref: 'Showtime', required: true },
     promotionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Promotion' },
     bookingCode: { type: String, required: true, unique: true },

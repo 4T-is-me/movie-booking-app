@@ -26,7 +26,14 @@ class StaffNotifAdapter(
                 tvNotifBody.text = item.message
                 tvNotifTime.text = "${date} - ${time}"
 
-                viewUnreadIndicator.visibility = if (item.isRead) View.GONE else View.VISIBLE
+                // Change background & dot indicator if unread
+                if (item.isRead) {
+                    root.setBackgroundColor(Color.TRANSPARENT)
+                    viewUnreadIndicator.visibility = View.GONE
+                } else {
+                    root.setBackgroundColor(ContextCompat.getColor(root.context, R.color.unread_item_bg))
+                    viewUnreadIndicator.visibility = View.VISIBLE
+                }
 
                 root.setOnClickListener {
                     onItemClick(item)

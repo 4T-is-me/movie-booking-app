@@ -139,12 +139,15 @@ class NotificationActivity : AppCompatActivity() {
             val isVoucherOrPromo = item.type.equals("PROMOTION", ignoreCase = true) ||
                     item.title.contains("Voucher", ignoreCase = true) ||
                     item.title.contains("Khuyến mãi", ignoreCase = true) ||
-                    item.body.contains("Mã voucher", ignoreCase = true)
+                    item.title.contains("Promotion", ignoreCase = true) ||
+                    item.body.contains("Mã voucher", ignoreCase = true) ||
+                    item.body.contains("Voucher code", ignoreCase = true)
 
             val isMaintenanceAction = !isVoucherOrPromo && (
                     item.type.contains("MAINTENANCE_ACTION_REQUIRED", ignoreCase = true) ||
                     item.type.equals("ACTION_REQUIRED", ignoreCase = true) ||
-                    (item.title.contains("Sự cố", ignoreCase = true) && item.title.contains("dời vé", ignoreCase = true))
+                    (item.title.contains("Sự cố", ignoreCase = true) && item.title.contains("dời vé", ignoreCase = true)) ||
+                    (item.title.contains("Showtime issue", ignoreCase = true) && item.title.contains("transfer", ignoreCase = true))
             )
 
             if (isVoucherOrPromo) {
@@ -255,7 +258,7 @@ class NotificationActivity : AppCompatActivity() {
         dialogBinding.btnDecline.visibility = android.view.View.GONE
 
         // Display a clean Exit Button
-        dialogBinding.tvDismiss.text = "✕  Đóng"
+        dialogBinding.tvDismiss.text = "✕  Close"
         dialogBinding.tvDismiss.textSize = 16f
         dialogBinding.tvDismiss.setTextColor(ContextCompat.getColor(this@NotificationActivity, R.color.gold_selected))
         dialogBinding.tvDismiss.setOnClickListener {
@@ -274,22 +277,22 @@ class NotificationActivity : AppCompatActivity() {
                 )
                 if (response.isSuccessful) {
                     val msg = if (action == "accept") {
-                        "Cảm ơn bạn! Đã xác nhận dời vé thành công. Voucher đền bù đã được gửi vào ví."
+                        "Thank you! Confirming ticket transfer successful. Compensation voucher has been sent to your wallet."
                     } else {
-                        "Đã từ chối dời vé! 100% số điểm thưởng đã được hoàn trả vào ví của bạn."
+                        "Ticket transfer declined! 100% of reward points have been refunded to your wallet."
                     }
                     Toast.makeText(this@NotificationActivity, msg, Toast.LENGTH_LONG).show()
                     loadNotifications()
                 } else {
                     val errorMsg = if (response.code() == 409) {
-                        "Thông báo: Vé này đã được xác nhận hoặc hủy trước đó."
+                        "Notice: This ticket has already been confirmed or cancelled."
                     } else {
-                        "Lỗi xử lý dời vé (Mã: ${response.code()})"
+                        "Failed to process ticket transfer (Code: ${response.code()})"
                     }
                     Toast.makeText(this@NotificationActivity, errorMsg, Toast.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@NotificationActivity, "Lỗi kết nối: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@NotificationActivity, "Connection error: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
             }
         }
     }

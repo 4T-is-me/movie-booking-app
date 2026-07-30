@@ -42,7 +42,7 @@ class BookingViewModel @Inject constructor(private val repository: BookingReposi
                 .collect { baseResponse ->
                     val historyList = baseResponse.data
 
-                    // Nếu history có dữ liệu, lấy thông tin member từ giao dịch mới nhất
+                    // If history has data, retrieve member details from the latest transaction
                     if (historyList.isNotEmpty()) {
                         val latestTransaction = historyList.first()
                         _memberState.value = latestTransaction.memberId.copy(

@@ -196,7 +196,7 @@ const createNotification = async ({ accountId, title, message, body, type = 'gen
 
         if (tokens.length > 0) {
             try {
-                // Map metadata thành string và chuẩn hóa referenceId
+                // Map metadata to string values and normalize referenceId
                 const stringifiedMetadata = {
                     notificationId: String(newNotification._id),
                     type: String(type),
@@ -232,19 +232,19 @@ const getStaffNotifications = async (staffId, query) => {
 
     const filter = { recipientId: staffId };
 
-    // Lọc theo trạng thái đã đọc hay chưa (nếu client truyền lên ?isRead=false)
+    // Filter by read status (e.g. if client passes ?isRead=false)
     if (query.isRead !== undefined) {
         filter.isRead = query.isRead === 'true';
     }
 
-    // Lọc theo loại thông báo (nếu client truyền ?type=ACTION_REQUIRED)
+    // Filter by notification type (e.g. if client passes ?type=ACTION_REQUIRED)
     if (query.type) {
         filter.type = query.type;
     }
 
     const [notifications, total, unreadCount] = await Promise.all([
         Notification.find(filter)
-            .sort({ createdAt: -1 }) // Mới nhất lên đầu
+            .sort({ createdAt: -1 }) // Newest first
             .skip(skip)
             .limit(limit)
             .lean(),

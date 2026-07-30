@@ -434,7 +434,7 @@ class ManagerStaffActivity : AppCompatActivity() {
             if (reason.isNotBlank()) {
                 leaveRequestAdapter.setLocalRejectState(item.leaveRequestId)
 
-                // Gọi API gửi lên server
+                // Call API to send request to server
                 leaveRequestViewModel.rejectLeaveRequest(item.leaveRequestId, reason)
                 dialog.dismiss()
             } else {
