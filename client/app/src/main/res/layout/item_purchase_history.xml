@@ -171,8 +171,8 @@
                     android:textSize="10sp"
                     android:textStyle="bold"
                     android:visibility="gone"
-                    app:backgroundTint="#2C2C2C"
-                    app:strokeColor="#FFC107"
+                    app:backgroundTint="@color/payment_poster_bg"
+                    app:strokeColor="@color/yellow"
                     app:strokeWidth="1dp"
                     app:cornerRadius="8dp"
                     tools:visibility="visible" />

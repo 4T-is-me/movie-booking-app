@@ -4,10 +4,10 @@
     android:layout_width="480dp"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    app:cardBackgroundColor="#1A1B23"
+    app:cardBackgroundColor="@color/auto_color_1A1B23"
     app:cardCornerRadius="28dp"
     app:cardElevation="12dp"
-    app:strokeColor="#333544"
+    app:strokeColor="@color/auto_color_333544"
     app:strokeWidth="1dp">
 
     <LinearLayout
@@ -42,7 +42,7 @@
             android:layout_marginBottom="12dp"
             android:text="@string/auto_str_confirmation"
             android:textAlignment="center"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/white"
             android:textSize="22sp"
             android:textStyle="bold" />
 
@@ -54,7 +54,7 @@
             android:layout_marginBottom="30dp"
             android:gravity="center"
             android:lineSpacingMultiplier="1.2"
-            android:textColor="#BDBDBD"
+            android:textColor="@color/auto_color_BDBDBD"
             android:textSize="15sp" />
 
         <!-- Action Buttons -->
@@ -73,10 +73,10 @@
                 android:layout_weight="1"
                 android:padding="0dp"
                 android:text="@string/auto_str_cancel_dialog"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                app:backgroundTint="#2D303E"
+                app:backgroundTint="@color/auto_color_2D303E"
                 app:cornerRadius="14dp" />
 
             <!-- Confirm Button -->
@@ -88,7 +88,7 @@
                 android:layout_weight="1"
                 android:padding="0dp"
                 android:text="@string/auto_str_confirm_dialog"
-                android:textColor="#000000"
+                android:textColor="@color/black"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 app:backgroundTint="@color/yellow"

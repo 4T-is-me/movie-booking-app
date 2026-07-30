@@ -18,7 +18,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/white"
             android:textSize="13sp"
             android:textStyle="bold"
             android:text="Nguyen Van A" />
@@ -55,7 +55,7 @@
             android:id="@+id/tvHolidayBadge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#FF4444"
+            android:textColor="@color/auto_color_FF4444"
             android:textSize="11sp"
             android:textStyle="bold"
             android:text="🎉 Holiday"

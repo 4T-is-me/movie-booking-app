@@ -397,4 +397,19 @@
     <color name="color_draft_status_bg">#1AF5C518</color>
     <color name="color_dropdown_text">#222222</color>
     <color name="payroll_config_read_only">#334155</color>
+
+    <!-- Auto-extracted colors (Antigravity Refactor) -->
+    <color name="auto_color_161A23">#161A23</color>
+    <color name="auto_color_4B5563">#4B5563</color>
+    <color name="auto_color_2E2E2E">#2E2E2E</color>
+    <color name="auto_color_333544">#333544</color>
+    <color name="auto_color_1A1829">#1A1829</color>
+    <color name="auto_color_33F59E0B">#33F59E0B</color>
+    <color name="auto_color_252238">#252238</color>
+    <color name="auto_color_F87171">#F87171</color>
+    <color name="auto_color_2DEF4444">#2DEF4444</color>
+    <color name="auto_color_7FEF4444">#7FEF4444</color>
+    <color name="auto_color_660A0A0A">#660A0A0A</color>
+    <color name="auto_color_FF4444">#FF4444</color>
+    <color name="auto_color_FFD700">#FFD700</color>
 </resources>

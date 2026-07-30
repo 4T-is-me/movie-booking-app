@@ -24,7 +24,7 @@
             android:layout_height="4dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="16dp"
-            android:background="#40FFFFFF" />
+            android:background="@color/auto_color_40FFFFFF" />
 
         <TextView
             android:id="@+id/tvDialogTitle"
@@ -85,7 +85,7 @@
                 android:layout_weight="1"
                 android:backgroundTint="@color/color_gold"
                 android:text="@string/dialog_submit"
-                android:textColor="#1A1A1A"
+                android:textColor="@color/bg_surface"
                 android:textSize="14sp"
                 android:textStyle="bold" />
         </LinearLayout>

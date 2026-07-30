@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0A0A0A"
+    android:background="@color/bg_primary"
     android:fitsSystemWindows="true"
     tools:context=".view.activity.ChatActivity">
 
@@ -14,7 +14,7 @@
         android:id="@+id/topBar"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="#1A1A1A"
+        android:background="@color/bg_surface"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="12dp"
@@ -31,7 +31,7 @@
             android:focusable="true"
             android:padding="6dp"
             android:src="@drawable/ic_back"
-            app:tint="#FFFFFF" />
+            app:tint="@color/white" />
 
         <FrameLayout
             android:layout_width="36dp"
@@ -57,7 +57,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Trợ Lý AI Xem Phim 🎬"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -65,7 +65,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="🟢 Đang trực tuyến (Hỗ trợ 24/7)"
-                android:textColor="#10B981"
+                android:textColor="@color/color_green"
                 android:textSize="11sp" />
         </LinearLayout>
     </LinearLayout>
@@ -74,7 +74,7 @@
         android:id="@+id/dividerTop"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#2A2A2A"
+        android:background="@color/border_subtle"
         app:layout_constraintTop_toBottomOf="@id/topBar" />
 
     <!-- Chat Messages RecyclerView -->
@@ -93,7 +93,7 @@
         android:id="@+id/layoutInputArea"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#161A23"
+        android:background="@color/auto_color_161A23"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="10dp"
@@ -106,8 +106,8 @@
             android:layout_weight="1"
             android:background="@drawable/bg_input_dark"
             android:hint="Nhập câu hỏi (giá vé, lịch chiếu...)..."
-            android:textColorHint="#80FFFFFF"
-            android:textColor="#FFFFFF"
+            android:textColorHint="@color/nav_inactive"
+            android:textColor="@color/white"
             android:textSize="14sp"
             android:maxLines="4"
             android:paddingStart="14dp"
@@ -130,7 +130,7 @@
                 android:layout_height="20dp"
                 android:layout_gravity="center"
                 android:src="@drawable/ic_send_message"
-                app:tint="#0A0A0A" />
+                app:tint="@color/bg_primary" />
         </FrameLayout>
     </LinearLayout>
 

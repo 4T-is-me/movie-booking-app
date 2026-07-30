@@ -23,7 +23,7 @@
             android:id="@+id/tvMessageContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#0A0A0A"
+            android:textColor="@color/bg_primary"
             android:textSize="14sp"
             android:lineSpacingExtra="2dp"
             android:textIsSelectable="true" />
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_marginTop="2dp"
-            android:textColor="#660A0A0A"
+            android:textColor="@color/auto_color_660A0A0A"
             android:textSize="10sp" />
     </LinearLayout>
 
