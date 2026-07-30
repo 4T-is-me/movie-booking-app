@@ -64,31 +64,31 @@ class NotificationViewModel @Inject constructor(
         }
     }
 
-    fun markAsRead(id: String) {
+    fun markAsRead(id: String, isStaff: Boolean = true) {
         viewModelScope.launch {
             val localId = id.toLongOrNull()
             if (localId != null) {
                 NotificationLocalStorage.markRead(context, localId)
-                fetchStaffNotifications()
+                if (isStaff) fetchStaffNotifications() else loadNotifications()
             } else {
                 repository.markAsRead(id).collect { response ->
                     if (response?.success == true) {
-                        fetchStaffNotifications()
+                        if (isStaff) fetchStaffNotifications() else loadNotifications()
                     }
                 }
             }
         }
     }
 
-    fun markAllAsRead() {
+    fun markAllAsRead(isStaff: Boolean = true) {
         viewModelScope.launch {
             NotificationLocalStorage.markAllRead(context)
             repository.markAllAsRead().collect { response ->
                 if (response?.success == true) {
-                    fetchStaffNotifications()
+                    if (isStaff) fetchStaffNotifications() else loadNotifications()
                 }
             }
-            fetchStaffNotifications()
+            if (isStaff) fetchStaffNotifications() else loadNotifications()
         }
     }
 
