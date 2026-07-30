@@ -1,5 +1,9 @@
 package com.example.movie_booking_app.viewmodel.staff
 
+import dagger.hilt.android.qualifiers.ApplicationContext
+
+import android.content.Context
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.R
@@ -20,7 +24,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LeaveRequestViewModel @Inject constructor(private val repository: LeaveRequestRepository) : ViewModel() {
+class LeaveRequestViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val repository: LeaveRequestRepository) : ViewModel() {
 
     // --- States cho Staff ---
     private val _createLeaveResult = MutableStateFlow<CreateLeaveResponse?>(null)
@@ -186,7 +192,7 @@ class LeaveRequestViewModel @Inject constructor(private val repository: LeaveReq
                 if (response != null) {
                     _managerLeaveRequests.value = response
                 } else {
-                    _errorMessage.value = "Failed to load leave requests."
+                    _errorMessage.value = context.getString(R.string.auto_str_failed_to_load_leave_requests)
                 }
             }
         }

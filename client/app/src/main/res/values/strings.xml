@@ -1449,4 +1449,27 @@
     <string name="auto_str_ticket_validated">Ticket Validated</string>
     <string name="auto_str_validation_failed">Validation Failed</string>
     <string name="auto_str_please_check_the_booking_code">Please check the booking code or payment status.</string>
+
+    <!-- Auto-extracted strings from ViewModels -->
+    <string name="auto_str_room_name_is_required">Room name is required</string>
+    <string name="auto_str_rows_must_be_between_1_and_8">Rows must be between 1 and 8.</string>
+    <string name="auto_str_columns_must_be_between_1_and">Columns must be between 1 and 10.</string>
+    <string name="auto_str_seat_layout_is_empty">Seat layout is empty</string>
+    <string name="auto_str_cinema_name_is_required">Cinema name is required</string>
+    <string name="auto_str_address_is_required">Address is required</string>
+    <string name="auto_str_city_province_is_required">City/Province is required</string>
+    <string name="auto_str_hotline_phone_number_is_requir">Hotline/Phone number is required</string>
+    <string name="auto_str_invalid_phone_number_format">Invalid phone number format</string>
+    <string name="auto_str_failed_to_update_status">Failed to update status</string>
+    <string name="auto_str_failed_to_update_room_status">Failed to update room status</string>
+    <string name="auto_str_failed_to_load_active_tickets">Failed to load active tickets</string>
+    <string name="auto_str_failed_to_load_booking_history">Failed to load booking history</string>
+    <string name="auto_str_google_sign_in_failed">Google sign-in failed</string>
+    <string name="auto_str_failed_to_load_leave_requests">Failed to load leave requests.</string>
+    <string name="auto_str_please_enter_verification_info">Please enter verification info</string>
+    <string name="auto_str_member_account_does_not_exist">Member account does not exist</string>
+    <string name="auto_str_please_enter_promotion_code">Please enter promotion code</string>
+    <string name="auto_str_please_select_a_showtime">Please select a showtime</string>
+    <string name="auto_str_please_select_a_seat">Please select a seat</string>
+    <string name="auto_str_failed_to_load_ratings_or_no_r">Failed to load ratings or no ratings yet</string>
 </resources>
