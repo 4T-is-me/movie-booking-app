@@ -26,7 +26,6 @@ class StaffNotifAdapter(
                 tvNotifBody.text = item.message
                 tvNotifTime.text = "${date} - ${time}"
 
-                // Chỉ hiện chấm indicator nếu chưa đọc, giữ nền giống user (dùng màu từ XML)
                 viewUnreadIndicator.visibility = if (item.isRead) View.GONE else View.VISIBLE
 
                 root.setOnClickListener {
