@@ -153,6 +153,53 @@ const validatePayrollPeriod = (month, year) => {
 };
 
 /**
+ * Hàm này dùng nội bộ để gom mảng employeeIds lại và truy vấn 1 lần.
+ */
+const getBulkEmployeeInfo = async (employeeIds) => {
+  // Lọc ID trùng lặp để giảm thiểu data query
+  const uniqueIds = [...new Set(employeeIds.map(id => id.toString()))];
+  if (uniqueIds.length === 0) return {};
+
+  // Tìm trong bảng Staff
+  const staffs = await Staff.find({ _id: { $in: uniqueIds } })
+    .populate({
+      path: "accountId",
+      select: "username roleId",
+      populate: { path: "roleId", select: "roleName" }
+    }).lean();
+
+  const foundStaffIds = staffs.map(s => s._id.toString());
+  const missingIds = uniqueIds.filter(id => !foundStaffIds.includes(id));
+
+  // Nếu có ID chưa tìm thấy (là Manager), tìm trong bảng Manager
+  let managers = [];
+  if (missingIds.length > 0) {
+    managers = await Manager.find({ _id: { $in: missingIds } })
+      .populate({
+        path: "accountId",
+        select: "username roleId",
+        populate: { path: "roleId", select: "roleName" }
+      }).lean();
+  }
+
+  // Gom chung lại và tạo Dictionary (Map) để map dữ liệu với độ phức tạp O(1)
+  const allEmployees = [...staffs, ...managers];
+  const employeeMap = {};
+
+  for (const emp of allEmployees) {
+    employeeMap[emp._id.toString()] = {
+      _id: emp._id,
+      fullName: emp.fullName,
+      username: emp.accountId?.username || null,
+      image: emp.image || null,
+      role: emp.accountId?.roleId?.roleName || null,
+    };
+  }
+
+  return employeeMap;
+};
+
+/**
  * Generate Payroll hàng loạt cho toàn bộ Staff & Manager
  */
 const generatePayroll = async (month, year) => {
@@ -190,51 +237,36 @@ const generatePayroll = async (month, year) => {
 
   return [];
 };
-const getEmployeeInfo = async (employeeId) => {
-  let employee = await Staff.findById(employeeId).populate({
-    path: "accountId",
-    select: "username roleId",
-    populate: {
-      path: "roleId",
-      select: "roleName"
-    }
-  });
 
-  if (!employee) {
-    employee = await Manager.findById(employeeId).populate({
-      path: "accountId",
-      select: "username roleId",
-      populate: {
-        path: "roleId",
-        select: "roleName"
-      }
-    });
-  }
-
-  if (!employee) {
-    return null;
-  }
-
-  return {
-    _id: employee._id,
-    fullName: employee.fullName,
-    username: employee.accountId?.username || null,
-    image: employee.image || null,
-    role: employee.accountId?.roleId?.roleName || null,
-  };
-};
-
-/**
+/*
  * Hàm đếm ca làm thực tế của Staff trong tháng (dùng cho API xem chi tiết)
- */
+*/
 const getStaffShiftCount = async (staffId, month, year) => {
   const startDate = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0, 0));
   const endDate = new Date(Date.UTC(year, month, 0, 23, 59, 59, 999));
 
+  // Thêm .lean() để tăng tốc độ read
   const shifts = await StaffShift.find({
     staffId: staffId,
     workDate: { $gte: startDate, $lte: endDate },
-  });
+  }).lean();
+
+  // Gom tất cả shift_id cần check leave request
+  const potentialLeaveShiftIds = shifts
+    .filter(shift => !shift.originalStaffId)
+    .map(shift => shift._id);
+
+  let approvedShiftIdsSet = new Set();
+  
+  // Chỉ query LeaveRequest 1 lần duy nhất bằng $in
+  if (potentialLeaveShiftIds.length > 0) {
+    const approvedLeaves = await LeaveRequest.find({
+      staffShiftId: { $in: potentialLeaveShiftIds },
+      status: 'Approved',
+    }).select('staffShiftId').lean();
+
+    approvedShiftIdsSet = new Set(approvedLeaves.map(l => l.staffShiftId.toString()));
+  }
 
   const shiftCount = {
     morning: 0,
@@ -244,13 +276,10 @@ const getStaffShiftCount = async (staffId, month, year) => {
     absent: 0,
   };
 
+  // Vòng lặp tính toán lúc này chỉ chạy trên RAM, không chọc xuống DB nữa
   for (const shift of shifts) {
-    if (!shift.originalStaffId) {
-      const approvedLeave = await LeaveRequest.findOne({
-        staffShiftId: shift._id,
-        status: 'Approved',
-      });
-      if (approvedLeave) continue; 
+    if (!shift.originalStaffId && approvedShiftIdsSet.has(shift._id.toString())) {
+      continue; 
     }
 
     if (shift.status === 'Completed') {
@@ -267,55 +296,83 @@ const getStaffShiftCount = async (staffId, month, year) => {
 };
 
 const getManagerPayrolls = async (accountId, filter = {}) => {
-    const manager = await Manager.findOne({ accountId });
+  const manager = await Manager.findOne({ accountId }).lean(); // Thêm lean() 
 
-    if (!manager) {
-        throw new Error("Manager not found");
-    }
+  if (!manager) {
+    throw new Error("Manager not found");
+  }
 
-    const query = {
-        cinemaId: manager.cinemaId,
-        ...filter
-    };
+  const query = {
+    cinemaId: manager.cinemaId,
+    ...filter
+  };
 
-    const payrolls = await Payroll.find(query)
-        .populate("cinemaId", "_id cinemaName")
-        .lean();
+  const payrolls = await Payroll.find(query)
+    .populate("cinemaId", "_id cinemaName")
+    .lean();
 
-    return await Promise.all(
-        payrolls.map(async payroll => ({
-            ...payroll,
-            employeeId: await getEmployeeInfo(payroll.employeeId)
-        }))
-    );
+  // Gom tất cả employeeId lại và query 1 lần
+  const employeeIds = payrolls.map(p => p.employeeId);
+  const employeeInfoMap = await getBulkEmployeeInfo(employeeIds);
+
+  // Map lại vào kết quả (Thay vì dùng Promise.all và gọi DB từng lần)
+  return payrolls.map(payroll => ({
+    ...payroll,
+    employeeId: employeeInfoMap[payroll.employeeId.toString()] || null
+  }));
 };
 
 const getMyPayroll = async (accountId) => {
+  let employee = await Staff.findOne({ accountId }).select("_id").lean();
 
-    let employee =
-        await Staff.findOne({ accountId }).select("_id");
+  if (!employee) {
+    employee = await Manager.findOne({ accountId }).select("_id").lean();
+  }
 
-    if (!employee) {
-        employee = await Manager.findOne({ accountId }).select("_id");
-    }
+  if (!employee) {
+    throw new Error("Employee not found");
+  }
 
-    if (!employee) {
-        throw new Error("Employee not found");
-    }
+  const payrolls = await Payroll.find({
+    employeeId: employee._id
+  })
+    .populate("cinemaId", "_id cinemaName")
+    .sort({ year: -1, month: -1 })
+    .lean();
 
-    const payrolls = await Payroll.find({
-        employeeId: employee._id
-    })
-        .populate("cinemaId", "_id cinemaName")
-        .sort({ year: -1, month: -1 })
-        .lean();
+  const employeeIds = payrolls.map(p => p.employeeId);
+  const employeeInfoMap = await getBulkEmployeeInfo(employeeIds);
 
-    return await Promise.all(
-        payrolls.map(async payroll => ({
-            ...payroll,
-            employeeId: await getEmployeeInfo(payroll.employeeId)
-        }))
-    );
+  return payrolls.map(payroll => ({
+    ...payroll,
+    employeeId: employeeInfoMap[payroll.employeeId.toString()] || null
+  }));
+};
+const getEmployeeInfo = async (employeeId) => { 
+  let employee = await Staff.findById(employeeId)
+  .populate({ 
+    path: "accountId", 
+    select: "username roleId", 
+    populate: { path: "roleId", select: "roleName" } 
+  }); 
+  if (!employee) { 
+    employee = await Manager.findById(employeeId)
+    .populate({ 
+      path: "accountId", 
+      select: "username roleId", 
+      populate: { path: "roleId", select: "roleName" } 
+    }); 
+  } 
+  if (!employee) { 
+    return null; 
+  } 
+  return { 
+    _id: employee._id, 
+    fullName: employee.fullName, 
+    username: employee.accountId?.username || null, 
+    image: employee.image || null, 
+    role: employee.accountId?.roleId?.roleName || null, 
+  } 
 };
 
 export const payrollService = {
