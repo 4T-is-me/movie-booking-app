@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="Thêm hình ảnh nhận diện phim 🎬"
+        android:text="@string/auto_str_th_m_h_nh_nh_nh_n_di_n_phim"
         android:textColor="@color/white"
         android:textSize="16sp"
         android:textStyle="bold" />
@@ -58,7 +58,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Chụp ảnh mới"
+                android:text="@string/auto_str_ch_p_nh_m_i"
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="bold" />
@@ -67,7 +67,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Dùng máy ảnh"
+                android:text="@string/auto_str_d_ng_m_y_nh"
                 android:textColor="@color/text_secondary"
                 android:textSize="11sp" />
         </LinearLayout>
@@ -96,7 +96,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Tải ảnh lên"
+                android:text="@string/auto_str_t_i_nh_l_n"
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="bold" />
@@ -105,7 +105,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Chọn từ thư viện"
+                android:text="@string/auto_str_ch_n_t_th_vi_n"
                 android:textColor="@color/text_secondary"
                 android:textSize="11sp" />
         </LinearLayout>

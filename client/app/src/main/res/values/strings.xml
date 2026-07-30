@@ -1257,4 +1257,104 @@
     <string name="evening_shift_rate">Evening Shift Rate</string>
     <string name="night_shift_rate">Night Shift Rate</string>
 
+
+    <!-- Auto-extracted strings (Node Script) -->
+    <string name="auto_str_tr_l_ai_xem_phim">Trợ Lý AI Xem Phim 🎬</string>
+    <string name="auto_str_ang_tr_c_tuy_n_h_tr_24_7">🟢 Đang trực tuyến (Hỗ trợ 24/7)</string>
+    <string name="auto_str_my_profile">My Profile</string>
+    <string name="auto_str_m">M</string>
+    <string name="auto_str_personal_information">Personal Information</string>
+    <string name="auto_str_change_password">Change Password</string>
+    <string name="auto_str_update_profile">Update Profile</string>
+    <string name="auto_str_closed">Closed</string>
+    <string name="auto_str_ch_n_nhi_u">Chọn nhiều</string>
+    <string name="auto_str_ch_n_0_gh">Đã chọn 0 ghế</string>
+    <string name="auto_str_b_ch_n">Bỏ chọn</string>
+    <string name="auto_str_ho_t_ng">✓ Hoạt động</string>
+    <string name="auto_str_b_o_tr">✓ Bảo trì</string>
+    <string name="auto_str_see_more">See more</string>
+    <string name="auto_str_movie_news">Movie News</string>
+    <string name="auto_str_book_now">Book Now</string>
+    <string name="auto_str_discussion">Discussion</string>
+    <string name="auto_str_no_comments_yet_start_the_conv">No comments yet. Start the conversation!</string>
+
+    <!-- Auto-extracted strings (Node Script) -->
+    <string name="auto_str_selected_snacks_amp_drinks">Selected Snacks &amp;amp; Drinks</string>
+    <string name="auto_str_choose_f_amp_b">Choose F&amp;amp;B</string>
+    <string name="auto_str_total_price">Total Price</string>
+    <string name="auto_str_checkout">Checkout</string>
+    <string name="auto_str_android_textcolor">\"
+                    android:textColor=</string>
+    <string name="auto_str_th_m_h_nh_nh_nh_n_di_n_phim">Thêm hình ảnh nhận diện phim 🎬</string>
+    <string name="auto_str_ch_p_nh_m_i">Chụp ảnh mới</string>
+    <string name="auto_str_d_ng_m_y_nh">Dùng máy ảnh</string>
+    <string name="auto_str_t_i_nh_l_n">Tải ảnh lên</string>
+    <string name="auto_str_ch_n_t_th_vi_n">Chọn từ thư viện</string>
+    <string name="auto_str_s_c_ph_ng_chi_u_c_n_x_c_nh_n">Sự cố phòng chiếu - Cần xác nhận</string>
+    <string name="auto_str_ng_d_i_v">✓  ĐỒNG Ý DỜI VÉ</string>
+    <string name="auto_str_t_ch_i_ho_n_100_i_m">✕  Từ chối (Hoàn 100% điểm)</string>
+    <string name="auto_str_sau">Để sau</string>
+
+    <!-- Auto-extracted strings (Node Script) -->
+    <string name="auto_str_manual_check_in">Manual Check-in</string>
+    <string name="auto_str_please_enter_the_18_digit_book">Please enter the 18-digit booking code (e.g. MBD-...) to validate this ticket manually.</string>
+    <string name="auto_str_cancel">Cancel</string>
+    <string name="auto_str_confirm">Confirm</string>
+    <string name="auto_str_reason_for_this_request">Reason for this request:</string>
+    <string name="auto_str_reason_for_this_request_1">Reason for this request:</string>
+    <string name="auto_str_duration">Duration</string>
+    <string name="auto_str_staff_per_shift">Staff Per Shift</string>
+    <string name="auto_str_select_staff_for_scheduling">Select Staff for Scheduling</string>
+    <string name="auto_str_schedule_preview">Schedule Preview</string>
+    <string name="auto_str_s">S</string>
+    <string name="auto_str_rating">Rating</string>
+    <string name="auto_str_0_0">0.0</string>
+    <string name="auto_str_kpi_points">KPI Points</string>
+    <string name="auto_str_0">0</string>
+    <string name="auto_str_sales">Sales</string>
+    <string name="auto_str_0_1">0</string>
+    <string name="auto_str_personal_information">Personal Information</string>
+    <string name="auto_str_change_password">Change Password</string>
+    <string name="auto_str_update_profile">Update Profile</string>
+
+    <!-- Auto-extracted strings (Node Script) -->
+    <string name="auto_str_0_0">0.0</string>
+    <string name="auto_str_0_reviews">0 reviews</string>
+    <string name="auto_str_no_leave_requests_found">No leave requests found</string>
+    <string name="auto_str_shifts_need_replacement">Shifts Need Replacement</string>
+    <string name="auto_str_0">0</string>
+    <string name="auto_str_str_auto"> • </string>
+    <string name="auto_str_like">Like</string>
+    <string name="auto_str_str_auto_1"> • </string>
+    <string name="auto_str_reply">Reply</string>
+
+    <!-- Auto-extracted strings (Node Script) -->
+    <string name="auto_str_cinema_club">Cinema Club ✔️</string>
+    <string name="auto_str_2d">2d • 🌐</string>
+    <string name="auto_str_mua_v_t_i_y">Mua vé tại đây 🔍</string>
+    <string name="auto_str_1_9k">👍❤️ 1.9k</string>
+    <string name="auto_str_222_comments">222 comments</string>
+    <string name="auto_str_th_ch">Thích</string>
+    <string name="auto_str_b_nh_lu_n">Bình luận</string>
+    <string name="auto_str_rate_movie">Rate Movie</string>
+    <string name="auto_str_mon">MON</string>
+    <string name="auto_str_20">20</string>
+    <string name="auto_str_jul">Jul</string>
+    <string name="auto_str_morning_shift">Morning Shift</string>
+    <string name="auto_str_need_replacement">Need Replacement</string>
+    <string name="auto_str_08_00_am_12_00_pm">08:00 AM - 12:00 PM</string>
+    <string name="auto_str_nguy_n_v_n_a">Nguyễn Văn A</string>
+    <string name="auto_str_str_auto">  •  </string>
+    <string name="auto_str_cashier">Cashier</string>
+    <string name="auto_str_approved_19_07_2026">Approved: 19/07/2026</string>
+    <string name="auto_str_accept">Accept</string>
+    <string name="auto_str_a">A</string>
+    <string name="auto_str_customer_name">Customer Name</string>
+    <string name="auto_str_5_0">5.0</string>
+    <string name="auto_str_date">Date</string>
+    <string name="auto_str_sample_comment_content">Sample comment content...</string>
+    <string name="auto_str_nguyen_van_a">Nguyen Van A</string>
+    <string name="auto_str_morning">Morning</string>
+    <string name="auto_str_2026_07_20">2026-07-20</string>
+    <string name="auto_str_holiday">🎉 Holiday</string>
 </resources>

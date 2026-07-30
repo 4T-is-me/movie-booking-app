@@ -301,7 +301,7 @@
                 android:id="@+id/tvFBTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Selected Snacks &amp; Drinks"
+                android:text="@string/auto_str_selected_snacks_amp_drinks"
                 android:textColor="@color/auto_color_FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold"

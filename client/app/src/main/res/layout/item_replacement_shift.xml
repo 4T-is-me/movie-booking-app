@@ -33,7 +33,7 @@
                 android:textSize="11sp"
                 android:textStyle="bold"
                 android:letterSpacing="0.05"
-                android:text="MON" />
+                android:text="@string/auto_str_mon" />
 
             <TextView
                 android:id="@+id/tvBadgeDayNumber"
@@ -43,7 +43,7 @@
                 android:textSize="22sp"
                 android:textStyle="bold"
                 android:layout_marginVertical="1dp"
-                android:text="20" />
+                android:text="@string/auto_str_20" />
 
             <TextView
                 android:id="@+id/tvBadgeMonthName"
@@ -51,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/text_secondary"
                 android:textSize="11sp"
-                android:text="Jul" />
+                android:text="@string/auto_str_jul" />
         </LinearLayout>
 
         <LinearLayout
@@ -73,14 +73,14 @@
                     android:textColor="@color/white"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:text="Morning Shift" />
+                    android:text="@string/auto_str_morning_shift" />
 
                 <TextView
                     android:id="@+id/tvShiftStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:text="Need Replacement"
+                    android:text="@string/auto_str_need_replacement"
                     android:textColor="@color/color_gold"
                     android:textSize="9sp"
                     android:textStyle="bold"
@@ -109,7 +109,7 @@
                     android:layout_marginStart="6dp"
                     android:textColor="@color/text_secondary"
                     android:textSize="13sp"
-                    android:text="08:00 AM - 12:00 PM" />
+                    android:text="@string/auto_str_08_00_am_12_00_pm" />
             </LinearLayout>
 
             <LinearLayout
@@ -123,21 +123,21 @@
                     android:id="@+id/tvReplaceStaffName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Nguyễn Văn A"
+                    android:text="@string/auto_str_nguy_n_v_n_a"
                     android:textColor="@color/text_secondary"
                     android:textSize="13sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="  •  "
+                    android:text="@string/auto_str_str_auto"
                     android:textColor="@color/text_dialog_hint" />
 
                 <TextView
                     android:id="@+id/tvReplacePosition"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cashier"
+                    android:text="@string/auto_str_cashier"
                     android:textColor="@color/auto_color_94A3B8"
                     android:textSize="13sp" />
             </LinearLayout>
@@ -155,7 +155,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:text="Approved: 19/07/2026"
+                    android:text="@string/auto_str_approved_19_07_2026"
                     android:textColor="@color/text_dialog_hint"
                     android:textSize="11sp" />
 
@@ -165,7 +165,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="32dp"
                     android:layout_alignParentEnd="true"
-                    android:text="Accept"
+                    android:text="@string/auto_str_accept"
                     android:textColor="@color/color_gold"
                     android:textSize="12sp"
                     android:textStyle="bold"

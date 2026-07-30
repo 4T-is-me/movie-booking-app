@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="No leave requests found"
+            android:text="@string/auto_str_no_leave_requests_found"
             android:textColor="@color/auto_color_94A3B8"
             android:textSize="14sp"
             android:visibility="gone" />

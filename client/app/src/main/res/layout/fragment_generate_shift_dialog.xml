@@ -45,7 +45,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Duration"
+                android:text="@string/auto_str_duration"
                 android:textColor="@color/white"
                 android:textSize="12sp"
                 android:textStyle="bold" />
@@ -72,7 +72,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Staff Per Shift"
+                android:text="@string/auto_str_staff_per_shift"
                 android:textColor="@color/white"
                 android:textSize="12sp"
                 android:textStyle="bold" />
@@ -100,7 +100,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Select Staff for Scheduling"
+        android:text="@string/auto_str_select_staff_for_scheduling"
         android:textColor="@color/white"
         android:textSize="12sp"
         android:textStyle="bold" />
@@ -133,7 +133,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Schedule Preview"
+        android:text="@string/auto_str_schedule_preview"
         android:textColor="@color/white"
         android:textSize="14sp"
         android:textStyle="bold"

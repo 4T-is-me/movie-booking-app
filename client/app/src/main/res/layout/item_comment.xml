@@ -76,7 +76,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" • "
+            android:text="@string/auto_str_str_auto"
             android:textColor="@color/auto_color_88FFFFFF"
             android:textSize="11sp" />
 
@@ -85,7 +85,7 @@
             android:id="@+id/btnLikeComment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Like"
+            android:text="@string/auto_str_like"
             android:textColor="@color/auto_color_F5C542"
             android:textSize="12sp"
             android:textStyle="bold"
@@ -98,7 +98,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" • "
+            android:text="@string/auto_str_str_auto_1"
             android:textColor="@color/auto_color_88FFFFFF"
             android:textSize="11sp" />
 
@@ -107,7 +107,7 @@
             android:id="@+id/btnReplyComment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Reply"
+            android:text="@string/auto_str_reply"
             android:textColor="@color/white"
             android:textSize="12sp"
             android:textStyle="bold"

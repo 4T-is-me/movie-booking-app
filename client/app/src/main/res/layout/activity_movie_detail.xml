@@ -249,7 +249,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
-                    android:text="See more"
+                    android:text="@string/auto_str_see_more"
                     android:textColor="@color/auto_color_FACC15"
                     android:textSize="14sp"
                     android:textStyle="bold"
