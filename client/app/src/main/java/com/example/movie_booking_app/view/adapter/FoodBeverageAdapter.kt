@@ -99,29 +99,61 @@ class FoodBeverageAdapter(
 
         private fun showManualInputDialog(item: FoodBeverage) {
             val context = itemView.context
-            val input = EditText(context).apply {
-                inputType = InputType.TYPE_CLASS_NUMBER
-                setText(item.selectedQuantity.toString())
-                setSelection(text.length)
+            val container = android.widget.LinearLayout(context).apply {
+                orientation = android.widget.LinearLayout.VERTICAL
+                val padding = (24 * resources.displayMetrics.density).toInt()
+                setPadding(padding, 8, padding, 0)
             }
 
-            AlertDialog.Builder(context)
+            val til = com.google.android.material.textfield.TextInputLayout(context).apply {
+                hint = "Quantity (Max: ${item.stock})"
+                errorIconDrawable = null
+                boxBackgroundMode = com.google.android.material.textfield.TextInputLayout.BOX_BACKGROUND_OUTLINE
+                setBoxCornerRadii(12f, 12f, 12f, 12f)
+            }
+
+            val input = com.google.android.material.textfield.TextInputEditText(context).apply {
+                inputType = android.text.InputType.TYPE_CLASS_NUMBER
+                setText(item.selectedQuantity.toString())
+                setSelection(text?.length ?: 0)
+            }
+
+            til.addView(input)
+            container.addView(til)
+
+            val dialog = androidx.appcompat.app.AlertDialog.Builder(context)
                 .setTitle("Enter Quantity")
-                .setMessage("Max available: ${item.stock}")
-                .setView(input)
-                .setPositiveButton("OK") { _, _ ->
-                    val value = input.text.toString().toIntOrNull() ?: 0
-                    if (value > item.stock) {
-                        item.selectedQuantity = item.stock
-                        Toast.makeText(context, "Quantity adjusted to max stock", Toast.LENGTH_SHORT).show()
-                    } else {
-                        item.selectedQuantity = value
-                    }
-                    updateQuantityOnly(item)
-                    onQuantityChanged(item)
-                }
+                .setView(container)
+                .setPositiveButton("OK", null)
                 .setNegativeButton("Cancel", null)
-                .show()
+                .create()
+
+            dialog.show()
+
+            val okButton = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)
+            
+            input.addTextChangedListener(object : android.text.TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: android.text.Editable?) {
+                    val value = s.toString().toIntOrNull() ?: 0
+                    if (value > item.stock) {
+                        til.error = "Exceeds max stock (${item.stock})"
+                        okButton.isEnabled = false
+                    } else {
+                        til.error = null
+                        okButton.isEnabled = true
+                    }
+                }
+            })
+
+            okButton.setOnClickListener {
+                val value = input.text.toString().toIntOrNull() ?: 0
+                item.selectedQuantity = value
+                updateQuantityOnly(item)
+                onQuantityChanged(item)
+                dialog.dismiss()
+            }
         }
 
         private fun formatCurrency(amount: Int): String {
