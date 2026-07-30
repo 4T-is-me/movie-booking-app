@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import * as showtimeAdminService from '../services/adminShowtimeService.js';
+import { constants } from '../utils/constants.js';
 import { Manager } from '../models/managerModel.js';
 
 // POST /api/admin/showtimes
@@ -44,7 +45,7 @@ export const createBulkShowtimes = async (req, res) => {
         }
 
         let defaultCinemaId = null;
-        if (req.user && req.user.role === 'Manager') {
+        if (req.user && req.user.role === constants.ROLES.MANAGER) {
             const manager = await Manager.findOne({ accountId: req.user.accountId });
             if (manager) {
                 defaultCinemaId = manager.cinemaId;
@@ -78,7 +79,7 @@ export const getShowtimesAdmin = async (req, res) => {
 
         // If manager, auto-restrict to their cinema
         let filterCinemaId = cinemaId;
-        if (req.user && req.user.role === 'Manager') {
+        if (req.user && req.user.role === constants.ROLES.MANAGER) {
             const manager = await Manager.findOne({ accountId: req.user.accountId });
             if (manager) filterCinemaId = manager.cinemaId;
         }

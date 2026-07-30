@@ -31,31 +31,7 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="12dp"
-        android:gravity="center"
-        android:baselineAligned="false">
 
-        <View android:layout_width="8dp" android:layout_height="8dp" android:background="@color/auto_color_10B981" />
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_operating_3" android:textColor="@color/auto_color_94A3B8" android:textSize="12sp" android:layout_marginStart="4dp" />
-
-        <View android:layout_width="8dp" android:layout_height="8dp" android:background="@color/auto_color_FACC15" android:layout_marginStart="16dp" />
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_maintenance_1" android:textColor="@color/auto_color_94A3B8" android:textSize="12sp" android:layout_marginStart="4dp" />
-
-        <View android:layout_width="8dp" android:layout_height="8dp" android:background="@color/auto_color_EF4444" android:layout_marginStart="16dp" />
-        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/auto_str_closed_0" android:textColor="@color/auto_color_94A3B8" android:textSize="12sp" android:layout_marginStart="4dp" />
-    </LinearLayout>
-
-    <!-- Divider -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginHorizontal="16dp"
-        android:background="@color/auto_color_33FFFFFF" />
 
     <ProgressBar
         android:id="@+id/progressBar"

@@ -9,6 +9,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.delay
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.databinding.ActivityManagerAutoSchedulingBinding
 import com.example.movie_booking_app.utils.AutoSchedulingAlgorithm
@@ -18,6 +21,13 @@ import com.example.movie_booking_app.utils.RoomDraft
 import com.example.movie_booking_app.utils.ShowtimeDraft
 import com.example.movie_booking_app.view.adapter.manager.AutoSchedulingAdapter
 import java.time.LocalDate
+import android.view.View
+import com.example.movie_booking_app.data.model.request.ShowtimeBulkItem
+import com.example.movie_booking_app.data.model.request.ShowtimeBulkRequest
+import com.example.movie_booking_app.data.api.RetrofitClient
+import java.net.URL
+import java.net.HttpURLConnection
+import java.util.regex.Pattern
 
 class ManagerAutoSchedulingActivity : AppCompatActivity() {
 
@@ -62,7 +72,7 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
 
             // Map ShowtimeDraft -> ShowtimeBulkItem
             val bulkItems = draftsToSave.map {
-                com.example.movie_booking_app.data.model.request.ShowtimeBulkItem(
+                ShowtimeBulkItem(
                     movieId = it.movie_id,
                     cinemaId = it.cinema_id,
                     roomId = it.room_id,
@@ -73,27 +83,28 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                     ticketPrice = 85000
                 )
             }
-            val requestBody = com.example.movie_booking_app.data.model.request.ShowtimeBulkRequest(bulkItems)
+            val requestBody = ShowtimeBulkRequest(bulkItems)
 
             lifecycleScope.launch {
                 try {
                     // Start loading animation or block UI if needed
-                    binding.pbLoading.visibility = android.view.View.VISIBLE
-                    binding.layoutLoading.visibility = android.view.View.VISIBLE
+                    binding.pbLoading.visibility = View.VISIBLE
+                    binding.layoutLoading.visibility = View.VISIBLE
                     binding.tvLoadingText.text = "Saving to Database..."
 
-                    val response = com.example.movie_booking_app.data.api.RetrofitClient.managerApi.createBulkShowtimes(requestBody)
+                    val response = RetrofitClient.managerApi.createBulkShowtimes(requestBody)
 
                     if (response.isSuccessful) {
-                        binding.pbLoading.visibility = android.view.View.GONE
-                        binding.ivResultIcon.visibility = android.view.View.VISIBLE
-                        binding.ivResultIcon.setImageResource(com.example.movie_booking_app.R.drawable.baseline_check_circle_24)
+                        binding.pbLoading.visibility = View.GONE
+                        binding.ivResultIcon.visibility = View.VISIBLE
+                        binding.ivResultIcon.setImageResource(R.drawable.baseline_check_circle_24)
                         binding.tvLoadingText.text = "Saved successfully!"
-                        kotlinx.coroutines.delay(1500)
-                        binding.layoutLoading.visibility = android.view.View.GONE
+                        delay(1500)
+                        binding.layoutLoading.visibility = View.GONE
+                        binding.btnSave.isEnabled = true
                         
                         Toast.makeText(this@ManagerAutoSchedulingActivity, "Showtimes saved to Database!", Toast.LENGTH_SHORT).show()
-                        finish()
+                        fetchExistingShowtimes(currentWeekStart, currentWeekStart.plusDays(6))
                     } else {
                         binding.layoutLoading.visibility = android.view.View.GONE
                         binding.btnSave.isEnabled = true
@@ -128,9 +139,9 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
     }
 
     private fun fetchRoomsAndPopulateTabs() {
-        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+        lifecycleScope.launch {
             try {
-                val roomResponse = com.example.movie_booking_app.data.api.RetrofitClient.managerRoomApi.getRooms()
+                val roomResponse = RetrofitClient.managerRoomApi.getRooms()
                 allRooms = roomResponse.body()?.data?.map {
                     RoomDraft(it.id, it.roomName ?: "Unknown Room", "c1", it.status ?: "active")
                 } ?: emptyList()
@@ -252,25 +263,25 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
     }
 
     private fun fetchAndHighlightHolidays() {
-        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             try {
                 // Using a public API for holidays to demonstrate (e.g. Nager.Date)
-                val url = java.net.URL("https://date.nager.at/api/v3/PublicHolidays/${currentWeekStart.year}/VN")
-                val connection = url.openConnection() as java.net.HttpURLConnection
+                val url = URL("https://date.nager.at/api/v3/PublicHolidays/${currentWeekStart.year}/VN")
+                val connection = url.openConnection() as HttpURLConnection
                 connection.requestMethod = "GET"
                 
                 if (connection.responseCode == 200) {
                     val response = connection.inputStream.bufferedReader().use { it.readText() }
                     // Simple regex to find dates
                     val holidayDates = mutableListOf<String>()
-                    val pattern = java.util.regex.Pattern.compile("\"date\":\"(\\d{4}-\\d{2}-\\d{2})\"")
+                    val pattern = Pattern.compile("\"date\":\"(\\d{4}-\\d{2}-\\d{2})\"")
                     val matcher = pattern.matcher(response)
                     while (matcher.find()) {
                         holidayDates.add(matcher.group(1) ?: "")
                     }
                     currentWeekHolidays = holidayDates
                     
-                    kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                    withContext(Dispatchers.Main) {
                         val labels = listOf(binding.tvDay1Label, binding.tvDay2Label, binding.tvDay3Label, binding.tvDay4Label, binding.tvDay5Label, binding.tvDay6Label, binding.tvDay7Label)
                         val dates = listOf(binding.tvDay1Date, binding.tvDay2Date, binding.tvDay3Date, binding.tvDay4Date, binding.tvDay5Date, binding.tvDay6Date, binding.tvDay7Date)
                         for (i in 0..6) {
@@ -355,16 +366,16 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
     }
 
     private fun fetchMoviesAndGenerateSchedule() {
-        binding.layoutLoading.visibility = android.view.View.VISIBLE
-        binding.pbLoading.visibility = android.view.View.VISIBLE
-        binding.ivResultIcon.visibility = android.view.View.GONE
+        binding.layoutLoading.visibility = View.VISIBLE
+        binding.pbLoading.visibility = View.VISIBLE
+        binding.layoutLoading.visibility = View.VISIBLE
         binding.tvLoadingText.text = "Generating..."
         binding.tvLoadingText.setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_333333))
         
-        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+        lifecycleScope.launch {
             try {
                 // Fetch Movies
-                val movieResponse = com.example.movie_booking_app.data.api.RetrofitClient.movieApi.getMovies()
+                val movieResponse = RetrofitClient.movieApi.getMovies()
                 val movies = movieResponse.body()?.data?.map {
                     MovieDraft(it.id ?: "", it.movieName ?: "Unknown Movie", it.duration ?: 120, it.status ?: "showing", it.tier ?: 1)
                 } ?: emptyList()
@@ -381,7 +392,7 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                 // Pass existing showtimes from OTHER rooms to avoid cross-room conflicts
                 val existingOtherRooms = allGeneratedShowtimes.filter { it.room_id != selectedRoomId }
 
-                val schedule = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) {
+                val schedule = withContext(Dispatchers.Default) {
                     AutoSchedulingAlgorithm.generateWeeklySchedule(
                         currentWeekStart, currentWeekStart.plusDays(6), movies, roomsToGenerate, config, currentWeekHolidays, existingOtherRooms
                     )
@@ -389,33 +400,35 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
 
                 // Update global state and filter
                 allGeneratedShowtimes.removeAll { 
-                    val d = java.time.LocalDate.parse(it.show_date)
+                    val d = LocalDate.parse(it.show_date)
                     !d.isBefore(currentWeekStart) && !d.isAfter(currentWeekStart.plusDays(6)) && 
-                    it.room_id == selectedRoomId && !d.isBefore(java.time.LocalDate.now())
+                    it.room_id == selectedRoomId && !d.isBefore(LocalDate.now())
                 }
                 allGeneratedShowtimes.addAll(schedule)
                 
-                filterAndDisplaySchedule()
+                withContext(Dispatchers.Main) {
+                    filterAndDisplaySchedule()
+                }
                 
                 // Show success in overlay
-                binding.pbLoading.visibility = android.view.View.GONE
-                binding.ivResultIcon.visibility = android.view.View.VISIBLE
-                binding.ivResultIcon.setImageResource(com.example.movie_booking_app.R.drawable.baseline_check_circle_24)
+                binding.pbLoading.visibility = View.GONE
+                binding.ivResultIcon.visibility = View.VISIBLE
+                binding.ivResultIcon.setImageResource(R.drawable.baseline_check_circle_24)
                 binding.ivResultIcon.setColorFilter(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_00C853))
                 binding.tvLoadingText.text = "Generated successfully!"
                 binding.tvLoadingText.setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_00C853))
-                kotlinx.coroutines.delay(1500)
-                binding.layoutLoading.visibility = android.view.View.GONE
+                delay(1500)
+                binding.layoutLoading.visibility = View.GONE
             } catch (e: Exception) {
                 // Show failure in overlay
-                binding.pbLoading.visibility = android.view.View.GONE
-                binding.ivResultIcon.visibility = android.view.View.VISIBLE
-                binding.ivResultIcon.setImageResource(com.example.movie_booking_app.R.drawable.ic_report)
+                binding.pbLoading.visibility = View.GONE
+                binding.ivResultIcon.visibility = View.VISIBLE
+                binding.ivResultIcon.setImageResource(R.drawable.baseline_error_24)
                 binding.ivResultIcon.setColorFilter(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_E53935))
                 binding.tvLoadingText.text = "Generation failed!"
                 binding.tvLoadingText.setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_E53935))
-                kotlinx.coroutines.delay(1500)
-                binding.layoutLoading.visibility = android.view.View.GONE
+                delay(1500)
+                binding.layoutLoading.visibility = View.GONE
             }
         }
     }

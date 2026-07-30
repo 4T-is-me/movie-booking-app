@@ -16,12 +16,24 @@ export const MaintenanceController = {
     }
   },
 
-  // User Interaction API
+  // Xử lý báo ghế hỏng trong phòng
+  async handleBrokenSeats(req, res, next) {
+    try {
+      const { roomId } = req.params;
+      const { brokenSeatIds } = req.body;
+      const result = await MaintenanceService.handleBrokenSeats(roomId, brokenSeatIds);
+      res.status(StatusCodes.OK).json({ success: true, data: result });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  // API Tương tác User
   async resolveUserAction(req, res, next) {
     try {
       const { id } = req.params;
       const { action } = req.body; // 'accept' or 'decline'
-      
+
       // Ownership check (STT 17)
       const booking = await Booking.findById(id);
       if (!booking) {

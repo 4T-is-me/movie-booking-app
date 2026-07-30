@@ -14,6 +14,7 @@ import com.bumptech.glide.Glide
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.PayrollItem
 import com.example.movie_booking_app.databinding.ActivityPayrollDetailBinding
+import com.example.movie_booking_app.utils.RoleConstants
 import com.example.movie_booking_app.view.adapter.PayrollAdapter
 import com.example.movie_booking_app.viewmodel.PayrollViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -161,7 +162,7 @@ class PayrollDetailActivity : AppCompatActivity() {
 
         // 4. Role Check (Staff vs Manager)
         val isManager = (payroll.baseSalary ?: 0.0) > 0 ||
-                payroll.employee?.role?.contains("manager", ignoreCase = true) == true
+                payroll.employee?.role?.contains(RoleConstants.MANAGER, ignoreCase = true) == true
 
         if (isManager) {
             bindManagerDetails(payroll)

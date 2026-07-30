@@ -1,4 +1,5 @@
 import { Account } from '../models/accountModel.js';
+import { constants } from '../utils/constants.js';
 import { Staff } from '../models/staffModel.js';
 import { Manager } from '../models/managerModel.js';
 import { Role } from '../models/rolesModel.js';
@@ -44,7 +45,7 @@ export const getStaffList = async (arg1, arg2, arg3) => {
                 { name: { $regex: new RegExp(`^${role}$`, 'i') } },
                 { roleName: { $regex: new RegExp(`^${role}$`, 'i') } }
             ];
-            if (role.toLowerCase() === 'staff' || role.toLowerCase() === 'employee') {
+            if (role.toLowerCase() === constants.ROLES.STAFF.toLowerCase() || role.toLowerCase() === constants.ROLES.EMPLOYEE.toLowerCase()) {
                 orQuery.push({ name: { $regex: new RegExp(`^Employee$`, 'i') } });
                 orQuery.push({ roleName: { $regex: new RegExp(`^Employee$`, 'i') } });
                 orQuery.push({ name: { $regex: new RegExp(`^Staff$`, 'i') } });
@@ -111,7 +112,7 @@ export const getStaffList = async (arg1, arg2, arg3) => {
         .lean();
 
     let mappedManagers = [];
-    if (!role || (typeof role === 'string' && role.toLowerCase() === 'manager')) {
+    if (!role || (typeof role === 'string' && role.toLowerCase() === constants.ROLES.MANAGER.toLowerCase())) {
         const managersList = await Manager.find(staffFilter)
             .populate({
                 path: 'accountId',
@@ -145,7 +146,7 @@ export const createStaff = async (accountData, staffData) => {
 
     if (role) {
         let lookupName = role;
-        if (role.toLowerCase() === 'staff') {
+        if (role.toLowerCase() === constants.ROLES.STAFF.toLowerCase()) {
             lookupName = 'Employee';
         }
         const roleDoc = await Role.findOne({
@@ -164,7 +165,7 @@ export const createStaff = async (accountData, staffData) => {
             throw new ApiError(StatusCodes.BAD_REQUEST, 'Role does not exist in the system.');
         }
         const rName = roleDoc.roleName || roleDoc.name || '';
-        if (rName.toLowerCase() !== 'employee' && rName.toLowerCase() !== 'manager') {
+        if (rName.toLowerCase() !== constants.ROLES.EMPLOYEE.toLowerCase() && rName.toLowerCase() !== constants.ROLES.MANAGER.toLowerCase()) {
             throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid role. Only Staff (Employee) or Manager are accepted.');
         }
         targetRoleId = roleDoc._id;
@@ -181,7 +182,7 @@ export const createStaff = async (accountData, staffData) => {
         targetRoleId = roleDoc._id;
     }
 
-    const isManager = !!(role && role.toLowerCase() === 'manager');
+    const isManager = !!(role && role.toLowerCase() === constants.ROLES.MANAGER.toLowerCase());
 
     // --- Pre-checks BEFORE database mutation ---
     // 1. Check duplicate username or email in Account
@@ -407,7 +408,7 @@ export const updateStaffRole = async (staffId, { role, roleId }) => {
 
     if (role) {
         let lookupName = role;
-        if (role.toLowerCase() === 'staff') {
+        if (role.toLowerCase() === constants.ROLES.STAFF.toLowerCase()) {
             lookupName = 'Employee';
         }
         const roleDoc = await Role.findOne({
@@ -427,9 +428,9 @@ export const updateStaffRole = async (staffId, { role, roleId }) => {
         }
         const rName = roleDoc.roleName || roleDoc.name || '';
         if (
-            rName.toLowerCase() !== 'employee' &&
-            rName.toLowerCase() !== 'manager' &&
-            rName.toLowerCase() !== 'admin'
+            rName.toLowerCase() !== constants.ROLES.EMPLOYEE.toLowerCase() &&
+            rName.toLowerCase() !== constants.ROLES.MANAGER.toLowerCase() &&
+            rName.toLowerCase() !== constants.ROLES.ADMIN.toLowerCase()
         ) {
             throw new Error('InvalidRole');
         }

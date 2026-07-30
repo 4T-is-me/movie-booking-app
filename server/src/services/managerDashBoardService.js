@@ -485,7 +485,7 @@ const getTotalAvailibleSeatsToday = async (cinemaId) => {
  * Compile all Dashboard data for Manager based on accountId retrieved from JWT
  */
 const getManagerDashboard = async (accountId) => {
-  const manager = await Manager.findOne({ accountId });
+  const manager = await Manager.findOne({ accountId }).populate("cinemaId");
   if (!manager) {
     throw new ApiError(
       StatusCodes.NOT_FOUND,
@@ -493,7 +493,9 @@ const getManagerDashboard = async (accountId) => {
     );
   }
 
-  const cinemaId = manager.cinemaId;
+  const cinemaObj = manager.cinemaId;
+  const cinemaId = cinemaObj && cinemaObj._id ? cinemaObj._id : manager.cinemaId;
+  const cinemaName = cinemaObj && cinemaObj.cinemaName ? cinemaObj.cinemaName : "LUMINA Cinema";
   const { start: startOfDay, end: endOfDay } = getRangeDate("day");
 
   const [
@@ -524,6 +526,7 @@ const getManagerDashboard = async (accountId) => {
     managerId: manager._id,
     managerName: manager.fullName,
     cinemaId: cinemaId,
+    cinemaName: cinemaName,
     kpiSummary: {
       revenueToday: todayStats.totalRevenue,
       foodRevenueToday: todayStats.totalFbRevenue,

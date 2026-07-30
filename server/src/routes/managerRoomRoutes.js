@@ -13,4 +13,10 @@ managerRoomRouter.get('/:id/seats', authMiddleware.isAuthorized, authMiddleware.
 //PUT /api/manager/rooms/:id - update room info and seat pricing
 managerRoomRouter.put('/:id', authMiddleware.isAuthorized, authMiddleware.authorizeRoles("Manager", "Cinema Manager"), managerRoomController.updateRoom);
 
+//PATCH /api/manager/rooms/:id/seats/bulk-status - update multiple seats status at once
+managerRoomRouter.patch('/:id/seats/bulk-status', authMiddleware.isAuthorized, authMiddleware.authorizeRoles("Manager", "Cinema Manager"), managerRoomController.bulkUpdateSeatStatus);
+
+//PATCH /api/manager/rooms/:id/seats/:seatId/status - update individual seat status (active / maintenance)
+managerRoomRouter.patch('/:id/seats/:seatId/status', authMiddleware.isAuthorized, authMiddleware.authorizeRoles("Manager", "Cinema Manager"), managerRoomController.updateSeatStatus);
+
 export default managerRoomRouter;

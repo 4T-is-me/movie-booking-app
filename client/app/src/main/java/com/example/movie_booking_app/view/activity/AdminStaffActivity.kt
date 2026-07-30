@@ -13,6 +13,7 @@ import com.example.movie_booking_app.data.model.entity.Staff
 import com.example.movie_booking_app.data.model.request.CreateStaffRequest
 import com.example.movie_booking_app.data.model.request.UpdateStaffRequest
 import com.example.movie_booking_app.databinding.ActivityAdminStaffBinding
+import com.example.movie_booking_app.utils.RoleConstants
 import com.example.movie_booking_app.viewmodel.admin.AdminStaffViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -41,7 +42,7 @@ class AdminStaffActivity : BaseActivity() {
 
         currentStaff = intent.getSerializableExtra("staff") as? Staff
         isEditMode = currentStaff != null
-        val intentRole = intent.getStringExtra("role") ?: "Manager"
+        val intentRole = intent.getStringExtra("role") ?: RoleConstants.MANAGER
 
         setupUI(intentRole)
         setupListeners()
@@ -89,7 +90,7 @@ class AdminStaffActivity : BaseActivity() {
         }
 
         // Setup Role autocomplete dropdown
-        val roles = arrayOf("Staff", "Manager")
+        val roles = arrayOf(RoleConstants.STAFF, RoleConstants.MANAGER)
         val roleAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, roles)
         binding.actvRole.setAdapter(roleAdapter)
 
@@ -107,7 +108,7 @@ class AdminStaffActivity : BaseActivity() {
         }
         
         // Initialize position visibility
-        if (intentRole.equals("Manager", ignoreCase = true)) {
+        if (intentRole.equals(RoleConstants.MANAGER, ignoreCase = true)) {
             binding.layoutPosition.visibility = View.GONE
         } else {
             binding.layoutPosition.visibility = View.VISIBLE
@@ -137,7 +138,7 @@ class AdminStaffActivity : BaseActivity() {
         // Role dropdown listener to toggle position field and filter cinemas
         binding.actvRole.setOnItemClickListener { _, _, position, _ ->
             val selectedRole = binding.actvRole.adapter.getItem(position) as? String
-            if (selectedRole.equals("Manager", ignoreCase = true)) {
+            if (selectedRole.equals(RoleConstants.MANAGER, ignoreCase = true)) {
                 binding.layoutPosition.visibility = View.GONE
             } else {
                 binding.layoutPosition.visibility = View.VISIBLE
@@ -189,7 +190,7 @@ class AdminStaffActivity : BaseActivity() {
     private fun updateCinemaDropdown() {
         val allCinemas = viewModel.cinemas.value
         val allManagers = viewModel.managers.value
-        val isManagerMode = binding.actvRole.text.toString().equals("Manager", ignoreCase = true)
+        val isManagerMode = binding.actvRole.text.toString().equals(RoleConstants.MANAGER, ignoreCase = true)
         val managerCinemaIds = allManagers.map { it.cinemaId }.toSet()
 
         val filteredCinemas = if (isManagerMode && !isEditMode) {
@@ -231,8 +232,8 @@ class AdminStaffActivity : BaseActivity() {
         val salaryStr = binding.edtSalary.text.toString().trim()
         val startDate = binding.edtStartDate.text.toString().trim()
 
-        val isManager = role.equals("Manager", ignoreCase = true)
-        val finalPosition = if (isManager) "Manager" else position
+        val isManager = role.equals(RoleConstants.MANAGER, ignoreCase = true)
+        val finalPosition = if (isManager) RoleConstants.MANAGER else position
 
         if (fullName.isEmpty() || email.isEmpty() || phone.isEmpty() || identityCard.isEmpty() ||
             role.isEmpty() || (!isManager && position.isEmpty()) || salaryStr.isEmpty() || startDate.isEmpty() ||

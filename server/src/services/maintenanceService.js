@@ -12,6 +12,507 @@ import { ScoreHistory } from '../models/scoreHistoryModel.js';
 import { Movie } from '../models/movieModel.js';
 
 export const MaintenanceService = {
+  getSLATimeoutMinutes(showtimeStartTime) {
+    const now = new Date();
+    const diffMins = (new Date(showtimeStartTime).getTime() - now.getTime()) / (1000 * 60);
+    if (diffMins > 60) return 30;
+    if (diffMins >= 30) return 15;
+    return 5;
+  },
+
+  getRowVal(seatName) {
+    if (!seatName) return 99;
+    const match = seatName.match(/^([A-Z]+)(\d+)$/);
+    if (!match) return 99;
+    const rowStr = match[1];
+    let val = 0;
+    for (let i = 0; i < rowStr.length; i++) {
+      val = val * 26 + (rowStr.charCodeAt(i) - 64);
+    }
+    return val;
+  },
+
+  getColVal(seatName) {
+    if (!seatName) return 99;
+    const match = seatName.match(/^([A-Z]+)(\d+)$/);
+    if (!match) return 99;
+    return parseInt(match[2], 10);
+  },
+
+  scanReplacementSeats({ booking, brokenSeatIds, allRoomSeats, occupiedSeatIds }) {
+    const bookingSeatsMap = {};
+    (booking.seatIds || []).forEach(sid => {
+      const match = allRoomSeats.find(s => s._id.toString() === sid.toString());
+      if (match) bookingSeatsMap[sid.toString()] = match;
+    });
+
+    const brokenSeats = brokenSeatIds.map(id => bookingSeatsMap[id.toString()]).filter(Boolean);
+    const usableSeats = (booking.seatIds || [])
+      .map(id => bookingSeatsMap[id.toString()])
+      .filter(s => s && !brokenSeatIds.includes(s._id.toString()));
+
+    const targetType = brokenSeats[0]?.seatType || 'Regular';
+
+    const brokenSet = new Set(brokenSeatIds.map(id => id.toString()));
+    const availableSeats = allRoomSeats.filter(s =>
+      !s.isDeleted &&
+      s.status === 'active' &&
+      !occupiedSeatIds.has(s._id.toString()) &&
+      !brokenSet.has(s._id.toString())
+    );
+
+    // Priority 1: SAME_TIER adjacent to usable seats
+    if (usableSeats.length > 0) {
+      const sameTierAvailable = availableSeats.filter(s => s.seatType === targetType);
+      const usableRows = [...new Set(usableSeats.map(s => this.getRowVal(s.seatName)))];
+      const usableCols = usableSeats.map(s => this.getColVal(s.seatName));
+      const minCol = Math.min(...usableCols);
+      const maxCol = Math.max(...usableCols);
+
+      const adjacentSameTier = sameTierAvailable.filter(s => {
+        const r = this.getRowVal(s.seatName);
+        const c = this.getColVal(s.seatName);
+        return usableRows.includes(r) && (c === minCol - 1 || c === maxCol + 1);
+      });
+
+      if (adjacentSameTier.length >= brokenSeatIds.length) {
+        const selected = adjacentSameTier.slice(0, brokenSeatIds.length);
+        return {
+          category: 'SAME_TIER',
+          assignedSeatIds: selected.map(s => s._id),
+          assignedSeatNames: selected.map(s => s.seatName)
+        };
+      }
+    }
+
+    // Priority 2: SAME_TIER new contiguous block or any same tier seats
+    const sameTierAvailable = availableSeats.filter(s => s.seatType === targetType);
+    if (sameTierAvailable.length >= brokenSeatIds.length) {
+      const selected = sameTierAvailable.slice(0, brokenSeatIds.length);
+      return {
+        category: 'SAME_TIER',
+        assignedSeatIds: selected.map(s => s._id),
+        assignedSeatNames: selected.map(s => s.seatName)
+      };
+    }
+
+    // Priority 3: HIGHER_TIER (free upgrade)
+    if (targetType === 'Regular') {
+      const vipAvailable = availableSeats.filter(s => s.seatType === 'VIP');
+      if (vipAvailable.length >= brokenSeatIds.length) {
+        const selected = vipAvailable.slice(0, brokenSeatIds.length);
+        return {
+          category: 'HIGHER_TIER',
+          assignedSeatIds: selected.map(s => s._id),
+          assignedSeatNames: selected.map(s => s.seatName)
+        };
+      }
+    }
+
+    // Priority 4: LOWER_TIER (downgrade)
+    if (targetType === 'VIP') {
+      const regAvailable = availableSeats.filter(s => s.seatType === 'Regular');
+      if (regAvailable.length >= brokenSeatIds.length) {
+        const selected = regAvailable.slice(0, brokenSeatIds.length);
+        const oldAvgPrice = brokenSeats.reduce((sum, s) => sum + (s.price || 0), 0) / (brokenSeats.length || 1);
+        let refundPoints = 0;
+        selected.forEach(s => {
+          const diff = oldAvgPrice - (s.price || 0);
+          if (diff > 0) refundPoints += Math.round(diff / 10);
+        });
+
+        return {
+          category: 'LOWER_TIER',
+          assignedSeatIds: selected.map(s => s._id),
+          assignedSeatNames: selected.map(s => s.seatName),
+          priceDiffRefundPoints: refundPoints
+        };
+      }
+    }
+
+    // Priority 5: No seats in room
+    return { category: 'ROOM_FULL' };
+  },
+
+  async handleStep5FullRoom({ booking, showtime, cinemaId, isDryRun, session, slaMinutes, expiresAt }) {
+    const expireAt = expiresAt || new Date(Date.now() + (slaMinutes || 30) * 60 * 1000);
+    // Step 5.1: Scan other movie at same cinema, same slot (+/- 30 mins)
+    const timeWindow = 30 * 60 * 1000;
+    const minTime = new Date(showtime.startTime.getTime() - timeWindow);
+    const maxTime = new Date(showtime.startTime.getTime() + timeWindow);
+
+    const altMovieShowtimes = isDryRun
+      ? await Showtime.find({
+          cinemaId,
+          movieId: { $ne: showtime.movieId },
+          status: { $in: ['published', 'draft'] },
+          startTime: { $gte: minTime, $lte: maxTime }
+        })
+      : await Showtime.find({
+          cinemaId,
+          movieId: { $ne: showtime.movieId },
+          status: { $in: ['published', 'draft'] },
+          startTime: { $gte: minTime, $lte: maxTime }
+        }).session(session);
+
+    for (const altSt of altMovieShowtimes) {
+      const altSeats = isDryRun
+        ? await Seat.find({ roomId: altSt.roomId, isDeleted: false, status: 'active' })
+        : await Seat.find({ roomId: altSt.roomId, isDeleted: false, status: 'active' }).session(session);
+
+      const altBookedSS = isDryRun
+        ? await ScheduleSeat.find({ showtimeId: altSt._id, status: { $in: [2, 'booked', 'holding'] } })
+        : await ScheduleSeat.find({ showtimeId: altSt._id, status: { $in: [2, 'booked', 'holding'] } }).session(session);
+
+      if (altSeats.length - altBookedSS.length >= booking.seatIds.length) {
+        if (!isDryRun) {
+          const auditLog = {
+            timestamp: new Date().toISOString(),
+            actionType: 'PROPOSE_OTHER_MOVIE',
+            details: { bookingId: booking._id, altShowtimeId: altSt._id, slaMinutes, source: 'auto' }
+          };
+
+          const notification = new Notification({
+            recipientId: booking.memberId,
+            title: "Đề xuất đổi phim cùng khung giờ",
+            message: `Phòng chiếu gặp sự cố. Chúng tôi gợi ý đổi sang suất chiếu phim khác vào lúc ${new Date(altSt.startTime).toLocaleTimeString('vi-VN')}. Vui lòng xác nhận trong ${slaMinutes} phút.`,
+            type: "ACTION_REQUIRED",
+            metadata: {
+              bookingId: booking._id,
+              altShowtimeId: altSt._id,
+              slaTimeoutMinutes: slaMinutes,
+              expiresAt,
+              auditLog
+            },
+            expireAt
+          });
+          await notification.save({ session });
+        }
+        return { action: 'PROPOSE_OTHER_MOVIE', details: { altShowtimeId: altSt._id } };
+      }
+    }
+
+    // Step 5.2: Scan next showtime today of same movie
+    const startOfDay = new Date(showtime.startTime);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(showtime.startTime);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const nextShowtimesToday = isDryRun
+      ? await Showtime.find({
+          cinemaId,
+          movieId: showtime.movieId,
+          status: { $in: ['published', 'draft'] },
+          startTime: { $gt: showtime.startTime, $lte: endOfDay },
+          _id: { $ne: showtime._id }
+        }).sort({ startTime: 1 })
+      : await Showtime.find({
+          cinemaId,
+          movieId: showtime.movieId,
+          status: { $in: ['published', 'draft'] },
+          startTime: { $gt: showtime.startTime, $lte: endOfDay },
+          _id: { $ne: showtime._id }
+        }).session(session).sort({ startTime: 1 });
+
+    for (const nextSt of nextShowtimesToday) {
+      const nSeats = isDryRun
+        ? await Seat.find({ roomId: nextSt.roomId, isDeleted: false, status: 'active' })
+        : await Seat.find({ roomId: nextSt.roomId, isDeleted: false, status: 'active' }).session(session);
+
+      const nBookedSS = isDryRun
+        ? await ScheduleSeat.find({ showtimeId: nextSt._id, status: { $in: [2, 'booked', 'holding'] } })
+        : await ScheduleSeat.find({ showtimeId: nextSt._id, status: { $in: [2, 'booked', 'holding'] } }).session(session);
+
+      if (nSeats.length - nBookedSS.length >= booking.seatIds.length) {
+        if (!isDryRun) {
+          const auditLog = {
+            timestamp: new Date().toISOString(),
+            actionType: 'PROPOSE_NEXT_SHOWTIME',
+            details: { bookingId: booking._id, altShowtimeId: nextSt._id, slaMinutes, source: 'auto' }
+          };
+
+          const notification = new Notification({
+            recipientId: booking.memberId,
+            title: "Đề xuất suất chiếu tiếp theo trong ngày",
+            message: `Phòng chiếu gặp sự cố. Gợi ý đổi sang suất chiếu tiếp theo vào lúc ${new Date(nextSt.startTime).toLocaleTimeString('vi-VN')}. Vui lòng phản hồi trong ${slaMinutes} phút.`,
+            type: "ACTION_REQUIRED",
+            metadata: {
+              bookingId: booking._id,
+              altShowtimeId: nextSt._id,
+              slaTimeoutMinutes: slaMinutes,
+              expiresAt,
+              auditLog
+            },
+            expireAt
+          });
+          await notification.save({ session });
+        }
+        return { action: 'PROPOSE_NEXT_SHOWTIME', details: { altShowtimeId: nextSt._id } };
+      }
+    }
+
+    // NO MORE SHOWTIMES TODAY -> AUTO REFUND IMMEDIATELY WITHOUT WAITING
+    const refundPoints = Math.round(booking.finalAmount / 10);
+    if (!isDryRun) {
+      booking.paymentStatus = 'refunded_to_points';
+      await booking.save({ session });
+
+      const member = isDryRun
+        ? await Member.findById(booking.memberId)
+        : await Member.findById(booking.memberId).session(session);
+
+      if (member) {
+        member.rewardPoints += refundPoints;
+        await member.save({ session });
+
+        const scoreHistory = new ScoreHistory({
+          memberId: member._id,
+          bookingId: booking._id,
+          earnedPoints: refundPoints,
+          remainingPoints: member.rewardPoints,
+          reason: "Tự động hoàn 100% điểm thưởng do hết suất chiếu phù hợp trong ngày (sự cố bảo trì)"
+        });
+        await scoreHistory.save({ session });
+      }
+
+      await ScheduleSeat.deleteMany({
+        showtimeId: showtime._id,
+        seatId: { $in: booking.seatIds }
+      }).session(session);
+
+      const auditLog = {
+        timestamp: new Date().toISOString(),
+        actionType: 'AUTO_REFUND_NO_SHOWTIMES_LEFT',
+        details: { bookingId: booking._id, refundPoints, reason: 'Hết suất chiếu phù hợp trong ngày', source: 'auto' }
+      };
+
+      const notification = new Notification({
+        recipientId: booking.memberId,
+        title: "Thông báo hoàn tiền vé tự động",
+        message: `Rất tiếc, suất chiếu của bạn gặp sự cố và không còn suất chiếu nào khác phù hợp trong ngày hôm nay. Chúng tôi đã tự động hoàn lại ${refundPoints} điểm vào tài khoản của bạn.`,
+        type: "SYSTEM_ALERT",
+        metadata: { bookingId: booking._id, refundPoints, auditLog },
+        expireAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+      });
+      await notification.save({ session });
+    }
+
+    return { action: 'AUTO_REFUND_NO_SHOWTIMES_LEFT', details: { refundPoints } };
+  },
+
+  async handleBrokenSeats(roomId, brokenSeatIds = [], options = {}) {
+    const isDryRun = !!options.dryRun;
+    let session = null;
+    if (!isDryRun) {
+      session = await mongoose.startSession();
+      session.startTransaction();
+    }
+
+    const report = {
+      roomId,
+      brokenSeatIds,
+      dryRun: isDryRun,
+      showtimesScanned: 0,
+      bookingsProcessed: [],
+      auditLogs: []
+    };
+
+    try {
+      const roomQuery = CinemaRoom.findById(roomId);
+      const room = isDryRun ? await roomQuery : await roomQuery.session(session);
+      if (!room) throw new ApiError(StatusCodes.NOT_FOUND, "Room not found");
+
+      const now = new Date();
+      const stQuery = Showtime.find({ roomId: room._id, isDeleted: false, endTime: { $gt: now } });
+      const showtimes = isDryRun ? await stQuery : await stQuery.session(session);
+      report.showtimesScanned = showtimes.length;
+
+      const brokenSet = new Set(brokenSeatIds.map(id => id.toString()));
+
+      for (const showtime of showtimes) {
+        const bkQuery = Booking.find({
+          showtimeId: showtime._id,
+          paymentStatus: { $in: ['paid', 'successful'] },
+          checkedIn: { $ne: true }
+        });
+        const bookings = isDryRun ? await bkQuery : await bkQuery.session(session);
+
+        for (const booking of bookings) {
+          const bookingSeatIdsStr = (booking.seatIds || []).map(id => id.toString());
+          const brokenInBooking = bookingSeatIdsStr.filter(id => brokenSet.has(id));
+
+          if (brokenInBooking.length === 0) continue;
+
+          const allRoomSeats = isDryRun
+            ? await Seat.find({ roomId: room._id, isDeleted: false })
+            : await Seat.find({ roomId: room._id, isDeleted: false }).session(session);
+
+          const bookedScheduleSeats = isDryRun
+            ? await ScheduleSeat.find({ showtimeId: showtime._id, status: { $in: [2, 'booked', 'holding'] } })
+            : await ScheduleSeat.find({ showtimeId: showtime._id, status: { $in: [2, 'booked', 'holding'] } }).session(session);
+
+          const occupiedSeatIds = new Set(bookedScheduleSeats.map(ss => ss.seatId.toString()));
+          bookingSeatIdsStr.forEach(id => {
+            if (brokenSet.has(id)) {
+              occupiedSeatIds.delete(id);
+            }
+          });
+          brokenSet.forEach(id => occupiedSeatIds.add(id));
+
+          const candidateResult = this.scanReplacementSeats({
+            booking,
+            brokenSeatIds: brokenInBooking,
+            allRoomSeats,
+            occupiedSeatIds
+          });
+
+          const slaMinutes = this.getSLATimeoutMinutes(showtime.startTime);
+          const expiresAt = new Date(Date.now() + slaMinutes * 60 * 1000);
+
+          if (candidateResult.category === 'SAME_TIER' || candidateResult.category === 'HIGHER_TIER') {
+            if (!isDryRun) {
+              await ScheduleSeat.deleteMany({
+                showtimeId: showtime._id,
+                seatId: { $in: brokenInBooking }
+              }).session(session);
+
+              const assignedIds = [...candidateResult.assignedSeatIds];
+              const member = booking.memberId
+                ? (isDryRun ? await Member.findById(booking.memberId) : await Member.findById(booking.memberId).session(session))
+                : null;
+              const memberAccountId = member?.accountId || null;
+
+              const newScheduleSeats = assignedIds.map(sid => ({
+                showtimeId: showtime._id,
+                seatId: sid,
+                accountId: memberAccountId,
+                status: 'booked'
+              }));
+              await ScheduleSeat.insertMany(newScheduleSeats, { session });
+
+              const copyAssigned = [...assignedIds];
+              const finalSeatIds = booking.seatIds.map(sid => {
+                if (brokenSet.has(sid.toString())) {
+                  return copyAssigned.shift();
+                }
+                return sid;
+              });
+
+              const updatedSeats = await Seat.find({ _id: { $in: finalSeatIds } }).session(session);
+              const seatNameMap = {};
+              updatedSeats.forEach(s => seatNameMap[s._id.toString()] = s.seatName);
+              const finalSeatNames = finalSeatIds.map(sid => seatNameMap[sid.toString()]);
+
+              booking.seatIds = finalSeatIds;
+              booking.seatNames = finalSeatNames;
+              await booking.save({ session });
+
+              const auditLog = {
+                timestamp: new Date().toISOString(),
+                actionType: candidateResult.category === 'HIGHER_TIER' ? 'AUTO_UPGRADE' : 'AUTO_TRANSFER_SAME_TIER',
+                details: {
+                  bookingId: booking._id,
+                  oldBrokenSeatIds: brokenInBooking,
+                  category: candidateResult.category,
+                  source: 'auto'
+                }
+              };
+
+              const notifMsg = candidateResult.category === 'HIGHER_TIER'
+                ? `Một số ghế của bạn gặp sự cố. Bạn đã được nâng hạng ghế miễn phí sang [${finalSeatNames.join(', ')}] tại phòng ${room.roomName}.`
+                : `Ghế của bạn đã được cập nhật tự động sang [${finalSeatNames.join(', ')}] tại phòng ${room.roomName} do ghế cũ gặp sự cố.`;
+
+              const notification = new Notification({
+                recipientId: booking.memberId,
+                title: "Thông báo cập nhật vị trí ghế",
+                message: notifMsg,
+                type: "SYSTEM_ALERT",
+                metadata: { bookingId: booking._id, auditLog },
+                expireAt: new Date(showtime.endTime.getTime() + 24 * 60 * 60 * 1000)
+              });
+              await notification.save({ session });
+            }
+
+            report.bookingsProcessed.push({
+              bookingId: booking._id,
+              action: candidateResult.category,
+              newSeatNames: candidateResult.assignedSeatNames
+            });
+          } else if (candidateResult.category === 'LOWER_TIER') {
+            if (!isDryRun) {
+              const voucherCode = "VCH_DOWNGRADE_" + Math.random().toString(36).substring(2, 8).toUpperCase();
+              const auditLog = {
+                timestamp: new Date().toISOString(),
+                actionType: 'PROPOSE_LOWER_TIER',
+                details: {
+                  bookingId: booking._id,
+                  proposedSeats: candidateResult.assignedSeatNames,
+                  slaMinutes,
+                  source: 'auto'
+                }
+              };
+
+              const title = "Cần xác nhận: Đổi sang ghế hạng thường";
+              const message = `Do sự cố ghế hỏng, ghế mới đề xuất cho bạn là [${candidateResult.assignedSeatNames.join(', ')}]. Bạn sẽ nhận được voucher đền bù + hoàn điểm chênh lệch. Vui lòng phản hồi trong ${slaMinutes} phút.`;
+
+              const notification = new Notification({
+                recipientId: booking.memberId,
+                title: title,
+                message: message,
+                type: "ACTION_REQUIRED",
+                metadata: {
+                  bookingId: booking._id,
+                  proposedSeats: candidateResult.assignedSeatIds,
+                  voucherCode,
+                  slaTimeoutMinutes: slaMinutes,
+                  expiresAt,
+                  pointsRefundAmount: candidateResult.priceDiffRefundPoints || 0,
+                  auditLog
+                },
+                expireAt
+              });
+              await notification.save({ session });
+            }
+
+            report.bookingsProcessed.push({
+              bookingId: booking._id,
+              action: 'PROPOSE_LOWER_TIER',
+              slaTimeoutMinutes: slaMinutes
+            });
+          } else {
+            const step5Result = await this.handleStep5FullRoom({
+              booking,
+              showtime,
+              cinemaId: room.cinemaId,
+              isDryRun,
+              session,
+              slaMinutes,
+              expiresAt
+            });
+
+            report.bookingsProcessed.push({
+              bookingId: booking._id,
+              action: step5Result.action,
+              details: step5Result.details
+            });
+          }
+        }
+      }
+
+      if (!isDryRun && session) {
+        await session.commitTransaction();
+        session.endSession();
+      }
+      return report;
+    } catch (error) {
+      if (session) {
+        try { await session.abortTransaction(); } catch (e) {}
+        try { session.endSession(); } catch (e) {}
+      }
+      throw error;
+    }
+  },
+
   async handleRoomMaintenance(roomId, options = {}) {
     const isDryRun = !!options.dryRun;
     let session = null;
@@ -355,21 +856,21 @@ export const MaintenanceService = {
           const timeA = new Date(a.createdAt).getTime();
           const timeB = new Date(b.createdAt).getTime();
           const timeDiff = timeA - timeB;
-          
+
           if (Math.abs(timeDiff) > 10) {
             return timeDiff;
           }
-          
+
           const memA = memberMap[a.memberId.toString()];
           const memB = memberMap[b.memberId.toString()];
           const rankA = memA ? (rankPriority[memA.membershipRank] || 1) : 1;
           const rankB = memB ? (rankPriority[memB.membershipRank] || 1) : 1;
-          
+
           if (rankA !== rankB) {
             console.log(`[DEBUG] Trùng thời điểm đặt vé. So sánh hạng thành viên: ${memA?.fullName || 'N/A'} (${memA?.membershipRank || 'bronze'}) vs ${memB?.fullName || 'N/A'} (${memB?.membershipRank || 'bronze'})`);
             return rankB - rankA;
           }
-          
+
           const rand = Math.random() - 0.5;
           console.log(`[DEBUG] Trùng cả thời điểm và hạng thành viên. Random phân bổ giữa ${memA?.fullName || 'N/A'} và ${memB?.fullName || 'N/A'}. Kết quả: ${rand < 0 ? 'Ưu tiên ' + (memA?.fullName || 'N/A') : 'Ưu tiên ' + (memB?.fullName || 'N/A')}`);
           return rand;
@@ -629,8 +1130,8 @@ export const MaintenanceService = {
           const isSeparated = booking.seatIds.length >= 2 && !consecutiveFound;
           const separationWarning = isSeparated
             ? (downgradedCoupleCount > 0
-                ? " Lưu ý: do phòng mới không còn đủ ghế liền kề, 2 ghế của bạn sẽ không ngồi cạnh nhau. Xin lỗi vì sự bất tiện này."
-                : " (Do phòng mới không đủ cụm ghế liền kề, nhóm của bạn buộc phải xếp tách ghế. Rất mong bạn thông cảm.)")
+              ? " Lưu ý: do phòng mới không còn đủ ghế liền kề, 2 ghế của bạn sẽ không ngồi cạnh nhau. Xin lỗi vì sự bất tiện này."
+              : " (Do phòng mới không đủ cụm ghế liền kề, nhóm của bạn buộc phải xếp tách ghế. Rất mong bạn thông cảm.)")
             : "";
           const movie = session ? await Movie.findById(showtime.movieId).session(session) : await Movie.findById(showtime.movieId);
           const movieTitle = movie ? (movie.movieName || movie.title || 'Phim') : 'Phim';
@@ -719,8 +1220,8 @@ export const MaintenanceService = {
       return report;
     } catch (error) {
       if (session) {
-        try { await session.abortTransaction(); } catch (e) {}
-        try { session.endSession(); } catch (e) {}
+        try { await session.abortTransaction(); } catch (e) { }
+        try { session.endSession(); } catch (e) { }
       }
       throw error;
     }
@@ -1044,20 +1545,20 @@ export const MaintenanceService = {
 
   async handleTimeoutPendingBookings() {
     const thresholdTime = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes in future
-    
+
     // Find all bookings with paymentStatus: 'pending'
     const pendingBookings = await Booking.find({ paymentStatus: 'pending' });
     const showtimeIds = pendingBookings.map(b => b.showtimeId);
-    
+
     // Find showtimes starting in less than 30 minutes
     const showtimes = await Showtime.find({
       _id: { $in: showtimeIds },
       startTime: { $lte: thresholdTime }
     });
     const startingShowtimeIdsStr = showtimes.map(s => s._id.toString());
-    
+
     // Filter bookings
-    const timedOutBookings = pendingBookings.filter(b => 
+    const timedOutBookings = pendingBookings.filter(b =>
       startingShowtimeIdsStr.includes(b.showtimeId.toString())
     );
 

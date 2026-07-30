@@ -1,4 +1,5 @@
 import { StatusCodes } from 'http-status-codes'
+import { constants } from '../utils/constants.js'
 import mongoose from 'mongoose'
 import ApiError from '../utils/ApiError.js'
 import { Account } from '../models/accountModel.js'
@@ -228,9 +229,9 @@ const updateProfile = async (accountId, reqBody) => {
         const account = await Account.findById(accountId).populate('roleId');
         const roleName = account.roleId ? (account.roleId.name || account.roleId.roleName || 'Customer') : 'Customer';
         
-        if (roleName === 'Manager') {
+        if (roleName === constants.ROLES.MANAGER) {
             await Manager.findOneAndUpdate({ accountId: accountId }, memberUpdate);
-        } else if (roleName === 'Staff') {
+        } else if (roleName === constants.ROLES.STAFF) {
             const staffUpdate = { ...memberUpdate };
             if (staffUpdate.phoneNumber) {
                 staffUpdate.phone = staffUpdate.phoneNumber;

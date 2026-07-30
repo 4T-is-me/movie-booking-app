@@ -25,6 +25,19 @@ import { removeVietnameseTones } from './textNormalizer.js';
  * @param {Object} movie - Raw movie object từ Mongoose
  * @returns {Object|null} Clean sanitized movie object
  */
+/**
+ * Escape các ký tự đặc biệt HTML (XSS Protection)
+ */
+const escapeHTMLEntities = (str = '') => {
+  if (typeof str !== 'string') return str;
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+};
+
 export const sanitizeMovieForResponse = (movie) => {
   if (!movie) return null;
   const name = (movie.movieName || '').trim();
@@ -32,19 +45,22 @@ export const sanitizeMovieForResponse = (movie) => {
     return null;
   }
 
+  const rawGenre = Array.isArray(movie.movieGenre) ? movie.movieGenre : [movie.movieGenre || ''];
+  const sanitizedGenre = rawGenre.map(g => typeof g === 'string' ? escapeHTMLEntities(g) : g);
+
   const sanitized = {
     _id: movie._id,
-    movieName: name,
+    movieName: escapeHTMLEntities(name),
     duration: movie.duration || 0,
-    movieGenre: movie.movieGenre || [],
-    description: movie.description || '',
-    poster: movie.poster || '',
+    movieGenre: sanitizedGenre,
+    description: escapeHTMLEntities(movie.description || ''),
+    poster: escapeHTMLEntities(movie.poster || ''),
     rating: movie.rating || 0,
-    censorship: movie.censorship || ''
+    censorship: escapeHTMLEntities(movie.censorship || '')
   };
 
   if (Array.isArray(movie.showtimes) && movie.showtimes.length > 0) {
-    sanitized.showtimes = movie.showtimes;
+    sanitized.showtimes = movie.showtimes.map(st => typeof st === 'string' ? escapeHTMLEntities(st) : st);
   }
 
   return sanitized;
@@ -251,70 +267,187 @@ export const getTodayShowtimes = async (limit = 5, targetDate = null) => {
 };
 
 /**
+ * Lấy danh sách suất chiếu của một rạp cụ thể theo mốc ngày (targetDate)
+ * @param {string|null} cinemaId - ObjectId của rạp
+ * @param {Date|null} targetDate - Ngày tra cứu (mặc định hôm nay)
+ * @param {number} limit - Số lượng phim tối đa
+ * @returns {Promise<Array>}
+ */
+export const getShowtimesByCinemaAndDate = async (cinemaId = null, targetDate = null, limit = 5) => {
+  try {
+    const baseDate = targetDate ? new Date(targetDate) : new Date();
+    const dayStart = new Date(baseDate);
+    dayStart.setHours(0, 0, 0, 0);
+
+    const dayEnd = new Date(baseDate);
+    dayEnd.setHours(23, 59, 59, 999);
+
+    const filter = {
+      isDeleted: { $ne: true },
+      $or: [
+        { showDate: { $gte: dayStart, $lte: dayEnd } },
+        { startTime: { $gte: dayStart, $lte: dayEnd } }
+      ]
+    };
+
+    if (cinemaId) {
+      filter.cinemaId = cinemaId;
+    }
+
+    const showtimesList = await Showtime.find(filter)
+      .populate('movieId')
+      .sort({ startTime: 1 })
+      .lean();
+
+    const movieMap = new Map();
+    if (showtimesList && showtimesList.length > 0) {
+      for (const st of showtimesList) {
+        if (st.movieId && st.movieId._id && !st.movieId.isDeleted) {
+          const movieIdStr = st.movieId._id.toString();
+          if (!movieMap.has(movieIdStr)) {
+            movieMap.set(movieIdStr, {
+              ...st.movieId,
+              showtimes: []
+            });
+          }
+
+          let timeStr = st.showTime || '';
+          if (!timeStr && st.startTime) {
+            timeStr = new Date(st.startTime).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Ho_Chi_Minh' });
+          }
+
+          if (timeStr) {
+            const currentShowtimes = movieMap.get(movieIdStr).showtimes;
+            if (!currentShowtimes.includes(timeStr)) {
+              currentShowtimes.push(timeStr);
+            }
+          }
+        }
+      }
+    }
+
+    for (const movie of movieMap.values()) {
+      movie.showtimes.sort();
+    }
+
+    if (movieMap.size === 0) {
+      const activeMovies = await Movie.find({
+        isDeleted: { $ne: true },
+        status: { $in: ['showing', 'now_showing', 'active'] }
+      })
+        .limit(limit)
+        .lean();
+
+      return activeMovies.map(m => ({ ...m, showtimes: [] }));
+    }
+
+    return Array.from(movieMap.values()).slice(0, limit);
+  } catch (error) {
+    console.error('[Chatbot movieMatcher] Error in getShowtimesByCinemaAndDate:', error);
+    return [];
+  }
+};
+
+/**
+ * Lấy danh sách suất chiếu của duy nhất một bộ phim theo tất cả các rạp
+ * @param {string} movieId - ObjectId của phim
+ * @returns {Promise<Array>}
+ */
+export const getShowtimesByMovieId = async (movieId) => {
+  try {
+    if (!movieId) return [];
+    const dayStart = new Date();
+    dayStart.setHours(0, 0, 0, 0);
+
+    const showtimes = await Showtime.find({
+      movieId,
+      isDeleted: { $ne: true },
+      $or: [
+        { showDate: { $gte: dayStart } },
+        { startTime: { $gte: dayStart } }
+      ]
+    })
+      .populate('cinemaId')
+      .sort({ startTime: 1 })
+      .lean();
+
+    return showtimes || [];
+  } catch (error) {
+    console.error('[Chatbot movieMatcher] Error in getShowtimesByMovieId:', error);
+    return [];
+  }
+};
+
+/**
  * Tìm kiếm chi tiết một bộ phim theo tên (hỗ trợ Fuzzy Search khi gõ sai chính tả / gõ thiếu dấu)
  * @param {string} searchQuery - Từ khóa/tên phim cần tìm
  * @returns {Promise<Object|null>} Document phim hoặc null nếu không tìm thấy
  */
-export const getMovieDetail = async (searchQuery) => {
-  if (!searchQuery) return null;
+/**
+ * Tìm kiếm chi tiết và kiểm tra mờ mơ hồ (1 phim khớp vs 2+ phim khớp)
+ * @param {string} searchQuery - Từ khóa/tên phim cần tìm
+ * @returns {Promise<{status: 'single'|'multiple'|'none', movie: Object|null, movies: Array}>}
+ */
+export const getMovieDetailMatches = async (searchQuery) => {
+  if (!searchQuery) return { status: 'none', movie: null, movies: [] };
 
   try {
     const rawQuery = searchQuery.trim();
     const normalizedQuery = removeVietnameseTones(rawQuery.toLowerCase());
     const cleanQuery = normalizedQuery.replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
 
-    if (!cleanQuery || cleanQuery.length < 2) return null;
+    if (!cleanQuery || cleanQuery.length < 2) return { status: 'none', movie: null, movies: [] };
 
-    // Escape ký tự đặc biệt Regex để tránh Regex Injection / Crash
-    const escapedRawQuery = rawQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-    // 1. Tìm trực tiếp bằng regex không phân biệt hoa thường
-    let movie = await Movie.findOne({
-      isDeleted: { $ne: true },
-      movieName: { $regex: new RegExp(escapedRawQuery, 'i'), $nin: ['ll', 'lll'] }
-    }).lean();
-
-    if (movie && (movie.movieName || '').trim().length >= 2 && movie.movieName.toLowerCase() !== 'll') {
-      return movie;
-    }
-
-    // 2. Lấy danh sách phim hợp lệ (bỏ phim rác "ll", "lll")
     const allMovies = await Movie.find({ isDeleted: { $ne: true } }).lean();
     const validMovies = allMovies.filter(m => {
       const name = (m.movieName || '').trim();
       return name.length >= 2 && name.toLowerCase() !== 'll' && m.description !== 'lll';
     });
 
-    for (const m of validMovies) {
+    // 1. Khớp CHÍNH XÁC 100%
+    const exactMatches = validMovies.filter(m => {
       const normalizedName = removeVietnameseTones((m.movieName || '').toLowerCase());
       const cleanName = normalizedName.replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+      return normalizedName === normalizedQuery || cleanName === cleanQuery;
+    });
 
-      if (normalizedName === normalizedQuery || cleanName === cleanQuery) {
-        return m;
-      }
+    if (exactMatches.length === 1) {
+      return { status: 'single', movie: exactMatches[0], movies: exactMatches };
+    } else if (exactMatches.length > 1) {
+      return { status: 'multiple', movie: null, movies: exactMatches };
+    }
 
-      // Chỉ khớp nếu tên phim chứa từ khóa tìm kiếm (cleanQuery >= 3 ký tự)
-      if (cleanQuery.length >= 3 && cleanName.includes(cleanQuery)) {
-        return m;
+    // 2. Khớp TIỀN TỐ (startsWith) khi cleanQuery >= 3 ký tự
+    if (cleanQuery.length >= 3) {
+      const prefixMatches = validMovies.filter(m => {
+        const normalizedName = removeVietnameseTones((m.movieName || '').toLowerCase());
+        const cleanName = normalizedName.replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+        return cleanName.startsWith(cleanQuery) || cleanQuery.startsWith(cleanName) || normalizedName.startsWith(normalizedQuery) || normalizedQuery.startsWith(normalizedName);
+      });
+
+      if (prefixMatches.length === 1) {
+        return { status: 'single', movie: prefixMatches[0], movies: prefixMatches };
+      } else if (prefixMatches.length > 1) {
+        return { status: 'multiple', movie: null, movies: prefixMatches };
       }
     }
 
-    // 3. Tìm kiếm theo cụm từ (Word match ratio): nếu 70%+ các từ trong câu hỏi khớp với tên phim
-    const queryWords = cleanQuery.split(' ').filter(w => w.length > 1);
-    if (queryWords.length > 0) {
-      for (const m of validMovies) {
-        const cleanName = removeVietnameseTones((m.movieName || '').toLowerCase())
-          .replace(/[^a-z0-9\s]/g, '')
-          .replace(/\s+/g, ' ')
-          .trim();
-        const matchedWordsCount = queryWords.filter(w => cleanName.includes(w)).length;
-        if (matchedWordsCount / queryWords.length >= 0.7) {
-          return m;
-        }
+    // 3. Khớp SUBSTRING (includes 2 chiều) khi cleanQuery >= 3 ký tự
+    if (cleanQuery.length >= 3) {
+      const substringMatches = validMovies.filter(m => {
+        const normalizedName = removeVietnameseTones((m.movieName || '').toLowerCase());
+        const cleanName = normalizedName.replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
+        return cleanName.includes(cleanQuery) || cleanQuery.includes(cleanName) || normalizedName.includes(normalizedQuery) || normalizedQuery.includes(normalizedName);
+      });
+
+      if (substringMatches.length === 1) {
+        return { status: 'single', movie: substringMatches[0], movies: substringMatches };
+      } else if (substringMatches.length > 1) {
+        return { status: 'multiple', movie: null, movies: substringMatches };
       }
     }
 
-    // 4. Tìm kiếm mờ (Fuzzy Search) bằng thuật toán Levenshtein Distance cho trường hợp gõ sai chính tả
+    // 4. Fuzzy Search (Levenshtein Distance)
     let bestMatch = null;
     let minDistance = Infinity;
 
@@ -333,13 +466,20 @@ export const getMovieDetail = async (searchQuery) => {
       }
     }
 
-    if (bestMatch) return bestMatch;
+    if (bestMatch) {
+      return { status: 'single', movie: bestMatch, movies: [bestMatch] };
+    }
 
-    return null;
+    return { status: 'none', movie: null, movies: [] };
   } catch (error) {
-    console.error('[Chatbot movieMatcher] Error in getMovieDetail:', error);
-    return null;
+    console.error('[Chatbot movieMatcher] Error in getMovieDetailMatches:', error);
+    return { status: 'none', movie: null, movies: [] };
   }
+};
+
+export const getMovieDetail = async (searchQuery) => {
+  const res = await getMovieDetailMatches(searchQuery);
+  return res.movie || (res.movies.length > 0 ? res.movies[0] : null);
 };
 
 /**

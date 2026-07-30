@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import timber.log.Timber
 import com.example.movie_booking_app.utils.Validator
+import com.example.movie_booking_app.utils.RoleConstants
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -85,7 +86,7 @@ class LoginActivity : EnglishBaseActivity() {
             val username = binding.edtUsername.text.toString().trim()
             val password = binding.edtPassword.text.toString()
 
-            val usernameError = Validator.validateUsername(username)
+            val usernameError = Validator.validateLoginId(username)
             if (usernameError != null) {
                 showError(getString(usernameError))
                 return@setOnClickListener
@@ -163,17 +164,17 @@ class LoginActivity : EnglishBaseActivity() {
                         }
                         val roleName = state.role ?: ""
 
-                        if (roleName.equals("Admin", ignoreCase = true)) {
+                        if (roleName.equals(RoleConstants.ADMIN, ignoreCase = true)) {
                             val intent = Intent(this@LoginActivity, AdminActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(intent)
                             finish()
-                        } else if (roleName.equals("Manager", ignoreCase = true) || roleName.equals("Cinema Manager", ignoreCase = true)) {
+                        } else if (roleName.equals(RoleConstants.MANAGER, ignoreCase = true) || roleName.equals(RoleConstants.CINEMA_MANAGER, ignoreCase = true)) {
                             val intent = Intent(this@LoginActivity, ManagerActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(intent)
                             finish()
-                        } else if (roleName.equals("Staff", ignoreCase = true) || roleName.equals("Employee", ignoreCase = true)) {
+                        } else if (roleName.equals(RoleConstants.STAFF, ignoreCase = true) || roleName.equals(RoleConstants.EMPLOYEE, ignoreCase = true)) {
                             val intent = Intent(this@LoginActivity, StaffActivity::class.java)
                             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                             startActivity(intent)
