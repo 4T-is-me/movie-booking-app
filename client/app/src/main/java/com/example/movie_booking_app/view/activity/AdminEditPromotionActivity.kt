@@ -64,7 +64,7 @@ class AdminEditPromotionActivity : BaseActivity() {
         binding.actvDiscountType.setAdapter(typeAdapter)
 
         if (isEditMode) {
-            binding.tvFormTitle.text = "Update Promotion"
+            binding.tvFormTitle.text = getString(R.string.auto_str_update_promotion)
             
             binding.layoutStatus.visibility = View.VISIBLE
             val statuses = arrayOf("Active", "Inactive")
@@ -107,7 +107,7 @@ class AdminEditPromotionActivity : BaseActivity() {
                 }
             }
         } else {
-            binding.tvFormTitle.text = "Add New Promotion"
+            binding.tvFormTitle.text = getString(R.string.auto_str_add_new_promotion)
             binding.actvDiscountType.setText("Percentage (%)", false)
         }
     }
@@ -192,25 +192,25 @@ class AdminEditPromotionActivity : BaseActivity() {
 
         if (title.isEmpty() || detail.isEmpty() || couponCode.isEmpty() || discountTypeRaw.isEmpty() ||
             discountValueStr.isEmpty() || startDateStr.isEmpty() || endDateStr.isEmpty()) {
-            Toast.makeText(this, "Please enter all required fields (*)", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.auto_str_please_enter_all_required_fiel), Toast.LENGTH_SHORT).show()
             return
         }
 
         val discountType = if (discountTypeRaw.contains("Percentage")) "percentage" else "fixed"
         val discountValue = discountValueStr.toDoubleOrNull()
         if (discountValue == null || discountValue <= 0) {
-            Toast.makeText(this, "Discount value must be a positive number greater than 0", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.auto_str_discount_value_must_be_a_posit), Toast.LENGTH_SHORT).show()
             return
         }
 
         if (discountType == "percentage" && discountValue > 100) {
-            Toast.makeText(this, "Percentage discount cannot exceed 100%", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.auto_str_percentage_discount_cannot_exc), Toast.LENGTH_SHORT).show()
             return
         }
 
         val minOrderValue = minOrderValueStr.toDoubleOrNull() ?: 0.0
         if (minOrderValue < 0) {
-            Toast.makeText(this, "Minimum order value cannot be negative", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.auto_str_minimum_order_value_cannot_be), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -221,7 +221,7 @@ class AdminEditPromotionActivity : BaseActivity() {
         val isoEndDate = convertSimpleToIsoDate(endDateStr)
         
         if (isoStartDate == null || isoEndDate == null) {
-            Toast.makeText(this, "Invalid date format", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.auto_str_invalid_date_format), Toast.LENGTH_SHORT).show()
             return
         }
 

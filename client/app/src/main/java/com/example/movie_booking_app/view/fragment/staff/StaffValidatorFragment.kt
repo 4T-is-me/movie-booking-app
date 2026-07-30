@@ -58,7 +58,7 @@ class StaffValidatorFragment : Fragment() {
         if (isGranted) {
             startCamera()
         } else {
-            Toast.makeText(requireContext(), "Camera permission is required to scan QR codes.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.auto_str_camera_permission_is_required), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -193,10 +193,10 @@ class StaffValidatorFragment : Fragment() {
                 // Visual feedback for API processing
                 if (isLoading) {
                     binding.btnManualInput.isEnabled = false
-                    binding.btnManualInput.text = "Validating..."
+                    binding.btnManualInput.text = getString(R.string.auto_str_validating)
                 } else {
                     binding.btnManualInput.isEnabled = true
-                    binding.btnManualInput.text = "Enter Booking Code"
+                    binding.btnManualInput.text = getString(R.string.auto_str_enter_booking_code)
                 }
             }
         }
@@ -259,7 +259,7 @@ class StaffValidatorFragment : Fragment() {
         if (response.success && response.data != null) {
             val data = response.data
             bindingDialog.imgStatusIcon.setImageResource(R.drawable.ic_check_circle_gold)
-            bindingDialog.tvDialogTitle.text = "Ticket Validated"
+            bindingDialog.tvDialogTitle.text = getString(R.string.auto_str_ticket_validated)
             bindingDialog.tvDialogTitle.setTextColor(ContextCompat.getColor(context, R.color.seat_selected))
             
             bindingDialog.tvMovieName.text = data.movieName ?: "Unknown Movie"
@@ -280,7 +280,7 @@ class StaffValidatorFragment : Fragment() {
             bindingDialog.tvCheckedInTime.visibility = View.VISIBLE
         } else {
             bindingDialog.imgStatusIcon.setImageResource(R.drawable.ic_report)
-            bindingDialog.tvDialogTitle.text = "Validation Failed"
+            bindingDialog.tvDialogTitle.text = getString(R.string.auto_str_validation_failed)
             bindingDialog.tvDialogTitle.setTextColor(ContextCompat.getColor(context, R.color.seat_sold))
             
             val actualMessage = if (!response.success && !response.errors.isNullOrEmpty()) {
@@ -289,7 +289,7 @@ class StaffValidatorFragment : Fragment() {
                 response.message
             }
             bindingDialog.tvMovieName.text = actualMessage ?: "Invalid Ticket"
-            bindingDialog.tvCinemaRoom.text = "Please check the booking code or payment status."
+            bindingDialog.tvCinemaRoom.text = getString(R.string.auto_str_please_check_the_booking_code)
             bindingDialog.tvShowtime.visibility = View.GONE
             bindingDialog.tvSeats.visibility = View.GONE
             bindingDialog.tvBookingCode.visibility = View.GONE

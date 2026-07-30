@@ -45,7 +45,7 @@ class MovieDetailActivity : AppCompatActivity() {
 
         movieId = intent.getStringExtra("movieId") ?: ""
         if (movieId.isEmpty()) {
-            Toast.makeText(this, "Movie ID invalid", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.auto_str_movie_id_invalid), Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -67,13 +67,13 @@ class MovieDetailActivity : AppCompatActivity() {
         binding.btnBookTicket.setOnClickListener {
             val movie = viewModel.movieDetail.value?.data
             if (movie?.status == "coming-soon") {
-                Toast.makeText(this, "This movie is coming soon.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.auto_str_this_movie_is_coming_soon), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             val cinema = selectedCinema
             if (cinema == null) {
-                Toast.makeText(this, "Please select a cinema first.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.auto_str_please_select_a_cinema_first), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -148,10 +148,10 @@ class MovieDetailActivity : AppCompatActivity() {
                                         if (isDescriptionExpanded) {
                                             binding.txtDescription.maxLines =
                                                 Integer.MAX_VALUE
-                                            binding.tvSeeMoreDescription.text = "See less"
+                                            binding.tvSeeMoreDescription.text = getString(R.string.auto_str_see_less)
                                         } else {
                                             binding.txtDescription.maxLines = 2
-                                            binding.tvSeeMoreDescription.text = "See more"
+                                            binding.tvSeeMoreDescription.text = getString(R.string.auto_str_see_more)
                                         }
                                     }
                                 } else {
@@ -257,10 +257,10 @@ class MovieDetailActivity : AppCompatActivity() {
             if (currentReviewsList.size > 2) {
                 binding.tvSeeAllReviews.visibility = View.VISIBLE
                 if (isReviewsExpanded) {
-                    binding.tvSeeAllReviews.text = "Show less"
+                    binding.tvSeeAllReviews.text = getString(R.string.auto_str_show_less)
                     reviewAdapter.submitList(currentReviewsList)
                 } else {
-                    binding.tvSeeAllReviews.text = "See all"
+                    binding.tvSeeAllReviews.text = getString(R.string.auto_str_see_all)
                     reviewAdapter.submitList(currentReviewsList.take(2))
                 }
             } else {

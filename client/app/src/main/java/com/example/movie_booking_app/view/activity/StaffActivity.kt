@@ -63,35 +63,35 @@ class StaffActivity : BaseActivity() {
         binding.navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_staff_checkin -> {
-                    binding.tvHeaderTitle.text = "Ticket Validator"
+                    binding.tvHeaderTitle.text = getString(R.string.auto_str_ticket_validator)
                     loadFragment(StaffValidatorFragment())
                 }
                 R.id.nav_staff_sales -> {
-                    binding.tvHeaderTitle.text = "Ticket Sales"
+                    binding.tvHeaderTitle.text = getString(R.string.auto_str_ticket_sales)
                     loadFragment(StaffSalesFragment())
                 }
                 R.id.nav_staff_schedule -> {
-                    binding.tvHeaderTitle.text = "Work Schedule"
+                    binding.tvHeaderTitle.text = getString(R.string.auto_str_work_schedule)
                     loadFragment(StaffScheduleFragment())
                 }
                 R.id.nav_staff_requests -> {
-                    binding.tvHeaderTitle.text = "Leave Requests"
+                    binding.tvHeaderTitle.text = getString(R.string.auto_str_leave_requests)
                     loadFragment(StaffRequestsFragment())
                 }
                 R.id.nav_staff_ratings -> {
-                    binding.tvHeaderTitle.text = "My Ratings"
+                    binding.tvHeaderTitle.text = getString(R.string.auto_str_my_ratings)
                     loadFragment(StaffRatingFragment())
                 }
                 R.id.nav_staff_notifications -> {
-                    binding.tvHeaderTitle.text = "Notifications"
+                    binding.tvHeaderTitle.text = getString(R.string.auto_str_notifications)
                     loadFragment(StaffNotificationsFragment())
                 }
                 R.id.nav_staff_profile -> {
-                    binding.tvHeaderTitle.text = "My Profile"
+                    binding.tvHeaderTitle.text = getString(R.string.auto_str_my_profile)
                     loadFragment(StaffProfileFragment())
                 }
                 R.id.nav_staff_settings -> {
-                    binding.tvHeaderTitle.text = "Payroll"
+                    binding.tvHeaderTitle.text = getString(R.string.auto_str_payroll)
                     loadFragment(StaffPayrollFragment())
                 }
                 R.id.nav_staff_logout -> {
@@ -155,7 +155,7 @@ class StaffActivity : BaseActivity() {
 
         if (isStaffNotif) {
             binding.navigationView.setCheckedItem(R.id.nav_staff_notifications)
-            binding.tvHeaderTitle.text = "Notifications"
+            binding.tvHeaderTitle.text = getString(R.string.auto_str_notifications_1)
             loadFragment(StaffNotificationsFragment())
         } else if (!type.isNullOrEmpty() || !referenceId.isNullOrEmpty() || !title.isNullOrEmpty()) {
             // First load default fragment so backstack is valid
@@ -176,7 +176,7 @@ class StaffActivity : BaseActivity() {
 
     private fun loadDefaultFragment() {
         binding.navigationView.setCheckedItem(R.id.nav_staff_schedule)
-        binding.tvHeaderTitle.text = "Work Schedule"
+        binding.tvHeaderTitle.text = getString(R.string.auto_str_work_schedule_1)
         loadFragment(StaffScheduleFragment())
     }
 

@@ -66,7 +66,7 @@ class StaffPayrollFragment : Fragment() {
                         payrollAdapter.submitList(list)
                         binding.layoutEmptyState.visibility =
                             if (list.isEmpty()) View.VISIBLE else View.GONE
-                        binding.tvEmptyMessage.text = "No payroll found."
+                        binding.tvEmptyMessage.text = getString(R.string.auto_str_no_payroll_found)
                     }
                 }
 

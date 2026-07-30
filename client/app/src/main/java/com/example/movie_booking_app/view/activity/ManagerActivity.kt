@@ -107,7 +107,7 @@ class ManagerActivity : AppCompatActivity() {
             remove("role")
             apply()
         }
-        Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, getString(R.string.auto_str_logged_out_successfully), Toast.LENGTH_SHORT).show()
         val intent = Intent(this, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
@@ -258,7 +258,7 @@ class ManagerActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.nav_logout -> performLogout()
                 R.id.nav_dashboard -> {
-                    binding.tvHeaderTitle.text = "Dashboard"
+                    binding.tvHeaderTitle.text = getString(R.string.auto_str_dashboard)
                     binding.managerContainer.visibility = android.view.View.GONE
                     binding.scrollDashboard.visibility = android.view.View.VISIBLE
                 }
@@ -281,14 +281,14 @@ class ManagerActivity : AppCompatActivity() {
                     startActivity(Intent(this, ManagerProfileActivity::class.java))
                 }
                 R.id.nav_payroll -> {
-                    binding.tvHeaderTitle.text = "Payroll"
+                    binding.tvHeaderTitle.text = getString(R.string.auto_str_payroll)
                     binding.scrollDashboard.visibility = android.view.View.GONE
                     binding.managerContainer.visibility = android.view.View.VISIBLE
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.manager_container, com.example.movie_booking_app.view.fragment.manager.ManagerPayrollFragment())
                         .commit()
                 }
-                else -> Toast.makeText(this, "Feature coming soon", Toast.LENGTH_SHORT).show()
+                else -> Toast.makeText(this, getString(R.string.auto_str_feature_coming_soon), Toast.LENGTH_SHORT).show()
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             true
@@ -296,7 +296,7 @@ class ManagerActivity : AppCompatActivity() {
     }
 
     private fun loadNotificationsFragment() {
-        binding.tvHeaderTitle.text = "Notifications"
+        binding.tvHeaderTitle.text = getString(R.string.auto_str_notifications)
         binding.scrollDashboard.visibility = android.view.View.GONE
         binding.managerContainer.visibility = android.view.View.VISIBLE
         supportFragmentManager.beginTransaction()
@@ -309,7 +309,7 @@ class ManagerActivity : AppCompatActivity() {
             val sdf = SimpleDateFormat("EEEE, dd/MM/yyyy", Locale.ENGLISH)
             binding.tvDate.text = sdf.format(Date())
         }catch (e: Exception) {
-            binding.tvDate.text = "Today"
+            binding.tvDate.text = getString(R.string.auto_str_today)
         }
     }
     private fun getGreetingMessage(): String {

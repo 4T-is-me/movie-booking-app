@@ -122,7 +122,7 @@ class LoginActivity : EnglishBaseActivity() {
                     googleSignInLauncher.launch(signInIntent)
                 }
             } else {
-                Toast.makeText(this, "Google Sign-In is not available", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.auto_str_google_sign_in_is_not_availabl), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -144,7 +144,7 @@ class LoginActivity : EnglishBaseActivity() {
                     is LoginUiState.Success -> {
                         binding.btnLogin.isEnabled = true
                         binding.pbLoading.visibility = View.GONE
-                        Toast.makeText(this@LoginActivity, "Login successful", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@LoginActivity, getString(R.string.auto_str_login_successful), Toast.LENGTH_SHORT).show()
 
                         val loggedInUsername = state.username.ifEmpty {
                             binding.edtUsername.text.toString().trim()

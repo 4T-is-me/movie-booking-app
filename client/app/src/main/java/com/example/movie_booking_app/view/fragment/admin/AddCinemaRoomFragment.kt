@@ -107,12 +107,12 @@ class AddCinemaRoomFragment : Fragment() {
         pbLoading = binding.pbLoading
 
         if (roomId != null) {
-            tvTitle.text = "Edit Room"
-            btnSave.text = "Update Room"
+            tvTitle.text = getString(R.string.auto_str_edit_room)
+            btnSave.text = getString(R.string.auto_str_update_room)
             viewModel.loadRoom(roomId!!)
         } else {
-            tvTitle.text = "Add Room"
-            btnSave.text = "Save Room"
+            tvTitle.text = getString(R.string.auto_str_add_room)
+            btnSave.text = getString(R.string.auto_str_save_room)
         }
 
         // Setup drop downs (Adapters)

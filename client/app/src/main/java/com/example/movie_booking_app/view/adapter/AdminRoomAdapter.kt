@@ -34,7 +34,7 @@ class AdminRoomAdapter(
         fun bind(room: CinemaRoom) {
             tvRoomName.text = room.roomName
             tvTotalSeats.text = "Total Seats: ${room.totalSeats}"
-            tvRoomHint.text = "Tap to edit seat layout"
+            tvRoomHint.text = getString(R.string.auto_str_tap_to_edit_seat_layout)
         }
     }
 

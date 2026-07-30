@@ -202,7 +202,7 @@ class AdminFoodMenuActivity : AppCompatActivity() {
                 val active = binding.switchActive.isChecked
 
                 if (name.isBlank()) {
-                    Toast.makeText(this, "Name cannot be empty", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.auto_str_name_cannot_be_empty), Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }
 

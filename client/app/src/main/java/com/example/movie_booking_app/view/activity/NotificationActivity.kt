@@ -258,7 +258,7 @@ class NotificationActivity : AppCompatActivity() {
         dialogBinding.btnDecline.visibility = android.view.View.GONE
 
         // Display a clean Exit Button
-        dialogBinding.tvDismiss.text = "✕  Close"
+        dialogBinding.tvDismiss.text = getString(R.string.auto_str_close)
         dialogBinding.tvDismiss.textSize = 16f
         dialogBinding.tvDismiss.setTextColor(ContextCompat.getColor(this@NotificationActivity, R.color.gold_selected))
         dialogBinding.tvDismiss.setOnClickListener {

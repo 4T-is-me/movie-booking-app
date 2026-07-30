@@ -48,13 +48,13 @@ class ChatActivity : BaseActivity() {
         if (uri != null) {
             uploadAndAnalyzeUri(uri)
         } else {
-            Toast.makeText(this, "Không có ảnh nào được chọn.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.auto_str_kh_ng_c_nh_n_o_c_ch_n), Toast.LENGTH_SHORT).show()
         }
     }
 
     private val requestAudioPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) toggleVoiceRecognition()
-        else Toast.makeText(this, "Cần cấp quyền Micro để thu âm giọng nói.", Toast.LENGTH_SHORT).show()
+        else Toast.makeText(this, getString(R.string.auto_str_c_n_c_p_quy_n_micro_thu_m_gi_n), Toast.LENGTH_SHORT).show()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -199,7 +199,7 @@ class ChatActivity : BaseActivity() {
                 speechRecognizer?.startListening(intent)
             } catch (e: Exception) {
                 e.printStackTrace()
-                Toast.makeText(this, "Không thể kích hoạt Micro.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.auto_str_kh_ng_th_k_ch_ho_t_micro), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -224,21 +224,21 @@ class ChatActivity : BaseActivity() {
             }
 
             if (!tempFile.exists() || tempFile.length() == 0L) {
-                Toast.makeText(this, "Ảnh không hợp lệ, vui lòng thử lại.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.auto_str_nh_kh_ng_h_p_l_vui_l_ng_th_l_i), Toast.LENGTH_SHORT).show()
                 return
             }
 
             val reqFile = tempFile.asRequestBody("image/jpeg".toMediaTypeOrNull())
             val body = MultipartBody.Part.createFormData("image", tempFile.name, reqFile)
 
-            Toast.makeText(this, "⏳ Gemini AI đang phân tích hình ảnh...", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.auto_str_gemini_ai_ang_ph_n_t_ch_h_nh_n), Toast.LENGTH_SHORT).show()
             viewModel.analyzeImage(body) { recognizedMovie ->
                 runOnUiThread {
                     if (!recognizedMovie.isNullOrBlank()) {
                         Toast.makeText(this, "🎬 Đã tìm thấy phim: $recognizedMovie", Toast.LENGTH_LONG).show()
                         viewModel.sendMessage(recognizedMovie, sessionId, isFromVision = true)
                     } else {
-                        Toast.makeText(this, "AI không nhận ra tên phim trong ảnh này.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.auto_str_ai_kh_ng_nh_n_ra_t_n_phim_tron), Toast.LENGTH_SHORT).show()
                     }
                 }
             }

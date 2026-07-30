@@ -234,7 +234,7 @@ class ProfileFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.updateSuccess.collect { success ->
                     if (success) {
-                        Toast.makeText(context, "Profile updated successfully", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, getString(R.string.auto_str_profile_updated_successfully), Toast.LENGTH_SHORT).show()
                         viewModel.resetUpdateSuccess()
                     }
                 }
@@ -245,7 +245,7 @@ class ProfileFragment : Fragment() {
                 viewModel.isUnauthorized.collect { unauthorized ->
                     if (unauthorized) {
                         val act = activity ?: return@collect
-                        Toast.makeText(act, "Session expired. Please login again.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(act, getString(R.string.auto_str_session_expired_please_login_a), Toast.LENGTH_LONG).show()
                         TokenManager.clearTokens(act)
                         val sharedPref = act.getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
                         with(sharedPref.edit()) {

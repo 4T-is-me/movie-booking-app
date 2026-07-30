@@ -333,7 +333,7 @@ class EditProfileActivity : AppCompatActivity() {
                 android.util.Log.e("EditProfileActivity", "Error processing image", e)
                 if (!isDestroyed && !isFinishing) {
                     viewModel.setUploadingState(false)
-                    Toast.makeText(this@EditProfileActivity, "Unable to process selected image.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@EditProfileActivity, getString(R.string.auto_str_unable_to_process_selected_ima), Toast.LENGTH_SHORT).show()
                 }
             }
         }

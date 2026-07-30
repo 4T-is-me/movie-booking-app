@@ -164,7 +164,7 @@ class ManagerSeatActivity : AppCompatActivity() {
                 selectedSeatIds.clear()
                 updateBulkActionsUI()
             } else {
-                Toast.makeText(this, "Cập nhật trạng thái nhóm ghế thất bại", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.auto_str_c_p_nh_t_tr_ng_th_i_nh_m_gh_th), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -174,47 +174,47 @@ class ManagerSeatActivity : AppCompatActivity() {
         binding.btnStatusOperating.background = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.bg_btn_status_unselected)
         binding.btnStatusOperating.backgroundTintList = null
         binding.btnStatusOperating.setTextColor(ContextCompat.getColor(this@ManagerSeatActivity, R.color.text_gray))
-        binding.btnStatusOperating.text = "Operating"
+        binding.btnStatusOperating.text = getString(R.string.auto_str_operating)
         
         binding.btnStatusMaintenance.background = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.bg_btn_status_unselected)
         binding.btnStatusMaintenance.backgroundTintList = null
         binding.btnStatusMaintenance.setTextColor(ContextCompat.getColor(this@ManagerSeatActivity, R.color.text_gray))
-        binding.btnStatusMaintenance.text = "Maintenance"
+        binding.btnStatusMaintenance.text = getString(R.string.auto_str_maintenance)
         
         binding.btnStatusClosed.background = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.bg_btn_status_unselected)
         binding.btnStatusClosed.backgroundTintList = null
         binding.btnStatusClosed.setTextColor(ContextCompat.getColor(this@ManagerSeatActivity, R.color.text_gray))
-        binding.btnStatusClosed.text = "Closed"
+        binding.btnStatusClosed.text = getString(R.string.auto_str_closed)
 
         when (status.lowercase()) {
             "active", "operating", "open" -> {
-                binding.tvTopStatus.text = "Operating"
+                binding.tvTopStatus.text = getString(R.string.auto_str_operating_1)
                 binding.tvTopStatus.setTextColor(ContextCompat.getColor(this@ManagerSeatActivity, R.color.color_green))
                 binding.tvTopStatus.background = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.bg_label_operating)
                 
                 binding.btnStatusOperating.background = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.bg_btn_status_selected)
                 binding.btnStatusOperating.setTextColor(ContextCompat.getColor(this@ManagerSeatActivity, R.color.color_green))
-                binding.btnStatusOperating.text = "✓ Operating"
+                binding.btnStatusOperating.text = getString(R.string.auto_str_operating_2)
             }
             "maintenance", "maintain" -> {
-                binding.tvTopStatus.text = "Maintenance"
+                binding.tvTopStatus.text = getString(R.string.auto_str_maintenance_1)
                 binding.tvTopStatus.setTextColor(ContextCompat.getColor(this@ManagerSeatActivity, R.color.auto_color_F59E0B))
                 binding.tvTopStatus.background = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.bg_label_maintain)
                 
                 binding.btnStatusMaintenance.background = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.bg_btn_status_selected)
                 binding.btnStatusMaintenance.backgroundTintList = android.content.res.ColorStateList.valueOf(ContextCompat.getColor(this@ManagerSeatActivity, R.color.auto_color_33F59E0B))
                 binding.btnStatusMaintenance.setTextColor(ContextCompat.getColor(this@ManagerSeatActivity, R.color.auto_color_F59E0B))
-                binding.btnStatusMaintenance.text = "✓ Maintenance"
+                binding.btnStatusMaintenance.text = getString(R.string.auto_str_maintenance_2)
             }
             else -> {
-                binding.tvTopStatus.text = "Closed"
+                binding.tvTopStatus.text = getString(R.string.auto_str_closed_1)
                 binding.tvTopStatus.setTextColor(ContextCompat.getColor(this@ManagerSeatActivity, R.color.color_error_red))
                 binding.tvTopStatus.background = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.bg_label_close)
                 
                 binding.btnStatusClosed.background = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.bg_btn_status_selected)
                 binding.btnStatusClosed.backgroundTintList = android.content.res.ColorStateList.valueOf(ContextCompat.getColor(this@ManagerSeatActivity, R.color.auto_color_33EF4444))
                 binding.btnStatusClosed.setTextColor(ContextCompat.getColor(this@ManagerSeatActivity, R.color.color_error_red))
-                binding.btnStatusClosed.text = "✓ Closed"
+                binding.btnStatusClosed.text = getString(R.string.auto_str_closed_2)
             }
         }
     }
@@ -231,7 +231,7 @@ class ManagerSeatActivity : AppCompatActivity() {
         
         if (isEditingPricing) {
             // Mode "Edit"
-            binding.tvEditAction.text = "Done"
+            binding.tvEditAction.text = getString(R.string.auto_str_done)
             binding.ivEditAction.setImageResource(android.R.drawable.ic_menu_save)
             
             // Hide Text, Show Input container
@@ -250,7 +250,7 @@ class ManagerSeatActivity : AppCompatActivity() {
             
         } else {
             // Mode "Done"
-            binding.tvEditAction.text = "Edit"
+            binding.tvEditAction.text = getString(R.string.auto_str_edit)
             binding.ivEditAction.setImageResource(android.R.drawable.ic_menu_edit)
             
             // Retrieve data
@@ -286,9 +286,9 @@ class ManagerSeatActivity : AppCompatActivity() {
         
         viewModel.updateRoom(roomIdToUpdate, request) { success ->
             if (success) {
-                Toast.makeText(this, "Changes saved successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.auto_str_changes_saved_successfully), Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(this, "Failed to save changes", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.auto_str_failed_to_save_changes), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -356,7 +356,7 @@ class ManagerSeatActivity : AppCompatActivity() {
                                 val label = if (newStatus == "maintenance") "Bảo trì" else "Hoạt động"
                                 Toast.makeText(this, "Đã đổi ghế $seatDisplayName sang $label", Toast.LENGTH_SHORT).show()
                             } else {
-                                Toast.makeText(this, "Cập nhật trạng thái ghế thất bại", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this, getString(R.string.auto_str_c_p_nh_t_tr_ng_th_i_gh_th_t_b), Toast.LENGTH_SHORT).show()
                             }
                         }
                     }

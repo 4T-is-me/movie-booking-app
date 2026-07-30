@@ -45,7 +45,7 @@ class NewsDetailActivity : AppCompatActivity() {
         val taggedMoviePoster = intent.getStringExtra("moviePoster")
 
         if (newsId.isEmpty()) {
-            Toast.makeText(this, "News article not found", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.auto_str_news_article_not_found), Toast.LENGTH_SHORT).show()
             finish()
             return
         }

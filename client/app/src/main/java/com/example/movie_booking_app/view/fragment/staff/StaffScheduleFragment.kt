@@ -79,7 +79,7 @@ class StaffScheduleFragment : Fragment() {
         replacementShiftAdapter = ReplacementShiftAdapter { item ->
             item.shiftId?.let { id ->
                 leaveRequestViewModel.acceptReplacementShift(id)
-            }?: Toast.makeText(requireContext(), "Invalid Shift ID", Toast.LENGTH_SHORT).show()
+            }?: Toast.makeText(requireContext(), getString(R.string.auto_str_invalid_shift_id), Toast.LENGTH_SHORT).show()
         }
 
         binding.rvNeedReplacementShifts.apply {
@@ -138,7 +138,7 @@ class StaffScheduleFragment : Fragment() {
                 if (response != null) {
                     Toast.makeText(
                         requireContext(),
-                        "Shift accepted successfully!",
+                        getString(R.string.auto_str_shift_accepted_successfully),
                         Toast.LENGTH_SHORT
                     ).show()
                     leaveRequestViewModel.clearAcceptShiftState()
@@ -152,7 +152,7 @@ class StaffScheduleFragment : Fragment() {
                 if (response != null) {
                     Toast.makeText(
                         requireContext(),
-                        "Leave request submitted successfully!",
+                        getString(R.string.auto_str_leave_request_submitted_succes),
                         Toast.LENGTH_LONG
                     ).show()
                     leaveRequestViewModel.clearCreateLeaveState()
@@ -258,10 +258,10 @@ class StaffScheduleFragment : Fragment() {
             )
 
             // Custom UI for holidays
-            itemBinding.tvSubShiftTitle.text = "No Shift Scheduled"
-            itemBinding.tvSubStatusBadge.text = "Off"
+            itemBinding.tvSubShiftTitle.text = getString(R.string.auto_str_no_shift_scheduled)
+            itemBinding.tvSubStatusBadge.text = getString(R.string.auto_str_off)
             itemBinding.layoutSubHours.visibility = View.GONE // Hide the time row
-            itemBinding.tvSubShiftLocation.text = "Enjoy your day off!"
+            itemBinding.tvSubShiftLocation.text = getString(R.string.auto_str_enjoy_your_day_off)
 
             binding.lnTodayShiftsContainer.addView(itemBinding.root)
         }
@@ -361,7 +361,7 @@ class StaffScheduleFragment : Fragment() {
                 binding.tvBadgeMonthName.text = monthName
 
                 if (item.shift.isNullOrEmpty()) {
-                    binding.tvShiftName.text = "Day Off"
+                    binding.tvShiftName.text = getString(R.string.auto_str_day_off)
                     binding.tvShiftName.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_gray))
                     binding.layoutShiftTime.visibility = View.GONE
                     binding.btnShiftAction.visibility = View.GONE
