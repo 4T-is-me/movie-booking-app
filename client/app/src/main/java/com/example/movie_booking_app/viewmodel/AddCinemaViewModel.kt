@@ -1,5 +1,11 @@
 package com.example.movie_booking_app.viewmodel
 
+import com.example.movie_booking_app.R
+
+import dagger.hilt.android.qualifiers.ApplicationContext
+
+import android.content.Context
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.request.AddCinemaRequest
@@ -15,6 +21,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddCinemaViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+    
     private val repository: CinemasRepository
 ) : ViewModel() {
 
@@ -67,24 +75,24 @@ class AddCinemaViewModel @Inject constructor(
         val img = image.value.trim()
 
         if (name.isEmpty()) {
-            _errorMessage.value = "Cinema name is required"
+            _errorMessage.value = context.getString(R.string.auto_str_cinema_name_is_required)
             return
         }
         if (addr.isEmpty()) {
-            _errorMessage.value = "Address is required"
+            _errorMessage.value = context.getString(R.string.auto_str_address_is_required)
             return
         }
         if (cit.isEmpty()) {
-            _errorMessage.value = "City/Province is required"
+            _errorMessage.value = context.getString(R.string.auto_str_city_province_is_required)
             return
         }
         if (hot.isEmpty()) {
-            _errorMessage.value = "Hotline/Phone number is required"
+            _errorMessage.value = context.getString(R.string.auto_str_hotline_phone_number_is_requir)
             return
         }
         val phoneRegex = Regex("^[0-9\\-\\+\\s]{8,15}$")
         if (!phoneRegex.matches(hot)) {
-            _errorMessage.value = "Invalid phone number format"
+            _errorMessage.value = context.getString(R.string.auto_str_invalid_phone_number_format)
             return
         }
 

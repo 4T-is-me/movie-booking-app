@@ -1,5 +1,11 @@
 package com.example.movie_booking_app.viewmodel
 
+import com.example.movie_booking_app.R
+
+import dagger.hilt.android.qualifiers.ApplicationContext
+
+import android.content.Context
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.response.ReviewItem
@@ -13,6 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StaffRatingViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+    
     private val repository: StaffRepository
 ) : ViewModel() {
 
@@ -57,7 +65,7 @@ class StaffRatingViewModel @Inject constructor(
                         }
                     } else {
                         android.util.Log.e("StaffRating", "Response error or null: $response")
-                        _error.value = "Failed to load ratings or no ratings yet"
+                        _error.value = context.getString(R.string.auto_str_failed_to_load_ratings_or_no_r)
                     }
                     _isLoading.value = false
                 }

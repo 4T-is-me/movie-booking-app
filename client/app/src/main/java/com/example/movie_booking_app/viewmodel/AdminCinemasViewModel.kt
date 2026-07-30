@@ -1,5 +1,11 @@
 package com.example.movie_booking_app.viewmodel
 
+import com.example.movie_booking_app.R
+
+import dagger.hilt.android.qualifiers.ApplicationContext
+
+import android.content.Context
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.entity.Cinema
@@ -11,6 +17,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AdminCinemasViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+    
     private val repository: CinemasRepository
 ) : ViewModel() {
 
@@ -57,7 +65,7 @@ class AdminCinemasViewModel @Inject constructor(
                 if (success) {
                     loadCinemas()
                 } else {
-                    _error.value = "Failed to update status"
+                    _error.value = context.getString(R.string.auto_str_failed_to_update_status)
                 }
             } catch (e: Exception) {
                 _error.value = e.message ?: "Failed to update status"

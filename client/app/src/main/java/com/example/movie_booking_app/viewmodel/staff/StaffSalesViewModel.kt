@@ -1,5 +1,11 @@
 package com.example.movie_booking_app.viewmodel.staff
 
+import com.example.movie_booking_app.R
+
+import dagger.hilt.android.qualifiers.ApplicationContext
+
+import android.content.Context
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.entity.*
@@ -14,6 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StaffSalesViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+    
     private val movieRepository: MovieRepository,
     private val bookingRepository: BookingRepository,
     private val memberRepository: MemberRepository,
@@ -266,7 +274,7 @@ class StaffSalesViewModel @Inject constructor(
 
     fun verifyMember(identity: String) {
         if (identity.trim().isEmpty()) {
-            _memberVerificationError.value = "Please enter verification info"
+            _memberVerificationError.value = context.getString(R.string.auto_str_please_enter_verification_info)
             _verifiedMember.value = null
             return
         }
@@ -282,7 +290,7 @@ class StaffSalesViewModel @Inject constructor(
                         _memberVerificationError.value = null
                     } else {
                         _verifiedMember.value = null
-                        _memberVerificationError.value = "Member account does not exist"
+                        _memberVerificationError.value = context.getString(R.string.auto_str_member_account_does_not_exist)
                     }
                     _useScore.value = false
                     recalculateTotals()
@@ -372,7 +380,7 @@ class StaffSalesViewModel @Inject constructor(
 
     fun applyPromoCode(code: String) {
         if (code.trim().isEmpty()) {
-            _promoError.value = "Please enter promotion code"
+            _promoError.value = context.getString(R.string.auto_str_please_enter_promotion_code)
             return
         }
 
@@ -446,13 +454,13 @@ class StaffSalesViewModel @Inject constructor(
     fun confirmBooking(paymentMethod: String) {
         val showtime = _showtimes.value.find { it.isSelected }
         if (showtime == null) {
-            _checkoutError.value = "Please select a showtime"
+            _checkoutError.value = context.getString(R.string.auto_str_please_select_a_showtime)
             return
         }
 
         val selectedSeatsList = _selectedSeats.value
         if (selectedSeatsList.isEmpty()) {
-            _checkoutError.value = "Please select a seat"
+            _checkoutError.value = context.getString(R.string.auto_str_please_select_a_seat)
             return
         }
 

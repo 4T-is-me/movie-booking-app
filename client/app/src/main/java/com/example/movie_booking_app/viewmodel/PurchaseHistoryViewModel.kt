@@ -1,5 +1,11 @@
 package com.example.movie_booking_app.viewmodel
 
+import com.example.movie_booking_app.R
+
+import dagger.hilt.android.qualifiers.ApplicationContext
+
+import android.content.Context
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.response.BookingHistoryItem
@@ -16,6 +22,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PurchaseHistoryViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+    
     private val repository: PurchaseHistoryRepository
 ) : ViewModel() {
 
@@ -43,7 +51,7 @@ class PurchaseHistoryViewModel @Inject constructor(
                         if (body != null && body.success) {
                             _bookings.value = body.data ?: emptyList()
                         } else {
-                            _error.value = "Failed to load booking history"
+                            _error.value = context.getString(R.string.auto_str_failed_to_load_booking_history)
                         }
                     } else {
                         _error.value = "Server returned an error: ${response.code()}"

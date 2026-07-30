@@ -1,5 +1,11 @@
 package com.example.movie_booking_app.viewmodel
 
+import com.example.movie_booking_app.R
+
+import dagger.hilt.android.qualifiers.ApplicationContext
+
+import android.content.Context
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.entity.SeatPreview
@@ -19,6 +25,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddCinemaRoomViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+    
     private val repository: CinemaRoomsRepository
 ) : ViewModel() {
 
@@ -142,19 +150,19 @@ class AddCinemaRoomViewModel @Inject constructor(
         val configuredSeats = _previewSeats.value
 
         if (name.isEmpty()) {
-            _errorMessage.value = "Room name is required"
+            _errorMessage.value = context.getString(R.string.auto_str_room_name_is_required)
             return
         }
         if (r == null || r < 1 || r > 8) {
-            _errorMessage.value = "Rows must be between 1 and 8."
+            _errorMessage.value = context.getString(R.string.auto_str_rows_must_be_between_1_and_8)
             return
         }
         if (c == null || c < 1 || c > 10) {
-            _errorMessage.value = "Columns must be between 1 and 10."
+            _errorMessage.value = context.getString(R.string.auto_str_columns_must_be_between_1_and)
             return
         }
         if (configuredSeats.isEmpty()) {
-            _errorMessage.value = "Seat layout is empty"
+            _errorMessage.value = context.getString(R.string.auto_str_seat_layout_is_empty)
             return
         }
 
