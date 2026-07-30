@@ -1,5 +1,9 @@
 package com.example.movie_booking_app.view.adapter.admin
 
+import com.example.movie_booking_app.R
+
+import androidx.core.content.ContextCompat
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
@@ -30,7 +34,7 @@ class StatsTableAdapter : RecyclerView.Adapter<StatsTableAdapter.StatsViewHolder
         
         // Custom styling for dark background
         holder.tvLabel.setTextColor(android.graphics.Color.WHITE)
-        holder.tvValue.setTextColor(android.graphics.Color.parseColor("#F5C518"))
+        holder.tvValue.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.gold_selected))
     }
 
     override fun getItemCount(): Int = items.size

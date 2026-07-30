@@ -58,17 +58,17 @@ class CinemaRoomsAdapter(
             when (status.lowercase()) {
                 "active", "operating", "open" -> {
                     statusText = "Active"
-                    textColor = Color.parseColor("#10B981")
+                    textColor = ContextCompat.getColor(itemView.context, R.color.color_green)
                     backgroundRes = R.drawable.bg_label_operating
                 }
                 "maintenance", "maintain" -> {
                     statusText = "Maintenance"
-                    textColor = Color.parseColor("#F59E0B")
+                    textColor = ContextCompat.getColor(itemView.context, R.color.auto_color_F59E0B)
                     backgroundRes = R.drawable.bg_label_maintain
                 }
                 else -> {
                     statusText = "Closed"
-                    textColor = Color.parseColor("#EF4444")
+                    textColor = ContextCompat.getColor(itemView.context, R.color.color_error_red)
                     backgroundRes = R.drawable.bg_label_close
                 }
             }

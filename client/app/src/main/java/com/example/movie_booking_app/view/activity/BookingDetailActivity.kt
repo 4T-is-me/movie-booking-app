@@ -1,5 +1,7 @@
 package com.example.movie_booking_app.view.activity
 
+import androidx.core.content.ContextCompat
+
 import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
@@ -136,9 +138,9 @@ class BookingDetailActivity : AppCompatActivity() {
         binding.tvMembershipRank.text = "$formattedRank Member"
 
         val badgeColor = when (rankClean) {
-            "gold" -> Color.parseColor("#F5C542")
-            "silver" -> Color.parseColor("#C0C0C0")
-            else -> Color.parseColor("#CD7F32") // bronze
+            "gold" -> ContextCompat.getColor(this, R.color.cinema_primary)
+            "silver" -> ContextCompat.getColor(this, R.color.auto_color_C0C0C0)
+            else -> ContextCompat.getColor(this, R.color.auto_color_CD7F32) // bronze
         }
         binding.tvMembershipRank.setTextColor(badgeColor)
         binding.cardMembershipRank.strokeColor = badgeColor
@@ -208,7 +210,7 @@ class BookingDetailActivity : AppCompatActivity() {
 
                 val priceTv = TextView(this).apply {
                     text = "  ${formatter.format(combo.subtotal)} VND"
-                    setTextColor(Color.parseColor("#88FFFFFF"))
+                    setTextColor(ContextCompat.getColor(this, R.color.text_secondary_light))
                     textSize = 14f
                     layoutParams = LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,

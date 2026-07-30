@@ -1,5 +1,7 @@
 package com.example.movie_booking_app.view.activity
 
+import androidx.core.content.ContextCompat
+
 import android.app.DatePickerDialog
 import android.graphics.Color
 import android.os.Bundle
@@ -311,9 +313,9 @@ class RegisterActivity : EnglishBaseActivity() {
     private fun showNotification(message: String, isSuccess: Boolean) {
         binding.tvNotificationMessage.text = message
         if (isSuccess) {
-            binding.llNotificationBg.setBackgroundColor(Color.parseColor("#4CAF50")) // Green
+            binding.llNotificationBg.setBackgroundColor(ContextCompat.getColor(this, R.color.auto_color_4CAF50)) // Green
         } else {
-            binding.llNotificationBg.setBackgroundColor(Color.parseColor("#F44336")) // Red
+            binding.llNotificationBg.setBackgroundColor(ContextCompat.getColor(this, R.color.auto_color_F44336)) // Red
         }
 
         binding.cvNotification.visibility = View.VISIBLE

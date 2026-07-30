@@ -1,5 +1,7 @@
 package com.example.movie_booking_app.view.fragment
 
+import androidx.core.content.ContextCompat
+
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -154,9 +156,9 @@ class ProfileFragment : Fragment() {
                     val rankClean = rank.trim().lowercase()
 
                     val badgeColor = when (rankClean) {
-                        "gold" -> android.graphics.Color.parseColor("#F5C542")
-                        "silver" -> android.graphics.Color.parseColor("#C0C0C0")
-                        else -> android.graphics.Color.parseColor("#CD7F32") // bronze
+                        "gold" -> ContextCompat.getColor(requireContext(), R.color.cinema_primary)
+                        "silver" -> ContextCompat.getColor(requireContext(), R.color.auto_color_C0C0C0)
+                        else -> ContextCompat.getColor(requireContext(), R.color.auto_color_CD7F32) // bronze
                     }
 
                     val badgeBgRes = when (rankClean) {

@@ -1,5 +1,7 @@
 package com.example.movie_booking_app.view.adapter
 
+import androidx.core.content.ContextCompat
+
 import com.example.movie_booking_app.databinding.ItemCinemaRoomBinding
 import android.view.LayoutInflater
 import android.view.View
@@ -46,11 +48,11 @@ class CinemasAdapter(
 
             if (status == "active") {
                 statusText = "Active"
-                statusColor = android.graphics.Color.parseColor("#10B981")
+                statusColor = ContextCompat.getColor(itemView.context, R.color.color_green)
                 backgroundRes = R.drawable.bg_label_operating
             } else {
                 statusText = "Closed"
-                statusColor = android.graphics.Color.parseColor("#EF4444")
+                statusColor = ContextCompat.getColor(itemView.context, R.color.color_error_red)
                 backgroundRes = R.drawable.bg_label_close
             }
 

@@ -1,5 +1,9 @@
 package com.example.movie_booking_app.view.widget
 
+import com.example.movie_booking_app.R
+
+import androidx.core.content.ContextCompat
+
 import android.content.Context
 import android.graphics.BlurMaskFilter
 import android.graphics.Canvas
@@ -33,7 +37,7 @@ class CinemaScreenView @JvmOverloads constructor(
 
     private val linePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
-        color = Color.parseColor("#FFC107")
+        color = ContextCompat.getColor(context, R.color.yellow)
         strokeWidth = 4f
         strokeCap = Paint.Cap.BUTT
         maskFilter = BlurMaskFilter(8f, BlurMaskFilter.Blur.NORMAL)
@@ -41,7 +45,7 @@ class CinemaScreenView @JvmOverloads constructor(
 
     private val solidLinePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
-        color = Color.parseColor("#FFC107")
+        color = ContextCompat.getColor(context, R.color.yellow)
         strokeWidth = 2.5f
         strokeCap = Paint.Cap.BUTT
     }

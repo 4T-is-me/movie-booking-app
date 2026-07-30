@@ -412,4 +412,11 @@
     <color name="auto_color_660A0A0A">#660A0A0A</color>
     <color name="auto_color_FF4444">#FF4444</color>
     <color name="auto_color_FFD700">#FFD700</color>
+
+    <!-- Auto-extracted colors (Antigravity Refactor Kotlin) -->
+    <color name="auto_color_454545">#454545</color>
+    <color name="auto_color_2D2208">#2D2208</color>
+    <color name="auto_color_D9A300">#D9A300</color>
+    <color name="auto_color_1A64748B">#1A64748B</color>
+    <color name="auto_color_33EF4444">#33EF4444</color>
 </resources>

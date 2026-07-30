@@ -1,5 +1,7 @@
 package com.example.movie_booking_app.view.activity
 
+import androidx.core.content.ContextCompat
+
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -73,25 +75,25 @@ class ChangePasswordActivity : AppCompatActivity() {
 
         binding.edtCurrentPassword.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                binding.tvCurrentPasswordLabel.setTextColor(android.graphics.Color.parseColor("#F5C542"))
+                binding.tvCurrentPasswordLabel.setTextColor(ContextCompat.getColor(this, R.color.cinema_primary))
             } else {
-                binding.tvCurrentPasswordLabel.setTextColor(android.graphics.Color.parseColor("#9E9E9E"))
+                binding.tvCurrentPasswordLabel.setTextColor(ContextCompat.getColor(this, R.color.auto_color_9E9E9E))
             }
         }
 
         binding.edtNewPassword.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                binding.tvNewPasswordLabel.setTextColor(android.graphics.Color.parseColor("#F5C542"))
+                binding.tvNewPasswordLabel.setTextColor(ContextCompat.getColor(this, R.color.cinema_primary))
             } else {
-                binding.tvNewPasswordLabel.setTextColor(android.graphics.Color.parseColor("#9E9E9E"))
+                binding.tvNewPasswordLabel.setTextColor(ContextCompat.getColor(this, R.color.auto_color_9E9E9E))
             }
         }
 
         binding.edtConfirmPassword.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                binding.tvConfirmPasswordLabel.setTextColor(android.graphics.Color.parseColor("#F5C542"))
+                binding.tvConfirmPasswordLabel.setTextColor(ContextCompat.getColor(this, R.color.cinema_primary))
             } else {
-                binding.tvConfirmPasswordLabel.setTextColor(android.graphics.Color.parseColor("#9E9E9E"))
+                binding.tvConfirmPasswordLabel.setTextColor(ContextCompat.getColor(this, R.color.auto_color_9E9E9E))
             }
         }
 
@@ -187,10 +189,10 @@ class ChangePasswordActivity : AppCompatActivity() {
 
         // Highlight card border if all pass
         if (state.isNewPasswordValid) {
-            binding.cardRequirements.strokeColor = Color.parseColor("#F5C542")
+            binding.cardRequirements.strokeColor = ContextCompat.getColor(this, R.color.cinema_primary)
             binding.cardRequirements.strokeWidth = dpToPx(2)
         } else {
-            binding.cardRequirements.strokeColor = Color.parseColor("#33FFFFFF")
+            binding.cardRequirements.strokeColor = ContextCompat.getColor(this, R.color.divider_gray)
             binding.cardRequirements.strokeWidth = dpToPx(1)
         }
     }
@@ -198,12 +200,12 @@ class ChangePasswordActivity : AppCompatActivity() {
     private fun updateRequirementItem(isValid: Boolean, iconView: android.widget.ImageView, textView: android.widget.TextView) {
         if (isValid) {
             iconView.setImageResource(R.drawable.ic_check_circle_gold)
-            iconView.imageTintList = ColorStateList.valueOf(Color.parseColor("#34C759"))
-            textView.setTextColor(Color.parseColor("#34C759"))
+            iconView.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.iconPlus))
+            textView.setTextColor(ContextCompat.getColor(this, R.color.iconPlus))
         } else {
             iconView.setImageResource(R.drawable.ic_circle_gray)
-            iconView.imageTintList = ColorStateList.valueOf(Color.parseColor("#808080"))
-            textView.setTextColor(Color.parseColor("#808080"))
+            iconView.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.admin_hint_gray))
+            textView.setTextColor(ContextCompat.getColor(this, R.color.admin_hint_gray))
         }
     }
 
