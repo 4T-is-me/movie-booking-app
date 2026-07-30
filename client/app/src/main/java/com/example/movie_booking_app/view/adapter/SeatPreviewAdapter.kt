@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter
 
+import androidx.core.content.ContextCompat
 import com.example.movie_booking_app.databinding.ItemSeatPreviewBinding
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -46,15 +47,15 @@ class SeatPreviewAdapter(
             val shape = GradientDrawable().apply {
                 shape = GradientDrawable.RECTANGLE
                 cornerRadius = 12f // 4dp to pixels roughly
-                val colorHex = when (seat.seatType.lowercase()) {
-                    "vip" -> "#FF9800"    // Orange
-                    "couple" -> "#E91E63" // Pink
-                    else -> "#F5C542"     // Yellow (Standard)
+                val colorRes = when (seat.seatType.lowercase()) {
+                    "vip" -> R.color.auto_color_FF9800
+                    "couple" -> R.color.auto_color_E91E63
+                    else -> R.color.cinema_primary
                 }
-                setColor(Color.parseColor(colorHex))
+                setColor(ContextCompat.getColor(itemView.context, colorRes))
             }
             tvSeatLabel.background = shape
-            tvSeatLabel.setTextColor(Color.parseColor("#0B0F17")) // High contrast dark text color
+            tvSeatLabel.setTextColor(ContextCompat.getColor(itemView.context, R.color.cinema_bg)) // High contrast dark text color
         }
     }
 

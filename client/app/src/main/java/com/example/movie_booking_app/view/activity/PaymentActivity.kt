@@ -1,5 +1,9 @@
 package com.example.movie_booking_app.view.activity
 
+import com.example.movie_booking_app.R
+
+import androidx.core.content.ContextCompat
+
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -207,9 +211,9 @@ class PaymentActivity : AppCompatActivity() {
 
                     // Coupon validation messages & updates
                     if (state.couponApplied) {
-                        binding.etCouponCode.setTextColor(Color.parseColor("#34C759"))
+                        binding.etCouponCode.setTextColor(ContextCompat.getColor(this@PaymentActivity, R.color.iconPlus))
                     } else {
-                        binding.etCouponCode.setTextColor(Color.parseColor("#FFFFFF"))
+                        binding.etCouponCode.setTextColor(ContextCompat.getColor(this@PaymentActivity, R.color.white))
                     }
 
                     state.couponSuccessMessage?.let { msg ->
@@ -237,7 +241,7 @@ class PaymentActivity : AppCompatActivity() {
     }
 
     private fun updatePaymentMethodsHighlight(selectedMethod: String?) {
-        val activeColor = Color.parseColor("#F5C542")
+        val activeColor = ContextCompat.getColor(this@PaymentActivity, R.color.cinema_primary)
         val inactiveColor = Color.TRANSPARENT
 
         binding.cardMoMo.strokeColor = if (selectedMethod == "MoMo") activeColor else inactiveColor

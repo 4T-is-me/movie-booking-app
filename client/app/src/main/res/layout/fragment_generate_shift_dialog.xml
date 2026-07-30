@@ -46,7 +46,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Duration"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/white"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -73,7 +73,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Staff Per Shift"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/white"
                 android:textSize="12sp"
                 android:textStyle="bold" />
 
@@ -86,7 +86,7 @@
                 android:hint="e.g., 2"
                 android:inputType="number"
                 android:paddingHorizontal="12dp"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/white"
                 android:textColorHint="@color/text_secondary"
                 android:textSize="14sp" />
         </LinearLayout>
@@ -101,7 +101,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Select Staff for Scheduling"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/white"
         android:textSize="12sp"
         android:textStyle="bold" />
 
@@ -120,7 +120,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
-        android:textColor="#FF4D4D"
+        android:textColor="@color/auto_color_FF4D4D"
         android:textSize="12sp"
         android:textStyle="bold"
         android:visibility="gone"
@@ -134,7 +134,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Schedule Preview"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/white"
         android:textSize="14sp"
         android:textStyle="bold"
         android:visibility="gone" />

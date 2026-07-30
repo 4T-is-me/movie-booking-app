@@ -257,7 +257,7 @@ class NotificationActivity : AppCompatActivity() {
         // Display a clean Exit Button
         dialogBinding.tvDismiss.text = "✕  Đóng"
         dialogBinding.tvDismiss.textSize = 16f
-        dialogBinding.tvDismiss.setTextColor(android.graphics.Color.parseColor("#F5C518"))
+        dialogBinding.tvDismiss.setTextColor(ContextCompat.getColor(this@NotificationActivity, R.color.gold_selected))
         dialogBinding.tvDismiss.setOnClickListener {
             dialog.dismiss()
         }

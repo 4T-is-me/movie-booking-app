@@ -362,11 +362,11 @@ class StaffScheduleFragment : Fragment() {
 
                 if (item.shift.isNullOrEmpty()) {
                     binding.tvShiftName.text = "Day Off"
-                    binding.tvShiftName.setTextColor(Color.parseColor("#94A3B8"))
+                    binding.tvShiftName.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_gray))
                     binding.layoutShiftTime.visibility = View.GONE
                     binding.btnShiftAction.visibility = View.GONE
 
-                    setDynamicBadge(binding.tvShiftStatus, "Off", Color.parseColor("#64748B"), Color.parseColor("#1A64748B"))
+                    setDynamicBadge(binding.tvShiftStatus, "Off", ContextCompat.getColor(requireContext(), R.color.text_dialog_hint), ContextCompat.getColor(requireContext(), R.color.auto_color_1A64748B))
                 } else {
                     binding.layoutShiftTime.visibility = View.VISIBLE
                     binding.tvShiftName.setTextColor(Color.WHITE)

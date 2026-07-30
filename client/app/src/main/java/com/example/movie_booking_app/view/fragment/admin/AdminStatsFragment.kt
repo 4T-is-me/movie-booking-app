@@ -1,5 +1,7 @@
 package com.example.movie_booking_app.view.fragment.admin
 
+import androidx.core.content.ContextCompat
+
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -205,7 +207,7 @@ class AdminStatsFragment : Fragment() {
             BarEntry(index.toFloat(), item.totalRevenue.toFloat())
         }
         val dataSet = BarDataSet(entries, "Doanh thu phim").apply {
-            color = Color.parseColor("#F5C518")
+            color = ContextCompat.getColor(requireContext(), R.color.gold_selected)
             valueTextColor = Color.WHITE
             valueTextSize = 10f
             // Format values inside the chart
@@ -236,7 +238,7 @@ class AdminStatsFragment : Fragment() {
             xAxis.labelCount = sortedData.size
             xAxis.setDrawGridLines(false)
             axisLeft.setDrawGridLines(true)
-            axisLeft.gridColor = Color.parseColor("#33FFFFFF")
+            axisLeft.gridColor = ContextCompat.getColor(requireContext(), R.color.divider_gray)
             
             // Adjust offsets to prevent label clipping
             setExtraOffsets(20f, 0f, 40f, 0f)
