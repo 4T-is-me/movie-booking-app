@@ -46,4 +46,16 @@ abstract class RepositoryModule {
     abstract fun bindMemberRepository(
         impl: MemberRepositoryImpl
     ): MemberRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindFoodRepository(
+        impl: FoodRepositoryImpl
+    ): FoodRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindInventoryRepository(
+        impl: InventoryRepositoryImpl
+    ): InventoryRepository
 }

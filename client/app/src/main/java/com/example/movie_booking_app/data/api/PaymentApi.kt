@@ -35,6 +35,6 @@ interface PaymentApi {
     @POST("api/booking/{id}/rate-staff")
     suspend fun rateStaff(
         @retrofit2.http.Path("id") bookingId: String,
-        @Body request: Map<String, Int>
+        @Body request: com.example.movie_booking_app.data.model.request.RateStaffRequest
     ): Response<ResponseBody>
 }

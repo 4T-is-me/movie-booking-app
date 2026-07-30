@@ -129,6 +129,8 @@ const getProfile = async (accountId) => {
     const fullName = account.memberInfo?.fullName || account.managerInfo?.fullName || account.staffInfo?.fullName;
     const phone = account.memberInfo?.phoneNumber || account.managerInfo?.phoneNumber || account.staffInfo?.phone;
     const identityCard = account.memberInfo?.identityCard || account.managerInfo?.identityCard || account.staffInfo?.identityCard;
+    const isStaff = account.roleId?.name === 'Staff' || account.roleId?.roleName === 'Staff';
+    const staffInfo = account.staffInfo;
 
     return {
         accountId: account._id.toString(),
@@ -150,7 +152,11 @@ const getProfile = async (accountId) => {
         avatar: account.memberInfo?.image,
         image: account.memberInfo?.image,
         favoriteCinema: account.memberInfo?.favoriteCinema,
-        favoriteGenres: account.memberInfo?.favoriteGenres || []
+        favoriteGenres: account.memberInfo?.favoriteGenres || [],
+        kpiPoints: isStaff ? (staffInfo?.kpiPoints || 0) : 0,
+        ticketSold: isStaff ? (staffInfo?.ticketSold || 0) : 0,
+        rating: isStaff ? (staffInfo?.rating || 0) : 0,
+        totalRatings: isStaff ? (staffInfo?.totalRatings || 0) : 0
     };
 }
 

@@ -21,7 +21,8 @@ import kotlin.collections.emptyList
 @HiltViewModel
 class MovieViewModel @Inject constructor(
     private val repository: MovieRepository,
-    private val profileRepository: ProfileRepository
+    private val profileRepository: ProfileRepository,
+    private val newsRepository: com.example.movie_booking_app.data.repository.NewsRepository
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -240,22 +241,37 @@ class MovieViewModel @Inject constructor(
     private val _reviewActionSuccess = MutableSharedFlow<Boolean>()
     val reviewActionSuccess = _reviewActionSuccess.asSharedFlow()
 
+    private val _reviewErrorMessage = MutableSharedFlow<String?>()
+    val reviewErrorMessage = _reviewErrorMessage.asSharedFlow()
+
     private val _movieReviews = MutableStateFlow<List<com.example.movie_booking_app.data.model.response.ReviewItem>>(emptyList())
     val movieReviews: StateFlow<List<com.example.movie_booking_app.data.model.response.ReviewItem>> = _movieReviews.asStateFlow()
 
     private val _reviewsTotalCount = MutableStateFlow(0)
     val reviewsTotalCount: StateFlow<Int> = _reviewsTotalCount.asStateFlow()
 
-    fun submitReview(movieId: String, rating: Int, comment: String) {
+    fun submitReview(movieId: String, rating: Int, comment: String?) {
         viewModelScope.launch {
             try {
-                val success = repository.submitReview(movieId, rating, comment)
-                _reviewActionSuccess.emit(success)
-                if (success) {
+                val response = repository.submitReviewWithResult(movieId, rating, comment)
+                if (response.isSuccessful && response.body()?.success == true) {
+                    _reviewActionSuccess.emit(true)
                     fetchMovieDetail(movieId)
                     fetchMovieReviews(movieId)
+                } else {
+                    val errorMsg = response.body()?.message ?: response.errorBody()?.string() ?: "Unknown error"
+                    // Try to parse JSON error message if possible
+                    val parsedMsg = try {
+                        val json = com.google.gson.JsonParser.parseString(errorMsg).asJsonObject
+                        json.get("message")?.asString ?: errorMsg
+                    } catch (_: Exception) {
+                        errorMsg
+                    }
+                    _reviewErrorMessage.emit(parsedMsg)
+                    _reviewActionSuccess.emit(false)
                 }
             } catch (e: Exception) {
+                _reviewErrorMessage.emit(e.localizedMessage ?: "Network error")
                 _reviewActionSuccess.emit(false)
             }
         }
@@ -269,6 +285,17 @@ class MovieViewModel @Inject constructor(
             } catch (e: Exception) {
                 _movieReviews.value = emptyList()
             }
+        }
+    }
+    fun toggleNewsLike(newsId: String) {
+        viewModelScope.launch {
+            newsRepository.toggleNewsLike(newsId)
+                .catch { e ->
+                    // Log or handle error
+                }
+                .collect {
+                    loadHomeData()
+                }
         }
     }
 }

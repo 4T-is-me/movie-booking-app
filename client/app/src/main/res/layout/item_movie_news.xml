@@ -2,49 +2,262 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="310dp"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardBackgroundColor="@color/card_dark"
+    app:cardBackgroundColor="#1E1E1E"
     app:cardCornerRadius="16dp"
-    app:cardElevation="2dp">
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/auto_color_22FFFFFF"
+    app:cardElevation="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="12dp">
 
+        <!-- Top Row Profile Info -->
         <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/imgNews"
-            android:layout_width="match_parent"
-            android:layout_height="180dp"
+            android:id="@+id/ivAuthorAvatar"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:scaleType="centerCrop"
-            app:shapeAppearanceOverlay="@style/RoundedImageView16dp"
+            android:src="@drawable/bg_ai_avatar"
+            app:shapeAppearanceOverlay="@style/CircleImageView"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/tvAuthorName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Cinema Club ✔️"
+            android:textColor="@color/white"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@id/ivAuthorAvatar"
+            app:layout_constraintTop_toTopOf="@id/ivAuthorAvatar" />
+
+        <TextView
+            android:id="@+id/tvPostMeta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2d • 🌐"
+            android:textColor="@color/auto_color_88FFFFFF"
+            android:textSize="11sp"
+            app:layout_constraintStart_toStartOf="@id/tvAuthorName"
+            app:layout_constraintTop_toBottomOf="@id/tvAuthorName" />
+
+        <!-- Title / Caption description -->
         <TextView
             android:id="@+id/tvNewsTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:ellipsize="end"
             android:maxLines="2"
             android:textColor="@color/white"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/imgNews"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/ivAuthorAvatar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="🎁 CHECK-IN QUÀ VẬT LÝ - MỞ THẺ CONAN TRÊN MOMO" />
+
+        <!-- Main post image -->
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/imgNews"
+            android:layout_width="0dp"
+            android:layout_height="180dp"
+            android:layout_marginTop="8dp"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/RoundedImageView"
+            app:layout_constraintTop_toBottomOf="@id/tvNewsTitle"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <TextView
-            android:id="@+id/tvNewsDate"
-            android:layout_width="wrap_content"
+        <!-- Tagged Movie Mini-Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/layoutMovieTag"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:textColor="@color/text_gray"
-            android:textSize="12sp"
-            app:layout_constraintTop_toBottomOf="@id/tvNewsTitle"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:visibility="gone"
+            app:cardCornerRadius="8dp"
+            app:cardBackgroundColor="#2A2A2A"
+            app:strokeWidth="1dp"
+            app:strokeColor="#22FFFFFF"
+            app:layout_constraintTop_toBottomOf="@id/imgNews"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:visibility="visible">
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/ivMoviePoster"
+                    android:layout_width="30dp"
+                    android:layout_height="40dp"
+                    android:scaleType="centerCrop"
+                    app:shapeAppearanceOverlay="@style/RoundedImageView"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:src="@drawable/movie" />
+
+                <TextView
+                    android:id="@+id/tvMovieTagTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="Mua vé tại đây 🔍"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@id/ivMoviePoster"
+                    app:layout_constraintEnd_toStartOf="@id/ivChevron"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tvMovieTagSubtitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textColor="@color/auto_color_88FFFFFF"
+                    android:textSize="10sp"
+                    app:layout_constraintStart_toEndOf="@id/ivMoviePoster"
+                    app:layout_constraintEnd_toStartOf="@id/ivChevron"
+                    app:layout_constraintTop_toBottomOf="@id/tvMovieTagTitle"
+                    tools:text="Phim Điện Ảnh Thám Tử Lừng Danh" />
+
+                <ImageView
+                    android:id="@+id/ivChevron"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_chevron_right"
+                    app:tint="@color/white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Social Stats Row (likes, comments count) -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layoutStats"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/layoutMovieTag"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/tvLikesTally"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="👍❤️ 1.9k"
+                android:textColor="@color/auto_color_BBFFFFFF"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <TextView
+                android:id="@+id/tvCommentsTally"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="222 comments"
+                android:textColor="@color/auto_color_BBFFFFFF"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/dividerLine"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/auto_color_22FFFFFF"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/layoutStats"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Social Action Buttons (Like / Comment) -->
+        <LinearLayout
+            android:id="@+id/layoutActions"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="4dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/dividerLine"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <LinearLayout
+                android:id="@+id/btnLikePost"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground">
+
+                <ImageView
+                    android:id="@+id/ivLikeIcon"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_thumb_up"
+                    app:tint="@color/white" />
+
+                <TextView
+                    android:id="@+id/tvLikeText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="Thích"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/btnCommentPost"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_send_message"
+                    app:tint="@color/white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:text="Bình luận"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

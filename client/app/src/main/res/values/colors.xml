@@ -396,4 +396,5 @@
     <color name="color_draft_status">#F5C518</color>
     <color name="color_draft_status_bg">#1AF5C518</color>
     <color name="color_dropdown_text">#222222</color>
+    <color name="payroll_config_read_only">#334155</color>
 </resources>

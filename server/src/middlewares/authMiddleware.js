@@ -45,7 +45,24 @@ const authorizeRoles = (...allowedRoles) => {
     };
 };
 
+const optionalAuthorized = async (req, res, next) => {
+    try {
+        const authorizationHeader = req.headers.authorization
+
+        if (authorizationHeader && authorizationHeader.startsWith('Bearer ')) {
+            const accessToken = authorizationHeader.replace('Bearer ', '').trim()
+            const decoded = jwtProvider.verifyAccessToken(accessToken)
+            req.user = decoded
+            req.jwtDecoded = decoded
+        }
+        next()
+    } catch (error) {
+        next()
+    }
+}
+
 export const authMiddleware = {
     isAuthorized,
+    optionalAuthorized,
     authorizeRoles
 }

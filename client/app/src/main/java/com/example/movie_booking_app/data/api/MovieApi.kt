@@ -5,6 +5,7 @@ import com.example.movie_booking_app.data.model.response.MovieListResponse
 import com.example.movie_booking_app.data.model.response.MovieResponse
 import com.example.movie_booking_app.data.model.response.ReviewListResponse
 import com.example.movie_booking_app.data.model.response.ShowtimeResponse
+import com.google.gson.annotations.SerializedName
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -58,11 +59,11 @@ interface MovieApi {
 }
 
 data class ReviewRequest(
-    val rating: Int,
-    val comment: String
+    @SerializedName("rating") val rating: Int,
+    @SerializedName("comment") val comment: String?
 )
 
 data class ReviewSubmitResponse(
-    val success: Boolean,
-    val message: String?
+    @SerializedName("success") val success: Boolean,
+    @SerializedName("message") val message: String?
 )

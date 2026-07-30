@@ -18,6 +18,21 @@ const checkInTicket = async (req, res, next) => {
     }
 };
 
+const getMyRatings = async (req, res, next) => {
+    try {
+        const accountId = req.user.accountId;
+        const result = await staffService.getMyRatings(accountId);
+
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            data: result
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 export const staffController = {
-    checkInTicket
+    checkInTicket,
+    getMyRatings
 };

@@ -7,6 +7,7 @@ import com.example.movie_booking_app.data.model.entity.*
 import com.example.movie_booking_app.data.repository.BookingRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.SimpleDateFormat
@@ -23,7 +24,14 @@ class SelectSeatViewModel @Inject constructor(
     val timerManager: com.example.movie_booking_app.utils.BookingTimerManager
 ) : ViewModel() {
 
+    private val isoFormat by lazy { SimpleDateFormat("yyyy-MM-dd", Locale.US) }
+    private val dayFormat by lazy { SimpleDateFormat("dd", Locale.getDefault()) }
+    private val monthFormat by lazy { SimpleDateFormat("MMM", Locale.getDefault()) }
+    private val dowFormat by lazy { SimpleDateFormat("EEE", Locale.getDefault()) }
+    private val yearFormat by lazy { SimpleDateFormat("yyyy", Locale.getDefault()) }
+
     private val movieId: String = savedStateHandle["movieId"] ?: ""
+    private val targetCinemaId: String? = savedStateHandle["cinemaId"]
 
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
@@ -79,25 +87,29 @@ class SelectSeatViewModel @Inject constructor(
         viewModelScope.launch {
             _isLoading.value = true
             repository.getMovieShowtimes(targetMovieId).collect { list ->
-                _allShowtimes.value = list
+                val filteredList = if (!targetCinemaId.isNullOrEmpty()) {
+                    val filtered = list.filter { showtime -> showtime.cinemaId?.id == targetCinemaId }
+                    if (filtered.isNotEmpty()) filtered else list
+                } else {
+                    list
+                }
+                _allShowtimes.value = filteredList
                 
-                if (list.isEmpty()) {
+                if (filteredList.isEmpty()) {
                     _isLoading.value = false
                     _errorMessage.emit(savedStateHandle.get<String>("error_no_showtimes") ?: "This movie has no available showtimes.")
                     return@collect
                 }
                 
                 val dateMap = mutableMapOf<String, ShowDate>()
-                val isoFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-                val dayFormat = SimpleDateFormat("dd", Locale.getDefault())
-                val monthFormat = SimpleDateFormat("MMM", Locale.getDefault())
-                val dowFormat = SimpleDateFormat("EEE", Locale.getDefault())
-                val yearFormat = SimpleDateFormat("yyyy", Locale.getDefault())
 
                 list.forEach { showtime ->
                     val dateStr = showtime.showDate?.take(10) ?: return@forEach
                     if (!dateMap.containsKey(dateStr)) {
-                        val dateObj = try { isoFormat.parse(dateStr) } catch (e: Exception) { null }
+                        val dateObj = try { isoFormat.parse(dateStr) } catch (e: Exception) { 
+                            Timber.e(e, "Date parse error: $dateStr")
+                            null 
+                        }
                         if (dateObj != null) {
                             dateMap[dateStr] = ShowDate(
                                 id = dateStr,

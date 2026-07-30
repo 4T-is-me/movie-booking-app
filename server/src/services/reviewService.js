@@ -28,19 +28,24 @@ const createReview = async (accountId, movieId, rating, comment) => {
         throw new ApiError(StatusCodes.FORBIDDEN, 'Member profile not found. Review submission denied.');
     }
 
-    // Get all showtime IDs for this movie
-    const showtimes = await Showtime.find({ movieId, isDeleted: false }).select('_id');
+    const now = new Date();
+    // Get past showtime IDs for this movie (startTime < now)
+    const showtimes = await Showtime.find({ 
+        movieId, 
+        startTime: { $lt: now },
+        isDeleted: false 
+    }).select('_id');
     const showtimeIds = showtimes.map(st => st._id);
 
     // Find any successful booking count for these showtimes
     const bookingCount = await Booking.countDocuments({
         memberId: member._id,
         showtimeId: { $in: showtimeIds },
-        paymentStatus: { $in: ['paid', 'completed', 'successful'] }
+        paymentStatus: { $in: ['paid', 'confirmed_transfer', 'successful', 'completed'] }
     });
 
     if (bookingCount === 0) {
-        throw new ApiError(StatusCodes.FORBIDDEN, 'You must have purchased a successful ticket for this movie to submit a review.');
+        throw new ApiError(StatusCodes.FORBIDDEN, 'You must have a completed booking (in your Purchase History) for this movie to submit a review.');
     }
 
     const reviewCount = await Review.countDocuments({

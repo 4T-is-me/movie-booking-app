@@ -244,7 +244,9 @@ class ManagerActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.nav_logout -> performLogout()
                 R.id.nav_dashboard -> {
-                    startActivity(Intent(this, ManagerActivity ::class.java))
+                    binding.tvHeaderTitle.text = "Dashboard"
+                    binding.managerContainer.visibility = android.view.View.GONE
+                    binding.scrollDashboard.visibility = android.view.View.VISIBLE
                 }
                 R.id.nav_rooms -> {
                     startActivity(Intent(this, ManagerRoomListActivity::class.java))
@@ -260,6 +262,14 @@ class ManagerActivity : AppCompatActivity() {
                 }
                 R.id.nav_profile -> {
                     startActivity(Intent(this, ManagerProfileActivity::class.java))
+                }
+                R.id.nav_payroll -> {
+                    binding.tvHeaderTitle.text = "Payroll"
+                    binding.scrollDashboard.visibility = android.view.View.GONE
+                    binding.managerContainer.visibility = android.view.View.VISIBLE
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.manager_container, com.example.movie_booking_app.view.fragment.manager.ManagerPayrollFragment())
+                        .commit()
                 }
                 else -> Toast.makeText(this, "Feature coming soon", Toast.LENGTH_SHORT).show()
             }

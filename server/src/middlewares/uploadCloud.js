@@ -60,6 +60,16 @@ const normalizeMultipartBody = (req, res, next) => {
             return;
         }
 
+        if (key === 'inventoryDeductions') {
+            try {
+                normalizedBody[key] = JSON.parse(trimmedValue);
+                return;
+            } catch (e) {
+                normalizedBody[key] = [];
+                return;
+            }
+        }
+
         if (['duration', 'rating', 'totalReviews', 'totalStarts', 'tier'].includes(key)) {
             const parsedNumber = Number(trimmedValue);
             if (!Number.isNaN(parsedNumber)) {

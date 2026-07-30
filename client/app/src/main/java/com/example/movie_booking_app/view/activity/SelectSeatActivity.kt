@@ -73,7 +73,7 @@ class SelectSeatActivity : AppCompatActivity() {
         }
         binding.rvSeats.layoutManager = layoutManager
         binding.rvSeats.adapter = seatAdapter
-        binding.rvSeats.isNestedScrollingEnabled = false
+        // Optimization: Removing isNestedScrollingEnabled = false to allow view recycling
     }
 
     private fun setupListeners() {
@@ -117,7 +117,10 @@ class SelectSeatActivity : AppCompatActivity() {
                             movieName = intent.getStringExtra("movieName") ?: getString(R.string.unknown_movie),
                             moviePoster = intent.getStringExtra("moviePoster"),
                             movieGenre = intent.getStringExtra("movieGenre") ?: "",
-                            cinemaName = viewModel.cinemaName.value.takeIf { !it.isNullOrEmpty() } ?: intent.getStringExtra("cinemaName") ?: getString(R.string.cinema_center),
+                            cinemaName = viewModel.cinemaName.value.takeIf { !it.isNullOrEmpty() }
+                                ?: selectedTime?.cinemaId?.cinemaName?.takeIf { !it.isNullOrEmpty() }
+                                ?: intent.getStringExtra("cinemaName")
+                                ?: getString(R.string.cinema_center),
                             cinemaAddress = intent.getStringExtra("cinemaAddress") ?: "",
                             roomName = viewModel.cinemaRoomName.value.takeIf { !it.isNullOrEmpty() } ?: getString(R.string.default_room_name),
                             showDate = selectedDate?.id ?: "",
@@ -145,7 +148,7 @@ class SelectSeatActivity : AppCompatActivity() {
                             showtimeId = selectedTime?.id
                         )
 
-                        val intent = Intent(this@SelectSeatActivity, PaymentActivity::class.java).apply {
+                        val intent = Intent(this@SelectSeatActivity, SelectFoodActivity::class.java).apply {
                             putExtra("BOOKING_SESSION", booking)
                         }
                         startActivity(intent)
@@ -188,7 +191,7 @@ class SelectSeatActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.totalPrice.collect { price ->
-                    binding.tvTotalAmount.text = formatCurrency(price)
+                    binding.tvTotalAmount.text = price.toVnd()
                 }
             }
         }
@@ -206,7 +209,7 @@ class SelectSeatActivity : AppCompatActivity() {
                 viewModel.timerManager.remainingSeconds.collect { seconds ->
                     val isActive = viewModel.timerManager.isActive.value
                     binding.tvCountdown.visibility = if (isActive) View.VISIBLE else View.GONE
-                    binding.tvCountdown.text = formatTime(seconds)
+                    binding.tvCountdown.text = seconds.toTimerFormat()
                 }
             }
         }
@@ -222,12 +225,6 @@ class SelectSeatActivity : AppCompatActivity() {
         }
     }
 
-    private fun formatTime(seconds: Int): String {
-        val minutes = seconds / 60
-        val remainingSeconds = seconds % 60
-        return String.format(Locale.getDefault(), "%02d:%02d", minutes, remainingSeconds)
-    }
-
     private fun showExpiredDialog() {
         val builder = androidx.appcompat.app.AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.title_expired))
@@ -240,9 +237,18 @@ class SelectSeatActivity : AppCompatActivity() {
         builder.setCancelable(false)
         builder.show()
     }
+}
 
-    private fun formatCurrency(amount: Int): String {
-        val formatter = NumberFormat.getInstance(Locale.GERMANY)
-        return "${formatter.format(amount)} VND"
-    }
+/**
+ * Local extensions for SelectSeatActivity
+ */
+private fun Int.toVnd(): String {
+    val formatter = NumberFormat.getInstance(Locale.GERMANY)
+    return "${formatter.format(this)} VND"
+}
+
+private fun Int.toTimerFormat(): String {
+    val minutes = this / 60
+    val seconds = this % 60
+    return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds)
 }

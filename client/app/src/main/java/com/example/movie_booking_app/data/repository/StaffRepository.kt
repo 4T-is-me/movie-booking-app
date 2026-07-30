@@ -5,6 +5,8 @@ import com.example.movie_booking_app.data.api.LeaveRequestParams
 import com.example.movie_booking_app.data.model.response.ShiftResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,7 +24,7 @@ class StaffRepository @Inject constructor(private val api: StaffApi) {
         } catch (e: Exception) {
             emit(null)
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
     fun checkInTicket(bookingCode: String): Flow<com.example.movie_booking_app.data.model.response.CheckInTicketResponse?> = flow {
         try {
@@ -41,5 +43,18 @@ class StaffRepository @Inject constructor(private val api: StaffApi) {
         } catch (e: Exception) {
             emit(com.example.movie_booking_app.data.model.response.CheckInTicketResponse(false, e.message ?: "Network error", null, null))
         }
-    }
+    }.flowOn(Dispatchers.IO)
+
+    fun getMyRatings(): Flow<com.example.movie_booking_app.data.model.response.ReviewListResponse?> = flow {
+        try {
+            val response = api.getMyRatings()
+            if (response.isSuccessful) {
+                emit(response.body())
+            } else {
+                emit(null)
+            }
+        } catch (e: Exception) {
+            emit(null)
+        }
+    }.flowOn(Dispatchers.IO)
 }

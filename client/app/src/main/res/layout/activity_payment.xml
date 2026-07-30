@@ -289,240 +289,44 @@
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
                         <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/auto_str_seat_type" android:textColor="@color/auto_color_9A9A9A" android:textSize="14sp" />
-                        <TextView android:id="@+id/tvSeatType" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/auto_color_FFFFFF" android:textSize="14sp" tools:text="Regular, VIP" xmlns:tools="http://schemas.android.com/tools" />
+                        <TextView android:id="@+id/tvSeatType" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/auto_color_FFFFFF" android:textSize="14sp" tools:text="Regular, VIP" />
                     </LinearLayout>
 
                 </LinearLayout>
 
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Food and Combo Snacks Section -->
+            <!-- Food and Combo Snacks Summary Section -->
             <TextView
+                android:id="@+id/tvFBTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/auto_str_select_combo_amp_snacks"
+                android:text="Selected Snacks &amp; Drinks"
                 android:textColor="@color/auto_color_FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="12dp"/>
-
-            <!-- Combo Item 1 (Single Combo) -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                app:cardBackgroundColor="@color/auto_color_1E1E1E"
-                app:cardCornerRadius="12dp"
-                app:strokeWidth="0dp">
+                android:visibility="gone"
+                tools:visibility="visible"/>
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="12dp">
-
-                    <TextView
-                        android:id="@+id/tvCombo1Title"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="@string/auto_str_single_combo"
-                        android:textColor="@color/auto_color_FFFFFF"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toStartOf="@id/layoutCombo1Quantity"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/tvCombo1Desc"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="@string/auto_str_1_popcorn_1_soft_drink"
-                        android:textColor="@color/auto_color_9A9A9A"
-                        android:textSize="12sp"
-                        app:layout_constraintEnd_toStartOf="@id/layoutCombo1Quantity"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/tvCombo1Title" />
-
-                    <TextView
-                        android:id="@+id/tvCombo1Price"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="@string/auto_str_80_000_vnd"
-                        android:textColor="@color/auto_color_F5C542"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/tvCombo1Desc" />
-
-                    <LinearLayout
-                        android:id="@+id/layoutCombo1Quantity"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnCombo1Minus"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:text="@string/auto_str_str_auto_3"
-                            android:textColor="@color/auto_color_FFFFFF"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            android:padding="0dp"
-                            android:insetTop="0dp"
-                            android:insetBottom="0dp"
-                            android:insetLeft="0dp"
-                            android:insetRight="0dp"
-                            android:gravity="center"
-                            app:backgroundTint="@color/auto_color_3A3A3A"
-                            app:cornerRadius="8dp"/>
-
-                        <TextView
-                            android:id="@+id/tvCombo1Qty"
-                            android:layout_width="28dp"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="@string/auto_str_0_8"
-                            android:textColor="@color/auto_color_FFFFFF"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnCombo1Plus"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:text="@string/auto_str_str_auto_4"
-                            android:textColor="@color/auto_color_FFFFFF"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            android:padding="0dp"
-                            android:insetTop="0dp"
-                            android:insetBottom="0dp"
-                            android:insetLeft="0dp"
-                            android:insetRight="0dp"
-                            android:gravity="center"
-                            app:backgroundTint="@color/auto_color_3A3A3A"
-                            app:cornerRadius="8dp"/>
-
-                    </LinearLayout>
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Combo Item 2 (Double Combo) -->
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardFBSummary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
+                android:visibility="gone"
                 app:cardBackgroundColor="@color/auto_color_1E1E1E"
-                app:cardCornerRadius="12dp"
-                app:strokeWidth="0dp">
+                app:cardCornerRadius="16dp"
+                app:strokeWidth="0dp"
+                tools:visibility="visible">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvFBItems"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="12dp">
-
-                    <TextView
-                        android:id="@+id/tvCombo2Title"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="@string/auto_str_double_combo"
-                        android:textColor="@color/auto_color_FFFFFF"
-                        android:textSize="15sp"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toStartOf="@id/layoutCombo2Quantity"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/tvCombo2Desc"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="@string/auto_str_1_large_popcorn_2_soft_drinks"
-                        android:textColor="@color/auto_color_9A9A9A"
-                        android:textSize="12sp"
-                        app:layout_constraintEnd_toStartOf="@id/layoutCombo2Quantity"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/tvCombo2Title" />
-
-                    <TextView
-                        android:id="@+id/tvCombo2Price"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:text="@string/auto_str_120_000_vnd"
-                        android:textColor="@color/auto_color_F5C542"
-                        android:textSize="14sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/tvCombo2Desc" />
-
-                    <LinearLayout
-                        android:id="@+id/layoutCombo2Quantity"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnCombo2Minus"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:text="@string/auto_str_str_auto_5"
-                            android:textColor="@color/auto_color_FFFFFF"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            android:padding="0dp"
-                            android:insetTop="0dp"
-                            android:insetBottom="0dp"
-                            android:insetLeft="0dp"
-                            android:insetRight="0dp"
-                            android:gravity="center"
-                            app:backgroundTint="@color/auto_color_3A3A3A"
-                            app:cornerRadius="8dp"/>
-
-                        <TextView
-                            android:id="@+id/tvCombo2Qty"
-                            android:layout_width="28dp"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="@string/auto_str_0_9"
-                            android:textColor="@color/auto_color_FFFFFF"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnCombo2Plus"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:text="@string/auto_str_str_auto_6"
-                            android:textColor="@color/auto_color_FFFFFF"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            android:padding="0dp"
-                            android:insetTop="0dp"
-                            android:insetBottom="0dp"
-                            android:insetLeft="0dp"
-                            android:insetRight="0dp"
-                            android:gravity="center"
-                            app:backgroundTint="@color/auto_color_3A3A3A"
-                            app:cornerRadius="8dp"/>
-
-                    </LinearLayout>
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:padding="16dp"
+                    android:nestedScrollingEnabled="false"
+                    tools:listitem="@layout/item_payment_fb_summary" />
 
             </com.google.android.material.card.MaterialCardView>
 
