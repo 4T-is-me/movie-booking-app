@@ -211,9 +211,9 @@ class PaymentActivity : AppCompatActivity() {
 
                     // Coupon validation messages & updates
                     if (state.couponApplied) {
-                        binding.etCouponCode.setTextColor(ContextCompat.getColor(this, R.color.iconPlus))
+                        binding.etCouponCode.setTextColor(ContextCompat.getColor(this@PaymentActivity, R.color.iconPlus))
                     } else {
-                        binding.etCouponCode.setTextColor(ContextCompat.getColor(this, R.color.white))
+                        binding.etCouponCode.setTextColor(ContextCompat.getColor(this@PaymentActivity, R.color.white))
                     }
 
                     state.couponSuccessMessage?.let { msg ->
@@ -241,7 +241,7 @@ class PaymentActivity : AppCompatActivity() {
     }
 
     private fun updatePaymentMethodsHighlight(selectedMethod: String?) {
-        val activeColor = ContextCompat.getColor(this, R.color.cinema_primary)
+        val activeColor = ContextCompat.getColor(this@PaymentActivity, R.color.cinema_primary)
         val inactiveColor = Color.TRANSPARENT
 
         binding.cardMoMo.strokeColor = if (selectedMethod == "MoMo") activeColor else inactiveColor

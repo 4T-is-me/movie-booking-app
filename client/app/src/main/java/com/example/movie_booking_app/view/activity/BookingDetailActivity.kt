@@ -138,9 +138,9 @@ class BookingDetailActivity : AppCompatActivity() {
         binding.tvMembershipRank.text = "$formattedRank Member"
 
         val badgeColor = when (rankClean) {
-            "gold" -> ContextCompat.getColor(this, R.color.cinema_primary)
-            "silver" -> ContextCompat.getColor(this, R.color.auto_color_C0C0C0)
-            else -> ContextCompat.getColor(this, R.color.auto_color_CD7F32) // bronze
+            "gold" -> ContextCompat.getColor(this@BookingDetailActivity, R.color.cinema_primary)
+            "silver" -> ContextCompat.getColor(this@BookingDetailActivity, R.color.auto_color_C0C0C0)
+            else -> ContextCompat.getColor(this@BookingDetailActivity, R.color.auto_color_CD7F32) // bronze
         }
         binding.tvMembershipRank.setTextColor(badgeColor)
         binding.cardMembershipRank.strokeColor = badgeColor
@@ -210,7 +210,7 @@ class BookingDetailActivity : AppCompatActivity() {
 
                 val priceTv = TextView(this).apply {
                     text = "  ${formatter.format(combo.subtotal)} VND"
-                    setTextColor(ContextCompat.getColor(this, R.color.text_secondary_light))
+                    setTextColor(ContextCompat.getColor(this@BookingDetailActivity, R.color.text_secondary_light))
                     textSize = 14f
                     layoutParams = LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,

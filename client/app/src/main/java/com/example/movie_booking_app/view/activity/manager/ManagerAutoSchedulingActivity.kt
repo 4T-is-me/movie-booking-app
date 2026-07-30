@@ -181,10 +181,10 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                 tv.setTextColor(android.graphics.Color.WHITE)
             } else if (room.status != "active") {
                 tv.setBackgroundResource(com.example.movie_booking_app.R.drawable.bg_rounded_border)
-                tv.setTextColor(ContextCompat.getColor(this, R.color.auto_color_999999)) // Gray out text to indicate disabled
+                tv.setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_999999)) // Gray out text to indicate disabled
             } else {
                 tv.setBackgroundResource(com.example.movie_booking_app.R.drawable.bg_rounded_border)
-                tv.setTextColor(ContextCompat.getColor(this, R.color.auto_color_333333))
+                tv.setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_333333))
             }
 
             tv.setOnClickListener {
@@ -228,9 +228,9 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
             dates[i].text = date.dayOfMonth.toString()
             
             // Set default styling
-            labels[i].setTextColor(ContextCompat.getColor(this, R.color.auto_color_999999))
+            labels[i].setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_999999))
             dates[i].setBackgroundResource(0)
-            dates[i].setTextColor(ContextCompat.getColor(this, R.color.auto_color_333333))
+            dates[i].setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_333333))
             dates[i].typeface = android.graphics.Typeface.DEFAULT
             
             // Set Selected Day Styling
@@ -276,9 +276,9 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                         for (i in 0..6) {
                             val dateStr = currentWeekStart.plusDays(i.toLong()).toString() // yyyy-MM-dd
                             if (holidayDates.contains(dateStr)) {
-                                labels[i].setTextColor(ContextCompat.getColor(this, R.color.auto_color_E53935)) // Red label
+                                labels[i].setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_E53935)) // Red label
                                 if (currentWeekStart.plusDays(i.toLong()) != selectedDate) {
-                                    dates[i].setTextColor(ContextCompat.getColor(this, R.color.auto_color_E53935)) // Red text if not selected
+                                    dates[i].setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_E53935)) // Red text if not selected
                                 }
                             }
                         }
@@ -359,7 +359,7 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
         binding.pbLoading.visibility = android.view.View.VISIBLE
         binding.ivResultIcon.visibility = android.view.View.GONE
         binding.tvLoadingText.text = "Generating..."
-        binding.tvLoadingText.setTextColor(ContextCompat.getColor(this, R.color.auto_color_333333))
+        binding.tvLoadingText.setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_333333))
         
         kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
             try {
@@ -401,9 +401,9 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                 binding.pbLoading.visibility = android.view.View.GONE
                 binding.ivResultIcon.visibility = android.view.View.VISIBLE
                 binding.ivResultIcon.setImageResource(com.example.movie_booking_app.R.drawable.baseline_check_circle_24)
-                binding.ivResultIcon.setColorFilter(ContextCompat.getColor(this, R.color.auto_color_00C853))
+                binding.ivResultIcon.setColorFilter(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_00C853))
                 binding.tvLoadingText.text = "Generated successfully!"
-                binding.tvLoadingText.setTextColor(ContextCompat.getColor(this, R.color.auto_color_00C853))
+                binding.tvLoadingText.setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_00C853))
                 kotlinx.coroutines.delay(1500)
                 binding.layoutLoading.visibility = android.view.View.GONE
             } catch (e: Exception) {
@@ -411,9 +411,9 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                 binding.pbLoading.visibility = android.view.View.GONE
                 binding.ivResultIcon.visibility = android.view.View.VISIBLE
                 binding.ivResultIcon.setImageResource(com.example.movie_booking_app.R.drawable.ic_report)
-                binding.ivResultIcon.setColorFilter(ContextCompat.getColor(this, R.color.auto_color_E53935))
+                binding.ivResultIcon.setColorFilter(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_E53935))
                 binding.tvLoadingText.text = "Generation failed!"
-                binding.tvLoadingText.setTextColor(ContextCompat.getColor(this, R.color.auto_color_E53935))
+                binding.tvLoadingText.setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_E53935))
                 kotlinx.coroutines.delay(1500)
                 binding.layoutLoading.visibility = android.view.View.GONE
             }

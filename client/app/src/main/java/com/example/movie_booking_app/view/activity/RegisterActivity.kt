@@ -313,9 +313,9 @@ class RegisterActivity : EnglishBaseActivity() {
     private fun showNotification(message: String, isSuccess: Boolean) {
         binding.tvNotificationMessage.text = message
         if (isSuccess) {
-            binding.llNotificationBg.setBackgroundColor(ContextCompat.getColor(this, R.color.auto_color_4CAF50)) // Green
+            binding.llNotificationBg.setBackgroundColor(ContextCompat.getColor(this@RegisterActivity, R.color.auto_color_4CAF50)) // Green
         } else {
-            binding.llNotificationBg.setBackgroundColor(ContextCompat.getColor(this, R.color.auto_color_F44336)) // Red
+            binding.llNotificationBg.setBackgroundColor(ContextCompat.getColor(this@RegisterActivity, R.color.auto_color_F44336)) // Red
         }
 
         binding.cvNotification.visibility = View.VISIBLE
