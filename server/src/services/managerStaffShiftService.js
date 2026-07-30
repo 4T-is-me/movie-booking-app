@@ -141,7 +141,7 @@ const updateShifts = async (accountId, shiftId, updateData) => {
         );
     }
 
-    // 3. Kiểm tra quyền quản lý theo Cinema
+    // 3. Check management permission by Cinema
     if (currentShift.cinemaId.toString() !== manager.cinemaId.toString()) {
         throw new ApiError(StatusCodes.FORBIDDEN, "You can only update shifts for staff members belonging to your own cinema.");
     }
@@ -150,9 +150,9 @@ const updateShifts = async (accountId, shiftId, updateData) => {
     const fixedWorkDate = currentShift.workDate;
     let newStaffId = currentShift.staffId;
     let newShift = currentShift.shift;
-    const oldStaffId = currentShift.staffId; // Lưu vết nhân viên cũ
+    const oldStaffId = currentShift.staffId; // Keep track of the old staff member
 
-    // 4. Validate nhân viên mới nếu có thay đổi
+    // 4. Validate new staff member if there is any change
     if (staffId && staffId !== currentShift.staffId.toString()) {
         const staff = await Staff.findById(staffId);
         if (!staff) {
@@ -169,7 +169,7 @@ const updateShifts = async (accountId, shiftId, updateData) => {
         newShift = shift;
     }
 
-    // 5. Validate trùng lặp ca, nghỉ phép, giới hạn ca
+    // 5. Validate shift overlap, leave requests, and shift limits
     if (staffId || shift) {
         const duplicate = await StaffShift.findOne({
             _id: { $ne: shiftId },
@@ -201,7 +201,7 @@ const updateShifts = async (accountId, shiftId, updateData) => {
         }
     }
 
-    // 6. Cập nhật dữ liệu
+    // 6. Update data
     const isStaffChanged = staffId && newStaffId.toString() !== oldStaffId.toString();
     if (isStaffChanged) {
         currentShift.originalStaffId ??= currentShift.staffId;
@@ -216,7 +216,7 @@ const updateShifts = async (accountId, shiftId, updateData) => {
 
     await currentShift.save();
     
-    // 7. Gửi thông báo khi Manager update ca làm
+    // 7. Send notification when Manager updates shift
     const workDateStr = new Date(fixedWorkDate).toLocaleDateString('vi-VN');
     
     if (isStaffChanged) {
@@ -245,7 +245,7 @@ const updateShifts = async (accountId, shiftId, updateData) => {
         });
     }
 
-    // 8. Trả về kết quả
+    // 8. Return result
     const populatedShift = await StaffShift.findById(currentShift._id)
         .populate({
             path: 'staffId',
@@ -299,7 +299,7 @@ const getExistingShiftsOfDay = async (cinemaId, workDate) => {
 
 // Filter leave list based on conditions (cinema) when populating staff
 const getAvailableStaffForDay = async (allStaffs, cinemaId, workDate) => {
-    // chỉ tìm những leave request status = approved
+    // Only search for leave requests with status = approved
     const approvedLeaves = await LeaveRequest.find({
         status: "Approved",
         fromDate: { $lte: workDate },
@@ -328,24 +328,24 @@ const pickNextStaffRoundRobin = (dayStaffs, currentShift, shiftOccupancy, staffD
 
     const previousShift = previousShiftMap[currentShift];
 
-    //ưu tiên ca liền kề vd Nếu ca hiện tại có ca trước (như Afternoon có Morning, Night có Evening)
+    // Prioritize consecutive shifts (e.g. if current shift has a preceding shift: Afternoon has Morning, Night has Evening)
     if (previousShift && shiftOccupancy[previousShift]) {
-        // Tìm những người ĐÃ LÀM ca trước đó và CÒN SLOT làm ca hôm nay (< MAX_SHIFT_PER_DAY)
+        // Find staff who DID work the preceding shift and NEED a shift today (< MAX_SHIFT_PER_DAY)
         const candidatesFromPrevShift = shiftOccupancy[previousShift].filter(staffId => {
             const count = staffDailyCount[staffId] || 0;
             const isAlreadyInCurrentShift = shiftOccupancy[currentShift].includes(staffId);
             return count < constants.MAX_SHIFT_PER_DAY && !isAlreadyInCurrentShift;
         });
 
-        // Nếu tìm thấy người thỏa mãn -> Bốc ngay người này!
+        // If matching candidate found -> Assign this candidate immediately!
         if (candidatesFromPrevShift.length > 0) {
-            // Lấy người đầu tiên trong danh sách ứng viên liền kề
+            // Select the first candidate in the consecutive candidate list
             const selectedId = candidatesFromPrevShift[0];
             return selectedId;
         }
     }
 
-    //ROUND ROBIN CHUẨN
+    // STANDARD ROUND ROBIN
     const totalStaff = dayStaffs.length;
     if (totalStaff === 0) {
         return null;
@@ -398,7 +398,7 @@ const generateShift = async (accountId, dateRange, config = {}, shiftsFromFE = [
         throw new ApiError(StatusCodes.BAD_REQUEST, "No shift data provided for insertion.");
     }
 
-    // 1. Xác định start & end date an toàn (kể cả khi shiftsFromFE không đúng thứ tự)
+    // 1. Determine safe start & end dates (even if shiftsFromFE is out of order)
     const workDates = shiftsFromFE.map(s => new Date(s.workDate).getTime());
     
     const start = dateRange?.startDate 
@@ -409,11 +409,11 @@ const generateShift = async (accountId, dateRange, config = {}, shiftsFromFE = [
         ? new Date(dateRange.endDate) 
         : new Date(Math.max(...workDates));
 
-    // Chuẩn hóa về đầu ngày start và cuối ngày end (UTC)
+    // Normalize to start of start date and end of end date (UTC)
     start.setUTCHours(0, 0, 0, 0);
     end.setUTCHours(23, 59, 59, 999);
 
-    // 2. Kiểm tra dữ liệu đã tồn tại
+    // 2. Check if data already exists
     const existingShiftsCount = await StaffShift.countDocuments({
         workDate: { $gte: start, $lte: end }
     });
@@ -425,7 +425,7 @@ const generateShift = async (accountId, dateRange, config = {}, shiftsFromFE = [
         );
     }
 
-    // 3. Chuẩn hóa dữ liệu & tính lương
+    // 3. Normalize data & calculate payroll
     const payrollConfig = await payrollConfigService.getConfig();
     const shiftRates = payrollConfig.shiftRates instanceof Map
         ? Object.fromEntries(payrollConfig.shiftRates)
@@ -435,7 +435,7 @@ const generateShift = async (accountId, dateRange, config = {}, shiftsFromFE = [
         const shiftRate = Number(shiftRates[item.shift] || 0);
         const isHoliday = Boolean(item.isHoliday);
         
-        // Chỉ gán hệ số lễ khi thực sự là ngày lễ
+        // Only assign holiday multiplier if it is actually a holiday
         const holidayMultiplier = isHoliday 
             ? Number(payrollConfig.holidayMultiplier || 1) 
             : 1;
@@ -455,7 +455,7 @@ const generateShift = async (accountId, dateRange, config = {}, shiftsFromFE = [
         };
     });
 
-    // 4. Insert hàng loạt
+    // 4. Bulk insert
     const docs = await StaffShift.insertMany(formattedShifts);
 
     return {
@@ -517,7 +517,7 @@ const getStaffDetailService = async (accountId, shiftId) => {
         throw new ApiError(StatusCodes.NOT_FOUND, "There is no staff member assigned to this shift yet.");
     }
 
-    // 2. Lấy danh sách ca làm trong tuần
+    // 2. Get weekly shift list
     const shiftDate = new Date(targetShift.workDate);
     const { monday, sunday } = getWeekRange(shiftDate);
 
@@ -526,7 +526,7 @@ const getStaffDetailService = async (accountId, shiftId) => {
         workDate: { $gte: monday, $lte: sunday }
     }).lean();
 
-    // Sắp xếp ca làm theo thứ tự thời gian chuẩn
+    // Sort shifts by standard chronological order
     const shiftOrder = { Morning: 1, Afternoon: 2, Evening: 3, Night: 4 };
     shiftsInWeek.sort((a, b) => {
         const timeA = new Date(a.workDate).getTime();
@@ -535,7 +535,7 @@ const getStaffDetailService = async (accountId, shiftId) => {
         return (shiftOrder[a.shift] || 99) - (shiftOrder[b.shift] || 99);
     });
 
-    // Helper format ngày ra dạng: "14 Jul"
+    // Helper to format date as "14 Jul"
     const formatDisplayDate = (date) => {
         const d = new Date(date);
         const day = d.getUTCDate();
@@ -544,32 +544,32 @@ const getStaffDetailService = async (accountId, shiftId) => {
         return `${day} ${month}`;
     };
 
-    // 3. Map dữ liệu lịch 7 ngày
+    // 3. Map 7-day schedule data
     const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     const weekSchedule = daysOfWeek.map((dayName, index) => {
         const currentDate = new Date(monday);
         currentDate.setUTCDate(monday.getUTCDate() + index);
 
-        // Chuẩn hóa YYYY-MM-DD để so sánh chính xác ngày
+        // Normalize YYYY-MM-DD for accurate date comparison
         const isoDateStr = currentDate.toISOString().split('T')[0];
 
         const matchedShifts = shiftsInWeek.filter(
             s => new Date(s.workDate).toISOString().split('T')[0] === isoDateStr
         );
 
-        // Đảm bảo các ca trùng trong ngày luôn được sắp xếp lại từ Sáng -> Đêm trước khi join
+        // Ensure duplicate shifts within the same day are sorted from Morning -> Night before joining
         matchedShifts.sort((a, b) => (shiftOrder[a.shift] || 99) - (shiftOrder[b.shift] || 99));
 
         const shiftNames = matchedShifts.map(s => s.shift);
 
         return {
             day: dayName,
-            date: formatDisplayDate(currentDate), // Trả về dạng: "14 Jul"
+            date: formatDisplayDate(currentDate), // Returns format like: "14 Jul"
             shift: shiftNames.length > 0 ? shiftNames.join(" - ") : null
         };
     });
 
-    // 4. Tính Attendance Rate
+    // 4. Calculate Attendance Rate
     const [completedCount, absentCount] = await Promise.all([
         StaffShift.countDocuments({ staffId: staff._id, status: 'Completed' }),
         StaffShift.countDocuments({ staffId: staff._id, status: 'Absent' })
@@ -710,7 +710,7 @@ const approveLeaveRequest = async (accountId, leaveRequestId) => {
         const targetAccountId = staffAccount?._id || staffAccount;
         console.log("--> Debug Push Notification Staff Account ID:", targetAccountId);  
 
-        // Gửi thông báo chuẩn hóa dùng `message`
+        // Send normalized notification using `message`
         if (targetAccountId) {
             const workDateStr = leaveRequest.staffShiftId?.workDate 
                 ? new Date(leaveRequest.staffShiftId.workDate).toLocaleDateString('vi-VN')
@@ -768,7 +768,7 @@ const rejectLeaveRequest = async (accountId, leaveRequestId, { rejectReason }) =
     leaveRequest.approvedAt = new Date();
     await leaveRequest.save();
 
-    // Gửi thông báo chuẩn hóa dùng `message`
+    // Send normalized notification using `message`
     if (leaveRequest.staffId?.accountId) {
         NotificationService.createNotification({
             accountId: leaveRequest.staffId.accountId,
@@ -788,7 +788,7 @@ const undoLeaveRequest = async (accountId, leaveRequestId) => {
     try {
         const manager = await checkManager(accountId);
         
-        // Populate thêm staffId để lấy accountId gửi notification
+        // Populate staffId to retrieve accountId for sending notification
         const leaveRequest = await LeaveRequest.findById(leaveRequestId)
             .populate("staffShiftId")
             .populate("staffId")
@@ -830,7 +830,7 @@ const undoLeaveRequest = async (accountId, leaveRequestId) => {
         await session.commitTransaction();
         session.endSession();
 
-        // GỬI THÔNG BÁO CHO NHÂN VIÊN (Gọi sau khi commit transaction)
+        // SEND NOTIFICATION TO STAFF (Call after commit transaction)
         if (leaveRequest.staffId?.accountId) {
             const workDateStr = new Date(shift.workDate).toLocaleDateString('vi-VN');
             

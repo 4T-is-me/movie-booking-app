@@ -16,7 +16,7 @@ export const MaintenanceController = {
     }
   },
 
-  // API Tương tác User
+  // User Interaction API
   async resolveUserAction(req, res, next) {
     try {
       const { id } = req.params;
@@ -39,7 +39,7 @@ export const MaintenanceController = {
     }
   },
 
-  // Khôi phục Lịch chiếu
+  // Restore Schedule
   async previewRestoredSchedule(req, res, next) {
     try {
       const { roomId } = req.params;

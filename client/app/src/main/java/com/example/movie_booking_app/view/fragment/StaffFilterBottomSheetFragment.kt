@@ -49,7 +49,7 @@ class StaffFilterBottomSheetFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Khởi tạo Map quản lý các View trạng thái chuẩn theo Constants
+        // Initialize Map to manage standard status Views according to Constants
         statusViews = mapOf(
             Constants.STATUS_SHIFT[0] to binding.tvStatusActive,
             Constants.STATUS_SHIFT[1] to binding.tvStatusAssigned,

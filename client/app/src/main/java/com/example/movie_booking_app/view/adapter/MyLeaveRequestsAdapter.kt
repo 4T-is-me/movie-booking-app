@@ -67,7 +67,7 @@ class MyLeaveRequestsAdapter(
 
                     setDynamicBadge(binding.tvLeaveStatusBadge, "Rejected", textColor, bgColor)
 
-                    // Cập nhật màu viền dọc trái cho trạng thái Rejected
+                    // Update left vertical indicator color for Rejected status
                     binding.vStatusIndicator.setBackgroundColor(textColor)
 
                     binding.layoutPendingActions.visibility = View.GONE

@@ -30,7 +30,7 @@ class ForgotPasswordActivity : EnglishBaseActivity() {
         btnSend.setOnClickListener {
             val email = edtEmail.text.toString().trim()
             if (email.isEmpty()) {
-                showAlert("Thông báo", getString(R.string.please_enter_email))
+                showAlert("Notification", getString(R.string.please_enter_email))
                 return@setOnClickListener
             }
 
@@ -52,9 +52,9 @@ class ForgotPasswordActivity : EnglishBaseActivity() {
                                 val errorBody = response.errorBody()?.string()
                                 val jsonObject = JSONObject(errorBody ?: "")
                                 val message = jsonObject.getString("message")
-                                showAlert("Lỗi", message)
+                                showAlert("Error", message)
                             } catch (e: Exception) {
-                                showAlert("Lỗi", getString(R.string.error_sending_otp))
+                                showAlert("Error", getString(R.string.error_sending_otp))
                             }
                         }
                     }
@@ -62,7 +62,7 @@ class ForgotPasswordActivity : EnglishBaseActivity() {
                     withContext(Dispatchers.Main) {
                         btnSend.isEnabled = true
                         pbLoading.visibility = View.GONE
-                        showAlert("Lỗi mạng", getString(R.string.connection_error))
+                        showAlert("Network Error", getString(R.string.connection_error))
                     }
                 }
             }

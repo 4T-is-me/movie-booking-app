@@ -23,7 +23,7 @@ class StaffNotificationsFragment : Fragment() {
     private var _binding: FragmentStaffNotificationsBinding? = null
     private val binding get() = _binding!!
 
-    // Thay đổi từ viewModels() -> activityViewModels() để dùng chung ViewModel với StaffActivity
+    // Changed from viewModels() to activityViewModels() to share ViewModel with StaffActivity
     private val viewModel: NotificationViewModel by activityViewModels()
     private lateinit var adapter: StaffNotifAdapter
 

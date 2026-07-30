@@ -92,7 +92,7 @@ class StaffRequestsFragment : Fragment() {
 
         lifecycleScope.launch {
             viewModel.isLoading.collectLatest { isLoading ->
-                // Loading này chỉ hiển thị ở trang đầu tiên cho đỡ bị block UI khi loadmore
+                // Only display this progress bar on the first page load to avoid blocking the UI during pagination / load more
                 binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
             }
         }

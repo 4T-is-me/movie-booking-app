@@ -482,14 +482,14 @@ const getTotalAvailibleSeatsToday = async (cinemaId) => {
 };
 
 /**
- * Tổng hợp toàn bộ dữ liệu Dashboard cho Manager dựa trên accountId lấy từ JWT
+ * Compile all Dashboard data for Manager based on accountId retrieved from JWT
  */
 const getManagerDashboard = async (accountId) => {
   const manager = await Manager.findOne({ accountId });
   if (!manager) {
     throw new ApiError(
       StatusCodes.NOT_FOUND,
-      "Không tìm thấy thông tin Quản lý cho tài khoản này!",
+      "Manager information not found for this account!",
     );
   }
 
@@ -711,14 +711,14 @@ const getTopMoviesByRange = async (cinemaId, start, end) => {
 
 
 /**
- * Lấy dữ liệu báo cáo Manager Report (Day, Week, Month, Year) bao gồm doanh thu, số vé, tăng trưởng và biểu đồ
+ * Get manager report data (Day, Week, Month, Year) including revenue, ticket count, growth and chart data
  */
 const getManagerReport = async (accountId, reportType = "day") => {
   const manager = await Manager.findOne({ accountId });
   if (!manager) {
     throw new ApiError(
       StatusCodes.NOT_FOUND,
-      "Không tìm thấy thông tin Quản lý cho tài khoản này!",
+      "Manager information not found for this account!",
     );
   }
 

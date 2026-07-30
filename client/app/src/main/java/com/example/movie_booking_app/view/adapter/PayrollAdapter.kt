@@ -78,7 +78,7 @@ class PayrollAdapter(
     companion object {
         fun formatVnd(amount: Double): String {
             val formatter = NumberFormat.getInstance(Locale("vi", "VN"))
-            return "${formatter.format(amount.toLong())} đ"
+            return "${formatter.format(amount.toLong())} VND"
         }
     }
 }
