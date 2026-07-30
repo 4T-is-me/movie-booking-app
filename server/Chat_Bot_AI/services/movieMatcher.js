@@ -422,7 +422,7 @@ export const getMovieDetailMatches = async (searchQuery) => {
       const prefixMatches = validMovies.filter(m => {
         const normalizedName = removeVietnameseTones((m.movieName || '').toLowerCase());
         const cleanName = normalizedName.replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
-        return cleanName.startsWith(cleanQuery) || normalizedName.startsWith(normalizedQuery);
+        return cleanName.startsWith(cleanQuery) || cleanQuery.startsWith(cleanName) || normalizedName.startsWith(normalizedQuery) || normalizedQuery.startsWith(normalizedName);
       });
 
       if (prefixMatches.length === 1) {
@@ -432,12 +432,12 @@ export const getMovieDetailMatches = async (searchQuery) => {
       }
     }
 
-    // 3. Khớp SUBSTRING (includes) khi cleanQuery >= 3 ký tự
+    // 3. Khớp SUBSTRING (includes 2 chiều) khi cleanQuery >= 3 ký tự
     if (cleanQuery.length >= 3) {
       const substringMatches = validMovies.filter(m => {
         const normalizedName = removeVietnameseTones((m.movieName || '').toLowerCase());
         const cleanName = normalizedName.replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
-        return cleanName.includes(cleanQuery) || normalizedName.includes(normalizedQuery);
+        return cleanName.includes(cleanQuery) || cleanQuery.includes(cleanName) || normalizedName.includes(normalizedQuery) || normalizedQuery.includes(normalizedName);
       });
 
       if (substringMatches.length === 1) {

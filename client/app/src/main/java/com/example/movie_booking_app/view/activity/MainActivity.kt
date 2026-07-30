@@ -11,6 +11,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.example.movie_booking_app.R
+import com.example.movie_booking_app.utils.AppConstants
+import com.example.movie_booking_app.utils.RoleConstants
 import com.example.movie_booking_app.databinding.ActivityMainBinding
 import com.example.movie_booking_app.view.fragment.GenericGridFragment
 import com.example.movie_booking_app.view.fragment.MovieGridFragment
@@ -51,9 +53,9 @@ class MainActivity : BaseActivity() {
         
         if (!token.isNullOrEmpty()) {
             val destinationActivity = when {
-                role.equals("Admin", ignoreCase = true) -> AdminActivity::class.java
-                role.equals("Manager", ignoreCase = true) || role.equals("Cinema Manager", ignoreCase = true) -> ManagerActivity::class.java
-                role.equals("Staff", ignoreCase = true) || role.equals("Employee", ignoreCase = true) -> StaffActivity::class.java
+                role.equals(RoleConstants.ADMIN, ignoreCase = true) -> AdminActivity::class.java
+                role.equals(RoleConstants.MANAGER, ignoreCase = true) || role.equals(RoleConstants.CINEMA_MANAGER, ignoreCase = true) -> ManagerActivity::class.java
+                role.equals(RoleConstants.STAFF, ignoreCase = true) || role.equals(RoleConstants.EMPLOYEE, ignoreCase = true) -> StaffActivity::class.java
                 else -> null
             }
 

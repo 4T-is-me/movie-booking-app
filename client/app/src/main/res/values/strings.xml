@@ -88,7 +88,11 @@
     <string name="error_phone_required">Phone is required</string>
     <string name="error_phone_invalid">Must be 10 digits starting with 0</string>
     <string name="error_password_required">Password is required</string>
-    <string name="error_password_length">At least 6 characters</string>
+    <string name="error_password_length">Password must be at least 6 characters.</string>
+    <string name="error_password_uppercase">Password must contain at least one uppercase letter.</string>
+    <string name="error_password_lowercase">Password must contain at least one lowercase letter.</string>
+    <string name="error_password_number">Password must contain at least one number.</string>
+    <string name="error_password_special_character">Password must contain at least one special character.</string>
     <string name="error_confirm_password_required">Please confirm password</string>
     <string name="error_confirm_password_mismatch">Passwords do not match</string>
     <string name="error_address_required">Address is required</string>

@@ -6,6 +6,10 @@
  */
 
 import express from 'express';
+import multer from 'multer';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import fs from 'fs';
+import path from 'path';
 import { normalizeText } from '../services/textNormalizer.js';
 import { classifyIntent, detectContextualSubIntent, isImplicitContextualFollowUp } from '../services/intentClassifier.js';
 import {
@@ -138,7 +142,7 @@ const saveMessageToHistory = (sessionId, role, content) => {
  */
 router.post('/', async (req, res) => {
   try {
-    const { message, sessionId } = req.body || {};
+    const { message, sessionId, isFromVision } = req.body || {};
     const effectiveSessionId = sessionId && typeof sessionId === 'string' ? sessionId.trim() : 'default_session';
 
     // 1. Validate Input & Xử lý tin nhắn rỗng / khoảng trắng nhẹ nhàng
@@ -221,8 +225,20 @@ router.post('/', async (req, res) => {
     }
 
     // 4. Chuẩn hóa tin nhắn và phân loại ý định
+    const rawMsg = message.trim();
     const normalizedMessage = normalizeText(message);
-    const classification = classifyIntent(normalizedMessage, message);
+    
+    let classification;
+    if (isFromVision) {
+      classification = {
+        intent: 'movie_info_query',
+        searchQuery: rawMsg,
+        confidence: 1.0,
+        isFromVision: true
+      };
+    } else {
+      classification = classifyIntent(normalizedMessage, message);
+    }
     const { intent } = classification;
 
     let reply = '';
@@ -669,4 +685,118 @@ router.get('/history/:sessionId', (req, res) => {
 });
 
 export default router;
+
+// === MỚI: Tích hợp Multer và Google Generative AI (Gemini) ===
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 10 * 1024 * 1024 }
+});
+
+/**
+ * POST /api/chat/vision
+ * Nhận hình ảnh, dùng Gemini lấy tên phim (Xử lý trực tiếp trên Bộ nhớ RAM, không lưu đĩa)
+ */
+router.post('/vision', upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file || !req.file.buffer) {
+      return res.status(400).json({ success: false, message: 'Không tìm thấy file ảnh đính kèm.' });
+    }
+
+    const apiKey = (process.env.GEMINI_API_KEY || process.env.GOOGLE_CALENDAR_API_KEY || '').trim();
+    const prompt = `Đây là hình ảnh (poster/ảnh chụp màn hình) của một bộ phim.
+Bạn hãy cố gắng nhận diện và trả về DUY NHẤT TÊN CỦA BỘ PHIM ĐÓ (bằng tiếng Việt hoặc tiếng Anh tuỳ theo poster).
+Tuyệt đối KHÔNG trả lời thêm bất kỳ câu nào khác ngoài tên phim.
+Nếu không nhận diện được, hãy trả về chuỗi "UNKNOWN".`;
+
+    const mimeType = req.file.mimetype || 'image/jpeg';
+    const base64Data = req.file.buffer.toString("base64");
+    let text = null;
+
+    const modelNames = ["gemini-flash-latest", "gemini-3.5-flash", "gemini-3.6-flash", "gemini-2.5-flash", "gemini-2.0-flash"];
+    let lastErr = null;
+
+    for (const modelName of modelNames) {
+      try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+        const headers = { 
+          'Content-Type': 'application/json',
+          'x-goog-api-key': apiKey
+        };
+
+        const body = {
+          contents: [
+            {
+              parts: [
+                { text: prompt },
+                {
+                  inline_data: {
+                    mime_type: mimeType,
+                    data: base64Data
+                  }
+                }
+              ]
+            }
+          ]
+        };
+
+        const apiRes = await fetch(url, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(body)
+        });
+
+        const data = await apiRes.json();
+        if (apiRes.ok && data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+          text = data.candidates[0].content.parts[0].text.trim();
+          break;
+        } else if (data?.error) {
+          console.warn(`[Vision API] Model '${modelName}' returned error (${apiRes.status}):`, data.error.message || data.error);
+          lastErr = new Error(`[${modelName}] ${data.error.message || JSON.stringify(data.error)}`);
+        }
+      } catch (err) {
+        console.warn(`[Vision API] Model '${modelName}' fetch exception:`, err.message);
+        lastErr = err;
+      }
+    }
+
+    // Backup: Thử dùng SDK nếu fetch trực tiếp không lấy được
+    if (!text) {
+      try {
+        const genAI = new GoogleGenerativeAI(apiKey);
+        const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+        const result = await model.generateContent([prompt, { inlineData: { data: base64Data, mimeType } }]);
+        const response = await result.response;
+        text = response.text().trim();
+      } catch (sdkErr) {
+        console.error(`[Vision API SDK Error]:`, sdkErr.message);
+        throw lastErr || sdkErr;
+      }
+    }
+
+    if (!text || text === "UNKNOWN") {
+      return res.json({ success: false, text: null, message: 'AI không nhận ra phim nào trong ảnh.' });
+    }
+
+    // Tiền xử lý: Xoá ký tự markdown, ngoặc kép, và tiền tố thừa (như "Tên phim:")
+    let cleanText = text.replace(/[*"`]/g, '').trim();
+    cleanText = cleanText.replace(/^(Tên phim|Bộ phim|Tên bộ phim|Movie title|Title):\s*/i, '').trim();
+    // Xoá các câu chú thích phía sau nếu Gemini tự ý viết thành nhiều dòng
+    cleanText = cleanText.split('\n')[0].trim();
+    
+    // Cắt bỏ phần phụ đề sau dấu gạch ngang (nếu có)
+    cleanText = cleanText.split('-')[0].trim();
+
+    return res.json({ success: true, text: cleanText });
+
+  } catch (error) {
+    console.error('[Vision API Error]:', error?.message || error);
+    if (error?.message?.includes('API_KEY_SERVICE_BLOCKED') || error?.status === 403) {
+      return res.json({ 
+        success: false, 
+        message: 'API Key Gemini chưa được bật hoặc bị chặn dịch vụ. Vui lòng cập nhật GEMINI_API_KEY hợp lệ trong file .env.' 
+      });
+    }
+    return res.status(500).json({ success: false, message: 'Lỗi khi xử lý hình ảnh.' });
+  }
+});
 

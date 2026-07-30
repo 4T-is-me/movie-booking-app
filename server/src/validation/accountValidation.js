@@ -23,6 +23,28 @@ const validateAge = (value, helpers) => {
     return value;
 }
 
+const validatePassword = (value, helpers) => {
+    if (!value) return value;
+    
+    if (value.length < 6) {
+        return helpers.message('Password must be at least 6 characters');
+    }
+    if (!/[A-Z]/.test(value)) {
+        return helpers.message('Password must contain at least one uppercase letter');
+    }
+    if (!/[a-z]/.test(value)) {
+        return helpers.message('Password must contain at least one lowercase letter');
+    }
+    if (!/[0-9]/.test(value)) {
+        return helpers.message('Password must contain at least one number');
+    }
+    if (!/[!@#$%^&*()_+\-=\[\]{}|;:'",.<>?/]/.test(value)) {
+        return helpers.message('Password must contain at least one special character');
+    }
+    
+    return value;
+}
+
 const register = async (req, res, next) => {
     const correctCondition = Joi.object({
         username: Joi.string().required().min(3).max(30).pattern(/^[a-zA-Z0-9_]+$/).trim().strict().messages({
@@ -35,8 +57,7 @@ const register = async (req, res, next) => {
             'string.pattern.base': 'Email must be a valid address ending with @gmail.com',
             'any.required': 'Email is required'
         }),
-        password: Joi.string().required().min(6).strict().messages({
-            'string.min': 'Password must be at least 6 characters',
+        password: Joi.string().required().custom(validatePassword).messages({
             'any.required': 'Password is required'
         }),
         fullName: Joi.string().required().pattern(/^[^\d]+$/).trim().strict().messages({
@@ -129,8 +150,26 @@ const changePassword = async (req, res, next) => {
         currentPassword: Joi.string().required().strict().messages({
             'any.required': 'Current password is required'
         }),
-        newPassword: Joi.string().required().min(6).strict().messages({
-            'string.min': 'New password must be at least 6 characters',
+        newPassword: Joi.string().required().custom(validatePassword).messages({
+            'any.required': 'New password is required'
+        })
+    })
+
+    try {
+        await correctCondition.validateAsync(req.body, { abortEarly: false })
+        next()
+    } catch (error) {
+        const errorMessage = error.details ? error.details.map(err => err.message).join(', ') : error.message;
+        next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, errorMessage));
+    }
+}
+
+const resetPassword = async (req, res, next) => {
+    const correctCondition = Joi.object({
+        email: Joi.string().required().trim().strict().messages({
+            'any.required': 'Email is required'
+        }),
+        newPassword: Joi.string().required().custom(validatePassword).messages({
             'any.required': 'New password is required'
         })
     })
@@ -148,6 +187,7 @@ export const accountValidation = {
     register,
     login,
     updateProfile,
-    changePassword
+    changePassword,
+    resetPassword
 }
 

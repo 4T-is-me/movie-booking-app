@@ -29,6 +29,16 @@ const SHIFT_START_HOURS = {
 const MAX_SHIFT_LEAVE_PER_DAY = 3;
 
 
+const ROLES = {
+    ADMIN: 'Admin',
+    MANAGER: 'Manager',
+    STAFF: 'Staff',
+    EMPLOYEE: 'Employee',
+    MEMBER: 'Member',
+    CUSTOMER: 'Customer',
+    CINEMA_MANAGER: 'Cinema Manager'
+};
+
 export const constants = {  
     SEAT_STATUS,
     SHIFTS,
@@ -36,5 +46,6 @@ export const constants = {
     MAX_SHIFT_LEAVE_PER_DAY,
     SHIFT_RATES,
     HOLIDAY_MULTIPLIER,
-    MANAGER_REVENUE_BONUS
+    MANAGER_REVENUE_BONUS,
+    ROLES
 }

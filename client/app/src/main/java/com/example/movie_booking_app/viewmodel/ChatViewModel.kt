@@ -9,6 +9,7 @@ import com.example.movie_booking_app.data.model.CinemaOption
 import com.example.movie_booking_app.data.repository.ChatRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import okhttp3.MultipartBody
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -35,7 +36,7 @@ class ChatViewModel @Inject constructor(
         _messages.value = chatRepository.getMessages()
     }
 
-    fun sendMessage(userText: String, sessionId: String) {
+    fun sendMessage(userText: String, sessionId: String, isFromVision: Boolean = false) {
         val trimmed = userText.trim()
         if (trimmed.isEmpty()) return
 
@@ -50,7 +51,7 @@ class ChatViewModel @Inject constructor(
         _isLoading.value = true
 
         viewModelScope.launch {
-            val result = chatRepository.sendMessage(trimmed, sessionId)
+            val result = chatRepository.sendMessage(trimmed, sessionId, isFromVision)
             chatRepository.removeLoadingMessage()
 
             result.fold(
@@ -87,5 +88,20 @@ class ChatViewModel @Inject constructor(
     fun clearHistory() {
         chatRepository.clearHistory()
         _messages.value = chatRepository.getMessages()
+    }
+
+    fun analyzeImage(imagePart: MultipartBody.Part, onResult: (String?) -> Unit) {
+        viewModelScope.launch {
+            val result = chatRepository.sendVisionImage(imagePart)
+            result.fold(
+                onSuccess = { response ->
+                    onResult(response.text)
+                },
+                onFailure = { error ->
+                    error.printStackTrace()
+                    onResult(null)
+                }
+            )
+        }
     }
 }

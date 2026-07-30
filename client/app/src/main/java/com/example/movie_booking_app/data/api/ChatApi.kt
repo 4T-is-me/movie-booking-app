@@ -1,12 +1,16 @@
 package com.example.movie_booking_app.data.api
 
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 
 data class ChatRequest(
     val message: String,
-    val sessionId: String? = null
+    val sessionId: String? = null,
+    val isFromVision: Boolean = false
 )
 
 data class CinemaOptionDto(
@@ -18,13 +22,26 @@ data class CinemaOptionDto(
 
 data class ChatResponse(
     val success: Boolean,
-    val reply: String? = null,
-    val matchedIntent: String? = null,
-    val cinemaOptions: List<CinemaOptionDto>? = null,
-    val message: String? = null
+    val reply: String?,
+    val matchedIntent: String?,
+    val cinemaOptions: List<CinemaOptionDto>? = null
+)
+
+data class VisionResponse(
+    val success: Boolean,
+    val text: String?,
+    val message: String?
 )
 
 interface ChatApi {
     @POST("api/chat")
-    suspend fun sendMessage(@Body request: ChatRequest): Response<ChatResponse>
+    suspend fun sendMessage(
+        @Body request: ChatRequest
+    ): Response<ChatResponse>
+
+    @Multipart
+    @POST("api/chat/vision")
+    suspend fun uploadVisionImage(
+        @Part image: MultipartBody.Part
+    ): Response<VisionResponse>
 }
