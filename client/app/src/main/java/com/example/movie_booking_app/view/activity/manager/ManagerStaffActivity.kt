@@ -69,7 +69,12 @@ class ManagerStaffActivity : AppCompatActivity() {
         observeUpdateShiftResult()
         setUpSearchListener()
 
-        setActiveTab(binding.tabStaffList, "staff_list")
+        val targetTab = intent.getStringExtra("target_tab")
+        if (targetTab == "leave_requests") {
+            setActiveTab(binding.tabLeaveRequests, "leave_requests")
+        } else {
+            setActiveTab(binding.tabStaffList, "staff_list")
+        }
     }
 
     private fun setUpRecyclerView() {

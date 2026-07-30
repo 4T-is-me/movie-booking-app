@@ -265,7 +265,27 @@ const acceptReplacementShift = async (accountId, shiftId) => {
                 }).catch(err => console.error("Error sending notification to original staff:", err));
             }
         });
-        
+
+        // Gửi thông báo cho Manager (thay đổi ca/đổi ca)
+        Manager.findOne({ cinemaId: currentStaff.cinemaId }).populate("accountId").then(async manager => {
+            if (manager && manager.accountId) {
+                const managerAccountId = manager.accountId._id || manager.accountId;
+                const workDateStr = new Date(shift.workDate).toLocaleDateString('vi-VN');
+                const originalStaff = await Staff.findById(previousOwnerId);
+                NotificationService.createNotification({
+                    accountId: managerAccountId,
+                    title: "Shift Change Confirmation!",
+                    message: `${currentStaff.fullName || 'A staff member'} has picked up the shift of ${originalStaff?.fullName || 'another staff member'} on ${workDateStr} (${shift.shift}).`,
+                    type: "SHIFT_CHANGE_ACCEPTED",
+                    metadata: {
+                        shiftId: shift._id.toString(),
+                        originalStaffId: previousOwnerId.toString(),
+                        newStaffId: currentStaff._id.toString()
+                    }
+                }).catch(err => console.error("Error sending shift change notification to manager:", err));
+            }
+        }).catch(err => console.error("Error finding manager for shift change notification:", err));
+
         return { success: true, data: updatedShift };
         
     } catch (error) {
