@@ -33,6 +33,9 @@ class MovieViewModel @Inject constructor(
     private val _homeItems = MutableStateFlow<List<HomeItem>>(initialHomeState())
     val homeItems: StateFlow<List<HomeItem>> = _homeItems.asStateFlow()
 
+    private var cachedHomeItems: List<HomeItem>? = null
+    private var searchJob: kotlinx.coroutines.Job? = null
+
     private val _adminMovies = MutableStateFlow<List<Movie>>(emptyList())
     val adminMovies: StateFlow<List<Movie>> = _adminMovies.asStateFlow()
 
@@ -69,14 +72,18 @@ class MovieViewModel @Inject constructor(
                 if (query.isNotEmpty()) {
                     performSearch(query)
                 } else {
-                    loadHomeData()
+                    // Restore from cache if available, otherwise load fresh
+                    cachedHomeItems?.let { 
+                        _homeItems.value = it
+                    } ?: loadHomeData()
                 }
             }
             .launchIn(viewModelScope)
     }
 
     private fun performSearch(query: String) {
-        viewModelScope.launch {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
             _isLoading.value = true
             repository.searchMovies(query).collect { movies ->
                 if (movies.isEmpty()) {
@@ -143,6 +150,7 @@ class MovieViewModel @Inject constructor(
                 list
             }.collect {
                 _homeItems.value = it
+                cachedHomeItems = it // Cache for quick restoration
                 _isLoading.value = false
             }
         }
