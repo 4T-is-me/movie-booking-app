@@ -17,7 +17,8 @@ class MovieLargeAdapter(
 
     override fun getItemCount(): Int {
         val size = currentList.size
-        return if (size == 0) 0 else size * 1000
+        // Optimization: No infinite loop if only 1 movie (common in search results)
+        return if (size <= 1) size else size * 1000
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieLargeViewHolder {
