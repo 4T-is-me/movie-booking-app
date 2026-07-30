@@ -27,8 +27,8 @@ object AutoStaffSchedulingAlgorithm {
     )
 
     /**
-     * Hàm kiểm tra trước xem số lượng nhân viên và cấu hình có đủ gánh lịch tuần/tháng không.
-     * Chặn đứng tình trạng sinh thiếu ca, trống ca do cạn kiệt nhân sự.
+     * Helper function to check in advance if the number of staff and configuration are sufficient to handle the weekly/monthly schedule.
+     * Prevents missing or empty shifts due to labor shortages.
      */
     fun validateSchedulingCapability(
         startDate: LocalDate,
@@ -40,7 +40,7 @@ object AutoStaffSchedulingAlgorithm {
         if (startDate.isAfter(endDate)) return Pair(false, "Invalid date range!")
         if (selectedStaff.isEmpty()) return Pair(false, "Please select at least 1 staff member!")
 
-        // 1. Tính tổng số ca rạp CẦN (Nhu cầu thực tế của rạp)
+        // 1. Calculate total shifts needed (Actual cinema demand)
         var totalRequiredShifts = 0
         var tempDate = startDate
         while (!tempDate.isAfter(endDate)) {
@@ -48,23 +48,23 @@ object AutoStaffSchedulingAlgorithm {
             val isHoliday = holidayDates.contains(dateStr)
             val isWeekend = tempDate.dayOfWeek == DayOfWeek.SATURDAY || tempDate.dayOfWeek == DayOfWeek.SUNDAY
 
-            // 4 ca/ngày, cuối tuần tự cộng thêm 1 người/ca
+            // 4 shifts/day, automatically add 1 person/shift on weekends
             val staffPerShiftForDay = if (isHoliday || isWeekend) baseStaffPerShift + 1 else baseStaffPerShift
             totalRequiredShifts += Constants.MAX_SHIFT_OF_DATE * staffPerShiftForDay
 
             tempDate = tempDate.plusDays(1)
         }
 
-        // 2. Tính số ca TỐI ĐA nhân viên có thể gánh (Sức lao động kịch trần)
-        // Luật: workedDaysInWeek < 7 => Mỗi người làm tối đa 6 ngày/tuần
-        // Ép cặp ca => Mỗi ngày đi làm nuốt liền 2 ca. Tức là tối đa 12 ca/tuần cho mỗi người.
+        // 2. Calculate maximum shifts staff can work (Upper limit of labor)
+        // Rule: workedDaysInWeek < 7 => Each person works maximum 6 days/week
+        // Consecutive shift pairing => Each working day includes 2 consecutive shifts. Meaning up to 12 shifts/week per person.
         val totalDaysInPeriod = java.time.temporal.ChronoUnit.DAYS.between(startDate, endDate) + 1
         val totalWeeks = Math.ceil(totalDaysInPeriod.toDouble() / 7.0).toInt()
 
-        val maxShiftsPerStaff = totalWeeks * 6 * 2 // (Số tuần * 6 ngày * 2 ca)
+        val maxShiftsPerStaff = totalWeeks * 6 * 2 // (Number of weeks * 6 days * 2 shifts)
         val totalMaxCapacityShifts = selectedStaff.size * maxShiftsPerStaff
 
-        // 3. So sánh nhu cầu rạp và khả năng đáp ứng
+        // 3. Compare cinema demand and staff availability
         if (totalRequiredShifts > totalMaxCapacityShifts) {
             val missingShifts = totalRequiredShifts - totalMaxCapacityShifts
             val recommendedStaffCount = Math.ceil(totalRequiredShifts.toDouble() / maxShiftsPerStaff.toDouble()).toInt()
@@ -77,7 +77,7 @@ object AutoStaffSchedulingAlgorithm {
     }
 
     /**
-     * Hàm tự động sắp xếp lịch xoay vòng bọc lót nhau, đảm bảo đi liền ca
+     * Function to automatically schedule rotating shifts to back each other up, ensuring consecutive work
      */
     fun generateStaffSchedule(
         startDate: LocalDate,
@@ -93,7 +93,7 @@ object AutoStaffSchedulingAlgorithm {
 
         val result = mutableListOf<StaffShiftDraft>()
 
-        // Khởi tạo bộ đếm tổng thể
+        // Initialize overall counters
         val overallStaffCount = mutableMapOf<String, Int>()
         val weeklyWorkMap = mutableMapOf<String, Int>()
         val shiftOccupancy = mutableMapOf<String, MutableList<String>>()
@@ -110,14 +110,14 @@ object AutoStaffSchedulingAlgorithm {
             tempDate = tempDate.plusDays(1)
         }
 
-        // Sắp xếp thứ tự ưu tiên duyệt ngày: Ngày Lễ/Cuối tuần lên đầu, Ngày thường xuống sau
+        // Sort day priority order: Holidays/Weekends first, normal weekdays last
         val sortedDates = dateList.sortedWith(compareByDescending<LocalDate> { date ->
             holidayDates.contains(date.toString()) || date.dayOfWeek == DayOfWeek.SATURDAY || date.dayOfWeek == DayOfWeek.SUNDAY
         }.thenBy { date -> date })
 
         val todayStr = LocalDate.now().toString()
 
-        // Biến đếm dùng để đảo thứ tự ưu tiên cặp ca theo từng ngày
+        // Counter variable used to flip shift pair priority each day
         var dayCounter = 0
 
         for (currentDate in sortedDates) {
@@ -144,7 +144,7 @@ object AutoStaffSchedulingAlgorithm {
                 !hasLeaveApproved && staff.status == 1
             }
 
-            // Xoay vòng cặp ca liên tục qua các ngày để Ngày và Đêm công bằng như nhau
+            // Rotate shift pairs continuously across days so Day and Night are equally fair
             val rotatedPairs = if (dayCounter % 2 == 0) {
                 SHIFT_PAIRS
             } else {
@@ -175,7 +175,7 @@ object AutoStaffSchedulingAlgorithm {
                         val isFree1 = !(shiftOccupancy[keyOcc1] ?: emptyList()).contains(id)
                         val isFree2 = !(shiftOccupancy[keyOcc2] ?: emptyList()).contains(id)
 
-                        //  Đã làm một cặp ca trong ngày (dailyCount > 0) thì loại, không xếp trùng nữa
+                        // Already worked a shift pair today (dailyCount > 0) => exclude to prevent duplication
                         dailyCount == 0 && isFree1 && isFree2 && workedDaysInWeek < 7
                     }.toMutableList()
 
@@ -195,7 +195,7 @@ object AutoStaffSchedulingAlgorithm {
                     val sId = chosenStaff.id
                     val weekKey = "${year}_${weekYear}_$sId"
 
-                    // Gán nhân viên vào CẢ HAI CA trong cặp để đi liền nhau (Morning-Afternoon hoặc Evening-Night)
+                    // Assign staff to BOTH shifts in the pair to run consecutively (Morning-Afternoon or Evening-Night)
                     pair.shifts.forEach { sName ->
                         val key = "${dateStr}_$sName"
                         if (shiftOccupancy[key] == null) shiftOccupancy[key] = mutableListOf()

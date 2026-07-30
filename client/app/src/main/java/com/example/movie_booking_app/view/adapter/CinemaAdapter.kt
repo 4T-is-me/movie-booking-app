@@ -1,5 +1,9 @@
 package com.example.movie_booking_app.view.adapter
 
+import com.example.movie_booking_app.R
+
+import androidx.core.content.ContextCompat
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.graphics.toColorInt
@@ -39,12 +43,12 @@ class CinemaAdapter(private val cinemas: List<Cinema>, private val onCinemaClick
             .into(holder.binding.imgCinemaLogo)
         // Highlight selected cinema
         if (position == selectedPosition) {
-            holder.binding.root.setCardBackgroundColor("#2D2208".toColorInt())
-            holder.binding.root.strokeColor = "#D9A300".toColorInt()
+            holder.binding.root.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.context, R.color.auto_color_2D2208))
+            holder.binding.root.strokeColor = ContextCompat.getColor(holder.itemView.context, R.color.auto_color_D9A300)
             holder.binding.root.strokeWidth = 4
         } else {
-            holder.binding.root.setCardBackgroundColor("#1A1A1A".toColorInt())
-            holder.binding.root.strokeColor = "#454545".toColorInt()
+            holder.binding.root.setCardBackgroundColor(ContextCompat.getColor(holder.itemView.context, R.color.bg_surface))
+            holder.binding.root.strokeColor = ContextCompat.getColor(holder.itemView.context, R.color.auto_color_454545)
             holder.binding.root.strokeWidth = 1
         }
 

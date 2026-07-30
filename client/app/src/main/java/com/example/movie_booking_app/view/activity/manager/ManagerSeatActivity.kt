@@ -1,5 +1,7 @@
 package com.example.movie_booking_app.view.activity.manager
 
+import androidx.core.content.ContextCompat
+
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -171,38 +173,48 @@ class ManagerSeatActivity : AppCompatActivity() {
         // Reset all buttons
         binding.btnStatusOperating.background = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.bg_btn_status_unselected)
         binding.btnStatusOperating.backgroundTintList = null
-        binding.btnStatusOperating.setTextColor(android.graphics.Color.parseColor("#94A3B8"))
+        binding.btnStatusOperating.setTextColor(ContextCompat.getColor(this@ManagerSeatActivity, R.color.text_gray))
         binding.btnStatusOperating.text = "Operating"
         
         binding.btnStatusMaintenance.background = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.bg_btn_status_unselected)
         binding.btnStatusMaintenance.backgroundTintList = null
-        binding.btnStatusMaintenance.setTextColor(android.graphics.Color.parseColor("#94A3B8"))
+        binding.btnStatusMaintenance.setTextColor(ContextCompat.getColor(this@ManagerSeatActivity, R.color.text_gray))
         binding.btnStatusMaintenance.text = "Maintenance"
+        
+        binding.btnStatusClosed.background = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.bg_btn_status_unselected)
+        binding.btnStatusClosed.backgroundTintList = null
+        binding.btnStatusClosed.setTextColor(ContextCompat.getColor(this@ManagerSeatActivity, R.color.text_gray))
+        binding.btnStatusClosed.text = "Closed"
 
         when (status.lowercase()) {
             "active", "operating", "open" -> {
                 binding.tvTopStatus.text = "Operating"
-                binding.tvTopStatus.setTextColor(android.graphics.Color.parseColor("#10B981"))
+                binding.tvTopStatus.setTextColor(ContextCompat.getColor(this@ManagerSeatActivity, R.color.color_green))
                 binding.tvTopStatus.background = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.bg_label_operating)
                 
                 binding.btnStatusOperating.background = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.bg_btn_status_selected)
-                binding.btnStatusOperating.setTextColor(android.graphics.Color.parseColor("#10B981"))
+                binding.btnStatusOperating.setTextColor(ContextCompat.getColor(this@ManagerSeatActivity, R.color.color_green))
                 binding.btnStatusOperating.text = "✓ Operating"
             }
             "maintenance", "maintain" -> {
                 binding.tvTopStatus.text = "Maintenance"
-                binding.tvTopStatus.setTextColor(android.graphics.Color.parseColor("#F59E0B"))
+                binding.tvTopStatus.setTextColor(ContextCompat.getColor(this@ManagerSeatActivity, R.color.auto_color_F59E0B))
                 binding.tvTopStatus.background = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.bg_label_maintain)
                 
                 binding.btnStatusMaintenance.background = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.bg_btn_status_selected)
-                binding.btnStatusMaintenance.backgroundTintList = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#33F59E0B"))
-                binding.btnStatusMaintenance.setTextColor(android.graphics.Color.parseColor("#F59E0B"))
+                binding.btnStatusMaintenance.backgroundTintList = android.content.res.ColorStateList.valueOf(ContextCompat.getColor(this@ManagerSeatActivity, R.color.auto_color_33F59E0B))
+                binding.btnStatusMaintenance.setTextColor(ContextCompat.getColor(this@ManagerSeatActivity, R.color.auto_color_F59E0B))
                 binding.btnStatusMaintenance.text = "✓ Maintenance"
             }
             else -> {
                 binding.tvTopStatus.text = "Closed"
-                binding.tvTopStatus.setTextColor(android.graphics.Color.parseColor("#EF4444"))
+                binding.tvTopStatus.setTextColor(ContextCompat.getColor(this@ManagerSeatActivity, R.color.color_error_red))
                 binding.tvTopStatus.background = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.bg_label_close)
+                
+                binding.btnStatusClosed.background = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.bg_btn_status_selected)
+                binding.btnStatusClosed.backgroundTintList = android.content.res.ColorStateList.valueOf(ContextCompat.getColor(this@ManagerSeatActivity, R.color.auto_color_33EF4444))
+                binding.btnStatusClosed.setTextColor(ContextCompat.getColor(this@ManagerSeatActivity, R.color.color_error_red))
+                binding.btnStatusClosed.text = "✓ Closed"
             }
         }
     }

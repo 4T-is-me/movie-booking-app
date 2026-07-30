@@ -72,7 +72,7 @@ object AutoSchedulingAlgorithm {
         isHoliday: Boolean,
         existingShowtimesForDay: List<ShowtimeDraft>
     ): List<ShowtimeDraft> {
-        // Chặn hoàn toàn nếu ngày xếp lịch nằm trong quá khứ
+        // Block completely if the scheduled date is in the past
         if (date.isBefore(LocalDate.now())) {
             return emptyList()
         }
@@ -84,7 +84,7 @@ object AutoSchedulingAlgorithm {
         val nowTime = LocalTime.now()
         val isToday = date == LocalDate.now()
 
-        // Hàm điều chỉnh giờ bắt đầu của slot nếu là ngày hôm nay
+        // Helper function to adjust slot start time if it is today
         fun getAdjustedStart(defaultStart: LocalTime): LocalTime {
             return if (isToday && defaultStart.isBefore(nowTime)) {
                 nowTime

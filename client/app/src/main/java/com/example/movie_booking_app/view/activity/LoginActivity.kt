@@ -95,8 +95,8 @@ class LoginActivity : EnglishBaseActivity() {
                 showError(getString(passwordError))
                 return@setOnClickListener
             }
-            // remove Log.d(use ... chạy debug)
-            // bắt logic cccd 9 - 12 số
+            // remove Log.d (used to run debug)
+            // handle citizen identity card logic: 9 - 12 digits
             Timber.tag("LOGIN_DEBUG").d("Username: $username")
             hideError()
 

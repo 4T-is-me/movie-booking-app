@@ -209,7 +209,7 @@ class PayrollDetailActivity : AppCompatActivity() {
         binding.tvRevenueBonus.text = getString(R.string.plus_amount_format, PayrollAdapter.formatVnd(payroll.bonus ?: 0.0))
     }
 
-    // Helper xử lý số nhiều (1 shift / 2 shifts)
+    // Helper to handle pluralization (1 shift / 2 shifts)
     private fun formatShiftCount(count: Int): String {
         return if (count == 1) {
             getString(R.string.shift_count_singular, count)

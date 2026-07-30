@@ -9,7 +9,8 @@ data class ConfirmBookingRequest(
     val promotionId: String?,
     val combos: List<ComboRequest>,
     val scoreToRedeem: Int? = null,
-    val memberId: String? = null
+    val memberId: String? = null,
+    val isGuestCheckout: Boolean = false
 )
 
 data class ComboRequest(

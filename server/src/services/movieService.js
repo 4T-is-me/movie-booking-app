@@ -118,7 +118,7 @@ export const getMovieById = async (id) => {
 // GET /api/movies/:id/showtimes?date=YYYY-MM-DD
 // Returns list of movie showtimes with cinemaRoomName + availableSeats
 export const getMovieShowtimes = async (movieId, date) => {
-    // Tự động chuyển các suất chiếu đã qua giờ chiếu thành Unpublished
+    // Automatically set expired showtimes status to Unpublished
     await Showtime.updateMany(
         { endTime: { $lt: new Date() }, status: 'published' },
         { $set: { status: 'Unpublished' } }

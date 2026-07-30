@@ -48,7 +48,7 @@ class LeaveRequestViewModel @Inject constructor(private val repository: LeaveReq
     private val _undoResult = MutableStateFlow<SimpleSuccessResponse?>(null)
     val undoResult: StateFlow<SimpleSuccessResponse?> = _undoResult.asStateFlow()
 
-    // --- Trạng thái chung & Phân trang ---
+    // --- General State & Pagination ---
     private val _actionSuccessMessage = MutableStateFlow<String?>(null)
     val actionSuccessMessage: StateFlow<String?> = _actionSuccessMessage.asStateFlow()
 

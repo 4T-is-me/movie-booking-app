@@ -28,7 +28,7 @@ class StaffNotifAdapter(
                 tvNotifBody.text = item.message
                 tvNotifTime.text = "${date} - ${time}"
 
-                // Đổi nền & chấm indicator nếu chưa đọc
+                // Change background & dot indicator if unread
                 if (item.isRead) {
                     root.setBackgroundColor(Color.TRANSPARENT)
                     viewUnreadIndicator.visibility = View.GONE

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="20dp"
-    app:cardBackgroundColor="#1A1829"
+    app:cardBackgroundColor="@color/auto_color_1A1829"
     app:cardCornerRadius="24dp"
     app:cardElevation="16dp">
 
@@ -21,14 +21,14 @@
             android:layout_height="64dp"
             android:layout_gravity="center_horizontal"
             android:background="@drawable/bg_notification_badge"
-            android:backgroundTint="#33F59E0B"
+            android:backgroundTint="@color/auto_color_33F59E0B"
             android:padding="14dp">
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_notifications"
-                app:tint="#F59E0B" />
+                app:tint="@color/auto_color_F59E0B" />
         </FrameLayout>
 
         <!-- Dialog Title -->
@@ -39,7 +39,7 @@
             android:layout_marginTop="16dp"
             android:gravity="center"
             android:text="Sự cố phòng chiếu - Cần xác nhận"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -48,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:background="#252238"
+            android:background="@color/auto_color_252238"
             android:orientation="vertical"
             android:padding="16dp">
 
@@ -57,7 +57,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:lineSpacingExtra="4dp"
-                android:textColor="#E2E8F0"
+                android:textColor="@color/text_slate_200"
                 android:textSize="14sp"
                 tools:text="Suất chiếu Avengers: Infinity War tại phòng Phòng 1 gặp sự cố..." />
         </LinearLayout>
@@ -69,10 +69,10 @@
             android:layout_height="52dp"
             android:layout_marginTop="20dp"
             android:text="✓  ĐỒNG Ý DỜI VÉ"
-            android:textColor="#0F172A"
+            android:textColor="@color/cinema_dark_input"
             android:textSize="15sp"
             android:textStyle="bold"
-            app:backgroundTint="#F5C518"
+            app:backgroundTint="@color/gold_selected"
             app:cornerRadius="14dp" />
 
         <!-- Decline Button (Secondary Red Soft Outline) -->
@@ -82,11 +82,11 @@
             android:layout_height="48dp"
             android:layout_marginTop="10dp"
             android:text="✕  Từ chối (Hoàn 100% điểm)"
-            android:textColor="#F87171"
+            android:textColor="@color/auto_color_F87171"
             android:textSize="14sp"
-            app:backgroundTint="#2DEF4444"
+            app:backgroundTint="@color/auto_color_2DEF4444"
             app:cornerRadius="14dp"
-            app:strokeColor="#7FEF4444"
+            app:strokeColor="@color/auto_color_7FEF4444"
             app:strokeWidth="1dp" />
 
         <!-- Later Text Button -->
@@ -98,7 +98,7 @@
             android:layout_marginTop="12dp"
             android:padding="8dp"
             android:text="Để sau"
-            android:textColor="#9CA3AF"
+            android:textColor="@color/hint_gray"
             android:textSize="14sp" />
 
     </LinearLayout>

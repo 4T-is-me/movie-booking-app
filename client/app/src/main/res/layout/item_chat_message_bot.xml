@@ -38,14 +38,14 @@
             android:id="@+id/pbBotLoading"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:indeterminateTint="#F5C518"
+            android:indeterminateTint="@color/gold_selected"
             android:visibility="gone" />
 
         <TextView
             android:id="@+id/tvMessageContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/white"
             android:textSize="14sp"
             android:lineSpacingExtra="3dp"
             android:textIsSelectable="true" />
@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:layout_marginTop="4dp"
-            android:textColor="#80FFFFFF"
+            android:textColor="@color/nav_inactive"
             android:textSize="10sp" />
     </LinearLayout>
 

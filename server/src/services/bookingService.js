@@ -76,24 +76,27 @@ const handleHoldSeats = async ({ accountId, showtimeId, seatIds }) => {
   }
 };
 
-// handle confirm booking
-const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore = false, paymentMethod, couponCode, promotionId: requestPromotionId, combos = [], scoreToRedeem, memberId }) => {
+const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore = false, paymentMethod, couponCode, promotionId: requestPromotionId, combos = [], scoreToRedeem, memberId, isGuestCheckout = false }) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
     // find member
-    let member;
+    let member = null;
     if (memberId) {
+      // Staff provided a specific member ID (verified member)
       member = await Member.findById(memberId).session(session);
-    } else {
+      if (!member) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Member not found");
+      }
+    } else if (!isGuestCheckout) {
+      // Regular member app flow: find member by accountId
       member = await Member.findOne({ accountId: accountId }).session(session);
+      if (!member) {
+        throw new ApiError(StatusCodes.NOT_FOUND, "Member not found");
+      }
     }
-
-    // validate member
-    if (!member) {
-      throw new ApiError(StatusCodes.NOT_FOUND, "Member not found");
-    }
+    // else: isGuestCheckout = true and no memberId → walk-in guest, member remains null
 
     // find seat
     const seats = await ScheduleSeat.find({
@@ -222,54 +225,55 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
     // Value after applying the promotion code; if none, promotionDiscount = 0
     const afterPromotion = subTotal - promotionDiscount;
 
-    // Processing reward point redemptions
+    // Processing reward point redemptions (only if a member is linked)
     let pointUsed = 0;
     let pointDiscount = 0;
     let earnedPoints = 0;
     let finalAmount = afterPromotion;
 
-    if (useScore) {
-      if (!member.rewardPoints || member.rewardPoints <= 0) {
-        throw new ApiError(StatusCodes.BAD_REQUEST, "Not enough reward points");
-      }
-      const maxPointsNeeded = Math.ceil(afterPromotion / 10);
-      const targetScore = (scoreToRedeem !== undefined && scoreToRedeem !== null) ? scoreToRedeem : maxPointsNeeded;
-      pointUsed = Math.min(member.rewardPoints, targetScore);
-      pointDiscount = pointUsed * 10;
-      finalAmount = afterPromotion - pointDiscount;
-    }
-
-    // ADD_SCORE = 5% * TOTAL_MONEY (finalAmount) in terms of points (1 point = 10 VND)
-    earnedPoints = Math.floor((finalAmount * 0.05) / 10);
-    member.rewardPoints = member.rewardPoints - pointUsed + earnedPoints;
-
-    const prevTotalSpent = member.totalSpent;
-    const prevRewardPoints = member.rewardPoints + pointUsed - earnedPoints;
-
-    member.totalSpent += finalAmount;
-
-    // Update membership rank
-    if (member.totalSpent >= 10000000) {
-      member.membershipRank = "gold";
-    } else if (member.totalSpent >= 5000000) {
-      member.membershipRank = "silver";
-    } else {
-      member.membershipRank = "bronze";
-    }
-
-    const paymentStatus = "paid";
-
-    const memberUpdateResult = await Member.updateOne(
-      { _id: member._id },
-      {
-        $set: {
-          totalSpent: member.totalSpent,
-          rewardPoints: member.rewardPoints,
-          membershipRank: member.membershipRank
+    if (member) {
+      if (useScore) {
+        if (!member.rewardPoints || member.rewardPoints <= 0) {
+          throw new ApiError(StatusCodes.BAD_REQUEST, "Not enough reward points");
         }
-      },
-      { session }
-    );
+        const maxPointsNeeded = Math.ceil(afterPromotion / 10);
+        const targetScore = (scoreToRedeem !== undefined && scoreToRedeem !== null) ? scoreToRedeem : maxPointsNeeded;
+        pointUsed = Math.min(member.rewardPoints, targetScore);
+        pointDiscount = pointUsed * 10;
+        finalAmount = afterPromotion - pointDiscount;
+      }
+
+      // ADD_SCORE = 5% * TOTAL_MONEY (finalAmount) in terms of points (1 point = 10 VND)
+      earnedPoints = Math.floor((finalAmount * 0.05) / 10);
+      member.rewardPoints = member.rewardPoints - pointUsed + earnedPoints;
+
+      const prevTotalSpent = member.totalSpent;
+      const prevRewardPoints = member.rewardPoints + pointUsed - earnedPoints;
+
+      member.totalSpent += finalAmount;
+
+      // Update membership rank
+      if (member.totalSpent >= 10000000) {
+        member.membershipRank = "gold";
+      } else if (member.totalSpent >= 5000000) {
+        member.membershipRank = "silver";
+      } else {
+        member.membershipRank = "bronze";
+      }
+
+      await Member.updateOne(
+        { _id: member._id },
+        {
+          $set: {
+            totalSpent: member.totalSpent,
+            rewardPoints: member.rewardPoints,
+            membershipRank: member.membershipRank
+          }
+        },
+        { session }
+      );
+    }
+    // else: guest checkout — no points logic, finalAmount stays as afterPromotion
 
     const ticketCode = await ticketUtils.generateTicketCode();
     const qrCodeData = await ticketUtils.generateQRCode(ticketCode);
@@ -278,7 +282,7 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
     const booking = await Booking.create(
       [
         {
-          memberId: member._id,
+          memberId: member ? member._id : null,
           showtimeId: showtimeId,
           bookingCode: ticketCode,
           promotionId: promotionId,
@@ -288,7 +292,7 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
           ticketPrice: ticketPrice,
           comboPrice: comboPrice,
           subTotalAmount: subTotal,
-          paymentStatus: paymentStatus,
+          paymentStatus: "paid",
           paymentMethod: paymentMethod,
           qrCodeData: qrCodeData,
           disCountAmount: promotionDiscount + pointDiscount,
@@ -298,20 +302,22 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
       { session },
     );
 
-    // create score history
-    await ScoreHistory.create(
-      [
-        {
-          memberId: member._id,
-          bookingId: booking[0]._id,
-          usedPoints: pointUsed,
-          earnedPoints,
-          remainingPoints: member.rewardPoints,
-          reason: useScore ? "USE_SCORE" : "BUY_TICKET"
-        }
-      ],
-      { session }
-    );
+    // create score history only if a member is linked
+    if (member) {
+      await ScoreHistory.create(
+        [
+          {
+            memberId: member._id,
+            bookingId: booking[0]._id,
+            usedPoints: pointUsed,
+            earnedPoints,
+            remainingPoints: member.rewardPoints,
+            reason: useScore ? "USE_SCORE" : "BUY_TICKET"
+          }
+        ],
+        { session }
+      );
+    }
 
     // Create Inventory Logs if any
     if (session.userData && session.userData.pendingLogs) {
@@ -346,7 +352,7 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
         [
           {
             promotionId: promotionId,
-            accountId: member.accountId,
+            accountId: member ? member.accountId : accountId,
             invoiceId: booking[0]._id,
             discountAmount: promotionDiscount
           }
@@ -370,14 +376,16 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
       pointDiscount,
       finalAmount,
       earnedPoints,
-      remainingPoints: member.rewardPoints,
-      membershipRank: member.membershipRank,
+      remainingPoints: member ? member.rewardPoints : null,
+      membershipRank: member ? member.membershipRank : null,
     };
 
     await session.commitTransaction();
 
     // Trigger FCM notification asynchronously so it does not delay checkout response
-    NotificationService.sendBookingSuccessNotification(member.accountId, booking[0]).catch(() => {})
+    if (member) {
+      NotificationService.sendBookingSuccessNotification(member.accountId, booking[0]).catch(() => {});
+    }
 
     return result;
   } catch (error) {

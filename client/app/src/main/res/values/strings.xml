@@ -30,7 +30,7 @@
     <string name="change_language">Change language</string>
     <string name="change_password">Change password</string>
     <string name="list_title">List</string>
-    <string name="error_dialog_title">Lỗi</string>
+    <string name="error_dialog_title">Error</string>
 
     <!-- Auth Team Strings -->
     <string name="login_subtitle">Login to continue booking movies</string>
@@ -561,7 +561,7 @@
     <string name="auto_str_release_date">Release Date</string>
     <string name="auto_str_end_date_1">End Date</string>
     <string name="auto_str_country_search_to_select">Country (Search to select)</string>
-    <string name="auto_str_language_e_g_ti_ng_vi_t_ph_ti">Language (e.g. Tiếng Việt, Phụ đề)</string>
+    <string name="auto_str_language_e_g_ti_ng_vi_t_ph_ti">Language (e.g. Vietnamese, Subtitles)</string>
     <string name="auto_str_director_s_comma_separated">Director(s) (comma separated)</string>
     <string name="auto_str_actors_comma_separated">Actors (comma separated)</string>
     <string name="auto_str_description">Description</string>

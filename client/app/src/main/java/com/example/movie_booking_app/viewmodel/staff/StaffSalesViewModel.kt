@@ -479,7 +479,8 @@ class StaffSalesViewModel @Inject constructor(
                         promotionId = _appliedPromotion.value?.id,
                         combos = emptyList(), // Staff tickets sales combo not added in this flow
                         scoreToRedeem = if (_useScore.value) _scoreToRedeem.value else null,
-                        memberId = _verifiedMember.value?.memberId
+                        memberId = _verifiedMember.value?.memberId,
+                        isGuestCheckout = _verifiedMember.value == null
                     )
 
                     paymentRepository.confirmBooking(request)

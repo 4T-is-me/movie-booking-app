@@ -1,5 +1,7 @@
 package com.example.movie_booking_app.view.fragment.staff
 
+import androidx.core.content.ContextCompat
+
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -585,7 +587,7 @@ class StaffSalesFragment : Fragment() {
 
     private fun updateStepIndicators(step: Int) {
         val activeDrawable = R.drawable.bg_selected_item
-        val inactiveColor = android.graphics.Color.parseColor("#232A45")
+        val inactiveColor = ContextCompat.getColor(requireContext(), R.color.auto_color_232A45)
 
         binding.viewStep1.setBackgroundResource(if (step >= 1) activeDrawable else 0)
         if (step < 1) binding.viewStep1.setBackgroundColor(inactiveColor)

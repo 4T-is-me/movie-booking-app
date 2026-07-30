@@ -70,11 +70,11 @@ class ManagerStaffShiftAdapter(
                 binding.tvStatusBadge.text = Constants.STATUS_SHIFT[3]
                 binding.tvStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.status_leave_text)) // red
                 binding.tvStatusBadge.backgroundTintList =
-                    ColorStateList.valueOf(ContextCompat.getColor(context, R.color.status_leave_bg)) // Đã sửa màu bg cho khớp với màu chữ leave
+                    ColorStateList.valueOf(ContextCompat.getColor(context, R.color.status_leave_bg)) // Corrected bg color to match text color leave
             }
             else -> {
                 binding.tvStatusBadge.text = Constants.STATUS_SHIFT[0]
-                binding.tvStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.status_active_text)) // hoặc màu mặc định tùy bồ
+                binding.tvStatusBadge.setTextColor(ContextCompat.getColor(context, R.color.status_active_text)) // or default color
                 binding.tvStatusBadge.backgroundTintList =
                     ColorStateList.valueOf(ContextCompat.getColor(context, R.color.status_active_bg))
             }

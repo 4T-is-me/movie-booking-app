@@ -87,7 +87,7 @@ class NotificationRepository @Inject constructor(
                 emit(MarkReadResponse(success = false, message = errorMessage, data = null))
             }
         } catch (e: Exception) {
-            emit(MarkReadResponse(success = false, message = e.message ?: "Lỗi kết nối mạng", data = null))
+            emit(MarkReadResponse(success = false, message = e.message ?: "Network connection error", data = null))
         }
     }
 
@@ -107,7 +107,7 @@ class NotificationRepository @Inject constructor(
                 emit(MarkReadResponse(success = false, message = errorMessage, data = null))
             }
         } catch (e: Exception) {
-            emit(MarkReadResponse(success = false, message = e.message ?: "Lỗi kết nối mạng", data = null))
+            emit(MarkReadResponse(success = false, message = e.message ?: "Network connection error", data = null))
         }
     }
 }

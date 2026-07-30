@@ -33,7 +33,7 @@ export const MaintenanceController = {
     try {
       const { id } = req.params;
       const { action } = req.body; // 'accept' or 'decline'
-      
+
       // Ownership check (STT 17)
       const booking = await Booking.findById(id);
       if (!booking) {
@@ -51,7 +51,7 @@ export const MaintenanceController = {
     }
   },
 
-  // Khôi phục Lịch chiếu
+  // Restore Schedule
   async previewRestoredSchedule(req, res, next) {
     try {
       const { roomId } = req.params;

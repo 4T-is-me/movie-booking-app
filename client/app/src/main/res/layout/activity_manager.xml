@@ -292,13 +292,14 @@
     <!-- Navigation Drawer -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigationView"
-        android:layout_width="wrap_content"
+        android:layout_width="280dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@color/admin_bg"
-        app:itemTextColor="@color/auto_color_CBD5E1"
-        app:itemIconTint="@color/auto_color_CBD5E1"
+        android:background="@color/admin_drawer_bg"
         app:headerLayout="@layout/nav_manager_header"
-        app:menu="@menu/manager_drawer_menu" />
+        app:menu="@menu/manager_drawer_menu"
+        app:itemTextColor="@color/admin_drawer_item_text"
+        app:itemIconTint="@color/admin_drawer_item_text"
+        app:itemBackground="@drawable/bg_nav_item" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

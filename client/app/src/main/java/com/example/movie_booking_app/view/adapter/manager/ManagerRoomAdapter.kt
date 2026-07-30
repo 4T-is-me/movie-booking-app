@@ -1,5 +1,7 @@
 package com.example.movie_booking_app.view.adapter.manager
 
+import androidx.core.content.ContextCompat
+
 import com.example.movie_booking_app.databinding.ItemManagerRoomBinding
 import android.view.LayoutInflater
 import android.view.View
@@ -58,35 +60,35 @@ class ManagerRoomAdapter(
             val context = itemView.context
             when (statusText) {
                 "Operating" -> {
-                    tvOperating.setTextColor(android.graphics.Color.parseColor("#10B981"))
+                    tvOperating.setTextColor(ContextCompat.getColor(context, R.color.color_green))
                     tvOperating.background = androidx.core.content.ContextCompat.getDrawable(context, R.drawable.bg_label_operating)
                     
                     flIcon.background = androidx.core.content.ContextCompat.getDrawable(context, R.drawable.bg_manager_room_icon)
-                    ivMovie.setColorFilter(android.graphics.Color.parseColor("#10B981"))
+                    ivMovie.setColorFilter(ContextCompat.getColor(context, R.color.color_green))
                     
                     tvRoomUnavailable.visibility = View.GONE
                 }
                 "Maintenance" -> {
-                    tvOperating.setTextColor(android.graphics.Color.parseColor("#F59E0B")) // Orange yellow
+                    tvOperating.setTextColor(ContextCompat.getColor(context, R.color.auto_color_F59E0B)) // Orange yellow
                     tvOperating.background = androidx.core.content.ContextCompat.getDrawable(context, R.drawable.bg_label_maintain)
                     
                     flIcon.background = androidx.core.content.ContextCompat.getDrawable(context, R.drawable.bg_label_maintain)
-                    ivMovie.setColorFilter(android.graphics.Color.parseColor("#F59E0B"))
+                    ivMovie.setColorFilter(ContextCompat.getColor(context, R.color.auto_color_F59E0B))
                     
                     tvRoomUnavailable.visibility = View.VISIBLE
                     tvRoomUnavailable.text = "⚠️ Room unavailable · Tap to manage"
-                    tvRoomUnavailable.setTextColor(android.graphics.Color.parseColor("#F59E0B"))
+                    tvRoomUnavailable.setTextColor(ContextCompat.getColor(context, R.color.auto_color_F59E0B))
                 }
                 "Closed" -> {
-                    tvOperating.setTextColor(android.graphics.Color.parseColor("#EF4444"))
+                    tvOperating.setTextColor(ContextCompat.getColor(context, R.color.color_error_red))
                     tvOperating.background = androidx.core.content.ContextCompat.getDrawable(context, R.drawable.bg_label_close)
                     
                     flIcon.background = androidx.core.content.ContextCompat.getDrawable(context, R.drawable.bg_label_close)
-                    ivMovie.setColorFilter(android.graphics.Color.parseColor("#EF4444"))
+                    ivMovie.setColorFilter(ContextCompat.getColor(context, R.color.color_error_red))
                     
                     tvRoomUnavailable.visibility = View.VISIBLE
                     tvRoomUnavailable.text = "⚠️ Room closed · Tap to manage"
-                    tvRoomUnavailable.setTextColor(android.graphics.Color.parseColor("#EF4444"))
+                    tvRoomUnavailable.setTextColor(ContextCompat.getColor(context, R.color.color_error_red))
                 }
             }
             

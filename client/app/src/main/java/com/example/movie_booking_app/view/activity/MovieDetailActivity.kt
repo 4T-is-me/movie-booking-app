@@ -130,7 +130,7 @@ class MovieDetailActivity : AppCompatActivity() {
                     }
                 }
 
-                // Chi tiết phim
+                // Movie details
                 launch {
                     viewModel.movieDetail.collect { response ->
                         response?.data?.let { movie ->
@@ -165,7 +165,7 @@ class MovieDetailActivity : AppCompatActivity() {
                             binding.txtRating.text = movie.rating?.toString() ?: "Unrated"
                             binding.txtVote.text = "(${movie.totalReviews ?: 0})"
 
-                            // Cập nhật khu vực đánh giá tổng quan
+                            // Update rating summary section
                             val rating = movie.rating ?: 0.0
                             binding.tvAvgRating.text = String.format("%.1f", rating)
                             binding.ratingBarSummary.rating = rating.toFloat()
@@ -191,7 +191,7 @@ class MovieDetailActivity : AppCompatActivity() {
                     }
                 }
 
-                // Suất chiếu & Rạp
+                // Showtimes & Cinema
                 launch {
                     viewModel.movieShowtimes.collect { showtimes ->
                         if (showtimes.isEmpty()) {
@@ -216,7 +216,7 @@ class MovieDetailActivity : AppCompatActivity() {
                     }
                 }
 
-                // Lắng nghe danh sách đánh giá
+                // Listen to review list
                 launch {
                     viewModel.movieReviews.collect { reviews ->
                         currentReviewsList = reviews
@@ -224,7 +224,7 @@ class MovieDetailActivity : AppCompatActivity() {
                     }
                 }
 
-                // Xử lý lỗi
+                // Error handling
                 launch {
                     viewModel.detailError.collect { error ->
                         error?.let { Toast.makeText(this@MovieDetailActivity, it, Toast.LENGTH_SHORT).show() }
@@ -236,7 +236,7 @@ class MovieDetailActivity : AppCompatActivity() {
                     }
                 }
 
-                // Thành công khi viết review
+                // Successfully submitted a review
                 launch {
                     viewModel.reviewActionSuccess.collect { success ->
                         if (success) refreshData()

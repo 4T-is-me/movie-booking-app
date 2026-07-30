@@ -23,6 +23,12 @@ object NotificationLocalStorage {
         return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
     }
 
+    private fun getCurrentUserKey(context: Context): String {
+        val username = context.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+            .getString("username", "anonymous")
+        return "${KEY_LIST}_$username"
+    }
+
     // ─────────────────────────── WRITE ───────────────────────────
 
     /**
@@ -63,19 +69,19 @@ object NotificationLocalStorage {
     }
 
     /**
-     * Removes all stored notifications.
+     * Removes all stored notifications for the current user.
      */
     fun clearAll(context: Context) {
-        getPrefs(context).edit().remove(KEY_LIST).apply()
+        getPrefs(context).edit().remove(getCurrentUserKey(context)).apply()
     }
 
     // ─────────────────────────── READ ────────────────────────────
 
     /**
-     * Returns all stored notifications, newest first.
+     * Returns all stored notifications for the current user, newest first.
      */
     fun getAll(context: Context): List<NotificationItem> {
-        val json = getPrefs(context).getString(KEY_LIST, null) ?: return emptyList()
+        val json = getPrefs(context).getString(getCurrentUserKey(context), null) ?: return emptyList()
         return runCatching {
             val type = object : TypeToken<List<NotificationItem>>() {}.type
             gson.fromJson<List<NotificationItem>>(json, type) ?: emptyList()
@@ -83,13 +89,13 @@ object NotificationLocalStorage {
     }
 
     /**
-     * Returns the number of unread notifications.
+     * Returns the number of unread notifications for the current user.
      */
     fun unreadCount(context: Context): Int = getAll(context).count { !it.isRead }
 
     // ──────────────────────────── PRIVATE ─────────────────────────
 
     private fun persist(context: Context, list: List<NotificationItem>) {
-        getPrefs(context).edit().putString(KEY_LIST, gson.toJson(list)).apply()
+        getPrefs(context).edit().putString(getCurrentUserKey(context), gson.toJson(list)).apply()
     }
 }

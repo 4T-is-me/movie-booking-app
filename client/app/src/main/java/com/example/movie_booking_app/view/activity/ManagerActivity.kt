@@ -16,6 +16,8 @@ import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.local.TokenManager
 import com.example.movie_booking_app.data.model.response.WeeklyRevenueResponse
 import com.example.movie_booking_app.databinding.ActivityManagerBinding
+import com.example.movie_booking_app.databinding.LayoutMenuBadgeBinding
+import com.example.movie_booking_app.viewmodel.NotificationViewModel
 import com.example.movie_booking_app.view.activity.manager.ManagerReportActivity
 import com.example.movie_booking_app.view.activity.manager.ManagerRoomListActivity
 import com.example.movie_booking_app.view.activity.manager.ManagerStaffActivity
@@ -26,6 +28,7 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -36,6 +39,13 @@ import java.util.Locale
 class ManagerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityManagerBinding
     private val viewModel: ManagerViewModel by viewModels()
+    private val notificationViewModel: NotificationViewModel by viewModels()
+
+    private val notificationReceiver = object : android.content.BroadcastReceiver() {
+        override fun onReceive(context: android.content.Context?, intent: Intent?) {
+            notificationViewModel.loadNotifications()
+        }
+    }
 
     private lateinit var showtimeAdapter : ManagerShowtimeAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,6 +62,7 @@ class ManagerActivity : AppCompatActivity() {
 
         // Handle incoming notifications
         handleIncomingIntent(intent)
+        observeNotificationUnreadCount()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -223,6 +234,9 @@ class ManagerActivity : AppCompatActivity() {
         binding.ivMenu.setOnClickListener {
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
+        binding.ivNotification.setOnClickListener {
+            loadNotificationsFragment()
+        }
         binding.tvViewAll.setOnClickListener {
             startActivity(Intent(this, com.example.movie_booking_app.view.activity.manager.ManagerAutoSchedulingActivity::class.java))
         }
@@ -247,6 +261,9 @@ class ManagerActivity : AppCompatActivity() {
                     binding.tvHeaderTitle.text = "Dashboard"
                     binding.managerContainer.visibility = android.view.View.GONE
                     binding.scrollDashboard.visibility = android.view.View.VISIBLE
+                }
+                R.id.nav_notifications -> {
+                    loadNotificationsFragment()
                 }
                 R.id.nav_rooms -> {
                     startActivity(Intent(this, ManagerRoomListActivity::class.java))
@@ -278,6 +295,15 @@ class ManagerActivity : AppCompatActivity() {
         }
     }
 
+    private fun loadNotificationsFragment() {
+        binding.tvHeaderTitle.text = "Notifications"
+        binding.scrollDashboard.visibility = android.view.View.GONE
+        binding.managerContainer.visibility = android.view.View.VISIBLE
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.manager_container, com.example.movie_booking_app.view.fragment.manager.ManagerNotificationsFragment())
+            .commit()
+    }
+
     private fun setCurrentDate() {
         try {
             val sdf = SimpleDateFormat("EEEE, dd/MM/yyyy", Locale.ENGLISH)
@@ -294,6 +320,47 @@ class ManagerActivity : AppCompatActivity() {
             in 12..16 -> "Good afternoon 🌤️"
             in 17..21 -> "Good evening 🌙"
             else -> "Good night 💤"
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        notificationViewModel.loadNotifications()
+        ContextCompat.registerReceiver(
+            this,
+            notificationReceiver,
+            android.content.IntentFilter("com.example.movie_booking_app.NEW_NOTIFICATION"),
+            ContextCompat.RECEIVER_NOT_EXPORTED
+        )
+    }
+
+    override fun onPause() {
+        super.onPause()
+        try {
+            unregisterReceiver(notificationReceiver)
+        } catch (e: Exception) {
+            // Ignore
+        }
+    }
+
+    private fun observeNotificationUnreadCount() {
+        lifecycleScope.launch {
+            notificationViewModel.unreadCount.collectLatest { count ->
+                updateNotificationBadge(count)
+            }
+        }
+    }
+
+    private fun updateNotificationBadge(count: Int) {
+        val menuItem = binding.navigationView.menu.findItem(R.id.nav_notifications)
+        val actionView = menuItem?.actionView ?: return
+        val badgeBinding = LayoutMenuBadgeBinding.bind(actionView)
+
+        if (count > 0) {
+            badgeBinding.tvNotificationBadge.visibility = android.view.View.VISIBLE
+            badgeBinding.tvNotificationBadge.text = if (count > 99) "99+" else count.toString()
+        } else {
+            badgeBinding.tvNotificationBadge.visibility = android.view.View.GONE
         }
     }
 }

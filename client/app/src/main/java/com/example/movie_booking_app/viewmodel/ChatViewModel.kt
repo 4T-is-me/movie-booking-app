@@ -74,7 +74,7 @@ class ChatViewModel @Inject constructor(
                     )
                 },
                 onFailure = { error ->
-                    val errorMsg = error.localizedMessage ?: "Có lỗi kết nối xảy ra. Vui lòng kiểm tra lại mạng."
+                    val errorMsg = error.localizedMessage ?: "A connection error occurred. Please check your network connection."
                     chatRepository.addMessage(ChatMessage(role = "bot", content = "⚠️ $errorMsg", timestamp = timeFormat.format(Date())))
                 }
             )
