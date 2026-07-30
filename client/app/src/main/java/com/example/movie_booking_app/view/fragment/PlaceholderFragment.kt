@@ -1,5 +1,7 @@
 package com.example.movie_booking_app.view.fragment
 
+import com.example.movie_booking_app.R
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View

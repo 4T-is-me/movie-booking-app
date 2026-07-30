@@ -47,7 +47,7 @@ class PaymentActivity : AppCompatActivity() {
 
         val booking = intent.getSerializableExtra("BOOKING_SESSION") as? Booking
         if (booking == null) {
-            Toast.makeText(this, "Invalid booking session", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.auto_str_invalid_booking_session), Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -127,7 +127,7 @@ class PaymentActivity : AppCompatActivity() {
                     // Reward Points availability and switch control
                     if (state.availablePoints <= 0) {
                         binding.switchRewardPoints.isEnabled = false
-                        binding.tvAvailablePoints.text = "No reward points available"
+                        binding.tvAvailablePoints.text = getString(R.string.auto_str_no_reward_points_available)
                     } else {
                         binding.switchRewardPoints.isEnabled = true
                         binding.tvAvailablePoints.text = "Available: ${state.availablePoints} pts"

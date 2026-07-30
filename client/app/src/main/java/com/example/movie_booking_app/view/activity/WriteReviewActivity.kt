@@ -41,7 +41,7 @@ class WriteReviewActivity : AppCompatActivity() {
         movieGenre = intent.getStringExtra("movieGenre") ?: ""
 
         if (movieId.isEmpty()) {
-            Toast.makeText(this, "Movie ID not found", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.auto_str_movie_id_not_found), Toast.LENGTH_SHORT).show()
             finish()
             return
         }
@@ -79,18 +79,18 @@ class WriteReviewActivity : AppCompatActivity() {
 
             // Validate rating
             if (rating == 0) {
-                Toast.makeText(this, "Please select a rating.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.auto_str_please_select_a_rating), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             // Validate comment
             if (comment.length < 5) {
-                binding.tvCommentError.text = "Comment must be at least 5 characters."
+                binding.tvCommentError.text = getString(R.string.auto_str_comment_must_be_at_least_5_cha)
                 binding.tvCommentError.visibility = View.VISIBLE
                 return@setOnClickListener
             }
             if (comment.length > 1000) {
-                binding.tvCommentError.text = "Comment must not exceed 1000 characters."
+                binding.tvCommentError.text = getString(R.string.auto_str_comment_must_not_exceed_1000_c)
                 binding.tvCommentError.visibility = View.VISIBLE
                 return@setOnClickListener
             }
@@ -141,7 +141,7 @@ class WriteReviewActivity : AppCompatActivity() {
                         if (success) {
                             Toast.makeText(
                                 this@WriteReviewActivity,
-                                "Review submitted successfully! 🎉",
+                                getString(R.string.auto_str_review_submitted_successfully),
                                 Toast.LENGTH_LONG
                             ).show()
                             setResult(RESULT_OK)

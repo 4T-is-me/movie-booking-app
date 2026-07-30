@@ -1,5 +1,7 @@
 package com.example.movie_booking_app.view.fragment.admin
 
+import com.example.movie_booking_app.R
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -57,7 +59,7 @@ class AdminRoomDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.tvRoomTitle.text = roomName ?: "Seat Layout"
-        binding.tvRoomSummary.text = "Tap on seat to change type"
+        binding.tvRoomSummary.text = getString(R.string.auto_str_tap_on_seat_to_change_type)
 
         adapter = AdminSeatAdapter(
             onSeatClick = { seat ->

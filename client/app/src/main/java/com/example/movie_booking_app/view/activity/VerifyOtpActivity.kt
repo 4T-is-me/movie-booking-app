@@ -107,7 +107,7 @@ class VerifyOtpActivity : EnglishBaseActivity() {
                     is OtpUiState.Success -> {
                         binding.btnVerifyOtp.isEnabled = true
                         binding.pbLoading.visibility = View.GONE
-                        Toast.makeText(this@VerifyOtpActivity, "Verification successful!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@VerifyOtpActivity, getString(R.string.auto_str_verification_successful), Toast.LENGTH_SHORT).show()
                         
                         if (type == "register") {
                             val intent = Intent(this@VerifyOtpActivity, LoginActivity::class.java)

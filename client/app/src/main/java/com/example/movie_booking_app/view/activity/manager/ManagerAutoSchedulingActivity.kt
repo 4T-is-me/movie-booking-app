@@ -66,7 +66,7 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
             val draftsToSave = allGeneratedShowtimes.filter { it.is_auto_generated && it.room_id == selectedRoomId }
             if (draftsToSave.isEmpty()) {
                 binding.btnSave.isEnabled = true
-                Toast.makeText(this, "No new showtimes to save!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.auto_str_no_new_showtimes_to_save), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -90,7 +90,7 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                     // Start loading animation or block UI if needed
                     binding.pbLoading.visibility = View.VISIBLE
                     binding.layoutLoading.visibility = View.VISIBLE
-                    binding.tvLoadingText.text = "Saving to Database..."
+                    binding.tvLoadingText.text = getString(R.string.auto_str_saving_to_database)
 
                     val response = RetrofitClient.managerApi.createBulkShowtimes(requestBody)
 
@@ -98,12 +98,12 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                         binding.pbLoading.visibility = View.GONE
                         binding.ivResultIcon.visibility = View.VISIBLE
                         binding.ivResultIcon.setImageResource(R.drawable.baseline_check_circle_24)
-                        binding.tvLoadingText.text = "Saved successfully!"
+                        binding.tvLoadingText.text = getString(R.string.auto_str_saved_successfully)
                         delay(1500)
                         binding.layoutLoading.visibility = View.GONE
                         binding.btnSave.isEnabled = true
                         
-                        Toast.makeText(this@ManagerAutoSchedulingActivity, "Showtimes saved to Database!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@ManagerAutoSchedulingActivity, getString(R.string.auto_str_showtimes_saved_to_database), Toast.LENGTH_SHORT).show()
                         fetchExistingShowtimes(currentWeekStart, currentWeekStart.plusDays(6))
                     } else {
                         binding.layoutLoading.visibility = android.view.View.GONE
@@ -369,7 +369,7 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
         binding.layoutLoading.visibility = View.VISIBLE
         binding.pbLoading.visibility = View.VISIBLE
         binding.layoutLoading.visibility = View.VISIBLE
-        binding.tvLoadingText.text = "Generating..."
+        binding.tvLoadingText.text = getString(R.string.auto_str_generating)
         binding.tvLoadingText.setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_333333))
         
         lifecycleScope.launch {
@@ -415,7 +415,7 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                 binding.ivResultIcon.visibility = View.VISIBLE
                 binding.ivResultIcon.setImageResource(R.drawable.baseline_check_circle_24)
                 binding.ivResultIcon.setColorFilter(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_00C853))
-                binding.tvLoadingText.text = "Generated successfully!"
+                binding.tvLoadingText.text = getString(R.string.auto_str_generated_successfully)
                 binding.tvLoadingText.setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_00C853))
                 delay(1500)
                 binding.layoutLoading.visibility = View.GONE
@@ -423,9 +423,9 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                 // Show failure in overlay
                 binding.pbLoading.visibility = View.GONE
                 binding.ivResultIcon.visibility = View.VISIBLE
-                binding.ivResultIcon.setImageResource(R.drawable.baseline_error_24)
+                binding.ivResultIcon.setImageResource(R.drawable.ic_error)
                 binding.ivResultIcon.setColorFilter(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_E53935))
-                binding.tvLoadingText.text = "Generation failed!"
+                binding.tvLoadingText.text = getString(R.string.auto_str_generation_failed)
                 binding.tvLoadingText.setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_E53935))
                 delay(1500)
                 binding.layoutLoading.visibility = View.GONE

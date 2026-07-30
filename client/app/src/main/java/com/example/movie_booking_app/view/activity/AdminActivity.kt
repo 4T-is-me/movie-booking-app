@@ -54,7 +54,7 @@ class AdminActivity : BaseActivity() {
                     loadFragment(AdminStaffTabsFragment.newInstance(0))
                 }
                 R.id.nav_rooms -> {
-                    binding.tvHeaderTitle.text = "Cinemas"
+                    binding.tvHeaderTitle.text = getString(R.string.auto_str_cinemas)
                     loadFragment(AdminCinemasFragment())
                 }
                 R.id.nav_promotions -> {
@@ -72,7 +72,7 @@ class AdminActivity : BaseActivity() {
                     loadFragment(com.example.movie_booking_app.view.fragment.admin.MemberListFragment())
                 }
                 R.id.nav_settings -> {
-                    binding.tvHeaderTitle.text = "Payrolls"
+                    binding.tvHeaderTitle.text = getString(R.string.auto_str_payrolls)
                     loadFragment(com.example.movie_booking_app.view.fragment.admin.AdminPayrollFragment())
                 }
                 R.id.nav_logout -> {

@@ -47,7 +47,7 @@
                         android:id="@+id/tvAvgRating"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="0.0"
+                        android:text="@string/auto_str_0_0"
                         android:textColor="@color/auto_color_F5C542"
                         android:textSize="48sp"
                         android:textStyle="bold" />
@@ -68,7 +68,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="0 reviews"
+                        android:text="@string/auto_str_0_reviews"
                         android:textColor="@color/auto_color_BBFFFFFF"
                         android:textSize="14sp" />
 

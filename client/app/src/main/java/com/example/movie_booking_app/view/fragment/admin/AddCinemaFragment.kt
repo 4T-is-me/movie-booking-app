@@ -106,12 +106,12 @@ class AddCinemaFragment : Fragment() {
         pbLoading = binding.pbLoading
 
         if (cinemaId != null) {
-            tvTitle.text = "Edit Cinema"
-            btnSave.text = "Update Cinema"
+            tvTitle.text = getString(R.string.auto_str_edit_cinema)
+            btnSave.text = getString(R.string.auto_str_update_cinema)
             viewModel.loadCinema(cinemaId!!)
         } else {
-            tvTitle.text = "Add Cinema"
-            btnSave.text = "Save Cinema"
+            tvTitle.text = getString(R.string.auto_str_add_cinema)
+            btnSave.text = getString(R.string.auto_str_save_cinema)
         }
 
         setupDropdowns()

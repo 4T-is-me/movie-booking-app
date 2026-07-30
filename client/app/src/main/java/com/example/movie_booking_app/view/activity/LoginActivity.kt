@@ -1,5 +1,7 @@
 package com.example.movie_booking_app.view.activity
 
+import com.example.movie_booking_app.R
+
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -91,11 +93,11 @@ class LoginActivity : EnglishBaseActivity() {
                 showError(getString(usernameError))
                 return@setOnClickListener
             }
-            val passwordError = Validator.validatePassword(password)
-            if (passwordError != null) {
-                showError(getString(passwordError))
+            if (password.isEmpty()) {
+                showError(getString(R.string.error_password_required))
                 return@setOnClickListener
             }
+
             // remove Log.d (used to run debug)
             // handle citizen identity card logic: 9 - 12 digits
             Timber.tag("LOGIN_DEBUG").d("Username: $username")
@@ -122,7 +124,7 @@ class LoginActivity : EnglishBaseActivity() {
                     googleSignInLauncher.launch(signInIntent)
                 }
             } else {
-                Toast.makeText(this, "Google Sign-In is not available", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.auto_str_google_sign_in_is_not_availabl), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -144,7 +146,7 @@ class LoginActivity : EnglishBaseActivity() {
                     is LoginUiState.Success -> {
                         binding.btnLogin.isEnabled = true
                         binding.pbLoading.visibility = View.GONE
-                        Toast.makeText(this@LoginActivity, "Login successful", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@LoginActivity, getString(R.string.auto_str_login_successful), Toast.LENGTH_SHORT).show()
 
                         val loggedInUsername = state.username.ifEmpty {
                             binding.edtUsername.text.toString().trim()

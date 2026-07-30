@@ -166,7 +166,7 @@
                     android:layout_height="32dp"
                     android:layout_marginEnd="8dp"
                     android:paddingHorizontal="12dp"
-                    android:text="Rate Movie"
+                    android:text="@string/auto_str_rate_movie"
                     android:textColor="@color/white"
                     android:textSize="10sp"
                     android:textStyle="bold"

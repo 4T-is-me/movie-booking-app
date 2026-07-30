@@ -1,5 +1,7 @@
 package com.example.movie_booking_app.view.fragment.admin
 
+import com.example.movie_booking_app.R
+
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -124,7 +126,7 @@ class AdminPromotionFragment : Fragment() {
         dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
         dialog.setCancelable(true)
 
-        dialogBinding.tvDeleteMessage.text = "Are you sure you want to delete the promotion \"${promotion.title}\"?"
+        dialogBinding.tvDeleteMessage.text = "${getString(R.string.auto_str_are_you_sure_you_want_to_delet)} \"${promotion.title}\"?"
 
         dialogBinding.btnCancelDelete.setOnClickListener {
             dialog.dismiss()

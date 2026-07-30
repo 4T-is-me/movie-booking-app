@@ -1,5 +1,7 @@
 package com.example.movie_booking_app.data.repository
 
+import com.example.movie_booking_app.R
+
 import timber.log.Timber
 import android.util.Log
 import com.example.movie_booking_app.data.api.MovieApi

@@ -1,5 +1,7 @@
 package com.example.movie_booking_app.view.fragment.staff
 
+import com.example.movie_booking_app.R
+
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -66,7 +68,7 @@ class StaffPayrollFragment : Fragment() {
                         payrollAdapter.submitList(list)
                         binding.layoutEmptyState.visibility =
                             if (list.isEmpty()) View.VISIBLE else View.GONE
-                        binding.tvEmptyMessage.text = "No payroll found."
+                        binding.tvEmptyMessage.text = getString(R.string.auto_str_no_payroll_found)
                     }
                 }
 

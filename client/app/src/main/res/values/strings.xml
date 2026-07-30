@@ -1257,4 +1257,196 @@
     <string name="evening_shift_rate">Evening Shift Rate</string>
     <string name="night_shift_rate">Night Shift Rate</string>
 
+
+    <!-- Auto-extracted strings (Node Script) -->
+    <string name="auto_str_tr_l_ai_xem_phim">Trợ Lý AI Xem Phim 🎬</string>
+    <string name="auto_str_ang_tr_c_tuy_n_h_tr_24_7">🟢 Đang trực tuyến (Hỗ trợ 24/7)</string>
+    <string name="auto_str_my_profile">My Profile</string>
+    <string name="auto_str_personal_information">Personal Information</string>
+    <string name="auto_str_update_profile">Update Profile</string>
+    <string name="auto_str_ch_n_nhi_u">Chọn nhiều</string>
+    <string name="auto_str_ch_n_0_gh">Đã chọn 0 ghế</string>
+    <string name="auto_str_b_ch_n">Bỏ chọn</string>
+    <string name="auto_str_ho_t_ng">✓ Hoạt động</string>
+    <string name="auto_str_b_o_tr">✓ Bảo trì</string>
+    <string name="auto_str_see_more">See more</string>
+    <string name="auto_str_movie_news">Movie News</string>
+    <string name="auto_str_book_now">Book Now</string>
+    <string name="auto_str_discussion">Discussion</string>
+    <string name="auto_str_no_comments_yet_start_the_conv">No comments yet. Start the conversation!</string>
+
+    <!-- Auto-extracted strings (Node Script) -->
+    <string name="auto_str_selected_snacks_amp_drinks">Selected Snacks &amp;amp; Drinks</string>
+    <string name="auto_str_choose_f_amp_b">Choose F&amp;amp;B</string>
+    <string name="auto_str_total_price">Total Price</string>
+    <string name="auto_str_checkout">Checkout</string>
+    <string name="auto_str_th_m_h_nh_nh_nh_n_di_n_phim">Thêm hình ảnh nhận diện phim 🎬</string>
+    <string name="auto_str_ch_p_nh_m_i">Chụp ảnh mới</string>
+    <string name="auto_str_d_ng_m_y_nh">Dùng máy ảnh</string>
+    <string name="auto_str_t_i_nh_l_n">Tải ảnh lên</string>
+    <string name="auto_str_ch_n_t_th_vi_n">Chọn từ thư viện</string>
+    <string name="auto_str_s_c_ph_ng_chi_u_c_n_x_c_nh_n">Sự cố phòng chiếu - Cần xác nhận</string>
+    <string name="auto_str_ng_d_i_v">✓  ĐỒNG Ý DỜI VÉ</string>
+    <string name="auto_str_t_ch_i_ho_n_100_i_m">✕  Từ chối (Hoàn 100% điểm)</string>
+    <string name="auto_str_sau">Để sau</string>
+
+    <!-- Auto-extracted strings (Node Script) -->
+    <string name="auto_str_manual_check_in">Manual Check-in</string>
+    <string name="auto_str_please_enter_the_18_digit_book">Please enter the 18-digit booking code (e.g. MBD-...) to validate this ticket manually.</string>
+    <string name="auto_str_confirm">Confirm</string>
+    <string name="auto_str_reason_for_this_request">Reason for this request:</string>
+    <string name="auto_str_reason_for_this_request_1">Reason for this request:</string>
+    <string name="auto_str_duration">Duration</string>
+    <string name="auto_str_staff_per_shift">Staff Per Shift</string>
+    <string name="auto_str_select_staff_for_scheduling">Select Staff for Scheduling</string>
+    <string name="auto_str_schedule_preview">Schedule Preview</string>
+    <string name="auto_str_s">S</string>
+    <string name="auto_str_kpi_points">KPI Points</string>
+    <string name="auto_str_sales">Sales</string>
+
+    <!-- Auto-extracted strings (Node Script) -->
+    <string name="auto_str_no_leave_requests_found">No leave requests found</string>
+    <string name="auto_str_shifts_need_replacement">Shifts Need Replacement</string>
+    <string name="auto_str_like">Like</string>
+    <string name="auto_str_reply">Reply</string>
+
+    <!-- Auto-extracted strings (Node Script) -->
+    <string name="auto_str_cinema_club">Cinema Club ✔️</string>
+    <string name="auto_str_2d">2d • 🌐</string>
+    <string name="auto_str_mua_v_t_i_y">Mua vé tại đây 🔍</string>
+    <string name="auto_str_1_9k">👍❤️ 1.9k</string>
+    <string name="auto_str_222_comments">222 comments</string>
+    <string name="auto_str_th_ch">Thích</string>
+    <string name="auto_str_b_nh_lu_n">Bình luận</string>
+    <string name="auto_str_rate_movie">Rate Movie</string>
+    <string name="auto_str_need_replacement">Need Replacement</string>
+    <string name="auto_str_nguy_n_v_n_a">Nguyễn Văn A</string>
+    <string name="auto_str_cashier">Cashier</string>
+    <string name="auto_str_approved_19_07_2026">Approved: 19/07/2026</string>
+    <string name="auto_str_accept">Accept</string>
+    <string name="auto_str_customer_name">Customer Name</string>
+    <string name="auto_str_5_0">5.0</string>
+    <string name="auto_str_sample_comment_content">Sample comment content...</string>
+    <string name="auto_str_nguyen_van_a">Nguyen Van A</string>
+    <string name="auto_str_morning">Morning</string>
+    <string name="auto_str_2026_07_20">2026-07-20</string>
+    <string name="auto_str_holiday">🎉 Holiday</string>
+
+    <!-- Auto-extracted strings from Kotlin (Node Script) -->
+    <string name="auto_str_logged_out_successfully">Logged out successfully</string>
+    <string name="auto_str_name_cannot_be_empty">Name cannot be empty</string>
+    <string name="auto_str_please_enter_a_valid_quantity">Please enter a valid quantity</string>
+    <string name="auto_str_cinemas">Cinemas</string>
+    <string name="auto_str_payrolls">Payrolls</string>
+    <string name="auto_str_update_promotion">Update Promotion</string>
+    <string name="auto_str_please_enter_all_required_fiel">Please enter all required fields (*)</string>
+    <string name="auto_str_discount_value_must_be_a_posit">Discount value must be a positive number greater than 0</string>
+    <string name="auto_str_percentage_discount_cannot_exc">Percentage discount cannot exceed 100%</string>
+    <string name="auto_str_minimum_order_value_cannot_be">Minimum order value cannot be negative</string>
+    <string name="auto_str_invalid_date_format">Invalid date format</string>
+
+    <!-- Auto-extracted strings from Kotlin (Node Script) -->
+    <string name="auto_str_please_fill_in_all_required_fi">Please fill in all required fields (*)</string>
+    <string name="auto_str_invalid_email_address">Invalid email address</string>
+    <string name="auto_str_phone_number_must_start_with_0">Phone number must start with 0 and consist of 10 digits</string>
+    <string name="auto_str_identity_card_must_be_12_digit">Identity Card must be 12 digits</string>
+    <string name="auto_str_invalid_salary_amount">Invalid salary amount</string>
+    <string name="auto_str_employee_id_not_found">Employee ID not found</string>
+    <string name="auto_str_please_enter_username_and_pass">Please enter username and password</string>
+    <string name="auto_str_username_must_be_between_3_and">Username must be between 3 and 30 characters</string>
+    <string name="auto_str_password_must_be_at_least_6_ch">Password must be at least 6 characters</string>
+    <string name="auto_str_kh_ng_c_nh_n_o_c_ch_n">Không có ảnh nào được chọn.</string>
+    <string name="auto_str_c_n_c_p_quy_n_micro_thu_m_gi_n">Cần cấp quyền Micro để thu âm giọng nói.</string>
+    <string name="auto_str_kh_ng_th_k_ch_ho_t_micro">Không thể kích hoạt Micro.</string>
+    <string name="auto_str_nh_kh_ng_h_p_l_vui_l_ng_th_l_i">Ảnh không hợp lệ, vui lòng thử lại.</string>
+    <string name="auto_str_gemini_ai_ang_ph_n_t_ch_h_nh_n">⏳ Gemini AI đang phân tích hình ảnh...</string>
+    <string name="auto_str_ai_kh_ng_nh_n_ra_t_n_phim_tron">AI không nhận ra tên phim trong ảnh này.</string>
+    <string name="auto_str_unable_to_process_selected_ima">Unable to process selected image.</string>
+    <string name="auto_str_google_sign_in_is_not_availabl">Google Sign-In is not available</string>
+    <string name="auto_str_login_successful">Login successful</string>
+    <string name="auto_str_no_new_showtimes_to_save">No new showtimes to save!</string>
+    <string name="auto_str_saving_to_database">Saving to Database...</string>
+    <string name="auto_str_saved_successfully">Saved successfully!</string>
+    <string name="auto_str_showtimes_saved_to_database">Showtimes saved to Database!</string>
+    <string name="auto_str_generated_successfully">Generated successfully!</string>
+    <string name="auto_str_generation_failed">Generation failed!</string>
+
+    <!-- Auto-extracted strings from Kotlin (Node Script) -->
+    <string name="auto_str_c_p_nh_t_tr_ng_th_i_nh_m_gh_th">Cập nhật trạng thái nhóm ghế thất bại</string>
+    <string name="auto_str_maintenance_2">✓ Maintenance</string>
+    <string name="auto_str_closed_1">Closed</string>
+    <string name="auto_str_closed_2">✓ Closed</string>
+    <string name="auto_str_changes_saved_successfully">Changes saved successfully</string>
+    <string name="auto_str_failed_to_save_changes">Failed to save changes</string>
+    <string name="auto_str_c_p_nh_t_tr_ng_th_i_gh_th_t_b">Cập nhật trạng thái ghế thất bại</string>
+    <string name="auto_str_payroll">Payroll</string>
+    <string name="auto_str_feature_coming_soon">Feature coming soon</string>
+    <string name="auto_str_today">Today</string>
+    <string name="auto_str_movie_id_invalid">Movie ID invalid</string>
+    <string name="auto_str_this_movie_is_coming_soon">This movie is coming soon.</string>
+    <string name="auto_str_please_select_a_cinema_first">Please select a cinema first.</string>
+    <string name="auto_str_see_less">See less</string>
+    <string name="auto_str_show_less">Show less</string>
+    <string name="auto_str_news_article_not_found">News article not found</string>
+
+    <!-- Auto-extracted strings from Kotlin (Node Script) -->
+    <string name="auto_str_invalid_booking_session">Invalid booking session</string>
+    <string name="auto_str_no_reward_points_available">No reward points available</string>
+    <string name="auto_str_no_minimum_spending_required">No minimum spending required</string>
+    <string name="auto_str_copied">Copied</string>
+    <string name="auto_str_ticket_validator">Ticket Validator</string>
+    <string name="auto_str_ticket_sales">Ticket Sales</string>
+    <string name="auto_str_leave_requests">Leave Requests</string>
+    <string name="auto_str_my_ratings">My Ratings</string>
+    <string name="auto_str_notifications_1">Notifications</string>
+    <string name="auto_str_work_schedule_1">Work Schedule</string>
+    <string name="auto_str_verification_successful">Verification successful!</string>
+    <string name="auto_str_movie_id_not_found">Movie ID not found</string>
+    <string name="auto_str_please_select_a_rating">Please select a rating.</string>
+    <string name="auto_str_comment_must_be_at_least_5_cha">Comment must be at least 5 characters.</string>
+    <string name="auto_str_comment_must_not_exceed_1000_c">Comment must not exceed 1000 characters.</string>
+    <string name="auto_str_review_submitted_successfully">Review submitted successfully! 🎉</string>
+
+    <!-- Auto-extracted strings from Kotlin (Node Script) -->
+    <string name="auto_str_maximum_stock_reached">Maximum stock reached</string>
+    <string name="auto_str_quantity_adjusted_to_max_stock">Quantity adjusted to max stock</string>
+    <string name="auto_str_room_closed_tap_to_manage">⚠️ Room closed · Tap to manage</string>
+    <string name="auto_str_no_minimum_spend_required">No minimum spend required</string>
+
+    <!-- Auto-extracted strings from Kotlin (Node Script) -->
+    <string name="auto_str_approved">Approved</string>
+    <string name="auto_str_recent">Recent</string>
+    <string name="auto_str_edit_cinema">Edit Cinema</string>
+    <string name="auto_str_update_cinema">Update Cinema</string>
+    <string name="auto_str_edit_room">Edit Room</string>
+    <string name="auto_str_update_room">Update Room</string>
+    <string name="auto_str_update_movie">Update Movie</string>
+    <string name="auto_str_update_movie_1">UPDATE MOVIE</string>
+    <string name="auto_str_please_fill_required_fields">Please fill required fields</string>
+    <string name="auto_str_release_date_cannot_be_in_the">Release date cannot be in the past</string>
+    <string name="auto_str_updating_movie">Updating movie...</string>
+    <string name="auto_str_adding_movie">Adding movie...</string>
+
+    <!-- Auto-extracted strings from Kotlin (Node Script) -->
+    <string name="auto_str_tap_on_seat_to_change_type">Tap on seat to change type</string>
+    <string name="auto_str_unable_to_load_qr_code">Unable to load QR Code.</string>
+    <string name="auto_str_profile_updated_successfully">Profile updated successfully</string>
+    <string name="auto_str_session_expired_please_login_a">Session expired. Please login again.</string>
+
+    <!-- Auto-extracted strings from Kotlin (Node Script) -->
+    <string name="auto_str_no_payroll_found">No payroll found.</string>
+    <string name="auto_str_select_movie_showtime">SELECT MOVIE &amp; SHOWTIME</string>
+    <string name="auto_str_promotions_rewards">PROMOTIONS &amp; REWARDS</string>
+    <string name="auto_str_invalid_shift_id">Invalid Shift ID</string>
+    <string name="auto_str_shift_accepted_successfully">Shift accepted successfully!</string>
+    <string name="auto_str_leave_request_submitted_succes">Leave request submitted successfully!</string>
+    <string name="auto_str_no_shift_scheduled">No Shift Scheduled</string>
+    <string name="auto_str_off">Off</string>
+    <string name="auto_str_enjoy_your_day_off">Enjoy your day off!</string>
+    <string name="auto_str_camera_permission_is_required">Camera permission is required to scan QR codes.</string>
+    <string name="auto_str_validating">Validating...</string>
+    <string name="auto_str_enter_booking_code">Enter Booking Code</string>
+    <string name="auto_str_ticket_validated">Ticket Validated</string>
+    <string name="auto_str_validation_failed">Validation Failed</string>
+    <string name="auto_str_please_check_the_booking_code">Please check the booking code or payment status.</string>
 </resources>

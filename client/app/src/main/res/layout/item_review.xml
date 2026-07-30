@@ -43,7 +43,7 @@
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:text="A" />
+                    android:text="@string/auto_str_a" />
             </FrameLayout>
 
             <LinearLayout
@@ -57,7 +57,7 @@
                     android:id="@+id/tvReviewerName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Customer Name"
+                    android:text="@string/auto_str_customer_name"
                     android:textColor="@color/white"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -74,7 +74,7 @@
                         android:id="@+id/tvReviewRating"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="5.0"
+                        android:text="@string/auto_str_5_0"
                         android:textColor="@color/cinema_primary"
                         android:textSize="12sp"
                         android:textStyle="bold" />
@@ -93,7 +93,7 @@
                 android:id="@+id/tvReviewDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Date"
+                android:text="@string/auto_str_date"
                 android:textColor="@color/text_secondary_light"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -104,7 +104,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="Sample comment content..."
+            android:text="@string/auto_str_sample_comment_content"
             android:textColor="@color/auto_color_CCCCCC"
             android:textSize="14sp"
             android:lineSpacingExtra="2dp" />

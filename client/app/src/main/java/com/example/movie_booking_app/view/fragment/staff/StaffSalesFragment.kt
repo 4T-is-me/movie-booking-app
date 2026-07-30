@@ -306,7 +306,7 @@ class StaffSalesFragment : Fragment() {
                         binding.btnNext.alpha = 1.0f
                     }
                 } else {
-                    binding.tvSelectedSeats.text = "Selected seats: None"
+                    binding.tvSelectedSeats.text = getString(R.string.auto_str_selected_seats_none)
                     if (viewModel.currentStep.value == 1) {
                         binding.btnNext.isEnabled = false
                         binding.btnNext.alpha = 0.5f
@@ -336,7 +336,7 @@ class StaffSalesFragment : Fragment() {
 
                 when (step) {
                     1 -> {
-                        binding.tvHeaderTitle.text = "SELECT MOVIE & SHOWTIME"
+                        binding.tvHeaderTitle.text = getString(R.string.auto_str_select_movie_showtime)
                         val isMovieSelected = viewModel.selectedMovie.value != null
                         binding.layoutSeatSelection.visibility = if (isMovieSelected) View.VISIBLE else View.GONE
                         binding.layoutMemberVerification.visibility = View.GONE
@@ -347,7 +347,7 @@ class StaffSalesFragment : Fragment() {
                         binding.btnNext.alpha = if (seatsSelected) 1.0f else 0.5f
                     }
                     2 -> {
-                        binding.tvHeaderTitle.text = "MEMBER VERIFICATION"
+                        binding.tvHeaderTitle.text = getString(R.string.auto_str_member_verification)
                         binding.layoutSeatSelection.visibility = View.GONE
                         binding.layoutMemberVerification.visibility = View.VISIBLE
                         binding.layoutPromotionAndScore.visibility = View.GONE
@@ -356,7 +356,7 @@ class StaffSalesFragment : Fragment() {
                         binding.btnNext.alpha = 1.0f
                     }
                     3 -> {
-                        binding.tvHeaderTitle.text = "PROMOTIONS & REWARDS"
+                        binding.tvHeaderTitle.text = getString(R.string.auto_str_promotions_rewards)
                         binding.layoutSeatSelection.visibility = View.GONE
                         binding.layoutMemberVerification.visibility = View.GONE
                         binding.layoutPromotionAndScore.visibility = View.VISIBLE
@@ -366,7 +366,7 @@ class StaffSalesFragment : Fragment() {
                         binding.btnNext.alpha = if (hasScoreError) 0.5f else 1.0f
                     }
                     4 -> {
-                        binding.tvHeaderTitle.text = "CONFIRM & CHECKOUT"
+                        binding.tvHeaderTitle.text = getString(R.string.auto_str_confirm_checkout)
                         binding.layoutSeatSelection.visibility = View.GONE
                         binding.layoutMemberVerification.visibility = View.GONE
                         binding.layoutPromotionAndScore.visibility = View.GONE

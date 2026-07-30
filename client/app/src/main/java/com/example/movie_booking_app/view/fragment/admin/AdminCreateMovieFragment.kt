@@ -156,8 +156,8 @@ class AdminCreateMovieFragment : Fragment() {
         // Pre-fill if editing
         editingMovie = arguments?.getSerializable("movie") as? com.example.movie_booking_app.data.model.entity.Movie
         editingMovie?.let { movie ->
-            tvFormTitle.text = "Update Movie"
-            btnSubmit.text = "UPDATE MOVIE"
+            tvFormTitle.text = getString(R.string.auto_str_update_movie)
+            btnSubmit.text = getString(R.string.auto_str_update_movie_1)
             
             edtMovieName.setText(movie.movieName)
             edtDuration.setText(movie.duration?.toString())
@@ -245,7 +245,7 @@ class AdminCreateMovieFragment : Fragment() {
             }
 
             if (name.isEmpty() || releaseDateStr.isEmpty()) {
-                Toast.makeText(requireContext(), "Please fill required fields", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.auto_str_please_fill_required_fields), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -261,7 +261,7 @@ class AdminCreateMovieFragment : Fragment() {
                     }.time
                     
                     if (selectedDate != null && selectedDate.before(today)) {
-                        Toast.makeText(requireContext(), "Release date cannot be in the past", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), getString(R.string.auto_str_release_date_cannot_be_in_the), Toast.LENGTH_SHORT).show()
                         return@setOnClickListener
                     }
                 } catch (e: Exception) {
@@ -291,7 +291,7 @@ class AdminCreateMovieFragment : Fragment() {
                     val currentStatus = if (editingMovie?.isDeleted == true) "deleted" else "active"
                     viewModel.updateMovie(id, request, posterFile, currentStatus)
                 }
-                Toast.makeText(requireContext(), "Updating movie...", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.auto_str_updating_movie), Toast.LENGTH_SHORT).show()
             } else {
                 val request = com.example.movie_booking_app.data.model.request.AddMovieRequest(
                     movieName = name,
@@ -307,7 +307,7 @@ class AdminCreateMovieFragment : Fragment() {
                     censorship = censorshipCode
                 )
                 viewModel.addMovie(request, posterFile)
-                Toast.makeText(requireContext(), "Adding movie...", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.auto_str_adding_movie), Toast.LENGTH_SHORT).show()
             }
             parentFragmentManager.popBackStack()
         }

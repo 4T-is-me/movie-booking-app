@@ -31,7 +31,7 @@ class ScoreHistoryAdapter(private var list: List<ScoreHistory> = emptyList()) : 
                 val date = parser.parse(item.createdAt ?: "")
                 tvHistoryDate.text = if (date != null) formatter.format(date) else "Recent"
             } catch (e: Exception) {
-                tvHistoryDate.text = "Recent"
+                tvHistoryDate.text = holder.itemView.context.getString(R.string.auto_str_recent)
             }
 
             val textPlus = ContextCompat.getColor(holder.itemView.context, R.color.textPlus)

@@ -11,7 +11,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.example.movie_booking_app.R
-import com.example.movie_booking_app.utils.AppConstants
 import com.example.movie_booking_app.utils.RoleConstants
 import com.example.movie_booking_app.databinding.ActivityMainBinding
 import com.example.movie_booking_app.view.fragment.GenericGridFragment

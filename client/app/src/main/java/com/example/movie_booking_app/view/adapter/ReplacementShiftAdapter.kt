@@ -50,7 +50,7 @@ class ReplacementShiftAdapter(private val onAcceptClick: (ReplacementShiftRespon
                     if (approvedDate.contains("T")) approvedDate.substringBefore("T") else approvedDate
                 binding.tvApprovedAt.text = "Approved: $cleanApproved"
             } ?: run {
-                binding.tvApprovedAt.text = "Approved"
+                binding.tvApprovedAt.text = itemView.context.getString(R.string.auto_str_approved)
             }
 
             binding.btnAcceptShift.setOnClickListener {

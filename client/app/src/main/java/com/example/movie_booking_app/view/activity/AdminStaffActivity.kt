@@ -1,5 +1,7 @@
 package com.example.movie_booking_app.view.activity
 
+import com.example.movie_booking_app.R
+
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.util.Patterns
@@ -238,35 +240,35 @@ class AdminStaffActivity : BaseActivity() {
         if (fullName.isEmpty() || email.isEmpty() || phone.isEmpty() || identityCard.isEmpty() ||
             role.isEmpty() || (!isManager && position.isEmpty()) || salaryStr.isEmpty() || startDate.isEmpty() ||
             selectedCinemaId == null) {
-            Toast.makeText(this, "Please fill in all required fields (*)", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.auto_str_please_fill_in_all_required_fi), Toast.LENGTH_SHORT).show()
             return
         }
 
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(this, "Invalid email address", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.auto_str_invalid_email_address), Toast.LENGTH_SHORT).show()
             return
         }
 
         if (!phone.matches(Regex("^0\\d{9}$"))) {
-            Toast.makeText(this, "Phone number must start with 0 and consist of 10 digits", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.auto_str_phone_number_must_start_with_0), Toast.LENGTH_SHORT).show()
             return
         }
 
         if (identityCard.length != 12 || !identityCard.all { it.isDigit() }) {
-            Toast.makeText(this, "Identity Card must be 12 digits", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.auto_str_identity_card_must_be_12_digit), Toast.LENGTH_SHORT).show()
             return
         }
 
         val salary = salaryStr.toDoubleOrNull()
         if (salary == null || salary < 0) {
-            Toast.makeText(this, "Invalid salary amount", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.auto_str_invalid_salary_amount), Toast.LENGTH_SHORT).show()
             return
         }
 
         if (isEditMode) {
             val staffId = currentStaff?.id
             if (staffId == null) {
-                Toast.makeText(this, "Employee ID not found", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.auto_str_employee_id_not_found), Toast.LENGTH_SHORT).show()
                 return
             }
             val address = binding.edtAddress.text.toString().trim()
@@ -289,17 +291,17 @@ class AdminStaffActivity : BaseActivity() {
             val password = binding.edtPassword.text.toString().trim()
 
             if (username.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Please enter username and password", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.auto_str_please_enter_username_and_pass), Toast.LENGTH_SHORT).show()
                 return
             }
 
             if (username.length < 3 || username.length > 30) {
-                Toast.makeText(this, "Username must be between 3 and 30 characters", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.auto_str_username_must_be_between_3_and), Toast.LENGTH_SHORT).show()
                 return
             }
 
             if (password.length < 6) {
-                Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.auto_str_password_must_be_at_least_6_ch), Toast.LENGTH_SHORT).show()
                 return
             }
 

@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:gravity="center"
-            android:text="Sự cố phòng chiếu - Cần xác nhận"
+            android:text="@string/auto_str_s_c_ph_ng_chi_u_c_n_x_c_nh_n"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -68,7 +68,7 @@
             android:layout_width="match_parent"
             android:layout_height="52dp"
             android:layout_marginTop="20dp"
-            android:text="✓  ĐỒNG Ý DỜI VÉ"
+            android:text="@string/auto_str_ng_d_i_v"
             android:textColor="@color/cinema_dark_input"
             android:textSize="15sp"
             android:textStyle="bold"
@@ -81,7 +81,7 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginTop="10dp"
-            android:text="✕  Từ chối (Hoàn 100% điểm)"
+            android:text="@string/auto_str_t_ch_i_ho_n_100_i_m"
             android:textColor="@color/auto_color_F87171"
             android:textSize="14sp"
             app:backgroundTint="@color/auto_color_2DEF4444"
@@ -97,7 +97,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="12dp"
             android:padding="8dp"
-            android:text="Để sau"
+            android:text="@string/auto_str_sau"
             android:textColor="@color/hint_gray"
             android:textSize="14sp" />
 

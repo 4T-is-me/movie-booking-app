@@ -231,7 +231,7 @@ class MyTicketFragment : Fragment() {
                     android.util.Log.e("MyTicketFragment", "Error decoding QR Code", e)
                     if (isAdded && !isDetached && _binding != null && dialog.isShowing) {
                         dialogBinding.ivQrCode.setImageResource(com.example.movie_booking_app.R.drawable.ic_ticket)
-                        android.widget.Toast.makeText(requireContext(), "Unable to load QR Code.", android.widget.Toast.LENGTH_SHORT).show()
+                        android.widget.Toast.makeText(requireContext(), getString(R.string.auto_str_unable_to_load_qr_code), android.widget.Toast.LENGTH_SHORT).show()
                     }
                 }
             }

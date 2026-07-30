@@ -63,7 +63,7 @@ class PromotionDetailActivity : AppCompatActivity() {
             val formatter = NumberFormat.getInstance(Locale.GERMANY)
             binding.tvMinOrderValue.text = "Minimum spending: ${formatter.format(minOrderValue.toInt())} VND"
         } else {
-            binding.tvMinOrderValue.text = "No minimum spending required"
+            binding.tvMinOrderValue.text = getString(R.string.auto_str_no_minimum_spending_required)
         }
 
         // Parse and format date range
@@ -85,13 +85,13 @@ class PromotionDetailActivity : AppCompatActivity() {
 
             // Animate Copy Button transition state
             binding.btnCopyCode.animate().alpha(0f).setDuration(120).withEndAction {
-                binding.btnCopyCode.text = "Copied"
+                binding.btnCopyCode.text = getString(R.string.auto_str_copied)
                 binding.btnCopyCode.setIconResource(0) // Remove share icon
                 binding.btnCopyCode.setTextColor(ContextCompat.getColor(this, R.color.admin_live_indicator)) // Change color to green
                 binding.btnCopyCode.animate().alpha(1f).setDuration(120).withEndAction {
                     binding.btnCopyCode.postDelayed({
                         binding.btnCopyCode.animate().alpha(0f).setDuration(120).withEndAction {
-                            binding.btnCopyCode.text = "Copy"
+                            binding.btnCopyCode.text = getString(R.string.auto_str_copy)
                             binding.btnCopyCode.setIconResource(android.R.drawable.ic_menu_share) // Restore icon
                             binding.btnCopyCode.setTextColor(ContextCompat.getColor(this, R.color.yellow)) // Restore gold color
                             binding.btnCopyCode.animate().alpha(1f).setDuration(120).start()

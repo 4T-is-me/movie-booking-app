@@ -31,7 +31,7 @@
             android:layout_marginStart="16dp"
             android:layout_weight="1"
             android:fontFamily="sans-serif-black"
-            android:text="Choose F&amp;B"
+            android:text="@string/auto_str_choose_f_amp_b"
             android:textColor="@color/white"
             android:textSize="20sp" />
 
@@ -128,7 +128,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Total Price"
+                        android:text="@string/auto_str_total_price"
                         android:textColor="@color/hint_gray"
                         android:textSize="12sp" />
 
@@ -147,7 +147,7 @@
                     android:layout_width="160dp"
                     android:layout_height="56dp"
                     android:fontFamily="sans-serif-black"
-                    android:text="Checkout"
+                    android:text="@string/auto_str_checkout"
                     android:textAllCaps="false"
                     android:textColor="@color/auto_color_151A2C"
                     android:textSize="16sp"

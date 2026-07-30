@@ -1,5 +1,7 @@
 package com.example.movie_booking_app.view.activity.admin
 
+import com.example.movie_booking_app.R
+
 import android.content.Context
 import android.os.Bundle
 import android.text.InputType
@@ -128,7 +130,7 @@ class AdminInventoryActivity : AppCompatActivity() {
                 if (qty > 0) {
                     viewModel.refill(item.itemCode, qty, etReason.text.toString())
                 } else {
-                    Toast.makeText(context, "Please enter a valid quantity", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.auto_str_please_enter_a_valid_quantity), Toast.LENGTH_SHORT).show()
                 }
             }
             .setNegativeButton("Cancel") { _, _ ->

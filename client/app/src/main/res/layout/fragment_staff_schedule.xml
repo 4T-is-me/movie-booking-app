@@ -88,7 +88,7 @@
                 android:id="@+id/tvNeedReplacementHeader"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Shifts Need Replacement"
+                android:text="@string/auto_str_shifts_need_replacement"
                 android:textColor="@color/auto_color_94A3B8"
                 android:textSize="14sp"
                 android:textStyle="bold"

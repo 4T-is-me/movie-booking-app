@@ -29,7 +29,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Movie News"
+            android:text="@string/auto_str_movie_news"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -149,7 +149,7 @@
                         android:id="@+id/btnBookNow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Book Now"
+                        android:text="@string/auto_str_book_now"
                         android:textColor="@color/black"
                         android:textSize="11sp"
                         android:textStyle="bold"
@@ -171,7 +171,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Discussion"
+                android:text="@string/auto_str_discussion"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -195,7 +195,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:padding="24dp"
-                android:text="No comments yet. Start the conversation!"
+                android:text="@string/auto_str_no_comments_yet_start_the_conv"
                 android:textColor="@color/auto_color_88FFFFFF"
                 android:textSize="13sp"
                 android:visibility="gone" />
