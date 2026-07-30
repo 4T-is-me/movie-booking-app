@@ -1,5 +1,7 @@
 package com.example.movie_booking_app.view.fragment.staff
 
+import com.example.movie_booking_app.R
+
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle

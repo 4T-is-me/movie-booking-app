@@ -76,7 +76,7 @@ class ManagerRoomAdapter(
                     ivMovie.setColorFilter(ContextCompat.getColor(context, R.color.auto_color_F59E0B))
                     
                     tvRoomUnavailable.visibility = View.VISIBLE
-                    tvRoomUnavailable.text = getString(R.string.auto_str_room_unavailable_tap_to_manage)
+                    tvRoomUnavailable.text = itemView.context.getString(R.string.auto_str_room_unavailable_tap_to_manage)
                     tvRoomUnavailable.setTextColor(ContextCompat.getColor(context, R.color.auto_color_F59E0B))
                 }
                 "Closed" -> {
@@ -87,7 +87,7 @@ class ManagerRoomAdapter(
                     ivMovie.setColorFilter(ContextCompat.getColor(context, R.color.color_error_red))
                     
                     tvRoomUnavailable.visibility = View.VISIBLE
-                    tvRoomUnavailable.text = getString(R.string.auto_str_room_closed_tap_to_manage)
+                    tvRoomUnavailable.text = itemView.context.getString(R.string.auto_str_room_closed_tap_to_manage)
                     tvRoomUnavailable.setTextColor(ContextCompat.getColor(context, R.color.color_error_red))
                 }
             }

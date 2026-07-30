@@ -423,7 +423,7 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                 // Show failure in overlay
                 binding.pbLoading.visibility = View.GONE
                 binding.ivResultIcon.visibility = View.VISIBLE
-                binding.ivResultIcon.setImageResource(R.drawable.baseline_error_24)
+                binding.ivResultIcon.setImageResource(R.drawable.ic_error)
                 binding.ivResultIcon.setColorFilter(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_E53935))
                 binding.tvLoadingText.text = getString(R.string.auto_str_generation_failed)
                 binding.tvLoadingText.setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_E53935))

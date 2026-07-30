@@ -74,7 +74,7 @@ class PromoSeeAllAdapter : ListAdapter<Promo, PromoSeeAllAdapter.PromoViewHolder
                 val formatter = NumberFormat.getInstance(Locale.GERMANY)
                 tvMinOrderValue.text = "Min Spend: ${formatter.format(minSpend.toInt())} VND"
             } else {
-                tvMinOrderValue.text = getString(R.string.auto_str_no_minimum_spend_required)
+                tvMinOrderValue.text = itemView.context.getString(R.string.auto_str_no_minimum_spend_required)
             }
 
             // Parse and format date range
@@ -109,13 +109,13 @@ class PromoSeeAllAdapter : ListAdapter<Promo, PromoSeeAllAdapter.PromoViewHolder
 
                 // Animate Copy Button transition state
                 btnCopyCode.animate().alpha(0f).setDuration(120).withEndAction {
-                    btnCopyCode.text = getString(R.string.auto_str_copied)
+                    btnCopyCode.text = itemView.context.getString(R.string.auto_str_copied)
                     btnCopyCode.setIconResource(0) // Remove share icon
                     btnCopyCode.setTextColor(ContextCompat.getColor(context, R.color.admin_live_indicator)) // Change color to green
                     btnCopyCode.animate().alpha(1f).setDuration(120).withEndAction {
                         btnCopyCode.postDelayed({
                             btnCopyCode.animate().alpha(0f).setDuration(120).withEndAction {
-                                btnCopyCode.text = getString(R.string.auto_str_copy)
+                                btnCopyCode.text = itemView.context.getString(R.string.auto_str_copy)
                                 btnCopyCode.setIconResource(android.R.drawable.ic_menu_share) // Restore icon
                                 btnCopyCode.setTextColor(ContextCompat.getColor(context, R.color.yellow)) // Restore gold color
                                 btnCopyCode.animate().alpha(1f).setDuration(120).start()

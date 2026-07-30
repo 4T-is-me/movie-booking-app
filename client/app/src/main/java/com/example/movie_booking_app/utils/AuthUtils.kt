@@ -1,5 +1,7 @@
 package com.example.movie_booking_app.utils
 
+import com.example.movie_booking_app.R
+
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -41,7 +43,7 @@ object AuthUtils {
             remove("role")
             apply()
         }
-        Toast.makeText(activity, getString(R.string.auto_str_logged_out_successfully), Toast.LENGTH_SHORT).show()
+        Toast.makeText(activity, activity.getString(R.string.auto_str_logged_out_successfully), Toast.LENGTH_SHORT).show()
         val intent = Intent(activity, LoginActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }

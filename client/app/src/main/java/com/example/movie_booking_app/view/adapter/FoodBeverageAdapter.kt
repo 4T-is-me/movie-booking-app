@@ -69,7 +69,7 @@ class FoodBeverageAdapter(
                         updateQuantityOnly(item)
                         onQuantityChanged(item)
                     } else {
-                        Toast.makeText(itemView.context, getString(R.string.auto_str_maximum_stock_reached), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(itemView.context, itemView.context.getString(R.string.auto_str_maximum_stock_reached), Toast.LENGTH_SHORT).show()
                     }
                 }
 
@@ -113,7 +113,7 @@ class FoodBeverageAdapter(
                     val value = input.text.toString().toIntOrNull() ?: 0
                     if (value > item.stock) {
                         item.selectedQuantity = item.stock
-                        Toast.makeText(context, getString(R.string.auto_str_quantity_adjusted_to_max_stock), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, itemView.context.getString(R.string.auto_str_quantity_adjusted_to_max_stock), Toast.LENGTH_SHORT).show()
                     } else {
                         item.selectedQuantity = value
                     }

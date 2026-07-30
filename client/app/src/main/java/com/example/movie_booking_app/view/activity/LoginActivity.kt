@@ -1,5 +1,7 @@
 package com.example.movie_booking_app.view.activity
 
+import com.example.movie_booking_app.R
+
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -91,11 +93,11 @@ class LoginActivity : EnglishBaseActivity() {
                 showError(getString(usernameError))
                 return@setOnClickListener
             }
-            val passwordError = Validator.validatePassword(password)
-            if (passwordError != null) {
-                showError(getString(passwordError))
+            if (password.isEmpty()) {
+                showError(getString(R.string.error_password_required))
                 return@setOnClickListener
             }
+
             // remove Log.d (used to run debug)
             // handle citizen identity card logic: 9 - 12 digits
             Timber.tag("LOGIN_DEBUG").d("Username: $username")

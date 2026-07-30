@@ -71,7 +71,7 @@ class CommentsAdapter(
                 binding.btnLikeComment.setTextColor(ContextCompat.getColor(itemView.context, R.color.auto_color_F5C542))
             } else {
                 // Not reacted
-                binding.btnLikeComment.text = getString(R.string.auto_str_like)
+                binding.btnLikeComment.text = itemView.context.getString(R.string.auto_str_like)
                 binding.btnLikeComment.setTextColor(ContextCompat.getColor(itemView.context, R.color.white))
             }
 

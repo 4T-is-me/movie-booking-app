@@ -1,5 +1,7 @@
 package com.example.movie_booking_app.view.activity
 
+import com.example.movie_booking_app.R
+
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.util.Patterns

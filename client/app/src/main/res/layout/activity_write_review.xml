@@ -225,7 +225,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="@string/auto_str_android_textcolor"@color/auto_color_EF4444"
+                    android:textColor="@color/auto_color_EF4444"
                     android:textSize="12sp"
                     android:visibility="gone" />
 

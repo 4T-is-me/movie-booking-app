@@ -1,5 +1,7 @@
 package com.example.movie_booking_app.view.activity.admin
 
+import com.example.movie_booking_app.R
+
 import android.content.Context
 import android.os.Bundle
 import android.text.InputType
