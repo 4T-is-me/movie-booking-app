@@ -107,13 +107,12 @@ object RetrofitClient {
         instance.create(PayrollApiService::class.java)
     }
 
-    val maintenanceApi: MaintenanceApi by lazy {
-        instance.create(MaintenanceApi::class.java)
-    }
-
-
     val payrollConfigApi: PayrollConfigApi by lazy {
         instance.create(PayrollConfigApi::class.java)
+    }
+
+    val maintenanceApi: MaintenanceApi by lazy {
+        instance.create(MaintenanceApi::class.java)
     }
 
     // Added by AI Assistant - ChatBot AI API support - 2026-07-26

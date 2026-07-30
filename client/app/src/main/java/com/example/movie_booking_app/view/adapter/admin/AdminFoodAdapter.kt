@@ -36,13 +36,14 @@ class AdminFoodAdapter(
             with(binding) {
                 tvName.text = item.name
                 tvCategory.text = item.category.replaceFirstChar { it.uppercase() }
-                tvPrice.text = formatCurrency(item.price)
+                tvPrice.text = item.price.toVnd()
 
                 if (!item.isActive) {
                     root.alpha = 0.5f
-                    tvName.text = "${item.name} (Inactive)"
+                    btnDelete.setImageResource(android.R.drawable.ic_menu_rotate)
                 } else {
                     root.alpha = 1.0f
+                    btnDelete.setImageResource(R.drawable.ic_delete)
                 }
 
                 val imageUrl = when {
@@ -61,15 +62,18 @@ class AdminFoodAdapter(
                 btnDelete.setOnClickListener { onDeleteClick(item) }
             }
         }
-
-        private fun formatCurrency(amount: Int): String {
-            val formatter = NumberFormat.getInstance(Locale.GERMANY)
-            return "${formatter.format(amount)} VND"
-        }
     }
 
     class DiffCallback : DiffUtil.ItemCallback<FoodBeverage>() {
         override fun areItemsTheSame(oldItem: FoodBeverage, newItem: FoodBeverage): Boolean = oldItem.id == newItem.id
         override fun areContentsTheSame(oldItem: FoodBeverage, newItem: FoodBeverage): Boolean = oldItem == newItem
     }
+}
+
+/**
+ * Local extension for AdminFoodAdapter
+ */
+private fun Int.toVnd(): String {
+    val formatter = java.text.NumberFormat.getInstance(java.util.Locale.GERMANY)
+    return "${formatter.format(this)} VND"
 }

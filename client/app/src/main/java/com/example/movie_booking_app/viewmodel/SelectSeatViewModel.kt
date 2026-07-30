@@ -7,6 +7,7 @@ import com.example.movie_booking_app.data.model.entity.*
 import com.example.movie_booking_app.data.repository.BookingRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.SimpleDateFormat
@@ -22,6 +23,12 @@ class SelectSeatViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     val timerManager: com.example.movie_booking_app.utils.BookingTimerManager
 ) : ViewModel() {
+
+    private val isoFormat by lazy { SimpleDateFormat("yyyy-MM-dd", Locale.US) }
+    private val dayFormat by lazy { SimpleDateFormat("dd", Locale.getDefault()) }
+    private val monthFormat by lazy { SimpleDateFormat("MMM", Locale.getDefault()) }
+    private val dowFormat by lazy { SimpleDateFormat("EEE", Locale.getDefault()) }
+    private val yearFormat by lazy { SimpleDateFormat("yyyy", Locale.getDefault()) }
 
     private val movieId: String = savedStateHandle["movieId"] ?: ""
     private val targetCinemaId: String? = savedStateHandle["cinemaId"]
@@ -95,16 +102,14 @@ class SelectSeatViewModel @Inject constructor(
                 }
                 
                 val dateMap = mutableMapOf<String, ShowDate>()
-                val isoFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-                val dayFormat = SimpleDateFormat("dd", Locale.getDefault())
-                val monthFormat = SimpleDateFormat("MMM", Locale.getDefault())
-                val dowFormat = SimpleDateFormat("EEE", Locale.getDefault())
-                val yearFormat = SimpleDateFormat("yyyy", Locale.getDefault())
 
                 list.forEach { showtime ->
                     val dateStr = showtime.showDate?.take(10) ?: return@forEach
                     if (!dateMap.containsKey(dateStr)) {
-                        val dateObj = try { isoFormat.parse(dateStr) } catch (e: Exception) { null }
+                        val dateObj = try { isoFormat.parse(dateStr) } catch (e: Exception) { 
+                            Timber.e(e, "Date parse error: $dateStr")
+                            null 
+                        }
                         if (dateObj != null) {
                             dateMap[dateStr] = ShowDate(
                                 id = dateStr,

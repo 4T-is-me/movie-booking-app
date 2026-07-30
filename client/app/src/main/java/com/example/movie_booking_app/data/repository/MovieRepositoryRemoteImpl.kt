@@ -239,11 +239,11 @@ class MovieRepositoryRemoteImpl @Inject constructor(
             val response = api.submitReview(movieId, ReviewRequest(rating, comment))
             if (!response.isSuccessful || response.body()?.success != true) {
                 val errorBody = response.errorBody()?.string() ?: response.body()?.message
-                Log.e("MovieRepoRemote", "Submit review failed: ${response.code()} - $errorBody")
+                Timber.tag("MovieRepoRemote").e("Submit review failed: ${response.code()} - $errorBody")
             }
             response.isSuccessful && response.body()?.success == true
         } catch (e: Exception) {
-            Log.e("MovieRepoRemote", "Submit review exception: ${e.message}", e)
+            Timber.tag("MovieRepoRemote").e(e, "Submit review exception: ${e.message}")
             false
         }
     }
