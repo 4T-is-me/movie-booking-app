@@ -1,10 +1,8 @@
 package com.example.movie_booking_app.view.adapter
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -28,14 +26,8 @@ class StaffNotifAdapter(
                 tvNotifBody.text = item.message
                 tvNotifTime.text = "${date} - ${time}"
 
-                // Đổi nền & chấm indicator nếu chưa đọc
-                if (item.isRead) {
-                    root.setBackgroundColor(Color.TRANSPARENT)
-                    viewUnreadIndicator.visibility = View.GONE
-                } else {
-                    root.setBackgroundColor(ContextCompat.getColor(root.context, R.color.unread_item_bg))
-                    viewUnreadIndicator.visibility = View.VISIBLE
-                }
+                // Chỉ hiện chấm indicator nếu chưa đọc, giữ nền giống user (dùng màu từ XML)
+                viewUnreadIndicator.visibility = if (item.isRead) View.GONE else View.VISIBLE
 
                 root.setOnClickListener {
                     onItemClick(item)

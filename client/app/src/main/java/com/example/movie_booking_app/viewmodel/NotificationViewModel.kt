@@ -53,7 +53,13 @@ class NotificationViewModel @Inject constructor(
     fun fetchStaffNotifications() {
         viewModelScope.launch {
             _isLoading.value = true
-            val localList = NotificationLocalStorage.getAll(context)
+            // Filter local list to only include staff-related notifications
+            val localList = NotificationLocalStorage.getAll(context).filter { item ->
+                val type = item.type.uppercase()
+                type.startsWith("LEAVE_") || type.startsWith("SHIFT_") ||
+                        type == "SHIFT_ASSIGNED" || type == "SHIFT_UPDATED" ||
+                        type == "LEAVE_APPROVED" || type == "LEAVE_REJECTED"
+            }
             repository.getStaffNotifications().collect { response ->
                 _isLoading.value = false
                 val apiList = response?.data ?: emptyList()
