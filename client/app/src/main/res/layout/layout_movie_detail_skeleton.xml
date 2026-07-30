@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.facebook.shimmer.ShimmerFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/shimmerDetail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:shimmer_auto_start="true"
+    app:shimmer_base_alpha="0.2"
+    app:shimmer_highlight_alpha="0.4"
+    app:shimmer_duration="1200">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Poster Placeholder -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="280dp"
+            android:background="@color/skeleton_gray" />
+
+        <!-- Info Card Placeholder -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="-50dp"
+            app:cardBackgroundColor="@color/auto_color_1F1F1F"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <View
+                    android:layout_width="200dp"
+                    android:layout_height="28dp"
+                    android:background="@color/skeleton_gray" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal">
+                    <View
+                        android:layout_width="60dp"
+                        android:layout_height="18dp"
+                        android:background="@color/skeleton_gray" />
+                    <View
+                        android:layout_width="80dp"
+                        android:layout_height="18dp"
+                        android:layout_marginStart="16dp"
+                        android:background="@color/skeleton_gray" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="120dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="16dp"
+                    android:background="@color/skeleton_gray" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Movie Info Placeholders -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="18dp"
+                android:layout_marginBottom="10dp"
+                android:background="@color/skeleton_gray" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="18dp"
+                android:layout_marginBottom="10dp"
+                android:background="@color/skeleton_gray" />
+            <View
+                android:layout_width="200dp"
+                android:layout_height="18dp"
+                android:background="@color/skeleton_gray" />
+        </LinearLayout>
+
+        <!-- Storyline -->
+        <View
+            android:layout_width="120dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="28dp"
+            android:background="@color/skeleton_gray" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="12dp"
+            android:background="@color/skeleton_gray" />
+
+        <!-- Actors/Directors -->
+        <View
+            android:layout_width="100dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="28dp"
+            android:background="@color/skeleton_gray" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="20dp">
+            <View
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginEnd="12dp"
+                android:background="@drawable/bg_circle_green"
+                android:backgroundTint="@color/skeleton_gray" />
+            <View
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginEnd="12dp"
+                android:background="@drawable/bg_circle_green"
+                android:backgroundTint="@color/skeleton_gray" />
+            <View
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@drawable/bg_circle_green"
+                android:backgroundTint="@color/skeleton_gray" />
+        </LinearLayout>
+
+    </LinearLayout>
+</com.facebook.shimmer.ShimmerFrameLayout>

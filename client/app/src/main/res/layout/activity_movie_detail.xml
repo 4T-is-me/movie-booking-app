@@ -1,251 +1,235 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/swipeRefresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.core.widget.NestedScrollView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/auto_color_000000"
-        android:fillViewport="true">
+        android:layout_height="match_parent">
 
-        <LinearLayout
+        <!-- Shimmer Skeleton -->
+        <include
+            android:id="@+id/layoutSkeleton"
+            layout="@layout/layout_movie_detail_skeleton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:visibility="visible" />
 
-
-        <FrameLayout
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
-            android:layout_height="280dp">
-
-            <!-- Poster -->
-            <ImageView
-                android:id="@+id/imgPoster"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:src="@android:drawable/ic_menu_gallery" />
-
-            <!-- Back Button -->
-            <ImageView
-                android:id="@+id/ivBack"
-                android:layout_width="65dp"
-                android:layout_height="65dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_gravity="top|start"
-                android:padding="8dp"
-                android:src="@drawable/ic_chevron_right"
-                android:rotation="180"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                app:tint="@android:color/white" />
-        </FrameLayout>
-
-        <!-- Movie Info Overlay Card -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="-50dp"
-            app:cardBackgroundColor="@color/auto_color_1F1F1F"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="12dp"
-            app:strokeWidth="0dp"
-            app:strokeColor="@android:color/transparent">
+            android:layout_height="match_parent"
+            android:background="@color/auto_color_000000"
+            android:fillViewport="true"
+            android:visibility="gone"
+            tools:visibility="visible">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp">
-
-                <TextView
-                    android:id="@+id/txtTitle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/auto_str_avengers_infinity_war"
-                    android:textColor="@android:color/white"
-                    android:textSize="26sp"
-                    android:textStyle="bold" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp">
-                    <TextView
-                        android:id="@+id/txtDuration"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="@string/auto_str_2h29m"
-                        android:textColor="@color/auto_color_AAAAAA"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:id="@+id/txtReleaseDate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginLeft="10dp"
-                        android:text="@string/auto_str_28_06_2026"
-                        android:textColor="@color/auto_color_AAAAAA"
-                        android:textSize="15sp" />
-                </LinearLayout>
-
-                <!-- Review Row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/auto_str_review"
-                        android:textColor="@android:color/white"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
-
-                    <ImageView
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:layout_marginStart="8dp"
-                        android:src="@android:drawable/btn_star_big_on" />
-
-                    <TextView
-                        android:id="@+id/txtRating"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:text="@string/auto_str_4_8"
-                        android:textColor="@color/auto_color_FFD54F"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/txtVote"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:text="@string/auto_str_1_222"
-                        android:textColor="@color/auto_color_AAAAAA" />
-                </LinearLayout>
-
-                <RatingBar
-                    android:id="@+id/ratingBar"
-                    style="?android:attr/ratingBarStyleSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:numStars="5"
-                    android:rating="4.8"
-                    android:stepSize="0.1" />
-
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Movie Info -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:orientation="vertical"
-            android:paddingHorizontal="20dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="130dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/auto_str_movie_genre"
-                    android:textColor="@color/auto_color_CCCCCC" />
-                <TextView
-                    android:id="@+id/txtGenre"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/auto_str_action_adventure_sci_fi"
-                    android:textColor="@android:color/white" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="130dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/auto_str_censorship"
-                    android:textColor="@color/auto_color_CCCCCC" />
-                <TextView
-                    android:id="@+id/txtAge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/auto_str_13"
-                    android:textColor="@android:color/white"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="130dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/auto_str_language"
-                    android:textColor="@color/auto_color_CCCCCC" />
-                <TextView
-                    android:id="@+id/txtLanguage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/auto_str_english"
-                    android:textColor="@android:color/white" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- Storyline -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="28dp"
-                android:text="@string/auto_str_storyline"
-                android:textColor="@android:color/white"
-                android:textSize="22sp"
-                android:textStyle="bold" />
-
-            <!-- Cố định bọc bằng LinearLayout để căn lề chuẩn 20dp -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="10dp"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/txtDescription"
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="280dp">
+
+                    <!-- Poster -->
+                    <ImageView
+                        android:id="@+id/imgPoster"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop" />
+
+                    <!-- Back Button -->
+                    <ImageView
+                        android:id="@+id/ivBack"
+                        android:layout_width="65dp"
+                        android:layout_height="65dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_gravity="top|start"
+                        android:padding="8dp"
+                        android:src="@drawable/ic_chevron_right"
+                        android:rotation="180"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:focusable="true"
+                        app:tint="@android:color/white" />
+                </FrameLayout>
+
+                <!-- Movie Info Overlay Card -->
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:lineSpacingExtra="6dp"
-                    android:maxLines="3"
-                    android:text="@string/auto_str_as_the_avengers_and_their_alli"
-                    android:textColor="@color/auto_color_DDDDDD"
-                    android:textSize="15.5sp" />
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="-50dp"
+                    app:cardBackgroundColor="@color/auto_color_1F1F1F"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="12dp"
+                    app:strokeWidth="0dp"
+                    app:strokeColor="@android:color/transparent">
 
-                <!-- Căn nút "See more" sang góc phải cho tinh tế và chuyên nghiệp -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="20dp">
+
+                        <TextView
+                            android:id="@+id/txtTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@android:color/white"
+                            android:textSize="26sp"
+                            android:textStyle="bold"
+                            tools:text="Avengers: Infinity War" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp">
+                            <TextView
+                                android:id="@+id/txtDuration"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:textColor="@color/auto_color_AAAAAA"
+                                android:textSize="15sp"
+                                tools:text="2h 29m" />
+
+                            <TextView
+                                android:id="@+id/txtReleaseDate"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:layout_marginLeft="10dp"
+                                android:textColor="@color/auto_color_AAAAAA"
+                                android:textSize="15sp"
+                                tools:text="28/06/2026" />
+                        </LinearLayout>
+
+                        <!-- Review Row -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/auto_str_review"
+                                android:textColor="@android:color/white"
+                                android:textSize="16sp"
+                                android:textStyle="bold" />
+
+                            <ImageView
+                                android:layout_width="18dp"
+                                android:layout_height="18dp"
+                                android:layout_marginStart="8dp"
+                                android:src="@android:drawable/btn_star_big_on" />
+
+                            <TextView
+                                android:id="@+id/txtRating"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:textColor="@color/auto_color_FFD54F"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                tools:text="4.8" />
+
+                            <TextView
+                                android:id="@+id/txtVote"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:textColor="@color/auto_color_AAAAAA"
+                                tools:text="(1,222)" />
+                        </LinearLayout>
+
+                        <RatingBar
+                            android:id="@+id/ratingBar"
+                            style="?android:attr/ratingBarStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:numStars="5"
+                            android:stepSize="0.1"
+                            tools:rating="4.8" />
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Movie Info -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="130dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/auto_str_movie_genre"
+                            android:textColor="@color/auto_color_CCCCCC" />
+                        <TextView
+                            android:id="@+id/txtGenre"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@android:color/white"
+                            tools:text="Action, Adventure, Sci-Fi" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="130dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/auto_str_censorship"
+                            android:textColor="@color/auto_color_CCCCCC" />
+                        <TextView
+                            android:id="@+id/txtAge"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold"
+                            tools:text="T13" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="130dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/auto_str_language"
+                            android:textColor="@color/auto_color_CCCCCC" />
+                        <TextView
+                            android:id="@+id/txtLanguage"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@android:color/white"
+                            tools:text="English" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Storyline -->
                 <TextView
-                    android:id="@+id/tvSeeMoreDescription"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
@@ -356,119 +340,251 @@
                     android:textSize="22sp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/tvSeeAllReviews"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/auto_str_see_all"
-                    android:textColor="@color/auto_color_FACC15"
-                    android:textSize="14sp"
-                    android:visibility="gone" />
-            </LinearLayout>
-
-            <!-- Rating Summary Row -->
-            <LinearLayout
-                android:id="@+id/layoutRatingSummary"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:visibility="gone">
-
-                <TextView
-                    android:id="@+id/tvAvgRating"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/auto_str_0_0"
-                    android:textColor="@color/auto_color_FACC15"
-                    android:textSize="40sp"
-                    android:textStyle="bold" />
-
                 <LinearLayout
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_weight="1"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginTop="10dp"
                     android:orientation="vertical">
 
-                    <RatingBar
-                        android:id="@+id/ratingBarSummary"
-                        style="@style/Widget.AppCompat.RatingBar.Small"
-                        android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/txtDescription"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:isIndicator="true"
-                        android:numStars="5"
-                        android:rating="0"
-                        android:progressTint="@color/auto_color_FACC15" />
+                        android:lineSpacingExtra="6dp"
+                        android:maxLines="3"
+                        android:textColor="@color/auto_color_DDDDDD"
+                        android:textSize="15.5sp"
+                        tools:text="As the Avengers and their allies have continued to protect the world..." />
 
                     <TextView
-                        android:id="@+id/tvReviewCount"
+                        android:id="@+id/tvSeeMoreDescription"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="@string/auto_str_0_reviews"
-                        android:textColor="@color/auto_color_888888"
-                        android:textSize="13sp" />
+                        android:layout_gravity="end"
+                        android:text="See more"
+                        android:textColor="@color/auto_color_FACC15"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:paddingVertical="6dp"
+                        android:paddingHorizontal="12dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:visibility="gone" />
                 </LinearLayout>
+
+                <!-- Director Section -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="28dp"
+                    android:text="@string/auto_str_director"
+                    android:textColor="@android:color/white"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvDirector"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:layout_marginTop="12dp"
+                    android:clipToPadding="false"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:orientation="horizontal" />
+
+                <!-- Actor Section -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/auto_str_actor"
+                    android:textColor="@android:color/white"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvActors"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:layout_marginTop="12dp"
+                    android:clipToPadding="false"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:orientation="horizontal" />
+
+                <!-- Cinema Section -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="28dp"
+                    android:text="@string/auto_str_cinema_1"
+                    android:textColor="@android:color/white"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvCinema"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:nestedScrollingEnabled="false"
+                    android:paddingHorizontal="16dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+                <TextView
+                    android:id="@+id/tvNoCinema"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/auto_str_this_cinema_is_not_yet_availab"
+                    android:textAlignment="center"
+                    android:visibility="gone"
+                    android:padding="16dp"/>
+
+                <!-- Reviews Section -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="28dp"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="20dp">
+
+                    <!-- Reviews Header -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/auto_str_reviews"
+                            android:textColor="@color/auto_color_FFFFFF"
+                            android:textSize="22sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvSeeAllReviews"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/auto_str_see_all"
+                            android:textColor="@color/auto_color_FACC15"
+                            android:textSize="14sp"
+                            android:visibility="gone" />
+                    </LinearLayout>
+
+                    <!-- Rating Summary Row -->
+                    <LinearLayout
+                        android:id="@+id/layoutRatingSummary"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:id="@+id/tvAvgRating"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/auto_color_FACC15"
+                            android:textSize="40sp"
+                            android:textStyle="bold"
+                            tools:text="4.8" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <RatingBar
+                                android:id="@+id/ratingBarSummary"
+                                style="@style/Widget.AppCompat.RatingBar.Small"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:isIndicator="true"
+                                android:numStars="5"
+                                android:progressTint="@color/auto_color_FACC15"
+                                tools:rating="4.8" />
+
+                            <TextView
+                                android:id="@+id/tvReviewCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:textColor="@color/auto_color_888888"
+                                android:textSize="13sp"
+                                tools:text="1,222 reviews" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Reviews List -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvReviews"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:nestedScrollingEnabled="false"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+                    <!-- No Reviews Text -->
+                    <TextView
+                        android:id="@+id/tvNoReviews"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:gravity="center"
+                        android:padding="16dp"
+                        android:text="@string/auto_str_no_reviews_yet_be_the_first_to"
+                        android:textColor="@color/auto_color_666666"
+                        android:textSize="14sp"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+                <!-- Write Review Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnWriteReview"
+                    android:layout_width="match_parent"
+                    android:layout_height="58dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginTop="24dp"
+                    android:visibility="gone"
+                    android:text="@string/auto_str_write_review"
+                    android:textAllCaps="false"
+                    android:textColor="@color/auto_color_FFFFFF"
+                    android:textSize="18sp"
+                    app:backgroundTint="@color/auto_color_2F2F2F"
+                    app:strokeColor="@color/auto_color_FFC107"
+                    app:strokeWidth="1.5dp"
+                    app:cornerRadius="30dp" />
+
+                <!-- Continue Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnBookTicket"
+                    android:layout_width="match_parent"
+                    android:layout_height="58dp"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="40dp"
+                    android:text="@string/auto_str_continue"
+                    android:textAllCaps="false"
+                    android:textColor="@color/auto_color_000000"
+                    android:textSize="18sp"
+                    app:backgroundTint="@color/auto_color_FFC107"
+                    app:cornerRadius="30dp" />
+
             </LinearLayout>
-
-            <!-- Reviews List -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvReviews"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:nestedScrollingEnabled="false"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-            <!-- No Reviews Text -->
-            <TextView
-                android:id="@+id/tvNoReviews"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:gravity="center"
-                android:padding="16dp"
-                android:text="@string/auto_str_no_reviews_yet_be_the_first_to"
-                android:textColor="@color/auto_color_666666"
-                android:textSize="14sp"
-                android:visibility="gone" />
-
-        </LinearLayout>
-
-        <!-- Write Review Button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnWriteReview"
-            android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="24dp"
-            android:visibility="gone"
-            android:text="@string/auto_str_write_review"
-            android:textAllCaps="false"
-            android:textColor="@color/auto_color_FFFFFF"
-            android:textSize="18sp"
-            app:backgroundTint="@color/auto_color_2F2F2F"
-            app:strokeColor="@color/auto_color_FFC107"
-            app:strokeWidth="1.5dp"
-            app:cornerRadius="30dp" />
-
-        <!-- Continue Button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnBookTicket"
-            android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="40dp"
-            android:text="@string/auto_str_continue"
-            android:textAllCaps="false"
-            android:textColor="@color/auto_color_000000"
-            android:textSize="18sp"
-            app:backgroundTint="@color/auto_color_FFC107"
-            app:cornerRadius="30dp" />
-
-    </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+        </androidx.core.widget.NestedScrollView>
+    </FrameLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

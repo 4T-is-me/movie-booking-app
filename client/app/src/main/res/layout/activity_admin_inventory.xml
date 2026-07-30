@@ -41,38 +41,34 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Cinema Selector -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardCinemaSelector"
-        android:layout_width="match_parent"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/layoutCinemaSelector"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        app:cardBackgroundColor="@color/auto_color_1E1E1E"
-        app:cardCornerRadius="12dp"
-        app:layout_constraintTop_toBottomOf="@id/toolbar">
+        android:hint="@string/fb_select_cinema"
+        app:boxStrokeColor="@color/yellow"
+        app:boxCornerRadiusTopStart="12dp"
+        app:boxCornerRadiusTopEnd="12dp"
+        app:boxCornerRadiusBottomStart="12dp"
+        app:boxCornerRadiusBottomEnd="12dp"
+        app:hintTextColor="@color/admin_text_secondary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintWidth_percent="0.7">
 
-        <LinearLayout
+        <AutoCompleteTextView
+            android:id="@+id/actvCinema"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="12dp">
+            android:textColor="@color/white"
+            android:inputType="none"
+            android:paddingVertical="10dp"
+            android:textSize="14sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/fb_select_cinema"
-                android:textColor="@color/auto_color_9A9A9A"
-                android:textSize="12sp" />
-
-            <Spinner
-                android:id="@+id/spinnerCinema"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginTop="4dp"
-                android:backgroundTint="@color/white" />
-
-        </LinearLayout>
-
-    </com.google.android.material.card.MaterialCardView>
+    </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Inventory List -->
     <androidx.recyclerview.widget.RecyclerView
@@ -81,7 +77,7 @@
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cardCinemaSelector"
+        app:layout_constraintTop_toBottomOf="@id/layoutCinemaSelector"
         tools:listitem="@layout/item_admin_inventory" />
 
     <!-- Loading -->

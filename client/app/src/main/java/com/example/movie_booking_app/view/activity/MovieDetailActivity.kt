@@ -111,9 +111,21 @@ class MovieDetailActivity : AppCompatActivity() {
 
     private fun refreshData() {
         binding.swipeRefresh.isRefreshing = true
+        toggleLoading(true)
         viewModel.fetchMovieDetail(movieId)
         viewModel.fetchMovieShowtimes(movieId)
         viewModel.fetchMovieReviews(movieId)
+    }
+
+    private fun toggleLoading(isLoading: Boolean) {
+        binding.layoutSkeleton.root.visibility = if (isLoading) View.VISIBLE else View.GONE
+        binding.nestedScrollView.visibility = if (isLoading) View.GONE else View.VISIBLE
+        
+        if (isLoading) {
+            binding.layoutSkeleton.shimmerDetail.startShimmer()
+        } else {
+            binding.layoutSkeleton.shimmerDetail.stopShimmer()
+        }
     }
 
     private fun observeMovie() {
@@ -125,10 +137,13 @@ class MovieDetailActivity : AppCompatActivity() {
                         viewModel.movieDetail,
                         viewModel.movieShowtimes,
                         viewModel.movieReviews
-                    ) { detail, showtimes, reviews ->
+                    ) { detail, _, _ ->
                         detail != null
                     }.collect { isLoaded ->
-                        if (isLoaded) binding.swipeRefresh.isRefreshing = false
+                        if (isLoaded) {
+                            binding.swipeRefresh.isRefreshing = false
+                            toggleLoading(false)
+                        }
                     }
                 }
 

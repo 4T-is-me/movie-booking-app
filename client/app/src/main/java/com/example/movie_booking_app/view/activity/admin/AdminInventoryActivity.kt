@@ -55,12 +55,9 @@ class AdminInventoryActivity : AppCompatActivity() {
             adapter = inventoryAdapter
         }
 
-        binding.spinnerCinema.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val cinema = viewModel.uiState.value.cinemas.getOrNull(position)
-                cinema?.let { viewModel.selectCinema(it) }
-            }
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        binding.actvCinema.setOnItemClickListener { _, _, position, _ ->
+            val cinema = viewModel.uiState.value.cinemas.getOrNull(position)
+            cinema?.let { viewModel.selectCinema(it) }
         }
     }
 
@@ -70,12 +67,17 @@ class AdminInventoryActivity : AppCompatActivity() {
                 viewModel.uiState.collect { state ->
                     binding.progressBar.isVisible = state.isLoading
 
-                    // Setup Spinner
-                    if (state.cinemas.isNotEmpty() && binding.spinnerCinema.adapter == null) {
+                    // Setup Dropdown
+                    if (state.cinemas.isNotEmpty() && binding.actvCinema.adapter == null) {
                         val names = state.cinemas.map { it.cinemaName ?: "Unknown" }
-                        val adapter = ArrayAdapter(this@AdminInventoryActivity, android.R.layout.simple_spinner_item, names)
-                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                        binding.spinnerCinema.adapter = adapter
+                        val adapter = ArrayAdapter(this@AdminInventoryActivity, com.example.movie_booking_app.R.layout.item_spinner_dropdown, names)
+                        binding.actvCinema.setAdapter(adapter)
+                        
+                        // Default select first
+                        if (names.isNotEmpty()) {
+                            binding.actvCinema.setText(names[0], false)
+                            viewModel.selectCinema(state.cinemas[0])
+                        }
                     }
 
                     // Setup List
