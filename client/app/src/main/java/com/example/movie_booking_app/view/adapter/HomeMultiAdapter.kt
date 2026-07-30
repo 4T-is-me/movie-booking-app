@@ -120,11 +120,20 @@ class HomeMultiAdapter(
                 
                 layoutContentNowPlaying.isVisible = !isLoading
                 if (!isLoading && movies.isNotEmpty()) {
-                    val isFirstSubmit = adapter.currentList.isEmpty()
+                    val oldList = adapter.currentList
+                    val isFirstSubmit = oldList.isEmpty()
+                    
+                    // If content changed significantly (e.g. from Batman to Puss), reset to center
+                    val contentChanged = !isFirstSubmit && (oldList.size != movies.size || oldList.firstOrNull()?.id != movies.firstOrNull()?.id)
+
                     adapter.submitList(movies) {
-                        if (isFirstSubmit) {
+                        if (isFirstSubmit || contentChanged) {
                             val size = movies.size
-                            vpNowPlaying.setCurrentItem(size * 500, false)
+                            if (size > 1) {
+                                vpNowPlaying.setCurrentItem(size * 500, false)
+                            } else {
+                                vpNowPlaying.setCurrentItem(0, false)
+                            }
                         }
                     }
                     if (!isCallbackAdded) {
