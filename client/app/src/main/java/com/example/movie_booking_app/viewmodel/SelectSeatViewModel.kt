@@ -3,15 +3,29 @@ package com.example.movie_booking_app.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.movie_booking_app.data.model.entity.*
+import com.example.movie_booking_app.data.model.entity.Seat
+import com.example.movie_booking_app.data.model.entity.SeatStatus
+import com.example.movie_booking_app.data.model.entity.SeatType
+import com.example.movie_booking_app.data.model.entity.ShowDate
+import com.example.movie_booking_app.data.model.entity.Showtime
 import com.example.movie_booking_app.data.repository.BookingRepository
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
 
 enum class SeatingUiState {
     IDLE, HOLDING, HELD, EXPIRED, ERROR

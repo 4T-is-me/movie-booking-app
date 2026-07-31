@@ -5,9 +5,15 @@ import com.example.movie_booking_app.data.model.admin.MonthlyRevenueItem
 import com.example.movie_booking_app.data.model.admin.MovieRevenueItem
 import com.example.movie_booking_app.data.model.admin.StatsOverview
 import com.example.movie_booking_app.data.model.entity.CinemaRoom
-import com.example.movie_booking_app.data.model.entity.Movie
 import com.example.movie_booking_app.data.model.entity.Showtime
-import com.example.movie_booking_app.data.model.response.*
+import com.example.movie_booking_app.data.model.response.CinemaRoomListResponse
+import com.example.movie_booking_app.data.model.response.DailyRevenueResponse
+import com.example.movie_booking_app.data.model.response.MonthlyRevenueResponse
+import com.example.movie_booking_app.data.model.response.MovieRevenueResponse
+import com.example.movie_booking_app.data.model.response.OverviewStatsResponse
+import com.example.movie_booking_app.data.model.response.PromotionData
+import com.example.movie_booking_app.data.model.response.ShowtimeResponse
+import com.example.movie_booking_app.data.model.response.UserProfileResponse
 
 /**
  * Mock data source for Admin related entities.

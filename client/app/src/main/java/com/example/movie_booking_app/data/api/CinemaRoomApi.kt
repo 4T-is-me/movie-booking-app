@@ -6,11 +6,17 @@ import com.example.movie_booking_app.data.model.response.CinemaRoomListResponse
 import com.example.movie_booking_app.data.model.response.CinemaRoomDetailResponse
 import com.example.movie_booking_app.data.model.response.AdminRoomSeatsResponse
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.PATCH
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface CinemaRoomApi {
     @GET("api/admin/rooms")
-    suspend fun getRooms(@retrofit2.http.Query("cinemaId") cinemaId: String? = null): Response<CinemaRoomListResponse>
+    suspend fun getRooms(@Query("cinemaId") cinemaId: String? = null): Response<CinemaRoomListResponse>
 
     @GET("api/admin/rooms/{roomId}")
     suspend fun getRoomDetails(@Path("roomId") roomId: String): Response<CinemaRoomDetailResponse>

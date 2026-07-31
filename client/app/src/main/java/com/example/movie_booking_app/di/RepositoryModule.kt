@@ -1,6 +1,21 @@
 package com.example.movie_booking_app.di
 
-import com.example.movie_booking_app.data.repository.*
+import com.example.movie_booking_app.data.repository.BookingRepository
+import com.example.movie_booking_app.data.repository.BookingRepositoryRemoteImpl
+import com.example.movie_booking_app.data.repository.CinemaRoomRepository
+import com.example.movie_booking_app.data.repository.CinemaRoomRepositoryImpl
+import com.example.movie_booking_app.data.repository.CinemaRoomsRepository
+import com.example.movie_booking_app.data.repository.CinemaRoomsRepositoryImpl
+import com.example.movie_booking_app.data.repository.CinemasRepository
+import com.example.movie_booking_app.data.repository.CinemasRepositoryImpl
+import com.example.movie_booking_app.data.repository.FoodRepository
+import com.example.movie_booking_app.data.repository.FoodRepositoryImpl
+import com.example.movie_booking_app.data.repository.InventoryRepository
+import com.example.movie_booking_app.data.repository.InventoryRepositoryImpl
+import com.example.movie_booking_app.data.repository.MemberRepository
+import com.example.movie_booking_app.data.repository.MemberRepositoryImpl
+import com.example.movie_booking_app.data.repository.MovieRepository
+import com.example.movie_booking_app.data.repository.MovieRepositoryRemoteImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

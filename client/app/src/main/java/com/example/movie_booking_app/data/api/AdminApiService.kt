@@ -1,20 +1,32 @@
 package com.example.movie_booking_app.data.api
 
+import com.example.movie_booking_app.data.model.request.AddCinemaRequest
 import com.example.movie_booking_app.data.model.request.AddMovieRequest
 import com.example.movie_booking_app.data.model.request.UpdateMovieRequest
-import com.example.movie_booking_app.data.model.request.AddCinemaRequest
-import com.example.movie_booking_app.data.model.response.*
+import com.example.movie_booking_app.data.model.request.UpdateStatusRequest
+import com.example.movie_booking_app.data.model.response.AdminMemberResponse
+import com.example.movie_booking_app.data.model.response.AdminPromotionsResponse
+import com.example.movie_booking_app.data.model.response.AdminStaffListResponse
+import com.example.movie_booking_app.data.model.response.CinemaDetailResponse
+import com.example.movie_booking_app.data.model.response.CinemaResponse
 import com.example.movie_booking_app.data.model.response.DailyRevenueResponse
 import com.example.movie_booking_app.data.model.response.MonthlyRevenueResponse
 import com.example.movie_booking_app.data.model.response.MovieRevenueResponse
+import com.example.movie_booking_app.data.model.response.MovieListResponse
 import com.example.movie_booking_app.data.model.response.OverviewStatsResponse
-import com.example.movie_booking_app.data.model.response.AdminStaffListResponse
-import com.example.movie_booking_app.data.model.request.UpdateStatusRequest
-import com.example.movie_booking_app.data.model.response.CinemaDetailResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.Multipart
+import retrofit2.http.PATCH
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Part
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface AdminApiService {
     @GET("api/admin/movies")
