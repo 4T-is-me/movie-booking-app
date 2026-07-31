@@ -67,6 +67,9 @@ class AdminActivity : BaseActivity() {
                 R.id.nav_inventory -> {
                     startActivity(Intent(this, com.example.movie_booking_app.view.activity.admin.AdminInventoryActivity::class.java))
                 }
+                R.id.nav_import_orders -> {
+                    startActivity(Intent(this, com.example.movie_booking_app.view.activity.admin.AdminImportOrderActivity::class.java))
+                }
                 R.id.nav_members -> {
                     binding.tvHeaderTitle.text = getString(R.string.admin_tab_members)
                     loadFragment(com.example.movie_booking_app.view.fragment.admin.MemberListFragment())
