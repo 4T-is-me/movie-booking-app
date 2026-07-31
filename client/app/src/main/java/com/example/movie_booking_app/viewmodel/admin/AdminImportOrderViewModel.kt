@@ -18,7 +18,8 @@ data class AdminImportOrderUiState(
     val orders: List<ImportOrder> = emptyList(),
     val selectedStatus: String? = null,
     val error: String? = null,
-    val successMessage: String? = null
+    val successMessageResId: Int? = null,
+    val successMessageArg: String? = null
 )
 
 @HiltViewModel
@@ -60,7 +61,8 @@ class AdminImportOrderViewModel @Inject constructor(
                             it.copy(
                                 orders = updatedList,
                                 isLoading = false,
-                                successMessage = "Approved order ${updatedOrder.importCode} and updated stock successfully"
+                                successMessageResId = com.example.movie_booking_app.R.string.goods_intake_success_approve,
+                                successMessageArg = updatedOrder.importCode
                             )
                         }
                     }.onFailure { e ->
@@ -68,9 +70,9 @@ class AdminImportOrderViewModel @Inject constructor(
                     }
                 }
         }
-    }
+     }
 
-    fun rejectOrder(orderId: String, reason: String) {
+     fun rejectOrder(orderId: String, reason: String) {
         viewModelScope.launch {
             importOrderRepository.rejectImportOrder(orderId, reason)
                 .onStart { _uiState.update { it.copy(isLoading = true) } }
@@ -83,7 +85,8 @@ class AdminImportOrderViewModel @Inject constructor(
                             it.copy(
                                 orders = updatedList,
                                 isLoading = false,
-                                successMessage = "Rejected order ${updatedOrder.importCode}"
+                                successMessageResId = com.example.movie_booking_app.R.string.goods_intake_success_reject,
+                                successMessageArg = updatedOrder.importCode
                             )
                         }
                     }.onFailure { e ->
@@ -91,9 +94,9 @@ class AdminImportOrderViewModel @Inject constructor(
                     }
                 }
         }
-    }
+     }
 
-    fun resetStatus() {
-        _uiState.update { it.copy(error = null, successMessage = null) }
-    }
+     fun resetStatus() {
+        _uiState.update { it.copy(error = null, successMessageResId = null, successMessageArg = null) }
+     }
 }

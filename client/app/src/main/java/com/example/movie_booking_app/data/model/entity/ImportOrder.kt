@@ -7,7 +7,7 @@ data class ImportOrderItem(
     val itemCode: String,
     val itemName: String,
     val quantity: Int,
-    val purchasePrice: Long  // Giá nhập đơn vị (VNĐ)
+    val purchasePrice: Long  
 ) : Serializable
 
 data class ImportOrderCinema(
@@ -29,7 +29,7 @@ data class ImportOrder(
     val importCode: String,
     val cinemaId: ImportOrderCinema?,
     val managerId: ImportOrderManager?,
-    val supplierId: Supplier?,   // Populated từ server
+    val supplierId: Supplier?,   
     val items: List<ImportOrderItem>,
     val totalAmount: Long,
     val status: String,  // "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED"

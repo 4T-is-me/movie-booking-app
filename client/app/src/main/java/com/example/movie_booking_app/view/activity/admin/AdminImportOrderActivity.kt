@@ -121,8 +121,13 @@ class AdminImportOrderActivity : AppCompatActivity() {
                     originalList = state.orders
                     applyFilterAndSearch()
 
-                    state.successMessage?.let {
-                        Toast.makeText(this@AdminImportOrderActivity, it, Toast.LENGTH_SHORT).show()
+                    state.successMessageResId?.let { resId ->
+                        val msg = if (state.successMessageArg != null) {
+                            getString(resId, state.successMessageArg)
+                        } else {
+                            getString(resId)
+                        }
+                        Toast.makeText(this@AdminImportOrderActivity, msg, Toast.LENGTH_SHORT).show()
                         viewModel.resetStatus()
                     }
                     state.error?.let {

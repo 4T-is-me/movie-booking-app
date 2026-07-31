@@ -1,7 +1,6 @@
 package com.example.movie_booking_app.view.activity.manager
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -11,6 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.api.ImportOrderItemRequest
 import com.example.movie_booking_app.data.model.entity.Inventory
 import com.example.movie_booking_app.data.model.entity.Supplier
@@ -94,8 +94,13 @@ class ManagerCreateImportOrderActivity : AppCompatActivity() {
                         inventoryList = state.inventoryItems
                     }
 
-                    state.successMessage?.let {
-                        Toast.makeText(this@ManagerCreateImportOrderActivity, it, Toast.LENGTH_SHORT).show()
+                    state.successMessageResId?.let { resId ->
+                        val msg = if (state.successMessageArg != null) {
+                            getString(resId, state.successMessageArg)
+                        } else {
+                            getString(resId)
+                        }
+                        Toast.makeText(this@ManagerCreateImportOrderActivity, msg, Toast.LENGTH_SHORT).show()
                         viewModel.resetStatus()
                         setResult(RESULT_OK)
                         finish()
@@ -124,16 +129,16 @@ class ManagerCreateImportOrderActivity : AppCompatActivity() {
         var selectedIndex = -1
 
         androidx.appcompat.app.AlertDialog.Builder(this)
-            .setTitle("Select Concession Product")
+            .setTitle(getString(R.string.goods_intake_select_product_title))
             .setSingleChoiceItems(names, -1) { _, which ->
                 selectedIndex = which
             }
-            .setPositiveButton("Select") { _, _ ->
+            .setPositiveButton(getString(R.string.goods_intake_select_product_positive)) { _, _ ->
                 if (selectedIndex >= 0) {
                     val inv = items[selectedIndex]
                     // Check if already in list
                     if (itemInputAdapter.currentList.any { it.itemCode == inv.itemCode }) {
-                        Toast.makeText(this, "${inv.itemName} is already in the list", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.goods_intake_toast_already_added, inv.itemName), Toast.LENGTH_SHORT).show()
                     } else {
                         val newItem = ImportOrderItemRequest(
                             itemCode = inv.itemCode,
@@ -145,29 +150,29 @@ class ManagerCreateImportOrderActivity : AppCompatActivity() {
                     }
                 }
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.dialog_cancel), null)
             .show()
     }
 
     private fun updateTotalAmount(total: Long) {
         val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
-        binding.tvTotalAmount.text = "Total Amount: ${formatter.format(total)}"
+        binding.tvTotalAmount.text = getString(R.string.goods_intake_total_format, formatter.format(total))
     }
 
     private fun submitOrder() {
         val supplier = selectedSupplier
         if (supplier == null) {
-            Toast.makeText(this, "Please select a supplier", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.goods_intake_toast_select_supplier), Toast.LENGTH_SHORT).show()
             return
         }
         val items = itemInputAdapter.currentList
         if (items.isEmpty()) {
-            Toast.makeText(this, "Please add at least 1 product", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.goods_intake_toast_add_product), Toast.LENGTH_SHORT).show()
             return
         }
         val invalidItem = items.firstOrNull { it.quantity <= 0 || it.purchasePrice <= 0 }
         if (invalidItem != null) {
-            Toast.makeText(this, "Please enter valid quantity and price for ${invalidItem.itemName}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.goods_intake_toast_invalid_item, invalidItem.itemName), Toast.LENGTH_SHORT).show()
             return
         }
 

@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="4dp"
     android:layout_marginVertical="4dp"
-    app:cardBackgroundColor="#1A2333"
+    app:cardBackgroundColor="@color/import_order_card_bg"
     app:cardCornerRadius="10dp"
     app:strokeColor="@color/auto_color_F5C542"
     app:strokeWidth="0.5dp">
@@ -50,7 +50,7 @@
             android:layout_height="24dp"
             android:src="@drawable/ic_close_white"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            app:tint="#F44336"
+            app:tint="@color/text_error"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="8dp"
-            android:hint="Quantity"
+            android:hint="@string/goods_intake_quantity_hint"
             app:boxStrokeColor="@color/yellow"
             app:hintTextColor="@color/admin_text_secondary"
             app:boxCornerRadiusTopStart="8dp"
@@ -90,7 +90,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:hint="Price (đ)"
+            android:hint="@string/goods_intake_price_hint"
             app:boxStrokeColor="@color/yellow"
             app:hintTextColor="@color/admin_text_secondary"
             app:boxCornerRadiusTopStart="8dp"

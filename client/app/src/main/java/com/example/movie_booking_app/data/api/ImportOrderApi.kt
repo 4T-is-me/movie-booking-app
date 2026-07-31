@@ -46,7 +46,6 @@ data class ImportOrderResponse(
 
 interface ImportOrderApi {
 
-    // ---------- Manager ----------
 
     @GET("api/manager/suppliers")
     suspend fun getSuppliers(): Response<SupplierListResponse>
@@ -69,7 +68,6 @@ interface ImportOrderApi {
         @Path("id") orderId: String
     ): Response<ImportOrderResponse>
 
-    // ---------- Admin ----------
 
     @GET("api/admin/import-orders")
     suspend fun getAdminImportOrders(

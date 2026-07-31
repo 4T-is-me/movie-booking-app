@@ -23,7 +23,8 @@ data class ManagerImportOrderUiState(
     val suppliers: List<Supplier> = emptyList(),
     val inventoryItems: List<Inventory> = emptyList(),
     val error: String? = null,
-    val successMessage: String? = null
+    val successMessageResId: Int? = null,
+    val successMessageArg: String? = null
 )
 
 @HiltViewModel
@@ -91,7 +92,8 @@ class ManagerImportOrderViewModel @Inject constructor(
                             it.copy(
                                 isLoading = false,
                                 orders = listOf(order) + it.orders,
-                                successMessage = "Import order ${order.importCode} created successfully"
+                                successMessageResId = com.example.movie_booking_app.R.string.goods_intake_success_create,
+                                successMessageArg = order.importCode
                             )
                         }
                     }.onFailure { e ->
@@ -114,7 +116,8 @@ class ManagerImportOrderViewModel @Inject constructor(
                             it.copy(
                                 orders = updatedList,
                                 isLoading = false,
-                                successMessage = "Import order ${updatedOrder.importCode} cancelled"
+                                successMessageResId = com.example.movie_booking_app.R.string.goods_intake_success_cancel,
+                                successMessageArg = updatedOrder.importCode
                             )
                         }
                     }.onFailure { e ->
@@ -125,6 +128,6 @@ class ManagerImportOrderViewModel @Inject constructor(
     }
 
     fun resetStatus() {
-        _uiState.update { it.copy(error = null, successMessage = null) }
+        _uiState.update { it.copy(error = null, successMessageResId = null, successMessageArg = null) }
     }
 }

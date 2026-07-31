@@ -1487,4 +1487,27 @@
     <string name="goods_intake_approve_msg_template">Approve order %1$s?\n\nThis will automatically update the cinema\'s inventory.</string>
     <string name="goods_intake_reject_msg_template">Reject order %1$s?</string>
     <string name="goods_intake_cancel_msg_template">Are you sure you want to cancel order %1$s?</string>
+
+    <string name="goods_intake_create_title">Create Goods Intake Order</string>
+    <string name="goods_intake_supplier_required">Supplier *</string>
+    <string name="goods_intake_select_supplier">Select Supplier</string>
+    <string name="goods_intake_products_required">Concession Products *</string>
+    <string name="goods_intake_btn_add">+ Add</string>
+    <string name="goods_intake_total_initial">Total Amount: 0 đ</string>
+    <string name="goods_intake_notes_hint">Notes (optional)</string>
+    <string name="goods_intake_btn_submit">Submit Order</string>
+    <string name="goods_intake_rejection_label">Rejection reason:</string>
+    <string name="goods_intake_quantity_hint">Quantity</string>
+    <string name="goods_intake_price_hint">Price (đ)</string>
+    <string name="goods_intake_toast_already_added">%1$s is already in the list</string>
+    <string name="goods_intake_toast_select_supplier">Please select a supplier</string>
+    <string name="goods_intake_toast_add_product">Please add at least 1 product</string>
+    <string name="goods_intake_toast_invalid_item">Please enter valid quantity and price for %1$s</string>
+    <string name="goods_intake_total_format">Total Amount: %1$s</string>
+    <string name="goods_intake_select_product_title">Select Concession Product</string>
+    <string name="goods_intake_select_product_positive">Select</string>
+    <string name="goods_intake_success_approve">Approved order %1$s and updated stock successfully</string>
+    <string name="goods_intake_success_reject">Rejected order %1$s</string>
+    <string name="goods_intake_success_create">Import order %1$s created successfully</string>
+    <string name="goods_intake_success_cancel">Import order %1$s cancelled</string>
 </resources>
