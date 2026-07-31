@@ -740,13 +740,38 @@
                         android:orientation="vertical"
                         android:padding="16dp">
 
-                        <TextView
-                            android:layout_width="wrap_content"
+                        <RelativeLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/auto_str_promotion_coupon"
-                            android:textColor="@color/gold_selected"
-                            android:textSize="13sp"
-                            android:textStyle="bold" />
+                            android:layout_marginBottom="8dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_centerVertical="true"
+                                android:text="@string/auto_str_promotion_coupon"
+                                android:textColor="@color/gold_selected"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvStaffSuggestVoucher"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:text="@string/suggest_voucher"
+                                android:textColor="@color/gold_selected"
+                                android:textSize="13sp"
+                                android:textStyle="bold"
+                                android:paddingHorizontal="8dp"
+                                android:paddingVertical="4dp"
+                                android:background="?attr/selectableItemBackground"
+                                android:clickable="true"
+                                android:focusable="true"/>
+
+                        </RelativeLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -811,23 +836,7 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Available Promotions List -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:text="@string/auto_str_available_promotions"
-                    android:textColor="@color/white"
-                    android:textSize="13sp"
-                    android:textStyle="bold" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvAvailablePromotions"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:scrollbars="vertical"
-                    android:layout_marginBottom="16dp"
-                    tools:listitem="@layout/item_staff_promotion" />
 
                 <!-- Calculation Summary -->
                 <com.google.android.material.card.MaterialCardView

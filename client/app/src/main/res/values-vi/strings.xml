@@ -214,4 +214,5 @@
     <string name="please_select_rating">Vui lòng chọn số sao</string>
     <string name="rating_submitted_success">Cảm ơn bạn đã đánh giá!</string>
     <string name="btn_rate_staff">Đánh giá</string>
+    <string name="suggest_voucher">Gợi ý Voucher</string>
 </resources>

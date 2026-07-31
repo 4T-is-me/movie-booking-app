@@ -23,5 +23,6 @@ data class BookingUiState(
     val availablePoints: Int = 0,
     val useRewardPoints: Boolean = false,
     val rewardDiscount: Int = 0,
-    val earnedPoints: Int = 0
+    val earnedPoints: Int = 0,
+    val availablePromotions: List<com.example.movie_booking_app.data.model.entity.Promo> = emptyList()
 )

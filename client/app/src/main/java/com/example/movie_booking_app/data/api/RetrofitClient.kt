@@ -120,4 +120,8 @@ object RetrofitClient {
     val newsApi: NewsApi by lazy {
         instance.create(NewsApi::class.java)
     }
+
+    val importOrderApi: ImportOrderApi by lazy {
+        instance.create(ImportOrderApi::class.java)
+    }
 }

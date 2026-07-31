@@ -277,6 +277,9 @@ class ManagerActivity : AppCompatActivity() {
                 R.id.nav_schedule -> {
                     startActivity(Intent(this, com.example.movie_booking_app.view.activity.manager.ManagerAutoSchedulingActivity::class.java))
                 }
+                R.id.nav_import_orders -> {
+                    startActivity(Intent(this, com.example.movie_booking_app.view.activity.manager.ManagerImportOrderActivity::class.java))
+                }
                 R.id.nav_profile -> {
                     startActivity(Intent(this, ManagerProfileActivity::class.java))
                 }
