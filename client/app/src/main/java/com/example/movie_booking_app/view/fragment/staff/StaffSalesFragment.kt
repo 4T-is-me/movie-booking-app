@@ -40,7 +40,7 @@ class StaffSalesFragment : Fragment() {
     private lateinit var dateAdapter: DateAdapter
     private lateinit var timeAdapter: TimeAdapter
     private lateinit var seatAdapter: SeatAdapter
-    private lateinit var promotionAdapter: StaffPromotionAdapter
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -86,12 +86,6 @@ class StaffSalesFragment : Fragment() {
         }
         binding.rvSeatMap.adapter = seatAdapter
 
-        // Promotion Adapter
-        promotionAdapter = StaffPromotionAdapter { promo ->
-            viewModel.applyPromoCode(promo.discountCode)
-            binding.edtPromoCode.setText(promo.discountCode)
-        }
-        binding.rvAvailablePromotions.adapter = promotionAdapter
     }
 
     private fun setupLegend() {
@@ -185,6 +179,10 @@ class StaffSalesFragment : Fragment() {
         binding.btnApplyPromo.setOnClickListener {
             val code = binding.edtPromoCode.text.toString()
             viewModel.applyPromoCode(code)
+        }
+
+        binding.tvStaffSuggestVoucher.setOnClickListener {
+            showSuggestVoucherDialog()
         }
 
         binding.swUseScore.setOnCheckedChangeListener { _, isChecked ->
@@ -417,12 +415,7 @@ class StaffSalesFragment : Fragment() {
             }
         }
 
-        // Observe Promotions List
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.availablePromotions.collectLatest { list ->
-                promotionAdapter.submitList(list)
-            }
-        }
+
 
         // Observe Applied Promotion & Price Breakdown
         viewLifecycleOwner.lifecycleScope.launch {
@@ -600,6 +593,30 @@ class StaffSalesFragment : Fragment() {
 
         binding.viewStep4.setBackgroundResource(if (step >= 4) activeDrawable else 0)
         if (step < 4) binding.viewStep4.setBackgroundColor(inactiveColor)
+    }
+
+    private fun showSuggestVoucherDialog() {
+        val promotions = viewModel.availablePromotions.value
+        if (promotions.isEmpty()) {
+            Toast.makeText(requireContext(), getString(R.string.auto_str_no_promotions_found), Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val dialog = com.google.android.material.bottomsheet.BottomSheetDialog(requireContext())
+        val dialogBinding = com.example.movie_booking_app.databinding.DialogSuggestVoucherBinding.inflate(layoutInflater)
+        dialog.setContentView(dialogBinding.root)
+
+        val adapter = StaffPromotionAdapter { promo ->
+            binding.edtPromoCode.setText(promo.discountCode)
+            viewModel.applyPromoCode(promo.discountCode)
+            dialog.dismiss()
+        }
+
+        dialogBinding.rvSuggestPromotions.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(requireContext())
+        dialogBinding.rvSuggestPromotions.adapter = adapter
+        adapter.submitList(promotions)
+
+        dialog.show()
     }
 
     override fun onDestroyView() {

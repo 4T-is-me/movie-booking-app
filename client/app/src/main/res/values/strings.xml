@@ -1510,4 +1510,5 @@
     <string name="goods_intake_success_reject">Rejected order %1$s</string>
     <string name="goods_intake_success_create">Import order %1$s created successfully</string>
     <string name="goods_intake_success_cancel">Import order %1$s cancelled</string>
+    <string name="suggest_voucher">Suggest Vouchers</string>
 </resources>

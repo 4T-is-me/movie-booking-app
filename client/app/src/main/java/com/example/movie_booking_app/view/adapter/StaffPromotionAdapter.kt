@@ -29,11 +29,18 @@ class StaffPromotionAdapter(
         private val tvStaffPromoTitle: TextView = binding.tvStaffPromoTitle
         private val tvStaffPromoDetail: TextView = binding.tvStaffPromoDetail
         private val tvStaffPromoCode: TextView = binding.tvStaffPromoCode
+        private val imgPromoIcon = binding.imgPromoIcon
 
         fun bind(promo: Promo) {
             tvStaffPromoTitle.text = promo.title
             tvStaffPromoDetail.text = promo.detail ?: "No detailed description"
             tvStaffPromoCode.text = promo.discountCode
+
+            com.bumptech.glide.Glide.with(itemView.context)
+                .load(promo.imageUrl)
+                .placeholder(R.drawable.bg_placeholder_card)
+                .error(R.drawable.bg_placeholder_card)
+                .into(imgPromoIcon)
 
             itemView.setOnClickListener {
                 onPromoClick(promo)

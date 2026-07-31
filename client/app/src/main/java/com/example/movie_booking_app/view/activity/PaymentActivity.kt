@@ -113,6 +113,35 @@ class PaymentActivity : AppCompatActivity() {
             }
             viewModel.confirmCheckout()
         }
+
+        // Suggest Vouchers click listener
+        binding.tvSuggestVoucher.setOnClickListener {
+            showSuggestVoucherDialog()
+        }
+    }
+
+    private fun showSuggestVoucherDialog() {
+        val promotions = viewModel.uiState.value.availablePromotions
+        if (promotions.isEmpty()) {
+            Toast.makeText(this, getString(R.string.auto_str_no_promotions_found), Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val dialog = com.google.android.material.bottomsheet.BottomSheetDialog(this)
+        val dialogBinding = com.example.movie_booking_app.databinding.DialogSuggestVoucherBinding.inflate(layoutInflater)
+        dialog.setContentView(dialogBinding.root)
+
+        val adapter = com.example.movie_booking_app.view.adapter.StaffPromotionAdapter { promo ->
+            binding.etCouponCode.setText(promo.discountCode)
+            viewModel.applyCoupon(promo.discountCode)
+            dialog.dismiss()
+        }
+
+        dialogBinding.rvSuggestPromotions.layoutManager = LinearLayoutManager(this)
+        dialogBinding.rvSuggestPromotions.adapter = adapter
+        adapter.submitList(promotions)
+
+        dialog.show()
     }
 
     private fun observeViewModel() {

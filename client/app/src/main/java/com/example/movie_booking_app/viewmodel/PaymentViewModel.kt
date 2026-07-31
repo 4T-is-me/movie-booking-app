@@ -23,6 +23,7 @@ import kotlin.math.floor
 class PaymentViewModel @Inject constructor(
     private val repository: PaymentRepository,
     private val profileRepository: ProfileRepository,
+    private val movieRepository: com.example.movie_booking_app.data.repository.MovieRepository,
     val timerManager: com.example.movie_booking_app.utils.BookingTimerManager
 ) : ViewModel() {
 
@@ -43,7 +44,18 @@ class PaymentViewModel @Inject constructor(
         )
         observeTimer()
         loadRewardPoints()
+        loadAvailablePromotions()
         recalculateTotals()
+    }
+
+    private fun loadAvailablePromotions() {
+        viewModelScope.launch {
+            movieRepository.getPromos()
+                .catch { _uiState.update { it.copy(availablePromotions = emptyList()) } }
+                .collect { list ->
+                    _uiState.update { it.copy(availablePromotions = list) }
+                }
+        }
     }
 
     private fun loadRewardPoints() {
