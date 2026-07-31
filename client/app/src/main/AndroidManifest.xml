@@ -171,6 +171,19 @@
             android:name=".view.activity.manager.ManagerAutoSchedulingActivity"
             android:exported="false"
             android:theme="@style/Theme.Moviebookingapp" />
+        <activity
+            android:name=".view.activity.manager.ManagerImportOrderActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp" />
+        <activity
+            android:name=".view.activity.manager.ManagerCreateImportOrderActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".view.activity.admin.AdminImportOrderActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Moviebookingapp" />
      
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"

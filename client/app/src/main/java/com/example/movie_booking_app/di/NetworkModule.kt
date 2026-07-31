@@ -20,6 +20,7 @@ import com.example.movie_booking_app.data.api.RetrofitClient
 import com.example.movie_booking_app.data.api.MaintenanceApi
 import com.example.movie_booking_app.data.api.ChatApi
 import com.example.movie_booking_app.data.api.InventoryApi
+import com.example.movie_booking_app.data.api.ImportOrderApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -152,5 +153,11 @@ object NetworkModule {
     @Singleton
     fun provideMaintenanceApi(): MaintenanceApi {
         return RetrofitClient.maintenanceApi
+    }
+
+    @Provides
+    @Singleton
+    fun provideImportOrderApi(): ImportOrderApi {
+        return RetrofitClient.importOrderApi
     }
 }
