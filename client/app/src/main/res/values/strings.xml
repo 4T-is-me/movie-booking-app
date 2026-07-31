@@ -1472,4 +1472,19 @@
     <string name="auto_str_please_select_a_showtime">Please select a showtime</string>
     <string name="auto_str_please_select_a_seat">Please select a seat</string>
     <string name="auto_str_failed_to_load_ratings_or_no_r">Failed to load ratings or no ratings yet</string>
+
+    <!-- Goods Intake / Import Order Strings -->
+    <string name="goods_intake_approve_title">Approve Import Order</string>
+    <string name="goods_intake_reject_title">Reject Import Order</string>
+    <string name="goods_intake_cancel_title">Cancel Import Order</string>
+    <string name="goods_intake_rejection_hint">Rejection reason (optional)</string>
+    <string name="goods_intake_search_hint">Search code or supplier…</string>
+    <string name="goods_intake_tab_pending">Pending</string>
+    <string name="goods_intake_tab_approved">Approved</string>
+    <string name="goods_intake_tab_rejected">Rejected</string>
+    <string name="goods_intake_btn_back">Back</string>
+    <string name="goods_intake_btn_cancel_order">Cancel Order</string>
+    <string name="goods_intake_approve_msg_template">Approve order %1$s?\n\nThis will automatically update the cinema\'s inventory.</string>
+    <string name="goods_intake_reject_msg_template">Reject order %1$s?</string>
+    <string name="goods_intake_cancel_msg_template">Are you sure you want to cancel order %1$s?</string>
 </resources>

@@ -161,10 +161,10 @@ class ManagerImportOrderActivity : AppCompatActivity() {
         )
         dialog.setCancelable(true)
 
-        dialogBinding.tvTitle.text = "Cancel Import Order"
-        dialogBinding.tvMessage.text = "Are you sure you want to cancel order ${order.importCode}?"
-        dialogBinding.btnCancel.text = "Back"
-        dialogBinding.btnConfirm.text = "Cancel Order"
+        dialogBinding.tvTitle.text = getString(R.string.goods_intake_cancel_title)
+        dialogBinding.tvMessage.text = getString(R.string.goods_intake_cancel_msg_template, order.importCode)
+        dialogBinding.btnCancel.text = getString(R.string.goods_intake_btn_back)
+        dialogBinding.btnConfirm.text = getString(R.string.goods_intake_btn_cancel_order)
 
         dialogBinding.btnCancel.setOnClickListener {
             dialog.dismiss()

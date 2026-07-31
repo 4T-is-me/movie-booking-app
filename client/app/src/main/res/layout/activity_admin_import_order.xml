@@ -65,7 +65,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/bg_tab_active_gold"
                 android:gravity="center"
-                android:text="Pending"
+                android:text="@string/goods_intake_tab_pending"
                 android:textColor="@color/bg_primary"
                 android:textSize="14sp"
                 android:textStyle="bold" />
@@ -76,7 +76,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Approved"
+                android:text="@string/goods_intake_tab_approved"
                 android:textColor="@color/text_secondary"
                 android:textSize="14sp"
                 android:textStyle="bold" />
@@ -87,7 +87,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="Rejected"
+                android:text="@string/goods_intake_tab_rejected"
                 android:textColor="@color/text_secondary"
                 android:textSize="14sp"
                 android:textStyle="bold" />
@@ -115,7 +115,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
-                android:hint="Search code or supplier..."
+                android:hint="@string/goods_intake_search_hint"
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:maxLines="1"

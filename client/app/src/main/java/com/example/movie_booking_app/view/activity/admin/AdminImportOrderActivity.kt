@@ -145,7 +145,7 @@ class AdminImportOrderActivity : AppCompatActivity() {
         )
         dialog.setCancelable(true)
 
-        dialogBinding.tvMessage.text = "Approve order ${order.importCode}?\n\nThis will automatically update the cinema's inventory."
+        dialogBinding.tvMessage.text = getString(R.string.goods_intake_approve_msg_template, order.importCode)
 
         dialogBinding.btnCancel.setOnClickListener {
             dialog.dismiss()
@@ -170,7 +170,7 @@ class AdminImportOrderActivity : AppCompatActivity() {
         )
         dialog.setCancelable(true)
 
-        dialogBinding.tvMessage.text = "Reject order ${order.importCode}?"
+        dialogBinding.tvMessage.text = getString(R.string.goods_intake_reject_msg_template, order.importCode)
 
         dialogBinding.btnCancel.setOnClickListener {
             dialog.dismiss()
