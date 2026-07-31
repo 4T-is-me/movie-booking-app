@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import com.example.movie_booking_app.R
 import javax.inject.Inject
 
 data class AdminImportOrderUiState(
@@ -57,11 +58,11 @@ class AdminImportOrderViewModel @Inject constructor(
                         val updatedList = _uiState.value.orders.map {
                             if (it.id == updatedOrder.id) updatedOrder else it
                         }
-                        _uiState.update {
+                         _uiState.update {
                             it.copy(
                                 orders = updatedList,
                                 isLoading = false,
-                                successMessageResId = com.example.movie_booking_app.R.string.goods_intake_success_approve,
+                                successMessageResId = R.string.goods_intake_success_approve,
                                 successMessageArg = updatedOrder.importCode
                             )
                         }
@@ -85,7 +86,7 @@ class AdminImportOrderViewModel @Inject constructor(
                             it.copy(
                                 orders = updatedList,
                                 isLoading = false,
-                                successMessageResId = com.example.movie_booking_app.R.string.goods_intake_success_reject,
+                                successMessageResId = R.string.goods_intake_success_reject,
                                 successMessageArg = updatedOrder.importCode
                             )
                         }

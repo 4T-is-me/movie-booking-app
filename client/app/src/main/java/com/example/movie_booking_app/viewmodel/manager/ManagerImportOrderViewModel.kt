@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import com.example.movie_booking_app.R
 import javax.inject.Inject
 
 data class ManagerImportOrderUiState(
@@ -92,7 +93,7 @@ class ManagerImportOrderViewModel @Inject constructor(
                             it.copy(
                                 isLoading = false,
                                 orders = listOf(order) + it.orders,
-                                successMessageResId = com.example.movie_booking_app.R.string.goods_intake_success_create,
+                                successMessageResId = R.string.goods_intake_success_create,
                                 successMessageArg = order.importCode
                             )
                         }
@@ -116,7 +117,7 @@ class ManagerImportOrderViewModel @Inject constructor(
                             it.copy(
                                 orders = updatedList,
                                 isLoading = false,
-                                successMessageResId = com.example.movie_booking_app.R.string.goods_intake_success_cancel,
+                                successMessageResId = R.string.goods_intake_success_cancel,
                                 successMessageArg = updatedOrder.importCode
                             )
                         }
