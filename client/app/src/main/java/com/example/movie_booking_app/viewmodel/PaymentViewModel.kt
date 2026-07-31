@@ -9,10 +9,14 @@ import com.example.movie_booking_app.data.model.request.ConfirmBookingRequest
 import com.example.movie_booking_app.data.repository.PaymentRepository
 import com.example.movie_booking_app.data.repository.ProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.example.movie_booking_app.utils.Constants
 import kotlin.math.floor
 
 @HiltViewModel

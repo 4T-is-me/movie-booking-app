@@ -19,7 +19,8 @@ import com.example.movie_booking_app.viewmodel.SelectSeatViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
-import java.util.*
+import java.util.Locale
+import java.util.UUID
 
 /**
  * Activity for Cinema Seat Selection screen.

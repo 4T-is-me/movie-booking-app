@@ -2,7 +2,7 @@ package com.example.movie_booking_app.data.repository
 
 import android.util.Log
 import com.example.movie_booking_app.data.api.BookingApi
-import com.example.movie_booking_app.data.model.entity.*
+import com.example.movie_booking_app.data.model.entity.Showtime
 import com.example.movie_booking_app.data.model.response.ScoreHistoryBaseResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
