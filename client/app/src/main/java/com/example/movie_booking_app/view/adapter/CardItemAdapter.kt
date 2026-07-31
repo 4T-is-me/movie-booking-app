@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.databinding.ItemCardPersonBinding
+import com.example.movie_booking_app.R
 
 class CardItemAdapter : RecyclerView.Adapter<CardItemAdapter.DirectorViewHolder>(){
 
@@ -33,6 +34,18 @@ class CardItemAdapter : RecyclerView.Adapter<CardItemAdapter.DirectorViewHolder>
                 nameParts.dropLast(1).joinToString(" ")
             else
                 ""
+
+        val drawables = listOf(
+            R.drawable.actor_1,
+            R.drawable.actor_2,
+            R.drawable.actor_3,
+            R.drawable.actor_4,
+            R.drawable.actor_5,
+            R.drawable.actor_6,
+            R.drawable.actor_7
+        )
+        val imageRes = drawables[position % drawables.size]
+        holder.binding.imgAvatar.setImageResource(imageRes)
     }
 
 
