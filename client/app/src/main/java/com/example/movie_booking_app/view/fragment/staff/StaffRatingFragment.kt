@@ -69,7 +69,7 @@ class StaffRatingFragment : Fragment() {
 
                 launch {
                     viewModel.ratings.collect { list ->
-                        android.util.Log.d("StaffRatingFragment", "Observer: received ${list.size} ratings")
+
                         adapter.submitList(list)
                         updateUI()
                     }

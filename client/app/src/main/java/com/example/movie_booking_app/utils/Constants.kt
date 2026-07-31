@@ -12,7 +12,7 @@ object Constants {
      * Updated to your machine's actual IPv4: 192.168.88.100
      * Synced with group's server requirements.
      */
-    const val BASE_URL = "http://192.168.10.27:5000/"
+    const val BASE_URL = "http://192.168.88.143:5000/"
     const val RANK_GOLD = 10000000L
     const val RANK_SILVER = 5000000L
 
@@ -35,6 +35,28 @@ object Constants {
     }
 
     val STATUS_PAYROLL = listOf("All Status", "Draft", "Paid")
+
+    object Movie {
+        const val EXTRA_MOVIE_DATA = "movie"
+        const val MIME_TYPE_IMAGE = "image/*"
+        const val DATE_FORMAT_DISPLAY = "dd/MM/yyyy"
+        const val DATE_FORMAT_SERVER = "yyyy-MM-dd"
+        const val PREFIX_POSTER_FILE = "movie_poster_"
+        const val SUFFIX_JPG = ".jpg"
+        const val STATUS_ACTIVE = "active"
+        const val STATUS_DELETED = "deleted"
+
+        const val EXTRA_MOVIE_ID = "movieId"
+        const val EXTRA_MOVIE_TITLE = "movieTitle"
+        const val EXTRA_MOVIE_POSTER = "moviePoster"
+        const val EXTRA_MOVIE_GENRE = "movieGenre"
+
+        const val MIN_COMMENT_LENGTH = 5
+        const val MAX_COMMENT_LENGTH = 1000
+
+        const val SEPARATOR_DASH = "-"
+        const val SEPARATOR_SLASH = "/"
+    }
 }
 
 

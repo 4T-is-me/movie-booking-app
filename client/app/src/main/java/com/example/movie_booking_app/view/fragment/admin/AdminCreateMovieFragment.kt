@@ -23,6 +23,7 @@ import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
 import android.widget.TextView
 import android.widget.ImageView
+import com.example.movie_booking_app.utils.Constants
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -30,7 +31,6 @@ import java.util.Locale
 
 class AdminCreateMovieFragment : Fragment() {
 
-    private val availableGenres = listOf("Action", "Adventure", "Animation", "Comedy", "Crime", "Documentary", "Drama", "Family", "Fantasy", "History", "Horror", "Music", "Mystery", "Romance", "Science Fiction", "TV Movie", "Thriller", "War", "Western")
     private val selectedGenres = mutableSetOf<String>()
     private var editingMovie: com.example.movie_booking_app.data.model.entity.Movie? = null
 
@@ -51,7 +51,7 @@ class AdminCreateMovieFragment : Fragment() {
     private fun createPosterFile(uri: android.net.Uri): File? {
         return try {
             val inputStream = requireContext().contentResolver.openInputStream(uri) ?: return null
-            val tempFile = File.createTempFile("movie_poster_", ".jpg", requireContext().cacheDir)
+            val tempFile = File.createTempFile(Constants.Movie.PREFIX_POSTER_FILE, Constants.Movie.SUFFIX_JPG, requireContext().cacheDir)
             inputStream.use { input ->
                 tempFile.outputStream().use { output ->
                     input.copyTo(output)
@@ -87,8 +87,8 @@ class AdminCreateMovieFragment : Fragment() {
         val btnSubmit = binding.btnSubmitMovie
 
         // Setup Date Picker logic
-        val displaySdf = SimpleDateFormat("dd/MM/yyyy", Locale.US)
-        val serverSdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+        val displaySdf = SimpleDateFormat(Constants.Movie.DATE_FORMAT_DISPLAY, Locale.US)
+        val serverSdf = SimpleDateFormat(Constants.Movie.DATE_FORMAT_SERVER, Locale.US)
         
         edtReleaseDate.setOnClickListener {
             val calendar = Calendar.getInstance()
@@ -119,9 +119,10 @@ class AdminCreateMovieFragment : Fragment() {
 
         // Setup Genres Chips
         val chipGroupGenres = binding.chipGroupGenres
+        val availableGenres = resources.getStringArray(R.array.movie_genres)
         
         // Setup Censorship Dropdown
-        val censorshipOptions = arrayOf("P (General Audience)", "K (Children Under 13)", "T13 (13+)", "T16 (16+)", "T18 (18+)")
+        val censorshipOptions = resources.getStringArray(R.array.censorship_options)
         val censorshipCodes = arrayOf("P", "K", "T13", "T16", "T18", "C")
         val spnCensorship = binding.spnCensorship
         val censorshipAdapter = ArrayAdapter(
@@ -133,7 +134,7 @@ class AdminCreateMovieFragment : Fragment() {
         spnCensorship.setOnClickListener { spnCensorship.showDropDown() }
 
         // Setup Country Search Dropdown
-        val countryOptions = arrayOf("Vietnam", "USA", "Korea", "Japan", "China", "UK", "France", "India", "Thailand")
+        val countryOptions = resources.getStringArray(R.array.country_options)
         val edtCountry = binding.edtCountry
         val countryAdapter = ArrayAdapter(
             requireContext(),
@@ -144,7 +145,7 @@ class AdminCreateMovieFragment : Fragment() {
         edtCountry.setOnClickListener { edtCountry.showDropDown() }
 
         // Setup Language Dropdown
-        val languageOptions = arrayOf("Vietnamese (Dubbing)", "Vietnamese (Subtitle)", "English (Subtitle)", "English (Original)", "Korean (Subtitle)", "Japanese (Subtitle)")
+        val languageOptions = resources.getStringArray(R.array.language_options)
         val languageAdapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_dropdown_item_1line,
@@ -154,7 +155,7 @@ class AdminCreateMovieFragment : Fragment() {
         spnLanguage.setOnClickListener { spnLanguage.showDropDown() }
 
         // Pre-fill if editing
-        editingMovie = arguments?.getSerializable("movie") as? com.example.movie_booking_app.data.model.entity.Movie
+        editingMovie = arguments?.getSerializable(Constants.Movie.EXTRA_MOVIE_DATA) as? com.example.movie_booking_app.data.model.entity.Movie
         editingMovie?.let { movie ->
             tvFormTitle.text = getString(R.string.auto_str_update_movie)
             btnSubmit.text = getString(R.string.auto_str_update_movie_1)
@@ -209,7 +210,7 @@ class AdminCreateMovieFragment : Fragment() {
 
         val btnChoosePoster = binding.btnChoosePoster
         btnChoosePoster.setOnClickListener {
-            pickImageLauncher.launch("image/*")
+            pickImageLauncher.launch(Constants.Movie.MIME_TYPE_IMAGE)
         }
 
         btnSubmit.setOnClickListener {
