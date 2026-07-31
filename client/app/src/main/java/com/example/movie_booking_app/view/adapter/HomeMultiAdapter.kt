@@ -13,7 +13,13 @@ import com.example.movie_booking_app.data.model.entity.MovieNews
 import com.example.movie_booking_app.data.model.entity.Promo
 import com.example.movie_booking_app.data.model.entity.Service
 import com.example.movie_booking_app.data.model.ui.HomeItem
-import com.example.movie_booking_app.databinding.*
+import com.example.movie_booking_app.databinding.LayoutHomeComingSoonBinding
+import com.example.movie_booking_app.databinding.LayoutHomeEmptyStateBinding
+import com.example.movie_booking_app.databinding.LayoutHomeMovieNewsBinding
+import com.example.movie_booking_app.databinding.LayoutHomeNowPlayingBinding
+import com.example.movie_booking_app.databinding.LayoutHomePromoBinding
+import com.example.movie_booking_app.databinding.LayoutHomeServicesBinding
+import com.example.movie_booking_app.databinding.LayoutHomeVideosBinding
 
 class HomeMultiAdapter(
     private val onSeeAllClicked: (String) -> Unit,

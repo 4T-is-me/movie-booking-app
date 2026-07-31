@@ -8,13 +8,23 @@ import android.content.Context
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.movie_booking_app.data.model.entity.*
+import com.example.movie_booking_app.data.model.entity.Movie
+import com.example.movie_booking_app.data.model.entity.Promo
+import com.example.movie_booking_app.data.model.entity.Seat
+import com.example.movie_booking_app.data.model.entity.SeatStatus
+import com.example.movie_booking_app.data.model.entity.ShowDate
+import com.example.movie_booking_app.data.model.entity.Showtime
 import com.example.movie_booking_app.data.model.response.MemberVerifyData
 import com.example.movie_booking_app.data.repository.BookingRepository
 import com.example.movie_booking_app.data.repository.MovieRepository
 import com.example.movie_booking_app.data.repository.MemberRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

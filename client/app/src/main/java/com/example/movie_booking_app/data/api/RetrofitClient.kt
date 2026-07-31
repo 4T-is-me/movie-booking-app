@@ -10,10 +10,7 @@ object RetrofitClient {
     // 10.0.2.2 is the special alias to your host loopback interface (localhost) for Android emulator
     // Note for LDPlayer: If 10.0.2.2 doesn't work, change this to your PC's current IPv4 address (run ipconfig to check).
 
-    // private const val BASE_URL = "http://192.168.9.49:5000/"
-    private const val BASE_URL = "http://192.168.32.129:5000/"
-
-    // private const val BASE_URL = "http://10.88.54.26:5000/"
+    private const val BASE_URL = com.example.movie_booking_app.utils.Constants.BASE_URL
 
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
