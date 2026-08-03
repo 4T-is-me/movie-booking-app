@@ -12,11 +12,16 @@ import androidx.lifecycle.lifecycleScope
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.api.AuthEvent
 import com.example.movie_booking_app.databinding.ActivityAdminBinding
+import com.example.movie_booking_app.utils.AuthUtils
 import com.example.movie_booking_app.view.fragment.admin.AdminCinemasFragment
+import com.example.movie_booking_app.view.fragment.admin.AdminFoodMenuFragment
+import com.example.movie_booking_app.view.fragment.admin.AdminInventoryFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminMovieListFragment
+import com.example.movie_booking_app.view.fragment.admin.AdminPayrollFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminPromotionFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminStaffTabsFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminStatsFragment
+import com.example.movie_booking_app.view.fragment.admin.MemberListFragment
 import com.example.movie_booking_app.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -63,11 +68,11 @@ class AdminActivity : BaseActivity() {
                 }
                 R.id.nav_fb_menu -> {
                     binding.tvHeaderTitle.text = getString(R.string.fb_menu_mgmt)
-                    loadFragment(com.example.movie_booking_app.view.fragment.admin.AdminFoodMenuFragment())
+                    loadFragment(AdminFoodMenuFragment())
                 }
                 R.id.nav_inventory -> {
                     binding.tvHeaderTitle.text = getString(R.string.fb_inventory_mgmt)
-                    loadFragment(com.example.movie_booking_app.view.fragment.admin.AdminInventoryFragment())
+                    loadFragment(AdminInventoryFragment())
                 }
                 R.id.nav_import_orders -> {
                     binding.tvHeaderTitle.text = "Approve Goods Intake"
@@ -75,14 +80,14 @@ class AdminActivity : BaseActivity() {
                 }
                 R.id.nav_members -> {
                     binding.tvHeaderTitle.text = getString(R.string.admin_tab_members)
-                    loadFragment(com.example.movie_booking_app.view.fragment.admin.MemberListFragment())
+                    loadFragment(MemberListFragment())
                 }
                 R.id.nav_settings -> {
                     binding.tvHeaderTitle.text = getString(R.string.auto_str_payrolls)
-                    loadFragment(com.example.movie_booking_app.view.fragment.admin.AdminPayrollFragment())
+                    loadFragment(AdminPayrollFragment())
                 }
                 R.id.nav_logout -> {
-                    com.example.movie_booking_app.utils.AuthUtils.showLogoutConfirmationDialog(this)
+                    AuthUtils.showLogoutConfirmationDialog(this)
                 }
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)

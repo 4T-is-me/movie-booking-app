@@ -4,12 +4,13 @@ import android.content.Intent
 import android.graphics.Color
 import com.github.mikephil.charting.data.Entry
 import android.os.Bundle
-import timber.log.Timber
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
@@ -19,6 +20,14 @@ import com.example.movie_booking_app.databinding.ActivityManagerBinding
 import com.example.movie_booking_app.databinding.LayoutMenuBadgeBinding
 import com.example.movie_booking_app.viewmodel.NotificationViewModel
 import com.example.movie_booking_app.view.adapter.manager.ManagerShowtimeAdapter
+import com.example.movie_booking_app.view.fragment.manager.ManagerImportOrderFragment
+import com.example.movie_booking_app.view.fragment.manager.ManagerNotificationsFragment
+import com.example.movie_booking_app.view.fragment.manager.ManagerPayrollFragment
+import com.example.movie_booking_app.view.fragment.manager.ManagerProfileFragment
+import com.example.movie_booking_app.view.fragment.manager.ManagerReportFragment
+import com.example.movie_booking_app.view.fragment.manager.ManagerRoomFragment
+import com.example.movie_booking_app.view.fragment.manager.ManagerScheduleFragment
+import com.example.movie_booking_app.view.fragment.manager.ManagerStaffFragment
 import com.example.movie_booking_app.viewmodel.manager.ManagerViewModel
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.LineData
@@ -29,6 +38,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -140,15 +150,15 @@ class ManagerActivity : AppCompatActivity() {
                     }
 
                     if (upcomingShowtimes.isEmpty()) {
-                        binding.rvTodayShowtimes.visibility = android.view.View.GONE
-                        binding.tvNoShowtimes.visibility = android.view.View.VISIBLE
+                        binding.rvTodayShowtimes.visibility = View.GONE
+                        binding.tvNoShowtimes.visibility = View.VISIBLE
                     } else {
                        // get 5 showtime
                         val previewShowtimes = upcomingShowtimes.take(5)
                         showtimeAdapter.submitList(previewShowtimes)
 
-                        binding.rvTodayShowtimes.visibility = android.view.View.VISIBLE
-                        binding.tvNoShowtimes.visibility = android.view.View.GONE
+                        binding.rvTodayShowtimes.visibility = View.VISIBLE
+                        binding.tvNoShowtimes.visibility = View.GONE
                     }
 
                     val weeklyData = data.weeklyRevenue.orEmpty()
@@ -232,22 +242,22 @@ class ManagerActivity : AppCompatActivity() {
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
         binding.ivNotification.setOnClickListener {
-            replaceFragment(com.example.movie_booking_app.view.fragment.manager.ManagerNotificationsFragment(), getString(R.string.auto_str_notifications))
+            replaceFragment(ManagerNotificationsFragment(), getString(R.string.auto_str_notifications))
         }
         binding.tvViewAll.setOnClickListener {
-            replaceFragment(com.example.movie_booking_app.view.fragment.manager.ManagerScheduleFragment(), getString(R.string.auto_str_weekly_timetable))
+            replaceFragment(ManagerScheduleFragment(), getString(R.string.auto_str_weekly_timetable))
         }
         binding.layoutSchedule.setOnClickListener {
-            replaceFragment(com.example.movie_booking_app.view.fragment.manager.ManagerScheduleFragment(), getString(R.string.auto_str_weekly_timetable))
+            replaceFragment(ManagerScheduleFragment(), getString(R.string.auto_str_weekly_timetable))
         }
         binding.layoutRooms.setOnClickListener {
-            replaceFragment(com.example.movie_booking_app.view.fragment.manager.ManagerRoomFragment(), getString(R.string.auto_str_rooms))
+            replaceFragment(ManagerRoomFragment(), getString(R.string.auto_str_rooms))
         }
         binding.layoutStaff.setOnClickListener {
-            replaceFragment(com.example.movie_booking_app.view.fragment.manager.ManagerStaffFragment(), getString(R.string.auto_str_staff))
+            replaceFragment(ManagerStaffFragment(), getString(R.string.auto_str_staff))
         }
         binding.layoutReports.setOnClickListener {
-            replaceFragment(com.example.movie_booking_app.view.fragment.manager.ManagerReportFragment(), getString(R.string.auto_str_reports))
+            replaceFragment(ManagerReportFragment(), getString(R.string.auto_str_reports))
         }
 
 
@@ -258,28 +268,28 @@ class ManagerActivity : AppCompatActivity() {
                     showDashboard()
                 }
                 R.id.nav_notifications -> {
-                    replaceFragment(com.example.movie_booking_app.view.fragment.manager.ManagerNotificationsFragment(), getString(R.string.auto_str_notifications))
+                    replaceFragment(ManagerNotificationsFragment(), getString(R.string.auto_str_notifications))
                 }
                 R.id.nav_rooms -> {
-                    replaceFragment(com.example.movie_booking_app.view.fragment.manager.ManagerRoomFragment(), getString(R.string.auto_str_rooms))
+                    replaceFragment(ManagerRoomFragment(), getString(R.string.auto_str_rooms))
                 }
                 R.id.nav_reports -> {
-                    replaceFragment(com.example.movie_booking_app.view.fragment.manager.ManagerReportFragment(), getString(R.string.auto_str_reports))
+                    replaceFragment(ManagerReportFragment(), getString(R.string.auto_str_reports))
                 }
                 R.id.nav_staff -> {
-                    replaceFragment(com.example.movie_booking_app.view.fragment.manager.ManagerStaffFragment(), getString(R.string.auto_str_staff))
+                    replaceFragment(ManagerStaffFragment(), getString(R.string.auto_str_staff))
                 }
                 R.id.nav_schedule -> {
-                    replaceFragment(com.example.movie_booking_app.view.fragment.manager.ManagerScheduleFragment(), getString(R.string.auto_str_weekly_timetable))
+                    replaceFragment(ManagerScheduleFragment(), getString(R.string.auto_str_weekly_timetable))
                 }
                 R.id.nav_import_orders -> {
-                    replaceFragment(com.example.movie_booking_app.view.fragment.manager.ManagerImportOrderFragment(), "Goods Intake Orders")
+                    replaceFragment(ManagerImportOrderFragment(), "Goods Intake Orders")
                 }
                 R.id.nav_profile -> {
-                    replaceFragment(com.example.movie_booking_app.view.fragment.manager.ManagerProfileFragment(), getString(R.string.auto_str_my_profile))
+                    replaceFragment(ManagerProfileFragment(), getString(R.string.auto_str_my_profile))
                 }
                 R.id.nav_payroll -> {
-                    replaceFragment(com.example.movie_booking_app.view.fragment.manager.ManagerPayrollFragment(), getString(R.string.auto_str_payroll))
+                    replaceFragment(ManagerPayrollFragment(), getString(R.string.auto_str_payroll))
                 }
                 else -> Toast.makeText(this, getString(R.string.auto_str_feature_coming_soon), Toast.LENGTH_SHORT).show()
             }
@@ -288,10 +298,10 @@ class ManagerActivity : AppCompatActivity() {
         }
     }
 
-    fun replaceFragment(fragment: androidx.fragment.app.Fragment, title: String) {
+    fun replaceFragment(fragment: Fragment, title: String) {
         binding.tvHeaderTitle.text = title
-        binding.scrollDashboard.visibility = android.view.View.GONE
-        binding.managerContainer.visibility = android.view.View.VISIBLE
+        binding.scrollDashboard.visibility = View.GONE
+        binding.managerContainer.visibility = View.VISIBLE
         supportFragmentManager.beginTransaction()
             .replace(R.id.manager_container, fragment)
             .commit()
@@ -299,8 +309,8 @@ class ManagerActivity : AppCompatActivity() {
 
     private fun showDashboard() {
         binding.tvHeaderTitle.text = getString(R.string.auto_str_dashboard)
-        binding.managerContainer.visibility = android.view.View.GONE
-        binding.scrollDashboard.visibility = android.view.View.VISIBLE
+        binding.managerContainer.visibility = View.GONE
+        binding.scrollDashboard.visibility = View.VISIBLE
     }
 
 
@@ -313,7 +323,7 @@ class ManagerActivity : AppCompatActivity() {
         }
     }
     private fun getGreetingMessage(): String {
-        val currentHour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)
+        val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
 
         return when (currentHour) {
             in 5..11 -> "Good morning ☀️"
@@ -357,10 +367,10 @@ class ManagerActivity : AppCompatActivity() {
         val badgeBinding = LayoutMenuBadgeBinding.bind(actionView)
 
         if (count > 0) {
-            badgeBinding.tvNotificationBadge.visibility = android.view.View.VISIBLE
+            badgeBinding.tvNotificationBadge.visibility = View.VISIBLE
             badgeBinding.tvNotificationBadge.text = if (count > 99) "99+" else count.toString()
         } else {
-            badgeBinding.tvNotificationBadge.visibility = android.view.View.GONE
+            badgeBinding.tvNotificationBadge.visibility = View.GONE
         }
     }
 }

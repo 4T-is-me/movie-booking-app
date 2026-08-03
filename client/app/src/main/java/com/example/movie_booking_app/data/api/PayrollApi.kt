@@ -12,7 +12,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface PayrollApiService {
+interface PayrollApi {
     @POST("/api/payrolls/generate")
     suspend fun generatePayroll(@Body request: GeneratePayrollRequest): Response<GenericMessageResponse>
 

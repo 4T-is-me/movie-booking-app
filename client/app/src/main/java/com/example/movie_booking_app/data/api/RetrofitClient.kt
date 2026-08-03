@@ -100,8 +100,8 @@ object RetrofitClient {
         instance.create(InventoryApi::class.java)
     }
 
-    val payrollApi: PayrollApiService by lazy {
-        instance.create(PayrollApiService::class.java)
+    val payrollApi: PayrollApi by lazy {
+        instance.create(PayrollApi::class.java)
     }
 
     val payrollConfigApi: PayrollConfigApi by lazy {

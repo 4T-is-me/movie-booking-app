@@ -1,20 +1,18 @@
 package com.example.movie_booking_app.data.repository
 
-import com.example.movie_booking_app.data.api.PayrollApiService
+import com.example.movie_booking_app.data.api.PayrollApi
 import com.example.movie_booking_app.data.model.response.GeneratePayrollRequest
 import com.example.movie_booking_app.data.model.response.GenericMessageResponse
 import com.example.movie_booking_app.data.model.response.PayrollDetailResponse
 import com.example.movie_booking_app.data.model.response.PayrollListResponse
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class PayrollRepository @Inject constructor(
-    private val api: PayrollApiService
+    private val api: PayrollApi
 ) {
     fun generatePayroll(month: Int, year: Int): Flow<Result<GenericMessageResponse>> = flow {
         try {
