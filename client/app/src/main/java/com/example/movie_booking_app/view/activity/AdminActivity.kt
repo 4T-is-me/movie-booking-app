@@ -62,13 +62,16 @@ class AdminActivity : BaseActivity() {
                     loadFragment(AdminPromotionFragment())
                 }
                 R.id.nav_fb_menu -> {
-                    startActivity(Intent(this, com.example.movie_booking_app.view.activity.admin.AdminFoodMenuActivity::class.java))
+                    binding.tvHeaderTitle.text = getString(R.string.fb_menu_mgmt)
+                    loadFragment(com.example.movie_booking_app.view.fragment.admin.AdminFoodMenuFragment())
                 }
                 R.id.nav_inventory -> {
-                    startActivity(Intent(this, com.example.movie_booking_app.view.activity.admin.AdminInventoryActivity::class.java))
+                    binding.tvHeaderTitle.text = getString(R.string.fb_inventory_mgmt)
+                    loadFragment(com.example.movie_booking_app.view.fragment.admin.AdminInventoryFragment())
                 }
                 R.id.nav_import_orders -> {
-                    startActivity(Intent(this, com.example.movie_booking_app.view.activity.admin.AdminImportOrderActivity::class.java))
+                    binding.tvHeaderTitle.text = "Approve Goods Intake"
+                    loadFragment(com.example.movie_booking_app.view.fragment.admin.AdminImportOrderFragment())
                 }
                 R.id.nav_members -> {
                     binding.tvHeaderTitle.text = getString(R.string.admin_tab_members)
@@ -94,7 +97,7 @@ class AdminActivity : BaseActivity() {
         }
     }
 
-    private fun loadFragment(fragment: Fragment) {
+    fun loadFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, fragment)
             .commit()

@@ -3,13 +3,11 @@ package com.example.movie_booking_app.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.entity.Movie
-import com.example.movie_booking_app.data.model.entity.MovieNews
-import com.example.movie_booking_app.data.model.entity.Promo
-import com.example.movie_booking_app.data.model.entity.Service
 import com.example.movie_booking_app.data.model.entity.Showtime
 import com.example.movie_booking_app.data.model.response.MovieResponse
 import com.example.movie_booking_app.data.model.ui.HomeItem
 import com.example.movie_booking_app.data.repository.MovieRepository
+import com.example.movie_booking_app.data.repository.NewsRepository
 import com.example.movie_booking_app.data.repository.ProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -32,7 +30,7 @@ import javax.inject.Inject
 class MovieViewModel @Inject constructor(
     private val repository: MovieRepository,
     private val profileRepository: ProfileRepository,
-    private val newsRepository: com.example.movie_booking_app.data.repository.NewsRepository
+    private val newsRepository: NewsRepository
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")

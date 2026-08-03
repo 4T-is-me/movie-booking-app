@@ -51,8 +51,8 @@ interface ManagerApi {
         @Query("limit") limit: Int = 1000
     ): Response<com.example.movie_booking_app.data.model.response.ManagerShowtimesResponse>
 
-    @retrofit2.http.POST("api/admin/showtimes/bulk")
+    @POST("api/admin/showtimes/bulk")
     suspend fun createBulkShowtimes(
-        @retrofit2.http.Body request: com.example.movie_booking_app.data.model.request.ShowtimeBulkRequest
+        @Body request: com.example.movie_booking_app.data.model.request.ShowtimeBulkRequest
     ): Response<Unit>
 }

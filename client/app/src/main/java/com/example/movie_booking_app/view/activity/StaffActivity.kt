@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.activity
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -40,7 +41,7 @@ class StaffActivity : BaseActivity() {
     @Inject
     lateinit var fcmTokenHelper: FcmTokenHelper
 
-    private val notificationReceiver = object : android.content.BroadcastReceiver() {
+    private val notificationReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             notificationViewModel.fetchStaffNotifications()
         }

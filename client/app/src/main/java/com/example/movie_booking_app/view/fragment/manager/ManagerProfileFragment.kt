@@ -1,27 +1,39 @@
-package com.example.movie_booking_app.view.activity
+package com.example.movie_booking_app.view.fragment.manager
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.Toast
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.example.movie_booking_app.databinding.ActivityManagerProfileBinding
+import com.example.movie_booking_app.databinding.FragmentManagerProfileBinding
+import com.example.movie_booking_app.view.activity.ChangePasswordActivity
 import com.example.movie_booking_app.viewmodel.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class ManagerProfileActivity : AppCompatActivity() {
+class ManagerProfileFragment : Fragment() {
 
-    private lateinit var binding: ActivityManagerProfileBinding
+    private var _binding: FragmentManagerProfileBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: ProfileViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityManagerProfileBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentManagerProfileBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Hide local toolbar
+        binding.toolbar.visibility = View.GONE
 
         setupListeners()
         observeViewModel()
@@ -30,9 +42,6 @@ class ManagerProfileActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
-        binding.btnBack.setOnClickListener {
-            finish()
-        }
         binding.btnSaveChanges.setOnClickListener {
             val email = binding.fieldEmail.getValue()
             val phone = binding.fieldPhone.getValue()
@@ -42,7 +51,7 @@ class ManagerProfileActivity : AppCompatActivity() {
             }
         }
         binding.btnChangePassword.setOnClickListener {
-            startActivity(android.content.Intent(this, ChangePasswordActivity::class.java))
+            startActivity(android.content.Intent(requireContext(), ChangePasswordActivity::class.java))
         }
     }
 
@@ -83,7 +92,7 @@ class ManagerProfileActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.userProfile.collectLatest { profile ->
                 profile?.let {
                     binding.fieldFullName.setValue(it.fullName ?: "")
@@ -98,13 +107,13 @@ class ManagerProfileActivity : AppCompatActivity() {
             }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.isLoading.collectLatest { isLoading ->
                 binding.layoutLoading.visibility = if (isLoading) View.VISIBLE else View.GONE
             }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.error.collectLatest { errorMsg ->
                 errorMsg?.let {
                     com.google.android.material.snackbar.Snackbar.make(binding.root, it, com.google.android.material.snackbar.Snackbar.LENGTH_LONG).show()
@@ -113,7 +122,7 @@ class ManagerProfileActivity : AppCompatActivity() {
             }
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.updateSuccess.collectLatest { success ->
                 if (success) {
                     com.google.android.material.snackbar.Snackbar.make(binding.root, "Profile updated successfully!", com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
@@ -121,5 +130,10 @@ class ManagerProfileActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
