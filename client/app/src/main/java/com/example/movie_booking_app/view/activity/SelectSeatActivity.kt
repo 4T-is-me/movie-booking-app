@@ -16,6 +16,9 @@ import com.example.movie_booking_app.view.adapter.DateAdapter
 import com.example.movie_booking_app.view.adapter.SeatAdapter
 import com.example.movie_booking_app.view.adapter.TimeAdapter
 import com.example.movie_booking_app.viewmodel.SelectSeatViewModel
+import com.example.movie_booking_app.data.model.entity.Booking
+import com.example.movie_booking_app.data.model.entity.SeatType
+import com.example.movie_booking_app.utils.Constants
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
@@ -69,7 +72,7 @@ class SelectSeatActivity : AppCompatActivity() {
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
                 val seat = seatAdapter.currentList.getOrNull(position)
-                return if (seat?.type == com.example.movie_booking_app.data.model.entity.SeatType.COUPLE) 2 else 1
+                return if (seat?.type == SeatType.COUPLE) 2 else 1
             }
         }
         binding.rvSeats.layoutManager = layoutManager
@@ -112,7 +115,8 @@ class SelectSeatActivity : AppCompatActivity() {
                         val ticketTotal = viewModel.totalPrice.value
                         val orderId = "BK-" + UUID.randomUUID().toString().take(8).uppercase(Locale.getDefault())
 
-                        val booking = com.example.movie_booking_app.data.model.entity.Booking(
+                        val seatConstants = Constants.SeatConstants
+                        val booking = Booking(
                             orderId = orderId,
                             movieId = intent.getStringExtra("movieId"),
                             movieName = intent.getStringExtra("movieName") ?: getString(R.string.unknown_movie),
@@ -126,17 +130,17 @@ class SelectSeatActivity : AppCompatActivity() {
                             roomName = viewModel.cinemaRoomName.value.takeIf { !it.isNullOrEmpty() } ?: getString(R.string.default_room_name),
                             showDate = selectedDate?.id ?: "",
                             showTime = selectedTime?.showTime ?: selectedTime?.startTime ?: "",
-                            duration = 120,
+                            duration = Constants.BookingConfig.DEFAULT_MOVIE_DURATION,
                             language = getString(R.string.default_language),
                             subtitle = getString(R.string.default_subtitle),
                             seatIds = selectedSeatsList.map { it.id },
                             seatNames = selectedSeatsList.map { it.label },
                             seatTypes = selectedSeatsList.map { seat ->
                                 when (seat.type) {
-                                    com.example.movie_booking_app.data.model.entity.SeatType.NORMAL -> "Regular"
-                                    com.example.movie_booking_app.data.model.entity.SeatType.VIP -> "VIP"
-                                    com.example.movie_booking_app.data.model.entity.SeatType.COUPLE -> "Couple"
-                                    else -> "Regular"
+                                    SeatType.NORMAL -> seatConstants.TYPE_REGULAR
+                                    SeatType.VIP -> seatConstants.TYPE_VIP
+                                    SeatType.COUPLE -> seatConstants.TYPE_COUPLE
+                                    else -> seatConstants.TYPE_REGULAR
                                 }
                             }.distinct(),
                             ticketTypeDetails = emptyList(),
@@ -200,7 +204,15 @@ class SelectSeatActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.errorMessage.collect { message ->
-                    Toast.makeText(this@SelectSeatActivity, message, Toast.LENGTH_LONG).show()
+                    val displayMsg = when(message) {
+                        "error_no_showtimes" -> getString(R.string.error_no_showtimes)
+                        "error_no_seats" -> getString(R.string.error_no_seats)
+                        "error_same_type" -> getString(R.string.error_same_type)
+                        "error_hold_conflict" -> getString(R.string.error_hold_conflict)
+                        "error_hold_failed" -> getString(R.string.error_hold_failed)
+                        else -> message
+                    }
+                    Toast.makeText(this@SelectSeatActivity, displayMsg, Toast.LENGTH_LONG).show()
                 }
             }
         }

@@ -20,7 +20,7 @@ data class FoodUiState(
     val filteredItems: List<FoodBeverage> = emptyList(),
     val isLoading: Boolean = false,
     val totalFBPrice: Int = 0,
-    val selectedCategory: String = "All",
+    val selectedCategory: String = com.example.movie_booking_app.utils.Constants.FoodCategory.ALL,
     val countdownText: String = "",
     val isExpired: Boolean = false
 )

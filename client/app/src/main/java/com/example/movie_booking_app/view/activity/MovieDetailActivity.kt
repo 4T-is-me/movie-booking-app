@@ -19,6 +19,9 @@ import com.example.movie_booking_app.view.adapter.CardItemAdapter
 import com.example.movie_booking_app.view.adapter.CinemaAdapter
 import com.example.movie_booking_app.view.adapter.ReviewAdapter
 import com.example.movie_booking_app.viewmodel.MovieViewModel
+import com.example.movie_booking_app.data.model.response.ReviewItem
+import com.example.movie_booking_app.utils.Constants
+import com.example.movie_booking_app.utils.DateUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
@@ -38,7 +41,7 @@ class MovieDetailActivity : AppCompatActivity() {
 
     private var isReviewsExpanded = false
     private var isDescriptionExpanded = false
-    private var currentReviewsList = emptyList<com.example.movie_booking_app.data.model.response.ReviewItem>()
+    private var currentReviewsList = emptyList<ReviewItem>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -178,7 +181,7 @@ class MovieDetailActivity : AppCompatActivity() {
                             binding.txtGenre.text = movie.movieGenre?.joinToString(", ") ?: ""
                             binding.txtLanguage.text = movie.language ?: ""
                             binding.txtDuration.text = formatDuration(movie.duration)
-                            binding.txtReleaseDate.text = com.example.movie_booking_app.utils.DateUtils.formatMovieDate(movie.releaseDate)
+                            binding.txtReleaseDate.text = DateUtils.formatMovieDate(movie.releaseDate)
                             binding.txtRating.text = movie.rating?.toString() ?: "Unrated"
                             binding.txtVote.text = "(${movie.totalReviews ?: 0})"
 
@@ -195,7 +198,7 @@ class MovieDetailActivity : AppCompatActivity() {
 
                             val posterUrl = movie.poster
                             val fullUrl = if (posterUrl?.startsWith("http") == true) posterUrl
-                            else "${com.example.movie_booking_app.utils.Constants.BASE_URL}${posterUrl?.removePrefix("/")}"
+                            else "${Constants.BASE_URL}${posterUrl?.removePrefix("/")}"
 
                             Glide.with(this@MovieDetailActivity)
                                 .load(fullUrl)
