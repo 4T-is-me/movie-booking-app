@@ -13,10 +13,9 @@ import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.api.AuthEvent
 import com.example.movie_booking_app.databinding.ActivityAdminBinding
 import com.example.movie_booking_app.utils.AuthUtils
-import com.example.movie_booking_app.view.activity.admin.AdminFoodMenuActivity
-import com.example.movie_booking_app.view.activity.admin.AdminImportOrderActivity
-import com.example.movie_booking_app.view.activity.admin.AdminInventoryActivity
 import com.example.movie_booking_app.view.fragment.admin.AdminCinemasFragment
+import com.example.movie_booking_app.view.fragment.admin.AdminFoodMenuFragment
+import com.example.movie_booking_app.view.fragment.admin.AdminInventoryFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminMovieListFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminPayrollFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminPromotionFragment
@@ -68,23 +67,29 @@ class AdminActivity : BaseActivity() {
                     loadFragment(AdminPromotionFragment())
                 }
                 R.id.nav_fb_menu -> {
-                    startActivity(Intent(this, AdminFoodMenuActivity::class.java))
+                    binding.tvHeaderTitle.text = getString(R.string.fb_menu_mgmt)
+                    loadFragment(AdminFoodMenuFragment())
                 }
                 R.id.nav_inventory -> {
-                    startActivity(Intent(this, AdminInventoryActivity::class.java))
+                    binding.tvHeaderTitle.text = getString(R.string.fb_inventory_mgmt)
+                    loadFragment(AdminInventoryFragment())
                 }
                 R.id.nav_import_orders -> {
-                    startActivity(Intent(this, AdminImportOrderActivity::class.java))
+                    binding.tvHeaderTitle.text = "Approve Goods Intake"
+                    loadFragment(com.example.movie_booking_app.view.fragment.admin.AdminImportOrderFragment())
                 }
                 R.id.nav_members -> {
                     binding.tvHeaderTitle.text = getString(R.string.admin_tab_members)
+                    loadFragment(MemberListFragment())
                     loadFragment(MemberListFragment())
                 }
                 R.id.nav_settings -> {
                     binding.tvHeaderTitle.text = getString(R.string.auto_str_payrolls)
                     loadFragment(AdminPayrollFragment())
+                    loadFragment(AdminPayrollFragment())
                 }
                 R.id.nav_logout -> {
+                    AuthUtils.showLogoutConfirmationDialog(this)
                     AuthUtils.showLogoutConfirmationDialog(this)
                 }
             }
@@ -100,7 +105,7 @@ class AdminActivity : BaseActivity() {
         }
     }
 
-    private fun loadFragment(fragment: Fragment) {
+    fun loadFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, fragment)
             .commit()

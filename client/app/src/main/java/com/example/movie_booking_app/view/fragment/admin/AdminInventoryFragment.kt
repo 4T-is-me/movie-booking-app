@@ -1,18 +1,20 @@
-package com.example.movie_booking_app.view.activity.admin
+package com.example.movie_booking_app.view.fragment.admin
 
 import android.content.Context
 import android.os.Bundle
 import android.text.InputType
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -26,30 +28,44 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class AdminInventoryActivity : AppCompatActivity() {
+class AdminInventoryFragment : Fragment() {
 
-    private lateinit var binding: ActivityAdminInventoryBinding
+    private var _binding: ActivityAdminInventoryBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: AdminInventoryViewModel by viewModels()
     private lateinit var inventoryAdapter: InventoryAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityAdminInventoryBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = ActivityAdminInventoryBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Hide local toolbar
+        binding.toolbar.visibility = View.GONE
+        
+        // Update constraints: layoutCinemaSelector was below toolbar
+        val params = binding.layoutCinemaSelector.layoutParams as androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
+        params.topToTop = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
+        params.topToBottom = -1
+        binding.layoutCinemaSelector.layoutParams = params
 
         setupUI()
         observeViewModel()
     }
 
     private fun setupUI() {
-        binding.btnBack.setOnClickListener { finish() }
-
         inventoryAdapter = InventoryAdapter { item ->
             showRefillDialog(item)
         }
 
         binding.rvInventory.apply {
-            layoutManager = LinearLayoutManager(this@AdminInventoryActivity)
+            layoutManager = LinearLayoutManager(requireContext())
             adapter = inventoryAdapter
         }
 
@@ -60,35 +76,31 @@ class AdminInventoryActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     binding.progressBar.isVisible = state.isLoading
 
-                    // Setup Dropdown
                     if (state.cinemas.isNotEmpty() && binding.actvCinema.adapter == null) {
                         val names = state.cinemas.map { it.cinemaName ?: "Unknown" }
-                        val adapter = ArrayAdapter(this@AdminInventoryActivity, R.layout.item_spinner_dropdown, names)
+                        val adapter = ArrayAdapter(requireContext(), R.layout.item_spinner_dropdown, names)
                         binding.actvCinema.setAdapter(adapter)
                         
-                        // Default select first
                         if (names.isNotEmpty()) {
                             binding.actvCinema.setText(names[0], false)
                             viewModel.selectCinema(state.cinemas[0])
                         }
                     }
 
-                    // Setup List
                     inventoryAdapter.submitList(state.inventoryItems)
 
-                    // Error & Success Toast
                     state.error?.let {
-                        Toast.makeText(this@AdminInventoryActivity, it, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
                         viewModel.resetStatus()
                     }
 
                     state.refillSuccess?.let {
-                        Toast.makeText(this@AdminInventoryActivity, it, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
                         viewModel.resetStatus()
                     }
                 }
@@ -97,7 +109,7 @@ class AdminInventoryActivity : AppCompatActivity() {
     }
 
     private fun showRefillDialog(item: Inventory) {
-        val context = this
+        val context = requireContext()
         val layout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(50, 20, 50, 10)
@@ -139,7 +151,12 @@ class AdminInventoryActivity : AppCompatActivity() {
     }
 
     private fun hideKeyboard(view: View) {
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

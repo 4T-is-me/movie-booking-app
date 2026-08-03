@@ -1,27 +1,32 @@
-package com.example.movie_booking_app.view.activity.manager
+package com.example.movie_booking_app.view.fragment.manager
 
-import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.api.RetrofitClient
 import com.example.movie_booking_app.data.model.request.ShowtimeBulkItem
 import com.example.movie_booking_app.data.model.request.ShowtimeBulkRequest
-import com.example.movie_booking_app.databinding.ActivityManagerAutoSchedulingBinding
+import com.example.movie_booking_app.databinding.FragmentManagerAutoSchedulingBinding
 import com.example.movie_booking_app.utils.AutoSchedulingAlgorithm
 import com.example.movie_booking_app.utils.CinemaConfigDraft
 import com.example.movie_booking_app.utils.MovieDraft
 import com.example.movie_booking_app.utils.RoomDraft
 import com.example.movie_booking_app.utils.ShowtimeDraft
 import com.example.movie_booking_app.view.adapter.manager.AutoSchedulingAdapter
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
 import java.net.URL
 import java.time.LocalDate
@@ -30,37 +35,41 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.util.regex.Pattern
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-class ManagerAutoSchedulingActivity : AppCompatActivity() {
+@AndroidEntryPoint
+class ManagerScheduleFragment : Fragment() {
 
-    private lateinit var binding: ActivityManagerAutoSchedulingBinding
+    private var _binding: FragmentManagerAutoSchedulingBinding? = null
+    private val binding get() = _binding!!
     private lateinit var adapter: AutoSchedulingAdapter
     private var currentWeekStart: LocalDate = LocalDate.now().minusDays(LocalDate.now().dayOfWeek.value.toLong() - 1)
     private var selectedDate: LocalDate = LocalDate.now()
+    private var allRooms = listOf<RoomDraft>()
+    private var selectedRoomId: String? = null
+    private var allGeneratedShowtimes = mutableListOf<ShowtimeDraft>()
+    private var currentWeekHolidays = listOf<String>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityManagerAutoSchedulingBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentManagerAutoSchedulingBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Hide toolbar since ManagerActivity has its own header
+        binding.toolbar.visibility = View.GONE
 
         setupUI()
         updateCalendarUI()
     }
 
-    private var allRooms = listOf<RoomDraft>()
-    private var selectedRoomId: String? = null
-
     private fun setupUI() {
-        binding.ivBack.setOnClickListener {
-            finish()
-        }
-
         adapter = AutoSchedulingAdapter()
-        binding.rvSchedule.layoutManager = LinearLayoutManager(this)
+        binding.rvSchedule.layoutManager = LinearLayoutManager(requireContext())
         binding.rvSchedule.adapter = adapter
 
         binding.btnGenerate.setOnClickListener {
@@ -72,11 +81,10 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
             val draftsToSave = allGeneratedShowtimes.filter { it.is_auto_generated && it.room_id == selectedRoomId }
             if (draftsToSave.isEmpty()) {
                 binding.btnSave.isEnabled = true
-                Toast.makeText(this, getString(R.string.auto_str_no_new_showtimes_to_save), Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.auto_str_no_new_showtimes_to_save), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            // Map ShowtimeDraft -> ShowtimeBulkItem
             val bulkItems = draftsToSave.map {
                 ShowtimeBulkItem(
                     movieId = it.movie_id,
@@ -93,7 +101,6 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
 
             lifecycleScope.launch {
                 try {
-                    // Start loading animation or block UI if needed
                     binding.pbLoading.visibility = View.VISIBLE
                     binding.layoutLoading.visibility = View.VISIBLE
                     binding.tvLoadingText.text = getString(R.string.auto_str_saving_to_database)
@@ -109,23 +116,22 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                         binding.layoutLoading.visibility = View.GONE
                         binding.btnSave.isEnabled = true
                         
-                        Toast.makeText(this@ManagerAutoSchedulingActivity, getString(R.string.auto_str_showtimes_saved_to_database), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), getString(R.string.auto_str_showtimes_saved_to_database), Toast.LENGTH_SHORT).show()
                         fetchExistingShowtimes(currentWeekStart, currentWeekStart.plusDays(6))
                     } else {
                         binding.layoutLoading.visibility = View.GONE
                         binding.btnSave.isEnabled = true
-                        Toast.makeText(this@ManagerAutoSchedulingActivity, "Server error: ${response.message()}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(requireContext(), "Server error: ${response.message()}", Toast.LENGTH_LONG).show()
                     }
                 } catch (e: Exception) {
                     binding.layoutLoading.visibility = View.GONE
+                    binding.layoutLoading.visibility = View.GONE
                     binding.btnSave.isEnabled = true
-                    e.printStackTrace()
-                    Toast.makeText(this@ManagerAutoSchedulingActivity, "Network connection error: ${e.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), "Network connection error: ${e.message}", Toast.LENGTH_LONG).show()
                 }
             }
         }
 
-        // Setup Calendar Navigation
         binding.ivPrevWeek.setOnClickListener {
             currentWeekStart = currentWeekStart.minusWeeks(1)
             selectedDate = currentWeekStart
@@ -152,22 +158,34 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                     RoomDraft(it.id, it.roomName ?: "Unknown Room", "c1", it.status ?: "active")
                 } ?: emptyList()
                 
+                if (allRooms.isEmpty()) {
+                    allRooms = listOf(
+                        RoomDraft("room1", "Room 1", "c1", "active"),
+                        RoomDraft("room2", "Room 2", "c1", "active")
+                    )
+                }
+                
                 if (allRooms.isNotEmpty()) {
                     selectedRoomId = allRooms.firstOrNull { it.status == "active" }?._id ?: allRooms.first()._id
                 }
                 
                 renderRoomTabs()
             } catch (e: Exception) {
-                e.printStackTrace()
+                allRooms = listOf(
+                    RoomDraft("room1", "Room 1", "c1", "active"),
+                    RoomDraft("room2", "Room 2", "c1", "active")
+                )
+                selectedRoomId = allRooms.first()._id
                 renderRoomTabs()
             }
         }
     }
 
     private fun renderRoomTabs() {
+        if (_binding == null) return
         binding.layoutRoomTabs.removeAllViews()
         for (room in allRooms) {
-            val tv = TextView(this)
+            val tv = android.widget.TextView(requireContext())
             tv.text = room.roomName
             tv.setPadding(48, 24, 48, 24)
             tv.textSize = 14f
@@ -181,13 +199,13 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
 
             if (room._id == selectedRoomId) {
                 tv.setBackgroundResource(R.drawable.bg_button_gold)
-                tv.setTextColor(Color.WHITE)
+                tv.setTextColor(android.graphics.Color.WHITE)
             } else if (room.status != "active") {
                 tv.setBackgroundResource(R.drawable.bg_rounded_border)
-                tv.setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_999999)) // Gray out text to indicate disabled
+                tv.setTextColor(ContextCompat.getColor(requireContext(), R.color.auto_color_999999))
             } else {
                 tv.setBackgroundResource(R.drawable.bg_rounded_border)
-                tv.setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_333333))
+                tv.setTextColor(ContextCompat.getColor(requireContext(), R.color.auto_color_333333))
             }
 
             tv.setOnClickListener {
@@ -201,24 +219,27 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
     }
 
     private fun updateCalendarUI() {
-        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        if (_binding == null) return
+        val formatter = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")
         val weekEnd = currentWeekStart.plusDays(6)
         binding.tvSelectedWeek.text = "Selected week: ${currentWeekStart.format(formatter)} - ${weekEnd.format(formatter)}"
         
         val monthFormatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH)
         binding.tvMonthYear.text = currentWeekStart.format(monthFormatter)
         
-        // Disable generating and saving if the week is in the past
         val thisWeekStart = LocalDate.now().minusDays(LocalDate.now().dayOfWeek.value.toLong() - 1)
         if (currentWeekStart.isBefore(thisWeekStart)) {
+            binding.btnGenerate.visibility = View.GONE
+            binding.btnSave.visibility = View.GONE
             binding.btnGenerate.visibility = View.GONE
             binding.btnSave.visibility = View.GONE
         } else {
             binding.btnGenerate.visibility = View.VISIBLE
             binding.btnSave.visibility = View.VISIBLE
+            binding.btnGenerate.visibility = View.VISIBLE
+            binding.btnSave.visibility = View.VISIBLE
         }
 
-        // Update days
         val layouts = listOf(binding.layoutDay1, binding.layoutDay2, binding.layoutDay3, binding.layoutDay4, binding.layoutDay5, binding.layoutDay6, binding.layoutDay7)
         val labels = listOf(binding.tvDay1Label, binding.tvDay2Label, binding.tvDay3Label, binding.tvDay4Label, binding.tvDay5Label, binding.tvDay6Label, binding.tvDay7Label)
         val dates = listOf(binding.tvDay1Date, binding.tvDay2Date, binding.tvDay3Date, binding.tvDay4Date, binding.tvDay5Date, binding.tvDay6Date, binding.tvDay7Date)
@@ -230,20 +251,17 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
             labels[i].text = date.format(dayFormatter)
             dates[i].text = date.dayOfMonth.toString()
             
-            // Set default styling
-            labels[i].setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_999999))
+            labels[i].setTextColor(ContextCompat.getColor(requireContext(), R.color.auto_color_999999))
             dates[i].setBackgroundResource(0)
-            dates[i].setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_333333))
-            dates[i].typeface = Typeface.DEFAULT
+            dates[i].setTextColor(ContextCompat.getColor(requireContext(), R.color.auto_color_333333))
+            dates[i].typeface = android.graphics.Typeface.DEFAULT
             
-            // Set Selected Day Styling
             if (date == selectedDate) {
                 dates[i].setBackgroundResource(R.drawable.bg_circle_selected)
-                dates[i].setTextColor(Color.WHITE)
-                dates[i].typeface = Typeface.DEFAULT_BOLD
+                dates[i].setTextColor(android.graphics.Color.WHITE)
+                dates[i].typeface = android.graphics.Typeface.DEFAULT_BOLD
             }
             
-            // Click listener
             layouts[i].setOnClickListener {
                 selectedDate = date
                 updateCalendarUI()
@@ -257,14 +275,12 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
     private fun fetchAndHighlightHolidays() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                // Using a public API for holidays to demonstrate (e.g. Nager.Date)
                 val url = URL("https://date.nager.at/api/v3/PublicHolidays/${currentWeekStart.year}/VN")
                 val connection = url.openConnection() as HttpURLConnection
                 connection.requestMethod = "GET"
                 
                 if (connection.responseCode == 200) {
                     val response = connection.inputStream.bufferedReader().use { it.readText() }
-                    // Simple regex to find dates
                     val holidayDates = mutableListOf<String>()
                     val pattern = Pattern.compile("\"date\":\"(\\d{4}-\\d{2}-\\d{2})\"")
                     val matcher = pattern.matcher(response)
@@ -274,14 +290,15 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                     currentWeekHolidays = holidayDates
                     
                     withContext(Dispatchers.Main) {
+                        if (_binding == null) return@withContext
                         val labels = listOf(binding.tvDay1Label, binding.tvDay2Label, binding.tvDay3Label, binding.tvDay4Label, binding.tvDay5Label, binding.tvDay6Label, binding.tvDay7Label)
                         val dates = listOf(binding.tvDay1Date, binding.tvDay2Date, binding.tvDay3Date, binding.tvDay4Date, binding.tvDay5Date, binding.tvDay6Date, binding.tvDay7Date)
                         for (i in 0..6) {
-                            val dateStr = currentWeekStart.plusDays(i.toLong()).toString() // yyyy-MM-dd
+                            val dateStr = currentWeekStart.plusDays(i.toLong()).toString()
                             if (holidayDates.contains(dateStr)) {
-                                labels[i].setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_E53935)) // Red label
+                                labels[i].setTextColor(ContextCompat.getColor(requireContext(), R.color.auto_color_E53935))
                                 if (currentWeekStart.plusDays(i.toLong()) != selectedDate) {
-                                    dates[i].setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_E53935)) // Red text if not selected
+                                    dates[i].setTextColor(ContextCompat.getColor(requireContext(), R.color.auto_color_E53935))
                                 }
                             }
                         }
@@ -293,24 +310,17 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
         }
     }
 
-    private var allGeneratedShowtimes = mutableListOf<ShowtimeDraft>()
-    private var currentWeekHolidays = listOf<String>()
-
     private fun fetchExistingShowtimes(startDate: LocalDate, endDate: LocalDate) {
         lifecycleScope.launch {
             try {
                 binding.pbLoading.visibility = View.VISIBLE
-                val startStr = startDate.toString()
-                val endStr = endDate.toString()
-                
-                val response = RetrofitClient.managerApi.getShowtimes(startStr, endStr)
+                val response = RetrofitClient.managerApi.getShowtimes(startDate.toString(), endDate.toString())
                 if (response.isSuccessful) {
                     val apiShowtimes = response.body()?.data ?: emptyList()
                     allGeneratedShowtimes.clear()
                     
                     for (apiItem in apiShowtimes) {
                         if (apiItem.movieId != null && apiItem.roomId != null) {
-                            
                             val startLocal = try {
                                 ZonedDateTime.parse(apiItem.startTime)
                                     .withZoneSameInstant(ZoneId.systemDefault())
@@ -331,7 +341,7 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                                 room_name = apiItem.roomId.roomName,
                                 movie_id = apiItem.movieId._id,
                                 movie_name = apiItem.movieId.movieName,
-                                cinema_id = "", // Not strictly needed for UI display
+                                cinema_id = "",
                                 start_time = startLocal,
                                 end_time = endLocal,
                                 status = apiItem.status,
@@ -342,15 +352,15 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                     filterAndDisplaySchedule()
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
-                Toast.makeText(this@ManagerAutoSchedulingActivity, "Error loading showtimes: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Error loading showtimes: ${e.message}", Toast.LENGTH_SHORT).show()
             } finally {
-                binding.pbLoading.visibility = View.GONE
+                if (_binding != null) binding.pbLoading.visibility = View.GONE
             }
         }
     }
 
     private fun filterAndDisplaySchedule() {
+        if (_binding == null) return
         val filtered = allGeneratedShowtimes.filter {
             it.show_date == selectedDate.toString() && (selectedRoomId == null || it.room_id == selectedRoomId)
         }.sortedBy { it.start_time }
@@ -360,19 +370,16 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
     private fun fetchMoviesAndGenerateSchedule() {
         binding.layoutLoading.visibility = View.VISIBLE
         binding.pbLoading.visibility = View.VISIBLE
-        binding.layoutLoading.visibility = View.VISIBLE
         binding.tvLoadingText.text = getString(R.string.auto_str_generating)
-        binding.tvLoadingText.setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_333333))
+        binding.tvLoadingText.setTextColor(ContextCompat.getColor(requireContext(), R.color.auto_color_333333))
         
         lifecycleScope.launch {
             try {
-                // Fetch Movies
                 val movieResponse = RetrofitClient.movieApi.getMovies()
                 val movies = movieResponse.body()?.data?.map {
                     MovieDraft(it.id ?: "", it.movieName ?: "Unknown Movie", it.duration ?: 120, it.status ?: "showing", it.tier ?: 1)
                 } ?: emptyList()
 
-                // Only generate for the currently selected room
                 val roomsToGenerate = if (selectedRoomId != null) {
                     allRooms.filter { it._id == selectedRoomId }
                 } else {
@@ -380,8 +387,6 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                 }
 
                 val config = CinemaConfigDraft(15)
-
-                // Pass existing showtimes from OTHER rooms to avoid cross-room conflicts
                 val existingOtherRooms = allGeneratedShowtimes.filter { it.room_id != selectedRoomId }
 
                 val schedule = withContext(Dispatchers.Default) {
@@ -390,7 +395,6 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                     )
                 }
 
-                // Update global state and filter
                 allGeneratedShowtimes.removeAll { 
                     val d = LocalDate.parse(it.show_date)
                     !d.isBefore(currentWeekStart) && !d.isAfter(currentWeekStart.plusDays(6)) && 
@@ -402,26 +406,29 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                     filterAndDisplaySchedule()
                 }
                 
-                // Show success in overlay
                 binding.pbLoading.visibility = View.GONE
                 binding.ivResultIcon.visibility = View.VISIBLE
                 binding.ivResultIcon.setImageResource(R.drawable.baseline_check_circle_24)
-                binding.ivResultIcon.setColorFilter(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_00C853))
+                binding.ivResultIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.auto_color_00C853))
                 binding.tvLoadingText.text = getString(R.string.auto_str_generated_successfully)
-                binding.tvLoadingText.setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_00C853))
+                binding.tvLoadingText.setTextColor(ContextCompat.getColor(requireContext(), R.color.auto_color_00C853))
                 delay(1500)
                 binding.layoutLoading.visibility = View.GONE
             } catch (e: Exception) {
-                // Show failure in overlay
                 binding.pbLoading.visibility = View.GONE
                 binding.ivResultIcon.visibility = View.VISIBLE
                 binding.ivResultIcon.setImageResource(R.drawable.ic_error)
-                binding.ivResultIcon.setColorFilter(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_E53935))
+                binding.ivResultIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.auto_color_E53935))
                 binding.tvLoadingText.text = getString(R.string.auto_str_generation_failed)
-                binding.tvLoadingText.setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_E53935))
+                binding.tvLoadingText.setTextColor(ContextCompat.getColor(requireContext(), R.color.auto_color_E53935))
                 delay(1500)
                 binding.layoutLoading.visibility = View.GONE
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

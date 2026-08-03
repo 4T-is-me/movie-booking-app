@@ -1,4 +1,4 @@
-package com.example.movie_booking_app.view.activity.admin
+package com.example.movie_booking_app.view.fragment.admin
 
 import android.app.Activity
 import android.content.Intent
@@ -7,16 +7,16 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -38,10 +38,12 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import timber.log.Timber
 
-@AndroidEntryPoint
-class AdminFoodMenuActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityAdminFoodMenuBinding
+@AndroidEntryPoint
+class AdminFoodMenuFragment : Fragment() {
+
+    private var _binding: ActivityAdminFoodMenuBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: AdminFoodViewModel by viewModels()
     private lateinit var menuAdapter: AdminFoodAdapter
     
@@ -63,10 +65,25 @@ class AdminFoodMenuActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityAdminFoodMenuBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = ActivityAdminFoodMenuBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Hide local toolbar since AdminActivity has its own header
+        binding.toolbar.visibility = View.GONE
+        
+        // Adjust constraints if necessary. Since it's ConstraintLayout, we update tabContainer constraints
+        val params = binding.tabContainer.layoutParams as androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
+        params.topToTop = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
+        params.topToBottom = -1
+        binding.tabContainer.layoutParams = params
 
         setupUI()
         setupTabs()
@@ -74,7 +91,6 @@ class AdminFoodMenuActivity : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        binding.btnBack.setOnClickListener { finish() }
         binding.btnAdd.setOnClickListener { showAddEditDialog(null) }
 
         menuAdapter = AdminFoodAdapter(
@@ -83,7 +99,7 @@ class AdminFoodMenuActivity : AppCompatActivity() {
         )
 
         binding.rvMenu.apply {
-            layoutManager = LinearLayoutManager(this@AdminFoodMenuActivity)
+            layoutManager = LinearLayoutManager(requireContext())
             adapter = menuAdapter
         }
     }
@@ -105,13 +121,14 @@ class AdminFoodMenuActivity : AppCompatActivity() {
         menuAdapter.submitList(getFilteredList(fullList))
     }
 
-    private fun updateTabStyle(tabView: TextView, isActive: Boolean) {
+    private fun updateTabStyle(tabView: android.widget.TextView, isActive: Boolean) {
+        val context = requireContext()
         if (isActive) {
             tabView.setBackgroundResource(R.drawable.bg_tab_active)
-            tabView.setTextColor(ContextCompat.getColor(this, R.color.black))
+            tabView.setTextColor(ContextCompat.getColor(context, R.color.black))
         } else {
             tabView.background = null
-            tabView.setTextColor(ContextCompat.getColor(this, R.color.text_gray))
+            tabView.setTextColor(ContextCompat.getColor(context, R.color.text_gray))
         }
     }
 
@@ -124,19 +141,19 @@ class AdminFoodMenuActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     binding.progressBar.isVisible = state.isLoading
                     menuAdapter.submitList(getFilteredList(state.menuItems))
 
                     state.error?.let {
-                        Toast.makeText(this@AdminFoodMenuActivity, it, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
                         viewModel.resetStatus()
                     }
 
                     state.successMessage?.let {
-                        Toast.makeText(this@AdminFoodMenuActivity, it, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
                         viewModel.resetStatus()
                     }
                 }
@@ -145,7 +162,7 @@ class AdminFoodMenuActivity : AppCompatActivity() {
     }
 
     private fun showAddEditDialog(item: FoodBeverage?) {
-        dialogBinding = DialogAddEditFoodBinding.inflate(LayoutInflater.from(this))
+        dialogBinding = DialogAddEditFoodBinding.inflate(LayoutInflater.from(requireContext()))
         val binding = dialogBinding!!
         val isEdit = item != null
         selectedImageUri = null
@@ -153,14 +170,13 @@ class AdminFoodMenuActivity : AppCompatActivity() {
         binding.switchActive.isVisible = !isEdit
 
         val categories = listOf("drink", "food", "combo")
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories)
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerCategory.adapter = adapter
 
-        // Setup Deduction List
         val deductionAdapter = AdminDeductionAdapter()
         binding.rvDeductions.apply {
-            layoutManager = LinearLayoutManager(this@AdminFoodMenuActivity)
+            layoutManager = LinearLayoutManager(requireContext())
             this.adapter = deductionAdapter
         }
         deductionAdapter.setSourceItems(viewModel.uiState.value.menuItems, item?.inventoryDeductions)
@@ -191,7 +207,7 @@ class AdminFoodMenuActivity : AppCompatActivity() {
             imagePickerLauncher.launch(intent)
         }
 
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(requireContext())
             .setTitle(if (isEdit) "Edit Product" else "Add New Product")
             .setView(binding.root)
             .setPositiveButton("Save") { _, _ ->
@@ -202,7 +218,7 @@ class AdminFoodMenuActivity : AppCompatActivity() {
                 val active = binding.switchActive.isChecked
 
                 if (name.isBlank()) {
-                    Toast.makeText(this, getString(R.string.auto_str_name_cannot_be_empty), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.auto_str_name_cannot_be_empty), Toast.LENGTH_SHORT).show()
                     return@setPositiveButton
                 }
 
@@ -210,7 +226,6 @@ class AdminFoodMenuActivity : AppCompatActivity() {
                     prepareImagePart(uri)
                 }
 
-                // If single, deductions should be self. If combo, take from adapter
                 val deductions = if (cat == "combo") {
                     deductionAdapter.getDeductions()
                 } else {
@@ -241,8 +256,8 @@ class AdminFoodMenuActivity : AppCompatActivity() {
 
     private fun getFileFromUri(uri: Uri): File? {
         return try {
-            contentResolver.openInputStream(uri)?.use { input ->
-                val file = File(cacheDir, "temp_food_upload.jpg")
+            requireContext().contentResolver.openInputStream(uri)?.use { input ->
+                val file = File(requireContext().cacheDir, "temp_food_upload.jpg")
                 FileOutputStream(file).use { output ->
                     input.copyTo(output)
                 }
@@ -262,7 +277,7 @@ class AdminFoodMenuActivity : AppCompatActivity() {
         else 
             "Are you sure you want to reactivate ${item.name}?"
 
-        AlertDialog.Builder(this)
+        AlertDialog.Builder(requireContext())
             .setTitle(title)
             .setMessage(message)
             .setPositiveButton("Yes") { _, _ ->
@@ -283,5 +298,10 @@ class AdminFoodMenuActivity : AppCompatActivity() {
             }
             .setNegativeButton("No", null)
             .show()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

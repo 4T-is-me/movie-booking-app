@@ -205,7 +205,20 @@ class MovieDetailActivity : AppCompatActivity() {
                                 .error(android.R.drawable.stat_notify_error)
                                 .into(binding.imgPoster)
 
-                             binding.btnWriteReview.visibility = View.GONE
+                            binding.btnWriteReview.visibility = View.GONE
+
+                            // Handle coming-soon status
+                            if (movie.status == "coming-soon") {
+                                binding.tvCinemaTitle.visibility = View.GONE
+                                binding.rvCinema.visibility = View.GONE
+                                binding.tvNoCinema.visibility = View.GONE
+                                binding.layoutReviews.visibility = View.GONE
+                                binding.btnBookTicket.visibility = View.GONE
+                            } else {
+                                binding.tvCinemaTitle.visibility = View.VISIBLE
+                                binding.layoutReviews.visibility = View.VISIBLE
+                                binding.btnBookTicket.visibility = View.VISIBLE
+                            }
                         }
                     }
                 }
@@ -213,6 +226,14 @@ class MovieDetailActivity : AppCompatActivity() {
                 // Showtimes & Cinema
                 launch {
                     viewModel.movieShowtimes.collect { showtimes ->
+                        val movie = viewModel.movieDetail.value?.data
+                        if (movie?.status == "coming-soon") {
+                            binding.tvCinemaTitle.visibility = View.GONE
+                            binding.rvCinema.visibility = View.GONE
+                            binding.tvNoCinema.visibility = View.GONE
+                            return@collect
+                        }
+
                         if (showtimes.isEmpty()) {
                             binding.rvCinema.visibility = View.GONE
                             binding.tvNoCinema.visibility = View.VISIBLE

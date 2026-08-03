@@ -42,10 +42,7 @@ class AdminPayrollFragment : Fragment() {
     private var selectedStatus: String? = null
     private var cinemaList: List<Cinema> = emptyList()
 
-    private var spinnerMonthReady = false
-    private var spinnerYearReady = false
-    private var spinnerCinemaReady = false
-    private var spinnerStatusReady = false
+    private var isInitializing = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,9 +55,26 @@ class AdminPayrollFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Reset filter state to "All" by default to match ViewModel initial state
+        selectedMonth = null
+        selectedYear = null
+        selectedCinemaId = null
+        selectedStatus = null
+
         setupRecyclerView()
         setupStaticSpinners()
+        setupSwipeRefresh()
         observeViewModel()
+        
+        // Initial load happens in onResume or here
+        isInitializing = false
+    }
+
+    private fun setupSwipeRefresh() {
+        binding.swipeRefresh.setOnRefreshListener {
+            applyFilters()
+        }
+        binding.swipeRefresh.setColorSchemeResources(R.color.accent_primary)
     }
 
     private fun setupRecyclerView() {
@@ -77,50 +91,58 @@ class AdminPayrollFragment : Fragment() {
     }
 
     private fun setupStaticSpinners() {
-        val currentMonth = Calendar.getInstance().get(Calendar.MONTH) + 1
         val currentYear = Calendar.getInstance().get(Calendar.YEAR)
 
         // Month spinner
         val months = listOf(getString(R.string.all_label)) + (1..12).map { getString(R.string.month_format, it) }
         setupSpinner(binding.spinnerMonth, months) { position ->
-            if (!spinnerMonthReady) { spinnerMonthReady = true; return@setupSpinner }
-            selectedMonth = if (position == 0) null else position
-            applyFilters()
+            val newVal = if (position == 0) null else position
+            if (!isInitializing && selectedMonth != newVal) {
+                selectedMonth = newVal
+                applyFilters()
+            }
         }
-        // Default to current month
-        binding.spinnerMonth.setSelection(currentMonth)
-        selectedMonth = currentMonth
+        binding.spinnerMonth.setSelection(0) // Default to "All"
 
         // Year spinner
         val years = listOf(getString(R.string.all_label)) + (currentYear - 2..currentYear + 1).map { it.toString() }
         setupSpinner(binding.spinnerYear, years) { position ->
-            if (!spinnerYearReady) { spinnerYearReady = true; return@setupSpinner }
-            selectedYear = if (position == 0) null else years[position].toIntOrNull()
-            applyFilters()
+            val newVal = if (position == 0) null else years[position].toIntOrNull()
+            if (!isInitializing && selectedYear != newVal) {
+                selectedYear = newVal
+                applyFilters()
+            }
         }
-        val currentYearIndex = years.indexOf(currentYear.toString())
-        if (currentYearIndex >= 0) binding.spinnerYear.setSelection(currentYearIndex)
-        selectedYear = currentYear
+        binding.spinnerYear.setSelection(0) // Default to "All"
 
         // Status spinner
         val statuses = listOf(getString(R.string.all_status), getString(R.string.status_draft), getString(R.string.status_paid))
         setupSpinner(binding.spinnerStatus, statuses) { position ->
-            if (!spinnerStatusReady) { spinnerStatusReady = true; return@setupSpinner }
-            selectedStatus = if (position == 0) null else {
-                if (position == 1) "Draft" else "Paid" // Still need the API-friendly string for the ViewModel
+            val newVal = if (position == 0) null else {
+                if (position == 1) "Draft" else "Paid"
             }
-            applyFilters()
+            if (!isInitializing && selectedStatus != newVal) {
+                selectedStatus = newVal
+                applyFilters()
+            }
         }
+        binding.spinnerStatus.setSelection(0) // Default to "All"
     }
 
     private fun setupCinemaSpinner(cinemas: List<Cinema>) {
         cinemaList = cinemas
         val cinemaNames = listOf(getString(R.string.all_cinemas)) + cinemas.map { it.cinemaName ?: getString(R.string.unknown) }
         setupSpinner(binding.spinnerCinema, cinemaNames) { position ->
-            if (!spinnerCinemaReady) { spinnerCinemaReady = true; return@setupSpinner }
-            selectedCinemaId = if (position == 0) null else cinemas.getOrNull(position - 1)?.id
-            applyFilters()
+            val newVal = if (position == 0) null else cinemas.getOrNull(position - 1)?.id
+            if (!isInitializing && selectedCinemaId != newVal) {
+                selectedCinemaId = newVal
+                applyFilters()
+            }
         }
+        
+        val cinemaIdx = if (selectedCinemaId == null) 0 
+                        else cinemas.indexOfFirst { it.id == selectedCinemaId }.let { if (it < 0) 0 else it + 1 }
+        binding.spinnerCinema.setSelection(cinemaIdx)
     }
 
     private fun setupManagerCinemaSpinner(cinemaName: String) {
@@ -187,8 +209,13 @@ class AdminPayrollFragment : Fragment() {
 
                 launch {
                     viewModel.isLoading.collect { loading ->
-                        binding.progressBar.visibility = if (loading) View.VISIBLE else View.GONE
-                        if (loading) binding.layoutEmptyState.visibility = View.GONE
+                        // Show progress bar only if NOT using swipe refresh
+                        binding.progressBar.visibility = if (loading && !binding.swipeRefresh.isRefreshing) View.VISIBLE else View.GONE
+                        
+                        // Stop swipe refresh animation when loading finished
+                        if (!loading) {
+                            binding.swipeRefresh.isRefreshing = false
+                        }
                     }
                 }
 

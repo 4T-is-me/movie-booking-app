@@ -1,6 +1,5 @@
 package com.example.movie_booking_app.view.fragment.manager
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,9 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.NotificationItemResponse
 import com.example.movie_booking_app.databinding.FragmentManagerNotificationsBinding
-import com.example.movie_booking_app.view.activity.manager.ManagerStaffActivity
 import com.example.movie_booking_app.view.adapter.manager.ManagerNotifAdapter
 import com.example.movie_booking_app.viewmodel.NotificationViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -61,10 +60,15 @@ class ManagerNotificationsFragment : Fragment() {
                 viewModel.markAsRead(item.id, isStaff = false)
             }
             if (item.type == "LEAVE_REQUEST_CREATED" || item.type == "SHIFT_CHANGE_ACCEPTED") {
-                val intent = Intent(requireContext(), ManagerStaffActivity::class.java).apply {
-                    putExtra("target_tab", "leave_requests")
+                val fragment = ManagerStaffFragment().apply {
+                    arguments = Bundle().apply {
+                        putString("target_tab", "leave_requests")
+                    }
                 }
-                startActivity(intent)
+                (activity as? com.example.movie_booking_app.view.activity.ManagerActivity)?.replaceFragment(
+                    fragment,
+                    getString(R.string.auto_str_staff)
+                )
             }
         }
         binding.rvManagerNotifications.layoutManager = LinearLayoutManager(requireContext())

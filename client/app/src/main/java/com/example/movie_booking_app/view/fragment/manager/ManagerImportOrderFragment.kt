@@ -1,61 +1,72 @@
-package com.example.movie_booking_app.view.activity.manager
+package com.example.movie_booking_app.view.fragment.manager
 
-import android.app.Dialog
+
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.ImportOrder
-import com.example.movie_booking_app.databinding.ActivityManagerImportOrderBinding
-import com.example.movie_booking_app.databinding.DialogApproveImportOrderBinding
+import com.example.movie_booking_app.databinding.FragmentManagerImportOrderBinding
+import com.example.movie_booking_app.view.activity.manager.ManagerCreateImportOrderActivity
 import com.example.movie_booking_app.view.adapter.manager.ImportOrderAdapter
 import com.example.movie_booking_app.viewmodel.manager.ManagerImportOrderViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class ManagerImportOrderActivity : AppCompatActivity() {
+class ManagerImportOrderFragment : Fragment() {
 
-    private lateinit var binding: ActivityManagerImportOrderBinding
+    private var _binding: FragmentManagerImportOrderBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: ManagerImportOrderViewModel by viewModels()
     private lateinit var adapter: ImportOrderAdapter
+    private var originalList: List<ImportOrder> = emptyList()
 
     private val createOrderLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        if (result.resultCode == RESULT_OK) {
+        if (result.resultCode == AppCompatActivity.RESULT_OK) {
             viewModel.loadOrders()
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityManagerImportOrderBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentManagerImportOrderBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        setupToolbar()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Hide local toolbar
+        binding.toolbar.visibility = View.GONE
+        (binding.contentLayout.layoutParams as? ViewGroup.MarginLayoutParams)?.topMargin = 0
+
         setupRecyclerView()
         setupFilterChips()
         setupFab()
         observeViewModel()
-    }
-
-    private fun setupToolbar() {
-        binding.btnBack.setOnClickListener { finish() }
+        viewModel.loadOrders("PENDING")
     }
 
     private fun setupRecyclerView() {
@@ -63,14 +74,13 @@ class ManagerImportOrderActivity : AppCompatActivity() {
             onCancelClick = { order -> showCancelConfirmDialog(order) }
         )
         binding.rvImportOrders.apply {
-            layoutManager = LinearLayoutManager(this@ManagerImportOrderActivity)
-            adapter = this@ManagerImportOrderActivity.adapter
+            layoutManager = LinearLayoutManager(requireContext())
+            this.adapter = this@ManagerImportOrderFragment.adapter
         }
     }
 
-    private var originalList: List<ImportOrder> = emptyList()
-
     private fun applyFilterAndSearch() {
+        if (_binding == null) return
         val query = binding.etSearch.text.toString().trim().lowercase()
         val filtered = if (query.isEmpty()) {
             originalList
@@ -85,9 +95,10 @@ class ManagerImportOrderActivity : AppCompatActivity() {
     }
 
     private fun updateTabStyles(selectedStatus: String) {
-        val activeBg = ContextCompat.getDrawable(this, R.drawable.bg_tab_active_gold)
-        val activeTextColor = ContextCompat.getColor(this, R.color.bg_primary)
-        val inactiveTextColor = ContextCompat.getColor(this, R.color.text_secondary)
+        val context = requireContext()
+        val activeBg = ContextCompat.getDrawable(context, R.drawable.bg_tab_active_gold)
+        val activeTextColor = ContextCompat.getColor(context, R.color.bg_primary)
+        val inactiveTextColor = ContextCompat.getColor(context, R.color.text_secondary)
 
         binding.tabPending.apply {
             background = if (selectedStatus == "PENDING") activeBg else null
@@ -130,14 +141,14 @@ class ManagerImportOrderActivity : AppCompatActivity() {
 
     private fun setupFab() {
         binding.fabCreate.setOnClickListener {
-            val intent = Intent(this, ManagerCreateImportOrderActivity::class.java)
+            val intent = Intent(requireContext(), ManagerCreateImportOrderActivity::class.java)
             createOrderLauncher.launch(intent)
         }
     }
 
     private fun observeViewModel() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     binding.progressBar.isVisible = state.isLoading
                     originalList = state.orders
@@ -149,11 +160,11 @@ class ManagerImportOrderActivity : AppCompatActivity() {
                         } else {
                             getString(resId)
                         }
-                        Toast.makeText(this@ManagerImportOrderActivity, msg, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                         viewModel.resetStatus()
                     }
                     state.error?.let {
-                        Toast.makeText(this@ManagerImportOrderActivity, it, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
                         viewModel.resetStatus()
                     }
                 }
@@ -162,8 +173,8 @@ class ManagerImportOrderActivity : AppCompatActivity() {
     }
 
     private fun showCancelConfirmDialog(order: ImportOrder) {
-        val dialogBinding = DialogApproveImportOrderBinding.inflate(layoutInflater)
-        val dialog = Dialog(this)
+        val dialogBinding = com.example.movie_booking_app.databinding.DialogApproveImportOrderBinding.inflate(layoutInflater)
+        val dialog = android.app.Dialog(requireContext())
         dialog.setContentView(dialogBinding.root)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window?.setLayout(
@@ -187,5 +198,10 @@ class ManagerImportOrderActivity : AppCompatActivity() {
         }
 
         dialog.show()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

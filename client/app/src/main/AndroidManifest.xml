@@ -42,9 +42,6 @@
             android:theme="@style/Theme.Moviebookingapp"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
-            android:name=".view.activity.manager.ManagerRoomListActivity"
-            android:exported="false" />
-        <activity
             android:name=".view.activity.manager.ManagerSeatActivity"
             android:exported="false"
             android:theme="@style/Theme.Moviebookingapp" />
@@ -91,16 +88,6 @@
             android:exported="false"
             android:theme="@style/Theme.Moviebookingapp"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity
-            android:name=".view.activity.admin.AdminInventoryActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Moviebookingapp"
-            android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity
-            android:name=".view.activity.admin.AdminFoodMenuActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Moviebookingapp"
-            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".view.activity.AdminEditPromotionActivity"
@@ -148,19 +135,7 @@
             android:exported="false"
             android:theme="@style/Theme.Moviebookingapp" />
         <activity
-            android:name=".view.activity.ManagerProfileActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Moviebookingapp" />
-        <activity
             android:name=".view.activity.StaffActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Moviebookingapp" />
-        <activity
-            android:name=".view.activity.manager.ManagerReportActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Moviebookingapp" />
-        <activity
-            android:name=".view.activity.manager.ManagerStaffActivity"
             android:exported="false"
             android:theme="@style/Theme.Moviebookingapp" />
         <activity
@@ -168,23 +143,11 @@
             android:exported="false"
             android:theme="@style/Theme.Moviebookingapp" />
         <activity
-            android:name=".view.activity.manager.ManagerAutoSchedulingActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Moviebookingapp" />
-        <activity
-            android:name=".view.activity.manager.ManagerImportOrderActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Moviebookingapp" />
-        <activity
             android:name=".view.activity.manager.ManagerCreateImportOrderActivity"
             android:exported="false"
             android:theme="@style/Theme.Moviebookingapp"
             android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".view.activity.admin.AdminImportOrderActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Moviebookingapp" />
-     
+
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_notification_small" />

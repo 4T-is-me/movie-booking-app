@@ -1,17 +1,18 @@
-package com.example.movie_booking_app.view.activity.admin
+package com.example.movie_booking_app.view.fragment.admin
 
-import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -27,25 +28,33 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class AdminImportOrderActivity : AppCompatActivity() {
+class AdminImportOrderFragment : Fragment() {
 
-    private lateinit var binding: ActivityAdminImportOrderBinding
+    private var _binding: ActivityAdminImportOrderBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: AdminImportOrderViewModel by viewModels()
     private lateinit var adapter: AdminImportOrderAdapter
+    private var originalList: List<ImportOrder> = emptyList()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityAdminImportOrderBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = ActivityAdminImportOrderBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        setupToolbar()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Hide local toolbar
+        binding.toolbar.visibility = View.GONE
+        (binding.contentLayout.layoutParams as? ViewGroup.MarginLayoutParams)?.topMargin = 0
+
         setupRecyclerView()
         setupFilterChips()
         observeViewModel()
-    }
-
-    private fun setupToolbar() {
-        binding.btnBack.setOnClickListener { finish() }
+        viewModel.loadOrders("PENDING")
     }
 
     private fun setupRecyclerView() {
@@ -54,14 +63,13 @@ class AdminImportOrderActivity : AppCompatActivity() {
             onRejectClick  = { order -> showRejectDialog(order) }
         )
         binding.rvImportOrders.apply {
-            layoutManager = LinearLayoutManager(this@AdminImportOrderActivity)
-            adapter = this@AdminImportOrderActivity.adapter
+            layoutManager = LinearLayoutManager(requireContext())
+            this.adapter = this@AdminImportOrderFragment.adapter
         }
     }
 
-    private var originalList: List<ImportOrder> = emptyList()
-
     private fun applyFilterAndSearch() {
+        if (_binding == null) return
         val query = binding.etSearch.text.toString().trim().lowercase()
         val filtered = if (query.isEmpty()) {
             originalList
@@ -76,9 +84,10 @@ class AdminImportOrderActivity : AppCompatActivity() {
     }
 
     private fun updateTabStyles(selectedStatus: String) {
-        val activeBg = ContextCompat.getDrawable(this, R.drawable.bg_tab_active_gold)
-        val activeTextColor = ContextCompat.getColor(this, R.color.bg_primary)
-        val inactiveTextColor = ContextCompat.getColor(this, R.color.text_secondary)
+        val context = requireContext()
+        val activeBg = ContextCompat.getDrawable(context, R.drawable.bg_tab_active_gold)
+        val activeTextColor = ContextCompat.getColor(context, R.color.bg_primary)
+        val inactiveTextColor = ContextCompat.getColor(context, R.color.text_secondary)
 
         binding.tabPending.apply {
             background = if (selectedStatus == "PENDING") activeBg else null
@@ -120,8 +129,8 @@ class AdminImportOrderActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     binding.progressBar.isVisible = state.isLoading
                     originalList = state.orders
@@ -133,11 +142,11 @@ class AdminImportOrderActivity : AppCompatActivity() {
                         } else {
                             getString(resId)
                         }
-                        Toast.makeText(this@AdminImportOrderActivity, msg, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                         viewModel.resetStatus()
                     }
                     state.error?.let {
-                        Toast.makeText(this@AdminImportOrderActivity, it, Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
                         viewModel.resetStatus()
                     }
                 }
@@ -147,7 +156,7 @@ class AdminImportOrderActivity : AppCompatActivity() {
 
     private fun showApproveConfirmDialog(order: ImportOrder) {
         val dialogBinding = DialogApproveImportOrderBinding.inflate(layoutInflater)
-        val dialog = Dialog(this)
+        val dialog = android.app.Dialog(requireContext())
         dialog.setContentView(dialogBinding.root)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window?.setLayout(
@@ -172,7 +181,7 @@ class AdminImportOrderActivity : AppCompatActivity() {
 
     private fun showRejectDialog(order: ImportOrder) {
         val dialogBinding = DialogRejectImportOrderBinding.inflate(layoutInflater)
-        val dialog = Dialog(this)
+        val dialog = android.app.Dialog(requireContext())
         dialog.setContentView(dialogBinding.root)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window?.setLayout(
@@ -194,5 +203,10 @@ class AdminImportOrderActivity : AppCompatActivity() {
         }
 
         dialog.show()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
