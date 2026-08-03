@@ -20,7 +20,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
-import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Inventory
 import com.example.movie_booking_app.databinding.ActivityAdminInventoryBinding
 import com.example.movie_booking_app.view.adapter.admin.InventoryAdapter

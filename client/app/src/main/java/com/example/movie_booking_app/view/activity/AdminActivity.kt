@@ -18,11 +18,9 @@ import com.example.movie_booking_app.view.fragment.admin.AdminFoodMenuFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminInventoryFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminMovieListFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminPayrollFragment
-import com.example.movie_booking_app.view.fragment.admin.AdminPayrollFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminPromotionFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminStaffTabsFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminStatsFragment
-import com.example.movie_booking_app.view.fragment.admin.MemberListFragment
 import com.example.movie_booking_app.view.fragment.admin.MemberListFragment
 import com.example.movie_booking_app.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint

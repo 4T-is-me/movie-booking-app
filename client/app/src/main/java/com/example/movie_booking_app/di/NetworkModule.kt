@@ -17,13 +17,13 @@ import com.example.movie_booking_app.data.api.MemberApi
 import com.example.movie_booking_app.data.api.MovieApi
 import com.example.movie_booking_app.data.api.NewsApi
 import com.example.movie_booking_app.data.api.NotificationApi
+import com.example.movie_booking_app.data.api.PaymentApi
 import com.example.movie_booking_app.data.api.PayrollApi
 import com.example.movie_booking_app.data.api.PayrollConfigApi
 import com.example.movie_booking_app.data.api.ProfileApi
 import com.example.movie_booking_app.data.api.RetrofitClient
-import com.example.movie_booking_app.data.api.MaintenanceApi
-import com.example.movie_booking_app.data.api.InventoryApi
-import com.example.movie_booking_app.data.api.ImportOrderApi
+import com.example.movie_booking_app.data.api.StaffApi
+
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

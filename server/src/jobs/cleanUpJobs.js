@@ -63,24 +63,24 @@ const updateStaffShiftStatus = async () => {
     const startTime = new Date(workDate);
     const endTime = new Date(workDate);
 
-    // Thiết lập giờ bắt đầu và kết thúc của ca
+    // Thiết lập giờ bắt đầu và kết thúc của ca (dùng UTC để nhất quán với MongoDB)
     switch (shiftItem.shift) {
       case constants.SHIFTS[0]:
-        startTime.setHours(8, 0, 0, 0);
-        endTime.setHours(12, 0, 0, 0);
+        startTime.setUTCHours(8, 0, 0, 0);
+        endTime.setUTCHours(12, 0, 0, 0);
         break;
       case constants.SHIFTS[1]:
-        startTime.setHours(12, 0, 0, 0);
-        endTime.setHours(16, 0, 0, 0);
+        startTime.setUTCHours(12, 0, 0, 0);
+        endTime.setUTCHours(16, 0, 0, 0);
         break;
       case constants.SHIFTS[2]:
-        startTime.setHours(16, 0, 0, 0);
-        endTime.setHours(20, 0, 0, 0);
+        startTime.setUTCHours(16, 0, 0, 0);
+        endTime.setUTCHours(20, 0, 0, 0);
         break;
       case constants.SHIFTS[3]:
-        startTime.setHours(20, 0, 0, 0);
-        endTime.setDate(endTime.getDate() + 1);
-        endTime.setHours(0, 0, 0, 0);
+        startTime.setUTCHours(20, 0, 0, 0);
+        endTime.setUTCDate(endTime.getUTCDate() + 1);
+        endTime.setUTCHours(0, 0, 0, 0);
         break;
       default:
         continue;
@@ -182,18 +182,19 @@ const autoRejectAndAbsentJob = async () => {
       const workDate = new Date(shift.workDate);
       const startTime = new Date(workDate);
 
+      // Dùng setUTCHours để nhất quán với workDate lưu UTC trong MongoDB
       switch (shift.shift) {
         case constants.SHIFTS[0]:
-          startTime.setHours(8, 0, 0, 0);
+          startTime.setUTCHours(8, 0, 0, 0);
           break;
         case constants.SHIFTS[1]:
-          startTime.setHours(12, 0, 0, 0);
+          startTime.setUTCHours(12, 0, 0, 0);
           break;
         case constants.SHIFTS[2]:
-          startTime.setHours(16, 0, 0, 0);
+          startTime.setUTCHours(16, 0, 0, 0);
           break;
         case constants.SHIFTS[3]:
-          startTime.setHours(20, 0, 0, 0);
+          startTime.setUTCHours(20, 0, 0, 0);
           break;
         default:
           continue;

@@ -55,20 +55,18 @@ class AdminPayrollFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Initialize default dates if null
-        if (selectedMonth == null) {
-            val cal = Calendar.getInstance()
-            selectedMonth = cal.get(Calendar.MONTH) + 1
-            selectedYear = cal.get(Calendar.YEAR)
-        }
+        // Reset filter state to "All" by default to match ViewModel initial state
+        selectedMonth = null
+        selectedYear = null
+        selectedCinemaId = null
+        selectedStatus = null
 
         setupRecyclerView()
         setupStaticSpinners()
         setupSwipeRefresh()
         observeViewModel()
         
-        // Initial load
-        applyFilters()
+        // Initial load happens in onResume or here
         isInitializing = false
     }
 
@@ -104,9 +102,7 @@ class AdminPayrollFragment : Fragment() {
                 applyFilters()
             }
         }
-        
-        val monthIdx = selectedMonth ?: 0
-        binding.spinnerMonth.setSelection(monthIdx)
+        binding.spinnerMonth.setSelection(0) // Default to "All"
 
         // Year spinner
         val years = listOf(getString(R.string.all_label)) + (currentYear - 2..currentYear + 1).map { it.toString() }
@@ -117,10 +113,7 @@ class AdminPayrollFragment : Fragment() {
                 applyFilters()
             }
         }
-        
-        val yearStr = selectedYear?.toString() ?: getString(R.string.all_label)
-        val yearIdx = years.indexOf(yearStr).let { if (it < 0) 0 else it }
-        binding.spinnerYear.setSelection(yearIdx)
+        binding.spinnerYear.setSelection(0) // Default to "All"
 
         // Status spinner
         val statuses = listOf(getString(R.string.all_status), getString(R.string.status_draft), getString(R.string.status_paid))
@@ -133,13 +126,7 @@ class AdminPayrollFragment : Fragment() {
                 applyFilters()
             }
         }
-        
-        val statusIdx = when (selectedStatus) {
-            "Draft" -> 1
-            "Paid" -> 2
-            else -> 0
-        }
-        binding.spinnerStatus.setSelection(statusIdx)
+        binding.spinnerStatus.setSelection(0) // Default to "All"
     }
 
     private fun setupCinemaSpinner(cinemas: List<Cinema>) {
@@ -222,11 +209,13 @@ class AdminPayrollFragment : Fragment() {
 
                 launch {
                     viewModel.isLoading.collect { loading ->
+                        // Show progress bar only if NOT using swipe refresh
                         binding.progressBar.visibility = if (loading && !binding.swipeRefresh.isRefreshing) View.VISIBLE else View.GONE
+                        
+                        // Stop swipe refresh animation when loading finished
                         if (!loading) {
                             binding.swipeRefresh.isRefreshing = false
                         }
-                        if (loading) binding.layoutEmptyState.visibility = View.GONE
                     }
                 }
 
