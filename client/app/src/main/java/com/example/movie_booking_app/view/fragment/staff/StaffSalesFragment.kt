@@ -20,6 +20,7 @@ import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.DialogSuccessBinding
 import com.example.movie_booking_app.databinding.DialogSuggestVoucherBinding
 import com.example.movie_booking_app.databinding.FragmentStaffSalesBinding
+import com.example.movie_booking_app.data.model.entity.SeatType
 import com.example.movie_booking_app.view.adapter.DateAdapter
 import com.example.movie_booking_app.view.adapter.SeatAdapter
 import com.example.movie_booking_app.view.adapter.StaffMovieAdapter
@@ -280,7 +281,14 @@ class StaffSalesFragment : Fragment() {
             viewModel.seats.collectLatest { seatList ->
                 if (seatList.isNotEmpty()) {
                     val maxCol = seatList.maxOfOrNull { it.number } ?: 10
-                    binding.rvSeatMap.layoutManager = GridLayoutManager(requireContext(), maxCol)
+                    val layoutManager = GridLayoutManager(requireContext(), maxCol)
+                    layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                        override fun getSpanSize(position: Int): Int {
+                            val seat = seatAdapter.currentList.getOrNull(position)
+                            return if (seat?.type == SeatType.COUPLE) 2 else 1
+                        }
+                    }
+                    binding.rvSeatMap.layoutManager = layoutManager
                     seatAdapter.submitList(seatList)
 
                     binding.svSeatMapContainer.visibility = View.VISIBLE
