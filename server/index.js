@@ -1,5 +1,6 @@
 // ES Modules syntax (ES6+) to import libraries
 import express from 'express';
+import dns from 'dns';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -90,6 +91,7 @@ app.use('/api/news', newsRoute);
 app.use('/api/manager', managerImportOrderRoutes);
 app.use('/api/admin', adminImportOrderRoutes);
 
+dns.setServers(['8.8.8.8', '1.1.1.1']);
 
 app.get('/api/cinemas', async (req, res) => {
     try {

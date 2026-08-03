@@ -9,10 +9,10 @@ object Constants {
     const val useMockData = false
 
     /**
-     * Updated to your machine's actual IPv4: 192.168.88.100
+     * Updated to your machine's actual IPv4: 192.168.1.184
      * Synced with group's server requirements.
      */
-    const val BASE_URL = "http://192.168.32.129:5000/"
+    const val BASE_URL = "http://192.168.1.184:5000/"
     const val RANK_GOLD = 10000000L
     const val RANK_SILVER = 5000000L
 
