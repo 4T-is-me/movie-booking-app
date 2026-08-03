@@ -1,5 +1,7 @@
 package com.example.movie_booking_app.view.fragment.admin
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +18,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.ImportOrder
 import com.example.movie_booking_app.databinding.ActivityAdminImportOrderBinding
+import com.example.movie_booking_app.databinding.DialogApproveImportOrderBinding
+import com.example.movie_booking_app.databinding.DialogRejectImportOrderBinding
 import com.example.movie_booking_app.view.adapter.admin.AdminImportOrderAdapter
 import com.example.movie_booking_app.viewmodel.admin.AdminImportOrderViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -149,10 +153,10 @@ class AdminImportOrderFragment : Fragment() {
     }
 
     private fun showApproveConfirmDialog(order: ImportOrder) {
-        val dialogBinding = com.example.movie_booking_app.databinding.DialogApproveImportOrderBinding.inflate(layoutInflater)
+        val dialogBinding = DialogApproveImportOrderBinding.inflate(layoutInflater)
         val dialog = android.app.Dialog(requireContext())
         dialog.setContentView(dialogBinding.root)
-        dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window?.setLayout(
             (320 * resources.displayMetrics.density).toInt(),
             android.view.ViewGroup.LayoutParams.WRAP_CONTENT
@@ -174,10 +178,10 @@ class AdminImportOrderFragment : Fragment() {
     }
 
     private fun showRejectDialog(order: ImportOrder) {
-        val dialogBinding = com.example.movie_booking_app.databinding.DialogRejectImportOrderBinding.inflate(layoutInflater)
+        val dialogBinding = DialogRejectImportOrderBinding.inflate(layoutInflater)
         val dialog = android.app.Dialog(requireContext())
         dialog.setContentView(dialogBinding.root)
-        dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window?.setLayout(
             (320 * resources.displayMetrics.density).toInt(),
             android.view.ViewGroup.LayoutParams.WRAP_CONTENT
