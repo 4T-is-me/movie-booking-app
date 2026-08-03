@@ -3,7 +3,12 @@ package com.example.movie_booking_app.data.api
 import com.example.movie_booking_app.data.model.entity.ImportOrder
 import com.example.movie_booking_app.data.model.entity.Supplier
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 // ---- Request bodies ----
 

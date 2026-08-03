@@ -1,7 +1,6 @@
 package com.example.movie_booking_app.view.activity.manager
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle

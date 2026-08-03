@@ -1,14 +1,17 @@
 package com.example.movie_booking_app.data.repository
 
 import com.example.movie_booking_app.data.api.StaffApi
-import com.example.movie_booking_app.data.api.LeaveRequestParams
+import com.example.movie_booking_app.data.model.request.CheckInTicketRequest
+import com.example.movie_booking_app.data.model.response.CheckInTicketResponse
+import com.example.movie_booking_app.data.model.response.ReviewListResponse
 import com.example.movie_booking_app.data.model.response.ShiftResponse
+import com.google.gson.Gson
+import javax.inject.Inject
+import javax.inject.Singleton
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.Dispatchers
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class StaffRepository @Inject constructor(private val api: StaffApi) {
@@ -26,26 +29,26 @@ class StaffRepository @Inject constructor(private val api: StaffApi) {
         }
     }.flowOn(Dispatchers.IO)
 
-    fun checkInTicket(bookingCode: String): Flow<com.example.movie_booking_app.data.model.response.CheckInTicketResponse?> = flow {
+    fun checkInTicket(bookingCode: String): Flow<CheckInTicketResponse?> = flow {
         try {
-            val response = api.checkInTicket(com.example.movie_booking_app.data.model.request.CheckInTicketRequest(bookingCode))
+            val response = api.checkInTicket(CheckInTicketRequest(bookingCode))
             if (response.isSuccessful) {
                 emit(response.body())
             } else {
                 val errorMsg = response.errorBody()?.string() ?: "An error occurred"
                 val parsedError = try {
-                    com.google.gson.Gson().fromJson(errorMsg, com.example.movie_booking_app.data.model.response.CheckInTicketResponse::class.java)
+                    Gson().fromJson(errorMsg, CheckInTicketResponse::class.java)
                 } catch (e: Exception) {
-                    com.example.movie_booking_app.data.model.response.CheckInTicketResponse(false, errorMsg, null, null)
+                    CheckInTicketResponse(false, errorMsg, null, null)
                 }
                 emit(parsedError)
             }
         } catch (e: Exception) {
-            emit(com.example.movie_booking_app.data.model.response.CheckInTicketResponse(false, e.message ?: "Network error", null, null))
+            emit(CheckInTicketResponse(false, e.message ?: "Network error", null, null))
         }
     }.flowOn(Dispatchers.IO)
 
-    fun getMyRatings(): Flow<com.example.movie_booking_app.data.model.response.ReviewListResponse?> = flow {
+    fun getMyRatings(): Flow<ReviewListResponse?> = flow {
         try {
             val response = api.getMyRatings()
             if (response.isSuccessful) {

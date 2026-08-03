@@ -1,15 +1,16 @@
 package com.example.movie_booking_app.data.repository
 
-import com.example.movie_booking_app.data.api.NewsApi
 import com.example.movie_booking_app.data.api.CreateCommentRequest
+import com.example.movie_booking_app.data.api.NewsApi
 import com.example.movie_booking_app.data.api.ToggleReactionRequest
 import com.example.movie_booking_app.data.model.response.CommentItemResponse
+import com.example.movie_booking_app.data.model.response.NewsLikeData
 import com.example.movie_booking_app.data.model.response.ReactionsSummaryResponse
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import javax.inject.Inject
 
 class NewsRepository @Inject constructor(
     private val newsApi: NewsApi
@@ -41,7 +42,7 @@ class NewsRepository @Inject constructor(
         }
     }.flowOn(Dispatchers.IO)
 
-    fun toggleNewsLike(newsId: String): Flow<com.example.movie_booking_app.data.model.response.NewsLikeData> = flow {
+    fun toggleNewsLike(newsId: String): Flow<NewsLikeData> = flow {
         val response = newsApi.toggleNewsLike(newsId)
         if (response.isSuccessful && response.body() != null) {
             emit(response.body()!!.data!!)

@@ -1,11 +1,10 @@
 package com.example.movie_booking_app.data.repository
 
-import com.example.movie_booking_app.R
-
-import timber.log.Timber
-import android.util.Log
-import com.example.movie_booking_app.data.api.MovieApi
 import com.example.movie_booking_app.data.api.AdminApiService
+import com.example.movie_booking_app.data.api.MovieApi
+import com.example.movie_booking_app.data.api.NewsApi
+import com.example.movie_booking_app.data.api.ReviewRequest
+import com.example.movie_booking_app.data.api.ReviewSubmitResponse
 import com.example.movie_booking_app.data.model.entity.Movie
 import com.example.movie_booking_app.data.model.entity.MovieNews
 import com.example.movie_booking_app.data.model.entity.Promo
@@ -13,15 +12,18 @@ import com.example.movie_booking_app.data.model.entity.Service
 import com.example.movie_booking_app.data.model.entity.Showtime
 import com.example.movie_booking_app.data.model.request.AddMovieRequest
 import com.example.movie_booking_app.data.model.request.UpdateMovieRequest
-import com.example.movie_booking_app.data.api.ReviewRequest
+import com.example.movie_booking_app.data.model.response.ReviewItem
+import com.example.movie_booking_app.utils.Constants
+import java.io.File
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.File
-import javax.inject.Inject
+import retrofit2.Response
+import timber.log.Timber
 
 /**
  * Clean remote implementation for production/MR.
@@ -30,7 +32,7 @@ import javax.inject.Inject
 class MovieRepositoryRemoteImpl @Inject constructor(
     private val api: MovieApi,
     private val adminApi: AdminApiService,
-    private val newsApi: com.example.movie_booking_app.data.api.NewsApi
+    private val newsApi: NewsApi
 ) : MovieRepository {
 
     override fun getMovies(status: String?, page: Int?, limit: Int?): Flow<List<Movie>> = flow {
@@ -107,7 +109,7 @@ class MovieRepositoryRemoteImpl @Inject constructor(
             if (response.isSuccessful) {
                 val list = response.body()?.data?.map { item ->
                     val fullUrl = if (item.image?.startsWith("http") == true) item.image
-                    else "${com.example.movie_booking_app.utils.Constants.BASE_URL}${item.image?.removePrefix("/")}"
+                    else "${Constants.BASE_URL}${item.image?.removePrefix("/")}"
 
                     MovieNews(
                         id = item.id,
@@ -254,11 +256,11 @@ class MovieRepositoryRemoteImpl @Inject constructor(
         movieId: String,
         rating: Int,
         comment: String?
-    ): retrofit2.Response<com.example.movie_booking_app.data.api.ReviewSubmitResponse> {
+    ): Response<ReviewSubmitResponse> {
         return api.submitReview(movieId, ReviewRequest(rating, comment))
     }
 
-    override suspend fun getMovieReviews(movieId: String, page: Int, limit: Int): List<com.example.movie_booking_app.data.model.response.ReviewItem> {
+    override suspend fun getMovieReviews(movieId: String, page: Int, limit: Int): List<ReviewItem> {
         return try {
             val response = api.getMovieReviews(movieId, page, limit)
             if (response.isSuccessful) response.body()?.data ?: emptyList()

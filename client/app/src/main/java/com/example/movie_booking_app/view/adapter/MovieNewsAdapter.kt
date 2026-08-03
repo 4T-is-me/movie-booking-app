@@ -1,11 +1,10 @@
 package com.example.movie_booking_app.view.adapter
 
-import com.example.movie_booking_app.databinding.ItemMovieNewsBinding
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +12,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.MovieNews
-import com.google.android.material.imageview.ShapeableImageView
+import com.example.movie_booking_app.databinding.ItemMovieNewsBinding
+import com.example.movie_booking_app.utils.Constants
+import com.example.movie_booking_app.utils.DateUtils
+import com.example.movie_booking_app.view.activity.MovieDetailActivity
 
 class MovieNewsAdapter(
     private val onNewsClick: ((MovieNews) -> Unit)? = null,
@@ -35,7 +37,7 @@ class MovieNewsAdapter(
             binding.tvNewsTitle.text = news.title
             
             val displayDate = if (news.date.contains("T")) {
-                com.example.movie_booking_app.utils.DateUtils.formatDateTime(news.date)
+                DateUtils.formatDateTime(news.date)
             } else {
                 news.date
             }
@@ -46,7 +48,7 @@ class MovieNewsAdapter(
             val avatarUrl = news.authorAvatar ?: ""
             if (avatarUrl.isNotEmpty()) {
                 val fullAvatarUrl = if (avatarUrl.startsWith("http")) avatarUrl
-                                    else "${com.example.movie_booking_app.utils.Constants.BASE_URL.removeSuffix("/")}${avatarUrl}"
+                                    else "${Constants.BASE_URL.removeSuffix("/")}${avatarUrl}"
                 Glide.with(itemView.context)
                     .load(fullAvatarUrl)
                     .placeholder(R.drawable.bg_ai_avatar)
@@ -59,18 +61,18 @@ class MovieNewsAdapter(
             Glide.with(itemView.context)
                 .load(news.imageUrl)
                 .placeholder(R.color.card_dark)
-                .transition(com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade())
+                .transition(DrawableTransitionOptions.withCrossFade())
                 .into(binding.imgNews)
 
             // Setup Tagged Movie mini-card
             if (!news.movieId.isNullOrEmpty()) {
-                binding.layoutMovieTag.visibility = android.view.View.VISIBLE
+                binding.layoutMovieTag.visibility = View.VISIBLE
                 binding.tvMovieTagSubtitle.text = news.movieName ?: ""
 
                 val fullPosterUrl = when {
                     news.moviePoster.isNullOrEmpty() -> ""
                     news.moviePoster.startsWith("http") -> news.moviePoster
-                    else -> "${com.example.movie_booking_app.utils.Constants.BASE_URL.removeSuffix("/")}${news.moviePoster}"
+                    else -> "${Constants.BASE_URL.removeSuffix("/")}${news.moviePoster}"
                 }
 
                 Glide.with(itemView.context)
@@ -81,13 +83,13 @@ class MovieNewsAdapter(
 
                 // Open Movie details on card click
                 binding.layoutMovieTag.setOnClickListener {
-                    val intent = Intent(itemView.context, com.example.movie_booking_app.view.activity.MovieDetailActivity::class.java).apply {
+                    val intent = Intent(itemView.context, MovieDetailActivity::class.java).apply {
                         putExtra("movieId", news.movieId)
                     }
                     itemView.context.startActivity(intent)
                 }
             } else {
-                binding.layoutMovieTag.visibility = android.view.View.GONE
+                binding.layoutMovieTag.visibility = View.GONE
             }
 
             // Real Social tallies from DB
@@ -104,7 +106,7 @@ class MovieNewsAdapter(
 
             // Real Like state color mapping
             val colorRes = if (news.userLiked) R.color.auto_color_F5C542 else R.color.white
-            val colorVal = androidx.core.content.ContextCompat.getColor(itemView.context, colorRes)
+            val colorVal = ContextCompat.getColor(itemView.context, colorRes)
             binding.ivLikeIcon.setColorFilter(colorVal)
             binding.tvLikeText.setTextColor(colorVal)
 

@@ -7,11 +7,11 @@ import com.example.movie_booking_app.data.model.entity.Seat
 import com.example.movie_booking_app.data.model.entity.SeatType
 import com.example.movie_booking_app.data.repository.CinemaRoomRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class AdminRoomViewModel @Inject constructor(

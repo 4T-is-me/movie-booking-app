@@ -1,5 +1,5 @@
 import express from 'express'
-import {bookingController} from '../controllers/bookingController.js'
+import { bookingController } from '../controllers/bookingController.js'
 import { authMiddleware } from '../middlewares/authMiddleware.js'
 
 const bookingRouter = express.Router()

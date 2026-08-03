@@ -1,32 +1,33 @@
 package com.example.movie_booking_app.view.activity
 
+import android.app.Dialog
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
+import android.view.Window
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
+import com.example.movie_booking_app.data.api.ResolveMaintenanceRequest
+import com.example.movie_booking_app.data.api.RetrofitClient
 import com.example.movie_booking_app.data.local.NotificationItem
 import com.example.movie_booking_app.data.local.NotificationLocalStorage
 import com.example.movie_booking_app.databinding.ActivityNotificationBinding
+import com.example.movie_booking_app.databinding.DialogMaintenanceActionBinding
 import com.example.movie_booking_app.databinding.ItemNotificationBinding
 import dagger.hilt.android.AndroidEntryPoint
-
-import android.widget.Toast
-import androidx.lifecycle.lifecycleScope
-import com.example.movie_booking_app.data.api.MaintenanceApi
-import com.example.movie_booking_app.data.api.ResolveMaintenanceRequest
-import com.example.movie_booking_app.data.api.RetrofitClient
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 
 /**
@@ -42,7 +43,7 @@ class NotificationActivity : AppCompatActivity() {
     private lateinit var adapter: NotificationAdapter
     private var notificationList = mutableListOf<NotificationItem>()
 
-    private val notificationReceiver = object : android.content.BroadcastReceiver() {
+    private val notificationReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             loadNotifications()
         }
@@ -199,16 +200,16 @@ class NotificationActivity : AppCompatActivity() {
     }
 
     private fun displayMaintenanceDialogUI(item: NotificationItem, bookingId: String?) {
-        val dialog = android.app.Dialog(this)
-        dialog.requestWindowFeature(android.view.Window.FEATURE_NO_TITLE)
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
 
-        val dialogBinding = com.example.movie_booking_app.databinding.DialogMaintenanceActionBinding.inflate(layoutInflater)
+        val dialogBinding = DialogMaintenanceActionBinding.inflate(layoutInflater)
         dialog.setContentView(dialogBinding.root)
 
-        dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window?.setLayout(
             (resources.displayMetrics.widthPixels * 0.90).toInt(),
-            android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+            ViewGroup.LayoutParams.WRAP_CONTENT
         )
 
         dialogBinding.tvDialogTitle.text = item.title
@@ -225,8 +226,8 @@ class NotificationActivity : AppCompatActivity() {
                 dialog.dismiss()
             }
         } else {
-            dialogBinding.btnAccept.visibility = android.view.View.GONE
-            dialogBinding.btnDecline.visibility = android.view.View.GONE
+            dialogBinding.btnAccept.visibility = View.GONE
+            dialogBinding.btnDecline.visibility = View.GONE
         }
 
         dialogBinding.tvDismiss.setOnClickListener {
@@ -238,24 +239,24 @@ class NotificationActivity : AppCompatActivity() {
 
     // Added by AI Assistant - Pure Voucher/Promotion Info Dialog (No Accept/Decline, Only Close) - 2026-07-26
     private fun showVoucherDialog(item: NotificationItem) {
-        val dialog = android.app.Dialog(this)
-        dialog.requestWindowFeature(android.view.Window.FEATURE_NO_TITLE)
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
 
-        val dialogBinding = com.example.movie_booking_app.databinding.DialogMaintenanceActionBinding.inflate(layoutInflater)
+        val dialogBinding = DialogMaintenanceActionBinding.inflate(layoutInflater)
         dialog.setContentView(dialogBinding.root)
 
-        dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window?.setLayout(
             (resources.displayMetrics.widthPixels * 0.90).toInt(),
-            android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+            ViewGroup.LayoutParams.WRAP_CONTENT
         )
 
         dialogBinding.tvDialogTitle.text = item.title
         dialogBinding.tvDialogMessage.text = item.body
 
         // Hide Agree and Decline buttons completely for Voucher notifications
-        dialogBinding.btnAccept.visibility = android.view.View.GONE
-        dialogBinding.btnDecline.visibility = android.view.View.GONE
+        dialogBinding.btnAccept.visibility = View.GONE
+        dialogBinding.btnDecline.visibility = View.GONE
 
         // Display a clean Exit Button
         dialogBinding.tvDismiss.text = getString(R.string.auto_str_close)

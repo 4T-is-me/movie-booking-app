@@ -116,7 +116,7 @@
     <string name="error_no_selection">Please select at least one seat</string>
     <string name="unknown_movie">Unknown Movie</string>
     <string name="cinema_center">Cinema Center</string>
-    <string name="default_room_name">Room 3</string>
+    <string name="default_room_name">Room 1</string>
     <string name="default_language">English</string>
     <string name="default_subtitle">Vietnamese</string>
     <string name="label_screen">Screen</string>
@@ -124,8 +124,8 @@
     <string name="section_select_date_time">Select Date &amp; Time</string>
     <string name="label_total">Total</string>
     <string name="btn_continue">Continue</string>
-    <string name="title_expired">Time Expired</string>
-    <string name="msg_expired">Your seat hold has expired. Please select seats again.</string>
+    <string name="title_expired">Booking Session Expired</string>
+    <string name="msg_expired">Your 10-minute booking window has expired. Please select seats again.</string>
     <string name="btn_ok">OK</string>
     <string name="error_no_showtimes">This movie has no available showtimes.</string>
     <string name="error_no_seats">No seats available for this showtime.</string>
@@ -718,7 +718,7 @@
     <string name="auto_str_save_1">Save</string>
 
     <!-- Admin Staff & Member Management Strings -->
-    <string name="admin_staff_members_title">Employees</string>
+    <string name="admin_staff_members_title">Staff Members</string>
     <string name="admin_settings_title">Settings</string>
     <string name="admin_tab_employees">Managers</string>
     <string name="admin_tab_staff">Staff</string>
@@ -1276,8 +1276,8 @@
     <string name="auto_str_no_comments_yet_start_the_conv">No comments yet. Start the conversation!</string>
 
     <!-- Auto-extracted strings (Node Script) -->
-    <string name="auto_str_selected_snacks_amp_drinks">Selected Snacks &amp;amp; Drinks</string>
-    <string name="auto_str_choose_f_amp_b">Choose F&amp;amp;B</string>
+    <string name="auto_str_selected_snacks_amp_drinks">Selected Snacks &amp; Drinks</string>
+    <string name="auto_str_choose_f_amp_b">Choose F&amp;B</string>
     <string name="auto_str_total_price">Total Price</string>
     <string name="auto_str_checkout">Checkout</string>
     <string name="auto_str_th_m_h_nh_nh_nh_n_di_n_phim">Thêm hình ảnh nhận diện phim 🎬</string>
@@ -1511,4 +1511,25 @@
     <string name="goods_intake_success_create">Import order %1$s created successfully</string>
     <string name="goods_intake_success_cancel">Import order %1$s cancelled</string>
     <string name="suggest_voucher">Suggest Vouchers</string>
+
+    <string name="approve_goods_intake">Approve Goods Intake</string>
+    <string name="no_goods_intake_found">No goods intake orders found</string>
+    <string name="goods_intake_orders">Goods Intake Orders</string>
+    <string name="create_order">Create Order</string>
+    <string name="hint_write_comment">Write a comment...</string>
+    <string name="hint_food_name">e.g. Coca Cola L</string>
+    <string name="hint_food_price">35000</string>
+    <string name="hint_food_desc">Product description</string>
+    <string name="hint_booking_id">MBD-XXXXXXXX-XXXXXX</string>
+    <string name="hint_language">Language</string>
+    <string name="hint_quantity">e.g., 2</string>
+    <string name="msg_movie_deleted_success">Movie deleted successfully</string>
+    <string name="msg_movie_restored_success">Movie restored successfully</string>
+    <string name="msg_movie_delete_failed">Failed to delete movie</string>
+    <string name="msg_movie_restore_failed">Failed to restore movie</string>
+    <string name="msg_movie_added_success">Movie added successfully</string>
+    <string name="msg_movie_add_failed">Failed to add movie</string>
+    <string name="msg_movie_updated_success">Movie updated successfully</string>
+    <string name="msg_movie_update_failed">Failed to update movie</string>
+    <string name="see_more">See more</string>
 </resources>

@@ -1,34 +1,37 @@
 package com.example.movie_booking_app.view.activity
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import timber.log.Timber
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
 import com.example.movie_booking_app.R
-import com.example.movie_booking_app.utils.RoleConstants
+import com.example.movie_booking_app.data.api.AuthEvent
+import com.example.movie_booking_app.data.local.FcmTokenHelper
 import com.example.movie_booking_app.databinding.ActivityMainBinding
+import com.example.movie_booking_app.utils.RoleConstants
 import com.example.movie_booking_app.view.fragment.GenericGridFragment
-import com.example.movie_booking_app.view.fragment.MovieGridFragment
 import com.example.movie_booking_app.view.fragment.HomeFragment
+import com.example.movie_booking_app.view.fragment.MovieGridFragment
+import com.example.movie_booking_app.view.fragment.MyTicketFragment
 import com.example.movie_booking_app.view.fragment.PlaceholderFragment
 import com.example.movie_booking_app.view.fragment.ProfileFragment
-import com.example.movie_booking_app.view.fragment.MyTicketFragment
 import com.example.movie_booking_app.viewmodel.AuthViewModel
-import com.example.movie_booking_app.data.api.AuthEvent
-import androidx.activity.viewModels
-import androidx.lifecycle.lifecycleScope
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.Dispatchers
-import dagger.hilt.android.AndroidEntryPoint
-import com.example.movie_booking_app.data.local.FcmTokenHelper
-import javax.inject.Inject
+import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity() {
@@ -44,7 +47,7 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         // Added by AI – feature auto login routing – 2026-07-06
-        val sharedPref = getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+        val sharedPref = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val token = sharedPref.getString("auth_token", null)
         val role = sharedPref.getString("role", "") ?: ""
         
@@ -139,14 +142,14 @@ class MainActivity : BaseActivity() {
         super.onResume()
         
         // Added by AI for User – feature hide navbar & AI chat FAB for logged-in users only – 2026-07-26
-        val sharedPref = getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+        val sharedPref = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val token = sharedPref.getString("auth_token", null)
         if (token.isNullOrEmpty()) {
-            binding.bottomNav.visibility = android.view.View.GONE
-            binding.fabAiChat.visibility = android.view.View.GONE
+            binding.bottomNav.visibility = View.GONE
+            binding.fabAiChat.visibility = View.GONE
         } else {
-            binding.bottomNav.visibility = android.view.View.VISIBLE
-            binding.fabAiChat.visibility = android.view.View.VISIBLE
+            binding.bottomNav.visibility = View.VISIBLE
+            binding.fabAiChat.visibility = View.VISIBLE
         }
     }
 
@@ -206,7 +209,7 @@ class MainActivity : BaseActivity() {
         if (section != "Home") {
             transaction.addToBackStack(section)
         } else {
-            supportFragmentManager.popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
+            supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         }
             
         transaction.commit()

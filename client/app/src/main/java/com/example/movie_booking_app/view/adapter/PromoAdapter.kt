@@ -1,8 +1,6 @@
 package com.example.movie_booking_app.view.adapter
 
-import com.example.movie_booking_app.databinding.ItemPromoBinding
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.DiffUtil
@@ -12,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Promo
+import com.example.movie_booking_app.databinding.ItemPromoBinding
 
 class PromoAdapter : ListAdapter<Promo, PromoAdapter.PromoViewHolder>(PromoDiffCallback()) {
 

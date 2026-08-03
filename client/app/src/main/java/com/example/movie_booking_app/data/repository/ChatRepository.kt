@@ -10,6 +10,7 @@ import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
+import okhttp3.MultipartBody
 
 @Singleton
 class ChatRepository @Inject constructor(
@@ -71,7 +72,7 @@ class ChatRepository @Inject constructor(
         }
     }
 
-    suspend fun sendVisionImage(imagePart: okhttp3.MultipartBody.Part): Result<VisionResponse> {
+    suspend fun sendVisionImage(imagePart: MultipartBody.Part): Result<VisionResponse> {
         return try {
             val response = chatApi.uploadVisionImage(imagePart)
             if (response.isSuccessful) {

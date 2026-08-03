@@ -1,9 +1,7 @@
 package com.example.movie_booking_app.view.adapter
 
-import com.example.movie_booking_app.databinding.ItemAdminSeatBinding
 import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -13,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Seat
 import com.example.movie_booking_app.data.model.entity.SeatType
+import com.example.movie_booking_app.databinding.ItemAdminSeatBinding
 
 class AdminSeatAdapter(
     private val onSeatClick: (Seat) -> Unit

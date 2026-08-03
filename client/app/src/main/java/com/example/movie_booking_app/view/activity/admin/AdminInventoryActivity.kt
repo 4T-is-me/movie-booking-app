@@ -1,13 +1,10 @@
 package com.example.movie_booking_app.view.activity.admin
 
-import com.example.movie_booking_app.R
-
 import android.content.Context
 import android.os.Bundle
 import android.text.InputType
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -20,6 +17,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Inventory
 import com.example.movie_booking_app.databinding.ActivityAdminInventoryBinding
 import com.example.movie_booking_app.view.adapter.admin.InventoryAdapter
@@ -70,7 +68,7 @@ class AdminInventoryActivity : AppCompatActivity() {
                     // Setup Dropdown
                     if (state.cinemas.isNotEmpty() && binding.actvCinema.adapter == null) {
                         val names = state.cinemas.map { it.cinemaName ?: "Unknown" }
-                        val adapter = ArrayAdapter(this@AdminInventoryActivity, com.example.movie_booking_app.R.layout.item_spinner_dropdown, names)
+                        val adapter = ArrayAdapter(this@AdminInventoryActivity, R.layout.item_spinner_dropdown, names)
                         binding.actvCinema.setAdapter(adapter)
                         
                         // Default select first

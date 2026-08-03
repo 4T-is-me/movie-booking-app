@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -15,7 +14,9 @@ import com.example.movie_booking_app.databinding.FragmentStaffProfileBinding
 import com.example.movie_booking_app.view.activity.ChangePasswordActivity
 import com.example.movie_booking_app.viewmodel.ProfileViewModel
 import com.example.movie_booking_app.viewmodel.staff.StaffScheduleViewModel
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -115,7 +116,7 @@ class StaffProfileFragment : Fragment() {
 
                     binding.tvStaffKpi.text = (it.kpiPoints ?: 0).toString()
                     binding.tvStaffTickets.text = (it.ticketSold ?: 0).toString()
-                    binding.tvStaffRating.text = String.format(java.util.Locale.US, "%.1f", it.rating ?: 0.0)
+                    binding.tvStaffRating.text = String.format(Locale.US, "%.1f", it.rating ?: 0.0)
 
                     val initials = it.fullName?.split(" ")
                         ?.mapNotNull { word -> word.firstOrNull()?.uppercase() }
@@ -134,7 +135,7 @@ class StaffProfileFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.error.collectLatest { errorMsg ->
                 errorMsg?.let {
-                    com.google.android.material.snackbar.Snackbar.make(binding.root, it, com.google.android.material.snackbar.Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG).show()
                     viewModel.resetError()
                 }
             }
@@ -148,7 +149,7 @@ class StaffProfileFragment : Fragment() {
                         // Update rating if not already set by profile API
                         if (binding.tvStaffRating.text == "0.0" || binding.tvStaffRating.text == "0,0") {
                             val rating = firstShift.rating ?: 0.0
-                            binding.tvStaffRating.text = String.format(java.util.Locale.US, "%.1f", rating)
+                            binding.tvStaffRating.text = String.format(Locale.US, "%.1f", rating)
                         }
                         // Update KPI if not already set
                         if (binding.tvStaffKpi.text == "0") {

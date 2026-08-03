@@ -1,11 +1,10 @@
 package com.example.movie_booking_app.view.adapter
 
-import com.example.movie_booking_app.databinding.ItemPromoSeeAllBinding
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -18,13 +17,14 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Promo
+import com.example.movie_booking_app.databinding.ItemPromoSeeAllBinding
+import com.example.movie_booking_app.view.activity.PromotionDetailActivity
+import com.google.android.material.button.MaterialButton
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
-import android.content.Intent
-import com.example.movie_booking_app.view.activity.PromotionDetailActivity
 
 class PromoSeeAllAdapter : ListAdapter<Promo, PromoSeeAllAdapter.PromoViewHolder>(PromoDiffCallback()) {
 
@@ -44,7 +44,7 @@ class PromoSeeAllAdapter : ListAdapter<Promo, PromoSeeAllAdapter.PromoViewHolder
         private val tvPromoDetail: TextView = binding.tvPromoDetail
         private val tvMinOrderValue: TextView = binding.tvMinOrderValue
         private val tvCouponCode: TextView = binding.tvCouponCode
-        private val btnCopyCode: com.google.android.material.button.MaterialButton = binding.btnCopyCode
+        private val btnCopyCode: MaterialButton = binding.btnCopyCode
         private val tvPromoDateRange: TextView = binding.tvPromoDateRange
 
         fun bind(promo: Promo) {

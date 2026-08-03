@@ -41,7 +41,7 @@
             android:id="@+id/etName"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:hint="e.g. Coca Cola L"
+            android:hint="@string/hint_food_name"
             android:inputType="text" />
 
         <TextView
@@ -69,7 +69,7 @@
             android:id="@+id/etPrice"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:hint="35000"
+            android:hint="@string/hint_food_price"
             android:inputType="number" />
 
         <TextView
@@ -84,7 +84,7 @@
             android:id="@+id/etDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Product description"
+            android:hint="@string/hint_food_desc"
             android:inputType="textMultiLine"
             android:minLines="2" />
 

@@ -2,6 +2,7 @@ package com.example.movie_booking_app.data.api
 
 import com.example.movie_booking_app.data.model.request.CheckInTicketRequest
 import com.example.movie_booking_app.data.model.response.CheckInTicketResponse
+import com.example.movie_booking_app.data.model.response.ReviewListResponse
 import com.example.movie_booking_app.data.model.response.ShiftResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -27,5 +28,5 @@ interface StaffApi {
     ): Response<CheckInTicketResponse>
 
     @GET("api/staff/my-ratings")
-    suspend fun getMyRatings(): Response<com.example.movie_booking_app.data.model.response.ReviewListResponse>
+    suspend fun getMyRatings(): Response<ReviewListResponse>
 }

@@ -2,7 +2,6 @@ import { ScheduleSeat } from '../models/scheduleSeatModel.js';
 import { Seat } from '../models/seatModel.js';
 import { CinemaRoom } from '../models/cinemaRoomModel.js';
 import { Showtime } from '../models/showTimeModel.js';
-import { Movie } from '../models/movieModel.js';
 import { constants } from '../utils/constants.js';
 import { Cinema } from "../models/cinemaModel.js";
 const getSeatStatus = (scheduleSeat) => {

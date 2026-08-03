@@ -5,7 +5,10 @@ import { InventoryLog } from "../models/inventoryLogModel.js";
 import { Manager } from "../models/managerModel.js";
 import { StatusCodes } from "http-status-codes";
 import ApiError from "../utils/ApiError.js";
+import { constants } from "../utils/constants.js";
 import mongoose from "mongoose";
+
+const { IMPORT_ORDER_STATUS, INVENTORY_LOG_TYPE, ORDER_PREFIX } = constants;
 
 // ================================
 // SUPPLIER
@@ -77,7 +80,7 @@ const createImportOrder = async (accountId, data) => {
     const countToday = await ImportOrder.countDocuments({
         createdAt: { $gte: new Date(now.setHours(0, 0, 0, 0)) }
     });
-    const importCode = `PN-${datePart}-${String(countToday + 1).padStart(4, '0')}`;
+    const importCode = `${ORDER_PREFIX.IMPORT}${datePart}-${String(countToday + 1).padStart(4, '0')}`;
 
     const newOrder = await ImportOrder.create({
         importCode,
@@ -87,7 +90,7 @@ const createImportOrder = async (accountId, data) => {
         items,
         totalAmount,
         notes: notes || '',
-        status: 'PENDING'
+        status: IMPORT_ORDER_STATUS.PENDING
     });
 
     return await ImportOrder.findById(newOrder._id)
@@ -102,11 +105,11 @@ const cancelImportOrder = async (accountId, orderId) => {
 
     const order = await ImportOrder.findOne({ _id: orderId, cinemaId: manager.cinemaId });
     if (!order) throw new ApiError(StatusCodes.NOT_FOUND, "Import order not found");
-    if (order.status !== 'PENDING') {
+    if (order.status !== IMPORT_ORDER_STATUS.PENDING) {
         throw new ApiError(StatusCodes.BAD_REQUEST, `Cannot cancel an order with status: ${order.status}`);
     }
 
-    order.status = 'CANCELLED';
+    order.status = IMPORT_ORDER_STATUS.CANCELLED;
     await order.save();
     return await ImportOrder.findById(order._id)
         .populate('supplierId', 'name phone')
@@ -133,7 +136,7 @@ const getAllImportOrders = async (query = {}) => {
 const approveImportOrder = async (adminAccountId, orderId) => {
     const order = await ImportOrder.findById(orderId);
     if (!order) throw new ApiError(StatusCodes.NOT_FOUND, "Import order not found");
-    if (order.status !== 'PENDING') {
+    if (order.status !== IMPORT_ORDER_STATUS.PENDING) {
         throw new ApiError(StatusCodes.BAD_REQUEST, `Cannot approve an order with status: ${order.status}`);
     }
 
@@ -142,7 +145,7 @@ const approveImportOrder = async (adminAccountId, orderId) => {
 
     try {
         // 1. Update order status
-        order.status = 'APPROVED';
+        order.status = IMPORT_ORDER_STATUS.APPROVED;
         order.approvedBy = adminAccountId;
         await order.save({ session });
 
@@ -165,7 +168,7 @@ const approveImportOrder = async (adminAccountId, orderId) => {
             await InventoryLog.create([{
                 cinemaId: order.cinemaId,
                 itemCode: item.itemCode,
-                type: 'REFILL',
+                type: INVENTORY_LOG_TYPE.REFILL,
                 changeQuantity: item.quantity,
                 oldQuantity,
                 newQuantity,
@@ -190,11 +193,11 @@ const approveImportOrder = async (adminAccountId, orderId) => {
 const rejectImportOrder = async (adminAccountId, orderId, rejectionReason) => {
     const order = await ImportOrder.findById(orderId);
     if (!order) throw new ApiError(StatusCodes.NOT_FOUND, "Import order not found");
-    if (order.status !== 'PENDING') {
+    if (order.status !== IMPORT_ORDER_STATUS.PENDING) {
         throw new ApiError(StatusCodes.BAD_REQUEST, `Cannot reject an order with status: ${order.status}`);
     }
 
-    order.status = 'REJECTED';
+    order.status = IMPORT_ORDER_STATUS.REJECTED;
     order.approvedBy = adminAccountId;
     order.rejectionReason = rejectionReason || '';
     await order.save();

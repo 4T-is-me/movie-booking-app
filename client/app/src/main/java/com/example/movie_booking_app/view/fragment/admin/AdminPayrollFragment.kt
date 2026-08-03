@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -17,15 +18,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Cinema
 import com.example.movie_booking_app.databinding.FragmentAdminPayrollBinding
-import com.example.movie_booking_app.utils.Constants
-import com.example.movie_booking_app.view.activity.PayrollDetailActivity
 import com.example.movie_booking_app.view.activity.PayrollConfigActivity
+import com.example.movie_booking_app.view.activity.PayrollDetailActivity
 import com.example.movie_booking_app.view.adapter.PayrollAdapter
 import com.example.movie_booking_app.view.fragment.GeneratePayrollDialogFragment
 import com.example.movie_booking_app.viewmodel.PayrollViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import java.util.Calendar
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class AdminPayrollFragment : Fragment() {
@@ -131,7 +131,7 @@ class AdminPayrollFragment : Fragment() {
     }
 
     private fun setupSpinner(
-        spinner: android.widget.Spinner,
+        spinner: Spinner,
         items: List<String>,
         onSelected: (position: Int) -> Unit
     ) {

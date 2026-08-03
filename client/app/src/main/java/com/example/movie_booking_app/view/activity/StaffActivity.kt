@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.activity
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -15,20 +16,21 @@ import com.example.movie_booking_app.data.api.AuthEvent
 import com.example.movie_booking_app.data.local.FcmTokenHelper
 import com.example.movie_booking_app.databinding.ActivityStaffBinding
 import com.example.movie_booking_app.databinding.LayoutMenuBadgeBinding
+import com.example.movie_booking_app.utils.AuthUtils
 import com.example.movie_booking_app.view.fragment.staff.StaffNotificationsFragment
+import com.example.movie_booking_app.view.fragment.staff.StaffPayrollFragment
 import com.example.movie_booking_app.view.fragment.staff.StaffProfileFragment
 import com.example.movie_booking_app.view.fragment.staff.StaffRatingFragment
 import com.example.movie_booking_app.view.fragment.staff.StaffRequestsFragment
 import com.example.movie_booking_app.view.fragment.staff.StaffSalesFragment
 import com.example.movie_booking_app.view.fragment.staff.StaffScheduleFragment
-import com.example.movie_booking_app.view.fragment.staff.StaffPayrollFragment
 import com.example.movie_booking_app.view.fragment.staff.StaffValidatorFragment
 import com.example.movie_booking_app.viewmodel.AuthViewModel
 import com.example.movie_booking_app.viewmodel.NotificationViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class StaffActivity : BaseActivity() {
@@ -40,7 +42,7 @@ class StaffActivity : BaseActivity() {
     @Inject
     lateinit var fcmTokenHelper: FcmTokenHelper
 
-    private val notificationReceiver = object : android.content.BroadcastReceiver() {
+    private val notificationReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             notificationViewModel.fetchStaffNotifications()
         }
@@ -95,7 +97,7 @@ class StaffActivity : BaseActivity() {
                     loadFragment(StaffPayrollFragment())
                 }
                 R.id.nav_staff_logout -> {
-                    com.example.movie_booking_app.utils.AuthUtils.showLogoutConfirmationDialog(this)
+                    AuthUtils.showLogoutConfirmationDialog(this)
                 }
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)

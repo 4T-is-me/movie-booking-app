@@ -1,13 +1,11 @@
 package com.example.movie_booking_app.view.fragment
 
-import com.example.movie_booking_app.R
-
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.GenerateShiftResponse
 import com.example.movie_booking_app.databinding.FragmentGenerateShiftSuccessDialogBinding
 

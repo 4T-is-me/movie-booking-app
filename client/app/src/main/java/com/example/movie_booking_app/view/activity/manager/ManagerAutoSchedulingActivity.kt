@@ -1,18 +1,20 @@
 package com.example.movie_booking_app.view.activity.manager
 
-import com.example.movie_booking_app.R
-
-import androidx.core.content.ContextCompat
-
+import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
+import android.view.View
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.delay
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.movie_booking_app.R
+import com.example.movie_booking_app.data.api.RetrofitClient
+import com.example.movie_booking_app.data.model.request.ShowtimeBulkItem
+import com.example.movie_booking_app.data.model.request.ShowtimeBulkRequest
 import com.example.movie_booking_app.databinding.ActivityManagerAutoSchedulingBinding
 import com.example.movie_booking_app.utils.AutoSchedulingAlgorithm
 import com.example.movie_booking_app.utils.CinemaConfigDraft
@@ -20,14 +22,18 @@ import com.example.movie_booking_app.utils.MovieDraft
 import com.example.movie_booking_app.utils.RoomDraft
 import com.example.movie_booking_app.utils.ShowtimeDraft
 import com.example.movie_booking_app.view.adapter.manager.AutoSchedulingAdapter
-import java.time.LocalDate
-import android.view.View
-import com.example.movie_booking_app.data.model.request.ShowtimeBulkItem
-import com.example.movie_booking_app.data.model.request.ShowtimeBulkRequest
-import com.example.movie_booking_app.data.api.RetrofitClient
-import java.net.URL
 import java.net.HttpURLConnection
+import java.net.URL
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import java.util.regex.Pattern
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ManagerAutoSchedulingActivity : AppCompatActivity() {
 
@@ -106,12 +112,12 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                         Toast.makeText(this@ManagerAutoSchedulingActivity, getString(R.string.auto_str_showtimes_saved_to_database), Toast.LENGTH_SHORT).show()
                         fetchExistingShowtimes(currentWeekStart, currentWeekStart.plusDays(6))
                     } else {
-                        binding.layoutLoading.visibility = android.view.View.GONE
+                        binding.layoutLoading.visibility = View.GONE
                         binding.btnSave.isEnabled = true
                         Toast.makeText(this@ManagerAutoSchedulingActivity, "Server error: ${response.message()}", Toast.LENGTH_LONG).show()
                     }
                 } catch (e: Exception) {
-                    binding.layoutLoading.visibility = android.view.View.GONE
+                    binding.layoutLoading.visibility = View.GONE
                     binding.btnSave.isEnabled = true
                     e.printStackTrace()
                     Toast.makeText(this@ManagerAutoSchedulingActivity, "Network connection error: ${e.message}", Toast.LENGTH_LONG).show()
@@ -175,26 +181,26 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
     private fun renderRoomTabs() {
         binding.layoutRoomTabs.removeAllViews()
         for (room in allRooms) {
-            val tv = android.widget.TextView(this)
+            val tv = TextView(this)
             tv.text = room.roomName
             tv.setPadding(48, 24, 48, 24)
             tv.textSize = 14f
-            tv.setTypeface(null, android.graphics.Typeface.BOLD)
-            val params = android.widget.LinearLayout.LayoutParams(
-                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
-                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+            tv.setTypeface(null, Typeface.BOLD)
+            val params = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
             )
             params.setMargins(0, 0, 24, 0)
             tv.layoutParams = params
 
             if (room._id == selectedRoomId) {
-                tv.setBackgroundResource(com.example.movie_booking_app.R.drawable.bg_button_gold)
-                tv.setTextColor(android.graphics.Color.WHITE)
+                tv.setBackgroundResource(R.drawable.bg_button_gold)
+                tv.setTextColor(Color.WHITE)
             } else if (room.status != "active") {
-                tv.setBackgroundResource(com.example.movie_booking_app.R.drawable.bg_rounded_border)
+                tv.setBackgroundResource(R.drawable.bg_rounded_border)
                 tv.setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_999999)) // Gray out text to indicate disabled
             } else {
-                tv.setBackgroundResource(com.example.movie_booking_app.R.drawable.bg_rounded_border)
+                tv.setBackgroundResource(R.drawable.bg_rounded_border)
                 tv.setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_333333))
             }
 
@@ -209,21 +215,21 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
     }
 
     private fun updateCalendarUI() {
-        val formatter = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")
+        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
         val weekEnd = currentWeekStart.plusDays(6)
         binding.tvSelectedWeek.text = "Selected week: ${currentWeekStart.format(formatter)} - ${weekEnd.format(formatter)}"
         
-        val monthFormatter = java.time.format.DateTimeFormatter.ofPattern("MMMM yyyy", java.util.Locale.ENGLISH)
+        val monthFormatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH)
         binding.tvMonthYear.text = currentWeekStart.format(monthFormatter)
         
         // Disable generating and saving if the week is in the past
         val thisWeekStart = LocalDate.now().minusDays(LocalDate.now().dayOfWeek.value.toLong() - 1)
         if (currentWeekStart.isBefore(thisWeekStart)) {
-            binding.btnGenerate.visibility = android.view.View.GONE
-            binding.btnSave.visibility = android.view.View.GONE
+            binding.btnGenerate.visibility = View.GONE
+            binding.btnSave.visibility = View.GONE
         } else {
-            binding.btnGenerate.visibility = android.view.View.VISIBLE
-            binding.btnSave.visibility = android.view.View.VISIBLE
+            binding.btnGenerate.visibility = View.VISIBLE
+            binding.btnSave.visibility = View.VISIBLE
         }
 
         // Update days
@@ -231,7 +237,7 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
         val labels = listOf(binding.tvDay1Label, binding.tvDay2Label, binding.tvDay3Label, binding.tvDay4Label, binding.tvDay5Label, binding.tvDay6Label, binding.tvDay7Label)
         val dates = listOf(binding.tvDay1Date, binding.tvDay2Date, binding.tvDay3Date, binding.tvDay4Date, binding.tvDay5Date, binding.tvDay6Date, binding.tvDay7Date)
         
-        val dayFormatter = java.time.format.DateTimeFormatter.ofPattern("EEE", java.util.Locale.ENGLISH)
+        val dayFormatter = DateTimeFormatter.ofPattern("EEE", Locale.ENGLISH)
         
         for (i in 0..6) {
             val date = currentWeekStart.plusDays(i.toLong())
@@ -242,13 +248,13 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
             labels[i].setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_999999))
             dates[i].setBackgroundResource(0)
             dates[i].setTextColor(ContextCompat.getColor(this@ManagerAutoSchedulingActivity, R.color.auto_color_333333))
-            dates[i].typeface = android.graphics.Typeface.DEFAULT
+            dates[i].typeface = Typeface.DEFAULT
             
             // Set Selected Day Styling
             if (date == selectedDate) {
-                dates[i].setBackgroundResource(com.example.movie_booking_app.R.drawable.bg_circle_selected)
-                dates[i].setTextColor(android.graphics.Color.WHITE)
-                dates[i].typeface = android.graphics.Typeface.DEFAULT_BOLD
+                dates[i].setBackgroundResource(R.drawable.bg_circle_selected)
+                dates[i].setTextColor(Color.WHITE)
+                dates[i].typeface = Typeface.DEFAULT_BOLD
             }
             
             // Click listener
@@ -307,11 +313,11 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
     private fun fetchExistingShowtimes(startDate: LocalDate, endDate: LocalDate) {
         lifecycleScope.launch {
             try {
-                binding.pbLoading.visibility = android.view.View.VISIBLE
+                binding.pbLoading.visibility = View.VISIBLE
                 val startStr = startDate.toString()
                 val endStr = endDate.toString()
                 
-                val response = com.example.movie_booking_app.data.api.RetrofitClient.managerApi.getShowtimes(startStr, endStr)
+                val response = RetrofitClient.managerApi.getShowtimes(startStr, endStr)
                 if (response.isSuccessful) {
                     val apiShowtimes = response.body()?.data ?: emptyList()
                     allGeneratedShowtimes.clear()
@@ -320,17 +326,17 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                         if (apiItem.movieId != null && apiItem.roomId != null) {
                             
                             val startLocal = try {
-                                java.time.ZonedDateTime.parse(apiItem.startTime)
-                                    .withZoneSameInstant(java.time.ZoneId.systemDefault())
+                                ZonedDateTime.parse(apiItem.startTime)
+                                    .withZoneSameInstant(ZoneId.systemDefault())
                                     .toLocalDateTime()
-                                    .format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                                    .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
                             } catch (e: Exception) { apiItem.startTime }
                             
                             val endLocal = try {
-                                java.time.ZonedDateTime.parse(apiItem.endTime)
-                                    .withZoneSameInstant(java.time.ZoneId.systemDefault())
+                                ZonedDateTime.parse(apiItem.endTime)
+                                    .withZoneSameInstant(ZoneId.systemDefault())
                                     .toLocalDateTime()
-                                    .format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                                    .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
                             } catch (e: Exception) { apiItem.endTime }
 
                             allGeneratedShowtimes.add(ShowtimeDraft(
@@ -353,7 +359,7 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                 e.printStackTrace()
                 Toast.makeText(this@ManagerAutoSchedulingActivity, "Error loading showtimes: ${e.message}", Toast.LENGTH_SHORT).show()
             } finally {
-                binding.pbLoading.visibility = android.view.View.GONE
+                binding.pbLoading.visibility = View.GONE
             }
         }
     }

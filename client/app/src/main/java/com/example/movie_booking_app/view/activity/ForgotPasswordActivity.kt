@@ -6,17 +6,15 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.api.RetrofitClient
 import com.example.movie_booking_app.data.model.request.OtpRequest
-import com.example.movie_booking_app.databinding.ActivityForgotPasswordBinding
+import com.example.movie_booking_app.view.dialog.ErrorDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
-
-import com.example.movie_booking_app.R
 
 class ForgotPasswordActivity : EnglishBaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,7 +68,7 @@ class ForgotPasswordActivity : EnglishBaseActivity() {
     }
 
     private fun showAlert(title: String, message: String, onSuccess: (() -> Unit)? = null) {
-        val dialog = com.example.movie_booking_app.view.dialog.ErrorDialog(
+        val dialog = ErrorDialog(
             context = this,
             title = title,
             message = message,

@@ -12,24 +12,21 @@ import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.ActivityChatBinding
 import com.example.movie_booking_app.view.adapter.ChatAdapter
 import com.example.movie_booking_app.viewmodel.ChatViewModel
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
+import java.util.UUID
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.File
-import java.util.Locale
-import java.util.UUID
 
 @AndroidEntryPoint
 class ChatActivity : BaseActivity() {

@@ -1,17 +1,18 @@
 package com.example.movie_booking_app.view.activity
 
-import androidx.core.content.ContextCompat
-
 import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Bundle
 import android.text.method.PasswordTransformationMethod
 import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -19,8 +20,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.local.TokenManager
 import com.example.movie_booking_app.databinding.ActivityChangePasswordBinding
+import com.example.movie_booking_app.viewmodel.ChangePasswordUiState
 import com.example.movie_booking_app.viewmodel.ChangePasswordViewModel
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -151,7 +152,7 @@ class ChangePasswordActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateValidationCard(state: com.example.movie_booking_app.viewmodel.ChangePasswordUiState) {
+    private fun updateValidationCard(state: ChangePasswordUiState) {
         // Requirement 1: Length
         updateRequirementItem(
             state.lengthValid,
@@ -197,7 +198,7 @@ class ChangePasswordActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateRequirementItem(isValid: Boolean, iconView: android.widget.ImageView, textView: android.widget.TextView) {
+    private fun updateRequirementItem(isValid: Boolean, iconView: ImageView, textView: TextView) {
         if (isValid) {
             iconView.setImageResource(R.drawable.ic_check_circle_gold)
             iconView.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this@ChangePasswordActivity, R.color.iconPlus))
@@ -209,7 +210,7 @@ class ChangePasswordActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateInlineErrors(state: com.example.movie_booking_app.viewmodel.ChangePasswordUiState) {
+    private fun updateInlineErrors(state: ChangePasswordUiState) {
         binding.tilCurrentPassword.error = state.currentPasswordError?.let { getString(it) }
         binding.tilNewPassword.error = state.newPasswordError?.let { getString(it) }
         binding.tilConfirmPassword.error = state.confirmPasswordError?.let { getString(it) }
@@ -222,7 +223,7 @@ class ChangePasswordActivity : AppCompatActivity() {
     private fun hideKeyboard() {
         val view = this.currentFocus
         if (view != null) {
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }

@@ -1,12 +1,6 @@
 import { Router } from 'express';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
-import {
-    createShowtime,
-    createBulkShowtimes,
-    getShowtimesAdmin,
-    getShowtimeDetail,
-    softDeleteShowtime
-} from '../controllers/adminShowtimeController.js';
+import { createShowtime, createBulkShowtimes, getShowtimesAdmin, getShowtimeDetail, softDeleteShowtime } from '../controllers/adminShowtimeController.js';
 
 const router = Router();
 

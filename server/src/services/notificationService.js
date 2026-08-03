@@ -1,8 +1,6 @@
 import { messaging } from '../config/firebaseAdmin.js'
 import { Account } from '../models/accountModel.js'
 import { Showtime } from '../models/showTimeModel.js'
-import { Movie } from '../models/movieModel.js'
-import { CinemaRoom } from '../models/cinemaRoomModel.js'
 import { Notification } from '../models/notificationModel.js'
 
 /**

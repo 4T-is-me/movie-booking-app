@@ -2,15 +2,16 @@ package com.example.movie_booking_app.viewmodel.manager
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.movie_booking_app.data.api.UpdateRoomRequest
 import com.example.movie_booking_app.data.model.response.ManagerRoom
 import com.example.movie_booking_app.data.model.response.ManagerSeatRow
 import com.example.movie_booking_app.data.repository.ManagerRoomRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class ManagerRoomViewModel @Inject constructor(
@@ -46,7 +47,7 @@ class ManagerRoomViewModel @Inject constructor(
         }
     }
 
-    fun updateRoom(roomId: String, request: com.example.movie_booking_app.data.api.UpdateRoomRequest, onResult: (Boolean) -> Unit) {
+    fun updateRoom(roomId: String, request: UpdateRoomRequest, onResult: (Boolean) -> Unit) {
         viewModelScope.launch {
             _isLoading.value = true
             repository.updateRoom(roomId, request).collect { success ->

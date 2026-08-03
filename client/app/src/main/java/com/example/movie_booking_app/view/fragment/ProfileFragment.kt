@@ -1,31 +1,45 @@
 package com.example.movie_booking_app.view.fragment
 
-import androidx.core.content.ContextCompat
-
+import android.app.Dialog
+import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.bumptech.glide.Glide
+import com.bumptech.glide.signature.ObjectKey
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.local.TokenManager
+import com.example.movie_booking_app.data.model.entity.UserProfile
 import com.example.movie_booking_app.databinding.FragmentProfileBinding
+import com.example.movie_booking_app.utils.AuthUtils
+import com.example.movie_booking_app.utils.Constants
+import com.example.movie_booking_app.view.activity.ChangePasswordActivity
+import com.example.movie_booking_app.view.activity.EditProfileActivity
 import com.example.movie_booking_app.view.activity.LoginActivity
 import com.example.movie_booking_app.view.activity.MainActivity
+import com.example.movie_booking_app.view.activity.PurchaseHistoryActivity
+import com.example.movie_booking_app.view.activity.RewardPointsActivity
 import com.example.movie_booking_app.viewmodel.ProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import com.bumptech.glide.Glide
-import com.example.movie_booking_app.R
-import com.example.movie_booking_app.data.model.entity.UserProfile
-import com.example.movie_booking_app.data.model.response.UserProfileResponse
-import com.example.movie_booking_app.view.activity.RewardPointsActivity
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
+import java.util.Locale
 import kotlin.jvm.java
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
@@ -34,7 +48,7 @@ class ProfileFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: ProfileViewModel by viewModels()
-    private var progressDialog: android.app.Dialog? = null
+    private var progressDialog: Dialog? = null
     private var currentUserProfile: UserProfile? = null
     private var lastLoadedAvatarUrl: String? = null
 
@@ -76,7 +90,7 @@ class ProfileFragment : Fragment() {
 
     private fun setupClickListeners() {
         binding.ivEditProfile.setOnClickListener {
-            val intent = Intent(requireContext(), com.example.movie_booking_app.view.activity.EditProfileActivity::class.java)
+            val intent = Intent(requireContext(), EditProfileActivity::class.java)
             startActivity(intent)
         }
         binding.layoutRewardPoints.setOnClickListener {
@@ -90,12 +104,12 @@ class ProfileFragment : Fragment() {
         binding.layoutChangeLanguage.setOnClickListener {
             val languages = arrayOf("English", "Tiếng Việt", "日本語")
             val langCodes = arrayOf("en", "vi", "ja")
-            val prefs = requireContext().getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+            val prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
             val currentLang = prefs.getString("language_code", "en") ?: "en"
             val checkedItem = langCodes.indexOf(currentLang).takeIf { it >= 0 } ?: 0
 
-            androidx.appcompat.app.AlertDialog.Builder(requireContext())
-                .setTitle(getString(com.example.movie_booking_app.R.string.auto_str_change_language))
+            AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.auto_str_change_language))
                 .setSingleChoiceItems(languages, checkedItem) { dialog, which ->
                     val selectedLang = langCodes[which]
                     if (selectedLang != currentLang) {
@@ -110,16 +124,16 @@ class ProfileFragment : Fragment() {
                 .show()
         }
         binding.layoutChangePassword.setOnClickListener {
-            val intent = Intent(requireContext(), com.example.movie_booking_app.view.activity.ChangePasswordActivity::class.java)
+            val intent = Intent(requireContext(), ChangePasswordActivity::class.java)
             startActivity(intent)
         }
         binding.layoutPurchaseHistory.setOnClickListener {
-            val intent = Intent(requireContext(), com.example.movie_booking_app.view.activity.PurchaseHistoryActivity::class.java)
+            val intent = Intent(requireContext(), PurchaseHistoryActivity::class.java)
             startActivity(intent)
         }
         binding.layoutLogout.setOnClickListener {
             val act = activity ?: return@setOnClickListener
-            com.example.movie_booking_app.utils.AuthUtils.showLogoutConfirmationDialog(act)
+            AuthUtils.showLogoutConfirmationDialog(act)
         }
     }
 
@@ -130,9 +144,9 @@ class ProfileFragment : Fragment() {
         if (isLoading) {
             if (binding.swipeRefresh.isRefreshing) return
             if (progressDialog == null) {
-                progressDialog = android.app.Dialog(act).apply {
-                    setContentView(android.widget.ProgressBar(act))
-                    window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
+                progressDialog = Dialog(act).apply {
+                    setContentView(ProgressBar(act))
+                    window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                     setCancelable(false)
                 }
             }
@@ -173,7 +187,7 @@ class ProfileFragment : Fragment() {
                     binding.tvRank.setTextColor(badgeColor)
 
                     // Tint crown icon inside the badge
-                    binding.imgBadgeCrownIcon.imageTintList = android.content.res.ColorStateList.valueOf(badgeColor)
+                    binding.imgBadgeCrownIcon.imageTintList = ColorStateList.valueOf(badgeColor)
 
                     // Dynamically refresh Member Card styling
                     val memberCardBg = when (rankClean) {
@@ -183,29 +197,29 @@ class ProfileFragment : Fragment() {
                     }
                     binding.layoutMemberCardInner.setBackgroundResource(memberCardBg)
                     binding.cardMember.strokeColor = badgeColor
-                    binding.ivAvatar.strokeColor = android.content.res.ColorStateList.valueOf(badgeColor)
+                    binding.ivAvatar.strokeColor = ColorStateList.valueOf(badgeColor)
 
                     val points = userProfile?.rewardPoints ?: 0
                     binding.tvPoints.text = "$points pts"
 
                     val spent = userProfile?.totalSpent ?: 0
-                    val symbols = java.text.DecimalFormatSymbols(java.util.Locale("vi", "VN")).apply {
+                    val symbols = DecimalFormatSymbols(Locale("vi", "VN")).apply {
                         groupingSeparator = ','
                     }
-                    val spentFormatter = java.text.DecimalFormat("#,###", symbols)
+                    val spentFormatter = DecimalFormat("#,###", symbols)
                     binding.tvTotalSpent.text = "${spentFormatter.format(spent)} ₫"
 
                     val url = userProfile?.image
                     val finalUrl = when {
                         url.isNullOrEmpty() -> ""
                         url.startsWith("http") -> url
-                        else -> "${com.example.movie_booking_app.utils.Constants.BASE_URL.removeSuffix("/")}$url"
+                        else -> "${Constants.BASE_URL.removeSuffix("/")}$url"
                     }
                     if (finalUrl != lastLoadedAvatarUrl) {
                         lastLoadedAvatarUrl = finalUrl
                         Glide.with(this@ProfileFragment)
                             .load(finalUrl.ifEmpty { null })
-                            .signature(com.bumptech.glide.signature.ObjectKey(System.currentTimeMillis().toString()))
+                            .signature(ObjectKey(System.currentTimeMillis().toString()))
                             .placeholder(R.drawable.ic_profile)
                             .error(R.drawable.ic_profile)
                             .into(binding.ivAvatar)
@@ -247,7 +261,7 @@ class ProfileFragment : Fragment() {
                         val act = activity ?: return@collect
                         Toast.makeText(act, getString(R.string.auto_str_session_expired_please_login_a), Toast.LENGTH_LONG).show()
                         TokenManager.clearTokens(act)
-                        val sharedPref = act.getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE)
+                        val sharedPref = act.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
                         with(sharedPref.edit()) {
                             remove("auth_token")
                             remove("username")
