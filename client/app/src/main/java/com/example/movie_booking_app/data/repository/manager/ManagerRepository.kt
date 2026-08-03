@@ -11,11 +11,11 @@ import com.example.movie_booking_app.data.model.response.ManagerStaffListRespons
 import com.example.movie_booking_app.data.model.response.ShiftDetailResponse
 import com.example.movie_booking_app.data.model.response.ShiftResponse
 import com.example.movie_booking_app.data.model.response.UpdateShiftResponse
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.json.JSONObject
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class ManagerRepository @Inject constructor(private val api: ManagerApi) {

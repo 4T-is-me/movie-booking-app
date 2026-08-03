@@ -2,11 +2,11 @@ package com.example.movie_booking_app.data.repository
 
 import com.example.movie_booking_app.data.api.FoodApi
 import com.example.movie_booking_app.data.model.entity.FoodBeverage
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import javax.inject.Inject
 
 class FoodRepositoryImpl @Inject constructor(
     private val api: FoodApi

@@ -2,17 +2,20 @@ package com.example.movie_booking_app.data.repository.admin
 
 import com.example.movie_booking_app.data.api.AdminApiService
 import com.example.movie_booking_app.data.model.request.AddMovieRequest
-import com.example.movie_booking_app.data.model.request.UpdateMovieRequest
+import com.example.movie_booking_app.data.model.request.AdjustScoreRequest
 import com.example.movie_booking_app.data.model.request.AdminPromotionRequest
 import com.example.movie_booking_app.data.model.request.CreateStaffRequest
+import com.example.movie_booking_app.data.model.request.UpdateMemberStatusRequest
+import com.example.movie_booking_app.data.model.request.UpdateMovieRequest
 import com.example.movie_booking_app.data.model.request.UpdateStaffRequest
 import com.example.movie_booking_app.data.model.response.AdminPromotionsResponse
 import com.example.movie_booking_app.data.model.response.MovieListResponse
 import com.example.movie_booking_app.data.model.response.OverviewStatsResponse
-import kotlinx.coroutines.flow.flow
-import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.flow
+import org.json.JSONObject
+import retrofit2.Response
 
 @Singleton
 class AdminRepository @Inject constructor(
@@ -32,7 +35,7 @@ class AdminRepository @Inject constructor(
         return try {
             val errorBodyStr = response.errorBody()?.string()
             if (!errorBodyStr.isNullOrBlank()) {
-                val json = org.json.JSONObject(errorBodyStr)
+                val json = JSONObject(errorBodyStr)
                 if (json.has("message") && !json.isNull("message")) {
                     json.getString("message")
                 } else if (json.has("error") && !json.isNull("error")) {
@@ -87,13 +90,13 @@ class AdminRepository @Inject constructor(
     }
 
     fun adjustMemberScoreFlow(id: String, adjustment: Int, reason: String) = flow {
-        val response = api.adjustMemberScore(id, com.example.movie_booking_app.data.model.request.AdjustScoreRequest(adjustment, reason))
+        val response = api.adjustMemberScore(id, AdjustScoreRequest(adjustment, reason))
         if (response.isSuccessful) emit(Unit)
         else throw Exception(response.errorBody()?.string() ?: "Failed to adjust score")
     }
 
     fun updateMemberStatusFlow(id: String, status: Int) = flow {
-        val response = api.updateMemberStatus(id, com.example.movie_booking_app.data.model.request.UpdateMemberStatusRequest(status))
+        val response = api.updateMemberStatus(id, UpdateMemberStatusRequest(status))
         if (response.isSuccessful) emit(Unit)
         else throw Exception(response.errorBody()?.string() ?: "Failed to update member status")
     }

@@ -1,11 +1,6 @@
 import { Router } from 'express';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
-import {
-    getShowDates,
-    createShowDate,
-    updateShowDate,
-    deleteShowDate
-} from '../controllers/adminShowDateController.js';
+import { getShowDates, createShowDate, updateShowDate, deleteShowDate } from '../controllers/adminShowDateController.js';
 
 const router = Router();
 

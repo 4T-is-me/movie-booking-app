@@ -13,6 +13,7 @@ import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.utils.NameFormatter
 import com.google.android.material.card.MaterialCardView
 import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 class ManagerLeaveRequestAdapter(private val listener: LeaveRequestListener) :
@@ -172,7 +173,7 @@ class ManagerLeaveRequestAdapter(private val listener: LeaveRequestListener) :
             val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault())
             val workDate = sdf.parse(workDateStr) ?: return false
 
-            val today = java.util.Date()
+            val today = Date()
 
             workDate.before(today)
         } catch (e: Exception) {

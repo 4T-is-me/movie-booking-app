@@ -1,17 +1,17 @@
 package com.example.movie_booking_app.view.adapter
 
-import com.example.movie_booking_app.databinding.ItemCinemaRoomBinding
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.CinemaRoom
+import com.example.movie_booking_app.databinding.ItemCinemaRoomBinding
 
 class CinemaRoomsAdapter(
     private val onRoomClick: (CinemaRoom) -> Unit,
@@ -80,7 +80,7 @@ class CinemaRoomsAdapter(
             itemView.setOnClickListener { onEditClick(room) }
 
             ivOptions.setOnClickListener { view ->
-                val popup = androidx.appcompat.widget.PopupMenu(view.context, view)
+                val popup = PopupMenu(view.context, view)
                 popup.menu.add(0, 1, 0, "Edit Room")
                 if (status.lowercase() == "active") {
                     popup.menu.add(0, 2, 1, "Close Room")

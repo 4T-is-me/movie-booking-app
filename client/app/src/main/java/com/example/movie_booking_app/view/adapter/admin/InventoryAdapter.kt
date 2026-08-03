@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter.admin
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -37,9 +38,9 @@ class InventoryAdapter(
                 tvLowStockWarning.isVisible = isLowStock
                 
                 if (isLowStock) {
-                    tvQuantity.setTextColor(android.graphics.Color.RED)
+                    tvQuantity.setTextColor(Color.RED)
                 } else {
-                    tvQuantity.setTextColor(android.graphics.Color.WHITE)
+                    tvQuantity.setTextColor(Color.WHITE)
                 }
 
                 btnRefill.setOnClickListener { onRefillClick(item) }

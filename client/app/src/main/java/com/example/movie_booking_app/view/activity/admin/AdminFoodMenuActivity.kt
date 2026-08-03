@@ -9,11 +9,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -24,19 +26,17 @@ import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.FoodBeverage
 import com.example.movie_booking_app.databinding.ActivityAdminFoodMenuBinding
 import com.example.movie_booking_app.databinding.DialogAddEditFoodBinding
-import com.example.movie_booking_app.view.adapter.admin.AdminFoodAdapter
 import com.example.movie_booking_app.view.adapter.admin.AdminDeductionAdapter
+import com.example.movie_booking_app.view.adapter.admin.AdminFoodAdapter
 import com.example.movie_booking_app.viewmodel.admin.AdminFoodViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
+import java.io.FileOutputStream
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import timber.log.Timber
-import java.io.File
-import java.io.FileOutputStream
-import java.text.NumberFormat
-import java.util.Locale
 
 @AndroidEntryPoint
 class AdminFoodMenuActivity : AppCompatActivity() {
@@ -105,13 +105,13 @@ class AdminFoodMenuActivity : AppCompatActivity() {
         menuAdapter.submitList(getFilteredList(fullList))
     }
 
-    private fun updateTabStyle(tabView: android.widget.TextView, isActive: Boolean) {
+    private fun updateTabStyle(tabView: TextView, isActive: Boolean) {
         if (isActive) {
             tabView.setBackgroundResource(R.drawable.bg_tab_active)
-            tabView.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.black))
+            tabView.setTextColor(ContextCompat.getColor(this, R.color.black))
         } else {
             tabView.background = null
-            tabView.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.text_gray))
+            tabView.setTextColor(ContextCompat.getColor(this, R.color.text_gray))
         }
     }
 

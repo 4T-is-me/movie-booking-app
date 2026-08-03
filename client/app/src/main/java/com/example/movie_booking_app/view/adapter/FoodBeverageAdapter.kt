@@ -1,9 +1,11 @@
 package com.example.movie_booking_app.view.adapter
 
+import android.text.Editable
 import android.text.InputType
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
@@ -14,6 +16,9 @@ import com.bumptech.glide.Glide
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.FoodBeverage
 import com.example.movie_booking_app.databinding.ItemFoodBeverageBinding
+import com.example.movie_booking_app.utils.Constants
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -54,7 +59,7 @@ class FoodBeverageAdapter(
                 val imageUrl = when {
                     item.imageUrl.isNullOrBlank() -> null
                     item.imageUrl.startsWith("http") -> item.imageUrl
-                    else -> "${com.example.movie_booking_app.utils.Constants.BASE_URL.removeSuffix("/")}${item.imageUrl}"
+                    else -> "${Constants.BASE_URL.removeSuffix("/")}${item.imageUrl}"
                 }
 
                 Glide.with(itemView.context)
@@ -99,21 +104,21 @@ class FoodBeverageAdapter(
 
         private fun showManualInputDialog(item: FoodBeverage) {
             val context = itemView.context
-            val container = android.widget.LinearLayout(context).apply {
-                orientation = android.widget.LinearLayout.VERTICAL
+            val container = LinearLayout(context).apply {
+                orientation = LinearLayout.VERTICAL
                 val padding = (24 * resources.displayMetrics.density).toInt()
                 setPadding(padding, 8, padding, 0)
             }
 
-            val til = com.google.android.material.textfield.TextInputLayout(context).apply {
+            val til = TextInputLayout(context).apply {
                 hint = "Quantity (Max: ${item.stock})"
                 errorIconDrawable = null
-                boxBackgroundMode = com.google.android.material.textfield.TextInputLayout.BOX_BACKGROUND_OUTLINE
+                boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_OUTLINE
                 setBoxCornerRadii(12f, 12f, 12f, 12f)
             }
 
-            val input = com.google.android.material.textfield.TextInputEditText(context).apply {
-                inputType = android.text.InputType.TYPE_CLASS_NUMBER
+            val input = TextInputEditText(context).apply {
+                inputType = InputType.TYPE_CLASS_NUMBER
                 setText(item.selectedQuantity.toString())
                 setSelection(text?.length ?: 0)
             }
@@ -121,7 +126,7 @@ class FoodBeverageAdapter(
             til.addView(input)
             container.addView(til)
 
-            val dialog = androidx.appcompat.app.AlertDialog.Builder(context)
+            val dialog = AlertDialog.Builder(context)
                 .setTitle("Enter Quantity")
                 .setMessage("Max available: ${item.stock}")
                 .setView(input)
@@ -141,12 +146,12 @@ class FoodBeverageAdapter(
 
             dialog.show()
 
-            val okButton = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE)
+            val okButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             
-            input.addTextChangedListener(object : android.text.TextWatcher {
+            input.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-                override fun afterTextChanged(s: android.text.Editable?) {
+                override fun afterTextChanged(s: Editable?) {
                     val value = s.toString().toIntOrNull() ?: 0
                     if (value > item.stock) {
                         til.error = "Exceeds max stock (${item.stock})"

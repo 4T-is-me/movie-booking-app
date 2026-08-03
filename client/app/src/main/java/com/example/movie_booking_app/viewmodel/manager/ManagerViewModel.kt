@@ -2,25 +2,22 @@ package com.example.movie_booking_app.viewmodel.manager
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bumptech.glide.load.engine.Resource
 import com.example.movie_booking_app.data.model.request.GenerateShiftRequest
 import com.example.movie_booking_app.data.model.request.UpdateShiftRequest
-
 import com.example.movie_booking_app.data.model.response.GenerateShiftApiResponse
 import com.example.movie_booking_app.data.model.response.ManagerDashboardResponse
 import com.example.movie_booking_app.data.model.response.ManagerReportsResponse
 import com.example.movie_booking_app.data.model.response.ManagerStaffListResponse
 import com.example.movie_booking_app.data.model.response.ShiftDetailResponse
-import com.example.movie_booking_app.data.model.response.ShiftItemResponse
 import com.example.movie_booking_app.data.model.response.ShiftResponse
 import com.example.movie_booking_app.data.model.response.UpdateShiftResponse
 import com.example.movie_booking_app.data.repository.manager.ManagerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class ManagerViewModel @Inject constructor(private val repository: ManagerRepository) : ViewModel() {

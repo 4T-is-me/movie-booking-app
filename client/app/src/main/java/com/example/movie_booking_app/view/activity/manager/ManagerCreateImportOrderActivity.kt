@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
@@ -18,9 +19,9 @@ import com.example.movie_booking_app.databinding.ActivityManagerCreateImportOrde
 import com.example.movie_booking_app.view.adapter.manager.ImportOrderItemInputAdapter
 import com.example.movie_booking_app.viewmodel.manager.ManagerImportOrderViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ManagerCreateImportOrderActivity : AppCompatActivity() {
@@ -128,7 +129,7 @@ class ManagerCreateImportOrderActivity : AppCompatActivity() {
         val names = items.map { "${it.itemName} (${it.itemCode})" }.toTypedArray()
         var selectedIndex = -1
 
-        androidx.appcompat.app.AlertDialog.Builder(this)
+        AlertDialog.Builder(this)
             .setTitle(getString(R.string.goods_intake_select_product_title))
             .setSingleChoiceItems(names, -1) { _, which ->
                 selectedIndex = which

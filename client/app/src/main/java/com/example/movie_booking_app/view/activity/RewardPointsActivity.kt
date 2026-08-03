@@ -3,7 +3,6 @@ package com.example.movie_booking_app.view.activity
 import android.content.Intent
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import timber.log.Timber
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -21,6 +20,7 @@ import com.example.movie_booking_app.view.adapter.ScoreHistoryAdapter
 import com.example.movie_booking_app.viewmodel.BookingViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @AndroidEntryPoint
 class RewardPointsActivity : AppCompatActivity() {

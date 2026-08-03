@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -17,7 +16,6 @@ import com.example.movie_booking_app.data.repository.RepositoryProvider
 import com.example.movie_booking_app.databinding.FragmentMovieGridBinding
 import com.example.movie_booking_app.view.activity.MovieDetailActivity
 import com.example.movie_booking_app.view.adapter.MovieGridAdapter
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MovieGridFragment : Fragment() {

@@ -10,6 +10,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Movie
 import com.example.movie_booking_app.databinding.ItemMovieGridBinding
+import com.example.movie_booking_app.utils.DateUtils
 
 class MovieGridAdapter(
     private val isNowPlaying: Boolean,
@@ -44,9 +45,9 @@ class MovieGridAdapter(
                 tvTitleEn.text = movie.movieName // develop model only has movieName
                 
                 tvRow1.text = (movie.rating?.toString() ?: "N/A")
-                val durationStr = itemView.context.getString(com.example.movie_booking_app.R.string.duration_mins, (movie.duration ?: 0).toString())
+                val durationStr = itemView.context.getString(R.string.duration_mins, (movie.duration ?: 0).toString())
                 tvRow2.text = "$durationStr • " + (movie.censorship ?: "2D")
-                tvRow3.text = com.example.movie_booking_app.utils.DateUtils.formatMovieDate(movie.releaseDate)
+                tvRow3.text = DateUtils.formatMovieDate(movie.releaseDate)
 
                 Glide.with(itemView.context)
                     .load(movie.poster)

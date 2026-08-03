@@ -1,9 +1,10 @@
 package com.example.movie_booking_app.data.api
 
 import com.example.movie_booking_app.data.model.response.BaseNewsResponse
-import com.example.movie_booking_app.data.model.response.NewsDetailResponse
 import com.example.movie_booking_app.data.model.response.CommentListResponse
 import com.example.movie_booking_app.data.model.response.CommentResponse
+import com.example.movie_booking_app.data.model.response.NewsDetailResponse
+import com.example.movie_booking_app.data.model.response.NewsLikeResponse
 import com.example.movie_booking_app.data.model.response.ReactionResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -36,7 +37,7 @@ interface NewsApi {
     @POST("api/news/{id}/like")
     suspend fun toggleNewsLike(
         @Path("id") newsId: String
-    ): Response<com.example.movie_booking_app.data.model.response.NewsLikeResponse>
+    ): Response<NewsLikeResponse>
 }
 
 data class CreateCommentRequest(

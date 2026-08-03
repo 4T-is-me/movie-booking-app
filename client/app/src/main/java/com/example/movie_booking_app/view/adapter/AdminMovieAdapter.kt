@@ -1,6 +1,5 @@
 package com.example.movie_booking_app.view.adapter
 
-import com.example.movie_booking_app.databinding.ItemAdminMovieBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Movie
+import com.example.movie_booking_app.databinding.ItemAdminMovieBinding
 
 class AdminMovieAdapter(
     private val onEditClick: (Movie) -> Unit,
@@ -39,7 +39,7 @@ class AdminMovieAdapter(
 
         fun bind(movie: Movie) {
             tvTitle.text = movie.movieName
-            tvDuration.text = itemView.context.getString(com.example.movie_booking_app.R.string.duration_mins, (movie.duration ?: 0).toString())
+            tvDuration.text = itemView.context.getString(R.string.duration_mins, (movie.duration ?: 0).toString())
 
             Glide.with(itemView.context)
                 .load(movie.poster)

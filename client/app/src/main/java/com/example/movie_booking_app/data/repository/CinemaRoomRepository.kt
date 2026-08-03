@@ -1,4 +1,5 @@
 package com.example.movie_booking_app.data.repository
+
 import com.example.movie_booking_app.data.model.entity.CinemaRoom
 import com.example.movie_booking_app.data.model.entity.Seat
 import com.example.movie_booking_app.data.model.entity.SeatType

@@ -6,14 +6,14 @@ import com.example.movie_booking_app.data.model.entity.FoodBeverage
 import com.example.movie_booking_app.data.repository.FoodRepository
 import com.example.movie_booking_app.utils.BookingTimerManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.Locale
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import java.util.Locale
 
 data class FoodUiState(
     val menuItems: List<FoodBeverage> = emptyList(),

@@ -1,10 +1,10 @@
 package com.example.movie_booking_app.view.fragment.admin
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -19,14 +19,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.MemberItem
 import com.example.movie_booking_app.databinding.DialogAdjustScoreBinding
+import com.example.movie_booking_app.databinding.DialogConfirmToggleMemberBinding
+import com.example.movie_booking_app.databinding.DialogDetailMemberBinding
 import com.example.movie_booking_app.databinding.FragmentAdminUserListBinding
 import com.example.movie_booking_app.view.adapter.admin.MemberAdapter
 import com.example.movie_booking_app.viewmodel.admin.AdminStaffViewModel
-import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.util.Locale
 
 @AndroidEntryPoint
 class MemberListFragment : Fragment() {
@@ -76,8 +77,8 @@ class MemberListFragment : Fragment() {
     }
 
     private fun showMemberDetailDialog(member: MemberItem) {
-        val dialogBinding = com.example.movie_booking_app.databinding.DialogDetailMemberBinding.inflate(layoutInflater)
-        val dialog = android.app.Dialog(requireContext())
+        val dialogBinding = DialogDetailMemberBinding.inflate(layoutInflater)
+        val dialog = Dialog(requireContext())
         dialog.setContentView(dialogBinding.root)
         dialog.window?.setBackgroundDrawable(ContextCompat.getDrawable(requireContext(), android.R.color.transparent))
         dialog.setCancelable(true)
@@ -133,8 +134,8 @@ class MemberListFragment : Fragment() {
 
     private fun showConfirmToggleStatusDialog(member: MemberItem) {
         val isActive = member.account?.status != 0
-        val dialogBinding = com.example.movie_booking_app.databinding.DialogConfirmToggleMemberBinding.inflate(layoutInflater)
-        val dialog = android.app.Dialog(requireContext())
+        val dialogBinding = DialogConfirmToggleMemberBinding.inflate(layoutInflater)
+        val dialog = Dialog(requireContext())
         dialog.setContentView(dialogBinding.root)
         dialog.window?.setBackgroundDrawable(ContextCompat.getDrawable(requireContext(), android.R.color.transparent))
         dialog.setCancelable(true)

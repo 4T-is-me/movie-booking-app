@@ -8,12 +8,12 @@ import com.example.movie_booking_app.data.model.ChatMessage
 import com.example.movie_booking_app.data.model.CinemaOption
 import com.example.movie_booking_app.data.repository.ChatRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
-import okhttp3.MultipartBody
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
+import kotlinx.coroutines.launch
+import okhttp3.MultipartBody
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(

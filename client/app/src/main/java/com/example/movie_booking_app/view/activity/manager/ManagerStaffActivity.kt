@@ -14,6 +14,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -23,6 +24,8 @@ import com.example.movie_booking_app.data.model.response.ManagerLeaveRequestResp
 import com.example.movie_booking_app.data.model.response.ShiftItemResponse
 import com.example.movie_booking_app.databinding.ActivityManagerStaffBinding
 import com.example.movie_booking_app.databinding.DialogErrorCustomBinding
+import com.example.movie_booking_app.databinding.DialogRejectLeaveCustomBinding
+import com.example.movie_booking_app.databinding.DialogUndoLeaveCustomBinding
 import com.example.movie_booking_app.view.adapter.manager.ManagerLeaveRequestAdapter
 import com.example.movie_booking_app.view.adapter.manager.ManagerStaffShiftAdapter
 import com.example.movie_booking_app.view.fragment.GenerateShiftDialogFragment
@@ -183,7 +186,7 @@ class ManagerStaffActivity : AppCompatActivity() {
                 viewModel.generateShiftData.collectLatest { response ->
                     if(response != null) {
                         if (response.success) {
-                            (supportFragmentManager.findFragmentByTag("GenerateShiftDialogFragment") as? androidx.fragment.app.DialogFragment)?.dismiss()
+                            (supportFragmentManager.findFragmentByTag("GenerateShiftDialogFragment") as? DialogFragment)?.dismiss()
                             viewModel.loadStaffShifts()
                             Toast.makeText(this@ManagerStaffActivity, getString(R.string.auto_str_success), Toast.LENGTH_SHORT).show()
                         } else {
@@ -418,7 +421,7 @@ class ManagerStaffActivity : AppCompatActivity() {
 
     private fun showRejectDialog(item: ManagerLeaveRequestResponse) {
         val builder = AlertDialog.Builder(this)
-        val dialogBinding = com.example.movie_booking_app.databinding.DialogRejectLeaveCustomBinding.inflate(layoutInflater)
+        val dialogBinding = DialogRejectLeaveCustomBinding.inflate(layoutInflater)
         builder.setView(dialogBinding.root)
 
         val dialog = builder.create()
@@ -465,7 +468,7 @@ class ManagerStaffActivity : AppCompatActivity() {
 
     private fun showConfirmUndoDialog(item: ManagerLeaveRequestResponse) {
         val builder = AlertDialog.Builder(this)
-        val dialogBinding = com.example.movie_booking_app.databinding.DialogUndoLeaveCustomBinding.inflate(layoutInflater)
+        val dialogBinding = DialogUndoLeaveCustomBinding.inflate(layoutInflater)
         builder.setView(dialogBinding.root)
         val dialog = builder.create()
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)

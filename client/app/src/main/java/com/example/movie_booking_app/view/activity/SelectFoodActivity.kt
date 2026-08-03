@@ -18,9 +18,9 @@ import com.example.movie_booking_app.view.adapter.FoodBeverageAdapter
 import com.example.movie_booking_app.viewmodel.SelectFoodViewModel
 import com.google.android.material.tabs.TabLayout
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SelectFoodActivity : AppCompatActivity() {

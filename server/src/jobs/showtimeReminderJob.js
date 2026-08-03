@@ -1,6 +1,5 @@
 import cron from "node-cron";
 import { Booking } from "../models/bookingModel.js";
-import { Showtime } from "../models/showTimeModel.js";
 import { Account } from "../models/accountModel.js";
 import { NotificationService } from "../services/notificationService.js";
 import { getShowtimeTimeRange } from "../utils/formatters.js";

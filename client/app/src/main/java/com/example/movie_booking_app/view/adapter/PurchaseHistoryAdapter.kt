@@ -1,6 +1,7 @@
 package com.example.movie_booking_app.view.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -87,22 +88,22 @@ class PurchaseHistoryAdapter(
 
             // Show Rate Staff button only if checked in and not yet rated
             if (item.checkedIn == true && item.isStaffRated == false) {
-                binding.btnRateStaff.visibility = android.view.View.VISIBLE
+                binding.btnRateStaff.visibility = View.VISIBLE
                 binding.btnRateStaff.setOnClickListener {
                     onRateStaffClick?.invoke(item)
                 }
             } else {
-                binding.btnRateStaff.visibility = android.view.View.GONE
+                binding.btnRateStaff.visibility = View.GONE
             }
 
             // Show Rate Movie button only if not yet rated
             if (item.isMovieRated == false) {
-                binding.btnRateMovie.visibility = android.view.View.VISIBLE
+                binding.btnRateMovie.visibility = View.VISIBLE
                 binding.btnRateMovie.setOnClickListener {
                     onRateMovieClick?.invoke(item)
                 }
             } else {
-                binding.btnRateMovie.visibility = android.view.View.GONE
+                binding.btnRateMovie.visibility = View.GONE
             }
         }
     }

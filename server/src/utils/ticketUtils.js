@@ -1,5 +1,5 @@
 import QRCode from 'qrcode';
-import  ApiError  from '../utils/ApiError.js';
+import ApiError from '../utils/ApiError.js';
 import { StatusCodes } from 'http-status-codes';
 const generateTicketCode = async (bookingId) => {
     const PREFIX = 'MBD';

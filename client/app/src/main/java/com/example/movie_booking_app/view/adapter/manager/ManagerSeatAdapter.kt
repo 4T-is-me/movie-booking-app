@@ -1,14 +1,12 @@
 package com.example.movie_booking_app.view.adapter.manager
 
-import com.example.movie_booking_app.databinding.ItemManagerSeatBinding
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.ManagerSeat
+import com.example.movie_booking_app.databinding.ItemManagerSeatBinding
 
 class ManagerSeatAdapter(
     private val seats: List<ManagerSeat>,

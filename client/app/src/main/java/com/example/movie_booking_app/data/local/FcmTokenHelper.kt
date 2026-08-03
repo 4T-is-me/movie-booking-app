@@ -1,12 +1,12 @@
 package com.example.movie_booking_app.data.local
 
-import timber.log.Timber
 import com.example.movie_booking_app.data.api.FcmApi
 import com.example.movie_booking_app.data.model.request.RegisterFcmTokenRequest
 import com.google.firebase.messaging.FirebaseMessaging
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.tasks.await
+import timber.log.Timber
 
 /**
  * Singleton helper that encapsulates FCM token registration logic.

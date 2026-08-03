@@ -1,7 +1,5 @@
 package com.example.movie_booking_app.view.activity
 
-import com.example.movie_booking_app.R
-
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.util.Patterns
@@ -10,6 +8,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Cinema
 import com.example.movie_booking_app.data.model.entity.Staff
 import com.example.movie_booking_app.data.model.request.CreateStaffRequest
@@ -18,11 +17,12 @@ import com.example.movie_booking_app.databinding.ActivityAdminStaffBinding
 import com.example.movie_booking_app.utils.RoleConstants
 import com.example.movie_booking_app.viewmodel.admin.AdminStaffViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import java.math.BigDecimal
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class AdminStaffActivity : BaseActivity() {
@@ -69,7 +69,7 @@ class AdminStaffActivity : BaseActivity() {
                 
                 // Fix scientific notation bug (e.g. 1.5E7) by using BigDecimal toPlainString()
                 val salaryText = staff.salary?.let { 
-                    java.math.BigDecimal.valueOf(it).toPlainString().replace(Regex("\\.0$"), "")
+                    BigDecimal.valueOf(it).toPlainString().replace(Regex("\\.0$"), "")
                 } ?: ""
                 binding.edtSalary.setText(salaryText)
 
