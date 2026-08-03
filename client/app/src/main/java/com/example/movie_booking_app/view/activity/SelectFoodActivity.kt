@@ -9,7 +9,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Booking
 import com.example.movie_booking_app.data.model.entity.ComboDetail
@@ -54,7 +54,7 @@ class SelectFoodActivity : AppCompatActivity() {
         }
 
         binding.rvFood.apply {
-            layoutManager = GridLayoutManager(this@SelectFoodActivity, 2)
+            layoutManager = LinearLayoutManager(this@SelectFoodActivity)
             adapter = foodAdapter
         }
 
@@ -68,7 +68,8 @@ class SelectFoodActivity : AppCompatActivity() {
             getString(R.string.fb_tab_drink),
             getString(R.string.fb_tab_food)
         )
-        val internalCategories = listOf("All", "combo", "drink", "food")
+        val foodCategory = com.example.movie_booking_app.utils.Constants.FoodCategory
+        val internalCategories = listOf(foodCategory.ALL, foodCategory.COMBO, foodCategory.DRINK, foodCategory.FOOD)
 
         displayCategories.forEach {
             binding.tabLayout.addTab(binding.tabLayout.newTab().setText(it))
@@ -131,10 +132,10 @@ class SelectFoodActivity : AppCompatActivity() {
 
     private fun showExpiredDialog() {
         AlertDialog.Builder(this)
-            .setTitle("Booking Session Expired")
-            .setMessage("Your 10-minute booking window has expired. Please select seats again.")
+            .setTitle(getString(R.string.title_expired))
+            .setMessage(getString(R.string.msg_expired))
             .setCancelable(false)
-            .setPositiveButton("OK") { _, _ ->
+            .setPositiveButton(getString(R.string.btn_ok)) { _, _ ->
                 val intent = Intent(this, SelectSeatActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 }

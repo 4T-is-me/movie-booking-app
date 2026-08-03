@@ -9,10 +9,10 @@ object Constants {
     const val useMockData = false
 
     /**
-     * Updated to your machine's actual IPv4: 192.168.88.100
+     * Updated to your machine's actual IPv4: 192.168.1.184
      * Synced with group's server requirements.
      */
-    const val BASE_URL = "http://192.168.32.129:5000/"
+    const val BASE_URL = "http://192.168.1.184:5000/"
     const val RANK_GOLD = 10000000L
     const val RANK_SILVER = 5000000L
 
@@ -35,6 +35,35 @@ object Constants {
     }
 
     val STATUS_PAYROLL = listOf("All Status", "Draft", "Paid")
+
+    object MovieStatus {
+        const val ACTIVE = "active"
+        const val INACTIVE = "inactive"
+        const val DELETED = "deleted"
+        const val SHOWING = "showing"
+        const val COMING_SOON = "coming"
+        const val SOON = "soon"
+        const val UPCOMING = "upcoming"
+    }
+
+    object SeatConstants {
+        const val TYPE_REGULAR = "Regular"
+        const val TYPE_VIP = "VIP"
+        const val TYPE_COUPLE = "Couple"
+    }
+
+    object BookingConfig {
+        const val HOLD_TIME_SECONDS = 600L
+        const val DEBOUNCE_SEARCH_MS = 500L
+        const val DEFAULT_MOVIE_DURATION = 120
+    }
+
+    object FoodCategory {
+        const val ALL = "All"
+        const val COMBO = "combo"
+        const val DRINK = "drink"
+        const val FOOD = "food"
+    }
 }
 
 

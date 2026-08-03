@@ -179,7 +179,7 @@ const handleConfirmBooking = async ({ accountId, showtimeId, seatIds, useScore =
           logEntries.push({
             cinemaId: cinemaId,
             itemCode: itemCode,
-            type: 'SALE',
+            type: constants.INVENTORY_LOG_TYPE.SALE,
             changeQuantity: -neededQty,
             oldQuantity: inv.quantity,
             newQuantity: inv.quantity - neededQty,

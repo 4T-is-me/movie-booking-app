@@ -18,6 +18,7 @@ import com.example.movie_booking_app.databinding.ActivitySelectSeatBinding
 import com.example.movie_booking_app.view.adapter.SeatAdapter
 import com.example.movie_booking_app.viewmodel.SeatingUiState
 import com.example.movie_booking_app.viewmodel.SelectSeatViewModel
+import com.example.movie_booking_app.utils.Constants
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.NumberFormat
 import java.util.Locale
@@ -114,6 +115,7 @@ class SelectSeatActivity : AppCompatActivity() {
                         val ticketTotal = viewModel.totalPrice.value
                         val orderId = "BK-" + UUID.randomUUID().toString().take(8).uppercase(Locale.getDefault())
 
+                        val seatConstants = Constants.SeatConstants
                         val booking = Booking(
                             orderId = orderId,
                             movieId = intent.getStringExtra("movieId"),
@@ -128,17 +130,17 @@ class SelectSeatActivity : AppCompatActivity() {
                             roomName = viewModel.cinemaRoomName.value.takeIf { !it.isNullOrEmpty() } ?: getString(R.string.default_room_name),
                             showDate = selectedDate?.id ?: "",
                             showTime = selectedTime?.showTime ?: selectedTime?.startTime ?: "",
-                            duration = 120,
+                            duration = Constants.BookingConfig.DEFAULT_MOVIE_DURATION,
                             language = getString(R.string.default_language),
                             subtitle = getString(R.string.default_subtitle),
                             seatIds = selectedSeatsList.map { it.id },
                             seatNames = selectedSeatsList.map { it.label },
                             seatTypes = selectedSeatsList.map { seat ->
                                 when (seat.type) {
-                                    SeatType.NORMAL -> "Regular"
-                                    SeatType.VIP -> "VIP"
-                                    SeatType.COUPLE -> "Couple"
-                                    else -> "Regular"
+                                    SeatType.NORMAL -> seatConstants.TYPE_REGULAR
+                                    SeatType.VIP -> seatConstants.TYPE_VIP
+                                    SeatType.COUPLE -> seatConstants.TYPE_COUPLE
+                                    else -> seatConstants.TYPE_REGULAR
                                 }
                             }.distinct(),
                             ticketTypeDetails = emptyList(),
@@ -202,7 +204,15 @@ class SelectSeatActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.errorMessage.collect { message ->
-                    Toast.makeText(this@SelectSeatActivity, message, Toast.LENGTH_LONG).show()
+                    val displayMsg = when(message) {
+                        "error_no_showtimes" -> getString(R.string.error_no_showtimes)
+                        "error_no_seats" -> getString(R.string.error_no_seats)
+                        "error_same_type" -> getString(R.string.error_same_type)
+                        "error_hold_conflict" -> getString(R.string.error_hold_conflict)
+                        "error_hold_failed" -> getString(R.string.error_hold_failed)
+                        else -> message
+                    }
+                    Toast.makeText(this@SelectSeatActivity, displayMsg, Toast.LENGTH_LONG).show()
                 }
             }
         }

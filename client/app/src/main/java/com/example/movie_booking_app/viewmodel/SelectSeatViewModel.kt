@@ -113,7 +113,7 @@ class SelectSeatViewModel @Inject constructor(
                 
                 if (filteredList.isEmpty()) {
                     _isLoading.value = false
-                    _errorMessage.emit(savedStateHandle.get<String>("error_no_showtimes") ?: "This movie has no available showtimes.")
+                    _errorMessage.emit(savedStateHandle.get<String>("error_no_showtimes") ?: "error_no_showtimes")
                     return@collect
                 }
                 
@@ -194,7 +194,7 @@ class SelectSeatViewModel @Inject constructor(
                 _selectedSeats.value = emptyList()
                 _isLoading.value = false
                 if (seatList.isEmpty()) {
-                    _errorMessage.emit(savedStateHandle.get<String>("error_no_seats") ?: "No seats available for this showtime.")
+                    _errorMessage.emit(savedStateHandle.get<String>("error_no_seats") ?: "error_no_seats")
                 }
             }
         }
@@ -215,7 +215,7 @@ class SelectSeatViewModel @Inject constructor(
                 val baseType = currentlySelected.first().type
                 if (seatToToggle.type != baseType) {
                     viewModelScope.launch {
-                        _errorMessage.emit(savedStateHandle.get<String>("error_same_type") ?: "Please select seats of the same type")
+                        _errorMessage.emit(savedStateHandle.get<String>("error_same_type") ?: "error_same_type")
                     }
                     return
                 }
@@ -261,9 +261,9 @@ class SelectSeatViewModel @Inject constructor(
                     _isLoading.value = false
                     _uiState.value = SeatingUiState.ERROR
                     val msg = if (exception.message == "CONFLICT") {
-                        savedStateHandle.get<String>("error_hold_conflict") ?: "The seats have been selected by another person, please choose again"
+                        savedStateHandle.get<String>("error_hold_conflict") ?: "error_hold_conflict"
                     } else {
-                        exception.message ?: (savedStateHandle.get<String>("error_hold_failed") ?: "Failed to hold seats")
+                        exception.message ?: (savedStateHandle.get<String>("error_hold_failed") ?: "error_hold_failed")
                     }
                     _errorMessage.emit(msg)
                 }
@@ -278,7 +278,7 @@ class SelectSeatViewModel @Inject constructor(
     }
 
     private fun startCountdown(showtimeId: String, seatIds: List<String>) {
-        timerManager.startTimer(600)
+        timerManager.startTimer(com.example.movie_booking_app.utils.Constants.BookingConfig.HOLD_TIME_SECONDS.toInt())
         countdownCollectJob?.cancel()
         countdownCollectJob = viewModelScope.launch {
             timerManager.isExpired.collect { expired ->

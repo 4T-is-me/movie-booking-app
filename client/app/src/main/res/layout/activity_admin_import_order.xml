@@ -28,7 +28,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Approve Goods Intake"
+            android:text="@string/approve_goods_intake"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -142,7 +142,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="No goods intake orders found"
+        android:text="@string/no_goods_intake_found"
         android:textColor="@color/admin_text_secondary"
         android:textSize="16sp"
         android:visibility="gone" />

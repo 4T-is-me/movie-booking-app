@@ -33,6 +33,7 @@ import staffLeaveRequestRoutes from './src/routes/staffLeaveRequestRoutes.js';
 import { staffRoute } from './src/routes/staffRoutes.js';
 import { foodBeverageRoutes } from './src/routes/foodBeverageRoutes.js';
 import { errorHandlingMiddleware } from './src/middlewares/errorHandlingMiddleware.js'
+import './src/config/firebaseAdmin.js'  // Initialize Firebase Admin SDK at startup;
 import { ShowtimeReminderJob } from './src/jobs/showtimeReminderJob.js';
 import payrollRoutes from './src/routes/payrollRoutes.js';
 import payrollConfigRoutes from './src/routes/payrollConfigRoutes.js';

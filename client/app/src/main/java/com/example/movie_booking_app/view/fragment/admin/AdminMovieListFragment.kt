@@ -37,8 +37,8 @@ class AdminMovieListFragment : Fragment() {
     private val binding get() = _binding!!
 
     companion object {
-        private const val TAB_ACTIVE = "active"
-        private const val TAB_INACTIVE = "inactive"
+        private const val TAB_ACTIVE = com.example.movie_booking_app.utils.Constants.MovieStatus.ACTIVE
+        private const val TAB_INACTIVE = com.example.movie_booking_app.utils.Constants.MovieStatus.DELETED
     }
 
     override fun onCreateView(
@@ -81,11 +81,11 @@ class AdminMovieListFragment : Fragment() {
 
         binding.tabActiveMovie.setOnClickListener {
             switchTab(TAB_ACTIVE)
-            viewModel.loadAdminMovies("active")
+            viewModel.loadAdminMovies(com.example.movie_booking_app.utils.Constants.MovieStatus.ACTIVE)
         }
         binding.tabInactiveMovie.setOnClickListener {
             switchTab(TAB_INACTIVE)
-            viewModel.loadAdminMovies("deleted")
+            viewModel.loadAdminMovies(com.example.movie_booking_app.utils.Constants.MovieStatus.DELETED)
         }
 
         binding.fabAddMovie.setOnClickListener {
@@ -163,9 +163,9 @@ class AdminMovieListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.movieActionSuccess.collect { success ->
                 val message = if (success) {
-                    if (selectedTab == TAB_ACTIVE) "Movie deleted successfully" else "Movie restored successfully"
+                    if (selectedTab == TAB_ACTIVE) getString(R.string.msg_movie_deleted_success) else getString(R.string.msg_movie_restored_success)
                 } else {
-                    if (selectedTab == TAB_ACTIVE) "Failed to delete movie" else "Failed to restore movie"
+                    if (selectedTab == TAB_ACTIVE) getString(R.string.msg_movie_delete_failed) else getString(R.string.msg_movie_restore_failed)
                 }
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             }
@@ -173,7 +173,19 @@ class AdminMovieListFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.movieActionMessage.collect { message ->
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                val displayMsg = when(message) {
+                    "msg_movie_deleted_success" -> getString(R.string.msg_movie_deleted_success)
+                    "msg_movie_restored_success" -> getString(R.string.msg_movie_restored_success)
+                    "msg_movie_delete_failed" -> getString(R.string.msg_movie_delete_failed)
+                    "msg_movie_restore_failed" -> getString(R.string.msg_movie_restore_failed)
+                    "msg_movie_added_success" -> getString(R.string.msg_movie_added_success)
+                    "msg_movie_add_failed" -> getString(R.string.msg_movie_add_failed)
+                    "msg_movie_updated_success" -> getString(R.string.msg_movie_updated_success)
+                    "msg_movie_update_failed" -> getString(R.string.msg_movie_update_failed)
+                    "error_unknown" -> getString(R.string.error_unknown)
+                    else -> message
+                }
+                Toast.makeText(context, displayMsg, Toast.LENGTH_SHORT).show()
             }
         }
     }
