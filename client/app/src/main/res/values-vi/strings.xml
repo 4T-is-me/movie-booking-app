@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MovieBookingApp</string>
+    <string name="app_name">Lumina Cinema</string>
     <string name="hi_user">Chào, %1$s 👋</string>
     <string name="welcome_back">Chào mừng bạn quay lại</string>
     <string name="search_hint">Tìm kiếm phim...</string>

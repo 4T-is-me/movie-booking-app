@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MovieBookingApp</string>
+    <string name="app_name">Lumina Cinema</string>
     <string name="hi_user">こんにちは、%1$s 👋</string>
     <string name="welcome_back">おかえりなさい</string>
     <string name="search_hint">映画を検索...</string>

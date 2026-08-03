@@ -12,7 +12,7 @@ import { normalizeText } from '../services/textNormalizer.js';
 import { classifyIntent, detectContextualSubIntent, isImplicitContextualFollowUp } from '../services/intentClassifier.js';
 import { findMoviesByMood, getTodayShowtimes, getMovieDetail, getPromotionsFromDB, getTicketPricesFromDB, getCinemasFromDB, getUpcomingShowtimesByCinema, getShowtimesByCinemaAndDate, getShowtimesByMovieId, getTopRatedMovies, findMoviesByDirectorOrActor, sanitizeMovieForResponse, getMovieDetailMatches } from '../services/movieMatcher.js';
 import { maskPIIData } from '../config/securityGuardrails.js';
-import { buildMoodResponse, buildScheduleResponse, buildMovieInfoResponse, buildFallbackResponse, buildSecurityViolationResponse, buildGreetingResponse, buildBotIdentityResponse, buildTicketPriceResponse, buildPromotionResponse, buildBookingGuidanceResponse, buildSystemMaintenanceResponse, buildCinemaSelectionRequest, buildUpcomingShowtimeResponse, buildRecommendationPromptResponse, buildTopRatedResponse, buildMovieComparisonResponse, buildDirectorActorResponse, buildNegatedMoodResponse, buildEmptyMessageResponse, buildMovieShowtimeDetailResponse, buildTicketPriceForMovieResponse, buildAmbiguousMovieClarificationResponse, buildMovieDirectorActorDetailResponse } from '../services/responseBuilder.js';
+import { buildMoodResponse, buildScheduleResponse, buildMovieInfoResponse, buildFallbackResponse, buildSecurityViolationResponse, buildGreetingResponse, buildBotIdentityResponse, buildTicketPriceResponse, buildPromotionResponse, buildBookingGuidanceResponse, buildSystemMaintenanceResponse, buildCinemaSelectionRequest, buildUpcomingShowtimeResponse, buildRecommendationPromptResponse, buildTopRatedResponse, buildMovieComparisonResponse, buildDirectorActorResponse, buildNegatedMoodResponse, buildEmptyMessageResponse, buildMovieShowtimeDetailResponse, buildTicketPriceForMovieResponse, buildAmbiguousMovieClarificationResponse, buildMovieDirectorActorDetailResponse, buildCinemaFormatResponse } from '../services/responseBuilder.js';
 
 const router = express.Router();
 
@@ -475,6 +475,11 @@ router.post('/', async (req, res) => {
 
       case 'booking_guidance': {
         reply = buildBookingGuidanceResponse();
+        break;
+      }
+
+      case 'cinema_format_query': {
+        reply = buildCinemaFormatResponse();
         break;
       }
 

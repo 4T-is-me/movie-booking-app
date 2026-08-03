@@ -1,30 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <path android:pathData="M31,63.928c0,0 6.4,-11 12.1,-13.1c7.2,-2.6 26,-1.4 26,-1.4l38.1,38.1L107,108.928l-32,-1L31,63.928z">
-        <aapt:attr name="android:fillColor">
-            <gradient
-                android:endX="85.84757"
-                android:endY="92.4963"
-                android:startX="42.9492"
-                android:startY="49.59793"
-                android:type="linear">
-                <item
-                    android:color="@color/auto_color_44000000"
-                    android:offset="0.0" />
-                <item
-                    android:color="@color/auto_color_00000000"
-                    android:offset="1.0" />
-            </gradient>
-        </aapt:attr>
-    </path>
-    <path
-        android:fillColor="@color/auto_color_FFFFFF"
-        android:fillType="nonZero"
-        android:pathData="M65.3,45.828l3.8,-6.6c0.2,-0.4 0.1,-0.9 -0.3,-1.1c-0.4,-0.2 -0.9,-0.1 -1.1,0.3l-3.9,6.7c-6.3,-2.8 -13.4,-2.8 -19.7,0l-3.9,-6.7c-0.2,-0.4 -0.7,-0.5 -1.1,-0.3C38.8,38.328 38.7,38.828 38.9,39.228l3.8,6.6C36.2,49.428 31.7,56.028 31,63.928h46C76.3,56.028 71.8,49.428 65.3,45.828zM43.4,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2c-0.3,-0.7 -0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C45.3,56.528 44.5,57.328 43.4,57.328L43.4,57.328zM64.6,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2s-0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C66.5,56.528 65.6,57.328 64.6,57.328L64.6,57.328z"
-        android:strokeWidth="1"
-        android:strokeColor="@color/auto_color_00000000" />
+
+    <!-- Glowing Moon -->
+    <group android:pivotX="54" android:pivotY="54" android:rotation="-30">
+        
+        <!-- Glowing Light -->
+        <path android:pathData="M 54,22 A 32,32 0 0,0 54,86 A 24,32 0 0,1 54,22 Z"
+              android:strokeWidth="12" android:strokeColor="#22FFD966" android:strokeLineCap="round"/>
+        <path android:pathData="M 54,22 A 32,32 0 0,0 54,86 A 24,32 0 0,1 54,22 Z"
+              android:strokeWidth="4" android:strokeColor="#55FFD966" android:strokeLineCap="round"/>
+
+        <!-- Moon Body -->
+        <path android:pathData="M 54,22 A 32,32 0 0,0 54,86 A 24,32 0 0,1 54,22 Z">
+            <aapt:attr name="android:fillColor">
+                <gradient android:startX="22" android:startY="22" android:endX="86" android:endY="86" android:type="linear">
+                    <item android:offset="0.0" android:color="#FFD966" />
+                    <item android:offset="1.0" android:color="#B8860B" />
+                </gradient>
+            </aapt:attr>
+        </path>
+    </group>
+
+    <!-- Golden Ticket -->
+    <group android:pivotX="60" android:pivotY="65" android:rotation="-15">
+        
+        <!-- Ticket Base with perforations and rounded corners -->
+        <path android:pathData="
+            M 42,55
+            L 78,55
+            A 2,2 0 0,1 80,57
+            L 80,58 A 2.5,2.5 0 0,0 80,63
+            L 80,67 A 2.5,2.5 0 0,0 80,72
+            L 80,73 A 2,2 0 0,1 78,75
+            L 42,75
+            A 2,2 0 0,1 40,73
+            L 40,72 A 2.5,2.5 0 0,0 40,67
+            L 40,63 A 2.5,2.5 0 0,0 40,58
+            L 40,57 A 2,2 0 0,1 42,55 Z"
+            android:fillColor="#E8C87A" />
+
+        <!-- Ticket Inner Border -->
+        <path android:pathData="M 43,58 L 77,58 L 77,72 L 43,72 Z"
+              android:strokeWidth="1" android:strokeColor="#C59A45" />
+
+        <!-- Center Star Accent -->
+        <path android:pathData="M 60,61.5 L 61,64 L 64,64 L 61.5,65.5 L 62.5,68.5 L 60,66.5 L 57.5,68.5 L 58.5,65.5 L 56,64 L 59,64 Z"
+              android:fillColor="#C59A45" />
+    </group>
+
 </vector>

@@ -152,14 +152,6 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                     RoomDraft(it.id, it.roomName ?: "Unknown Room", "c1", it.status ?: "active")
                 } ?: emptyList()
                 
-                if (allRooms.isEmpty()) {
-                    // Fallback to dummy rooms if DB is empty so user can still test
-                    allRooms = listOf(
-                        RoomDraft("room1", "Room 1", "c1", "active"),
-                        RoomDraft("room2", "Room 2", "c1", "active")
-                    )
-                }
-                
                 if (allRooms.isNotEmpty()) {
                     selectedRoomId = allRooms.firstOrNull { it.status == "active" }?._id ?: allRooms.first()._id
                 }
@@ -167,12 +159,6 @@ class ManagerAutoSchedulingActivity : AppCompatActivity() {
                 renderRoomTabs()
             } catch (e: Exception) {
                 e.printStackTrace()
-                // Fallback to dummy rooms on error
-                allRooms = listOf(
-                    RoomDraft("room1", "Room 1", "c1", "active"),
-                    RoomDraft("room2", "Room 2", "c1", "active")
-                )
-                selectedRoomId = allRooms.first()._id
                 renderRoomTabs()
             }
         }
