@@ -1,9 +1,5 @@
 package com.example.movie_booking_app.view.widget
 
-import com.example.movie_booking_app.R
-
-import androidx.core.content.ContextCompat
-
 import android.content.Context
 import android.graphics.BlurMaskFilter
 import android.graphics.Canvas
@@ -14,6 +10,8 @@ import android.graphics.Path
 import android.graphics.Shader
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.content.ContextCompat
+import com.example.movie_booking_app.R
 
 /**
  * Custom View that renders a cinema-screen light projection effect using Canvas.

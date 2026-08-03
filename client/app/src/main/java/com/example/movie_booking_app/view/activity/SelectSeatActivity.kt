@@ -5,22 +5,24 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.movie_booking_app.R
+import com.example.movie_booking_app.data.model.entity.Booking
+import com.example.movie_booking_app.data.model.entity.SeatType
 import com.example.movie_booking_app.databinding.ActivitySelectSeatBinding
-import com.example.movie_booking_app.view.adapter.DateAdapter
 import com.example.movie_booking_app.view.adapter.SeatAdapter
-import com.example.movie_booking_app.view.adapter.TimeAdapter
+import com.example.movie_booking_app.viewmodel.SeatingUiState
 import com.example.movie_booking_app.viewmodel.SelectSeatViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
 import java.util.UUID
+import kotlinx.coroutines.launch
 
 /**
  * Activity for Cinema Seat Selection screen.
@@ -69,7 +71,7 @@ class SelectSeatActivity : AppCompatActivity() {
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
                 val seat = seatAdapter.currentList.getOrNull(position)
-                return if (seat?.type == com.example.movie_booking_app.data.model.entity.SeatType.COUPLE) 2 else 1
+                return if (seat?.type == SeatType.COUPLE) 2 else 1
             }
         }
         binding.rvSeats.layoutManager = layoutManager
@@ -79,7 +81,7 @@ class SelectSeatActivity : AppCompatActivity() {
 
     private fun setupListeners() {
         binding.ivBack.setOnClickListener {
-            if (viewModel.uiState.value == com.example.movie_booking_app.viewmodel.SeatingUiState.HELD) {
+            if (viewModel.uiState.value == SeatingUiState.HELD) {
                 viewModel.releaseCurrentHold()
             }
             finish()
@@ -112,7 +114,7 @@ class SelectSeatActivity : AppCompatActivity() {
                         val ticketTotal = viewModel.totalPrice.value
                         val orderId = "BK-" + UUID.randomUUID().toString().take(8).uppercase(Locale.getDefault())
 
-                        val booking = com.example.movie_booking_app.data.model.entity.Booking(
+                        val booking = Booking(
                             orderId = orderId,
                             movieId = intent.getStringExtra("movieId"),
                             movieName = intent.getStringExtra("movieName") ?: getString(R.string.unknown_movie),
@@ -133,9 +135,9 @@ class SelectSeatActivity : AppCompatActivity() {
                             seatNames = selectedSeatsList.map { it.label },
                             seatTypes = selectedSeatsList.map { seat ->
                                 when (seat.type) {
-                                    com.example.movie_booking_app.data.model.entity.SeatType.NORMAL -> "Regular"
-                                    com.example.movie_booking_app.data.model.entity.SeatType.VIP -> "VIP"
-                                    com.example.movie_booking_app.data.model.entity.SeatType.COUPLE -> "Couple"
+                                    SeatType.NORMAL -> "Regular"
+                                    SeatType.VIP -> "VIP"
+                                    SeatType.COUPLE -> "Couple"
                                     else -> "Regular"
                                 }
                             }.distinct(),
@@ -218,7 +220,7 @@ class SelectSeatActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
-                    if (state == com.example.movie_booking_app.viewmodel.SeatingUiState.EXPIRED) {
+                    if (state == SeatingUiState.EXPIRED) {
                         showExpiredDialog()
                     }
                 }
@@ -227,7 +229,7 @@ class SelectSeatActivity : AppCompatActivity() {
     }
 
     private fun showExpiredDialog() {
-        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.title_expired))
         builder.setMessage(getString(R.string.msg_expired))
         builder.setPositiveButton(getString(R.string.btn_ok)) { dialog, _ ->

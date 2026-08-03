@@ -1,15 +1,14 @@
 package com.example.movie_booking_app.view.adapter
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.PayrollItem
 import com.example.movie_booking_app.databinding.ItemPayrollBinding
+import com.example.movie_booking_app.utils.NameFormatter
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -46,7 +45,7 @@ class PayrollAdapter(
 
             // Avatar Text Initials
             val fullName = item.employee?.fullName ?: item.employee?.username ?: ""
-            binding.tvAvatarText.text = com.example.movie_booking_app.utils.NameFormatter.getAvatarInitials(fullName)
+            binding.tvAvatarText.text = NameFormatter.getAvatarInitials(fullName)
 
             // Total salary – VND format
             binding.tvTotalSalary.text = formatVnd(item.totalSalary)

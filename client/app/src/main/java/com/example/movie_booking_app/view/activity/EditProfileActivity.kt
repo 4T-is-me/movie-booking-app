@@ -2,8 +2,11 @@ package com.example.movie_booking_app.view.activity
 
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,19 +17,21 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
+import com.bumptech.glide.signature.ObjectKey
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.ActivityEditProfileBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.viewmodel.EditProfileViewModel
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class EditProfileActivity : AppCompatActivity() {
@@ -156,13 +161,13 @@ class EditProfileActivity : AppCompatActivity() {
                             url
                         } else {
                             // Prepend base URL for local paths like /uploads/avatar.jpg
-                            "${com.example.movie_booking_app.utils.Constants.BASE_URL.removeSuffix("/")}$url"
+                            "${Constants.BASE_URL.removeSuffix("/")}$url"
                         }
                         if (finalUrl != lastLoadedAvatarUrl) {
                             lastLoadedAvatarUrl = finalUrl
                             Glide.with(this@EditProfileActivity)
                                 .load(finalUrl)
-                                .signature(com.bumptech.glide.signature.ObjectKey(System.currentTimeMillis().toString()))
+                                .signature(ObjectKey(System.currentTimeMillis().toString()))
                                 .placeholder(R.drawable.ic_profile)
                                 .error(R.drawable.ic_profile)
                                 .into(binding.ivAvatar)
@@ -305,7 +310,7 @@ class EditProfileActivity : AppCompatActivity() {
                 val processedFile = withContext(Dispatchers.Default) {
                     val bitmap = withContext(Dispatchers.IO) {
                         contentResolver.openInputStream(uri)?.use { inputStream ->
-                            android.graphics.BitmapFactory.decodeStream(inputStream)
+                            BitmapFactory.decodeStream(inputStream)
                         }
                     } ?: throw Exception("Failed to decode bitmap from Uri")
 
@@ -319,7 +324,7 @@ class EditProfileActivity : AppCompatActivity() {
 
                     withContext(Dispatchers.IO) {
                         FileOutputStream(tempFile).use { out ->
-                            resizedBitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 85, out)
+                            resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 85, out)
                         }
                     }
 
@@ -330,7 +335,7 @@ class EditProfileActivity : AppCompatActivity() {
                     viewModel.uploadAvatar(processedFile)
                 }
             } catch (e: Exception) {
-                android.util.Log.e("EditProfileActivity", "Error processing image", e)
+                Log.e("EditProfileActivity", "Error processing image", e)
                 if (!isDestroyed && !isFinishing) {
                     viewModel.setUploadingState(false)
                     Toast.makeText(this@EditProfileActivity, getString(R.string.auto_str_unable_to_process_selected_ima), Toast.LENGTH_SHORT).show()
@@ -339,7 +344,7 @@ class EditProfileActivity : AppCompatActivity() {
         }
     }
 
-    private fun resizeBitmap(source: android.graphics.Bitmap, maxWidth: Int, maxHeight: Int): android.graphics.Bitmap {
+    private fun resizeBitmap(source: Bitmap, maxWidth: Int, maxHeight: Int): Bitmap {
         val width = source.width
         val height = source.height
         if (width <= maxWidth && height <= maxHeight) {
@@ -353,7 +358,7 @@ class EditProfileActivity : AppCompatActivity() {
         } else {
             targetWidth = (maxHeight * ratio).toInt()
         }
-        return android.graphics.Bitmap.createScaledBitmap(source, targetWidth, targetHeight, true)
+        return Bitmap.createScaledBitmap(source, targetWidth, targetHeight, true)
     }
 
     private fun formatDateString(rawDate: String?): String {

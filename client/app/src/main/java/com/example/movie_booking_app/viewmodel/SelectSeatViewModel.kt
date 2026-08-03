@@ -9,6 +9,12 @@ import com.example.movie_booking_app.data.model.entity.SeatType
 import com.example.movie_booking_app.data.model.entity.ShowDate
 import com.example.movie_booking_app.data.model.entity.Showtime
 import com.example.movie_booking_app.data.repository.BookingRepository
+import com.example.movie_booking_app.utils.BookingTimerManager
+import dagger.hilt.android.lifecycle.HiltViewModel
+import java.text.SimpleDateFormat
+import java.util.Locale
+import javax.inject.Inject
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,10 +28,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
-import dagger.hilt.android.lifecycle.HiltViewModel
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 enum class SeatingUiState {
     IDLE, HOLDING, HELD, EXPIRED, ERROR
@@ -35,7 +37,7 @@ enum class SeatingUiState {
 class SelectSeatViewModel @Inject constructor(
     private val repository: BookingRepository,
     private val savedStateHandle: SavedStateHandle,
-    val timerManager: com.example.movie_booking_app.utils.BookingTimerManager
+    val timerManager: BookingTimerManager
 ) : ViewModel() {
 
     private val isoFormat by lazy { SimpleDateFormat("yyyy-MM-dd", Locale.US) }
@@ -54,7 +56,7 @@ class SelectSeatViewModel @Inject constructor(
     val uiState: StateFlow<SeatingUiState> = _uiState.asStateFlow()
 
     private var lastHeldSeatIds: List<String>? = null
-    private var countdownCollectJob: kotlinx.coroutines.Job? = null
+    private var countdownCollectJob: Job? = null
 
     private val _allShowtimes = MutableStateFlow<List<Showtime>>(emptyList())
 

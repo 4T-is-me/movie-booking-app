@@ -1,6 +1,7 @@
 package com.example.movie_booking_app.view.fragment.admin
 
 import android.app.AlertDialog
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -16,20 +17,20 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.FragmentAddCinemaBinding
 import com.example.movie_booking_app.viewmodel.AddCinemaViewModel
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
+import java.io.FileOutputStream
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.File
-import java.io.FileOutputStream
-import android.net.Uri
 
 @AndroidEntryPoint
 class AddCinemaFragment : Fragment() {
@@ -233,7 +234,7 @@ class AddCinemaFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.image.collectLatest { imgUrl ->
                 if (!imgUrl.isNullOrEmpty() && selectedImageUri == null) {
-                    com.bumptech.glide.Glide.with(this@AddCinemaFragment)
+                    Glide.with(this@AddCinemaFragment)
                         .load(imgUrl)
                         .placeholder(R.drawable.bg_placeholder_card)
                         .into(ivCinemaPreview)

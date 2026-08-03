@@ -3,7 +3,7 @@ package com.example.movie_booking_app.view.activity.manager
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
-import android.util.Log
+import android.view.View
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -25,11 +25,11 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ManagerReportActivity : AppCompatActivity() {
@@ -248,11 +248,11 @@ class ManagerReportActivity : AppCompatActivity() {
     private fun setUpTopMovies (topMovies:  List<TopMoviesResponse>) {
         val movies = topMovies.orEmpty()
         if(movies.isEmpty()) {
-            binding.rvTopMovies.visibility = android.view.View.GONE
-            binding.txtNoMovieData.visibility = android.view.View.VISIBLE
+            binding.rvTopMovies.visibility = View.GONE
+            binding.txtNoMovieData.visibility = View.VISIBLE
         }else{
-            binding.rvTopMovies.visibility = android.view.View.VISIBLE
-            binding.txtNoMovieData.visibility = android.view.View.GONE
+            binding.rvTopMovies.visibility = View.VISIBLE
+            binding.txtNoMovieData.visibility = View.GONE
             topMovieManagerAdapter.submitList(movies.toMutableList())
         }
     }

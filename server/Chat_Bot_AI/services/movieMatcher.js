@@ -5,13 +5,6 @@
  * Đã hỗ trợ Sanitize Movie Object loại bỏ các trường nội bộ của hệ thống/Mongoose.
  */
 
-import { Movie } from '../../src/models/movieModel.js';
-import { Showtime } from '../../src/models/showTimeModel.js';
-import { Promotion } from '../../src/models/promotionModel.js';
-import { Seat } from '../../src/models/seatModel.js';
-import { Cinema } from '../../src/models/cinemaModel.js';
-import { moodDictionary } from '../config/moodDictionary.js';
-import { removeVietnameseTones } from './textNormalizer.js';
 
 /**
  * Làm sạch bớt các trường nội bộ của Mongoose Document trước khi trả về client

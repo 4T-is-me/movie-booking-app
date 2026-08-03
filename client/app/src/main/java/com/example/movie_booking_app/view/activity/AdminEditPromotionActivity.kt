@@ -1,6 +1,7 @@
 package com.example.movie_booking_app.view.activity
 
 import android.app.DatePickerDialog
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
@@ -15,13 +16,13 @@ import com.example.movie_booking_app.data.model.response.AdminPromotion
 import com.example.movie_booking_app.databinding.ActivityAdminEditPromotionBinding
 import com.example.movie_booking_app.viewmodel.admin.AdminPromotionViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class AdminEditPromotionActivity : BaseActivity() {
@@ -35,7 +36,7 @@ class AdminEditPromotionActivity : BaseActivity() {
     private val calendarStart = Calendar.getInstance()
     private val calendarEnd = Calendar.getInstance()
 
-    private var selectedImageUri: android.net.Uri? = null
+    private var selectedImageUri: Uri? = null
     private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         if (uri != null) {
             selectedImageUri = uri

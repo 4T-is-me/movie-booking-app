@@ -1,7 +1,5 @@
 package com.example.movie_booking_app.data.model.entity
 
-import java.util.Date
-
 data class Member(
     val _id: String,
     val accountId: String,

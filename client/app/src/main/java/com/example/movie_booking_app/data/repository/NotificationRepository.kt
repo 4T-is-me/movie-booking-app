@@ -1,15 +1,14 @@
 package com.example.movie_booking_app.data.repository
 
-
 import com.example.movie_booking_app.data.api.NotificationApi
 import com.example.movie_booking_app.data.model.response.MarkReadResponse
 import com.example.movie_booking_app.data.model.response.NotificationResponse
 import com.example.movie_booking_app.data.model.response.UnreadCountResponse
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.json.JSONObject
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class NotificationRepository @Inject constructor(

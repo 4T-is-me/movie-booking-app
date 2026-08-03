@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.view.animation.TranslateAnimation
-import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.OptIn
@@ -34,12 +33,12 @@ import com.example.movie_booking_app.viewmodel.staff.StaffValidatorViewModel
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
 import java.util.concurrent.Executors
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class StaffValidatorFragment : Fragment() {
@@ -241,7 +240,7 @@ class StaffValidatorFragment : Fragment() {
         // Enforce explicit dialog width to prevent layout collapsing
         dialog.window?.let { window ->
             val width = (320 * context.resources.displayMetrics.density).toInt()
-            window.setLayout(width, android.view.ViewGroup.LayoutParams.WRAP_CONTENT)
+            window.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT)
         }
     }
 
@@ -310,7 +309,7 @@ class StaffValidatorFragment : Fragment() {
         // Enforce explicit dialog width to prevent layout collapsing
         dialog.window?.let { window ->
             val width = (320 * context.resources.displayMetrics.density).toInt()
-            window.setLayout(width, android.view.ViewGroup.LayoutParams.WRAP_CONTENT)
+            window.setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT)
         }
     }
 

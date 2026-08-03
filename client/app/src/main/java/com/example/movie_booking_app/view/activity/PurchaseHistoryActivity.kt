@@ -2,10 +2,9 @@ package com.example.movie_booking_app.view.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import dagger.hilt.android.AndroidEntryPoint
-
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.view.fragment.PurchaseHistoryFragment
+import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class PurchaseHistoryActivity : AppCompatActivity() {

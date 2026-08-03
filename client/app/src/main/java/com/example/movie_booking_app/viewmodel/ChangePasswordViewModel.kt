@@ -7,6 +7,8 @@ import com.example.movie_booking_app.data.model.request.ChangePasswordRequest
 import com.example.movie_booking_app.data.repository.ProfileRepository
 import com.example.movie_booking_app.data.repository.UnauthorizedException
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.io.IOException
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +16,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import javax.inject.Inject
 
 @HiltViewModel
 class ChangePasswordViewModel @Inject constructor(
@@ -149,7 +150,7 @@ class ChangePasswordViewModel @Inject constructor(
                         is UnauthorizedException -> {
                             R.string.error_session_expired
                         }
-                        is java.io.IOException -> {
+                        is IOException -> {
                             R.string.error_network_error
                         }
                         else -> {

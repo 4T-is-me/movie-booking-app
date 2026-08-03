@@ -1,14 +1,18 @@
 package com.example.movie_booking_app.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.entity.Booking
-import com.example.movie_booking_app.data.model.entity.ComboDetail
 import com.example.movie_booking_app.data.model.request.ComboRequest
 import com.example.movie_booking_app.data.model.request.ConfirmBookingRequest
+import com.example.movie_booking_app.data.repository.MovieRepository
 import com.example.movie_booking_app.data.repository.PaymentRepository
 import com.example.movie_booking_app.data.repository.ProfileRepository
+import com.example.movie_booking_app.utils.BookingTimerManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlin.math.floor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,15 +20,13 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import kotlin.math.floor
 
 @HiltViewModel
 class PaymentViewModel @Inject constructor(
     private val repository: PaymentRepository,
     private val profileRepository: ProfileRepository,
-    private val movieRepository: com.example.movie_booking_app.data.repository.MovieRepository,
-    val timerManager: com.example.movie_booking_app.utils.BookingTimerManager
+    private val movieRepository: MovieRepository,
+    val timerManager: BookingTimerManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(BookingUiState())
@@ -230,7 +232,7 @@ class PaymentViewModel @Inject constructor(
                     try {
                         profileRepository.getUserProfile().collect {}
                     } catch (e: Exception) {
-                        android.util.Log.e("PaymentViewModel", "Failed to refresh profile after checkout", e)
+                        Log.e("PaymentViewModel", "Failed to refresh profile after checkout", e)
                     }
                     _uiState.update { it.copy(
                         isCheckingOut = false,

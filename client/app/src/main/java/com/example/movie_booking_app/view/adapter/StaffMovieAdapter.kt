@@ -1,6 +1,5 @@
 package com.example.movie_booking_app.view.adapter
 
-import com.example.movie_booking_app.databinding.ItemStaffMovieCardBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Movie
+import com.example.movie_booking_app.databinding.ItemStaffMovieCardBinding
 import com.google.android.material.card.MaterialCardView
 
 class StaffMovieAdapter(
@@ -51,7 +51,7 @@ class StaffMovieAdapter(
             
             // Format Info: Genre | Duration
             val genreStr = movie.movieGenre?.joinToString(", ") ?: ""
-            val durationStr = if (movie.duration != null) itemView.context.getString(com.example.movie_booking_app.R.string.duration_mins, movie.duration.toString()) else "N/A"
+            val durationStr = if (movie.duration != null) itemView.context.getString(R.string.duration_mins, movie.duration.toString()) else "N/A"
             tvMovieInfo.text = "$genreStr | $durationStr"
 
             // Rating & Votes

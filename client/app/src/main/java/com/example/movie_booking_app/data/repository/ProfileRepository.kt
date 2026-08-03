@@ -2,14 +2,16 @@ package com.example.movie_booking_app.data.repository
 
 import com.example.movie_booking_app.data.api.ProfileApi
 import com.example.movie_booking_app.data.model.entity.UserProfile
+import com.example.movie_booking_app.data.model.request.ChangePasswordRequest
 import com.example.movie_booking_app.data.model.request.UpdateProfileRequest
 import com.example.movie_booking_app.data.model.response.UploadAvatarResponse
 import com.example.movie_booking_app.data.model.response.toUserProfile
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import javax.inject.Inject
+import okhttp3.MultipartBody
 
 class UnauthorizedException(message: String) : Exception(message)
 
@@ -59,7 +61,7 @@ class ProfileRepository @Inject constructor(
     /**
      * Uploads the user avatar.
      */
-    fun uploadAvatar(avatarPart: okhttp3.MultipartBody.Part): Flow<UploadAvatarResponse> = flow {
+    fun uploadAvatar(avatarPart: MultipartBody.Part): Flow<UploadAvatarResponse> = flow {
         val response = profileApi.uploadAvatar(avatarPart)
         if (response.isSuccessful && response.body() != null) {
             emit(response.body()!!)
@@ -74,7 +76,7 @@ class ProfileRepository @Inject constructor(
         }
     }.flowOn(Dispatchers.IO)
 
-    fun changePassword(request: com.example.movie_booking_app.data.model.request.ChangePasswordRequest): Flow<Unit> = flow {
+    fun changePassword(request: ChangePasswordRequest): Flow<Unit> = flow {
         val response = profileApi.changePassword(request)
         if (response.isSuccessful) {
             emit(Unit)

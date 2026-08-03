@@ -1,10 +1,5 @@
 import { Router } from 'express';
-import {
-    handleGetMovies,
-    handleSearchMovies,
-    handleGetMovieById,
-    handleGetMovieShowtimes
-} from '../controllers/movieController.js';
+import { handleGetMovies, handleSearchMovies, handleGetMovieById, handleGetMovieShowtimes } from '../controllers/movieController.js';
 import { handleCreateReview, handleGetMovieReviews } from '../controllers/reviewController.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 

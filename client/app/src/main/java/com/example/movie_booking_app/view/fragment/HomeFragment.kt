@@ -6,21 +6,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.TextView
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.example.movie_booking_app.R
+import com.example.movie_booking_app.data.local.NotificationLocalStorage
+import com.example.movie_booking_app.data.model.ui.HomeItem
 import com.example.movie_booking_app.databinding.FragmentMovieListBinding
-import com.example.movie_booking_app.view.activity.MainActivity
 import com.example.movie_booking_app.view.activity.LoginActivity
+import com.example.movie_booking_app.view.activity.MainActivity
 import com.example.movie_booking_app.view.activity.MovieDetailActivity
 import com.example.movie_booking_app.view.activity.NewsDetailActivity
 import com.example.movie_booking_app.view.activity.NotificationActivity
 import com.example.movie_booking_app.view.activity.VideoListActivity
-import com.example.movie_booking_app.data.local.NotificationLocalStorage
 import com.example.movie_booking_app.view.adapter.HomeMultiAdapter
 import com.example.movie_booking_app.viewmodel.MovieViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -134,14 +135,14 @@ class HomeFragment : Fragment() {
             }
         )
         binding.rvHome.adapter = homeAdapter
-        (binding.rvHome.itemAnimator as? androidx.recyclerview.widget.SimpleItemAnimator)?.supportsChangeAnimations = false
+        (binding.rvHome.itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
     }
 
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.homeItems.collect { items ->
                 // Filter out HeaderSection if it still exists in homeItems flow
-                val listWithoutHeader = items.filter { it !is com.example.movie_booking_app.data.model.ui.HomeItem.HeaderSection }
+                val listWithoutHeader = items.filter { it !is HomeItem.HeaderSection }
                 homeAdapter.submitList(listWithoutHeader)
             }
         }

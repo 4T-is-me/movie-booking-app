@@ -1,18 +1,17 @@
 package com.example.movie_booking_app.view.adapter.manager
 
-import androidx.core.content.ContextCompat
-
-import com.example.movie_booking_app.databinding.ItemManagerRoomBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.ManagerRoom
+import com.example.movie_booking_app.databinding.ItemManagerRoomBinding
 
 class ManagerRoomAdapter(
     private val onRoomClick: (ManagerRoom) -> Unit
@@ -37,7 +36,7 @@ class ManagerRoomAdapter(
         private val tvOperating: TextView = binding.tvOperating
         private val tvRoomUnavailable: TextView = binding.tvRoomUnavailable
         private val flIcon: View = binding.flIcon
-        private val ivMovie: android.widget.ImageView = binding.ivMovie
+        private val ivMovie: ImageView = binding.ivMovie
         private val btnManage: View = binding.btnManage
 
         fun bind(room: ManagerRoom) {
@@ -61,18 +60,18 @@ class ManagerRoomAdapter(
             when (statusText) {
                 "Operating" -> {
                     tvOperating.setTextColor(ContextCompat.getColor(context, R.color.color_green))
-                    tvOperating.background = androidx.core.content.ContextCompat.getDrawable(context, R.drawable.bg_label_operating)
+                    tvOperating.background = ContextCompat.getDrawable(context, R.drawable.bg_label_operating)
                     
-                    flIcon.background = androidx.core.content.ContextCompat.getDrawable(context, R.drawable.bg_manager_room_icon)
+                    flIcon.background = ContextCompat.getDrawable(context, R.drawable.bg_manager_room_icon)
                     ivMovie.setColorFilter(ContextCompat.getColor(context, R.color.color_green))
                     
                     tvRoomUnavailable.visibility = View.GONE
                 }
                 "Maintenance" -> {
                     tvOperating.setTextColor(ContextCompat.getColor(context, R.color.auto_color_F59E0B)) // Orange yellow
-                    tvOperating.background = androidx.core.content.ContextCompat.getDrawable(context, R.drawable.bg_label_maintain)
+                    tvOperating.background = ContextCompat.getDrawable(context, R.drawable.bg_label_maintain)
                     
-                    flIcon.background = androidx.core.content.ContextCompat.getDrawable(context, R.drawable.bg_label_maintain)
+                    flIcon.background = ContextCompat.getDrawable(context, R.drawable.bg_label_maintain)
                     ivMovie.setColorFilter(ContextCompat.getColor(context, R.color.auto_color_F59E0B))
                     
                     tvRoomUnavailable.visibility = View.VISIBLE
@@ -81,9 +80,9 @@ class ManagerRoomAdapter(
                 }
                 "Closed" -> {
                     tvOperating.setTextColor(ContextCompat.getColor(context, R.color.color_error_red))
-                    tvOperating.background = androidx.core.content.ContextCompat.getDrawable(context, R.drawable.bg_label_close)
+                    tvOperating.background = ContextCompat.getDrawable(context, R.drawable.bg_label_close)
                     
-                    flIcon.background = androidx.core.content.ContextCompat.getDrawable(context, R.drawable.bg_label_close)
+                    flIcon.background = ContextCompat.getDrawable(context, R.drawable.bg_label_close)
                     ivMovie.setColorFilter(ContextCompat.getColor(context, R.color.color_error_red))
                     
                     tvRoomUnavailable.visibility = View.VISIBLE

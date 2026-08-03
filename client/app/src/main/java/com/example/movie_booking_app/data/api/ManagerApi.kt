@@ -1,11 +1,12 @@
 package com.example.movie_booking_app.data.api
 
-import com.example.movie_booking_app.data.model.entity.StaffShift
 import com.example.movie_booking_app.data.model.request.GenerateShiftRequest
+import com.example.movie_booking_app.data.model.request.ShowtimeBulkRequest
 import com.example.movie_booking_app.data.model.request.UpdateShiftRequest
 import com.example.movie_booking_app.data.model.response.GenerateShiftApiResponse
 import com.example.movie_booking_app.data.model.response.ManagerDashboardResponse
 import com.example.movie_booking_app.data.model.response.ManagerReportsResponse
+import com.example.movie_booking_app.data.model.response.ManagerShowtimesResponse
 import com.example.movie_booking_app.data.model.response.ManagerStaffListResponse
 import com.example.movie_booking_app.data.model.response.ShiftDetailResponse
 import com.example.movie_booking_app.data.model.response.ShiftResponse
@@ -49,10 +50,10 @@ interface ManagerApi {
         @Query("startDate") startDate: String,
         @Query("endDate") endDate: String,
         @Query("limit") limit: Int = 1000
-    ): Response<com.example.movie_booking_app.data.model.response.ManagerShowtimesResponse>
+    ): Response<ManagerShowtimesResponse>
 
-    @retrofit2.http.POST("api/admin/showtimes/bulk")
+    @POST("api/admin/showtimes/bulk")
     suspend fun createBulkShowtimes(
-        @retrofit2.http.Body request: com.example.movie_booking_app.data.model.request.ShowtimeBulkRequest
+        @Body request: ShowtimeBulkRequest
     ): Response<Unit>
 }

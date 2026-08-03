@@ -1,23 +1,34 @@
 package com.example.movie_booking_app.view.fragment
 
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Base64
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RatingBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.example.movie_booking_app.R
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.BookingHistoryItem
+import com.example.movie_booking_app.databinding.DialogQrCodeBinding
 import com.example.movie_booking_app.databinding.FragmentMyTicketBinding
 import com.example.movie_booking_app.view.activity.BookingDetailActivity
 import com.example.movie_booking_app.view.activity.MainActivity
 import com.example.movie_booking_app.view.adapter.MyTicketAdapter
 import com.example.movie_booking_app.viewmodel.MyTicketViewModel
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.TextInputEditText
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -170,13 +181,13 @@ class MyTicketFragment : Fragment() {
     }
 
     private fun showRateStaffDialog(bookingId: String) {
-        val dialog = com.google.android.material.bottomsheet.BottomSheetDialog(requireContext())
+        val dialog = BottomSheetDialog(requireContext())
         val dialogView = layoutInflater.inflate(R.layout.dialog_rate_staff, null)
         dialog.setContentView(dialogView)
 
-        val ratingBar = dialogView.findViewById<android.widget.RatingBar>(R.id.ratingBar)
-        val etComment = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etComment)
-        val btnSubmit = dialogView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnSubmitRating)
+        val ratingBar = dialogView.findViewById<RatingBar>(R.id.ratingBar)
+        val etComment = dialogView.findViewById<TextInputEditText>(R.id.etComment)
+        val btnSubmit = dialogView.findViewById<MaterialButton>(R.id.btnSubmitRating)
 
         btnSubmit.setOnClickListener {
             val rating = ratingBar.rating.toInt()
@@ -193,14 +204,14 @@ class MyTicketFragment : Fragment() {
     }
 
     private fun showQrDialog(item: BookingHistoryItem) {
-        val dialogBinding = com.example.movie_booking_app.databinding.DialogQrCodeBinding.inflate(layoutInflater)
-        val dialog = android.app.Dialog(requireContext())
+        val dialogBinding = DialogQrCodeBinding.inflate(layoutInflater)
+        val dialog = Dialog(requireContext())
         dialog.setContentView(dialogBinding.root)
-        dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.setCancelable(true)
 
         dialogBinding.tvMovieTitle.text = item.movie
-        dialogBinding.tvBookingCode.text = requireContext().getString(com.example.movie_booking_app.R.string.booking_id_format, item.bookingCode)
+        dialogBinding.tvBookingCode.text = requireContext().getString(R.string.booking_id_format, item.bookingCode)
         dialogBinding.tvDateTime.text = "${item.showDate} • ${item.showtime}"
         dialogBinding.tvCinemaRoom.text = "${item.cinemaName} • ${item.roomName}"
 
@@ -212,31 +223,31 @@ class MyTicketFragment : Fragment() {
 
         val qr = item.qrCodeData
         if (!qr.isNullOrEmpty()) {
-            dialogBinding.ivQrCode.setImageResource(com.example.movie_booking_app.R.drawable.ic_ticket)
+            dialogBinding.ivQrCode.setImageResource(R.drawable.ic_ticket)
             viewLifecycleOwner.lifecycleScope.launch {
                 try {
                     val bitmap = withContext(Dispatchers.Default) {
                         val cleanBase64 = qr.substringAfter("base64,")
-                        val imageBytes = android.util.Base64.decode(cleanBase64, android.util.Base64.DEFAULT)
-                        android.graphics.BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                        val imageBytes = Base64.decode(cleanBase64, Base64.DEFAULT)
+                        BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
                     }
                     if (isAdded && !isDetached && _binding != null && dialog.isShowing) {
                         if (bitmap != null) {
                             dialogBinding.ivQrCode.setImageBitmap(bitmap)
                         } else {
-                            dialogBinding.ivQrCode.setImageResource(com.example.movie_booking_app.R.drawable.ic_ticket)
+                            dialogBinding.ivQrCode.setImageResource(R.drawable.ic_ticket)
                         }
                     }
                 } catch (e: Exception) {
-                    android.util.Log.e("MyTicketFragment", "Error decoding QR Code", e)
+                    Log.e("MyTicketFragment", "Error decoding QR Code", e)
                     if (isAdded && !isDetached && _binding != null && dialog.isShowing) {
-                        dialogBinding.ivQrCode.setImageResource(com.example.movie_booking_app.R.drawable.ic_ticket)
-                        android.widget.Toast.makeText(requireContext(), getString(R.string.auto_str_unable_to_load_qr_code), android.widget.Toast.LENGTH_SHORT).show()
+                        dialogBinding.ivQrCode.setImageResource(R.drawable.ic_ticket)
+                        Toast.makeText(requireContext(), getString(R.string.auto_str_unable_to_load_qr_code), Toast.LENGTH_SHORT).show()
                     }
                 }
             }
         } else {
-            dialogBinding.ivQrCode.setImageResource(com.example.movie_booking_app.R.drawable.ic_ticket)
+            dialogBinding.ivQrCode.setImageResource(R.drawable.ic_ticket)
         }
     }
 }

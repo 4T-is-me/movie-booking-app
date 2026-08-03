@@ -4,6 +4,7 @@ import com.example.movie_booking_app.data.model.response.ManagerStaffItem
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.ChronoField
+import java.time.temporal.ChronoUnit
 
 data class StaffShiftDraft(
     val staffId: String,
@@ -58,7 +59,7 @@ object AutoStaffSchedulingAlgorithm {
         // 2. Calculate maximum shifts staff can work (Upper limit of labor)
         // Rule: workedDaysInWeek < 7 => Each person works maximum 6 days/week
         // Consecutive shift pairing => Each working day includes 2 consecutive shifts. Meaning up to 12 shifts/week per person.
-        val totalDaysInPeriod = java.time.temporal.ChronoUnit.DAYS.between(startDate, endDate) + 1
+        val totalDaysInPeriod = ChronoUnit.DAYS.between(startDate, endDate) + 1
         val totalWeeks = Math.ceil(totalDaysInPeriod.toDouble() / 7.0).toInt()
 
         val maxShiftsPerStaff = totalWeeks * 6 * 2 // (Number of weeks * 6 days * 2 shifts)

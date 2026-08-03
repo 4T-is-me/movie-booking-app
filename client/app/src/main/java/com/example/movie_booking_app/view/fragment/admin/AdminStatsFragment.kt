@@ -1,22 +1,19 @@
 package com.example.movie_booking_app.view.fragment.admin
 
-import androidx.core.content.ContextCompat
-
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.movie_booking_app.R
-import com.example.movie_booking_app.data.model.admin.DailyRevenueItem
-import com.example.movie_booking_app.data.model.admin.MonthlyRevenueItem
 import com.example.movie_booking_app.data.model.admin.MovieRevenueItem
 import com.example.movie_booking_app.databinding.FragmentAdminStatsBinding
-import com.example.movie_booking_app.viewmodel.admin.AdminStatsViewModel
 import com.example.movie_booking_app.viewmodel.admin.AdminStatsUiState
+import com.example.movie_booking_app.viewmodel.admin.AdminStatsViewModel
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
@@ -26,10 +23,10 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.ValueFormatter
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class AdminStatsFragment : Fragment() {

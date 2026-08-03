@@ -12,11 +12,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.facebook.shimmer.ShimmerFrameLayout
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.FragmentAdminCinemasBinding
 import com.example.movie_booking_app.view.adapter.CinemasAdapter
 import com.example.movie_booking_app.viewmodel.AdminCinemasViewModel
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.android.material.button.MaterialButton
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest

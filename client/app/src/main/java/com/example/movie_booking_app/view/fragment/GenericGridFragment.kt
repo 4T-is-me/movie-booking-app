@@ -11,11 +11,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.movie_booking_app.data.repository.MovieRepository
 import com.example.movie_booking_app.data.repository.RepositoryProvider
 import com.example.movie_booking_app.databinding.FragmentGenericListBinding
+import com.example.movie_booking_app.view.activity.NewsDetailActivity
 import com.example.movie_booking_app.view.adapter.MovieNewsAdapter
 import com.example.movie_booking_app.view.adapter.PromoSeeAllAdapter
 import com.example.movie_booking_app.view.adapter.ServiceAdapter
-import com.example.movie_booking_app.view.activity.NewsDetailActivity
-import com.example.movie_booking_app.data.repository.NewsRepository
 import kotlinx.coroutines.launch
 
 class GenericGridFragment : Fragment() {

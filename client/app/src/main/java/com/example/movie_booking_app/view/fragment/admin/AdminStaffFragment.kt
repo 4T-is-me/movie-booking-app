@@ -1,12 +1,16 @@
 package com.example.movie_booking_app.view.fragment.admin
 
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -14,14 +18,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Staff
+import com.example.movie_booking_app.databinding.DialogConfirmDeleteStaffBinding
+import com.example.movie_booking_app.databinding.DialogDetailStaffBinding
 import com.example.movie_booking_app.databinding.FragmentAdminStaffBinding
 import com.example.movie_booking_app.view.activity.AdminStaffActivity
 import com.example.movie_booking_app.view.adapter.AdminStaffAdapter
 import com.example.movie_booking_app.viewmodel.admin.AdminStaffViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.util.Locale
 
 @AndroidEntryPoint
 class AdminStaffFragment : Fragment() {
@@ -117,10 +123,10 @@ class AdminStaffFragment : Fragment() {
     }
 
     private fun showDeleteConfirmationDialog(staff: Staff) {
-        val dialogBinding = com.example.movie_booking_app.databinding.DialogConfirmDeleteStaffBinding.inflate(layoutInflater)
-        val dialog = android.app.Dialog(requireContext())
+        val dialogBinding = DialogConfirmDeleteStaffBinding.inflate(layoutInflater)
+        val dialog = Dialog(requireContext())
         dialog.setContentView(dialogBinding.root)
-        dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.setCancelable(true)
 
         dialogBinding.tvDeleteTitle.text = getString(R.string.auto_str_delete_account)
@@ -139,10 +145,10 @@ class AdminStaffFragment : Fragment() {
     }
 
     private fun showStaffDetailDialog(staff: Staff) {
-        val dialogBinding = com.example.movie_booking_app.databinding.DialogDetailStaffBinding.inflate(layoutInflater)
-        val dialog = android.app.Dialog(requireContext())
+        val dialogBinding = DialogDetailStaffBinding.inflate(layoutInflater)
+        val dialog = Dialog(requireContext())
         dialog.setContentView(dialogBinding.root)
-        dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.setCancelable(true)
 
         dialogBinding.tvDetailUsername.text = staff.username ?: getString(R.string.user_name_placeholder)
@@ -212,13 +218,13 @@ class AdminStaffFragment : Fragment() {
         adapter.submitList(getFilteredStaffList(fullList))
     }
 
-    private fun updateTabStyle(tabView: android.widget.TextView, isActive: Boolean) {
+    private fun updateTabStyle(tabView: TextView, isActive: Boolean) {
         if (isActive) {
             tabView.setBackgroundResource(R.drawable.bg_tab_active)
-            tabView.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.black))
+            tabView.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
         } else {
             tabView.background = null
-            tabView.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), R.color.text_gray))
+            tabView.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_gray))
         }
     }
 
