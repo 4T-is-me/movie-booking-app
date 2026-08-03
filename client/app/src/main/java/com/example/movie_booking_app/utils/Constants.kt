@@ -12,7 +12,7 @@ object Constants {
      * Updated to your machine's actual IPv4: 192.168.1.184
      * Synced with group's server requirements.
      */
-    const val BASE_URL = "http://192.168.1.184:5000/"
+    const val BASE_URL = "https://movie-booking-app-6kcy.onrender.com/"
     const val RANK_GOLD = 10000000L
     const val RANK_SILVER = 5000000L
 

@@ -138,7 +138,7 @@ class ManagerSeatActivity : AppCompatActivity() {
             this,
             if (enable) R.drawable.bg_btn_status_selected else R.drawable.bg_btn_status_unselected
         )
-        binding.tvMultiSelectLabel.text = if (enable) "✓ Chọn nhiều" else "Chọn nhiều"
+        binding.tvMultiSelectLabel.text = if (enable) getString(R.string.manager_select_multiple_checked) else getString(R.string.auto_str_ch_n_nhi_u)
         binding.tvMultiSelectLabel.setTextColor(
             Color.parseColor(if (enable) "#38BDF8" else "#94A3B8")
         )
@@ -149,7 +149,7 @@ class ManagerSeatActivity : AppCompatActivity() {
     private fun updateBulkActionsUI() {
         if (selectedSeatIds.isNotEmpty()) {
             binding.cvBulkActions.visibility = View.VISIBLE
-            binding.tvSelectedCount.text = "Đã chọn ${selectedSeatIds.size} ghế"
+            binding.tvSelectedCount.text = getString(R.string.manager_selected_seats_count, selectedSeatIds.size)
         } else {
             binding.cvBulkActions.visibility = View.GONE
         }
@@ -183,11 +183,6 @@ class ManagerSeatActivity : AppCompatActivity() {
         binding.btnStatusMaintenance.backgroundTintList = null
         binding.btnStatusMaintenance.setTextColor(ContextCompat.getColor(this@ManagerSeatActivity, R.color.text_gray))
         binding.btnStatusMaintenance.text = getString(R.string.auto_str_maintenance)
-        
-        binding.btnStatusClosed.background = ContextCompat.getDrawable(this, R.drawable.bg_btn_status_unselected)
-        binding.btnStatusClosed.backgroundTintList = null
-        binding.btnStatusClosed.setTextColor(ContextCompat.getColor(this@ManagerSeatActivity, R.color.text_gray))
-        binding.btnStatusClosed.text = getString(R.string.auto_str_closed)
 
         when (status.lowercase()) {
             "active", "operating", "open" -> {
@@ -212,12 +207,7 @@ class ManagerSeatActivity : AppCompatActivity() {
             else -> {
                 binding.tvTopStatus.text = getString(R.string.auto_str_closed_1)
                 binding.tvTopStatus.setTextColor(ContextCompat.getColor(this@ManagerSeatActivity, R.color.color_error_red))
-                binding.tvTopStatus.background = ContextCompat.getDrawable(this, R.drawable.bg_label_close)
-                
-                binding.btnStatusClosed.background = ContextCompat.getDrawable(this, R.drawable.bg_btn_status_selected)
-                binding.btnStatusClosed.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this@ManagerSeatActivity, R.color.auto_color_33EF4444))
-                binding.btnStatusClosed.setTextColor(ContextCompat.getColor(this@ManagerSeatActivity, R.color.color_error_red))
-                binding.btnStatusClosed.text = getString(R.string.auto_str_closed_2)
+                binding.tvTopStatus.background = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.bg_label_close)
             }
         }
     }
@@ -340,24 +330,24 @@ class ManagerSeatActivity : AppCompatActivity() {
 
     private fun showSeatStatusDialog(seat: ManagerSeat) {
         val seatDisplayName = seat.seatName ?: "${seat.row ?: ""}${seat.col}"
-        val options = arrayOf("Hoạt động (Active)", "Bảo trì (Maintenance)")
+        val options = arrayOf(getString(R.string.manager_seat_status_active_opt), getString(R.string.manager_seat_status_maintenance_opt))
         val currentSelection = if (seat.status.equals("maintenance", ignoreCase = true)) 1 else 0
 
         var selectedOption = currentSelection
 
-        AlertDialog.Builder(this)
-            .setTitle("Đổi trạng thái ghế $seatDisplayName")
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle(getString(R.string.manager_change_seat_status_title, seatDisplayName))
             .setSingleChoiceItems(options, currentSelection) { _, which ->
                 selectedOption = which
             }
-            .setPositiveButton("Xác nhận") { dialog, _ ->
+            .setPositiveButton(getString(R.string.manager_confirm)) { dialog, _ ->
                 val newStatus = if (selectedOption == 1) "maintenance" else "active"
                 if (newStatus != seat.status) {
                     if (roomIdToUpdate.isNotEmpty()) {
                         viewModel.updateSeatStatus(roomIdToUpdate, seat.id, newStatus) { success ->
                             if (success) {
-                                val label = if (newStatus == "maintenance") "Bảo trì" else "Hoạt động"
-                                Toast.makeText(this, "Đã đổi ghế $seatDisplayName sang $label", Toast.LENGTH_SHORT).show()
+                                val label = if (newStatus == "maintenance") getString(R.string.manager_seat_status_maintenance) else getString(R.string.manager_seat_status_active)
+                                Toast.makeText(this, getString(R.string.manager_seat_status_changed_success, seatDisplayName, label), Toast.LENGTH_SHORT).show()
                             } else {
                                 Toast.makeText(this, getString(R.string.auto_str_c_p_nh_t_tr_ng_th_i_gh_th_t_b), Toast.LENGTH_SHORT).show()
                             }
@@ -366,7 +356,7 @@ class ManagerSeatActivity : AppCompatActivity() {
                 }
                 dialog.dismiss()
             }
-            .setNegativeButton("Hủy") { dialog, _ ->
+            .setNegativeButton(getString(R.string.manager_cancel)) { dialog, _ ->
                 dialog.dismiss()
             }
             .create()

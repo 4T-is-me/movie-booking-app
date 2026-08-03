@@ -19,7 +19,8 @@ const movieSchema = new mongoose.Schema({
     totalStarts: { type: Number, default: 0 },
     isDeleted: { type: Boolean, default: false },
     deletedAt: { type: Date, default: null },
-    tier: { type: Number, default: 1 }
+    tier: { type: Number, default: 1 },
+    isAutoTier: { type: Boolean, default: true }
 }, {
     versionKey: false,
     collection: 'movies', // Match collection name
