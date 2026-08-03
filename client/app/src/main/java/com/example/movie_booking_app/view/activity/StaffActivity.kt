@@ -186,6 +186,39 @@ class StaffActivity : BaseActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.staff_container, fragment)
             .commit()
+
+        val itemId = when (fragment) {
+            is StaffScheduleFragment -> R.id.nav_staff_schedule
+            is StaffValidatorFragment -> R.id.nav_staff_checkin
+            is StaffSalesFragment -> R.id.nav_staff_sales
+            is StaffRequestsFragment -> R.id.nav_staff_requests
+            is StaffRatingFragment -> R.id.nav_staff_ratings
+            is StaffNotificationsFragment -> R.id.nav_staff_notifications
+            is StaffProfileFragment -> R.id.nav_staff_profile
+            is StaffPayrollFragment -> R.id.nav_staff_settings
+            else -> null
+        }
+        if (itemId != null) {
+            updateMenuCheckedState(itemId)
+        }
+    }
+
+    private fun updateMenuCheckedState(checkedId: Int) {
+        val menu = binding.navigationView.menu
+        for (i in 0 until menu.size()) {
+            val item = menu.getItem(i)
+            if (item.hasSubMenu()) {
+                val subMenu = item.subMenu
+                if (subMenu != null) {
+                    for (j in 0 until subMenu.size()) {
+                        val subItem = subMenu.getItem(j)
+                        subItem.isChecked = (subItem.itemId == checkedId)
+                    }
+                }
+            } else {
+                item.isChecked = (item.itemId == checkedId)
+            }
+        }
     }
 
     private fun observeAuthEvents() {
