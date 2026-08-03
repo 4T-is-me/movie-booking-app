@@ -21,10 +21,10 @@ import com.example.movie_booking_app.data.model.request.UpdateMovieRequest
 import com.example.movie_booking_app.databinding.DialogConfirmDeleteStaffBinding
 import com.example.movie_booking_app.databinding.FragmentAdminMovieListBinding
 import com.example.movie_booking_app.view.adapter.AdminMovieAdapter
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.viewmodel.MovieViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import android.widget.TextView
 
 @AndroidEntryPoint
 class AdminMovieListFragment : Fragment() {
@@ -167,7 +167,7 @@ class AdminMovieListFragment : Fragment() {
                 } else {
                     if (selectedTab == TAB_ACTIVE) "Failed to delete movie" else "Failed to restore movie"
                 }
-                Toast.makeText(context, getString(messageRes), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             }
         }
 

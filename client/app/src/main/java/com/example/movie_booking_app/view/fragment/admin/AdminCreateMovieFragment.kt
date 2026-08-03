@@ -17,6 +17,7 @@ import com.example.movie_booking_app.data.model.entity.Movie
 import com.example.movie_booking_app.data.model.request.AddMovieRequest
 import com.example.movie_booking_app.data.model.request.UpdateMovieRequest
 import com.example.movie_booking_app.databinding.FragmentAdminCreateMovieBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.utils.DateUtils
 import com.example.movie_booking_app.viewmodel.MovieViewModel
 import com.google.android.material.chip.Chip
