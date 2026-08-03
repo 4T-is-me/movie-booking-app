@@ -643,4 +643,21 @@ export const buildEmptyMessageResponse = () => {
     `Bạn gõ tin nhắn để mình tư vấn ngay nhé! 😊`;
 };
 
-
+/**
+ * Phản hồi thông tin định dạng chiếu phim (IMAX, 4DX...)
+ * @returns {string}
+ */
+export const buildCinemaFormatResponse = () => {
+  return `🎥 **THÔNG TIN ĐỊNH DẠNG CHIẾU PHIM ĐẶC BIỆT** 🎥\n\n` +
+    `Hiện tại rạp có hỗ trợ các công nghệ trình chiếu tiên tiến mang lại trải nghiệm tuyệt vời:\n\n` +
+    `🌟 **IMAX (Image Maximum):**\n` +
+    `• Kích thước màn hình khổng lồ, cong ôm sát tầm nhìn.\n` +
+    `• Độ nét cực cao, màu sắc sống động và sáng hơn phim 2D thông thường.\n` +
+    `• Hệ thống âm thanh vòm đa chiều cực kỳ chân thực.\n` +
+    `• Đặc biệt phù hợp với các phim bom tấn hành động, viễn tưởng.\n\n` +
+    `💺 **4DX (4D Experience):**\n` +
+    `• Ghế ngồi chuyển động linh hoạt (rung lắc, nghiêng, nâng) đồng bộ với cảnh phim.\n` +
+    `• Hiệu ứng môi trường thực tế như gió thổi, phun sương, chớp sáng, sương mù, và mùi hương.\n` +
+    `• Mang lại cảm giác hóa thân trực tiếp vào nhân vật.\n\n` +
+    `Bạn có muốn kiểm tra lịch chiếu các bộ phim IMAX hoặc 4DX hôm nay không? 😊`;
+};

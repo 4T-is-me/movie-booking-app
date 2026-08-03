@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
-import  { managerDashboardService} from '../services/managerDashboardService.js';
+import { managerDashboardService } from '../services/managerDashboardService.js';
 import ApiError from "../utils/ApiError.js";ApiError
 const getManagerReport = async (req, res, next) => {
     try {

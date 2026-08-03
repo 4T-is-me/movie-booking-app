@@ -1,5 +1,4 @@
 import natural from 'natural';
-import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { trainingData } from '../data/trainingData.js';

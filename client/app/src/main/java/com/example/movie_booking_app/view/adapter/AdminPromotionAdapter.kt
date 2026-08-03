@@ -1,10 +1,9 @@
 package com.example.movie_booking_app.view.adapter
 
-import com.example.movie_booking_app.databinding.ItemAdminPromotionBinding
 import android.content.res.ColorStateList
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
@@ -12,6 +11,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.AdminPromotion
+import com.example.movie_booking_app.databinding.ItemAdminPromotionBinding
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -39,8 +39,8 @@ class AdminPromotionAdapter(
         private val tvCouponCode: TextView = binding.tvCouponCode
         private val tvDiscountValue: TextView = binding.tvDiscountValue
         private val tvPromoDateRange: TextView = binding.tvPromoDateRange
-        private val btnEditPromo: android.widget.ImageButton = binding.btnEditPromo
-        private val btnDeletePromo: android.widget.ImageButton = binding.btnDeletePromo
+        private val btnEditPromo: ImageButton = binding.btnEditPromo
+        private val btnDeletePromo: ImageButton = binding.btnDeletePromo
 
         fun bind(promotion: AdminPromotion) {
             btnEditPromo.setOnClickListener { onEditClick(promotion) }

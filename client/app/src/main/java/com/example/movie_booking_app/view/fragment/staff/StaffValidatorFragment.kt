@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
 import android.view.animation.TranslateAnimation
-import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.OptIn
@@ -34,12 +33,12 @@ import com.example.movie_booking_app.viewmodel.staff.StaffValidatorViewModel
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
 import java.util.concurrent.Executors
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class StaffValidatorFragment : Fragment() {
@@ -247,9 +246,9 @@ class StaffValidatorFragment : Fragment() {
 
     private fun showResultDialog(response: CheckInTicketResponse) {
         val context = requireContext()
-        val builder = AlertDialog.Builder(context, R.style.CustomAlertDialogTheme)
+        val builder = AlertDialog.Builder(requireContext(), R.style.CustomAlertDialogTheme)
         
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_check_in_result, null)
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_check_in_result, null)
         val bindingDialog = DialogCheckInResultBinding.bind(dialogView)
         
         val dialog = builder.setView(dialogView)
@@ -260,7 +259,7 @@ class StaffValidatorFragment : Fragment() {
             val data = response.data
             bindingDialog.imgStatusIcon.setImageResource(R.drawable.ic_check_circle_gold)
             bindingDialog.tvDialogTitle.text = getString(R.string.auto_str_ticket_validated)
-            bindingDialog.tvDialogTitle.setTextColor(ContextCompat.getColor(context, R.color.seat_selected))
+            bindingDialog.tvDialogTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.seat_selected))
             
             bindingDialog.tvMovieName.text = data.movieName ?: "Unknown Movie"
             bindingDialog.tvCinemaRoom.text = "${data.cinemaName} • ${data.roomName} (${data.screenType})"
@@ -281,7 +280,7 @@ class StaffValidatorFragment : Fragment() {
         } else {
             bindingDialog.imgStatusIcon.setImageResource(R.drawable.ic_report)
             bindingDialog.tvDialogTitle.text = getString(R.string.auto_str_validation_failed)
-            bindingDialog.tvDialogTitle.setTextColor(ContextCompat.getColor(context, R.color.seat_sold))
+            bindingDialog.tvDialogTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.seat_sold))
             
             val actualMessage = if (!response.success && !response.errors.isNullOrEmpty()) {
                 response.errors.firstOrNull()?.message ?: response.message

@@ -227,10 +227,112 @@ const autoRejectAndAbsentJob = async () => {
 
 cron.schedule("*/1 * * * *", autoRejectAndAbsentJob);
 
+// Auto Update Movie Tiers based on release date and recent booking performance (Hybrid Logic)
+const autoUpdateMovieTiers = async () => {
+  try {
+    const now = new Date();
+    const sevenDaysAgo = new Date(now);
+    sevenDaysAgo.setDate(now.getDate() - 7);
+    
+    // Get all showing movies that have autoTier enabled
+    const activeMovies = await Movie.find({ 
+      status: { $in: ["showing"] }, 
+      isDeleted: false,
+      isAutoTier: true
+    });
+
+    if (activeMovies.length === 0) return;
+
+    // Dynamically import to prevent any circular dependencies
+    const { Booking } = await import('../models/bookingModel.js');
+    
+    // Aggregate successful bookings in the last 7 days grouped by movieId
+    const bookingStats = await Booking.aggregate([
+      { 
+        $match: { 
+          paymentStatus: 'successful',
+          createdAt: { $gte: sevenDaysAgo }
+        }
+      },
+      {
+        $lookup: {
+          from: 'showtimes',
+          localField: 'showtimeId',
+          foreignField: '_id',
+          as: 'showtime'
+        }
+      },
+      { $unwind: '$showtime' },
+      {
+        $group: {
+          _id: '$showtime.movieId',
+          totalBookings: { $sum: 1 }
+        }
+      }
+    ]);
+
+    // Create a map for quick lookup: { "movieId_string": totalBookings }
+    const bookingMap = {};
+    bookingStats.forEach(stat => {
+      bookingMap[stat._id.toString()] = stat.totalBookings;
+    });
+
+    const bulkOps = [];
+
+    for (const movie of activeMovies) {
+      if (!movie.releaseDate) continue;
+
+      const diffTime = Math.abs(now - new Date(movie.releaseDate));
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      const recentBookings = bookingMap[movie._id.toString()] || 0;
+      
+      let newTier = movie.tier;
+      
+      // Default auto-tiering logic based on time decay
+      if (diffDays <= 14) {
+        newTier = 1; // Tier 1 for first 14 days
+      } else if (diffDays <= 30) {
+        newTier = 2; // Tier 2 for days 15-30
+      } else {
+        newTier = 3; // Tier 3 for older than 30 days
+      }
+
+      // Booking Overrides (Hybrid factors)
+      if (diffDays > 14 && recentBookings > 100) {
+        newTier = 1; // Keep it at Tier 1 because it's a hot movie
+      } else if (diffDays > 30 && recentBookings > 50) {
+        newTier = 2; // Keep it at Tier 2 instead of dropping to Tier 3
+      } else if (diffDays <= 14 && recentBookings < 10) {
+        newTier = 2; // Flop movie, drop to Tier 2 early
+      }
+
+      if (newTier !== movie.tier) {
+        bulkOps.push({
+          updateOne: {
+            filter: { _id: movie._id },
+            update: { $set: { tier: newTier } }
+          }
+        });
+      }
+    }
+
+    if (bulkOps.length > 0) {
+      await Movie.bulkWrite(bulkOps);
+      console.log(`[Cron Job] Automatically updated tier for ${bulkOps.length} movies (Hybrid Logic).`);
+    }
+
+  } catch (error) {
+    console.error("[Cron Job Error] Failed to auto-update movie tiers:", error);
+  }
+};
+
+cron.schedule("0 0 * * *", autoUpdateMovieTiers); // Runs every day at midnight
+
 export const CleanUpJobs = {
   startSeatCleanupJob,
   updateMovieStatus,
   updateStaffShiftStatus,
   resolveMaintenanceTimeouts,
-  autoRejectAndAbsentJob
+  autoRejectAndAbsentJob,
+  autoUpdateMovieTiers
 };

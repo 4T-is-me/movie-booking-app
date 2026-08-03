@@ -1,19 +1,19 @@
 package com.example.movie_booking_app.view.adapter
 
-import com.example.movie_booking_app.databinding.ItemReviewBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.movie_booking_app.data.model.response.ReviewItem
+import com.example.movie_booking_app.databinding.ItemReviewBinding
+import com.example.movie_booking_app.utils.Constants
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-
-import com.bumptech.glide.Glide
-import com.example.movie_booking_app.utils.Constants
+import java.util.Locale
 
 class ReviewAdapter(
     @Suppress("UNUSED_PARAMETER") items: List<ReviewItem> = emptyList()
@@ -56,7 +56,7 @@ class ReviewAdapter(
         }
 
         // Rating
-        binding.tvReviewRating.text = java.lang.String.format(java.util.Locale.getDefault(), "%.1f", review.rating ?: 0.0)
+        binding.tvReviewRating.text = java.lang.String.format(Locale.getDefault(), "%.1f", review.rating ?: 0.0)
 
         // Comment
         if (!review.comment.isNullOrEmpty()) {

@@ -6,14 +6,15 @@ import com.example.movie_booking_app.data.model.entity.UserProfile
 import com.example.movie_booking_app.data.model.request.UpdateProfileRequest
 import com.example.movie_booking_app.data.repository.ProfileRepository
 import com.example.movie_booking_app.data.repository.UnauthorizedException
+import com.google.gson.JsonParser
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /**
  * ViewModel for Profile Screen, managing state and data loading.
@@ -109,7 +110,7 @@ class ProfileViewModel @Inject constructor(
     private fun parseErrorMessage(raw: String): String {
         return try {
             if (raw.startsWith("{") && raw.contains("message")) {
-                val json = com.google.gson.JsonParser.parseString(raw).asJsonObject
+                val json = JsonParser.parseString(raw).asJsonObject
                 json.get("message")?.asString ?: raw
             } else {
                 raw

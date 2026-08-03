@@ -1,6 +1,9 @@
 package com.example.movie_booking_app.view.fragment.manager
 
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +12,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -16,6 +20,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.ImportOrder
 import com.example.movie_booking_app.databinding.FragmentManagerImportOrderBinding
@@ -125,12 +130,12 @@ class ManagerImportOrderFragment : Fragment() {
             viewModel.loadOrders("REJECTED")
         }
 
-        binding.etSearch.addTextChangedListener(object : android.text.TextWatcher {
+        binding.etSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 applyFilterAndSearch()
             }
-            override fun afterTextChanged(s: android.text.Editable?) {}
+            override fun afterTextChanged(s: Editable?) {}
         })
     }
 
@@ -171,10 +176,10 @@ class ManagerImportOrderFragment : Fragment() {
         val dialogBinding = com.example.movie_booking_app.databinding.DialogApproveImportOrderBinding.inflate(layoutInflater)
         val dialog = android.app.Dialog(requireContext())
         dialog.setContentView(dialogBinding.root)
-        dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window?.setLayout(
             (320 * resources.displayMetrics.density).toInt(),
-            android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+            ViewGroup.LayoutParams.WRAP_CONTENT
         )
         dialog.setCancelable(true)
 

@@ -8,8 +8,11 @@ import com.example.movie_booking_app.data.model.entity.Cinema
 import com.example.movie_booking_app.data.model.entity.Staff
 import com.example.movie_booking_app.data.model.request.CreateStaffRequest
 import com.example.movie_booking_app.data.model.request.UpdateStaffRequest
+import com.example.movie_booking_app.data.model.response.MemberItem
+import com.example.movie_booking_app.data.model.response.ScoreAdjustState
 import com.example.movie_booking_app.data.repository.admin.AdminRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -20,12 +23,11 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 data class AdminStaffUiState(
     val isLoading: Boolean = false,
     val staffList: List<Staff> = emptyList(),
-    val memberList: List<com.example.movie_booking_app.data.model.response.MemberItem> = emptyList(),
+    val memberList: List<MemberItem> = emptyList(),
     val error: String? = null
 )
 
@@ -49,8 +51,8 @@ class AdminStaffViewModel @Inject constructor(
     private val _actionMessage = MutableSharedFlow<String>()
     val actionMessage: SharedFlow<String> = _actionMessage.asSharedFlow()
 
-    private val _scoreAdjustState = MutableSharedFlow<com.example.movie_booking_app.data.model.response.ScoreAdjustState>()
-    val scoreAdjustState: SharedFlow<com.example.movie_booking_app.data.model.response.ScoreAdjustState> = _scoreAdjustState.asSharedFlow()
+    private val _scoreAdjustState = MutableSharedFlow<ScoreAdjustState>()
+    val scoreAdjustState: SharedFlow<ScoreAdjustState> = _scoreAdjustState.asSharedFlow()
 
     private var currentRole: String = "Manager"
 
@@ -208,7 +210,7 @@ class AdminStaffViewModel @Inject constructor(
                     _actionMessage.emit(e.message ?: getString(R.string.toast_error_network))
                 }
                 .collect {
-                    _scoreAdjustState.emit(com.example.movie_booking_app.data.model.response.ScoreAdjustState(isSuccess = true, message = getString(R.string.toast_points_adjusted)))
+                    _scoreAdjustState.emit(ScoreAdjustState(isSuccess = true, message = getString(R.string.toast_points_adjusted)))
                     loadMembers(showLoading = false)
                 }
         }

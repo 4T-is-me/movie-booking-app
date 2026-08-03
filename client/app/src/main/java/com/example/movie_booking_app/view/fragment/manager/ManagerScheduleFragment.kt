@@ -29,6 +29,10 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.time.LocalDate
 import java.util.regex.Pattern
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class ManagerScheduleFragment : Fragment() {
@@ -119,6 +123,7 @@ class ManagerScheduleFragment : Fragment() {
                     }
                 } catch (e: Exception) {
                     binding.layoutLoading.visibility = View.GONE
+                    binding.layoutLoading.visibility = View.GONE
                     binding.btnSave.isEnabled = true
                     Toast.makeText(requireContext(), "Network connection error: ${e.message}", Toast.LENGTH_LONG).show()
                 }
@@ -182,10 +187,10 @@ class ManagerScheduleFragment : Fragment() {
             tv.text = room.roomName
             tv.setPadding(48, 24, 48, 24)
             tv.textSize = 14f
-            tv.setTypeface(null, android.graphics.Typeface.BOLD)
-            val params = android.widget.LinearLayout.LayoutParams(
-                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
-                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+            tv.setTypeface(null, Typeface.BOLD)
+            val params = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
             )
             params.setMargins(0, 0, 24, 0)
             tv.layoutParams = params
@@ -217,14 +222,18 @@ class ManagerScheduleFragment : Fragment() {
         val weekEnd = currentWeekStart.plusDays(6)
         binding.tvSelectedWeek.text = "Selected week: ${currentWeekStart.format(formatter)} - ${weekEnd.format(formatter)}"
         
-        val monthFormatter = java.time.format.DateTimeFormatter.ofPattern("MMMM yyyy", java.util.Locale.ENGLISH)
+        val monthFormatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH)
         binding.tvMonthYear.text = currentWeekStart.format(monthFormatter)
         
         val thisWeekStart = LocalDate.now().minusDays(LocalDate.now().dayOfWeek.value.toLong() - 1)
         if (currentWeekStart.isBefore(thisWeekStart)) {
             binding.btnGenerate.visibility = View.GONE
             binding.btnSave.visibility = View.GONE
+            binding.btnGenerate.visibility = View.GONE
+            binding.btnSave.visibility = View.GONE
         } else {
+            binding.btnGenerate.visibility = View.VISIBLE
+            binding.btnSave.visibility = View.VISIBLE
             binding.btnGenerate.visibility = View.VISIBLE
             binding.btnSave.visibility = View.VISIBLE
         }
@@ -233,7 +242,7 @@ class ManagerScheduleFragment : Fragment() {
         val labels = listOf(binding.tvDay1Label, binding.tvDay2Label, binding.tvDay3Label, binding.tvDay4Label, binding.tvDay5Label, binding.tvDay6Label, binding.tvDay7Label)
         val dates = listOf(binding.tvDay1Date, binding.tvDay2Date, binding.tvDay3Date, binding.tvDay4Date, binding.tvDay5Date, binding.tvDay6Date, binding.tvDay7Date)
         
-        val dayFormatter = java.time.format.DateTimeFormatter.ofPattern("EEE", java.util.Locale.ENGLISH)
+        val dayFormatter = DateTimeFormatter.ofPattern("EEE", Locale.ENGLISH)
         
         for (i in 0..6) {
             val date = currentWeekStart.plusDays(i.toLong())
@@ -311,17 +320,17 @@ class ManagerScheduleFragment : Fragment() {
                     for (apiItem in apiShowtimes) {
                         if (apiItem.movieId != null && apiItem.roomId != null) {
                             val startLocal = try {
-                                java.time.ZonedDateTime.parse(apiItem.startTime)
-                                    .withZoneSameInstant(java.time.ZoneId.systemDefault())
+                                ZonedDateTime.parse(apiItem.startTime)
+                                    .withZoneSameInstant(ZoneId.systemDefault())
                                     .toLocalDateTime()
-                                    .format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                                    .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
                             } catch (e: Exception) { apiItem.startTime }
                             
                             val endLocal = try {
-                                java.time.ZonedDateTime.parse(apiItem.endTime)
-                                    .withZoneSameInstant(java.time.ZoneId.systemDefault())
+                                ZonedDateTime.parse(apiItem.endTime)
+                                    .withZoneSameInstant(ZoneId.systemDefault())
                                     .toLocalDateTime()
-                                    .format(java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+                                    .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
                             } catch (e: Exception) { apiItem.endTime }
 
                             allGeneratedShowtimes.add(ShowtimeDraft(

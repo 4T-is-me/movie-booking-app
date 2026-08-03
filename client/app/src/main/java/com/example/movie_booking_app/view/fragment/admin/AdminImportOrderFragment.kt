@@ -16,8 +16,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.ImportOrder
 import com.example.movie_booking_app.databinding.ActivityAdminImportOrderBinding
+import com.example.movie_booking_app.databinding.DialogApproveImportOrderBinding
+import com.example.movie_booking_app.databinding.DialogRejectImportOrderBinding
 import com.example.movie_booking_app.databinding.DialogApproveImportOrderBinding
 import com.example.movie_booking_app.databinding.DialogRejectImportOrderBinding
 import com.example.movie_booking_app.view.adapter.admin.AdminImportOrderAdapter
@@ -117,12 +120,12 @@ class AdminImportOrderFragment : Fragment() {
             viewModel.loadOrders("REJECTED")
         }
 
-        binding.etSearch.addTextChangedListener(object : android.text.TextWatcher {
+        binding.etSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 applyFilterAndSearch()
             }
-            override fun afterTextChanged(s: android.text.Editable?) {}
+            override fun afterTextChanged(s: Editable?) {}
         })
     }
 
@@ -159,7 +162,7 @@ class AdminImportOrderFragment : Fragment() {
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window?.setLayout(
             (320 * resources.displayMetrics.density).toInt(),
-            android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+            ViewGroup.LayoutParams.WRAP_CONTENT
         )
         dialog.setCancelable(true)
 
@@ -184,7 +187,7 @@ class AdminImportOrderFragment : Fragment() {
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window?.setLayout(
             (320 * resources.displayMetrics.density).toInt(),
-            android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+            ViewGroup.LayoutParams.WRAP_CONTENT
         )
         dialog.setCancelable(true)
 

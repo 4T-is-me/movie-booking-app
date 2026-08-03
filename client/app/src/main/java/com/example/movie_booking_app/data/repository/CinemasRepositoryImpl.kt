@@ -3,11 +3,12 @@ package com.example.movie_booking_app.data.repository
 import com.example.movie_booking_app.data.api.AdminApiService
 import com.example.movie_booking_app.data.model.entity.Cinema
 import com.example.movie_booking_app.data.model.request.AddCinemaRequest
+import com.example.movie_booking_app.data.model.request.UpdateStatusRequest
+import javax.inject.Inject
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import org.json.JSONObject
 import retrofit2.Response
-import javax.inject.Inject
 
 class CinemasRepositoryImpl @Inject constructor(
     private val adminApi: AdminApiService
@@ -128,7 +129,7 @@ class CinemasRepositoryImpl @Inject constructor(
 
     override suspend fun updateCinemaStatus(id: String, status: String): Boolean {
         return try {
-            val response = adminApi.updateCinemaStatus(id, com.example.movie_booking_app.data.model.request.UpdateStatusRequest(status))
+            val response = adminApi.updateCinemaStatus(id, UpdateStatusRequest(status))
             response.isSuccessful
         } catch (e: Exception) {
             false

@@ -1,20 +1,19 @@
 package com.example.movie_booking_app.view.adapter.manager
 
-import com.example.movie_booking_app.databinding.ItemManagerSeatRowBinding
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.movie_booking_app.R
+import com.example.movie_booking_app.data.model.response.ManagerSeat
 import com.example.movie_booking_app.data.model.response.ManagerSeatRow
+import com.example.movie_booking_app.databinding.ItemManagerSeatRowBinding
 
 class ManagerSeatRowAdapter(
     private var rows: List<ManagerSeatRow> = emptyList(),
     private val selectedSeatIds: Set<String> = emptySet(),
-    private val onSeatClick: ((com.example.movie_booking_app.data.model.response.ManagerSeat) -> Unit)? = null,
-    private val onSeatLongClick: ((com.example.movie_booking_app.data.model.response.ManagerSeat) -> Unit)? = null
+    private val onSeatClick: ((ManagerSeat) -> Unit)? = null,
+    private val onSeatLongClick: ((ManagerSeat) -> Unit)? = null
 ) : RecyclerView.Adapter<ManagerSeatRowAdapter.RowViewHolder>() {
 
     fun updateData(newRows: List<ManagerSeatRow>) {
@@ -41,8 +40,8 @@ class ManagerSeatRowAdapter(
         fun bind(
             row: ManagerSeatRow,
             selectedSeatIds: Set<String>,
-            onSeatClick: ((com.example.movie_booking_app.data.model.response.ManagerSeat) -> Unit)?,
-            onSeatLongClick: ((com.example.movie_booking_app.data.model.response.ManagerSeat) -> Unit)?
+            onSeatClick: ((ManagerSeat) -> Unit)?,
+            onSeatLongClick: ((ManagerSeat) -> Unit)?
         ) {
             tvRowName.text = row.row
             rvSeats.layoutManager = LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false)

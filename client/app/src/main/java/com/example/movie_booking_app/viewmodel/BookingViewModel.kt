@@ -1,18 +1,17 @@
 package com.example.movie_booking_app.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.entity.Member
 import com.example.movie_booking_app.data.model.entity.ScoreHistory
 import com.example.movie_booking_app.data.repository.BookingRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import dagger.hilt.android.lifecycle.HiltViewModel
 
 @HiltViewModel
 class BookingViewModel @Inject constructor(private val repository: BookingRepository): ViewModel() {

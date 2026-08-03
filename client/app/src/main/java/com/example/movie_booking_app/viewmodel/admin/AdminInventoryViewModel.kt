@@ -8,13 +8,13 @@ import com.example.movie_booking_app.data.model.entity.Inventory
 import com.example.movie_booking_app.data.repository.CinemasRepository
 import com.example.movie_booking_app.data.repository.InventoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 data class AdminInventoryUiState(
     val cinemas: List<Cinema> = emptyList(),

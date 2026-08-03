@@ -1,6 +1,7 @@
 package com.example.movie_booking_app.viewmodel
 
 import com.example.movie_booking_app.data.model.entity.Booking
+import com.example.movie_booking_app.data.model.entity.Promo
 
 data class BookingUiState(
     val booking: Booking? = null,
@@ -24,5 +25,5 @@ data class BookingUiState(
     val useRewardPoints: Boolean = false,
     val rewardDiscount: Int = 0,
     val earnedPoints: Int = 0,
-    val availablePromotions: List<com.example.movie_booking_app.data.model.entity.Promo> = emptyList()
+    val availablePromotions: List<Promo> = emptyList()
 )

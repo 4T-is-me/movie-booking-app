@@ -3,19 +3,23 @@ package com.example.movie_booking_app.di
 import com.example.movie_booking_app.data.api.AdminApiService
 import com.example.movie_booking_app.data.api.AuthApi
 import com.example.movie_booking_app.data.api.BookingApi
+import com.example.movie_booking_app.data.api.ChatApi
 import com.example.movie_booking_app.data.api.CinemaRoomApi
 import com.example.movie_booking_app.data.api.FcmApi
+import com.example.movie_booking_app.data.api.FoodApi
+import com.example.movie_booking_app.data.api.ImportOrderApi
+import com.example.movie_booking_app.data.api.InventoryApi
+import com.example.movie_booking_app.data.api.LeaveRequestApi
+import com.example.movie_booking_app.data.api.MaintenanceApi
 import com.example.movie_booking_app.data.api.ManagerApi
-import com.example.movie_booking_app.data.api.MovieApi
-import com.example.movie_booking_app.data.api.PaymentApi
-import com.example.movie_booking_app.data.api.ProfileApi
 import com.example.movie_booking_app.data.api.ManagerRoomApi
 import com.example.movie_booking_app.data.api.MemberApi
-import com.example.movie_booking_app.data.api.FoodApi
-import com.example.movie_booking_app.data.api.LeaveRequestApi
+import com.example.movie_booking_app.data.api.MovieApi
+import com.example.movie_booking_app.data.api.NewsApi
 import com.example.movie_booking_app.data.api.NotificationApi
 import com.example.movie_booking_app.data.api.PayrollApi
 import com.example.movie_booking_app.data.api.PayrollConfigApi
+import com.example.movie_booking_app.data.api.ProfileApi
 import com.example.movie_booking_app.data.api.RetrofitClient
 import com.example.movie_booking_app.data.api.MaintenanceApi
 import com.example.movie_booking_app.data.api.InventoryApi
@@ -98,7 +102,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideStaffApi(): com.example.movie_booking_app.data.api.StaffApi {
+    fun provideStaffApi(): StaffApi {
         return RetrofitClient.staffApi
     }
     
@@ -138,13 +142,13 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideChatApi(): com.example.movie_booking_app.data.api.ChatApi {
+    fun provideChatApi(): ChatApi {
         return RetrofitClient.chatApi
     }
 
     @Provides
     @Singleton
-    fun provideNewsApi(): com.example.movie_booking_app.data.api.NewsApi {
+    fun provideNewsApi(): NewsApi {
         return RetrofitClient.newsApi
     }
 

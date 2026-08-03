@@ -1,9 +1,9 @@
 package com.example.movie_booking_app
 
 import com.example.movie_booking_app.data.model.entity.Movie
-import org.junit.Test
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Test
 
 class MovieSearchTest {
 

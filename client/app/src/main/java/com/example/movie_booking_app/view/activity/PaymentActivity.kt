@@ -1,34 +1,39 @@
 package com.example.movie_booking_app.view.activity
 
-import com.example.movie_booking_app.R
-
-import androidx.core.content.ContextCompat
-
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.animation.OvershootInterpolator
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Booking
-import com.example.movie_booking_app.data.model.entity.ComboDetail
 import com.example.movie_booking_app.databinding.ActivityPaymentBinding
+import com.example.movie_booking_app.databinding.DialogSuccessBinding
+import com.example.movie_booking_app.databinding.DialogSuggestVoucherBinding
+import com.example.movie_booking_app.utils.Constants
+import com.example.movie_booking_app.utils.DateUtils
 import com.example.movie_booking_app.view.adapter.SelectedFBAdapter
+import com.example.movie_booking_app.view.adapter.StaffPromotionAdapter
 import com.example.movie_booking_app.viewmodel.PaymentViewModel
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
-import com.example.movie_booking_app.utils.DateUtils
 import kotlin.math.roundToInt
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class PaymentActivity : AppCompatActivity() {
@@ -89,10 +94,10 @@ class PaymentActivity : AppCompatActivity() {
         }
 
         // Listen for coupon code edits to reset applied coupon state
-        binding.etCouponCode.addTextChangedListener(object : android.text.TextWatcher {
+        binding.etCouponCode.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: android.text.Editable?) {
+            override fun afterTextChanged(s: Editable?) {
                 if (viewModel.uiState.value.couponApplied) {
                     viewModel.removeCoupon()
                 }
@@ -127,11 +132,11 @@ class PaymentActivity : AppCompatActivity() {
             return
         }
 
-        val dialog = com.google.android.material.bottomsheet.BottomSheetDialog(this)
-        val dialogBinding = com.example.movie_booking_app.databinding.DialogSuggestVoucherBinding.inflate(layoutInflater)
+        val dialog = BottomSheetDialog(this)
+        val dialogBinding = DialogSuggestVoucherBinding.inflate(layoutInflater)
         dialog.setContentView(dialogBinding.root)
 
-        val adapter = com.example.movie_booking_app.view.adapter.StaffPromotionAdapter { promo ->
+        val adapter = StaffPromotionAdapter { promo ->
             binding.etCouponCode.setText(promo.discountCode)
             viewModel.applyCoupon(promo.discountCode)
             dialog.dismiss()
@@ -190,7 +195,7 @@ class PaymentActivity : AppCompatActivity() {
                         // Load Movie Poster
                         booking.moviePoster?.let { poster ->
                             val posterUrl = if (poster.startsWith("http")) poster 
-                            else "${com.example.movie_booking_app.utils.Constants.BASE_URL.removeSuffix("/")}$poster"
+                            else "${Constants.BASE_URL.removeSuffix("/")}$poster"
                             
                             Glide.with(this@PaymentActivity)
                                 .load(posterUrl)
@@ -295,7 +300,7 @@ class PaymentActivity : AppCompatActivity() {
     }
 
     private fun showPremiumSuccessDialog(message: String, onDismiss: () -> Unit) {
-        val dialogBinding = com.example.movie_booking_app.databinding.DialogSuccessBinding.inflate(layoutInflater)
+        val dialogBinding = DialogSuccessBinding.inflate(layoutInflater)
         dialogBinding.tvDialogMessage.text = message
         val dialog = AlertDialog.Builder(this)
             .setView(dialogBinding.root)
@@ -313,7 +318,7 @@ class PaymentActivity : AppCompatActivity() {
             .scaleX(1f)
             .scaleY(1f)
             .setDuration(500)
-            .setInterpolator(android.view.animation.OvershootInterpolator())
+            .setInterpolator(OvershootInterpolator())
             .start()
     }
 

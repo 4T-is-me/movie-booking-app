@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.fragment.manager
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.movie_booking_app.databinding.FragmentManagerProfileBinding
 import com.example.movie_booking_app.view.activity.ChangePasswordActivity
 import com.example.movie_booking_app.viewmodel.ProfileViewModel
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -116,7 +118,7 @@ class ManagerProfileFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.error.collectLatest { errorMsg ->
                 errorMsg?.let {
-                    com.google.android.material.snackbar.Snackbar.make(binding.root, it, com.google.android.material.snackbar.Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG).show()
                     viewModel.resetError()
                 }
             }
@@ -125,7 +127,7 @@ class ManagerProfileFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.updateSuccess.collectLatest { success ->
                 if (success) {
-                    com.google.android.material.snackbar.Snackbar.make(binding.root, "Profile updated successfully!", com.google.android.material.snackbar.Snackbar.LENGTH_SHORT).show()
+                    Snackbar.make(binding.root, "Profile updated successfully!", Snackbar.LENGTH_SHORT).show()
                     viewModel.resetUpdateSuccess()
                 }
             }

@@ -1,6 +1,5 @@
 import { Booking } from "../models/bookingModel.js";
 import { Staff } from "../models/staffModel.js";
-import { Member } from "../models/memberModel.js";
 import ApiError from "../utils/ApiError.js";
 import { StatusCodes } from 'http-status-codes';
 

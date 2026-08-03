@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="app_name">MovieBookingApp</string>
+    <string name="app_name">Lumina Cinema</string>
     <string name="hi_user">Hi, %1$s 👋</string>
     <string name="welcome_back">Welcome back</string>
     <string name="search_hint">Search</string>
@@ -116,7 +116,7 @@
     <string name="error_no_selection">Please select at least one seat</string>
     <string name="unknown_movie">Unknown Movie</string>
     <string name="cinema_center">Cinema Center</string>
-    <string name="default_room_name">Room 3</string>
+    <string name="default_room_name">Room 1</string>
     <string name="default_language">English</string>
     <string name="default_subtitle">Vietnamese</string>
     <string name="label_screen">Screen</string>
@@ -124,8 +124,8 @@
     <string name="section_select_date_time">Select Date &amp; Time</string>
     <string name="label_total">Total</string>
     <string name="btn_continue">Continue</string>
-    <string name="title_expired">Time Expired</string>
-    <string name="msg_expired">Your seat hold has expired. Please select seats again.</string>
+    <string name="title_expired">Booking Session Expired</string>
+    <string name="msg_expired">Your 10-minute booking window has expired. Please select seats again.</string>
     <string name="btn_ok">OK</string>
     <string name="error_no_showtimes">This movie has no available showtimes.</string>
     <string name="error_no_seats">No seats available for this showtime.</string>
@@ -718,7 +718,7 @@
     <string name="auto_str_save_1">Save</string>
 
     <!-- Admin Staff & Member Management Strings -->
-    <string name="admin_staff_members_title">Employees</string>
+    <string name="admin_staff_members_title">Staff &amp; Manager</string>
     <string name="admin_settings_title">Settings</string>
     <string name="admin_tab_employees">Managers</string>
     <string name="admin_tab_staff">Staff</string>
@@ -1264,11 +1264,22 @@
     <string name="auto_str_my_profile">My Profile</string>
     <string name="auto_str_personal_information">Personal Information</string>
     <string name="auto_str_update_profile">Update Profile</string>
-    <string name="auto_str_ch_n_nhi_u">Chọn nhiều</string>
-    <string name="auto_str_ch_n_0_gh">Đã chọn 0 ghế</string>
-    <string name="auto_str_b_ch_n">Bỏ chọn</string>
-    <string name="auto_str_ho_t_ng">✓ Hoạt động</string>
-    <string name="auto_str_b_o_tr">✓ Bảo trì</string>
+    <string name="auto_str_ch_n_nhi_u">Select multiple</string>
+    <string name="auto_str_ch_n_0_gh">Selected 0 seats</string>
+    <string name="auto_str_b_ch_n">Unselect</string>
+    <string name="auto_str_ho_t_ng">✓ Active</string>
+    <string name="auto_str_b_o_tr">✓ Maintenance</string>
+    <string name="manager_select_multiple_checked">✓ Select multiple</string>
+    <string name="manager_selected_seats_count">Selected %1$d seats</string>
+    <string name="manager_change_seat_status_title">Change status for seat %1$s</string>
+    <string name="manager_seat_status_active">Active</string>
+    <string name="manager_seat_status_maintenance">Maintenance</string>
+    <string name="manager_seat_status_active_opt">Active</string>
+    <string name="manager_seat_status_maintenance_opt">Maintenance</string>
+    <string name="manager_confirm">Confirm</string>
+    <string name="manager_cancel">Cancel</string>
+    <string name="manager_seat_status_changed_success">Changed seat %1$s to %2$s</string>
+    <string name="manager_update_seat_status_failed">Failed to update seat status</string>
     <string name="auto_str_see_more">See more</string>
     <string name="auto_str_movie_news">Movie News</string>
     <string name="auto_str_book_now">Book Now</string>
@@ -1276,8 +1287,8 @@
     <string name="auto_str_no_comments_yet_start_the_conv">No comments yet. Start the conversation!</string>
 
     <!-- Auto-extracted strings (Node Script) -->
-    <string name="auto_str_selected_snacks_amp_drinks">Selected Snacks &amp;amp; Drinks</string>
-    <string name="auto_str_choose_f_amp_b">Choose F&amp;amp;B</string>
+    <string name="auto_str_selected_snacks_amp_drinks">Selected Snacks &amp; Drinks</string>
+    <string name="auto_str_choose_f_amp_b">Choose F&amp;B</string>
     <string name="auto_str_total_price">Total Price</string>
     <string name="auto_str_checkout">Checkout</string>
     <string name="auto_str_th_m_h_nh_nh_nh_n_di_n_phim">Thêm hình ảnh nhận diện phim 🎬</string>
@@ -1473,6 +1484,24 @@
     <string name="auto_str_please_select_a_seat">Please select a seat</string>
     <string name="auto_str_failed_to_load_ratings_or_no_r">Failed to load ratings or no ratings yet</string>
 
+    <string name="msg_movie_deleted_success">Movie deleted successfully</string>
+    <string name="msg_movie_restored_success">Movie restored successfully</string>
+    <string name="msg_movie_delete_failed">Failed to delete movie</string>
+    <string name="msg_movie_restore_failed">Failed to restore movie</string>
+
+    <string name="text_unknown">Unknown</string>
+    <string name="label_tap_to_rate">Tap to rate</string>
+    <string name="label_rating_terrible">😞 Terrible</string>
+    <string name="label_rating_poor">😐 Poor</string>
+    <string name="label_rating_average">🙂 Average</string>
+    <string name="label_rating_good">😊 Good</string>
+    <string name="label_rating_excellent">🤩 Excellent</string>
+    <string name="format_char_count">%1$d / %2$d</string>
+
+    <string name="chart_label_monthly_revenue">Monthly Revenue</string>
+    <string name="chart_label_daily_revenue">Daily Revenue</string>
+    <string name="chart_label_movie_revenue">Movie Revenue</string>
+    <string name="month_prefix_short">T</string>
     <!-- Goods Intake / Import Order Strings -->
     <string name="goods_intake_approve_title">Approve Import Order</string>
     <string name="goods_intake_reject_title">Reject Import Order</string>
@@ -1511,4 +1540,25 @@
     <string name="goods_intake_success_create">Import order %1$s created successfully</string>
     <string name="goods_intake_success_cancel">Import order %1$s cancelled</string>
     <string name="suggest_voucher">Suggest Vouchers</string>
+
+    <string name="approve_goods_intake">Approve Goods Intake</string>
+    <string name="no_goods_intake_found">No goods intake orders found</string>
+    <string name="goods_intake_orders">Goods Intake Orders</string>
+    <string name="create_order">Create Order</string>
+    <string name="hint_write_comment">Write a comment...</string>
+    <string name="hint_food_name">e.g. Coca Cola L</string>
+    <string name="hint_food_price">35000</string>
+    <string name="hint_food_desc">Product description</string>
+    <string name="hint_booking_id">MBD-XXXXXXXX-XXXXXX</string>
+    <string name="hint_language">Language</string>
+    <string name="hint_quantity">e.g., 2</string>
+    <string name="msg_movie_added_success">Movie added successfully</string>
+    <string name="msg_movie_add_failed">Failed to add movie</string>
+    <string name="msg_movie_updated_success">Movie updated successfully</string>
+    <string name="msg_movie_update_failed">Failed to update movie</string>
+    <string name="see_more">See more</string>
+    <string name="dialog_logout_title">Log Out</string>
+    <string name="dialog_logout_message">Are you sure you want to log out?</string>
+    <string name="dialog_logout_cancel">Cancel</string>
+    <string name="dialog_logout_confirm">Log Out</string>
 </resources>

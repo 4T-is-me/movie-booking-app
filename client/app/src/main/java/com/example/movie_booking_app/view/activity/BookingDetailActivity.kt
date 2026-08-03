@@ -1,15 +1,16 @@
 package com.example.movie_booking_app.view.activity
 
-import androidx.core.content.ContextCompat
-
 import android.graphics.Color
 import android.os.Bundle
-import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -20,13 +21,10 @@ import com.example.movie_booking_app.databinding.ActivityBookingDetailBinding
 import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.viewmodel.BookingDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.Locale
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class BookingDetailActivity : AppCompatActivity() {
@@ -115,7 +113,7 @@ class BookingDetailActivity : AppCompatActivity() {
         binding.tvMovieTitle.text = detail.movie?.movieName ?: "-"
         val duration = detail.movie?.duration ?: 0
         val genres = detail.movie?.movieGenre?.joinToString(", ") ?: ""
-        val durationStr = getString(com.example.movie_booking_app.R.string.duration_mins, duration.toString())
+        val durationStr = getString(R.string.duration_mins, duration.toString())
         binding.tvDurationGenre.text = "$durationStr • ${genres.ifEmpty { "-" }}"
 
         // Poster

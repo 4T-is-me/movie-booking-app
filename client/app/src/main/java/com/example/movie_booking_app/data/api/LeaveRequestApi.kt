@@ -5,12 +5,10 @@ import com.example.movie_booking_app.data.model.request.RejectLeaveRequest
 import com.example.movie_booking_app.data.model.response.AcceptShiftResponse
 import com.example.movie_booking_app.data.model.response.CreateLeaveResponse
 import com.example.movie_booking_app.data.model.response.GenericMessageResponse
-import com.example.movie_booking_app.data.model.response.LeaveRequestResponse
-import com.example.movie_booking_app.data.model.response.StaffLeaveRequestListResponse
 import com.example.movie_booking_app.data.model.response.ManagerLeaveRequestListResponse
 import com.example.movie_booking_app.data.model.response.ReplacementShiftListResponse
-import com.example.movie_booking_app.data.model.response.ReplacementShiftResponse
 import com.example.movie_booking_app.data.model.response.SimpleSuccessResponse
+import com.example.movie_booking_app.data.model.response.StaffLeaveRequestListResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE

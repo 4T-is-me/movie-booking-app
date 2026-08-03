@@ -10,10 +10,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.bumptech.glide.Glide
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.CommentItemResponse
 import com.example.movie_booking_app.databinding.ActivityNewsDetailBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.view.adapter.CommentsAdapter
 import com.example.movie_booking_app.viewmodel.NewsDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -87,7 +89,7 @@ class NewsDetailActivity : AppCompatActivity() {
             val fullPosterUrl = when {
                 taggedMoviePoster.isNullOrEmpty() -> ""
                 taggedMoviePoster.startsWith("http") -> taggedMoviePoster
-                else -> "${com.example.movie_booking_app.utils.Constants.BASE_URL.removeSuffix("/")}$taggedMoviePoster"
+                else -> "${Constants.BASE_URL.removeSuffix("/")}$taggedMoviePoster"
             }
 
             Glide.with(this)
@@ -123,7 +125,7 @@ class NewsDetailActivity : AppCompatActivity() {
 
         binding.rvComments.layoutManager = LinearLayoutManager(this)
         binding.rvComments.adapter = adapter
-        (binding.rvComments.itemAnimator as? androidx.recyclerview.widget.SimpleItemAnimator)?.supportsChangeAnimations = false
+        (binding.rvComments.itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
 
         // Setup Send Comment trigger
         binding.btnSendComment.setOnClickListener {

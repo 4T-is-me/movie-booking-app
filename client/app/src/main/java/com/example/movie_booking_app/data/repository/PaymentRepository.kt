@@ -3,10 +3,11 @@ package com.example.movie_booking_app.data.repository
 import com.example.movie_booking_app.data.api.PaymentApi
 import com.example.movie_booking_app.data.model.request.ConfirmBookingRequest
 import com.example.movie_booking_app.data.model.response.PromotionResponse
+import com.google.gson.JsonParser
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okhttp3.ResponseBody
-import javax.inject.Inject
 
 class PaymentRepository @Inject constructor(
     private val paymentApi: PaymentApi
@@ -35,7 +36,7 @@ class PaymentRepository @Inject constructor(
     private fun parseErrorMessage(raw: String): String {
         return try {
             if (raw.startsWith("{") && raw.contains("message")) {
-                val json = com.google.gson.JsonParser.parseString(raw).asJsonObject
+                val json = JsonParser.parseString(raw).asJsonObject
                 json.get("message")?.asString ?: raw
             } else {
                 raw

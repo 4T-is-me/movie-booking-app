@@ -1,21 +1,19 @@
 package com.example.movie_booking_app.viewmodel
 
-import com.example.movie_booking_app.R
-
-import dagger.hilt.android.qualifiers.ApplicationContext
-
 import android.content.Context
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.request.RegisterRequest
 import com.example.movie_booking_app.data.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import org.json.JSONObject
 
 sealed class RegisterUiState {
     object Idle : RegisterUiState()
@@ -45,7 +43,7 @@ class RegisterViewModel @Inject constructor(
                     val errorMsg = response.errorBody()?.string() ?: "Registration failed"
                     var displayMsg = errorMsg
                     try {
-                        val jsonObject = org.json.JSONObject(errorMsg)
+                        val jsonObject = JSONObject(errorMsg)
                         if (jsonObject.has("errors")) {
                             val errorsArray = jsonObject.getJSONArray("errors")
                             if (errorsArray.length() > 0) {

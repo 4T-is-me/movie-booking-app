@@ -1,7 +1,5 @@
 package com.example.movie_booking_app.data.model.response
 
-import com.google.gson.annotations.SerializedName
-
 /**
  * Simplified response data class for authentication (Login/Register).
  */

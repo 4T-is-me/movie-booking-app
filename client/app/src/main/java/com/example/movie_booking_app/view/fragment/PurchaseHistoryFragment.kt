@@ -1,22 +1,27 @@
 package com.example.movie_booking_app.view.fragment
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RatingBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.example.movie_booking_app.R
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.FragmentPurchaseHistoryBinding
 import com.example.movie_booking_app.view.activity.BookingDetailActivity
 import com.example.movie_booking_app.view.activity.WriteReviewActivity
 import com.example.movie_booking_app.view.adapter.PurchaseHistoryAdapter
 import com.example.movie_booking_app.viewmodel.PurchaseHistoryViewModel
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.TextInputEditText
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -162,13 +167,13 @@ class PurchaseHistoryFragment : Fragment() {
     }
 
     private fun showRateStaffDialog(bookingId: String) {
-        val dialog = com.google.android.material.bottomsheet.BottomSheetDialog(requireContext())
+        val dialog = BottomSheetDialog(requireContext())
         val dialogView = layoutInflater.inflate(R.layout.dialog_rate_staff, null)
         dialog.setContentView(dialogView)
 
-        val ratingBar = dialogView.findViewById<android.widget.RatingBar>(R.id.ratingBar)
-        val etComment = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etComment)
-        val btnSubmit = dialogView.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnSubmitRating)
+        val ratingBar = dialogView.findViewById<RatingBar>(R.id.ratingBar)
+        val etComment = dialogView.findViewById<TextInputEditText>(R.id.etComment)
+        val btnSubmit = dialogView.findViewById<MaterialButton>(R.id.btnSubmitRating)
 
         btnSubmit.setOnClickListener {
             val rating = ratingBar.rating.toInt()
@@ -186,7 +191,7 @@ class PurchaseHistoryFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_WRITE_REVIEW && resultCode == android.app.Activity.RESULT_OK) {
+        if (requestCode == REQUEST_WRITE_REVIEW && resultCode == Activity.RESULT_OK) {
             viewModel.loadHistory()
         }
     }

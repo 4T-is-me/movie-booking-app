@@ -2,9 +2,9 @@ package com.example.movie_booking_app.data.api
 
 import com.example.movie_booking_app.data.model.request.AddRoomRequest
 import com.example.movie_booking_app.data.model.request.UpdateStatusRequest
-import com.example.movie_booking_app.data.model.response.CinemaRoomListResponse
-import com.example.movie_booking_app.data.model.response.CinemaRoomDetailResponse
 import com.example.movie_booking_app.data.model.response.AdminRoomSeatsResponse
+import com.example.movie_booking_app.data.model.response.CinemaRoomDetailResponse
+import com.example.movie_booking_app.data.model.response.CinemaRoomListResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET

@@ -1,6 +1,8 @@
 package com.example.movie_booking_app.data.api
 
 import com.example.movie_booking_app.data.model.request.AddMovieRequest
+import com.example.movie_booking_app.data.model.request.UpdateMovieRequest
+import com.example.movie_booking_app.data.model.response.AdminPromotionsResponse
 import com.example.movie_booking_app.data.model.response.MovieListResponse
 import com.example.movie_booking_app.data.model.response.MovieResponse
 import com.example.movie_booking_app.data.model.response.ReviewListResponse
@@ -36,13 +38,13 @@ interface MovieApi {
     suspend fun addMovie(@Body request: AddMovieRequest): Response<Unit>
 
     @PUT("api/admin/movies/{id}")
-    suspend fun updateMovie(@Path("id") id: String, @Body request: com.example.movie_booking_app.data.model.request.UpdateMovieRequest): Response<Unit>
+    suspend fun updateMovie(@Path("id") id: String, @Body request: UpdateMovieRequest): Response<Unit>
 
     @DELETE("api/admin/movies/{id}")
     suspend fun deleteMovie(@Path("id") id: String): Response<Unit>
 
     @GET("api/promotions")
-    suspend fun getPromotions(): Response<com.example.movie_booking_app.data.model.response.AdminPromotionsResponse>
+    suspend fun getPromotions(): Response<AdminPromotionsResponse>
 
     @POST("api/movies/{id}/reviews")
     suspend fun submitReview(

@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.FoodBeverage
 import com.example.movie_booking_app.databinding.ItemAdminFoodBinding
+import com.example.movie_booking_app.utils.Constants
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -49,7 +50,7 @@ class AdminFoodAdapter(
                 val imageUrl = when {
                     item.imageUrl.isNullOrBlank() -> null
                     item.imageUrl.startsWith("http") -> item.imageUrl
-                    else -> "${com.example.movie_booking_app.utils.Constants.BASE_URL.removeSuffix("/")}${item.imageUrl}"
+                    else -> "${Constants.BASE_URL.removeSuffix("/")}${item.imageUrl}"
                 }
 
                 Glide.with(itemView.context)
@@ -74,6 +75,6 @@ class AdminFoodAdapter(
  * Local extension for AdminFoodAdapter
  */
 private fun Int.toVnd(): String {
-    val formatter = java.text.NumberFormat.getInstance(java.util.Locale.GERMANY)
+    val formatter = NumberFormat.getInstance(Locale.GERMANY)
     return "${formatter.format(this)} VND"
 }

@@ -1,14 +1,16 @@
 package com.example.movie_booking_app.data.api
 
 import com.example.movie_booking_app.data.model.request.ConfirmBookingRequest
+import com.example.movie_booking_app.data.model.request.RateStaffRequest
+import com.example.movie_booking_app.data.model.response.BookingDetailResponse
+import com.example.movie_booking_app.data.model.response.BookingHistoryResponse
 import com.example.movie_booking_app.data.model.response.PromotionResponse
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.POST
-
-import com.example.movie_booking_app.data.model.response.BookingHistoryResponse
 import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Path
 
 interface PaymentApi {
     @POST("api/promotions/apply")
@@ -29,12 +31,12 @@ interface PaymentApi {
 
     @GET("api/booking/{id}")
     suspend fun getBookingDetail(
-        @retrofit2.http.Path("id") id: String
-    ): Response<com.example.movie_booking_app.data.model.response.BookingDetailResponse>
+        @Path("id") id: String
+    ): Response<BookingDetailResponse>
 
     @POST("api/booking/{id}/rate-staff")
     suspend fun rateStaff(
-        @retrofit2.http.Path("id") bookingId: String,
-        @Body request: com.example.movie_booking_app.data.model.request.RateStaffRequest
+        @Path("id") bookingId: String,
+        @Body request: RateStaffRequest
     ): Response<ResponseBody>
 }

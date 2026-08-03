@@ -18,9 +18,11 @@ import com.example.movie_booking_app.view.fragment.admin.AdminFoodMenuFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminInventoryFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminMovieListFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminPayrollFragment
+import com.example.movie_booking_app.view.fragment.admin.AdminPayrollFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminPromotionFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminStaffTabsFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminStatsFragment
+import com.example.movie_booking_app.view.fragment.admin.MemberListFragment
 import com.example.movie_booking_app.view.fragment.admin.MemberListFragment
 import com.example.movie_booking_app.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -81,12 +83,15 @@ class AdminActivity : BaseActivity() {
                 R.id.nav_members -> {
                     binding.tvHeaderTitle.text = getString(R.string.admin_tab_members)
                     loadFragment(MemberListFragment())
+                    loadFragment(MemberListFragment())
                 }
                 R.id.nav_settings -> {
                     binding.tvHeaderTitle.text = getString(R.string.auto_str_payrolls)
                     loadFragment(AdminPayrollFragment())
+                    loadFragment(AdminPayrollFragment())
                 }
                 R.id.nav_logout -> {
+                    AuthUtils.showLogoutConfirmationDialog(this)
                     AuthUtils.showLogoutConfirmationDialog(this)
                 }
             }

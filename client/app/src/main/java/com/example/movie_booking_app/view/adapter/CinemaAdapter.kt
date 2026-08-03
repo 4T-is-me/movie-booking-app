@@ -1,14 +1,11 @@
 package com.example.movie_booking_app.view.adapter
 
-import com.example.movie_booking_app.R
-
-import androidx.core.content.ContextCompat
-
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.graphics.toColorInt
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Cinema
 import com.example.movie_booking_app.databinding.ItemCinemaBinding
 import com.example.movie_booking_app.utils.Constants

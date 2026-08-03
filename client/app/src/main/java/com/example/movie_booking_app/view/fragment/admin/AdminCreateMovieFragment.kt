@@ -1,23 +1,25 @@
 package com.example.movie_booking_app.view.fragment.admin
 
 import android.app.DatePickerDialog
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.movie_booking_app.R
-import com.example.movie_booking_app.databinding.FragmentAdminCreateMovieBinding
+import com.example.movie_booking_app.data.model.entity.Movie
 import com.example.movie_booking_app.data.model.request.AddMovieRequest
-import com.example.movie_booking_app.viewmodel.MovieViewModel
+import com.example.movie_booking_app.data.model.request.UpdateMovieRequest
+import com.example.movie_booking_app.databinding.FragmentAdminCreateMovieBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.utils.DateUtils
+import com.example.movie_booking_app.viewmodel.MovieViewModel
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
@@ -30,11 +32,10 @@ import java.util.Locale
 
 class AdminCreateMovieFragment : Fragment() {
 
-    private val availableGenres = listOf("Action", "Adventure", "Animation", "Comedy", "Crime", "Documentary", "Drama", "Family", "Fantasy", "History", "Horror", "Music", "Mystery", "Romance", "Science Fiction", "TV Movie", "Thriller", "War", "Western")
     private val selectedGenres = mutableSetOf<String>()
-    private var editingMovie: com.example.movie_booking_app.data.model.entity.Movie? = null
+    private var editingMovie: Movie? = null
 
-    private var selectedPosterUri: android.net.Uri? = null
+    private var selectedPosterUri: Uri? = null
     
     private var _binding: FragmentAdminCreateMovieBinding? = null
     private val binding get() = _binding!!
@@ -48,10 +49,10 @@ class AdminCreateMovieFragment : Fragment() {
         }
     }
 
-    private fun createPosterFile(uri: android.net.Uri): File? {
+    private fun createPosterFile(uri: Uri): File? {
         return try {
             val inputStream = requireContext().contentResolver.openInputStream(uri) ?: return null
-            val tempFile = File.createTempFile("movie_poster_", ".jpg", requireContext().cacheDir)
+            val tempFile = File.createTempFile(Constants.Movie.PREFIX_POSTER_FILE, Constants.Movie.SUFFIX_JPG, requireContext().cacheDir)
             inputStream.use { input ->
                 tempFile.outputStream().use { output ->
                     input.copyTo(output)
@@ -87,8 +88,8 @@ class AdminCreateMovieFragment : Fragment() {
         val btnSubmit = binding.btnSubmitMovie
 
         // Setup Date Picker logic
-        val displaySdf = SimpleDateFormat("dd/MM/yyyy", Locale.US)
-        val serverSdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+        val displaySdf = SimpleDateFormat(Constants.Movie.DATE_FORMAT_DISPLAY, Locale.US)
+        val serverSdf = SimpleDateFormat(Constants.Movie.DATE_FORMAT_SERVER, Locale.US)
         
         edtReleaseDate.setOnClickListener {
             val calendar = Calendar.getInstance()
@@ -119,9 +120,10 @@ class AdminCreateMovieFragment : Fragment() {
 
         // Setup Genres Chips
         val chipGroupGenres = binding.chipGroupGenres
+        val availableGenres = resources.getStringArray(R.array.movie_genres)
         
         // Setup Censorship Dropdown
-        val censorshipOptions = arrayOf("P (General Audience)", "K (Children Under 13)", "T13 (13+)", "T16 (16+)", "T18 (18+)")
+        val censorshipOptions = resources.getStringArray(R.array.censorship_options)
         val censorshipCodes = arrayOf("P", "K", "T13", "T16", "T18", "C")
         val spnCensorship = binding.spnCensorship
         val censorshipAdapter = ArrayAdapter(
@@ -133,7 +135,7 @@ class AdminCreateMovieFragment : Fragment() {
         spnCensorship.setOnClickListener { spnCensorship.showDropDown() }
 
         // Setup Country Search Dropdown
-        val countryOptions = arrayOf("Vietnam", "USA", "Korea", "Japan", "China", "UK", "France", "India", "Thailand")
+        val countryOptions = resources.getStringArray(R.array.country_options)
         val edtCountry = binding.edtCountry
         val countryAdapter = ArrayAdapter(
             requireContext(),
@@ -144,7 +146,7 @@ class AdminCreateMovieFragment : Fragment() {
         edtCountry.setOnClickListener { edtCountry.showDropDown() }
 
         // Setup Language Dropdown
-        val languageOptions = arrayOf("Vietnamese (Dubbing)", "Vietnamese (Subtitle)", "English (Subtitle)", "English (Original)", "Korean (Subtitle)", "Japanese (Subtitle)")
+        val languageOptions = resources.getStringArray(R.array.language_options)
         val languageAdapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_dropdown_item_1line,
@@ -209,7 +211,7 @@ class AdminCreateMovieFragment : Fragment() {
 
         val btnChoosePoster = binding.btnChoosePoster
         btnChoosePoster.setOnClickListener {
-            pickImageLauncher.launch("image/*")
+            pickImageLauncher.launch(Constants.Movie.MIME_TYPE_IMAGE)
         }
 
         btnSubmit.setOnClickListener {
@@ -273,7 +275,7 @@ class AdminCreateMovieFragment : Fragment() {
             val posterFile = selectedPosterUri?.let { createPosterFile(it) }
 
             if (editingMovie != null) {
-                val request = com.example.movie_booking_app.data.model.request.UpdateMovieRequest(
+                val request = UpdateMovieRequest(
                     movieName = name,
                     duration = duration,
                     releaseDate = releaseDate,
@@ -293,7 +295,7 @@ class AdminCreateMovieFragment : Fragment() {
                 }
                 Toast.makeText(requireContext(), getString(R.string.auto_str_updating_movie), Toast.LENGTH_SHORT).show()
             } else {
-                val request = com.example.movie_booking_app.data.model.request.AddMovieRequest(
+                val request = AddMovieRequest(
                     movieName = name,
                     duration = duration,
                     releaseDate = releaseDate,

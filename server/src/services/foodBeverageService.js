@@ -4,7 +4,6 @@ import { Showtime } from "../models/showTimeModel.js";
 import { Cinema } from "../models/cinemaModel.js";
 import { StatusCodes } from "http-status-codes";
 import ApiError from "../utils/ApiError.js";
-import mongoose from "mongoose";
 
 const getAllActive = async (category, showtimeId) => {
     const query = { isActive: true };

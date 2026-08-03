@@ -1,9 +1,13 @@
 package com.example.movie_booking_app.view.fragment.admin
 
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
@@ -13,16 +17,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Movie
-import com.example.movie_booking_app.databinding.FragmentAdminMovieListBinding
+import com.example.movie_booking_app.data.model.request.UpdateMovieRequest
 import com.example.movie_booking_app.databinding.DialogConfirmDeleteStaffBinding
+import com.example.movie_booking_app.databinding.FragmentAdminMovieListBinding
 import com.example.movie_booking_app.view.adapter.AdminMovieAdapter
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.viewmodel.MovieViewModel
-import android.app.Dialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import android.widget.TextView
 
 @AndroidEntryPoint
 class AdminMovieListFragment : Fragment() {
@@ -55,7 +57,7 @@ class AdminMovieListFragment : Fragment() {
             onEditClick = { movie ->
                 val fragment = AdminCreateMovieFragment().apply {
                     arguments = Bundle().apply {
-                        putSerializable("movie", movie)
+                        putSerializable(Constants.Movie.EXTRA_MOVIE_DATA, movie)
                     }
                 }
                 parentFragmentManager.beginTransaction()
@@ -88,7 +90,6 @@ class AdminMovieListFragment : Fragment() {
         }
 
         binding.fabAddMovie.setOnClickListener {
-            // TODO: Open Add Movie Fragment
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, AdminCreateMovieFragment())
                 .addToBackStack(null)
@@ -115,7 +116,7 @@ class AdminMovieListFragment : Fragment() {
 
         dialogBinding.btnConfirmDelete.setOnClickListener {
             dialog.dismiss()
-            val currentStatus = if (selectedTab == TAB_ACTIVE) "active" else "deleted"
+            val currentStatus = if (selectedTab == TAB_ACTIVE) Constants.Movie.STATUS_ACTIVE else Constants.Movie.STATUS_DELETED
             movie.id?.let { viewModel.deleteMovie(it, currentStatus) }
         }
 
@@ -141,10 +142,10 @@ class AdminMovieListFragment : Fragment() {
 
         dialogBinding.btnConfirmDelete.setOnClickListener {
             dialog.dismiss()
-            val request = com.example.movie_booking_app.data.model.request.UpdateMovieRequest(
+            val request = UpdateMovieRequest(
                 isDeleted = false
             )
-            val currentStatus = if (selectedTab == TAB_ACTIVE) "active" else "deleted"
+            val currentStatus = if (selectedTab == TAB_ACTIVE) Constants.Movie.STATUS_ACTIVE else Constants.Movie.STATUS_DELETED
             movie.id?.let { viewModel.updateMovie(it, request, null, currentStatus) }
         }
 
@@ -172,7 +173,19 @@ class AdminMovieListFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.movieActionMessage.collect { message ->
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                val displayMsg = when(message) {
+                    "msg_movie_deleted_success" -> getString(R.string.msg_movie_deleted_success)
+                    "msg_movie_restored_success" -> getString(R.string.msg_movie_restored_success)
+                    "msg_movie_delete_failed" -> getString(R.string.msg_movie_delete_failed)
+                    "msg_movie_restore_failed" -> getString(R.string.msg_movie_restore_failed)
+                    "msg_movie_added_success" -> getString(R.string.msg_movie_added_success)
+                    "msg_movie_add_failed" -> getString(R.string.msg_movie_add_failed)
+                    "msg_movie_updated_success" -> getString(R.string.msg_movie_updated_success)
+                    "msg_movie_update_failed" -> getString(R.string.msg_movie_update_failed)
+                    "error_unknown" -> getString(R.string.error_unknown)
+                    else -> message
+                }
+                Toast.makeText(context, displayMsg, Toast.LENGTH_SHORT).show()
             }
         }
     }

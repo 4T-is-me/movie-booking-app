@@ -1,13 +1,16 @@
 package com.example.movie_booking_app.view.fragment.admin
 
-import com.example.movie_booking_app.R
-
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -15,18 +18,20 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.AdminPromotion
+import com.example.movie_booking_app.databinding.DialogConfirmDeletePromotionBinding
 import com.example.movie_booking_app.databinding.FragmentAdminPromotionBinding
 import com.example.movie_booking_app.view.activity.AdminEditPromotionActivity
 import com.example.movie_booking_app.view.adapter.AdminPromotionAdapter
 import com.example.movie_booking_app.viewmodel.admin.AdminPromotionViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class AdminPromotionFragment : Fragment() {
@@ -109,21 +114,21 @@ class AdminPromotionFragment : Fragment() {
         filterAndSubmit()
     }
 
-    private fun updateTabStyle(tabView: android.widget.TextView, isActive: Boolean) {
+    private fun updateTabStyle(tabView: TextView, isActive: Boolean) {
         if (isActive) {
-            tabView.setBackgroundResource(com.example.movie_booking_app.R.drawable.bg_tab_active)
-            tabView.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), com.example.movie_booking_app.R.color.black))
+            tabView.setBackgroundResource(R.drawable.bg_tab_active)
+            tabView.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
         } else {
             tabView.background = null
-            tabView.setTextColor(androidx.core.content.ContextCompat.getColor(requireContext(), com.example.movie_booking_app.R.color.text_gray))
+            tabView.setTextColor(ContextCompat.getColor(requireContext(), R.color.text_gray))
         }
     }
 
     private fun showDeleteConfirmationDialog(promotion: AdminPromotion) {
-        val dialogBinding = com.example.movie_booking_app.databinding.DialogConfirmDeletePromotionBinding.inflate(layoutInflater)
-        val dialog = android.app.Dialog(requireContext())
+        val dialogBinding = DialogConfirmDeletePromotionBinding.inflate(layoutInflater)
+        val dialog = Dialog(requireContext())
         dialog.setContentView(dialogBinding.root)
-        dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.setCancelable(true)
 
         dialogBinding.tvDeleteMessage.text = "${getString(R.string.auto_str_are_you_sure_you_want_to_delet)} \"${promotion.title}\"?"

@@ -2,6 +2,7 @@ package com.example.movie_booking_app.view.adapter.admin
 
 import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -55,8 +56,8 @@ class AdminImportOrderAdapter(
 
                 // Show Approve/Reject only for PENDING
                 val isPending = order.status == "PENDING"
-                btnApprove.visibility = if (isPending) android.view.View.VISIBLE else android.view.View.GONE
-                btnReject.visibility  = if (isPending) android.view.View.VISIBLE else android.view.View.GONE
+                btnApprove.visibility = if (isPending) View.VISIBLE else View.GONE
+                btnReject.visibility  = if (isPending) View.VISIBLE else View.GONE
 
                 btnApprove.setOnClickListener { onApproveClick(order) }
                 btnReject.setOnClickListener  { onRejectClick(order) }

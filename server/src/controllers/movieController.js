@@ -1,9 +1,4 @@
-import {
-    getMovies,
-    searchMovies,
-    getMovieById,
-    getMovieShowtimes
-} from '../services/movieService.js';
+import { getMovies, searchMovies, getMovieById, getMovieShowtimes } from '../services/movieService.js';
 
 import { StatusCodes } from 'http-status-codes';
 import { jwtProvider } from '../utils/jwtProvider.js';

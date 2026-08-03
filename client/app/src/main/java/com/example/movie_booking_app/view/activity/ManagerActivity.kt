@@ -1,9 +1,12 @@
 package com.example.movie_booking_app.view.activity
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
-import com.github.mikephil.charting.data.Entry
 import android.os.Bundle
+import android.view.View
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -30,17 +33,19 @@ import com.example.movie_booking_app.view.fragment.manager.ManagerScheduleFragme
 import com.example.movie_booking_app.view.fragment.manager.ManagerStaffFragment
 import com.example.movie_booking_app.viewmodel.manager.ManagerViewModel
 import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ManagerActivity : AppCompatActivity() {
@@ -48,8 +53,8 @@ class ManagerActivity : AppCompatActivity() {
     private val viewModel: ManagerViewModel by viewModels()
     private val notificationViewModel: NotificationViewModel by viewModels()
 
-    private val notificationReceiver = object : android.content.BroadcastReceiver() {
-        override fun onReceive(context: android.content.Context?, intent: Intent?) {
+    private val notificationReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
             notificationViewModel.loadNotifications()
         }
     }
@@ -339,7 +344,7 @@ class ManagerActivity : AppCompatActivity() {
         ContextCompat.registerReceiver(
             this,
             notificationReceiver,
-            android.content.IntentFilter("com.example.movie_booking_app.NEW_NOTIFICATION"),
+            IntentFilter("com.example.movie_booking_app.NEW_NOTIFICATION"),
             ContextCompat.RECEIVER_NOT_EXPORTED
         )
     }

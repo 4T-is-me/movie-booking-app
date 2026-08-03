@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.movie_booking_app.databinding.ItemCardPersonBinding
 import com.example.movie_booking_app.R
+import com.example.movie_booking_app.databinding.ItemCardPersonBinding
 
 class CardItemAdapter : RecyclerView.Adapter<CardItemAdapter.DirectorViewHolder>(){
 

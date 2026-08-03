@@ -3,9 +3,9 @@ package com.example.movie_booking_app.data.repository
 import com.example.movie_booking_app.data.model.entity.CinemaRoom
 import com.example.movie_booking_app.data.model.entity.Seat
 import com.example.movie_booking_app.data.model.entity.SeatType
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
 
 class CinemaRoomRepositoryImpl @Inject constructor() : CinemaRoomRepository {
     override fun getRooms(): Flow<List<CinemaRoom>> = flow {
