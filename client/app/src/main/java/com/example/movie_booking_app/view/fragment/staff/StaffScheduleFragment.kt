@@ -393,20 +393,20 @@ class StaffScheduleFragment : Fragment() {
                             setDynamicBadge(
                                 binding.tvShiftStatus,
                                 Constants.STATUS_SHIFT[4],
-                                ContextCompat.getColor(context, R.color.status_rose_red),
-                                ContextCompat.getColor(context, R.color.bg_badge_rose_red)
+                                ContextCompat.getColor(requireContext(), R.color.status_rose_red),
+                                ContextCompat.getColor(requireContext(), R.color.bg_badge_rose_red)
                             )
                             binding.btnShiftAction.visibility = View.VISIBLE
                             binding.btnShiftAction.text = context?.getString(R.string.action_accept_replacement)
-                            binding.btnShiftAction.setTextColor(ContextCompat.getColor(context, R.color.status_gold_yellow))
+                            binding.btnShiftAction.setTextColor(ContextCompat.getColor(requireContext(), R.color.status_gold_yellow))
                             binding.btnShiftAction.setOnClickListener { onRequestReplacement(item) }
                         }
                         Constants.STATUS_SHIFT[2] -> {
                             setDynamicBadge(
                                 binding.tvShiftStatus,
                                 Constants.STATUS_SHIFT[2],
-                                ContextCompat.getColor(context, R.color.status_gold_yellow),
-                                ContextCompat.getColor(context, R.color.bg_badge_gold_yellow)
+                                ContextCompat.getColor(requireContext(), R.color.status_gold_yellow),
+                                ContextCompat.getColor(requireContext(), R.color.bg_badge_gold_yellow)
                             )
                             binding.btnShiftAction.visibility = View.GONE
                         }
@@ -415,8 +415,8 @@ class StaffScheduleFragment : Fragment() {
                             setDynamicBadge(
                                 binding.tvShiftStatus,
                                 badgeStatus,
-                                ContextCompat.getColor(context, R.color.status_gold_yellow),
-                                ContextCompat.getColor(context, R.color.bg_badge_gold_yellow)
+                                ContextCompat.getColor(requireContext(), R.color.status_gold_yellow),
+                                ContextCompat.getColor(requireContext(), R.color.bg_badge_gold_yellow)
                             )
                             val todayStr = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(Date())
                             val cleanDate = if (item.workDate?.contains("T") == true) item.workDate.substringBefore("T") else item.workDate
@@ -426,7 +426,7 @@ class StaffScheduleFragment : Fragment() {
                             } else {
                                 binding.btnShiftAction.visibility = View.VISIBLE
                                 binding.btnShiftAction.text = context?.getString(R.string.action_request_time_off)
-                                binding.btnShiftAction.setTextColor(ContextCompat.getColor(context, R.color.status_light_rose))
+                                binding.btnShiftAction.setTextColor(ContextCompat.getColor(requireContext(), R.color.status_light_rose))
                                 binding.btnShiftAction.setOnClickListener { onRequestTimeOff(item) }
                             }
                         }

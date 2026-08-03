@@ -35,10 +35,10 @@ class WriteReviewActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Get data from Intent
-        movieId    = intent.getStringExtra("movieId") ?: ""
-        movieTitle = intent.getStringExtra("movieTitle") ?: ""
-        moviePoster = intent.getStringExtra("moviePoster") ?: ""
-        movieGenre = intent.getStringExtra("movieGenre") ?: ""
+        movieId    = intent.getStringExtra(Constants.Movie.EXTRA_MOVIE_ID) ?: ""
+        movieTitle = intent.getStringExtra(Constants.Movie.EXTRA_MOVIE_TITLE) ?: ""
+        moviePoster = intent.getStringExtra(Constants.Movie.EXTRA_MOVIE_POSTER) ?: ""
+        movieGenre = intent.getStringExtra(Constants.Movie.EXTRA_MOVIE_GENRE) ?: ""
 
         if (movieId.isEmpty()) {
             Toast.makeText(this, getString(R.string.auto_str_movie_id_not_found), Toast.LENGTH_SHORT).show()
@@ -57,7 +57,7 @@ class WriteReviewActivity : AppCompatActivity() {
         binding.btnBack.setOnClickListener { finish() }
 
         // Display movie info
-        binding.tvMovieTitle.text = movieTitle.ifEmpty { "Unknown" }
+        binding.tvMovieTitle.text = movieTitle.ifEmpty { getString(R.string.text_unknown) }
         binding.tvMovieGenre.text = movieGenre.ifEmpty { "" }
 
         // Load poster
@@ -84,12 +84,12 @@ class WriteReviewActivity : AppCompatActivity() {
             }
 
             // Validate comment
-            if (comment.length < 5) {
+            if (comment.length < Constants.Movie.MIN_COMMENT_LENGTH) {
                 binding.tvCommentError.text = getString(R.string.auto_str_comment_must_be_at_least_5_cha)
                 binding.tvCommentError.visibility = View.VISIBLE
                 return@setOnClickListener
             }
-            if (comment.length > 1000) {
+            if (comment.length > Constants.Movie.MAX_COMMENT_LENGTH) {
                 binding.tvCommentError.text = getString(R.string.auto_str_comment_must_not_exceed_1000_c)
                 binding.tvCommentError.visibility = View.VISIBLE
                 return@setOnClickListener
@@ -110,23 +110,23 @@ class WriteReviewActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
                 val len = s?.length ?: 0
-                binding.tvCharCount.text = "$len / 1000"
+                binding.tvCharCount.text = getString(R.string.format_char_count, len, Constants.Movie.MAX_COMMENT_LENGTH)
                 // Hide error when user is typing
-                if (len >= 5) binding.tvCommentError.visibility = View.GONE
+                if (len >= Constants.Movie.MIN_COMMENT_LENGTH) binding.tvCommentError.visibility = View.GONE
             }
         })
     }
 
     private fun setupRatingBar() {
         val ratingLabels = mapOf(
-            1f to "😞 Terrible",
-            2f to "😐 Poor",
-            3f to "🙂 Average",
-            4f to "😊 Good",
-            5f to "🤩 Excellent"
+            1f to getString(R.string.label_rating_terrible),
+            2f to getString(R.string.label_rating_poor),
+            3f to getString(R.string.label_rating_average),
+            4f to getString(R.string.label_rating_good),
+            5f to getString(R.string.label_rating_excellent)
         )
         binding.ratingBarReview.setOnRatingBarChangeListener { _, rating, _ ->
-            binding.tvRatingLabel.text = ratingLabels[rating] ?: "Tap to rate"
+            binding.tvRatingLabel.text = ratingLabels[rating] ?: getString(R.string.label_tap_to_rate)
         }
     }
 

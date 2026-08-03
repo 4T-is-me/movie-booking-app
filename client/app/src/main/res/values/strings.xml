@@ -1484,6 +1484,24 @@
     <string name="auto_str_please_select_a_seat">Please select a seat</string>
     <string name="auto_str_failed_to_load_ratings_or_no_r">Failed to load ratings or no ratings yet</string>
 
+    <string name="msg_movie_deleted_success">Movie deleted successfully</string>
+    <string name="msg_movie_restored_success">Movie restored successfully</string>
+    <string name="msg_movie_delete_failed">Failed to delete movie</string>
+    <string name="msg_movie_restore_failed">Failed to restore movie</string>
+
+    <string name="text_unknown">Unknown</string>
+    <string name="label_tap_to_rate">Tap to rate</string>
+    <string name="label_rating_terrible">😞 Terrible</string>
+    <string name="label_rating_poor">😐 Poor</string>
+    <string name="label_rating_average">🙂 Average</string>
+    <string name="label_rating_good">😊 Good</string>
+    <string name="label_rating_excellent">🤩 Excellent</string>
+    <string name="format_char_count">%1$d / %2$d</string>
+
+    <string name="chart_label_monthly_revenue">Monthly Revenue</string>
+    <string name="chart_label_daily_revenue">Daily Revenue</string>
+    <string name="chart_label_movie_revenue">Movie Revenue</string>
+    <string name="month_prefix_short">T</string>
     <!-- Goods Intake / Import Order Strings -->
     <string name="goods_intake_approve_title">Approve Import Order</string>
     <string name="goods_intake_reject_title">Reject Import Order</string>

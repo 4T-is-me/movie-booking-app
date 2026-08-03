@@ -99,7 +99,6 @@ dependencies {
     implementation(libs.shimmer)
     implementation(libs.glide)
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
-    ksp(libs.glide.compiler)
 
     // Network
     implementation(libs.retrofit)

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="movie_genres">
+        <item>Action</item>
+        <item>Adventure</item>
+        <item>Animation</item>
+        <item>Comedy</item>
+        <item>Crime</item>
+        <item>Documentary</item>
+        <item>Drama</item>
+        <item>Family</item>
+        <item>Fantasy</item>
+        <item>History</item>
+        <item>Horror</item>
+        <item>Music</item>
+        <item>Mystery</item>
+        <item>Romance</item>
+        <item>Science Fiction</item>
+        <item>TV Movie</item>
+        <item>Thriller</item>
+        <item>War</item>
+        <item>Western</item>
+    </string-array>
+
+    <string-array name="censorship_options">
+        <item>P (General Audience)</item>
+        <item>K (Children Under 13)</item>
+        <item>T13 (13+)</item>
+        <item>T16 (16+)</item>
+        <item>T18 (18+)</item>
+        <item>C (Banned)</item>
+    </string-array>
+
+    <string-array name="country_options">
+        <item>Vietnam</item>
+        <item>USA</item>
+        <item>Korea</item>
+        <item>Japan</item>
+        <item>China</item>
+        <item>UK</item>
+        <item>France</item>
+        <item>India</item>
+        <item>Thailand</item>
+    </string-array>
+
+    <string-array name="language_options">
+        <item>Vietnamese (Dubbing)</item>
+        <item>Vietnamese (Subtitle)</item>
+        <item>English (Subtitle)</item>
+        <item>English (Original)</item>
+        <item>Korean (Subtitle)</item>
+        <item>Japanese (Subtitle)</item>
+    </string-array>
+</resources>

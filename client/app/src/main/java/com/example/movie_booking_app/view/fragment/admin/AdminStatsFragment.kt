@@ -1,6 +1,7 @@
 package com.example.movie_booking_app.view.fragment.admin
 
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import com.example.movie_booking_app.data.model.admin.MovieRevenueItem
 import com.example.movie_booking_app.databinding.FragmentAdminStatsBinding
 import com.example.movie_booking_app.viewmodel.admin.AdminStatsUiState
 import com.example.movie_booking_app.viewmodel.admin.AdminStatsViewModel
+import com.example.movie_booking_app.viewmodel.admin.AdminStatsUiState
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
@@ -69,29 +71,48 @@ class AdminStatsFragment : Fragment() {
         }
     }
 
+    companion object {
+        private const val LINE_WIDTH = 1.8f
+        private const val CIRCLE_RADIUS = 3.5f
+        private const val CHART_ANIMATION_DURATION = 1000
+        private const val GRADIENT_ALPHA = 40
+    }
+
     private fun setupCharts() {
         // LineChart setup
         binding.lcDailyRevenue.apply {
             description.isEnabled = false
             setTouchEnabled(true)
             setPinchZoom(true)
-            xAxis.position = XAxis.XAxisPosition.BOTTOM
-            xAxis.textColor = Color.WHITE
-            xAxis.granularity = 1f
-            xAxis.setAvoidFirstLastClipping(true)
+            setDrawGridBackground(false)
+            setDrawBorders(false)
+            
+            xAxis.apply {
+                position = XAxis.XAxisPosition.BOTTOM
+                textColor = ContextCompat.getColor(requireContext(), R.color.white)
+                granularity = 1f
+                setDrawGridLines(false)
+                setAvoidFirstLastClipping(true)
+            }
 
-            axisLeft.textColor = Color.WHITE
-            axisLeft.labelCount = 5
-            axisLeft.valueFormatter = object : ValueFormatter() {
-                override fun getFormattedValue(value: Float): String {
-                    return when {
-                        value >= 1000000 -> String.format(Locale.US, "%.1fM", value / 1000000)
-                        value >= 1000 -> String.format(Locale.US, "%.0fK", value / 1000)
-                        else -> value.toInt().toString()
+            axisLeft.apply {
+                textColor = ContextCompat.getColor(requireContext(), R.color.white)
+                labelCount = 5
+                setDrawGridLines(true)
+                gridColor = ContextCompat.getColor(requireContext(), R.color.divider_gray)
+                gridLineWidth = 0.5f
+                valueFormatter = object : ValueFormatter() {
+                    override fun getFormattedValue(value: Float): String {
+                        return when {
+                            value >= 1000000 -> String.format(Locale.US, "%.1fM", value / 1000000)
+                            value >= 1000 -> String.format(Locale.US, "%.0fK", value / 1000)
+                            else -> value.toInt().toString()
+                        }
                     }
                 }
             }
             axisRight.isEnabled = false
+            legend.textColor = ContextCompat.getColor(requireContext(), R.color.white)
         }
 
         // HorizontalBarChart setup
@@ -99,11 +120,11 @@ class AdminStatsFragment : Fragment() {
             description.isEnabled = false
             setTouchEnabled(true)
             xAxis.position = XAxis.XAxisPosition.BOTTOM
-            xAxis.textColor = Color.WHITE
+            xAxis.textColor = ContextCompat.getColor(requireContext(), R.color.white)
             xAxis.granularity = 1f
             xAxis.setDrawGridLines(false)
             
-            axisLeft.textColor = Color.WHITE
+            axisLeft.textColor = ContextCompat.getColor(requireContext(), R.color.white)
             axisLeft.axisMinimum = 0f
             axisLeft.labelCount = 5
             axisLeft.valueFormatter = object : ValueFormatter() {
@@ -116,7 +137,7 @@ class AdminStatsFragment : Fragment() {
                 }
             }
             axisRight.isEnabled = false
-            legend.textColor = Color.WHITE
+            legend.textColor = ContextCompat.getColor(requireContext(), R.color.white)
         }
     }
 
@@ -162,38 +183,74 @@ class AdminStatsFragment : Fragment() {
             }
         }
 
-        val dataSet = LineDataSet(entries, if (isMonthly) "Monthly Revenue" else "Daily Revenue").apply {
-            color = Color.YELLOW
-            setCircleColor(Color.YELLOW)
-            lineWidth = 2f
-            circleRadius = 4f
-            setDrawCircleHole(false)
-            valueTextColor = Color.WHITE
-            mode = LineDataSet.Mode.CUBIC_BEZIER
-            setDrawFilled(true)
-            fillColor = Color.YELLOW
-            fillAlpha = 50
-        }
+        val label = if (isMonthly) getString(R.string.chart_label_monthly_revenue)
+                    else getString(R.string.chart_label_daily_revenue)
 
-        binding.lcDailyRevenue.xAxis.valueFormatter = object : ValueFormatter() {
-            override fun getFormattedValue(value: Float): String {
-                return if (isMonthly) {
-                    "T${value.toInt()}"
-                } else {
-                    val index = value.toInt()
-                    if (index >= 0 && index < state.dailyRevenue.size) {
-                        val parts = state.dailyRevenue[index].date.split("-")
-                        if (parts.size == 3) "${parts[2]}/${parts[1]}" else state.dailyRevenue[index].date
-                    } else ""
+        val dataSet = LineDataSet(entries, label).apply {
+            color = ContextCompat.getColor(requireContext(), R.color.yellow)
+            setCircleColor(ContextCompat.getColor(requireContext(), R.color.yellow))
+            lineWidth = 3f
+            circleRadius = 5f
+            setDrawCircleHole(true)
+            circleHoleColor = ContextCompat.getColor(requireContext(), R.color.admin_bg)
+            
+            // Hiển thị giá trị trực tiếp cho chế độ Tháng để dễ theo dõi
+            setDrawValues(isMonthly)
+            valueTextColor = ContextCompat.getColor(requireContext(), R.color.white)
+            valueTextSize = 9f
+            valueFormatter = object : ValueFormatter() {
+                override fun getFormattedValue(value: Float): String {
+                    return if (value >= 1000000) {
+                        String.format(Locale.US, "%.1fM", value / 1000000)
+                    } else if (value >= 1000) {
+                        String.format(Locale.US, "%.0fK", value / 1000)
+                    } else {
+                        value.toInt().toString()
+                    }
                 }
             }
-        }
-        
-        // Adjust label count to prevent overlap
-        binding.lcDailyRevenue.xAxis.labelCount = if (isMonthly) 12 else 6
 
-        binding.lcDailyRevenue.data = LineData(dataSet)
-        binding.lcDailyRevenue.invalidate()
+            mode = LineDataSet.Mode.CUBIC_BEZIER
+            
+            // Hiệu ứng Gradient
+            setDrawFilled(true)
+            val gradientDrawable = GradientDrawable(
+                GradientDrawable.Orientation.TOP_BOTTOM,
+                intArrayOf(
+                    ContextCompat.getColor(requireContext(), R.color.yellow),
+                    ContextCompat.getColor(requireContext(), android.R.color.transparent)
+                )
+            )
+            fillDrawable = gradientDrawable
+            fillAlpha = 80
+        }
+
+        binding.lcDailyRevenue.xAxis.apply {
+            valueFormatter = object : ValueFormatter() {
+                override fun getFormattedValue(value: Float): String {
+                    return if (isMonthly) {
+                        getString(R.string.month_prefix_short) + value.toInt().toString()
+                    } else {
+                        val index = value.toInt()
+                        if (index >= 0 && index < state.dailyRevenue.size) {
+                            val parts = state.dailyRevenue[index].date.split(Constants.Movie.SEPARATOR_DASH)
+                            if (parts.size == 3) {
+                                "${parts[2]}${Constants.Movie.SEPARATOR_SLASH}${parts[1]}"
+                            } else {
+                                state.dailyRevenue[index].date
+                            }
+                        } else ""
+                    }
+                }
+            }
+            labelCount = if (isMonthly) 12 else 6
+        }
+
+        binding.lcDailyRevenue.apply {
+            data = LineData(dataSet)
+            animateY(800)
+            invalidate()
+        }
     }
 
     private fun updateBarChart(data: List<MovieRevenueItem>) {
@@ -203,9 +260,9 @@ class AdminStatsFragment : Fragment() {
         val entries = sortedData.mapIndexed { index, item ->
             BarEntry(index.toFloat(), item.totalRevenue.toFloat())
         }
-        val dataSet = BarDataSet(entries, "Doanh thu phim").apply {
+        val dataSet = BarDataSet(entries, getString(R.string.chart_label_movie_revenue)).apply {
             color = ContextCompat.getColor(requireContext(), R.color.gold_selected)
-            valueTextColor = Color.WHITE
+            valueTextColor = ContextCompat.getColor(requireContext(), R.color.white)
             valueTextSize = 10f
             // Format values inside the chart
             valueFormatter = object : ValueFormatter() {
