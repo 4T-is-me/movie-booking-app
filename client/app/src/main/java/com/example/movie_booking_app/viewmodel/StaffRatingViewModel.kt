@@ -1,21 +1,19 @@
 package com.example.movie_booking_app.viewmodel
 
-import com.example.movie_booking_app.R
-
-import dagger.hilt.android.qualifiers.ApplicationContext
-
 import android.content.Context
-
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.ReviewItem
 import com.example.movie_booking_app.data.repository.StaffRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class StaffRatingViewModel @Inject constructor(
@@ -47,7 +45,7 @@ class StaffRatingViewModel @Inject constructor(
                 repository.getMyRatings().collect { response ->
                     if (response != null && response.success == true) {
                         val items = response.data ?: emptyList()
-                        android.util.Log.d("StaffRating", "Data loaded: ${items.size} items")
+                        Log.d("StaffRating", "Data loaded: ${items.size} items")
                         _ratings.value = items
                         
                         if (items.isNotEmpty()) {
@@ -64,13 +62,13 @@ class StaffRatingViewModel @Inject constructor(
                             _totalCount.value = 0
                         }
                     } else {
-                        android.util.Log.e("StaffRating", "Response error or null: $response")
+                        Log.e("StaffRating", "Response error or null: $response")
                         _error.value = context.getString(R.string.auto_str_failed_to_load_ratings_or_no_r)
                     }
                     _isLoading.value = false
                 }
             } catch (e: Exception) {
-                android.util.Log.e("StaffRating", "Exception: ${e.message}")
+                Log.e("StaffRating", "Exception: ${e.message}")
                 _isLoading.value = false
                 _error.value = e.localizedMessage ?: "Network error"
             }

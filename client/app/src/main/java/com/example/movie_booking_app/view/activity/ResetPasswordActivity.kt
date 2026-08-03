@@ -7,7 +7,6 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.api.RetrofitClient

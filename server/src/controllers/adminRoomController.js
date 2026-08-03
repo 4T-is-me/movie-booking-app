@@ -1,4 +1,4 @@
-import {adminRoomService} from "../services/adminRoomService.js";
+import { adminRoomService } from "../services/adminRoomService.js";
 import { StatusCodes } from "http-status-codes";
 import { Cinema } from "../models/cinemaModel.js";
 

@@ -1,15 +1,15 @@
 package com.example.movie_booking_app.view.adapter
 
-import com.example.movie_booking_app.databinding.ItemStaffPromotionBinding
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Promo
+import com.example.movie_booking_app.databinding.ItemStaffPromotionBinding
 
 class StaffPromotionAdapter(
     private val onPromoClick: (Promo) -> Unit
@@ -36,7 +36,7 @@ class StaffPromotionAdapter(
             tvStaffPromoDetail.text = promo.detail ?: "No detailed description"
             tvStaffPromoCode.text = promo.discountCode
 
-            com.bumptech.glide.Glide.with(itemView.context)
+            Glide.with(itemView.context)
                 .load(promo.imageUrl)
                 .placeholder(R.drawable.bg_placeholder_card)
                 .error(R.drawable.bg_placeholder_card)

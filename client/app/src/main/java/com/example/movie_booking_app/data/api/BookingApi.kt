@@ -2,10 +2,11 @@ package com.example.movie_booking_app.data.api
 
 import com.example.movie_booking_app.data.model.response.ScoreHistoryBaseResponse
 import com.example.movie_booking_app.data.model.response.SeatListResponse
+import okhttp3.ResponseBody
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
-import retrofit2.http.Body
 import retrofit2.http.Path
 
 data class HoldSeatsRequest(
@@ -23,11 +24,11 @@ interface BookingApi {
     suspend fun holdSeats(
         @Path("showtimeId") showtimeId: String,
         @Body request: HoldSeatsRequest
-    ): Response<okhttp3.ResponseBody>
+    ): Response<ResponseBody>
 
     @POST("api/showtimes/{showtimeId}/release")
     suspend fun releaseSeats(
         @Path("showtimeId") showtimeId: String,
         @Body request: HoldSeatsRequest
-    ): Response<okhttp3.ResponseBody>
+    ): Response<ResponseBody>
 }

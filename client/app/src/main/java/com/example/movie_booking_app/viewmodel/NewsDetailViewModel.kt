@@ -5,12 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.response.CommentItemResponse
 import com.example.movie_booking_app.data.repository.NewsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class NewsDetailViewModel @Inject constructor(

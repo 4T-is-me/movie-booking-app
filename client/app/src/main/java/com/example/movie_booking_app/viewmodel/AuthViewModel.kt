@@ -5,11 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.api.AuthEvent
 import com.example.movie_booking_app.data.api.AuthEventBus
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /**
  * ViewModel for handling authentication state and global auth events.

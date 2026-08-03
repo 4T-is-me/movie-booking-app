@@ -7,6 +7,7 @@ import com.example.movie_booking_app.data.model.entity.InventoryDeduction
 import com.example.movie_booking_app.data.repository.FoodRepository
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,7 +18,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import javax.inject.Inject
 
 data class AdminFoodUiState(
     val menuItems: List<FoodBeverage> = emptyList(),

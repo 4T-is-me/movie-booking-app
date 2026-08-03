@@ -1,7 +1,12 @@
 package com.example.movie_booking_app.view.adapter
 
+import android.util.TypedValue
+import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -12,6 +17,7 @@ import com.example.movie_booking_app.data.model.response.CommentItemResponse
 import com.example.movie_booking_app.databinding.ItemCommentBinding
 import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.utils.DateUtils
+import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class CommentsAdapter(
     private val onReplyClick: (CommentItemResponse) -> Unit,
@@ -77,7 +83,7 @@ class CommentsAdapter(
 
             // Reactions Display tally
             if (summary != null && summary.count > 0) {
-                binding.layoutReactionsDisplay.visibility = android.view.View.VISIBLE
+                binding.layoutReactionsDisplay.visibility = View.VISIBLE
                 
                 // Build simple emoji breakdown string
                 val breakdown = summary.breakdown ?: emptyMap()
@@ -95,7 +101,7 @@ class CommentsAdapter(
 
                 binding.tvReactionsCount.text = "$emojis ${summary.count}"
             } else {
-                binding.layoutReactionsDisplay.visibility = android.view.View.GONE
+                binding.layoutReactionsDisplay.visibility = View.GONE
             }
 
             binding.btnReplyComment.setOnClickListener {
@@ -125,25 +131,25 @@ class CommentsAdapter(
                 Pair("angry", "😡")
             )
 
-            val dialog = com.google.android.material.bottomsheet.BottomSheetDialog(context)
+            val dialog = BottomSheetDialog(context)
             val sheetView = LayoutInflater.from(context).inflate(R.layout.dialog_rate_staff, null) // repurpose dialog view or construct dynamic layout
             
             // Construct a simple linear layout dynamically for options to select reactions
-            val layout = android.widget.LinearLayout(context).apply {
-                orientation = android.widget.LinearLayout.HORIZONTAL
-                gravity = android.view.Gravity.CENTER
+            val layout = LinearLayout(context).apply {
+                orientation = LinearLayout.HORIZONTAL
+                gravity = Gravity.CENTER
                 setPadding(0, 32, 0, 32)
                 layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             }
 
             reactions.forEach { reaction ->
-                val btn = android.widget.TextView(context).apply {
+                val btn = TextView(context).apply {
                     text = reaction.second
                     textSize = 28f
                     setPadding(24, 16, 24, 16)
                     isClickable = true
-                    focusable = android.view.View.FOCUSABLE
-                    val outValue = android.util.TypedValue()
+                    focusable = View.FOCUSABLE
+                    val outValue = TypedValue()
                     context.theme.resolveAttribute(android.R.attr.selectableItemBackground, outValue, true)
                     setBackgroundResource(outValue.resourceId)
                     setOnClickListener {

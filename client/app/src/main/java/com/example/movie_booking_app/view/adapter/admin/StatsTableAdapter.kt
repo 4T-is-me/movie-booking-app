@@ -1,13 +1,12 @@
 package com.example.movie_booking_app.view.adapter.admin
 
-import com.example.movie_booking_app.R
-
-import androidx.core.content.ContextCompat
-
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.ItemStatsTableBinding
 import java.text.NumberFormat
 import java.util.Locale
@@ -33,7 +32,7 @@ class StatsTableAdapter : RecyclerView.Adapter<StatsTableAdapter.StatsViewHolder
         holder.tvValue.text = currencyFormat.format(value)
         
         // Custom styling for dark background
-        holder.tvLabel.setTextColor(android.graphics.Color.WHITE)
+        holder.tvLabel.setTextColor(Color.WHITE)
         holder.tvValue.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.gold_selected))
     }
 

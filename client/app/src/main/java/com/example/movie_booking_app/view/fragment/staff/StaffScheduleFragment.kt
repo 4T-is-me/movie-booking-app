@@ -1,10 +1,10 @@
 package com.example.movie_booking_app.view.fragment.staff
 
+import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import timber.log.Timber
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,17 +23,21 @@ import com.example.movie_booking_app.data.model.response.ShiftItemResponse
 import com.example.movie_booking_app.databinding.DialogRequestLeaveBinding
 import com.example.movie_booking_app.databinding.FragmentStaffScheduleBinding
 import com.example.movie_booking_app.databinding.ItemStaffScheduleShiftBinding
+import com.example.movie_booking_app.databinding.ItemTodaySubShiftBinding
 import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.view.adapter.DateAdapter
 import com.example.movie_booking_app.view.adapter.ReplacementShiftAdapter
 import com.example.movie_booking_app.viewmodel.staff.LeaveRequestViewModel
 import com.example.movie_booking_app.viewmodel.staff.StaffScheduleViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import org.json.JSONObject
+import timber.log.Timber
 
 @AndroidEntryPoint
 class StaffScheduleFragment : Fragment() {
@@ -170,7 +174,7 @@ class StaffScheduleFragment : Fragment() {
                         Constants.ERROR_UNKNOWN -> getString(R.string.error_unknown)
                         else -> {
                             try {
-                                val jsonObject = org.json.JSONObject(rawMessage)
+                                val jsonObject = JSONObject(rawMessage)
                                 val errors = jsonObject.optJSONArray("errors")
                                 if (errors != null && errors.length() > 0) {
                                     errors.getJSONObject(0).optString("message", rawMessage)
@@ -224,7 +228,7 @@ class StaffScheduleFragment : Fragment() {
 
             // Review each shift for that day to create a separate Card
             matchingShifts.forEach { item ->
-                val itemBinding = com.example.movie_booking_app.databinding.ItemTodaySubShiftBinding.inflate(
+                val itemBinding = ItemTodaySubShiftBinding.inflate(
                     layoutInflater,
                     binding.lnTodayShiftsContainer,
                     false
@@ -251,7 +255,7 @@ class StaffScheduleFragment : Fragment() {
             // For days off – Issue an "Off" card featuring a matching design.
             binding.tvTodayHeader.visibility = View.VISIBLE
 
-            val itemBinding = com.example.movie_booking_app.databinding.ItemTodaySubShiftBinding.inflate(
+            val itemBinding = ItemTodaySubShiftBinding.inflate(
                 layoutInflater,
                 binding.lnTodayShiftsContainer,
                 false
@@ -269,7 +273,7 @@ class StaffScheduleFragment : Fragment() {
 
     private fun showRequestLeaveDialog(shiftItem: ShiftItemResponse) {
         val context = requireContext()
-        val dialog = android.app.Dialog(context)
+        val dialog = Dialog(context)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
 
         val dialogBinding = DialogRequestLeaveBinding.inflate(LayoutInflater.from(context))
@@ -414,7 +418,7 @@ class StaffScheduleFragment : Fragment() {
                                 ContextCompat.getColor(context, R.color.status_gold_yellow),
                                 ContextCompat.getColor(context, R.color.bg_badge_gold_yellow)
                             )
-                            val todayStr = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(java.util.Date())
+                            val todayStr = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH).format(Date())
                             val cleanDate = if (item.workDate?.contains("T") == true) item.workDate.substringBefore("T") else item.workDate
 
                             if (badgeStatus != Constants.STATUS_SHIFT[1] || (cleanDate != null && cleanDate <= todayStr)) {

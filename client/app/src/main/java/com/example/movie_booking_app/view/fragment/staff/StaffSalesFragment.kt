@@ -1,32 +1,37 @@
 package com.example.movie_booking_app.view.fragment.staff
 
-import androidx.core.content.ContextCompat
-
 import android.app.AlertDialog
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.movie_booking_app.R
+import com.example.movie_booking_app.databinding.DialogSuccessBinding
+import com.example.movie_booking_app.databinding.DialogSuggestVoucherBinding
 import com.example.movie_booking_app.databinding.FragmentStaffSalesBinding
 import com.example.movie_booking_app.view.adapter.DateAdapter
 import com.example.movie_booking_app.view.adapter.SeatAdapter
 import com.example.movie_booking_app.view.adapter.StaffMovieAdapter
-import com.example.movie_booking_app.view.adapter.TimeAdapter
 import com.example.movie_booking_app.view.adapter.StaffPromotionAdapter
+import com.example.movie_booking_app.view.adapter.TimeAdapter
 import com.example.movie_booking_app.viewmodel.staff.StaffSalesViewModel
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class StaffSalesFragment : Fragment() {
@@ -190,10 +195,10 @@ class StaffSalesFragment : Fragment() {
             binding.layoutScoreInput.visibility = if (isChecked) View.VISIBLE else View.GONE
         }
 
-        binding.edtScoreToRedeem.addTextChangedListener(object : android.text.TextWatcher {
+        binding.edtScoreToRedeem.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: android.text.Editable?) {
+            override fun afterTextChanged(s: Editable?) {
                 val input = s.toString()
                 val score = if (input.isEmpty()) 0 else input.toIntOrNull() ?: 0
                 viewModel.setScoreToRedeem(score)
@@ -242,7 +247,7 @@ class StaffSalesFragment : Fragment() {
 
                     binding.tvSelectedMovieTitle.text = selectedMovie.movieName
                     val genreStr = selectedMovie.movieGenre?.joinToString(", ") ?: ""
-                    val durationStr = if (selectedMovie.duration != null) requireContext().getString(com.example.movie_booking_app.R.string.duration_mins, selectedMovie.duration.toString()) else "N/A"
+                    val durationStr = if (selectedMovie.duration != null) requireContext().getString(R.string.duration_mins, selectedMovie.duration.toString()) else "N/A"
                     binding.tvSelectedMovieInfo.text = "$genreStr | $durationStr"
                     binding.tvSelectedMovieRating.text = String.format("%.1f", selectedMovie.rating ?: 0.0)
 
@@ -560,7 +565,7 @@ class StaffSalesFragment : Fragment() {
     }
 
     private fun showSuccessDialog(message: String) {
-        val dialogBinding = com.example.movie_booking_app.databinding.DialogSuccessBinding.inflate(layoutInflater)
+        val dialogBinding = DialogSuccessBinding.inflate(layoutInflater)
         dialogBinding.tvDialogMessage.text = message
 
         val dialog = AlertDialog.Builder(requireContext())
@@ -602,8 +607,8 @@ class StaffSalesFragment : Fragment() {
             return
         }
 
-        val dialog = com.google.android.material.bottomsheet.BottomSheetDialog(requireContext())
-        val dialogBinding = com.example.movie_booking_app.databinding.DialogSuggestVoucherBinding.inflate(layoutInflater)
+        val dialog = BottomSheetDialog(requireContext())
+        val dialogBinding = DialogSuggestVoucherBinding.inflate(layoutInflater)
         dialog.setContentView(dialogBinding.root)
 
         val adapter = StaffPromotionAdapter { promo ->
@@ -612,7 +617,7 @@ class StaffSalesFragment : Fragment() {
             dialog.dismiss()
         }
 
-        dialogBinding.rvSuggestPromotions.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(requireContext())
+        dialogBinding.rvSuggestPromotions.layoutManager = LinearLayoutManager(requireContext())
         dialogBinding.rvSuggestPromotions.adapter = adapter
         adapter.submitList(promotions)
 

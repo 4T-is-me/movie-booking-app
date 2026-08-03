@@ -3,9 +3,9 @@ package com.example.movie_booking_app.data.repository
 import com.example.movie_booking_app.data.api.InventoryApi
 import com.example.movie_booking_app.data.api.RefillRequest
 import com.example.movie_booking_app.data.model.entity.Inventory
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
 
 class InventoryRepositoryImpl @Inject constructor(
     private val api: InventoryApi

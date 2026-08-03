@@ -1,6 +1,7 @@
 package com.example.movie_booking_app.data.repository
 
 import com.example.movie_booking_app.data.model.entity.CinemaRoom
+import com.example.movie_booking_app.data.model.entity.SeatPreview
 import com.example.movie_booking_app.data.model.request.AddRoomRequest
 import kotlinx.coroutines.flow.Flow
 
@@ -10,5 +11,5 @@ interface CinemaRoomsRepository {
     suspend fun getRoomDetails(roomId: String): CinemaRoom?
     suspend fun updateRoom(roomId: String, request: AddRoomRequest): Boolean
     suspend fun updateRoomStatus(roomId: String, status: String): Boolean
-    suspend fun getRoomSeats(roomId: String): List<com.example.movie_booking_app.data.model.entity.SeatPreview>
+    suspend fun getRoomSeats(roomId: String): List<SeatPreview>
 }

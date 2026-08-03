@@ -3,10 +3,11 @@ package com.example.movie_booking_app.data.repository
 import com.example.movie_booking_app.data.api.PayrollConfigApi
 import com.example.movie_booking_app.data.model.response.PayrollConfigResponse
 import com.example.movie_booking_app.data.model.response.UpdatePayrollConfigRequest
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import retrofit2.Response
 
 @Singleton
 class PayrollConfigRepository @Inject constructor(private val api: PayrollConfigApi) {
@@ -15,7 +16,7 @@ class PayrollConfigRepository @Inject constructor(private val api: PayrollConfig
     fun updateConfig(request: UpdatePayrollConfigRequest): Flow<Result<PayrollConfigResponse>> =
         executePayrollConfigRequest { api.updatePayrollConfig(request) }
 
-    private fun executePayrollConfigRequest(call: suspend () -> retrofit2.Response<PayrollConfigResponse>): Flow<Result<PayrollConfigResponse>> = flow {
+    private fun executePayrollConfigRequest(call: suspend () -> Response<PayrollConfigResponse>): Flow<Result<PayrollConfigResponse>> = flow {
         try {
             val response = call()
             if (response.isSuccessful && response.body() != null) emit(Result.success(response.body()!!))

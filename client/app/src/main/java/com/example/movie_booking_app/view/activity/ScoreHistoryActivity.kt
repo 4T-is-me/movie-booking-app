@@ -3,24 +3,18 @@ package com.example.movie_booking_app.view.activity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.movie_booking_app.R
-import com.example.movie_booking_app.databinding.ActivityRewardPointsBinding
 import com.example.movie_booking_app.databinding.ActivityScoreHistoryBinding
 import com.example.movie_booking_app.view.adapter.ScoreHistoryAdapter
 import com.example.movie_booking_app.viewmodel.BookingViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import kotlin.getValue
+
 @AndroidEntryPoint
 class ScoreHistoryActivity : AppCompatActivity() {
 

@@ -11,10 +11,10 @@ import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.ShiftItemResponse
 import com.example.movie_booking_app.databinding.ItemStaffCardBinding
 import com.example.movie_booking_app.utils.Constants
+import com.example.movie_booking_app.utils.NameFormatter
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
-import com.example.movie_booking_app.utils.NameFormatter
 
 class ManagerStaffShiftAdapter(
     private var list: List<ShiftItemResponse> = emptyList(),

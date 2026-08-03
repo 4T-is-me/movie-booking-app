@@ -5,6 +5,7 @@ import com.example.movie_booking_app.data.api.AuthApi
 import com.example.movie_booking_app.data.local.TokenManager
 import com.example.movie_booking_app.data.model.request.LoginRequest
 import com.example.movie_booking_app.data.model.request.RegisterRequest
+import com.example.movie_booking_app.data.model.request.VerifyOtpRequest
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
@@ -19,10 +20,10 @@ class AuthRepository @Inject constructor(
     suspend fun register(request: RegisterRequest) =
         api.register(request)
 
-    suspend fun verifyOtp(request: com.example.movie_booking_app.data.model.request.VerifyOtpRequest) =
+    suspend fun verifyOtp(request: VerifyOtpRequest) =
         api.verifyOtp(request)
 
-    suspend fun verifyRegisterOtp(request: com.example.movie_booking_app.data.model.request.VerifyOtpRequest) =
+    suspend fun verifyRegisterOtp(request: VerifyOtpRequest) =
         api.verifyRegisterOtp(request)
 
     suspend fun googleLogin(idToken: String) =

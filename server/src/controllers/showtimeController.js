@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { showtimeService } from '../services/showtimeService.js';
-import { StatusCodes} from 'http-status-codes';
+import { StatusCodes } from 'http-status-codes';
 // GET /api/showtimes/:id/seats
 const handleGetShowtimeSeats = async (req, res) => {
     try {

@@ -9,7 +9,6 @@ import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.ActivityVerifyOtpBinding

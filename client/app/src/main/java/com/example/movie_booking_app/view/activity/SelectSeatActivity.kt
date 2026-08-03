@@ -5,25 +5,25 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.movie_booking_app.R
-import com.example.movie_booking_app.databinding.ActivitySelectSeatBinding
-import com.example.movie_booking_app.view.adapter.DateAdapter
-import com.example.movie_booking_app.view.adapter.SeatAdapter
-import com.example.movie_booking_app.view.adapter.TimeAdapter
-import com.example.movie_booking_app.viewmodel.SelectSeatViewModel
 import com.example.movie_booking_app.data.model.entity.Booking
 import com.example.movie_booking_app.data.model.entity.SeatType
+import com.example.movie_booking_app.databinding.ActivitySelectSeatBinding
+import com.example.movie_booking_app.view.adapter.SeatAdapter
+import com.example.movie_booking_app.viewmodel.SeatingUiState
+import com.example.movie_booking_app.viewmodel.SelectSeatViewModel
 import com.example.movie_booking_app.utils.Constants
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
 import java.util.UUID
+import kotlinx.coroutines.launch
 
 /**
  * Activity for Cinema Seat Selection screen.
@@ -82,7 +82,7 @@ class SelectSeatActivity : AppCompatActivity() {
 
     private fun setupListeners() {
         binding.ivBack.setOnClickListener {
-            if (viewModel.uiState.value == com.example.movie_booking_app.viewmodel.SeatingUiState.HELD) {
+            if (viewModel.uiState.value == SeatingUiState.HELD) {
                 viewModel.releaseCurrentHold()
             }
             finish()
@@ -230,7 +230,7 @@ class SelectSeatActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
-                    if (state == com.example.movie_booking_app.viewmodel.SeatingUiState.EXPIRED) {
+                    if (state == SeatingUiState.EXPIRED) {
                         showExpiredDialog()
                     }
                 }
@@ -239,7 +239,7 @@ class SelectSeatActivity : AppCompatActivity() {
     }
 
     private fun showExpiredDialog() {
-        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+        val builder = AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.title_expired))
         builder.setMessage(getString(R.string.msg_expired))
         builder.setPositiveButton(getString(R.string.btn_ok)) { dialog, _ ->

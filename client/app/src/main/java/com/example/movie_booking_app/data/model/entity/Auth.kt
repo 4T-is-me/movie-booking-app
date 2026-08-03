@@ -1,6 +1,6 @@
-package com.example.movie_booking_app.data.model.entity;
+package com.example.movie_booking_app.data.model.entity
 
-import com.google.gson.annotations.SerializedName;
+import com.google.gson.annotations.SerializedName
 
 public class Auth {
     data class RoleResponse(

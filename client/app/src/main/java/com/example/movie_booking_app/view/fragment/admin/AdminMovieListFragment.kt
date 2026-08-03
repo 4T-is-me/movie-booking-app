@@ -1,9 +1,13 @@
 package com.example.movie_booking_app.view.fragment.admin
 
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
@@ -13,16 +17,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Movie
-import com.example.movie_booking_app.databinding.FragmentAdminMovieListBinding
+import com.example.movie_booking_app.data.model.request.UpdateMovieRequest
 import com.example.movie_booking_app.databinding.DialogConfirmDeleteStaffBinding
+import com.example.movie_booking_app.databinding.FragmentAdminMovieListBinding
 import com.example.movie_booking_app.view.adapter.AdminMovieAdapter
 import com.example.movie_booking_app.viewmodel.MovieViewModel
-import android.app.Dialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import android.widget.TextView
 
 @AndroidEntryPoint
 class AdminMovieListFragment : Fragment() {
@@ -141,7 +142,7 @@ class AdminMovieListFragment : Fragment() {
 
         dialogBinding.btnConfirmDelete.setOnClickListener {
             dialog.dismiss()
-            val request = com.example.movie_booking_app.data.model.request.UpdateMovieRequest(
+            val request = UpdateMovieRequest(
                 isDeleted = false
             )
             val currentStatus = if (selectedTab == TAB_ACTIVE) "active" else "deleted"

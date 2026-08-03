@@ -1,6 +1,5 @@
-import { Booking } from '../models/bookingModel.js';
 import { StatusCodes } from 'http-status-codes';
-import  { managerDashboardService} from '../services/managerDashboardService.js';
+import { managerDashboardService } from '../services/managerDashboardService.js';
 const getManagerDashboard = async (req, res, next) => {
     try {
         const accountId = req.user.accountId

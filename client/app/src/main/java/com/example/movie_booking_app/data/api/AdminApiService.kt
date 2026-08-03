@@ -2,7 +2,13 @@ package com.example.movie_booking_app.data.api
 
 import com.example.movie_booking_app.data.model.request.AddCinemaRequest
 import com.example.movie_booking_app.data.model.request.AddMovieRequest
+import com.example.movie_booking_app.data.model.request.AdjustScoreRequest
+import com.example.movie_booking_app.data.model.request.AdminPromotionRequest
+import com.example.movie_booking_app.data.model.request.CreateStaffRequest
+import com.example.movie_booking_app.data.model.request.UpdateMemberStatusRequest
 import com.example.movie_booking_app.data.model.request.UpdateMovieRequest
+import com.example.movie_booking_app.data.model.request.UpdateStaffRequest
+import com.example.movie_booking_app.data.model.request.UpdateStaffStatusRequest
 import com.example.movie_booking_app.data.model.request.UpdateStatusRequest
 import com.example.movie_booking_app.data.model.response.AdminMemberResponse
 import com.example.movie_booking_app.data.model.response.AdminPromotionsResponse
@@ -11,8 +17,8 @@ import com.example.movie_booking_app.data.model.response.CinemaDetailResponse
 import com.example.movie_booking_app.data.model.response.CinemaResponse
 import com.example.movie_booking_app.data.model.response.DailyRevenueResponse
 import com.example.movie_booking_app.data.model.response.MonthlyRevenueResponse
-import com.example.movie_booking_app.data.model.response.MovieRevenueResponse
 import com.example.movie_booking_app.data.model.response.MovieListResponse
+import com.example.movie_booking_app.data.model.response.MovieRevenueResponse
 import com.example.movie_booking_app.data.model.response.OverviewStatsResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -155,12 +161,12 @@ interface AdminApiService {
     ): Response<Unit>
 
     @POST("api/admin/staff")
-    suspend fun createStaff(@Body request: com.example.movie_booking_app.data.model.request.CreateStaffRequest): Response<Unit>
+    suspend fun createStaff(@Body request: CreateStaffRequest): Response<Unit>
 
     @PUT("api/admin/staff/{id}")
     suspend fun updateStaff(
         @Path("id") id: String,
-        @Body request: com.example.movie_booking_app.data.model.request.UpdateStaffRequest
+        @Body request: UpdateStaffRequest
     ): Response<Unit>
 
     @DELETE("api/admin/staff/{id}")
@@ -169,7 +175,7 @@ interface AdminApiService {
     @PATCH("api/admin/staff/{id}/status")
     suspend fun updateStaffStatus(
         @Path("id") id: String,
-        @Body request: com.example.movie_booking_app.data.model.request.UpdateStaffStatusRequest
+        @Body request: UpdateStaffStatusRequest
     ): Response<Unit>
 
     @GET("api/admin/members")
@@ -183,25 +189,25 @@ interface AdminApiService {
     @PATCH("api/admin/members/{id}/score")
     suspend fun adjustMemberScore(
         @Path("id") id: String,
-        @Body request: com.example.movie_booking_app.data.model.request.AdjustScoreRequest
+        @Body request: AdjustScoreRequest
     ): Response<Unit>
 
     @PATCH("api/admin/members/{id}/status")
     suspend fun updateMemberStatus(
         @Path("id") id: String,
-        @Body request: com.example.movie_booking_app.data.model.request.UpdateMemberStatusRequest
+        @Body request: UpdateMemberStatusRequest
     ): Response<Unit>
 
     @GET("api/admin/promotions")
     suspend fun getPromotions(): Response<AdminPromotionsResponse>
 
     @POST("api/admin/promotions")
-    suspend fun createPromotion(@Body request: com.example.movie_booking_app.data.model.request.AdminPromotionRequest): Response<Unit>
+    suspend fun createPromotion(@Body request: AdminPromotionRequest): Response<Unit>
 
     @PUT("api/admin/promotions/{id}")
     suspend fun updatePromotion(
         @Path("id") id: String,
-        @Body request: com.example.movie_booking_app.data.model.request.AdminPromotionRequest
+        @Body request: AdminPromotionRequest
     ): Response<Unit>
 
     @DELETE("api/admin/promotions/{id}")

@@ -1,24 +1,27 @@
 package com.example.movie_booking_app.viewmodel.staff
 
-import com.example.movie_booking_app.R
-
-import dagger.hilt.android.qualifiers.ApplicationContext
-
 import android.content.Context
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Movie
 import com.example.movie_booking_app.data.model.entity.Promo
 import com.example.movie_booking_app.data.model.entity.Seat
 import com.example.movie_booking_app.data.model.entity.SeatStatus
 import com.example.movie_booking_app.data.model.entity.ShowDate
 import com.example.movie_booking_app.data.model.entity.Showtime
+import com.example.movie_booking_app.data.model.request.ConfirmBookingRequest
 import com.example.movie_booking_app.data.model.response.MemberVerifyData
+import com.example.movie_booking_app.data.model.response.PromotionData
 import com.example.movie_booking_app.data.repository.BookingRepository
-import com.example.movie_booking_app.data.repository.MovieRepository
 import com.example.movie_booking_app.data.repository.MemberRepository
+import com.example.movie_booking_app.data.repository.MovieRepository
+import com.example.movie_booking_app.data.repository.PaymentRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import java.text.SimpleDateFormat
+import java.util.Locale
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,7 +29,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import org.json.JSONObject
 
 @HiltViewModel
 class StaffSalesViewModel @Inject constructor(
@@ -35,7 +38,7 @@ class StaffSalesViewModel @Inject constructor(
     private val movieRepository: MovieRepository,
     private val bookingRepository: BookingRepository,
     private val memberRepository: MemberRepository,
-    private val paymentRepository: com.example.movie_booking_app.data.repository.PaymentRepository
+    private val paymentRepository: PaymentRepository
 ) : ViewModel() {
 
     private val _movies = MutableStateFlow<List<Movie>>(emptyList())
@@ -72,8 +75,8 @@ class StaffSalesViewModel @Inject constructor(
     private val _availablePromotions = MutableStateFlow<List<Promo>>(emptyList())
     val availablePromotions: StateFlow<List<Promo>> = _availablePromotions.asStateFlow()
 
-    private val _appliedPromotion = MutableStateFlow<com.example.movie_booking_app.data.model.response.PromotionData?>(null)
-    val appliedPromotion: StateFlow<com.example.movie_booking_app.data.model.response.PromotionData?> = _appliedPromotion.asStateFlow()
+    private val _appliedPromotion = MutableStateFlow<PromotionData?>(null)
+    val appliedPromotion: StateFlow<PromotionData?> = _appliedPromotion.asStateFlow()
 
     private val _useScore = MutableStateFlow(false)
     val useScore: StateFlow<Boolean> = _useScore.asStateFlow()
@@ -182,11 +185,11 @@ class StaffSalesViewModel @Inject constructor(
                 _allShowtimes.value = list
                 
                 val dateMap = mutableMapOf<String, ShowDate>()
-                val isoFormat = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.US)
-                val dayFormat = java.text.SimpleDateFormat("dd", java.util.Locale.getDefault())
-                val monthFormat = java.text.SimpleDateFormat("MMM", java.util.Locale.getDefault())
-                val dowFormat = java.text.SimpleDateFormat("EEE", java.util.Locale.getDefault())
-                val yearFormat = java.text.SimpleDateFormat("yyyy", java.util.Locale.getDefault())
+                val isoFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+                val dayFormat = SimpleDateFormat("dd", Locale.getDefault())
+                val monthFormat = SimpleDateFormat("MMM", Locale.getDefault())
+                val dowFormat = SimpleDateFormat("EEE", Locale.getDefault())
+                val yearFormat = SimpleDateFormat("yyyy", Locale.getDefault())
 
                 list.forEach { showtime ->
                     val dateStr = showtime.showDate?.take(10) ?: return@forEach
@@ -488,7 +491,7 @@ class StaffSalesViewModel @Inject constructor(
                 }
                 .collect {
                     // Seats held successfully, proceed with booking checkout
-                    val request = com.example.movie_booking_app.data.model.request.ConfirmBookingRequest(
+                    val request = ConfirmBookingRequest(
                         showtimeId = showtime.id,
                         seatIds = seatIds,
                         useScore = _useScore.value,
@@ -512,7 +515,7 @@ class StaffSalesViewModel @Inject constructor(
                             _isCheckingOut.value = false
                             try {
                                 val responseString = responseBody.string()
-                                val jsonObject = org.json.JSONObject(responseString)
+                                val jsonObject = JSONObject(responseString)
                                 val success = jsonObject.optBoolean("success", false)
                                 if (success) {
                                     val data = jsonObject.optJSONObject("data")

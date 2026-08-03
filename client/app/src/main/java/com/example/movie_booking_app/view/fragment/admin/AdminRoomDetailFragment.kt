@@ -1,7 +1,5 @@
 package com.example.movie_booking_app.view.fragment.admin
 
-import com.example.movie_booking_app.R
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.FragmentAdminRoomDetailBinding
 import com.example.movie_booking_app.view.adapter.AdminSeatAdapter
 import com.example.movie_booking_app.viewmodel.AdminRoomViewModel

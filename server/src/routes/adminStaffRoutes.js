@@ -1,14 +1,7 @@
 import { Router } from 'express';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 import { adminStaffValidation } from '../validation/adminStaffValidation.js';
-import {
-    getStaffList,
-    createStaff,
-    updateStaff,
-    deleteStaff,
-    updateStaffStatus,
-    updateStaffRole
-} from '../controllers/adminStaffController.js';
+import { getStaffList, createStaff, updateStaff, deleteStaff, updateStaffStatus, updateStaffRole } from '../controllers/adminStaffController.js';
 
 const router = Router();
 
