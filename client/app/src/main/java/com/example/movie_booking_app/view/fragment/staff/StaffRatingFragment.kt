@@ -1,6 +1,7 @@
 package com.example.movie_booking_app.view.fragment.staff
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,12 +12,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import java.util.Locale
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.FragmentStaffRatingBinding
 import com.example.movie_booking_app.view.adapter.ReviewAdapter
 import com.example.movie_booking_app.viewmodel.StaffRatingViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -69,7 +70,7 @@ class StaffRatingFragment : Fragment() {
 
                 launch {
                     viewModel.ratings.collect { list ->
-
+                        android.util.Log.d("StaffRatingFragment", "Observer: received ${list.size} ratings")
                         adapter.submitList(list)
                         updateUI()
                     }

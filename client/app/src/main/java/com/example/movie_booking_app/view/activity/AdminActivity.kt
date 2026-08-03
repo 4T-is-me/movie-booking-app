@@ -12,11 +12,17 @@ import androidx.lifecycle.lifecycleScope
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.api.AuthEvent
 import com.example.movie_booking_app.databinding.ActivityAdminBinding
+import com.example.movie_booking_app.utils.AuthUtils
+import com.example.movie_booking_app.view.activity.admin.AdminFoodMenuActivity
+import com.example.movie_booking_app.view.activity.admin.AdminImportOrderActivity
+import com.example.movie_booking_app.view.activity.admin.AdminInventoryActivity
 import com.example.movie_booking_app.view.fragment.admin.AdminCinemasFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminMovieListFragment
+import com.example.movie_booking_app.view.fragment.admin.AdminPayrollFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminPromotionFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminStaffTabsFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminStatsFragment
+import com.example.movie_booking_app.view.fragment.admin.MemberListFragment
 import com.example.movie_booking_app.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -62,24 +68,24 @@ class AdminActivity : BaseActivity() {
                     loadFragment(AdminPromotionFragment())
                 }
                 R.id.nav_fb_menu -> {
-                    startActivity(Intent(this, com.example.movie_booking_app.view.activity.admin.AdminFoodMenuActivity::class.java))
+                    startActivity(Intent(this, AdminFoodMenuActivity::class.java))
                 }
                 R.id.nav_inventory -> {
-                    startActivity(Intent(this, com.example.movie_booking_app.view.activity.admin.AdminInventoryActivity::class.java))
+                    startActivity(Intent(this, AdminInventoryActivity::class.java))
                 }
                 R.id.nav_import_orders -> {
-                    startActivity(Intent(this, com.example.movie_booking_app.view.activity.admin.AdminImportOrderActivity::class.java))
+                    startActivity(Intent(this, AdminImportOrderActivity::class.java))
                 }
                 R.id.nav_members -> {
                     binding.tvHeaderTitle.text = getString(R.string.admin_tab_members)
-                    loadFragment(com.example.movie_booking_app.view.fragment.admin.MemberListFragment())
+                    loadFragment(MemberListFragment())
                 }
                 R.id.nav_settings -> {
                     binding.tvHeaderTitle.text = getString(R.string.auto_str_payrolls)
-                    loadFragment(com.example.movie_booking_app.view.fragment.admin.AdminPayrollFragment())
+                    loadFragment(AdminPayrollFragment())
                 }
                 R.id.nav_logout -> {
-                    com.example.movie_booking_app.utils.AuthUtils.showLogoutConfirmationDialog(this)
+                    AuthUtils.showLogoutConfirmationDialog(this)
                 }
             }
             binding.drawerLayout.closeDrawer(GravityCompat.START)

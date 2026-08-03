@@ -1,7 +1,6 @@
 package com.example.movie_booking_app.view.activity
 
 import android.os.Bundle
-import timber.log.Timber
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -18,7 +17,11 @@ import com.example.movie_booking_app.utils.RoleConstants
 import com.example.movie_booking_app.view.adapter.PayrollAdapter
 import com.example.movie_booking_app.viewmodel.PayrollViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.TimeZone
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @AndroidEntryPoint
 class PayrollDetailActivity : AppCompatActivity() {
@@ -131,10 +134,10 @@ class PayrollDetailActivity : AppCompatActivity() {
         binding.tvTotalSalary.text = PayrollAdapter.formatVnd(payroll.totalSalary)
 
         // 3.1. Generated At & Paid At dates
-        val inputFormat = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", java.util.Locale.US).apply {
-            timeZone = java.util.TimeZone.getTimeZone("UTC")
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
         }
-        val outputFormat = java.text.SimpleDateFormat("dd/MM/yyyy HH:mm", java.util.Locale.getDefault())
+        val outputFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
 
         if (!payroll.generatedAt.isNullOrEmpty()) {
             binding.layoutGeneratedAt.visibility = View.VISIBLE

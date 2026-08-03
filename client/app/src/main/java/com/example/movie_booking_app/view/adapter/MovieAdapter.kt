@@ -10,6 +10,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Movie
 import com.example.movie_booking_app.databinding.ItemMovieBinding
+import com.example.movie_booking_app.utils.DateUtils
 
 class MovieAdapter(
     private val onClick: (Movie) -> Unit
@@ -34,7 +35,7 @@ class MovieAdapter(
                 tvMovieNameVn.text = movie.movieName
                 tvMovieNameEn.text = movie.movieName // Develop model only has movieName
                 tvGenre.text = movie.movieGenre?.joinToString(", ") ?: "N/A"
-                tvReleaseDate.text = com.example.movie_booking_app.utils.DateUtils.formatMovieDate(movie.releaseDate)
+                tvReleaseDate.text = DateUtils.formatMovieDate(movie.releaseDate)
 
                 Glide.with(itemView.context)
                     .load(movie.poster)

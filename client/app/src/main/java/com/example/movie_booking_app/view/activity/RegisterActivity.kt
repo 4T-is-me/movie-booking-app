@@ -1,32 +1,30 @@
 package com.example.movie_booking_app.view.activity
 
-import androidx.core.content.ContextCompat
-
 import android.app.DatePickerDialog
-import android.graphics.Color
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.local.FcmTokenHelper
 import com.example.movie_booking_app.data.model.request.RegisterRequest
 import com.example.movie_booking_app.databinding.ActivityRegisterBinding
+import com.example.movie_booking_app.utils.Validator
 import com.example.movie_booking_app.viewmodel.RegisterUiState
 import com.example.movie_booking_app.viewmodel.RegisterViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import android.content.Intent
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import java.lang.StringBuilder
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import javax.inject.Inject
-import com.example.movie_booking_app.utils.Validator
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class RegisterActivity : EnglishBaseActivity() {
@@ -46,11 +44,11 @@ class RegisterActivity : EnglishBaseActivity() {
             finish()
         }
 
-        binding.edtDob.addTextChangedListener(object : android.text.TextWatcher {
+        binding.edtDob.addTextChangedListener(object : TextWatcher {
             private var isUpdating = false
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: android.text.Editable?) {
+            override fun afterTextChanged(s: Editable?) {
                 if (isUpdating) return
                 isUpdating = true
 
@@ -65,7 +63,7 @@ class RegisterActivity : EnglishBaseActivity() {
                 }
 
                 val digitsOnly = originalText.replace("/", "")
-                val formatted = java.lang.StringBuilder()
+                val formatted = StringBuilder()
 
                 for (i in digitsOnly.indices) {
                     if (i == 2 || i == 4) {

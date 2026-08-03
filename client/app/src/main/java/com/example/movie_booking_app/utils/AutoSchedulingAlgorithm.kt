@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.utils
 
+import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -249,7 +250,7 @@ object AutoSchedulingAlgorithm {
     private fun isConflict(existingStartTime: String, newStartTime: LocalDateTime): Boolean {
         try {
             val existingTime = LocalDateTime.parse(existingStartTime, DateTimeFormatter.ISO_DATE_TIME)
-            val diff = Math.abs(java.time.Duration.between(existingTime, newStartTime).toMinutes())
+            val diff = Math.abs(Duration.between(existingTime, newStartTime).toMinutes())
             return diff < 15 // Staggering rule: min 15 mins diff across rooms
         } catch (e: Exception) {
             return false

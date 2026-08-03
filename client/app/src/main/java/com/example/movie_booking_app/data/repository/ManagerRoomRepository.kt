@@ -1,14 +1,17 @@
 package com.example.movie_booking_app.data.repository
 
+import com.example.movie_booking_app.data.api.BulkUpdateSeatStatusRequest
 import com.example.movie_booking_app.data.api.ManagerRoomApi
+import com.example.movie_booking_app.data.api.UpdateRoomRequest
+import com.example.movie_booking_app.data.api.UpdateSeatStatusRequest
 import com.example.movie_booking_app.data.model.response.ManagerRoomListResponse
 import com.example.movie_booking_app.data.model.response.ManagerSeatListResponse
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class ManagerRoomRepository @Inject constructor(
@@ -40,7 +43,7 @@ class ManagerRoomRepository @Inject constructor(
         }
     }.flowOn(Dispatchers.IO)
 
-    fun updateRoom(roomId: String, request: com.example.movie_booking_app.data.api.UpdateRoomRequest): Flow<Boolean> = flow {
+    fun updateRoom(roomId: String, request: UpdateRoomRequest): Flow<Boolean> = flow {
         try {
             val response = api.updateRoom(roomId, request)
             emit(response.isSuccessful && response.body()?.success == true)
@@ -51,7 +54,7 @@ class ManagerRoomRepository @Inject constructor(
 
     fun updateSeatStatus(roomId: String, seatId: String, status: String): Flow<Boolean> = flow {
         try {
-            val response = api.updateSeatStatus(roomId, seatId, com.example.movie_booking_app.data.api.UpdateSeatStatusRequest(status))
+            val response = api.updateSeatStatus(roomId, seatId, UpdateSeatStatusRequest(status))
             emit(response.isSuccessful && response.body()?.success == true)
         } catch (e: Exception) {
             emit(false)
@@ -60,7 +63,7 @@ class ManagerRoomRepository @Inject constructor(
 
     fun bulkUpdateSeatStatus(roomId: String, seatIds: List<String>, status: String): Flow<Boolean> = flow {
         try {
-            val response = api.bulkUpdateSeatStatus(roomId, com.example.movie_booking_app.data.api.BulkUpdateSeatStatusRequest(seatIds, status))
+            val response = api.bulkUpdateSeatStatus(roomId, BulkUpdateSeatStatusRequest(seatIds, status))
             emit(response.isSuccessful && response.body()?.success == true)
         } catch (e: Exception) {
             emit(false)

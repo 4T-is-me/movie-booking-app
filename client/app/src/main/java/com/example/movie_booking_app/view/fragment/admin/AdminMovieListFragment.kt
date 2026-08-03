@@ -1,9 +1,13 @@
 package com.example.movie_booking_app.view.fragment.admin
 
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
@@ -13,17 +17,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Movie
-import com.example.movie_booking_app.databinding.FragmentAdminMovieListBinding
+import com.example.movie_booking_app.data.model.request.UpdateMovieRequest
 import com.example.movie_booking_app.databinding.DialogConfirmDeleteStaffBinding
+import com.example.movie_booking_app.databinding.FragmentAdminMovieListBinding
 import com.example.movie_booking_app.view.adapter.AdminMovieAdapter
 import com.example.movie_booking_app.viewmodel.MovieViewModel
-import android.app.Dialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import android.widget.TextView
-import com.example.movie_booking_app.utils.Constants
 
 @AndroidEntryPoint
 class AdminMovieListFragment : Fragment() {
@@ -37,8 +38,8 @@ class AdminMovieListFragment : Fragment() {
     private val binding get() = _binding!!
 
     companion object {
-        private const val TAB_ACTIVE = Constants.Movie.STATUS_ACTIVE
-        private const val TAB_INACTIVE = Constants.Movie.STATUS_DELETED
+        private const val TAB_ACTIVE = "active"
+        private const val TAB_INACTIVE = "inactive"
     }
 
     override fun onCreateView(
@@ -81,11 +82,11 @@ class AdminMovieListFragment : Fragment() {
 
         binding.tabActiveMovie.setOnClickListener {
             switchTab(TAB_ACTIVE)
-            viewModel.loadAdminMovies(Constants.Movie.STATUS_ACTIVE)
+            viewModel.loadAdminMovies("active")
         }
         binding.tabInactiveMovie.setOnClickListener {
             switchTab(TAB_INACTIVE)
-            viewModel.loadAdminMovies(Constants.Movie.STATUS_DELETED)
+            viewModel.loadAdminMovies("deleted")
         }
 
         binding.fabAddMovie.setOnClickListener {
@@ -141,7 +142,7 @@ class AdminMovieListFragment : Fragment() {
 
         dialogBinding.btnConfirmDelete.setOnClickListener {
             dialog.dismiss()
-            val request = com.example.movie_booking_app.data.model.request.UpdateMovieRequest(
+            val request = UpdateMovieRequest(
                 isDeleted = false
             )
             val currentStatus = if (selectedTab == TAB_ACTIVE) Constants.Movie.STATUS_ACTIVE else Constants.Movie.STATUS_DELETED
@@ -161,10 +162,10 @@ class AdminMovieListFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.movieActionSuccess.collect { success ->
-                val messageRes = if (success) {
-                    if (selectedTab == TAB_ACTIVE) R.string.msg_movie_deleted_success else R.string.msg_movie_restored_success
+                val message = if (success) {
+                    if (selectedTab == TAB_ACTIVE) "Movie deleted successfully" else "Movie restored successfully"
                 } else {
-                    if (selectedTab == TAB_ACTIVE) R.string.msg_movie_delete_failed else R.string.msg_movie_restore_failed
+                    if (selectedTab == TAB_ACTIVE) "Failed to delete movie" else "Failed to restore movie"
                 }
                 Toast.makeText(context, getString(messageRes), Toast.LENGTH_SHORT).show()
             }
@@ -172,7 +173,19 @@ class AdminMovieListFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.movieActionMessage.collect { message ->
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                val displayMsg = when(message) {
+                    "msg_movie_deleted_success" -> getString(R.string.msg_movie_deleted_success)
+                    "msg_movie_restored_success" -> getString(R.string.msg_movie_restored_success)
+                    "msg_movie_delete_failed" -> getString(R.string.msg_movie_delete_failed)
+                    "msg_movie_restore_failed" -> getString(R.string.msg_movie_restore_failed)
+                    "msg_movie_added_success" -> getString(R.string.msg_movie_added_success)
+                    "msg_movie_add_failed" -> getString(R.string.msg_movie_add_failed)
+                    "msg_movie_updated_success" -> getString(R.string.msg_movie_updated_success)
+                    "msg_movie_update_failed" -> getString(R.string.msg_movie_update_failed)
+                    "error_unknown" -> getString(R.string.error_unknown)
+                    else -> message
+                }
+                Toast.makeText(context, displayMsg, Toast.LENGTH_SHORT).show()
             }
         }
     }

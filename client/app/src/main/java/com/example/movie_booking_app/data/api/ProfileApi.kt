@@ -1,9 +1,11 @@
 package com.example.movie_booking_app.data.api
 
+import com.example.movie_booking_app.data.model.request.ChangePasswordRequest
 import com.example.movie_booking_app.data.model.request.UpdateProfileRequest
-import com.example.movie_booking_app.data.model.response.UserProfileResponse
 import com.example.movie_booking_app.data.model.response.UploadAvatarResponse
+import com.example.movie_booking_app.data.model.response.UserProfileResponse
 import okhttp3.MultipartBody
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -27,6 +29,6 @@ interface ProfileApi {
 
     @PUT("api/accounts/change-password")
     suspend fun changePassword(
-        @Body request: com.example.movie_booking_app.data.model.request.ChangePasswordRequest
-    ): Response<okhttp3.ResponseBody>
+        @Body request: ChangePasswordRequest
+    ): Response<ResponseBody>
 }

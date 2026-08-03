@@ -220,7 +220,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="Language"
+            android:hint="@string/hint_language"
             app:boxStrokeColor="@color/text_input_stroke"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="2dp"

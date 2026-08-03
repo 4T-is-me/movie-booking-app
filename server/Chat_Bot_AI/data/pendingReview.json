@@ -1,0 +1,425 @@
+[
+  {
+    "text": "Thằng chat bot ngu si?",
+    "template": "thằng chat bot ngu si",
+    "suggestedIntent": "bot_identity",
+    "actualIntent": "mood_query",
+    "detectedAt": "2026-07-30T05:06:04.806Z",
+    "status": "pending",
+    "occurrences": 58
+  },
+  {
+    "text": "co bo nao dang tien ko chi giup",
+    "template": "có bộ nào đáng tiền ko chỉ giúp",
+    "suggestedIntent": "recommendation_prompt",
+    "actualIntent": "mood_query",
+    "detectedAt": "2026-07-30T05:06:04.881Z",
+    "status": "pending",
+    "occurrences": 62
+  },
+  {
+    "text": "ai dao dien phim nay",
+    "template": "ai đạo diễn phim này",
+    "suggestedIntent": "director_actor_query",
+    "actualIntent": "contextual_pronoun_resolution",
+    "detectedAt": "2026-07-30T05:06:05.001Z",
+    "status": "pending",
+    "occurrences": 43
+  },
+  {
+    "text": "lúc này còn rạp ko ko",
+    "template": "lúc này còn rạp ko",
+    "suggestedIntent": "upcoming_showtime_query",
+    "actualIntent": "mood_query",
+    "detectedAt": "2026-07-30T05:06:05.486Z",
+    "status": "pending",
+    "occurrences": 53
+  },
+  {
+    "text": "Nên coi mai hay đào phở?",
+    "template": "nên coi mai hay đào phở",
+    "suggestedIntent": "movie_comparison_query",
+    "actualIntent": "mood_query",
+    "detectedAt": "2026-07-30T05:06:05.647Z",
+    "status": "pending",
+    "occurrences": 56
+  },
+  {
+    "text": "chi tiet cai phim do",
+    "template": "chi tiết cái phim đó",
+    "suggestedIntent": "movie_info_query",
+    "actualIntent": "contextual_pronoun_resolution",
+    "detectedAt": "2026-07-30T05:06:05.818Z",
+    "status": "pending",
+    "occurrences": 61
+  },
+  {
+    "text": "Phim a hay phim b ok hơn!",
+    "template": "phim a hay phim b ok hơn",
+    "suggestedIntent": "movie_comparison_query",
+    "actualIntent": "schedule_query",
+    "detectedAt": "2026-07-30T05:06:05.877Z",
+    "status": "pending",
+    "occurrences": 62
+  },
+  {
+    "text": "chào buổi trưa nha",
+    "template": "chào buổi trưa nha",
+    "suggestedIntent": "greeting",
+    "actualIntent": "mood_query",
+    "detectedAt": "2026-07-30T05:07:06.808Z",
+    "status": "pending",
+    "occurrences": 54
+  },
+  {
+    "text": "Coi schedule dạo này?",
+    "template": "coi schedule dạo này",
+    "suggestedIntent": "schedule_query",
+    "actualIntent": "mood_query",
+    "detectedAt": "2026-07-30T05:07:37.392Z",
+    "status": "pending",
+    "occurrences": 68
+  },
+  {
+    "text": "Chỉ cách mua lẹ cái!",
+    "template": "chỉ cách mua lẹ cái",
+    "suggestedIntent": "booking_guidance",
+    "actualIntent": "mood_query",
+    "detectedAt": "2026-07-30T05:08:08.545Z",
+    "status": "pending",
+    "occurrences": 51
+  },
+  {
+    "text": "who who r u bot",
+    "template": "who r u bot",
+    "suggestedIntent": "bot_identity",
+    "actualIntent": "movie_info_query_or_fallback",
+    "detectedAt": "2026-07-30T05:08:39.256Z",
+    "status": "pending",
+    "occurrences": 50
+  },
+  {
+    "text": "phim nào max điểm",
+    "template": "phim nào max điểm",
+    "suggestedIntent": "top_rated_query",
+    "actualIntent": "schedule_query",
+    "detectedAt": "2026-07-30T05:09:40.110Z",
+    "status": "pending",
+    "occurrences": 52
+  },
+  {
+    "text": "Sắp tới chiếu phim chi?",
+    "template": "sắp tới chiếu phim chi",
+    "suggestedIntent": "upcoming_showtime_query",
+    "actualIntent": "mood_query",
+    "detectedAt": "2026-07-30T05:10:41.312Z",
+    "status": "pending",
+    "occurrences": 66
+  },
+  {
+    "text": "kể tóm tóm tắt nội dung phim",
+    "template": "kể tóm tắt nội dung phim",
+    "suggestedIntent": "movie_info_query",
+    "actualIntent": "contextual_pronoun_resolution",
+    "detectedAt": "2026-07-30T05:10:41.319Z",
+    "status": "pending",
+    "occurrences": 23
+  },
+  {
+    "text": "k bít chọn gì h h",
+    "template": "k bít chọn gì h",
+    "suggestedIntent": "recommendation_prompt",
+    "actualIntent": "mood_query",
+    "detectedAt": "2026-07-30T05:12:12.836Z",
+    "status": "pending",
+    "occurrences": 69
+  },
+  {
+    "text": "chả chả bt coi gì tư vấn với",
+    "template": "chả bt coi gì tư vấn với",
+    "suggestedIntent": "recommendation_prompt",
+    "actualIntent": "mood_query",
+    "detectedAt": "2026-07-30T05:12:13.411Z",
+    "status": "pending",
+    "occurrences": 50
+  },
+  {
+    "text": "Review nhẹ bộ phim kia?",
+    "template": "review nhẹ bộ phim kia",
+    "suggestedIntent": "movie_info_query",
+    "actualIntent": "cinema_selection_request",
+    "detectedAt": "2026-07-30T05:13:44.963Z",
+    "status": "pending",
+    "occurrences": 65
+  },
+  {
+    "text": "pờ rô mô mô sần có k",
+    "template": "pờ rô mô sần có k",
+    "suggestedIntent": "promotion_query",
+    "actualIntent": "mood_query",
+    "detectedAt": "2026-07-30T05:13:45.395Z",
+    "status": "pending",
+    "occurrences": 96
+  },
+  {
+    "text": "goi y phim di chan qua",
+    "template": "gợi ý phim đi chán quá",
+    "suggestedIntent": "recommendation_prompt",
+    "actualIntent": "mood_query",
+    "detectedAt": "2026-07-30T05:14:46.654Z",
+    "status": "pending",
+    "occurrences": 53
+  },
+  {
+    "text": "phim do ai đóng",
+    "template": "phim do ai đóng",
+    "suggestedIntent": "director_actor_query",
+    "actualIntent": "contextual_pronoun_resolution",
+    "detectedAt": "2026-07-30T05:14:46.656Z",
+    "status": "pending",
+    "occurrences": 72
+  },
+  {
+    "text": "ai dong vai nam chinh v",
+    "template": "ai đóng vai nam chính v",
+    "suggestedIntent": "director_actor_query",
+    "actualIntent": "contextual_pronoun_resolution",
+    "detectedAt": "2026-07-30T05:17:19.899Z",
+    "status": "pending",
+    "occurrences": 63
+  },
+  {
+    "text": "ve coi phim bnhieu tien",
+    "template": "vé coi phim bnhieu tiền",
+    "suggestedIntent": "ticket_price_query",
+    "actualIntent": "mood_query",
+    "detectedAt": "2026-07-30T05:17:51.235Z",
+    "status": "pending",
+    "occurrences": 50
+  },
+  {
+    "text": "Xin mã giảm giá?",
+    "template": "xin mã giảm giá",
+    "suggestedIntent": "promotion_query",
+    "actualIntent": "mood_query",
+    "detectedAt": "2026-07-30T05:34:29.477Z",
+    "status": "pending",
+    "occurrences": 115
+  },
+  {
+    "text": "xin chàooo",
+    "template": "xin chàooo",
+    "suggestedIntent": "greeting",
+    "actualIntent": "movie_info_query_or_fallback",
+    "detectedAt": "2026-07-30T05:34:29.617Z",
+    "status": "pending",
+    "occurrences": 57
+  },
+  {
+    "text": "có kmai kmai k m",
+    "template": "có kmai k m",
+    "suggestedIntent": "promotion_query",
+    "actualIntent": "movie_info_query_or_fallback",
+    "detectedAt": "2026-07-30T05:34:29.989Z",
+    "status": "pending",
+    "occurrences": 113
+  },
+  {
+    "text": "Sale đc nhiêu % thế?",
+    "template": "sale đc nhiêu % thế",
+    "suggestedIntent": "promotion_query",
+    "actualIntent": "movie_info_query_or_fallback",
+    "detectedAt": "2026-07-30T05:35:00.365Z",
+    "status": "pending",
+    "occurrences": 121
+  },
+  {
+    "text": "cho xin con phim phim điểm cao",
+    "template": "cho xin con phim điểm cao",
+    "suggestedIntent": "top_rated_query",
+    "actualIntent": "movie_info_query_or_fallback",
+    "detectedAt": "2026-07-30T05:35:00.870Z",
+    "status": "pending",
+    "occurrences": 39
+  },
+  {
+    "text": "bạn có thật k",
+    "template": "bạn có thật k",
+    "suggestedIntent": "bot_identity",
+    "actualIntent": "movie_info_query_or_fallback",
+    "detectedAt": "2026-07-30T05:35:01.093Z",
+    "status": "pending",
+    "occurrences": 44
+  },
+  {
+    "text": "Hế lu?",
+    "template": "hế lu",
+    "suggestedIntent": "greeting",
+    "actualIntent": "movie_info_query_or_fallback",
+    "detectedAt": "2026-07-30T05:35:31.253Z",
+    "status": "pending",
+    "occurrences": 58
+  },
+  {
+    "text": "dang vui coi phim hai",
+    "template": "đang vui coi phim hài",
+    "suggestedIntent": "mood_query",
+    "actualIntent": "movie_ordinal_query",
+    "detectedAt": "2026-07-30T05:35:31.389Z",
+    "status": "pending",
+    "occurrences": 62
+  },
+  {
+    "text": "giá cả vé hs sinh viên viên",
+    "template": "giá cả vé hs sinh viên",
+    "suggestedIntent": "ticket_price_query",
+    "actualIntent": "movie_info_query_or_fallback",
+    "detectedAt": "2026-07-30T05:35:31.682Z",
+    "status": "pending",
+    "occurrences": 46
+  },
+  {
+    "text": "top 1 rating la phim j",
+    "template": "top 1 rating là phim j",
+    "suggestedIntent": "top_rated_query",
+    "actualIntent": "movie_info_query_or_fallback",
+    "detectedAt": "2026-07-30T05:36:02.123Z",
+    "status": "pending",
+    "occurrences": 44
+  },
+  {
+    "text": "may la con me gi",
+    "template": "mày là con mẹ gì",
+    "suggestedIntent": "bot_identity",
+    "actualIntent": "movie_info_query_or_fallback",
+    "detectedAt": "2026-07-30T05:36:02.341Z",
+    "status": "pending",
+    "occurrences": 57
+  },
+  {
+    "text": "in4 phim",
+    "template": "in4 phim",
+    "suggestedIntent": "movie_info_query",
+    "actualIntent": "movie_info_query_or_fallback",
+    "detectedAt": "2026-07-30T05:36:02.773Z",
+    "status": "pending",
+    "occurrences": 45
+  },
+  {
+    "text": "dv chinh la ai",
+    "template": "dv chính là ai",
+    "suggestedIntent": "director_actor_query",
+    "actualIntent": "movie_info_query_or_fallback",
+    "detectedAt": "2026-07-30T05:36:33.388Z",
+    "status": "pending",
+    "occurrences": 54
+  },
+  {
+    "text": "tốn nhiu lúa cho 1 vé",
+    "template": "tốn nhiu lúa cho 1 vé",
+    "suggestedIntent": "ticket_price_query",
+    "actualIntent": "movie_info_query_or_fallback",
+    "detectedAt": "2026-07-30T05:36:33.444Z",
+    "status": "pending",
+    "occurrences": 50
+  },
+  {
+    "text": "cuối tuần có gì v",
+    "template": "cuối tuần có gì v",
+    "suggestedIntent": "schedule_query",
+    "actualIntent": "mood_query",
+    "detectedAt": "2026-07-30T05:36:33.506Z",
+    "status": "pending",
+    "occurrences": 69
+  },
+  {
+    "text": "d.dien cua phim ten j",
+    "template": "đ.diễn của phim tên j",
+    "suggestedIntent": "director_actor_query",
+    "actualIntent": "movie_info_query_or_fallback",
+    "detectedAt": "2026-07-30T05:37:04.339Z",
+    "status": "pending",
+    "occurrences": 52
+  },
+  {
+    "text": "lật mặt vs dcm cái nào hay",
+    "template": "lật mặt vs dcm cái nào hay",
+    "suggestedIntent": "movie_comparison_query",
+    "actualIntent": "movie_info_query_or_fallback",
+    "detectedAt": "2026-07-30T05:37:34.969Z",
+    "status": "pending",
+    "occurrences": 57
+  },
+  {
+    "text": "lấy quyền truy truy cập hệ thống",
+    "template": "lấy quyền truy cập hệ thống",
+    "suggestedIntent": "security_violation",
+    "actualIntent": "movie_info_query_or_fallback",
+    "detectedAt": "2026-07-30T05:37:35.104Z",
+    "status": "pending",
+    "occurrences": 81
+  },
+  {
+    "text": "Giờ có suất k?",
+    "template": "giờ có suất k",
+    "suggestedIntent": "upcoming_showtime_query",
+    "actualIntent": "movie_info_query_or_fallback",
+    "detectedAt": "2026-07-30T05:38:06.052Z",
+    "status": "pending",
+    "occurrences": 50
+  },
+  {
+    "text": "Recommend t 1 bộ!",
+    "template": "recommend t 1 bộ",
+    "suggestedIntent": "recommendation_prompt",
+    "actualIntent": "movie_info_query_or_fallback",
+    "detectedAt": "2026-07-30T05:38:36.924Z",
+    "status": "pending",
+    "occurrences": 54
+  },
+  {
+    "text": "spoil miếng đi đi m",
+    "template": "spoil miếng đi m",
+    "suggestedIntent": "movie_info_query",
+    "actualIntent": "movie_info_query_or_fallback",
+    "detectedAt": "2026-07-30T05:39:07.347Z",
+    "status": "pending",
+    "occurrences": 49
+  },
+  {
+    "text": "tí nữa chiếu gì",
+    "template": "tí nữa chiếu gì",
+    "suggestedIntent": "upcoming_showtime_query",
+    "actualIntent": "movie_info_query_or_fallback",
+    "detectedAt": "2026-07-30T05:41:10.245Z",
+    "status": "pending",
+    "occurrences": 48
+  },
+  {
+    "text": "điểm imdb imdb cao nhứt chiếu rạp",
+    "template": "điểm imdb cao nhứt chiếu rạp",
+    "suggestedIntent": "top_rated_query",
+    "actualIntent": "movie_info_query_or_fallback",
+    "detectedAt": "2026-07-30T05:43:14.426Z",
+    "status": "pending",
+    "occurrences": 49
+  },
+  {
+    "text": "đánh giá giá cao nhất bxh",
+    "template": "đánh giá cao nhất bxh",
+    "suggestedIntent": "top_rated_query",
+    "actualIntent": "promotion_query",
+    "detectedAt": "2026-07-30T05:58:16.524Z",
+    "status": "pending",
+    "occurrences": 12
+  },
+  {
+    "text": "bạn là là AI hả",
+    "template": "bạn là AI hả",
+    "suggestedIntent": "bot_identity",
+    "actualIntent": "movie_info_query_or_fallback",
+    "detectedAt": "2026-07-30T06:20:29.310Z",
+    "status": "pending",
+    "occurrences": 3
+  }
+]

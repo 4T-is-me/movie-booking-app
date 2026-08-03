@@ -5,23 +5,22 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import timber.log.Timber
 import androidx.core.app.NotificationCompat
+import androidx.core.app.TaskStackBuilder
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.api.FcmApi
 import com.example.movie_booking_app.data.model.request.RegisterFcmTokenRequest
-import com.example.movie_booking_app.view.activity.BookingDetailActivity
 import com.example.movie_booking_app.view.activity.MainActivity
-import com.example.movie_booking_app.view.activity.PromotionDetailActivity
 import com.example.movie_booking_app.view.activity.NotificationActivity
 import com.example.movie_booking_app.view.activity.StaffActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import timber.log.Timber
 
 /**
  * Firebase Cloud Messaging Service.
@@ -218,7 +217,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         }
 
         val parentActivity = if (isStaffNotif) StaffActivity::class.java else MainActivity::class.java
-        val stackBuilder = androidx.core.app.TaskStackBuilder.create(this).apply {
+        val stackBuilder = TaskStackBuilder.create(this).apply {
             addNextIntentWithParentStack(Intent(this@MyFirebaseMessagingService, parentActivity))
             addNextIntent(destIntent)
         }

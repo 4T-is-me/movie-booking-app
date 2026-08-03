@@ -6,13 +6,13 @@ import com.example.movie_booking_app.data.model.response.DailyRevenueResponse
 import com.example.movie_booking_app.data.model.response.MonthlyRevenueResponse
 import com.example.movie_booking_app.data.model.response.MovieRevenueResponse
 import com.example.movie_booking_app.data.model.response.OverviewStatsResponse
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import okhttp3.ResponseBody.Companion.toResponseBody
 import retrofit2.Response
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class StatsRepository @Inject constructor(

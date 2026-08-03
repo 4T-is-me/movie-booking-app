@@ -1,12 +1,12 @@
 package com.example.movie_booking_app.view.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import androidx.viewpager2.widget.ViewPager2
 import com.example.movie_booking_app.data.model.entity.Movie
 import com.example.movie_booking_app.data.model.entity.MovieNews
@@ -229,7 +229,7 @@ class HomeMultiAdapter(
         private val adapter = MovieNewsAdapter(onNewsClicked, onNewsLikeClicked)
         init { 
             binding.rvMovieNews.adapter = adapter
-            (binding.rvMovieNews.itemAnimator as? androidx.recyclerview.widget.SimpleItemAnimator)?.supportsChangeAnimations = false
+            (binding.rvMovieNews.itemAnimator as? SimpleItemAnimator)?.supportsChangeAnimations = false
             binding.tvSeeAllNews.setOnClickListener { onSeeAll("News") }
         }
         fun bind(news: List<MovieNews>, isLoading: Boolean) { 

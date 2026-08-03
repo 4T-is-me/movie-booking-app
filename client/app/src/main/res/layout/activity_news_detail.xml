@@ -255,7 +255,7 @@
             android:minHeight="40dp"
             android:maxHeight="100dp"
             android:background="@drawable/bg_input_dark"
-            android:hint="Write a comment..."
+            android:hint="@string/hint_write_comment"
             android:textColorHint="@color/auto_color_88FFFFFF"
             android:textColor="@color/white"
             android:textSize="14sp"

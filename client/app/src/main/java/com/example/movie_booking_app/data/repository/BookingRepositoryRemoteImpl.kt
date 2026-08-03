@@ -1,30 +1,33 @@
 package com.example.movie_booking_app.data.repository
 
 import com.example.movie_booking_app.data.api.BookingApi
+import com.example.movie_booking_app.data.api.HoldSeatsRequest
 import com.example.movie_booking_app.data.api.MovieApi
 import com.example.movie_booking_app.data.model.entity.Showtime
 import com.example.movie_booking_app.data.model.response.ScoreHistoryBaseResponse
+import com.example.movie_booking_app.data.model.response.SeatMapData
+import com.google.gson.JsonParser
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
 
 class BookingRepositoryRemoteImpl @Inject constructor(
     private val bookingApi: BookingApi,
     private val movieApi: MovieApi
 ) : BookingRepository {
 
-    override fun getSeats(showtimeId: String): Flow<com.example.movie_booking_app.data.model.response.SeatMapData> = flow {
+    override fun getSeats(showtimeId: String): Flow<SeatMapData> = flow {
         try {
             val response = bookingApi.getSeats(showtimeId)
             if (response.isSuccessful) {
-                val seatMapData = response.body()?.data ?: com.example.movie_booking_app.data.model.response.SeatMapData()
+                val seatMapData = response.body()?.data ?: SeatMapData()
                 seatMapData.seats?.forEach { it.syncStatus() }
                 emit(seatMapData)
             } else {
-                emit(com.example.movie_booking_app.data.model.response.SeatMapData())
+                emit(SeatMapData())
             }
         } catch (e: Exception) {
-            emit(com.example.movie_booking_app.data.model.response.SeatMapData())
+            emit(SeatMapData())
         }
     }
 
@@ -58,7 +61,7 @@ class BookingRepositoryRemoteImpl @Inject constructor(
     }
 
     override fun holdSeats(showtimeId: String, seatIds: List<String>): Flow<Unit> = flow {
-        val payload = com.example.movie_booking_app.data.api.HoldSeatsRequest(seatIds)
+        val payload = HoldSeatsRequest(seatIds)
         val response = bookingApi.holdSeats(showtimeId, payload)
         if (response.isSuccessful) {
             emit(Unit)
@@ -71,7 +74,7 @@ class BookingRepositoryRemoteImpl @Inject constructor(
     }
 
     override fun releaseSeats(showtimeId: String, seatIds: List<String>): Flow<Unit> = flow {
-        val payload = com.example.movie_booking_app.data.api.HoldSeatsRequest(seatIds)
+        val payload = HoldSeatsRequest(seatIds)
         val response = bookingApi.releaseSeats(showtimeId, payload)
         if (response.isSuccessful) {
             emit(Unit)
@@ -84,7 +87,7 @@ class BookingRepositoryRemoteImpl @Inject constructor(
     private fun parseErrorMessage(raw: String): String {
         return try {
             if (raw.startsWith("{") && raw.contains("message")) {
-                val json = com.google.gson.JsonParser.parseString(raw).asJsonObject
+                val json = JsonParser.parseString(raw).asJsonObject
                 json.get("message")?.asString ?: raw
             } else {
                 raw

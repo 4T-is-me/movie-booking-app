@@ -2,9 +2,9 @@ package com.example.movie_booking_app.data.repository
 
 import com.example.movie_booking_app.data.api.MemberApi
 import com.example.movie_booking_app.data.model.response.MemberVerifyResponse
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
 
 class MemberRepositoryImpl @Inject constructor(
     private val memberApi: MemberApi

@@ -1,8 +1,6 @@
 package com.example.movie_booking_app.view.adapter
 
-import com.example.movie_booking_app.databinding.ItemAdminRoomBinding
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
@@ -10,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.CinemaRoom
+import com.example.movie_booking_app.databinding.ItemAdminRoomBinding
 
 class AdminRoomAdapter(
     private val onRoomClick: (CinemaRoom) -> Unit

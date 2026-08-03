@@ -1,35 +1,33 @@
 package com.example.movie_booking_app.view.activity
 
-import com.example.movie_booking_app.R
-
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import timber.log.Timber
-import com.example.movie_booking_app.utils.Validator
-import com.example.movie_booking_app.utils.RoleConstants
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
+import com.example.movie_booking_app.BuildConfig
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.local.FcmTokenHelper
 import com.example.movie_booking_app.data.model.request.LoginRequest
 import com.example.movie_booking_app.databinding.ActivityLoginBinding
+import com.example.movie_booking_app.utils.RoleConstants
+import com.example.movie_booking_app.utils.Validator
 import com.example.movie_booking_app.viewmodel.LoginUiState
 import com.example.movie_booking_app.viewmodel.LoginViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import androidx.activity.result.contract.ActivityResultContracts
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import javax.inject.Inject
+import timber.log.Timber
 
 @AndroidEntryPoint
 class LoginActivity : EnglishBaseActivity() {
@@ -63,7 +61,7 @@ class LoginActivity : EnglishBaseActivity() {
         setContentView(binding.root)
 
         // Disable system back button
-        onBackPressedDispatcher.addCallback(this, object : androidx.activity.OnBackPressedCallback(true) {
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 // Do nothing to disable back button
             }
@@ -106,7 +104,7 @@ class LoginActivity : EnglishBaseActivity() {
             viewModel.login(LoginRequest(username, password))
         }
 
-        val googleClientId = com.example.movie_booking_app.BuildConfig.GOOGLE_CLIENT_ID
+        val googleClientId = BuildConfig.GOOGLE_CLIENT_ID
         if (googleClientId.isNotEmpty()) {
             val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(googleClientId)

@@ -4,7 +4,7 @@ import { StaffShift } from "../models/staffShiftModel.js";
 import { LeaveRequest } from "../models/leaveRequestModel.js";
 import { StatusCodes } from "http-status-codes";
 import { constants } from "../utils/Constants.js";
-import {NotificationService} from "./notificationService.js";
+import { NotificationService } from "./notificationService.js";
 import { formatDate } from "../utils/formatters.js";
 import ApiError from "../utils/ApiError.js";
 import mongoose from "mongoose";

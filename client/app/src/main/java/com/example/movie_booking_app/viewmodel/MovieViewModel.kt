@@ -3,15 +3,21 @@ package com.example.movie_booking_app.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.entity.Movie
-import com.example.movie_booking_app.data.model.entity.MovieNews
-import com.example.movie_booking_app.data.model.entity.Promo
-import com.example.movie_booking_app.data.model.entity.Service
 import com.example.movie_booking_app.data.model.entity.Showtime
+import com.example.movie_booking_app.data.model.request.AddMovieRequest
+import com.example.movie_booking_app.data.model.request.UpdateMovieRequest
 import com.example.movie_booking_app.data.model.response.MovieResponse
+import com.example.movie_booking_app.data.model.response.ReviewItem
 import com.example.movie_booking_app.data.model.ui.HomeItem
 import com.example.movie_booking_app.data.repository.MovieRepository
+import com.example.movie_booking_app.data.repository.NewsRepository
 import com.example.movie_booking_app.data.repository.ProfileRepository
+import com.google.gson.JsonParser
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.io.File
+import javax.inject.Inject
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,14 +31,12 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import java.io.File
-import javax.inject.Inject
 
 @HiltViewModel
 class MovieViewModel @Inject constructor(
     private val repository: MovieRepository,
     private val profileRepository: ProfileRepository,
-    private val newsRepository: com.example.movie_booking_app.data.repository.NewsRepository
+    private val newsRepository: NewsRepository
 ) : ViewModel() {
 
     private val _searchQuery = MutableStateFlow("")
@@ -44,7 +48,7 @@ class MovieViewModel @Inject constructor(
     val homeItems: StateFlow<List<HomeItem>> = _homeItems.asStateFlow()
 
     private var cachedHomeItems: List<HomeItem>? = null
-    private var searchJob: kotlinx.coroutines.Job? = null
+    private var searchJob: Job? = null
 
     private val _adminMovies = MutableStateFlow<List<Movie>>(emptyList())
     val adminMovies: StateFlow<List<Movie>> = _adminMovies.asStateFlow()
@@ -73,10 +77,10 @@ class MovieViewModel @Inject constructor(
         loadAdminMovies()
     }
 
-    @OptIn(kotlinx.coroutines.FlowPreview::class)
+    @OptIn(FlowPreview::class)
     private fun setupSearch() {
         _searchQuery
-            .debounce(500)
+            .debounce(com.example.movie_booking_app.utils.Constants.BookingConfig.DEBOUNCE_SEARCH_MS)
             .distinctUntilChanged()
             .onEach { query ->
                 if (query.isNotEmpty()) {
@@ -134,19 +138,20 @@ class MovieViewModel @Inject constructor(
                 repository.getNews().onStart { emit(emptyList()) }
             ) { movies, promos, services, news ->
                 val list = mutableListOf<HomeItem>()
+                val movieStatus = com.example.movie_booking_app.utils.Constants.MovieStatus
                 
                 // Helper to filter status
                 fun Movie.hasStatus(vararg keys: String) = keys.any { status?.lowercase()?.contains(it) == true }
 
                 // Now Playing Section
-                val nowPlaying = movies.filter { it.hasStatus("showing", "active") }
+                val nowPlaying = movies.filter { it.hasStatus(movieStatus.SHOWING, movieStatus.ACTIVE) }
                 list.add(HomeItem.NowPlayingSection(
                     nowPlaying.ifEmpty { null },
                     isLoading = nowPlaying.isEmpty() && promos.isEmpty()
                 ))
                 
                 // Coming Soon Section: Hide if empty
-                val comingSoon = movies.filter { it.hasStatus("coming", "soon", "upcoming", "inactive") }
+                val comingSoon = movies.filter { it.hasStatus(movieStatus.COMING_SOON, movieStatus.SOON, movieStatus.UPCOMING, movieStatus.INACTIVE) }
                 if (comingSoon.isNotEmpty()) {
                     list.add(HomeItem.ComingSoonSection(comingSoon, isLoading = false))
                 }
@@ -207,18 +212,18 @@ class MovieViewModel @Inject constructor(
                 _movieActionSuccess.emit(success)
                 if (success) {
                     loadAdminMovies(status)
-                    _movieActionMessage.emit("Movie deleted successfully")
+                    _movieActionMessage.emit("msg_movie_deleted_success")
                 } else {
-                    _movieActionMessage.emit("Failed to delete movie")
+                    _movieActionMessage.emit("msg_movie_delete_failed")
                 }
             } catch (e: Exception) {
                 _movieActionSuccess.emit(false)
-                _movieActionMessage.emit("Failed to delete movie: ${e.message ?: "Unknown error"}")
+                _movieActionMessage.emit("error_unknown")
             }
         }
     }
 
-    fun addMovie(request: com.example.movie_booking_app.data.model.request.AddMovieRequest, posterFile: File? = null) {
+    fun addMovie(request: AddMovieRequest, posterFile: File? = null) {
         viewModelScope.launch {
             try {
                 val success = repository.addMovie(request, posterFile)
@@ -226,18 +231,18 @@ class MovieViewModel @Inject constructor(
                 if (success) {
                     loadAdminMovies()
                     loadHomeData()
-                    _movieActionMessage.emit("Movie added successfully")
+                    _movieActionMessage.emit("msg_movie_added_success")
                 } else {
-                    _movieActionMessage.emit("Failed to add movie")
+                    _movieActionMessage.emit("msg_movie_add_failed")
                 }
             } catch (e: Exception) {
                 _movieActionSuccess.emit(false)
-                _movieActionMessage.emit("Failed to add movie: ${e.message ?: "Unknown error"}")
+                _movieActionMessage.emit("error_unknown")
             }
         }
     }
 
-    fun updateMovie(id: String, request: com.example.movie_booking_app.data.model.request.UpdateMovieRequest, posterFile: File? = null, status: String? = null) {
+    fun updateMovie(id: String, request: UpdateMovieRequest, posterFile: File? = null, status: String? = null) {
         viewModelScope.launch {
             try {
                 val success = repository.updateMovie(id, request, posterFile)
@@ -245,13 +250,13 @@ class MovieViewModel @Inject constructor(
                 if (success) {
                     loadAdminMovies(status)
                     loadHomeData()
-                    _movieActionMessage.emit("Movie updated successfully")
+                    _movieActionMessage.emit("msg_movie_updated_success")
                 } else {
-                    _movieActionMessage.emit("Failed to update movie")
+                    _movieActionMessage.emit("msg_movie_update_failed")
                 }
             } catch (e: Exception) {
                 _movieActionSuccess.emit(false)
-                _movieActionMessage.emit("Failed to update movie: ${e.message ?: "Unknown error"}")
+                _movieActionMessage.emit("error_unknown")
             }
         }
     }
@@ -262,8 +267,8 @@ class MovieViewModel @Inject constructor(
     private val _reviewErrorMessage = MutableSharedFlow<String?>()
     val reviewErrorMessage = _reviewErrorMessage.asSharedFlow()
 
-    private val _movieReviews = MutableStateFlow<List<com.example.movie_booking_app.data.model.response.ReviewItem>>(emptyList())
-    val movieReviews: StateFlow<List<com.example.movie_booking_app.data.model.response.ReviewItem>> = _movieReviews.asStateFlow()
+    private val _movieReviews = MutableStateFlow<List<ReviewItem>>(emptyList())
+    val movieReviews: StateFlow<List<ReviewItem>> = _movieReviews.asStateFlow()
 
     private val _reviewsTotalCount = MutableStateFlow(0)
     val reviewsTotalCount: StateFlow<Int> = _reviewsTotalCount.asStateFlow()
@@ -280,7 +285,7 @@ class MovieViewModel @Inject constructor(
                     val errorMsg = response.body()?.message ?: response.errorBody()?.string() ?: "Unknown error"
                     // Try to parse JSON error message if possible
                     val parsedMsg = try {
-                        val json = com.google.gson.JsonParser.parseString(errorMsg).asJsonObject
+                        val json = JsonParser.parseString(errorMsg).asJsonObject
                         json.get("message")?.asString ?: errorMsg
                     } catch (_: Exception) {
                         errorMsg

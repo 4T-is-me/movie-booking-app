@@ -39,6 +39,23 @@ const ROLES = {
     CINEMA_MANAGER: 'Cinema Manager'
 };
 
+const IMPORT_ORDER_STATUS = {
+    PENDING: 'PENDING',
+    APPROVED: 'APPROVED',
+    REJECTED: 'REJECTED',
+    CANCELLED: 'CANCELLED'
+};
+
+const INVENTORY_LOG_TYPE = {
+    REFILL: 'REFILL',
+    SALE: 'SALE',
+    ADJUST: 'ADJUST'
+};
+
+const ORDER_PREFIX = {
+    IMPORT: 'PN-'
+};
+
 export const constants = {  
     SEAT_STATUS,
     SHIFTS,
@@ -47,5 +64,8 @@ export const constants = {
     SHIFT_RATES,
     HOLIDAY_MULTIPLIER,
     MANAGER_REVENUE_BONUS,
-    ROLES
+    ROLES,
+    IMPORT_ORDER_STATUS,
+    INVENTORY_LOG_TYPE,
+    ORDER_PREFIX
 }

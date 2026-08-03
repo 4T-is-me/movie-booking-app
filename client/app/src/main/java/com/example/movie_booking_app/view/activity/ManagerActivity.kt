@@ -1,10 +1,12 @@
 package com.example.movie_booking_app.view.activity
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
-import com.github.mikephil.charting.data.Entry
 import android.os.Bundle
-import timber.log.Timber
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -17,23 +19,29 @@ import com.example.movie_booking_app.data.local.TokenManager
 import com.example.movie_booking_app.data.model.response.WeeklyRevenueResponse
 import com.example.movie_booking_app.databinding.ActivityManagerBinding
 import com.example.movie_booking_app.databinding.LayoutMenuBadgeBinding
-import com.example.movie_booking_app.viewmodel.NotificationViewModel
+import com.example.movie_booking_app.view.activity.manager.ManagerAutoSchedulingActivity
+import com.example.movie_booking_app.view.activity.manager.ManagerImportOrderActivity
 import com.example.movie_booking_app.view.activity.manager.ManagerReportActivity
 import com.example.movie_booking_app.view.activity.manager.ManagerRoomListActivity
 import com.example.movie_booking_app.view.activity.manager.ManagerStaffActivity
 import com.example.movie_booking_app.view.adapter.manager.ManagerShowtimeAdapter
+import com.example.movie_booking_app.view.fragment.manager.ManagerNotificationsFragment
+import com.example.movie_booking_app.view.fragment.manager.ManagerPayrollFragment
+import com.example.movie_booking_app.viewmodel.NotificationViewModel
 import com.example.movie_booking_app.viewmodel.manager.ManagerViewModel
 import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class ManagerActivity : AppCompatActivity() {
@@ -41,8 +49,8 @@ class ManagerActivity : AppCompatActivity() {
     private val viewModel: ManagerViewModel by viewModels()
     private val notificationViewModel: NotificationViewModel by viewModels()
 
-    private val notificationReceiver = object : android.content.BroadcastReceiver() {
-        override fun onReceive(context: android.content.Context?, intent: Intent?) {
+    private val notificationReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
             notificationViewModel.loadNotifications()
         }
     }
@@ -143,15 +151,15 @@ class ManagerActivity : AppCompatActivity() {
                     }
 
                     if (upcomingShowtimes.isEmpty()) {
-                        binding.rvTodayShowtimes.visibility = android.view.View.GONE
-                        binding.tvNoShowtimes.visibility = android.view.View.VISIBLE
+                        binding.rvTodayShowtimes.visibility = View.GONE
+                        binding.tvNoShowtimes.visibility = View.VISIBLE
                     } else {
                        // get 5 showtime
                         val previewShowtimes = upcomingShowtimes.take(5)
                         showtimeAdapter.submitList(previewShowtimes)
 
-                        binding.rvTodayShowtimes.visibility = android.view.View.VISIBLE
-                        binding.tvNoShowtimes.visibility = android.view.View.GONE
+                        binding.rvTodayShowtimes.visibility = View.VISIBLE
+                        binding.tvNoShowtimes.visibility = View.GONE
                     }
 
                     val weeklyData = data.weeklyRevenue.orEmpty()
@@ -238,10 +246,10 @@ class ManagerActivity : AppCompatActivity() {
             loadNotificationsFragment()
         }
         binding.tvViewAll.setOnClickListener {
-            startActivity(Intent(this, com.example.movie_booking_app.view.activity.manager.ManagerAutoSchedulingActivity::class.java))
+            startActivity(Intent(this, ManagerAutoSchedulingActivity::class.java))
         }
         binding.layoutSchedule.setOnClickListener {
-            startActivity(Intent(this, com.example.movie_booking_app.view.activity.manager.ManagerAutoSchedulingActivity::class.java))
+            startActivity(Intent(this, ManagerAutoSchedulingActivity::class.java))
         }
         binding.layoutRooms.setOnClickListener {
             startActivity(Intent(this, ManagerRoomListActivity::class.java))
@@ -259,8 +267,8 @@ class ManagerActivity : AppCompatActivity() {
                 R.id.nav_logout -> performLogout()
                 R.id.nav_dashboard -> {
                     binding.tvHeaderTitle.text = getString(R.string.auto_str_dashboard)
-                    binding.managerContainer.visibility = android.view.View.GONE
-                    binding.scrollDashboard.visibility = android.view.View.VISIBLE
+                    binding.managerContainer.visibility = View.GONE
+                    binding.scrollDashboard.visibility = View.VISIBLE
                 }
                 R.id.nav_notifications -> {
                     loadNotificationsFragment()
@@ -275,20 +283,20 @@ class ManagerActivity : AppCompatActivity() {
                     startActivity(Intent(this, ManagerStaffActivity::class.java))
                 }
                 R.id.nav_schedule -> {
-                    startActivity(Intent(this, com.example.movie_booking_app.view.activity.manager.ManagerAutoSchedulingActivity::class.java))
+                    startActivity(Intent(this, ManagerAutoSchedulingActivity::class.java))
                 }
                 R.id.nav_import_orders -> {
-                    startActivity(Intent(this, com.example.movie_booking_app.view.activity.manager.ManagerImportOrderActivity::class.java))
+                    startActivity(Intent(this, ManagerImportOrderActivity::class.java))
                 }
                 R.id.nav_profile -> {
                     startActivity(Intent(this, ManagerProfileActivity::class.java))
                 }
                 R.id.nav_payroll -> {
                     binding.tvHeaderTitle.text = getString(R.string.auto_str_payroll)
-                    binding.scrollDashboard.visibility = android.view.View.GONE
-                    binding.managerContainer.visibility = android.view.View.VISIBLE
+                    binding.scrollDashboard.visibility = View.GONE
+                    binding.managerContainer.visibility = View.VISIBLE
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.manager_container, com.example.movie_booking_app.view.fragment.manager.ManagerPayrollFragment())
+                        .replace(R.id.manager_container, ManagerPayrollFragment())
                         .commit()
                 }
                 else -> Toast.makeText(this, getString(R.string.auto_str_feature_coming_soon), Toast.LENGTH_SHORT).show()
@@ -300,10 +308,10 @@ class ManagerActivity : AppCompatActivity() {
 
     private fun loadNotificationsFragment() {
         binding.tvHeaderTitle.text = getString(R.string.auto_str_notifications)
-        binding.scrollDashboard.visibility = android.view.View.GONE
-        binding.managerContainer.visibility = android.view.View.VISIBLE
+        binding.scrollDashboard.visibility = View.GONE
+        binding.managerContainer.visibility = View.VISIBLE
         supportFragmentManager.beginTransaction()
-            .replace(R.id.manager_container, com.example.movie_booking_app.view.fragment.manager.ManagerNotificationsFragment())
+            .replace(R.id.manager_container, ManagerNotificationsFragment())
             .commit()
     }
 
@@ -316,7 +324,7 @@ class ManagerActivity : AppCompatActivity() {
         }
     }
     private fun getGreetingMessage(): String {
-        val currentHour = java.util.Calendar.getInstance().get(java.util.Calendar.HOUR_OF_DAY)
+        val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
 
         return when (currentHour) {
             in 5..11 -> "Good morning ☀️"
@@ -332,7 +340,7 @@ class ManagerActivity : AppCompatActivity() {
         ContextCompat.registerReceiver(
             this,
             notificationReceiver,
-            android.content.IntentFilter("com.example.movie_booking_app.NEW_NOTIFICATION"),
+            IntentFilter("com.example.movie_booking_app.NEW_NOTIFICATION"),
             ContextCompat.RECEIVER_NOT_EXPORTED
         )
     }
@@ -360,10 +368,10 @@ class ManagerActivity : AppCompatActivity() {
         val badgeBinding = LayoutMenuBadgeBinding.bind(actionView)
 
         if (count > 0) {
-            badgeBinding.tvNotificationBadge.visibility = android.view.View.VISIBLE
+            badgeBinding.tvNotificationBadge.visibility = View.VISIBLE
             badgeBinding.tvNotificationBadge.text = if (count > 99) "99+" else count.toString()
         } else {
-            badgeBinding.tvNotificationBadge.visibility = android.view.View.GONE
+            badgeBinding.tvNotificationBadge.visibility = View.GONE
         }
     }
 }

@@ -6,11 +6,11 @@ import com.example.movie_booking_app.data.model.response.PayrollConfig
 import com.example.movie_booking_app.data.model.response.UpdatePayrollConfigRequest
 import com.example.movie_booking_app.data.repository.PayrollConfigRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class PayrollConfigViewModel @Inject constructor(private val repository: PayrollConfigRepository) : ViewModel() {

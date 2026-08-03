@@ -1,17 +1,17 @@
 package com.example.movie_booking_app.view.adapter
 
-import androidx.core.content.ContextCompat
-
-import com.example.movie_booking_app.databinding.ItemCinemaRoomBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.widget.PopupMenu
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Cinema
+import com.example.movie_booking_app.databinding.ItemCinemaRoomBinding
 
 class CinemasAdapter(
     private val onCinemaClick: (Cinema) -> Unit,
@@ -58,7 +58,7 @@ class CinemasAdapter(
 
             tvStatusChip.text = statusText
             tvStatusChip.setTextColor(statusColor)
-            tvStatusChip.background = androidx.core.content.ContextCompat.getDrawable(itemView.context, backgroundRes)
+            tvStatusChip.background = ContextCompat.getDrawable(itemView.context, backgroundRes)
 
             val totalRooms = cinema.totalRooms ?: 0
             tvCapacity.text = if (totalRooms == 1) "1 room" else "$totalRooms rooms"
@@ -67,7 +67,7 @@ class CinemasAdapter(
             itemView.setOnClickListener { onClick(cinema) }
 
             ivOptions.setOnClickListener { view ->
-                val popup = androidx.appcompat.widget.PopupMenu(view.context, view)
+                val popup = PopupMenu(view.context, view)
                 popup.menu.add(0, 1, 0, "Edit Cinema")
                 if (status == "active") {
                     popup.menu.add(0, 2, 1, "Close Cinema")

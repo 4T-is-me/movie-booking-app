@@ -2,10 +2,12 @@ package com.example.movie_booking_app.data.repository
 
 import com.example.movie_booking_app.data.api.CinemaRoomApi
 import com.example.movie_booking_app.data.model.entity.CinemaRoom
+import com.example.movie_booking_app.data.model.entity.SeatPreview
 import com.example.movie_booking_app.data.model.request.AddRoomRequest
+import com.example.movie_booking_app.data.model.request.UpdateStatusRequest
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
 
 class CinemaRoomsRepositoryImpl @Inject constructor(
     private val api: CinemaRoomApi
@@ -48,21 +50,21 @@ class CinemaRoomsRepositoryImpl @Inject constructor(
 
     override suspend fun updateRoomStatus(roomId: String, status: String): Boolean {
         return try {
-            val response = api.updateRoomStatus(roomId, com.example.movie_booking_app.data.model.request.UpdateStatusRequest(status))
+            val response = api.updateRoomStatus(roomId, UpdateStatusRequest(status))
             response.isSuccessful
         } catch (e: Exception) {
             false
         }
     }
 
-    override suspend fun getRoomSeats(roomId: String): List<com.example.movie_booking_app.data.model.entity.SeatPreview> {
+    override suspend fun getRoomSeats(roomId: String): List<SeatPreview> {
         return try {
             val response = api.getRoomSeats(roomId)
             if (response.isSuccessful) {
                 val groupedRows = response.body()?.data ?: emptyList()
                 groupedRows.flatMap { row ->
                     row.seats?.map { seat ->
-                        com.example.movie_booking_app.data.model.entity.SeatPreview(
+                        SeatPreview(
                             seatName = seat.seatName ?: "",
                             seatType = (seat.seatType ?: "standard").lowercase()
                         )

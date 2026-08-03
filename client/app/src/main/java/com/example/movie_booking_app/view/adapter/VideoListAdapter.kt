@@ -1,6 +1,5 @@
 package com.example.movie_booking_app.view.adapter
 
-import com.example.movie_booking_app.databinding.ItemVideoVerticalBinding
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Movie
+import com.example.movie_booking_app.databinding.ItemVideoVerticalBinding
 import com.google.android.material.imageview.ShapeableImageView
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
@@ -76,7 +76,7 @@ class VideoListAdapter(
 
         fun bind(movie: Movie, isPlaying: Boolean) {
             tvVideoTitle.text = movie.movieName
-            val durationStr = itemView.context.getString(com.example.movie_booking_app.R.string.duration_mins, (movie.duration ?: 120).toString())
+            val durationStr = itemView.context.getString(R.string.duration_mins, (movie.duration ?: 120).toString())
             tvMovieInfo.text = "${movie.language ?: "English"} • $durationStr"
 
             Glide.with(itemView.context)

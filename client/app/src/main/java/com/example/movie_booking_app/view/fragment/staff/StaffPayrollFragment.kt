@@ -1,8 +1,5 @@
 package com.example.movie_booking_app.view.fragment.staff
 
-import com.example.movie_booking_app.R
-
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -15,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.FragmentPayrollListBinding
 import com.example.movie_booking_app.view.activity.PayrollDetailActivity
 import com.example.movie_booking_app.view.adapter.PayrollAdapter

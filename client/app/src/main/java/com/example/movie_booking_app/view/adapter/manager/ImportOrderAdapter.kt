@@ -2,6 +2,7 @@ package com.example.movie_booking_app.view.adapter.manager
 
 import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -53,13 +54,13 @@ class ImportOrderAdapter(
 
                 // Show cancel button only for PENDING orders
                 btnCancel.visibility = if (order.status == "PENDING")
-                    android.view.View.VISIBLE else android.view.View.GONE
+                    View.VISIBLE else View.GONE
                 btnCancel.setOnClickListener { onCancelClick(order) }
 
                 // Show rejection reason if rejected
                 val hasRejectionReason = !order.rejectionReason.isNullOrEmpty()
                 tvRejectionLabel.visibility = if (order.status == "REJECTED" && hasRejectionReason)
-                    android.view.View.VISIBLE else android.view.View.GONE
+                    View.VISIBLE else View.GONE
                 tvRejectionReason.visibility = tvRejectionLabel.visibility
                 tvRejectionReason.text = order.rejectionReason ?: ""
             }

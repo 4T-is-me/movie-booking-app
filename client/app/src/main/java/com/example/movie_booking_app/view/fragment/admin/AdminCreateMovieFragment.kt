@@ -1,29 +1,29 @@
 package com.example.movie_booking_app.view.fragment.admin
 
 import android.app.DatePickerDialog
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.movie_booking_app.R
-import com.example.movie_booking_app.databinding.FragmentAdminCreateMovieBinding
+import com.example.movie_booking_app.data.model.entity.Movie
 import com.example.movie_booking_app.data.model.request.AddMovieRequest
-import com.example.movie_booking_app.viewmodel.MovieViewModel
+import com.example.movie_booking_app.data.model.request.UpdateMovieRequest
+import com.example.movie_booking_app.databinding.FragmentAdminCreateMovieBinding
 import com.example.movie_booking_app.utils.DateUtils
+import com.example.movie_booking_app.viewmodel.MovieViewModel
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textfield.TextInputEditText
 import android.widget.TextView
 import android.widget.ImageView
-import com.example.movie_booking_app.utils.Constants
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -32,9 +32,9 @@ import java.util.Locale
 class AdminCreateMovieFragment : Fragment() {
 
     private val selectedGenres = mutableSetOf<String>()
-    private var editingMovie: com.example.movie_booking_app.data.model.entity.Movie? = null
+    private var editingMovie: Movie? = null
 
-    private var selectedPosterUri: android.net.Uri? = null
+    private var selectedPosterUri: Uri? = null
     
     private var _binding: FragmentAdminCreateMovieBinding? = null
     private val binding get() = _binding!!
@@ -48,7 +48,7 @@ class AdminCreateMovieFragment : Fragment() {
         }
     }
 
-    private fun createPosterFile(uri: android.net.Uri): File? {
+    private fun createPosterFile(uri: Uri): File? {
         return try {
             val inputStream = requireContext().contentResolver.openInputStream(uri) ?: return null
             val tempFile = File.createTempFile(Constants.Movie.PREFIX_POSTER_FILE, Constants.Movie.SUFFIX_JPG, requireContext().cacheDir)
@@ -155,7 +155,7 @@ class AdminCreateMovieFragment : Fragment() {
         spnLanguage.setOnClickListener { spnLanguage.showDropDown() }
 
         // Pre-fill if editing
-        editingMovie = arguments?.getSerializable(Constants.Movie.EXTRA_MOVIE_DATA) as? com.example.movie_booking_app.data.model.entity.Movie
+        editingMovie = arguments?.getSerializable("movie") as? com.example.movie_booking_app.data.model.entity.Movie
         editingMovie?.let { movie ->
             tvFormTitle.text = getString(R.string.auto_str_update_movie)
             btnSubmit.text = getString(R.string.auto_str_update_movie_1)
@@ -274,7 +274,7 @@ class AdminCreateMovieFragment : Fragment() {
             val posterFile = selectedPosterUri?.let { createPosterFile(it) }
 
             if (editingMovie != null) {
-                val request = com.example.movie_booking_app.data.model.request.UpdateMovieRequest(
+                val request = UpdateMovieRequest(
                     movieName = name,
                     duration = duration,
                     releaseDate = releaseDate,
@@ -294,7 +294,7 @@ class AdminCreateMovieFragment : Fragment() {
                 }
                 Toast.makeText(requireContext(), getString(R.string.auto_str_updating_movie), Toast.LENGTH_SHORT).show()
             } else {
-                val request = com.example.movie_booking_app.data.model.request.AddMovieRequest(
+                val request = AddMovieRequest(
                     movieName = name,
                     duration = duration,
                     releaseDate = releaseDate,
