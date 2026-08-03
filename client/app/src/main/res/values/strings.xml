@@ -718,7 +718,7 @@
     <string name="auto_str_save_1">Save</string>
 
     <!-- Admin Staff & Member Management Strings -->
-    <string name="admin_staff_members_title">Staff Members</string>
+    <string name="admin_staff_members_title">Staff &amp; Manager</string>
     <string name="admin_settings_title">Settings</string>
     <string name="admin_tab_employees">Managers</string>
     <string name="admin_tab_staff">Staff</string>
@@ -1264,11 +1264,22 @@
     <string name="auto_str_my_profile">My Profile</string>
     <string name="auto_str_personal_information">Personal Information</string>
     <string name="auto_str_update_profile">Update Profile</string>
-    <string name="auto_str_ch_n_nhi_u">Chọn nhiều</string>
-    <string name="auto_str_ch_n_0_gh">Đã chọn 0 ghế</string>
-    <string name="auto_str_b_ch_n">Bỏ chọn</string>
-    <string name="auto_str_ho_t_ng">✓ Hoạt động</string>
-    <string name="auto_str_b_o_tr">✓ Bảo trì</string>
+    <string name="auto_str_ch_n_nhi_u">Select multiple</string>
+    <string name="auto_str_ch_n_0_gh">Selected 0 seats</string>
+    <string name="auto_str_b_ch_n">Unselect</string>
+    <string name="auto_str_ho_t_ng">✓ Active</string>
+    <string name="auto_str_b_o_tr">✓ Maintenance</string>
+    <string name="manager_select_multiple_checked">✓ Select multiple</string>
+    <string name="manager_selected_seats_count">Selected %1$d seats</string>
+    <string name="manager_change_seat_status_title">Change status for seat %1$s</string>
+    <string name="manager_seat_status_active">Active</string>
+    <string name="manager_seat_status_maintenance">Maintenance</string>
+    <string name="manager_seat_status_active_opt">Active</string>
+    <string name="manager_seat_status_maintenance_opt">Maintenance</string>
+    <string name="manager_confirm">Confirm</string>
+    <string name="manager_cancel">Cancel</string>
+    <string name="manager_seat_status_changed_success">Changed seat %1$s to %2$s</string>
+    <string name="manager_update_seat_status_failed">Failed to update seat status</string>
     <string name="auto_str_see_more">See more</string>
     <string name="auto_str_movie_news">Movie News</string>
     <string name="auto_str_book_now">Book Now</string>
