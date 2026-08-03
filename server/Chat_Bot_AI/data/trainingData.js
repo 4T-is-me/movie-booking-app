@@ -519,6 +519,21 @@ const rawTrainingSamples = [
   { text: 'giá giá cả vé hs sinh viên', intent: 'ticket_price_query' },
   { text: 'đánh giá giá cao nhất bxh', intent: 'top_rated_query' },
   { text: 'dv chính là ai ai', intent: 'director_actor_query' },
+
+  // CINEMA FORMAT (IMAX, 4DX)
+  { text: 'imax la gi', intent: 'cinema_format_query' },
+  { text: 'cho hoi dinh dang imax khac gi 2d', intent: 'cinema_format_query' },
+  { text: '4dx co gi dac biet', intent: 'cinema_format_query' },
+  { text: 'rap imax la sao', intent: 'cinema_format_query' },
+  { text: 'xem phim 4dx co lac lu k', intent: 'cinema_format_query' },
+  { text: 'giai thich cong nghe imax', intent: 'cinema_format_query' },
+  { text: 'phim 4dx khac gi the', intent: 'cinema_format_query' },
+  { text: 'imax la rap nhu the nao', intent: 'cinema_format_query' },
+  { text: '4dx la the loai gi', intent: 'cinema_format_query' },
+  { text: 'nen xem imax hay 4dx', intent: 'cinema_format_query' },
+  { text: 'su khac biet cua rap 4dx', intent: 'cinema_format_query' },
+  { text: 'cong nghe chieu phim imax la gi', intent: 'cinema_format_query' },
+  { text: 'ghe 4dx co rung k', intent: 'cinema_format_query' }
 ];
 
 /** 
