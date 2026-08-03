@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
+import com.example.movie_booking_app.utils.AuthUtils
 import com.example.movie_booking_app.data.local.TokenManager
 import com.example.movie_booking_app.data.model.response.WeeklyRevenueResponse
 import com.example.movie_booking_app.databinding.ActivityManagerBinding
@@ -108,21 +109,7 @@ class ManagerActivity : AppCompatActivity() {
 
     }
 
-    private fun performLogout() {
-        TokenManager.clearTokens(this)
-        val sharedPref = getSharedPreferences("app_prefs", MODE_PRIVATE)
-        with(sharedPref.edit()) {
-            remove("auth_token")
-            remove("username")
-            remove("role")
-            apply()
-        }
-        Toast.makeText(this, getString(R.string.auto_str_logged_out_successfully), Toast.LENGTH_SHORT).show()
-        val intent = Intent(this, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-        finish()
-    }
+
 
     private fun observeDashboardData() {
         lifecycleScope.launch {
@@ -266,7 +253,7 @@ class ManagerActivity : AppCompatActivity() {
 
         binding.navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_logout -> performLogout()
+                R.id.nav_logout -> AuthUtils.showLogoutConfirmationDialog(this)
                 R.id.nav_dashboard -> {
                     showDashboard()
                 }
