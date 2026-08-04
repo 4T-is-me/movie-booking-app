@@ -67,20 +67,9 @@
             android:id="@+id/btnDetailMember"
             android:layout_width="22dp"
             android:layout_height="22dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="16dp"
             android:src="@android:drawable/ic_menu_info_details"
             android:contentDescription="@string/admin_member_detail_desc"
-            app:tint="@color/yellow"
-            android:clickable="true"
-            android:focusable="true" />
-
-        <ImageView
-            android:id="@+id/btnAdjustScore"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_marginEnd="8dp"
-            android:src="@android:drawable/ic_menu_edit"
-            android:contentDescription="@string/admin_adjust_score_desc"
             app:tint="@color/yellow"
             android:clickable="true"
             android:focusable="true" />
