@@ -127,10 +127,10 @@ class ManagerPayrollFragment : Fragment() {
                     viewModel.payrollListState.collect { list ->
                         // 1. Separate Manager and Staff Data
                         val managerPayroll = list.find {
-                            it.employee?.role?.contains("manager", ignoreCase = true) == true
+                            it.employee?.role?.contains(Constants.ROLE.MANAGER, ignoreCase = true) == true
                         }
                         allStaffPayrolls = list.filter {
-                            it.employee?.role?.contains("manager", ignoreCase = true) == false
+                            it.employee?.role?.contains(Constants.ROLE.MANAGER, ignoreCase = true) == false
                         }
 
                         // 2. Bind Manager Card directly
@@ -176,7 +176,7 @@ class ManagerPayrollFragment : Fragment() {
         binding.tvManagerTotalSalary.text = PayrollAdapter.formatVnd(managerPayroll.totalSalary)
 
         // Status Badge Style
-        val isDraft = managerPayroll.status.equals("Draft", ignoreCase = true)
+        val isDraft = managerPayroll.status.equals(Constants.Status.DRAFT, ignoreCase = true)
         if (isDraft) {
             binding.tvManagerStatus.text = ctx.getString(R.string.status_draft)
             binding.tvManagerStatus.setTextColor(ctx.getColor(R.color.color_draft_status))

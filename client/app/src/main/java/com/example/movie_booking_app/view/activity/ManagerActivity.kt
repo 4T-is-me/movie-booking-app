@@ -350,10 +350,10 @@ class ManagerActivity : AppCompatActivity() {
         val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
 
         return when (currentHour) {
-            in 5..11 -> "Good morning ☀️"
-            in 12..16 -> "Good afternoon 🌤️"
-            in 17..21 -> "Good evening 🌙"
-            else -> "Good night 💤"
+            in 5..11 -> getString(R.string.greeting_morning)
+            in 12..16 -> getString(R.string.greeting_afternoon)
+            in 17..21 -> getString(R.string.greeting_evening)
+            else -> getString(R.string.greeting_night)
         }
     }
 

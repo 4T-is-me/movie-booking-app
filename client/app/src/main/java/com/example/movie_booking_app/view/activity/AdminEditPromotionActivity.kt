@@ -14,6 +14,7 @@ import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.request.AdminPromotionRequest
 import com.example.movie_booking_app.data.model.response.AdminPromotion
 import com.example.movie_booking_app.databinding.ActivityAdminEditPromotionBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.viewmodel.admin.AdminPromotionViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
@@ -68,7 +69,7 @@ class AdminEditPromotionActivity : BaseActivity() {
             binding.tvFormTitle.text = getString(R.string.auto_str_update_promotion)
             
             binding.layoutStatus.visibility = View.VISIBLE
-            val statuses = arrayOf("Active", "Inactive")
+            val statuses = arrayOf(Constants.Status.ACTIVE, Constants.Status.INACTIVE)
             val statusAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, statuses)
             binding.actvStatus.setAdapter(statusAdapter)
             
@@ -88,9 +89,9 @@ class AdminEditPromotionActivity : BaseActivity() {
                 binding.edtMaxUsage.setText(promo.maxUsage?.toString() ?: "-1")
                 
                 if (promo.isDeleted == true) {
-                    binding.actvStatus.setText("Inactive", false)
+                    binding.actvStatus.setText( Constants.Status.INACTIVE, false)
                 } else {
-                    binding.actvStatus.setText("Active", false)
+                    binding.actvStatus.setText( Constants.Status.ACTIVE, false)
                 }
                 
                 val startDateSimple = formatIsoToSimpleDate(promo.startDate)
@@ -228,7 +229,7 @@ class AdminEditPromotionActivity : BaseActivity() {
 
         val isDeletedVal = if (isEditMode) {
             val statusStr = binding.actvStatus.text.toString().trim()
-            statusStr == "Inactive"
+            statusStr ==  Constants.Status.INACTIVE
         } else {
             null
         }

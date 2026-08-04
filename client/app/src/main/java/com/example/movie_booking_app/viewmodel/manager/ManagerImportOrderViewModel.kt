@@ -9,6 +9,7 @@ import com.example.movie_booking_app.data.model.entity.ImportOrder
 import com.example.movie_booking_app.data.model.entity.Inventory
 import com.example.movie_booking_app.data.model.entity.Supplier
 import com.example.movie_booking_app.data.repository.ImportOrderRepository
+import com.example.movie_booking_app.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,7 +38,7 @@ class ManagerImportOrderViewModel @Inject constructor(
     val uiState: StateFlow<ManagerImportOrderUiState> = _uiState.asStateFlow()
 
     init {
-        loadOrders("PENDING")
+        loadOrders(Constants.ImportOrderStatus.PENDING)
         loadSuppliers()
         loadManagerInventory()
     }

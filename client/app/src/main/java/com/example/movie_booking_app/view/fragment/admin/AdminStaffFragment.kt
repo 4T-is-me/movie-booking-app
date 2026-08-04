@@ -21,6 +21,7 @@ import com.example.movie_booking_app.data.model.entity.Staff
 import com.example.movie_booking_app.databinding.DialogConfirmDeleteStaffBinding
 import com.example.movie_booking_app.databinding.DialogDetailStaffBinding
 import com.example.movie_booking_app.databinding.FragmentAdminStaffBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.view.activity.AdminStaffActivity
 import com.example.movie_booking_app.view.adapter.AdminStaffAdapter
 import com.example.movie_booking_app.viewmodel.admin.AdminStaffViewModel
@@ -38,11 +39,9 @@ class AdminStaffFragment : Fragment() {
     private val viewModel: AdminStaffViewModel by viewModels()
     private lateinit var adapter: AdminStaffAdapter
     
-    private var selectedTab = TAB_ACTIVE
+    private var selectedTab = Constants.TAB.TAB_ACTIVE
 
     companion object {
-        private const val TAB_ACTIVE = "active"
-        private const val TAB_INACTIVE = "inactive"
         private const val ARG_ROLE = "arg_role"
 
         fun newInstance(role: String): AdminStaffFragment {
@@ -202,15 +201,15 @@ class AdminStaffFragment : Fragment() {
     }
 
     private fun setupTabs() {
-        binding.tabActiveStaff.setOnClickListener { switchTab(TAB_ACTIVE) }
-        binding.tabInactiveStaff.setOnClickListener { switchTab(TAB_INACTIVE) }
+        binding.tabActiveStaff.setOnClickListener { switchTab(Constants.TAB.TAB_ACTIVE) }
+        binding.tabInactiveStaff.setOnClickListener { switchTab(Constants.TAB.TAB_INACTIVE) }
     }
 
     private fun switchTab(tab: String) {
         if (selectedTab == tab) return
         selectedTab = tab
         
-        val isActive = (tab == TAB_ACTIVE)
+        val isActive = (tab == Constants.TAB.TAB_ACTIVE)
         updateTabStyle(binding.tabActiveStaff, isActive)
         updateTabStyle(binding.tabInactiveStaff, !isActive)
         
@@ -229,7 +228,7 @@ class AdminStaffFragment : Fragment() {
     }
 
     private fun getFilteredStaffList(fullList: List<Staff>): List<Staff> {
-        return if (selectedTab == TAB_ACTIVE) {
+        return if (selectedTab == Constants.TAB.TAB_ACTIVE) {
             fullList.filter { it.status != 0 }
         } else {
             fullList.filter { it.status == 0 }

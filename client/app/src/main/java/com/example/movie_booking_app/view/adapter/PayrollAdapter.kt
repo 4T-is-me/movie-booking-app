@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.PayrollItem
 import com.example.movie_booking_app.databinding.ItemPayrollBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.utils.NameFormatter
 import java.text.NumberFormat
 import java.util.Locale
@@ -51,7 +52,7 @@ class PayrollAdapter(
             binding.tvTotalSalary.text = formatVnd(item.totalSalary)
 
             // Status badge
-            val isDraft = item.status.equals("Draft", ignoreCase = true)
+            val isDraft = item.status.equals(Constants.Status.DRAFT, ignoreCase = true)
             if (isDraft) {
                 binding.tvStatus.text = ctx.getString(R.string.status_draft)
                 binding.tvStatus.setTextColor(ctx.getColor(R.color.color_draft_status))

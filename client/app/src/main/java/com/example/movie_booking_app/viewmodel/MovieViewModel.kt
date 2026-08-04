@@ -213,13 +213,13 @@ class MovieViewModel @Inject constructor(
                 _movieActionSuccess.emit(success)
                 if (success) {
                     loadAdminMovies(status)
-                    _movieActionMessage.emit("msg_movie_deleted_success")
+                    _movieActionMessage.emit(Constants.MovieActionMessage.DELETED_SUCCESS)
                 } else {
-                    _movieActionMessage.emit("msg_movie_delete_failed")
+                    _movieActionMessage.emit(Constants.MovieActionMessage.DELETE_FAILED)
                 }
             } catch (e: Exception) {
                 _movieActionSuccess.emit(false)
-                _movieActionMessage.emit("error_unknown")
+                _movieActionMessage.emit(Constants.MovieActionMessage.ERROR_UNKNOWN)
             }
         }
     }
@@ -232,13 +232,13 @@ class MovieViewModel @Inject constructor(
                 if (success) {
                     loadAdminMovies()
                     loadHomeData()
-                    _movieActionMessage.emit("msg_movie_added_success")
+                    _movieActionMessage.emit(Constants.MovieActionMessage.ADDED_SUCCESS)
                 } else {
-                    _movieActionMessage.emit("msg_movie_add_failed")
+                    _movieActionMessage.emit(Constants.MovieActionMessage.ADD_FAILED)
                 }
             } catch (e: Exception) {
                 _movieActionSuccess.emit(false)
-                _movieActionMessage.emit("error_unknown")
+                _movieActionMessage.emit(Constants.MovieActionMessage.ERROR_UNKNOWN)
             }
         }
     }
@@ -251,13 +251,13 @@ class MovieViewModel @Inject constructor(
                 if (success) {
                     loadAdminMovies(status)
                     loadHomeData()
-                    _movieActionMessage.emit("msg_movie_updated_success")
+                    _movieActionMessage.emit(Constants.MovieActionMessage.UPDATED_SUCCESS)
                 } else {
-                    _movieActionMessage.emit("msg_movie_update_failed")
+                    _movieActionMessage.emit(Constants.MovieActionMessage.UPDATE_FAILED)
                 }
             } catch (e: Exception) {
                 _movieActionSuccess.emit(false)
-                _movieActionMessage.emit("error_unknown")
+                _movieActionMessage.emit(Constants.MovieActionMessage.ERROR_UNKNOWN)
             }
         }
     }

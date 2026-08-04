@@ -22,6 +22,7 @@ import com.example.movie_booking_app.databinding.DialogAdjustScoreBinding
 import com.example.movie_booking_app.databinding.DialogConfirmToggleMemberBinding
 import com.example.movie_booking_app.databinding.DialogDetailMemberBinding
 import com.example.movie_booking_app.databinding.FragmentAdminUserListBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.view.adapter.admin.MemberAdapter
 import com.example.movie_booking_app.viewmodel.admin.AdminStaffViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -37,12 +38,8 @@ class MemberListFragment : Fragment() {
     private val viewModel: AdminStaffViewModel by viewModels()
     private lateinit var adapter: MemberAdapter
 
-    private var selectedTab = TAB_ACTIVE
+    private var selectedTab = Constants.TAB.TAB_ACTIVE
 
-    companion object {
-        private const val TAB_ACTIVE = "active"
-        private const val TAB_INACTIVE = "inactive"
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentAdminUserListBinding.inflate(inflater, container, false)
@@ -98,15 +95,15 @@ class MemberListFragment : Fragment() {
     }
 
     private fun setupTabs() {
-        binding.tabActiveMember.setOnClickListener { switchTab(TAB_ACTIVE) }
-        binding.tabInactiveMember.setOnClickListener { switchTab(TAB_INACTIVE) }
+        binding.tabActiveMember.setOnClickListener { switchTab(Constants.TAB.TAB_ACTIVE) }
+        binding.tabInactiveMember.setOnClickListener { switchTab(Constants.TAB.TAB_INACTIVE) }
     }
 
     private fun switchTab(tab: String) {
         if (selectedTab == tab) return
         selectedTab = tab
         
-        val isActive = (tab == TAB_ACTIVE)
+        val isActive = (tab == Constants.TAB.TAB_ACTIVE)
         updateTabStyle(binding.tabActiveMember, isActive)
         updateTabStyle(binding.tabInactiveMember, !isActive)
         
@@ -125,7 +122,7 @@ class MemberListFragment : Fragment() {
     }
 
     private fun getFilteredMemberList(fullList: List<MemberItem>): List<MemberItem> {
-        return if (selectedTab == TAB_ACTIVE) {
+        return if (selectedTab == Constants.TAB.TAB_ACTIVE) {
             fullList.filter { it.account?.status != 0 }
         } else {
             fullList.filter { it.account?.status == 0 }

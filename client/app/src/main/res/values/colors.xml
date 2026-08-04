@@ -423,4 +423,12 @@
     <color name="auto_color_1A1D2D">#1A1D2D</color>
     <color name="switch_enabled">#38BDF8</color>
     <color name="switch_disabled">#94A3B8</color>
+
+    <color name="status_pending">#FFA500</color>
+    <color name="status_approved">#4CAF50</color>
+    <color name="status_rejected">#F44336</color>
+    <color name="status_cancelled">#9E9E9E</color>
+    <color name="status_default">#808080</color>
+    <color name="chat_cinema_title">#F5C518</color>
+    <color name="chat_cinema_address">#B0B3C6</color>
 </resources>

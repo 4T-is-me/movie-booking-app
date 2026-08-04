@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.request.LoginRequest
 import com.example.movie_booking_app.data.repository.AuthRepository
+import com.example.movie_booking_app.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -77,7 +78,7 @@ class LoginViewModel @Inject constructor(
                     val token = body?.accessToken
                     
                     val dbUsername = body?.account?.username ?: "GoogleUser"
-                    val roleNameStr = body?.account?.roleId?.roleName ?: body?.account?.role ?: "user"
+                    val roleNameStr = body?.account?.roleId?.roleName ?: body?.account?.role ?: Constants.ROLE.USER.lowercase()
                     
                     if (token != null) {
                         repository.saveLoginData(

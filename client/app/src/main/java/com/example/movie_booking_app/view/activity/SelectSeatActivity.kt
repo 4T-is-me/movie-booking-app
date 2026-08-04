@@ -204,12 +204,12 @@ class SelectSeatActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.errorMessage.collect { message ->
-                    val displayMsg = when(message) {
-                        "error_no_showtimes" -> getString(R.string.error_no_showtimes)
-                        "error_no_seats" -> getString(R.string.error_no_seats)
-                        "error_same_type" -> getString(R.string.error_same_type)
-                        "error_hold_conflict" -> getString(R.string.error_hold_conflict)
-                        "error_hold_failed" -> getString(R.string.error_hold_failed)
+                    val displayMsg = when (message) {
+                        Constants.ErrorCode.NO_SHOWTIMES -> getString(R.string.error_no_showtimes)
+                        Constants.ErrorCode.NO_SEATS -> getString(R.string.error_no_seats)
+                        Constants.ErrorCode.SAME_TYPE -> getString(R.string.error_same_type)
+                        Constants.ErrorCode.HOLD_CONFLICT -> getString(R.string.error_hold_conflict)
+                        Constants.ErrorCode.HOLD_FAILED -> getString(R.string.error_hold_failed)
                         else -> message
                     }
                     Toast.makeText(this@SelectSeatActivity, displayMsg, Toast.LENGTH_LONG).show()

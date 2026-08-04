@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.FragmentAdminCinemasBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.view.adapter.CinemasAdapter
 import com.example.movie_booking_app.viewmodel.AdminCinemasViewModel
 import com.facebook.shimmer.ShimmerFrameLayout
@@ -80,7 +81,7 @@ class AdminCinemasFragment : Fragment() {
                     .commit()
             },
             onToggleStatusClick = { cinema ->
-                viewModel.toggleCinemaStatus(cinema.id ?: "", cinema.status ?: "active")
+                viewModel.toggleCinemaStatus(cinema.id ?: "", cinema.status ?: Constants.Status.ACTIVE.lowercase())
             }
         )
         rvCinemas.layoutManager = LinearLayoutManager(context)

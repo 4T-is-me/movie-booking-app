@@ -20,6 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.FragmentAddCinemaBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.viewmodel.AddCinemaViewModel
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
@@ -224,7 +225,7 @@ class AddCinemaFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.status.collectLatest { stat ->
-                val display = if (stat.lowercase() == "active") "Active" else "Inactive"
+                val display = if (stat.lowercase() == Constants.CinemaRoomStatus.ACTIVE) Constants.Status.ACTIVE else Constants.Status.INACTIVE
                 if (actvStatus.text?.toString() != display) {
                     actvStatus.setText(display, false)
                 }

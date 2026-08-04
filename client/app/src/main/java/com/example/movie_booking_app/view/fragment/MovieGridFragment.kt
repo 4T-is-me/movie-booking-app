@@ -14,6 +14,7 @@ import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.repository.MovieRepository
 import com.example.movie_booking_app.data.repository.RepositoryProvider
 import com.example.movie_booking_app.databinding.FragmentMovieGridBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.view.activity.MovieDetailActivity
 import com.example.movie_booking_app.view.adapter.MovieGridAdapter
 import kotlinx.coroutines.launch
@@ -24,7 +25,7 @@ class MovieGridFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val movieRepository: MovieRepository = RepositoryProvider.provideMovieRepository()
-    private var currentSection: String = "Now Playing"
+    private var currentSection: String = Constants.NAV.NOW_PLAYING
 
     companion object {
         fun newInstance(sectionName: String): MovieGridFragment {
@@ -46,7 +47,7 @@ class MovieGridFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        currentSection = arguments?.getString("SECTION_NAME") ?: "Now Playing"
+        currentSection = arguments?.getString("SECTION_NAME") ?: Constants.NAV.NOW_PLAYING
         
         binding.btnBack.setOnClickListener {
             parentFragmentManager.popBackStack()
@@ -58,13 +59,13 @@ class MovieGridFragment : Fragment() {
     }
 
     private fun setupTabs() {
-        binding.tabNowPlaying.setOnClickListener { switchTab("Now Playing") }
-        binding.tabComingSoon.setOnClickListener { switchTab("Coming Soon") }
+        binding.tabNowPlaying.setOnClickListener { switchTab(Constants.NAV.NOW_PLAYING) }
+        binding.tabComingSoon.setOnClickListener { switchTab(Constants.NAV.COMING_SOON) }
     }
 
     private fun switchTab(section: String) {
         currentSection = section
-        val isNowPlaying = (section == "Now Playing")
+        val isNowPlaying = (section == Constants.NAV.NOW_PLAYING)
         updateTabStyle(binding.tabNowPlaying, isNowPlaying)
         updateTabStyle(binding.tabComingSoon, !isNowPlaying)
         loadMovieData(isNowPlaying)
@@ -104,9 +105,9 @@ class MovieGridFragment : Fragment() {
                 val filtered = allMovies.filter {
                     val s = it.status?.lowercase() ?: ""
                     if (isNowPlaying) {
-                        s.contains("showing") || s == "active" || s == "now_showing"
+                        s.contains(Constants.MovieStatus.SHOWING) || s == Constants.MovieStatus.ACTIVE || s == Constants.MovieStatus.NOW_SHOWING
                     } else {
-                        s.contains("coming") || s.contains("soon") || s == "upcoming" || s == "inactive"
+                        s.contains(Constants.MovieStatus.COMING_SOON) || s.contains(Constants.MovieStatus.SOON) || s == Constants.MovieStatus.UPCOMING || s == Constants.MovieStatus.INACTIVE
                     }
                 }
                 adapter.submitList(filtered)

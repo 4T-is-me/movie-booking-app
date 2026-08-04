@@ -42,7 +42,7 @@ class ManagerReportFragment : Fragment() {
     private var _binding: FragmentManagerReportBinding? = null
     private val binding get() = _binding!!
 
-    private var currentReportType = "week"
+    private var currentReportType = Constants.TIME[1]
 
     private val sourceDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     private val sourceMonthFormat = SimpleDateFormat("yyyy-MM", Locale.getDefault())
@@ -73,7 +73,7 @@ class ManagerReportFragment : Fragment() {
         )
         setUpClickListeners()
         observeReportData()
-        setActiveTab(binding.btnWeekReport, "week")
+        setActiveTab(binding.btnWeekReport, Constants.TIME[1])
         setUpRecyclerView()
     }
 

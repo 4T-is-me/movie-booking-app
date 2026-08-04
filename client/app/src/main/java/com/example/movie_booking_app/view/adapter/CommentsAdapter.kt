@@ -45,9 +45,9 @@ class CommentsAdapter(
             val density = itemView.context.resources.displayMetrics.density
             val indent = (level * 28 * density).toInt() // 28dp per level indent
             binding.layoutCommentRoot.setPaddingRelative(
-                indent + (16 * density).toInt(), 
-                binding.layoutCommentRoot.paddingTop, 
-                (16 * density).toInt(), 
+                indent + (16 * density).toInt(),
+                binding.layoutCommentRoot.paddingTop,
+                (16 * density).toInt(),
                 binding.layoutCommentRoot.paddingBottom
             )
 
@@ -59,7 +59,7 @@ class CommentsAdapter(
             val avatarUrl = item.commenterAvatar ?: ""
             val fullAvatarUrl = when {
                 avatarUrl.isEmpty() -> ""
-                avatarUrl.startsWith("http") -> avatarUrl
+                avatarUrl.startsWith(Constants.CommentReaction.PREFIX_HTTP) -> avatarUrl
                 else -> "${Constants.BASE_URL.removeSuffix("/")}$avatarUrl"
             }
 
@@ -84,18 +84,16 @@ class CommentsAdapter(
             // Reactions Display tally
             if (summary != null && summary.count > 0) {
                 binding.layoutReactionsDisplay.visibility = View.VISIBLE
-                
-                // Build simple emoji breakdown string
                 val breakdown = summary.breakdown ?: emptyMap()
                 val emojis = breakdown.keys.map { type ->
                     when (type) {
-                        "like" -> "👍"
-                        "love" -> "❤️"
-                        "haha" -> "😆"
-                        "wow" -> "😲"
-                        "sad" -> "😢"
-                        "angry" -> "😡"
-                        else -> "👍"
+                        Constants.CommentReaction.LIKE -> Constants.CommentReaction.EMOJI_LIKE
+                        Constants.CommentReaction.LOVE -> Constants.CommentReaction.EMOJI_LOVE
+                        Constants.CommentReaction.HAHA -> Constants.CommentReaction.EMOJI_HAHA
+                        Constants.CommentReaction.WOW -> Constants.CommentReaction.EMOJI_WOW
+                        Constants.CommentReaction.SAD -> Constants.CommentReaction.EMOJI_SAD
+                        Constants.CommentReaction.ANGRY -> Constants.CommentReaction.EMOJI_ANGRY
+                        else -> Constants.CommentReaction.EMOJI_LIKE
                     }
                 }.distinct().joinToString("")
 
@@ -109,11 +107,11 @@ class CommentsAdapter(
             }
 
             binding.btnLikeComment.setOnClickListener {
-                val currentReaction = summary?.userReacted ?: "like"
+                val currentReaction = summary?.userReacted ?: Constants.CommentReaction.LIKE
                 onLikeClick(item, currentReaction)
             }
 
-            // support long click to trigger simple dialog with reactions
+            // Support long click to trigger simple dialog with reactions
             binding.btnLikeComment.setOnLongClickListener {
                 showReactionsDialog(item)
                 true
@@ -123,18 +121,16 @@ class CommentsAdapter(
         private fun showReactionsDialog(item: CommentItemResponse) {
             val context = itemView.context
             val reactions = listOf(
-                Pair("like", "👍"),
-                Pair("love", "❤️"),
-                Pair("haha", "😆"),
-                Pair("wow", "😲"),
-                Pair("sad", "😢"),
-                Pair("angry", "😡")
+                Pair(Constants.CommentReaction.LIKE, Constants.CommentReaction.EMOJI_LIKE),
+                Pair(Constants.CommentReaction.LOVE, Constants.CommentReaction.EMOJI_LOVE),
+                Pair(Constants.CommentReaction.HAHA, Constants.CommentReaction.EMOJI_HAHA),
+                Pair(Constants.CommentReaction.WOW, Constants.CommentReaction.EMOJI_WOW),
+                Pair(Constants.CommentReaction.SAD, Constants.CommentReaction.EMOJI_SAD),
+                Pair(Constants.CommentReaction.ANGRY, Constants.CommentReaction.EMOJI_ANGRY)
             )
 
             val dialog = BottomSheetDialog(context)
-            val sheetView = LayoutInflater.from(context).inflate(R.layout.dialog_rate_staff, null) // repurpose dialog view or construct dynamic layout
-            
-            // Construct a simple linear layout dynamically for options to select reactions
+
             val layout = LinearLayout(context).apply {
                 orientation = LinearLayout.HORIZONTAL
                 gravity = Gravity.CENTER

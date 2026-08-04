@@ -67,7 +67,7 @@ class ManagerImportOrderFragment : Fragment() {
         setupFilterChips()
         setupFab()
         observeViewModel()
-        viewModel.loadOrders("PENDING")
+        viewModel.loadOrders(Constants.ImportOrderStatus.PENDING)
     }
 
     private fun setupRecyclerView() {

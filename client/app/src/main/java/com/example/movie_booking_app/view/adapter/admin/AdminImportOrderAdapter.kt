@@ -1,14 +1,16 @@
 package com.example.movie_booking_app.view.adapter.admin
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.ImportOrder
 import com.example.movie_booking_app.databinding.ItemAdminImportOrderBinding
+import com.example.movie_booking_app.utils.Constants
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -35,9 +37,11 @@ class AdminImportOrderAdapter(
         private val currencyFormat = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
 
         fun bind(order: ImportOrder) {
+            val context = itemView.context
+
             with(binding) {
                 tvImportCode.text = order.importCode
-                tvSupplierName.text = order.supplierId?.name ?: "Unknown"
+                tvSupplierName.text = order.supplierId?.name ?: Constants.UNKNOWN
                 tvTotalAmount.text = currencyFormat.format(order.totalAmount)
                 tvItemCount.text = "${order.items.size} items"
                 tvCreatedAt.text = order.createdAt?.take(10) ?: ""
@@ -45,17 +49,32 @@ class AdminImportOrderAdapter(
 
                 // Status display
                 val (statusText, statusColor) = when (order.status) {
-                    "PENDING"   -> Pair("Pending",  Color.parseColor("#FFA500"))
-                    "APPROVED"  -> Pair("Approved",   Color.parseColor("#4CAF50"))
-                    "REJECTED"  -> Pair("Rejected", Color.parseColor("#F44336"))
-                    "CANCELLED" -> Pair("Cancelled",     Color.parseColor("#9E9E9E"))
-                    else        -> Pair(order.status,  Color.GRAY)
+                    Constants.ImportOrderStatus.PENDING -> Pair(
+                        Constants.ImportOrderStatus.DISPLAY_PENDING,
+                        ContextCompat.getColor(context, R.color.status_pending)
+                    )
+                    Constants.ImportOrderStatus.APPROVED -> Pair(
+                        Constants.ImportOrderStatus.DISPLAY_APPROVED,
+                        ContextCompat.getColor(context, R.color.status_approved)
+                    )
+                    Constants.ImportOrderStatus.REJECTED -> Pair(
+                        Constants.ImportOrderStatus.DISPLAY_REJECTED,
+                        ContextCompat.getColor(context, R.color.status_rejected)
+                    )
+                    Constants.ImportOrderStatus.CANCELLED -> Pair(
+                        Constants.ImportOrderStatus.DISPLAY_CANCELLED,
+                        ContextCompat.getColor(context, R.color.status_cancelled)
+                    )
+                    else -> Pair(
+                        order.status,
+                        ContextCompat.getColor(context, R.color.status_default)
+                    )
                 }
                 tvStatus.text = statusText
                 tvStatus.setTextColor(statusColor)
 
                 // Show Approve/Reject only for PENDING
-                val isPending = order.status == "PENDING"
+                val isPending = order.status == Constants.ImportOrderStatus.PENDING
                 btnApprove.visibility = if (isPending) View.VISIBLE else View.GONE
                 btnReject.visibility  = if (isPending) View.VISIBLE else View.GONE
 

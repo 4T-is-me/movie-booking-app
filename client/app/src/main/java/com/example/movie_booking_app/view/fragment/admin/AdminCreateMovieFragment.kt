@@ -124,7 +124,7 @@ class AdminCreateMovieFragment : Fragment() {
         
         // Setup Censorship Dropdown
         val censorshipOptions = resources.getStringArray(R.array.censorship_options)
-        val censorshipCodes = arrayOf("P", "K", "T13", "T16", "T18", "C")
+        val censorshipCodes = Constants.CENSORSHIPCODES
         val spnCensorship = binding.spnCensorship
         val censorshipAdapter = ArrayAdapter(
             requireContext(),
@@ -290,7 +290,7 @@ class AdminCreateMovieFragment : Fragment() {
                     isDeleted = editingMovie?.isDeleted ?: true
                 )
                 editingMovie?.id?.let { id ->
-                    val currentStatus = if (editingMovie?.isDeleted == true) "deleted" else "active"
+                    val currentStatus = if (editingMovie?.isDeleted == true) Constants.Status.DELETE.lowercase() else Constants.Status.ACTIVE.lowercase()
                     viewModel.updateMovie(id, request, posterFile, currentStatus)
                 }
                 Toast.makeText(requireContext(), getString(R.string.auto_str_updating_movie), Toast.LENGTH_SHORT).show()

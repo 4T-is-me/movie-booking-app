@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.movie_booking_app.data.repository.MovieRepository
 import com.example.movie_booking_app.data.repository.RepositoryProvider
 import com.example.movie_booking_app.databinding.FragmentGenericListBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.view.activity.NewsDetailActivity
 import com.example.movie_booking_app.view.adapter.MovieNewsAdapter
 import com.example.movie_booking_app.view.adapter.PromoSeeAllAdapter
@@ -55,19 +56,19 @@ class GenericGridFragment : Fragment() {
 
     private fun setupRecyclerView() {
         when (sectionName) {
-            "Promo" -> {
+            Constants.SECTION_NAMES.PROMO -> {
                 binding.rvGenericList.layoutManager = GridLayoutManager(context, 1)
                 val adapter = PromoSeeAllAdapter()
                 binding.rvGenericList.adapter = adapter
                 viewLifecycleOwner.lifecycleScope.launch { movieRepository.getPromos().collect { adapter.submitList(it) } }
             }
-            "Service" -> {
+            Constants.SECTION_NAMES.SERVICE -> {
                 binding.rvGenericList.layoutManager = GridLayoutManager(context, 3)
                 val adapter = ServiceAdapter()
                 binding.rvGenericList.adapter = adapter
                 viewLifecycleOwner.lifecycleScope.launch { movieRepository.getServices().collect { adapter.submitList(it) } }
             }
-            "News" -> {
+            Constants.SECTION_NAMES.NEWS -> {
                 binding.rvGenericList.layoutManager = GridLayoutManager(context, 1)
                 lateinit var adapter: MovieNewsAdapter
                 adapter = MovieNewsAdapter(

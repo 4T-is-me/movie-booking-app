@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.ChatMessage
 import com.example.movie_booking_app.data.model.CinemaOption
 import com.example.movie_booking_app.data.repository.ChatRepository
+import com.example.movie_booking_app.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -41,7 +42,7 @@ class ChatViewModel @Inject constructor(
         if (trimmed.isEmpty()) return
 
         val now = timeFormat.format(Date())
-        val userMsg = ChatMessage(role = "user", content = trimmed, timestamp = now)
+        val userMsg = ChatMessage(role = Constants.ROLE.USER.lowercase(), content = trimmed, timestamp = now)
         val loadingMsg = ChatMessage(role = "bot", content = "", timestamp = now, isLoading = true)
 
         chatRepository.addMessage(userMsg)
