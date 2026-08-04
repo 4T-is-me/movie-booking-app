@@ -129,7 +129,8 @@ class ManagerCreateImportOrderActivity : AppCompatActivity() {
         val names = items.map { "${it.itemName} (${it.itemCode})" }.toTypedArray()
         var selectedIndex = -1
 
-        AlertDialog.Builder(this)
+        val contextWrapper = androidx.appcompat.view.ContextThemeWrapper(this, R.style.Theme_Moviebookingapp_DarkDialog)
+        AlertDialog.Builder(contextWrapper)
             .setTitle(getString(R.string.goods_intake_select_product_title))
             .setSingleChoiceItems(names, -1) { _, which ->
                 selectedIndex = which

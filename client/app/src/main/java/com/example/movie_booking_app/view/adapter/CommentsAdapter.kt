@@ -17,6 +17,7 @@ import com.example.movie_booking_app.data.model.response.CommentItemResponse
 import com.example.movie_booking_app.databinding.ItemCommentBinding
 import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.utils.DateUtils
+import com.example.movie_booking_app.utils.NameFormatter
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class CommentsAdapter(
@@ -57,6 +58,9 @@ class CommentsAdapter(
 
             // Load Avatar
             val avatarUrl = item.commenterAvatar ?: ""
+            val commenterName = item.commenterName ?: "User"
+            val fallbackRes = NameFormatter.getFallbackAvatarRes(commenterName)
+
             val fullAvatarUrl = when {
                 avatarUrl.isEmpty() -> ""
                 avatarUrl.startsWith("http") -> avatarUrl
@@ -65,8 +69,8 @@ class CommentsAdapter(
 
             Glide.with(itemView.context)
                 .load(fullAvatarUrl.ifEmpty { null })
-                .placeholder(R.drawable.bg_ai_avatar)
-                .error(R.drawable.bg_ai_avatar)
+                .placeholder(fallbackRes)
+                .error(fallbackRes)
                 .into(binding.ivCommenterAvatar)
 
             // Setup Reactions/Like UI
