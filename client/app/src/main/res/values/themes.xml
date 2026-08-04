@@ -62,4 +62,32 @@
         <item name="android:textColorHint">@color/text_secondary</item>
         <item name="android:backgroundTint">@color/accent_primary</item>
     </style>
+
+    <style name="Theme.Moviebookingapp.DarkDialog" parent="Theme.AppCompat.Dialog.Alert">
+        <item name="colorSurface">@color/auto_color_1A1B23</item>
+        <item name="android:windowBackground">@color/background_black</item>
+        <item name="colorPrimary">@color/auto_color_F5C542</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/auto_color_9A9A9A</item>
+        <item name="android:textColorPrimaryDisableOnly">@color/white</item>
+        <item name="android:textColorPrimaryNoDisable">@color/white</item>
+        <item name="colorControlActivated">@color/auto_color_F5C542</item>
+        <item name="android:colorControlActivated">@color/auto_color_F5C542</item>
+        <item name="colorSecondary">@color/auto_color_F5C542</item>
+        <item name="colorAccent">@color/auto_color_F5C542</item>
+        <item name="android:colorAccent">@color/auto_color_F5C542</item>
+        <item name="buttonBarPositiveButtonStyle">@style/DialogYellowButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/DialogYellowButtonStyle</item>
+        <item name="android:checkedTextViewStyle">@style/CustomCheckedTextViewStyle</item>
+    </style>
+
+    <style name="DialogYellowButtonStyle" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/auto_color_F5C542</item>
+        <item name="android:textColor">@color/auto_color_000000</item>
+    </style>
+
+    <style name="CustomCheckedTextViewStyle">
+        <item name="android:textColor">@color/white</item>
+    </style>
 </resources>

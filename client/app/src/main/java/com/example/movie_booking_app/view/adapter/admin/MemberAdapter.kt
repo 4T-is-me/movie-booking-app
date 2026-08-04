@@ -2,19 +2,15 @@ package com.example.movie_booking_app.view.adapter.admin
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.MemberItem
 import com.example.movie_booking_app.databinding.ItemAdminMemberBinding
-import java.util.Locale
 
 class MemberAdapter(
     private val onDetailClick: (MemberItem) -> Unit,
-    private val onAdjustScore: (MemberItem) -> Unit,
     private val onToggleStatus: (MemberItem) -> Unit
 ) : ListAdapter<MemberItem, MemberAdapter.MemberViewHolder>(MemberDiffCallback()) {
 
@@ -27,37 +23,27 @@ class MemberAdapter(
         holder.bind(getItem(position))
     }
 
-    inner class MemberViewHolder(private val binding: ItemAdminMemberBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: MemberItem) {
-            binding.tvMemberName.text = item.fullName ?: binding.root.context.getString(R.string.user_name_placeholder)
-            binding.tvMemberPoints.text = String.format(Locale.getDefault(), "%,d", item.rewardPoints ?: 0)
-            
-            val isActive = item.account?.status != 0
-            
-            // Load Avatar
-            Glide.with(binding.ivMemberAvatar.context)
-                .load(item.image)
-                .placeholder(R.drawable.ic_profile)
-                .error(R.drawable.ic_profile)
-                .circleCrop()
-                .into(binding.ivMemberAvatar)
+    inner class MemberViewHolder(private val binding: ItemAdminMemberBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(member: MemberItem) {
+            binding.tvMemberName.text = member.fullName ?: "Unknown"
+            binding.tvMemberPoints.text = "${member.rewardPoints ?: 0}"
 
-            binding.btnDetailMember.setOnClickListener { onDetailClick(item) }
-            binding.btnAdjustScore.setOnClickListener { onAdjustScore(item) }
+            // Status: 1 is Active, 0 is Locked/Inactive
+            val isActive = member.account?.status == 1
             
-            // If Active show trash icon (to Delete), if Inactive show Restore icon (to Reactivate)
-            if (isActive) {
-                binding.btnToggleMemberStatus.setImageResource(android.R.drawable.ic_menu_delete)
-                binding.btnToggleMemberStatus.setColorFilter(ContextCompat.getColor(binding.root.context, R.color.deduct))
-                binding.btnToggleMemberStatus.contentDescription = binding.root.context.getString(R.string.admin_delete)
+            if (!isActive) {
+                binding.btnToggleMemberStatus.setImageResource(android.R.drawable.ic_menu_view)
+                binding.btnToggleMemberStatus.contentDescription = "Reactivate Member"
+                binding.btnToggleMemberStatus.setColorFilter(binding.root.context.getColor(R.color.color_green_status))
             } else {
-                // Use rotate/restore icon for Reactivate
-                binding.btnToggleMemberStatus.setImageResource(android.R.drawable.ic_menu_rotate)
-                binding.btnToggleMemberStatus.setColorFilter(ContextCompat.getColor(binding.root.context, R.color.color_green_status))
-                binding.btnToggleMemberStatus.contentDescription = binding.root.context.getString(R.string.admin_reactivate)
+                binding.btnToggleMemberStatus.setImageResource(android.R.drawable.ic_menu_delete)
+                binding.btnToggleMemberStatus.contentDescription = "Delete Member"
+                binding.btnToggleMemberStatus.setColorFilter(binding.root.context.getColor(R.color.deduct))
             }
-            
-            binding.btnToggleMemberStatus.setOnClickListener { onToggleStatus(item) }
+
+            binding.btnDetailMember.setOnClickListener { onDetailClick(member) }
+            binding.btnToggleMemberStatus.setOnClickListener { onToggleStatus(member) }
         }
     }
 

@@ -55,6 +55,17 @@
             android:textSize="13sp"
             tools:text="Coca-Cola Vietnam" />
 
+        <!-- Items List -->
+        <TextView
+            android:id="@+id/tvItemsList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:textStyle="italic"
+            tools:text="Items: Coca-Cola (x10), Popcorn (x5)" />
+
         <!-- Items count + total -->
         <LinearLayout
             android:layout_width="match_parent"

@@ -47,6 +47,9 @@ class AdminImportOrderAdapter(
                 tvCreatedAt.text = order.createdAt?.take(10) ?: ""
                 tvNotes.text = order.notes?.takeIf { it.isNotEmpty() } ?: "No notes"
 
+                val itemsSummary = order.items.joinToString(", ") { "${it.itemName} (x${it.quantity})" }
+                tvItemsList.text = "Items: $itemsSummary"
+
                 // Status display
                 val (statusText, statusColor) = when (order.status) {
                     Constants.ImportOrderStatus.PENDING -> Pair(

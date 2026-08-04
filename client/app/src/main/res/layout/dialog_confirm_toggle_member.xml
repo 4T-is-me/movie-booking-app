@@ -72,8 +72,11 @@
                 android:layout_marginEnd="6dp"
                 android:text="@string/admin_cancel"
                 android:textColor="@color/white"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:textStyle="bold"
+                android:paddingHorizontal="4dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
                 app:backgroundTint="@color/auto_color_2D303E"
                 app:cornerRadius="24dp"
                 style="@style/Widget.Material3.Button.TextButton" />
@@ -87,8 +90,11 @@
                 android:layout_marginStart="6dp"
                 android:text="@string/admin_delete"
                 android:textColor="@color/black"
-                android:textSize="14sp"
+                android:textSize="13sp"
                 android:textStyle="bold"
+                android:paddingHorizontal="4dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
                 app:backgroundTint="@color/yellow"
                 app:cornerRadius="24dp" />
         </LinearLayout>

@@ -15,6 +15,7 @@ import com.example.movie_booking_app.data.model.entity.MovieNews
 import com.example.movie_booking_app.databinding.ItemMovieNewsBinding
 import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.utils.DateUtils
+import com.example.movie_booking_app.utils.NameFormatter
 import com.example.movie_booking_app.view.activity.MovieDetailActivity
 
 class MovieNewsAdapter(
@@ -46,16 +47,19 @@ class MovieNewsAdapter(
 
             // Author Avatar loading
             val avatarUrl = news.authorAvatar ?: ""
+            val authorName = news.authorName ?: "Cinema Club"
+            val fallbackRes = NameFormatter.getFallbackAvatarRes(authorName)
+
             if (avatarUrl.isNotEmpty()) {
                 val fullAvatarUrl = if (avatarUrl.startsWith("http")) avatarUrl
                                     else "${Constants.BASE_URL.removeSuffix("/")}${avatarUrl}"
                 Glide.with(itemView.context)
                     .load(fullAvatarUrl)
-                    .placeholder(R.drawable.bg_ai_avatar)
-                    .error(R.drawable.bg_ai_avatar)
+                    .placeholder(fallbackRes)
+                    .error(fallbackRes)
                     .into(binding.ivAuthorAvatar)
             } else {
-                binding.ivAuthorAvatar.setImageResource(R.drawable.bg_ai_avatar)
+                binding.ivAuthorAvatar.setImageResource(fallbackRes)
             }
 
             Glide.with(itemView.context)
