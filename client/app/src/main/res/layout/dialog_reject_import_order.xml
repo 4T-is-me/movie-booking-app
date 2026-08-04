@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
             android:hint="@string/goods_intake_rejection_hint"
-            app:boxStrokeColor="@color/yellow"
+            app:boxStrokeColor="@color/text_input_stroke"
             app:hintTextColor="@color/admin_text_secondary"
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
