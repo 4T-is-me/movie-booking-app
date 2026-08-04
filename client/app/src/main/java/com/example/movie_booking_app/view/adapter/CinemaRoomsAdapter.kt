@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.CinemaRoom
 import com.example.movie_booking_app.databinding.ItemCinemaRoomBinding
+import com.example.movie_booking_app.utils.Constants
 
 class CinemaRoomsAdapter(
     private val onRoomClick: (CinemaRoom) -> Unit,
@@ -29,7 +30,9 @@ class CinemaRoomsAdapter(
         holder.bind(room)
     }
 
-    class RoomViewHolder(private val binding: ItemCinemaRoomBinding, private val onRoomClick: (CinemaRoom) -> Unit,
+    class RoomViewHolder(
+        private val binding: ItemCinemaRoomBinding,
+        private val onRoomClick: (CinemaRoom) -> Unit,
         private val onEditClick: (CinemaRoom) -> Unit,
         private val onToggleStatusClick: (CinemaRoom) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
@@ -41,33 +44,37 @@ class CinemaRoomsAdapter(
 
         fun bind(room: CinemaRoom) {
             tvRoomName.text = room.roomName
-            
             // Format type: e.g., Standard • 2D
-            val formattedType = "${room.roomType ?: "Standard"} • ${room.screenType ?: "2D"}"
+            val roomType = room.roomType ?: Constants.CinemaRoomStatus.DEFAULT_ROOM_TYPE
+            val screenType = room.screenType ?: Constants.CinemaRoomStatus.DEFAULT_SCREEN_TYPE
+            val formattedType = "$roomType • $screenType"
             tvRoomType.text = formattedType
 
             // Format capacity: e.g., 120 seats
             tvCapacity.text = "${room.totalSeats} seats"
 
             // Adjust status chip presentation using existing drawables
-            val status = room.status ?: "active"
+            val status = room.status ?: Constants.CinemaRoomStatus.ACTIVE
             val statusText: String
             val textColor: Int
             val backgroundRes: Int
 
             when (status.lowercase()) {
-                "active", "operating", "open" -> {
-                    statusText = "Active"
+                Constants.CinemaRoomStatus.ACTIVE,
+                Constants.CinemaRoomStatus.OPERATING,
+                Constants.CinemaRoomStatus.OPEN -> {
+                    statusText = Constants.CinemaRoomStatus.DISPLAY_ACTIVE
                     textColor = ContextCompat.getColor(itemView.context, R.color.color_green)
                     backgroundRes = R.drawable.bg_label_operating
                 }
-                "maintenance", "maintain" -> {
-                    statusText = "Maintenance"
+                Constants.CinemaRoomStatus.MAINTENANCE,
+                Constants.CinemaRoomStatus.MAINTAIN -> {
+                    statusText = Constants.CinemaRoomStatus.DISPLAY_MAINTENANCE
                     textColor = ContextCompat.getColor(itemView.context, R.color.auto_color_F59E0B)
                     backgroundRes = R.drawable.bg_label_maintain
                 }
                 else -> {
-                    statusText = "Closed"
+                    statusText = Constants.CinemaRoomStatus.DISPLAY_CLOSED
                     textColor = ContextCompat.getColor(itemView.context, R.color.color_error_red)
                     backgroundRes = R.drawable.bg_label_close
                 }
@@ -81,11 +88,11 @@ class CinemaRoomsAdapter(
 
             ivOptions.setOnClickListener { view ->
                 val popup = PopupMenu(view.context, view)
-                popup.menu.add(0, 1, 0, "Edit Room")
-                if (status.lowercase() == "active") {
-                    popup.menu.add(0, 2, 1, "Close Room")
+                popup.menu.add(0, 1, 0, Constants.CinemaRoomStatus.MENU_EDIT)
+                if (status.lowercase() == Constants.CinemaRoomStatus.ACTIVE) {
+                    popup.menu.add(0, 2, 1, Constants.CinemaRoomStatus.MENU_CLOSE)
                 } else {
-                    popup.menu.add(0, 3, 1, "Reactivate Room")
+                    popup.menu.add(0, 3, 1, Constants.CinemaRoomStatus.MENU_REACTIVATE)
                 }
 
                 popup.setOnMenuItemClickListener { item ->

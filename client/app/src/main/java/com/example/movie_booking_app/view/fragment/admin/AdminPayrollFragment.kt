@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Cinema
 import com.example.movie_booking_app.databinding.FragmentAdminPayrollBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.view.activity.PayrollConfigActivity
 import com.example.movie_booking_app.view.activity.PayrollDetailActivity
 import com.example.movie_booking_app.view.adapter.PayrollAdapter
@@ -119,7 +120,7 @@ class AdminPayrollFragment : Fragment() {
         val statuses = listOf(getString(R.string.all_status), getString(R.string.status_draft), getString(R.string.status_paid))
         setupSpinner(binding.spinnerStatus, statuses) { position ->
             val newVal = if (position == 0) null else {
-                if (position == 1) "Draft" else "Paid"
+                if (position == 1) Constants.Status.DRAFT else Constants.Status.PAID
             }
             if (!isInitializing && selectedStatus != newVal) {
                 selectedStatus = newVal

@@ -74,9 +74,9 @@ class ManagerShiftDetailActivity : AppCompatActivity() {
 
         // Current Shift
         when(data.shift.lowercase()) {
-            "morning" -> binding.tvShiftTime.text = "${data.shift} (${Constants.MORNING})"
-            "afternoon" -> binding.tvShiftTime.text = "${data.shift} (${Constants.AFTERNOON})"
-            "evening" -> binding.tvShiftTime.text = "${data.shift} (${Constants.EVENING})"
+            Constants.SHIFTS[0].lowercase() -> binding.tvShiftTime.text = "${data.shift} (${Constants.MORNING})"
+            Constants.SHIFTS[1].lowercase() -> binding.tvShiftTime.text = "${data.shift} (${Constants.AFTERNOON})"
+            Constants.SHIFTS[2].lowercase() -> binding.tvShiftTime.text = "${data.shift} (${Constants.EVENING})"
             else -> binding.tvShiftTime.text = "${data.shift} (${Constants.NIGHT})"
         }
 

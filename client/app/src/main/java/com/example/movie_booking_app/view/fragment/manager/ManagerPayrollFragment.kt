@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.PayrollItem
 import com.example.movie_booking_app.databinding.FragmentManagerPayrollBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.utils.NameFormatter
 import com.example.movie_booking_app.view.activity.PayrollConfigActivity
 import com.example.movie_booking_app.view.activity.PayrollDetailActivity
@@ -40,7 +41,7 @@ class ManagerPayrollFragment : Fragment() {
     // Keep track of data to filter locally
     private var allStaffPayrolls: List<PayrollItem> = emptyList()
     private var currentSearchQuery: String = ""
-    private var currentStatusFilter: String = "All"
+    private var currentStatusFilter: String = Constants.STATUS_OPTIONS[0]
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -91,13 +92,12 @@ class ManagerPayrollFragment : Fragment() {
         })
 
         // Setup Spinner status
-        val statusOptions = listOf("All", "Draft", "Paid")
-        val spinnerAdapter = ArrayAdapter(requireContext(), R.layout.item_spinner_text, statusOptions)
+        val spinnerAdapter = ArrayAdapter(requireContext(), R.layout.item_spinner_text, Constants.STATUS_OPTIONS)
         spinnerAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown)
         binding.spinnerStatusFilter.adapter = spinnerAdapter
         binding.spinnerStatusFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                currentStatusFilter = statusOptions[position]
+                currentStatusFilter = Constants.STATUS_OPTIONS[position]
                 filterStaffList()
             }
 
@@ -127,10 +127,10 @@ class ManagerPayrollFragment : Fragment() {
                     viewModel.payrollListState.collect { list ->
                         // 1. Separate Manager and Staff Data
                         val managerPayroll = list.find {
-                            it.employee?.role?.contains("manager", ignoreCase = true) == true
+                            it.employee?.role?.contains(Constants.ROLE.MANAGER, ignoreCase = true) == true
                         }
                         allStaffPayrolls = list.filter {
-                            it.employee?.role?.contains("manager", ignoreCase = true) == false
+                            it.employee?.role?.contains(Constants.ROLE.MANAGER, ignoreCase = true) == false
                         }
 
                         // 2. Bind Manager Card directly
@@ -176,7 +176,7 @@ class ManagerPayrollFragment : Fragment() {
         binding.tvManagerTotalSalary.text = PayrollAdapter.formatVnd(managerPayroll.totalSalary)
 
         // Status Badge Style
-        val isDraft = managerPayroll.status.equals("Draft", ignoreCase = true)
+        val isDraft = managerPayroll.status.equals(Constants.Status.DRAFT, ignoreCase = true)
         if (isDraft) {
             binding.tvManagerStatus.text = ctx.getString(R.string.status_draft)
             binding.tvManagerStatus.setTextColor(ctx.getColor(R.color.color_draft_status))

@@ -9,6 +9,7 @@ import com.example.movie_booking_app.data.model.response.PayrollItem
 import com.example.movie_booking_app.data.repository.CinemasRepository
 import com.example.movie_booking_app.data.repository.PayrollRepository
 import com.example.movie_booking_app.data.repository.manager.ManagerRepository
+import com.example.movie_booking_app.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -64,16 +65,16 @@ class PayrollViewModel @Inject constructor(
     }
 
     fun isAdmin(): Boolean {
-        return userRole?.contains("admin", ignoreCase = true) == true
+        return userRole?.contains(Constants.ROLE.ADMIN.lowercase(), ignoreCase = true) == true
     }
 
     fun isManager(): Boolean {
-        return userRole?.contains("manager", ignoreCase = true) == true
+        return userRole?.contains(Constants.ROLE.MANAGER.lowercase(), ignoreCase = true) == true
     }
 
     fun isStaff(): Boolean {
-        return userRole?.contains("staff", ignoreCase = true) == true || 
-               userRole?.contains("employee", ignoreCase = true) == true
+        return userRole?.contains(Constants.ROLE.STAFF.lowercase(), ignoreCase = true) == true ||
+               userRole?.contains(Constants.ROLE.EMPLOYEE.lowercase(), ignoreCase = true) == true
     }
 
     fun loadInitialData() {

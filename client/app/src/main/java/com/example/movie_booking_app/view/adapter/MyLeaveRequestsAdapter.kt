@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.LeaveRequestResponse
 import com.example.movie_booking_app.databinding.ItemMyLeaveRequestBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.utils.DateUtils
 
 class MyLeaveRequestsAdapter(
@@ -36,11 +37,16 @@ class MyLeaveRequestsAdapter(
             binding.tvLeaveReason.text = item.reason ?: "No reason provided"
 
             when (item.status) {
-                "Pending" -> {
+                Constants.LeaveStatus.PENDING -> {
                     val textColor = ContextCompat.getColor(context, R.color.color_gold)
                     val bgColor = ContextCompat.getColor(context, R.color.bg_pending_badge)
 
-                    setDynamicBadge(binding.tvLeaveStatusBadge, "Pending", textColor, bgColor)
+                    setDynamicBadge(
+                        binding.tvLeaveStatusBadge,
+                        Constants.LeaveStatus.PENDING,
+                        textColor,
+                        bgColor
+                    )
 
                     binding.vStatusIndicator.setBackgroundColor(textColor)
 
@@ -50,36 +56,55 @@ class MyLeaveRequestsAdapter(
                     binding.btnEditLeave.setOnClickListener { onEditClick(item) }
                     binding.btnDeleteLeave.setOnClickListener { onDeleteClick(item) }
                 }
-                "Approved" -> {
+
+                Constants.LeaveStatus.APPROVED -> {
                     val textColor = ContextCompat.getColor(context, R.color.color_green)
                     val bgColor = ContextCompat.getColor(context, R.color.bg_approved_badge)
 
-                    setDynamicBadge(binding.tvLeaveStatusBadge, "Approved", textColor, bgColor)
+                    setDynamicBadge(
+                        binding.tvLeaveStatusBadge,
+                        Constants.LeaveStatus.APPROVED,
+                        textColor,
+                        bgColor
+                    )
 
                     binding.vStatusIndicator.setBackgroundColor(textColor)
 
                     binding.layoutRejectReason.visibility = View.GONE
                     binding.layoutPendingActions.visibility = View.GONE
                 }
-                "Rejected" -> {
+
+                Constants.LeaveStatus.REJECTED -> {
                     val textColor = ContextCompat.getColor(context, R.color.color_red)
                     val bgColor = ContextCompat.getColor(context, R.color.bg_rejected_badge)
 
-                    setDynamicBadge(binding.tvLeaveStatusBadge, "Rejected", textColor, bgColor)
+                    setDynamicBadge(
+                        binding.tvLeaveStatusBadge,
+                        Constants.LeaveStatus.REJECTED,
+                        textColor,
+                        bgColor
+                    )
 
                     // Update left vertical indicator color for Rejected status
                     binding.vStatusIndicator.setBackgroundColor(textColor)
 
                     binding.layoutPendingActions.visibility = View.GONE
                     binding.layoutRejectReason.visibility = View.VISIBLE
-                    binding.tvRejectReason.text = item.rejectReason ?: "No feedback provided."
+                    binding.tvRejectReason.text =
+                        item.rejectReason ?: Constants.LeaveStatus.DEFAULT_NO_FEEDBACK
                     binding.tvRejectReason.setTextColor(textColor)
                 }
+
                 else -> {
                     val textColor = ContextCompat.getColor(context, R.color.white)
                     val bgColor = ContextCompat.getColor(context, R.color.auto_color_94A3B8)
 
-                    setDynamicBadge(binding.tvLeaveStatusBadge, item.status ?: "Unknown", textColor, bgColor)
+                    setDynamicBadge(
+                        binding.tvLeaveStatusBadge,
+                        item.status ?: Constants.UNKNOWN,
+                        textColor,
+                        bgColor
+                    )
                     binding.vStatusIndicator.setBackgroundColor(textColor)
 
                     binding.layoutPendingActions.visibility = View.GONE

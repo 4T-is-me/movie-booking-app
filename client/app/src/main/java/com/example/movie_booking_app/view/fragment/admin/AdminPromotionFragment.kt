@@ -22,6 +22,7 @@ import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.AdminPromotion
 import com.example.movie_booking_app.databinding.DialogConfirmDeletePromotionBinding
 import com.example.movie_booking_app.databinding.FragmentAdminPromotionBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.view.activity.AdminEditPromotionActivity
 import com.example.movie_booking_app.view.adapter.AdminPromotionAdapter
 import com.example.movie_booking_app.viewmodel.admin.AdminPromotionViewModel
@@ -42,12 +43,8 @@ class AdminPromotionFragment : Fragment() {
     private val viewModel: AdminPromotionViewModel by viewModels()
     private lateinit var adapter: AdminPromotionAdapter
     private var allPromotions: List<AdminPromotion> = emptyList()
-    private var selectedTab = TAB_ACTIVE
+    private var selectedTab = Constants.TAB.TAB_ACTIVE
 
-    companion object {
-        private const val TAB_ACTIVE = "active"
-        private const val TAB_INACTIVE = "inactive"
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -99,15 +96,15 @@ class AdminPromotionFragment : Fragment() {
     }
 
     private fun setupTabs() {
-        binding.tabActivePromotion.setOnClickListener { switchTab(TAB_ACTIVE) }
-        binding.tabInactivePromotion.setOnClickListener { switchTab(TAB_INACTIVE) }
+        binding.tabActivePromotion.setOnClickListener { switchTab(Constants.TAB.TAB_ACTIVE) }
+        binding.tabInactivePromotion.setOnClickListener { switchTab(Constants.TAB.TAB_INACTIVE) }
     }
 
     private fun switchTab(tab: String) {
         if (selectedTab == tab) return
         selectedTab = tab
 
-        val isActive = (tab == TAB_ACTIVE)
+        val isActive = (tab == Constants.TAB.TAB_ACTIVE)
         updateTabStyle(binding.tabActivePromotion, isActive)
         updateTabStyle(binding.tabInactivePromotion, !isActive)
 
@@ -193,7 +190,7 @@ class AdminPromotionFragment : Fragment() {
     private fun filterAndSubmit() {
         val now = Date()
         val query = binding.etSearch.text.toString().trim().lowercase(Locale.getDefault())
-        val isActiveTab = (selectedTab == TAB_ACTIVE)
+        val isActiveTab = (selectedTab == Constants.TAB.TAB_ACTIVE)
 
         val filtered = allPromotions.filter { promo ->
             // Filter by search query

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.SeatPreview
 import com.example.movie_booking_app.databinding.ItemSeatPreviewBinding
+import com.example.movie_booking_app.utils.Constants
 
 class SeatPreviewAdapter(
     private val onSeatClick: (Int) -> Unit
@@ -46,8 +47,8 @@ class SeatPreviewAdapter(
                 shape = GradientDrawable.RECTANGLE
                 cornerRadius = 12f // 4dp to pixels roughly
                 val colorRes = when (seat.seatType.lowercase()) {
-                    "vip" -> R.color.auto_color_FF9800
-                    "couple" -> R.color.auto_color_E91E63
+                    Constants.SeatConstants.TYPE_VIP.lowercase() -> R.color.auto_color_FF9800
+                    Constants.SeatConstants.TYPE_COUPLE.lowercase() -> R.color.auto_color_E91E63
                     else -> R.color.cinema_primary
                 }
                 setColor(ContextCompat.getColor(itemView.context, colorRes))
