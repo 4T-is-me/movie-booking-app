@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -18,7 +17,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.MemberItem
-import com.example.movie_booking_app.databinding.DialogAdjustScoreBinding
 import com.example.movie_booking_app.databinding.DialogConfirmToggleMemberBinding
 import com.example.movie_booking_app.databinding.DialogDetailMemberBinding
 import com.example.movie_booking_app.databinding.FragmentAdminUserListBinding
@@ -67,7 +65,6 @@ class MemberListFragment : Fragment() {
     private fun setupRecyclerView() {
         adapter = MemberAdapter(
             onDetailClick = { member -> showMemberDetailDialog(member) },
-            onAdjustScore = { member -> showAdjustScoreDialog(member) },
             onToggleStatus = { member -> 
                 showConfirmToggleStatusDialog(member)
             }
@@ -173,81 +170,6 @@ class MemberListFragment : Fragment() {
         }
     }
 
-    private fun showAdjustScoreDialog(member: MemberItem) {
-        val dialogBinding = DialogAdjustScoreBinding.inflate(layoutInflater)
-        val dialog = AlertDialog.Builder(requireContext())
-            .setView(dialogBinding.root)
-            .create()
-
-        val currentPoints = member.rewardPoints ?: 0
-        dialogBinding.tvCurrentPoints.text = getString(R.string.admin_current_points_preview, String.format(Locale.getDefault(), "%,d", currentPoints))
-
-        val validate = {
-            val adjStr = dialogBinding.edtAdjustment.text.toString()
-            val reason = dialogBinding.edtReason.text.toString()
-            val adj = adjStr.toIntOrNull() ?: 0
-            val newTotal = currentPoints + adj
-            
-            var isValid = true
-            
-            // Validate Adjustment
-            if (adjStr.isEmpty()) {
-                dialogBinding.tilAdjustment.error = getString(R.string.admin_error_enter_adjustment)
-                isValid = false
-            } else if (adj == 0) {
-                dialogBinding.tilAdjustment.error = getString(R.string.admin_error_cannot_be_zero)
-                isValid = false
-            } else if (newTotal < 0) {
-                dialogBinding.tilAdjustment.error = getString(R.string.admin_error_total_less_than_zero)
-                isValid = false
-            } else {
-                dialogBinding.tilAdjustment.error = null
-            }
-            
-            // Validate Reason
-            if (reason.isEmpty()) {
-                dialogBinding.tilReason.error = getString(R.string.admin_error_reason_required)
-                isValid = false
-            } else {
-                dialogBinding.tilReason.error = null
-            }
-            
-            dialogBinding.btnConfirmAdjust.isEnabled = isValid
-
-            // Update New Points Preview
-            if (adjStr.isNotEmpty()) {
-                dialogBinding.tvNewPoints.visibility = View.VISIBLE
-                dialogBinding.tvNewPoints.text = getString(R.string.admin_new_points_preview, String.format(Locale.getDefault(), "%,d", newTotal))
-                dialogBinding.tvNewPoints.setTextColor(
-                    if (newTotal < 0) ContextCompat.getColor(requireContext(), android.R.color.holo_red_dark)
-                    else ContextCompat.getColor(requireContext(), R.color.yellow)
-                )
-            } else {
-                dialogBinding.tvNewPoints.visibility = View.GONE
-            }
-        }
-
-        dialogBinding.edtAdjustment.addTextChangedListener { validate() }
-        dialogBinding.edtReason.addTextChangedListener { validate() }
-        
-        // Initial validation
-        dialogBinding.btnConfirmAdjust.isEnabled = false
-
-        dialogBinding.btnConfirmAdjust.setOnClickListener {
-            val adjStr = dialogBinding.edtAdjustment.text.toString()
-            val adjustment = adjStr.toIntOrNull() ?: 0
-            val reason = dialogBinding.edtReason.text.toString()
-
-            member.id?.let { id ->
-                viewModel.adjustMemberScore(id, currentPoints, adjustment, reason)
-            }
-            dialog.dismiss()
-        }
-
-        dialogBinding.btnCancelAdjust.setOnClickListener { dialog.dismiss() }
-        dialog.show()
-    }
-
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -256,16 +178,6 @@ class MemberListFragment : Fragment() {
                     binding.swipeRefresh.isRefreshing = state.isLoading
                     state.error?.let {
                         Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.scoreAdjustState.collectLatest { state ->
-                    if (state.isSuccess) {
-                        Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                     }
                 }
             }
