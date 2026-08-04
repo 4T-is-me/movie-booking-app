@@ -133,7 +133,7 @@ class BookingDetailActivity : AppCompatActivity() {
         val rank = detail.membershipRank ?: "bronze"
         val rankClean = rank.trim().lowercase()
         val formattedRank = rankClean.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
-        binding.tvMembershipRank.text = "$formattedRank Member"
+        binding.tvMembershipRank.text = getString(R.string.booking_member_rank, formattedRank)
 
         val badgeColor = when (rankClean) {
             "gold" -> ContextCompat.getColor(this@BookingDetailActivity, R.color.cinema_primary)
@@ -197,7 +197,7 @@ class BookingDetailActivity : AppCompatActivity() {
                 }
 
                 val nameTv = TextView(this).apply {
-                    text = "• ${combo.name} × ${combo.quantity}"
+                    text = getString(R.string.booking_combo_format, combo.name, combo.quantity)
                     setTextColor(Color.WHITE)
                     textSize = 14f
                     layoutParams = LinearLayout.LayoutParams(
@@ -207,7 +207,7 @@ class BookingDetailActivity : AppCompatActivity() {
                 }
 
                 val priceTv = TextView(this).apply {
-                    text = "  ${formatter.format(combo.subtotal)} VND"
+                    text = getString(R.string.booking_price_vnd, formatter.format(combo.subtotal))
                     setTextColor(ContextCompat.getColor(this@BookingDetailActivity, R.color.text_secondary_light))
                     textSize = 14f
                     layoutParams = LinearLayout.LayoutParams(
@@ -220,32 +220,32 @@ class BookingDetailActivity : AppCompatActivity() {
                 itemLayout.addView(priceTv)
                 binding.layoutComboItems.addView(itemLayout)
             }
-            binding.tvComboTotal.text = "${formatter.format(totalComboPrice)} VND"
+            binding.tvComboTotal.text = getString(R.string.booking_price_vnd, formatter.format(totalComboPrice))
         }
 
         // Payment info
         val pay = detail.payment
         if (pay != null) {
-            binding.tvTicketPrice.text = "${formatter.format(pay.ticketPrice)} VND"
-            binding.tvComboPrice.text = "${formatter.format(pay.comboPrice)} VND"
+            binding.tvTicketPrice.text = getString(R.string.booking_price_vnd, formatter.format(pay.ticketPrice))
+            binding.tvComboPrice.text = getString(R.string.booking_price_vnd, formatter.format(pay.comboPrice))
 
             // Promotion discount
             val discount = pay.disCountAmount
             if (discount > 0) {
                 binding.layoutPromotion.visibility = View.VISIBLE
-                binding.tvPromotionDiscount.text = "-${formatter.format(discount)} VND"
+                binding.tvPromotionDiscount.text = getString(R.string.booking_price_vnd_negative, formatter.format(discount))
             } else {
                 binding.layoutPromotion.visibility = View.GONE
             }
 
             // Points Earned
-            binding.tvEarnedPoints.text = "+${detail.earnedPoints} Points"
+            binding.tvEarnedPoints.text = getString(R.string.booking_points_earned, detail.earnedPoints.toString())
 
             // Payment Method
-            binding.tvPaymentMethod.text = "Paid via ${pay.paymentMethod}"
+            binding.tvPaymentMethod.text = getString(R.string.booking_paid_via, pay.paymentMethod)
 
             // Total Paid
-            binding.tvTotalPaid.text = "${formatter.format(pay.finalAmount)} VND"
+            binding.tvTotalPaid.text = getString(R.string.booking_price_vnd, formatter.format(pay.finalAmount))
         }
     }
 }

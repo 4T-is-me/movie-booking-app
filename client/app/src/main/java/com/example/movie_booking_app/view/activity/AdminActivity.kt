@@ -75,7 +75,7 @@ class AdminActivity : BaseActivity() {
                     loadFragment(AdminInventoryFragment())
                 }
                 R.id.nav_import_orders -> {
-                    binding.tvHeaderTitle.text = "Approve Goods Intake"
+                    binding.tvHeaderTitle.text = getString(R.string.approve_goods_intake)
                     loadFragment(com.example.movie_booking_app.view.fragment.admin.AdminImportOrderFragment())
                 }
                 R.id.nav_members -> {

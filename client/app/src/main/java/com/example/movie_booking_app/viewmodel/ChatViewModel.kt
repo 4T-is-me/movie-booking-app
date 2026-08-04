@@ -11,12 +11,16 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import android.content.Context
+import com.example.movie_booking_app.R
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 
 @HiltViewModel
 class ChatViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val chatRepository: ChatRepository
 ) : ViewModel() {
 
@@ -56,7 +60,7 @@ class ChatViewModel @Inject constructor(
 
             result.fold(
                 onSuccess = { response ->
-                    val reply = response.reply ?: "Rất tiếc, không nhận được câu trả lời từ hệ thống."
+                    val reply = response.reply ?: context.getString(R.string.error_chat_no_response)
                     val cinemaOpts = response.cinemaOptions?.map { dto ->
                         CinemaOption(
                             _id = dto._id ?: "",
@@ -75,7 +79,7 @@ class ChatViewModel @Inject constructor(
                     )
                 },
                 onFailure = { error ->
-                    val errorMsg = error.localizedMessage ?: "A connection error occurred. Please check your network connection."
+                    val errorMsg = error.localizedMessage ?: context.getString(R.string.error_chat_connection)
                     chatRepository.addMessage(ChatMessage(role = "bot", content = "⚠️ $errorMsg", timestamp = timeFormat.format(Date())))
                 }
             )

@@ -163,9 +163,9 @@ class AdminMovieListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.movieActionSuccess.collect { success ->
                 val message = if (success) {
-                    if (selectedTab == TAB_ACTIVE) "Movie deleted successfully" else "Movie restored successfully"
+                    if (selectedTab == TAB_ACTIVE) getString(R.string.movie_deleted_successfully) else getString(R.string.movie_restored_successfully)
                 } else {
-                    if (selectedTab == TAB_ACTIVE) "Failed to delete movie" else "Failed to restore movie"
+                    if (selectedTab == TAB_ACTIVE) getString(R.string.failed_to_delete_movie) else getString(R.string.failed_to_restore_movie)
                 }
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             }

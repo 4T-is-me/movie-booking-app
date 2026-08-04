@@ -170,7 +170,7 @@ class ManagerPayrollFragment : Fragment() {
         val name = managerPayroll.employee?.fullName ?: managerPayroll.employee?.username ?: ""
         binding.tvManagerName.text = name
         binding.tvManagerAvatarText.text = NameFormatter.getAvatarInitials(name)
-        binding.tvManagerCinemaName.text = managerPayroll.cinema?.cinemaName ?: "Lumina Cinema"
+        binding.tvManagerCinemaName.text = managerPayroll.cinema?.cinemaName ?: getString(R.string.lumina_cinema)
         binding.tvManagerBaseSalary.text = PayrollAdapter.formatVnd(managerPayroll.baseSalary ?: 0.0)
         binding.tvManagerBonus.text = getString(R.string.auto_str_str_auto) + PayrollAdapter.formatVnd(managerPayroll.bonus ?: 0.0)
         binding.tvManagerTotalSalary.text = PayrollAdapter.formatVnd(managerPayroll.totalSalary)

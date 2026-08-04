@@ -70,7 +70,7 @@ class StaffRatingViewModel @Inject constructor(
             } catch (e: Exception) {
                 Log.e("StaffRating", "Exception: ${e.message}")
                 _isLoading.value = false
-                _error.value = e.localizedMessage ?: "Network error"
+                _error.value = e.localizedMessage ?: context.getString(R.string.error_network)
             }
         }
     }

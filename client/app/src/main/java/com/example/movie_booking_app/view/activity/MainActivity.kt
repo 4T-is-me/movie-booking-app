@@ -180,7 +180,7 @@ class MainActivity : BaseActivity() {
 
     private fun setupBottomNav() {
         binding.btnNavHome.setOnClickListener { navigateToSection("Home") }
-        binding.btnNavMovie.setOnClickListener { navigateToSection("Now Playing") }
+        binding.btnNavMovie.setOnClickListener { navigateToSection(getString(R.string.home_now_playing)) }
         binding.btnNavTicket.setOnClickListener { navigateToSection("Ticket") }
         binding.btnNavProfile.setOnClickListener { navigateToSection("Profile") }
         binding.fabAiChat.setOnClickListener {
@@ -195,7 +195,7 @@ class MainActivity : BaseActivity() {
         
         val fragment: Fragment = when (section) {
             "Home" -> HomeFragment()
-            "Now Playing", "Coming Soon" -> MovieGridFragment.newInstance(section)
+            getString(R.string.home_now_playing), getString(R.string.home_coming_soon) -> MovieGridFragment.newInstance(section)
             "Ticket" -> MyTicketFragment()
             "Profile" -> ProfileFragment()
             "Promo", "Service", "News" -> GenericGridFragment.newInstance(section)
@@ -214,7 +214,7 @@ class MainActivity : BaseActivity() {
             
         transaction.commit()
 
-        val navHighlight = if (section == "Now Playing" || section == "Coming Soon") "Movie" else section
+        val navHighlight = if (section == getString(R.string.home_now_playing) || section == getString(R.string.home_coming_soon)) "Movie" else section
         highlightNav(navHighlight)
     }
 
@@ -229,7 +229,7 @@ class MainActivity : BaseActivity() {
 
         when(target) {
             "Home" -> highlightNavItem(binding.imgNavHome, binding.tvNavHome, yellow)
-            "Movie", "Now Playing", "Coming Soon" -> highlightNavItem(binding.imgNavMovie, binding.tvNavMovie, yellow)
+            "Movie", getString(R.string.home_now_playing), getString(R.string.home_coming_soon) -> highlightNavItem(binding.imgNavMovie, binding.tvNavMovie, yellow)
             "Ticket" -> highlightNavItem(binding.imgNavTicket, binding.tvNavTicket, yellow)
             "Profile" -> highlightNavItem(binding.imgNavProfile, binding.tvNavProfile, yellow)
         }

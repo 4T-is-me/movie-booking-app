@@ -1,6 +1,7 @@
 package com.example.movie_booking_app.view.adapter.admin
 
 import android.graphics.Color
+import com.example.movie_booking_app.R
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,12 +40,12 @@ class AdminImportOrderAdapter(
                 tvImportCode.text = order.importCode
                 tvSupplierName.text = order.supplierId?.name ?: "Unknown"
                 tvTotalAmount.text = currencyFormat.format(order.totalAmount)
-                tvItemCount.text = "${order.items.size} items"
+                tvItemCount.text = binding.root.context.getString(R.string.admin_import_item_count, order.items.size)
                 tvCreatedAt.text = order.createdAt?.take(10) ?: ""
-                tvNotes.text = order.notes?.takeIf { it.isNotEmpty() } ?: "No notes"
+                tvNotes.text = order.notes?.takeIf { it.isNotEmpty() } ?: binding.root.context.getString(R.string.admin_import_no_notes)
 
-                val itemsSummary = order.items.joinToString(", ") { "${it.itemName} (x${it.quantity})" }
-                tvItemsList.text = "Items: $itemsSummary"
+                val itemsSummary = order.items.joinToString(", ") { binding.root.context.getString(R.string.admin_import_item_format, it.itemName, it.quantity) }
+                tvItemsList.text = binding.root.context.getString(R.string.admin_import_items_list, itemsSummary)
 
                 // Status display
                 val (statusText, statusColor) = when (order.status) {

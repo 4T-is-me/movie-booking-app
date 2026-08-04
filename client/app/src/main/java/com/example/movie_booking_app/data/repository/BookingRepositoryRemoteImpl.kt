@@ -6,6 +6,9 @@ import com.example.movie_booking_app.data.api.MovieApi
 import com.example.movie_booking_app.data.model.entity.Showtime
 import com.example.movie_booking_app.data.model.response.ScoreHistoryBaseResponse
 import com.example.movie_booking_app.data.model.response.SeatMapData
+import android.content.Context
+import com.example.movie_booking_app.R
+import dagger.hilt.android.qualifiers.ApplicationContext
 import com.google.gson.JsonParser
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -13,7 +16,8 @@ import kotlinx.coroutines.flow.flow
 
 class BookingRepositoryRemoteImpl @Inject constructor(
     private val bookingApi: BookingApi,
-    private val movieApi: MovieApi
+    private val movieApi: MovieApi,
+    @ApplicationContext private val context: Context
 ) : BookingRepository {
 
     override fun getSeats(showtimeId: String): Flow<SeatMapData> = flow {
@@ -68,7 +72,7 @@ class BookingRepositoryRemoteImpl @Inject constructor(
         } else if (response.code() == 409) {
             throw Exception("CONFLICT")
         } else {
-            val errorMsg = response.errorBody()?.string() ?: "Failed to hold seats"
+            val errorMsg = response.errorBody()?.string() ?: context.getString(R.string.error_hold_failed)
             throw Exception(parseErrorMessage(errorMsg))
         }
     }
@@ -79,7 +83,7 @@ class BookingRepositoryRemoteImpl @Inject constructor(
         if (response.isSuccessful) {
             emit(Unit)
         } else {
-            val errorMsg = response.errorBody()?.string() ?: "Failed to release seats"
+            val errorMsg = response.errorBody()?.string() ?: context.getString(R.string.error_release_failed)
             throw Exception(parseErrorMessage(errorMsg))
         }
     }

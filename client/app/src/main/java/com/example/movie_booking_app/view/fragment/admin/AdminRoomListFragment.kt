@@ -52,7 +52,7 @@ class AdminRoomListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.rooms.collect { rooms ->
                 adapter.submitList(rooms)
-                binding.tvTotalRoomsCount.text = "${rooms.size} rooms"
+                binding.tvTotalRoomsCount.text = getString(R.string.rooms_format, rooms.size)
             }
         }
 

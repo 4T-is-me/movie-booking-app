@@ -58,7 +58,7 @@ class ManagerSeatActivity : AppCompatActivity() {
         val roomId = intent.getStringExtra("roomId")
         if (roomId != null) roomIdToUpdate = roomId
 
-        val roomName = intent.getStringExtra("roomName") ?: "Room Name"
+        val roomName = intent.getStringExtra("roomName") ?: getString(R.string.seat_room_name)
         val roomType = intent.getStringExtra("roomType") ?: "Standard"
         val status = intent.getStringExtra("status") ?: "active"
         val totalSeats = intent.getIntExtra("totalSeats", 0)
@@ -75,7 +75,7 @@ class ManagerSeatActivity : AppCompatActivity() {
 
         // Bind data
         binding.tvRoomName.text = roomName
-        binding.tvRoomSubtitle.text = "$totalSeats seats · $roomType"
+        binding.tvRoomSubtitle.text = getString(R.string.seat_info_format, totalSeats, roomType)
         binding.tvConfigStdCount.text = regSeatsCount.toString()
         binding.tvConfigVipCount.text = vipSeatsCount.toString()
         binding.tvConfigCoupleCount.text = cplSeatsCount.toString()
@@ -159,11 +159,11 @@ class ManagerSeatActivity : AppCompatActivity() {
         if (selectedSeatIds.isEmpty() || roomIdToUpdate.isEmpty()) return
 
         val seatList = selectedSeatIds.toList()
-        val label = if (targetStatus == "maintenance") "Bảo trì" else "Hoạt động"
+        val label = if (targetStatus == "maintenance") getString(R.string.seat_status_maintenance) else getString(R.string.seat_status_active)
 
         viewModel.bulkUpdateSeatStatus(roomIdToUpdate, seatList, targetStatus) { success ->
             if (success) {
-                Toast.makeText(this, "Đã đổi ${seatList.size} ghế sang $label", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.seat_status_changed_success, seatList.size, label), Toast.LENGTH_SHORT).show()
                 selectedSeatIds.clear()
                 updateBulkActionsUI()
             } else {

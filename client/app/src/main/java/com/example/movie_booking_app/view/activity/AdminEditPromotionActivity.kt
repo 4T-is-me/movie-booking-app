@@ -60,7 +60,7 @@ class AdminEditPromotionActivity : BaseActivity() {
 
     private fun setupUI() {
         // Setup Discount Type Dropdown
-        val discountTypes = arrayOf("Percentage (%)", "Fixed Amount (VND)")
+        val discountTypes = arrayOf(getString(R.string.promo_percentage), getString(R.string.promo_fixed_amount))
         val typeAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, discountTypes)
         binding.actvDiscountType.setAdapter(typeAdapter)
 
@@ -78,9 +78,9 @@ class AdminEditPromotionActivity : BaseActivity() {
                 binding.edtCouponCode.setText(promo.couponCode ?: "")
                 
                 if (promo.discountType == "percentage") {
-                    binding.actvDiscountType.setText("Percentage (%)", false)
+                    binding.actvDiscountType.setText(getString(R.string.promo_percentage), false)
                 } else {
-                    binding.actvDiscountType.setText("Fixed Amount (VND)", false)
+                    binding.actvDiscountType.setText(getString(R.string.promo_fixed_amount), false)
                 }
 
                 binding.edtDiscountValue.setText(promo.discountValue?.toInt()?.toString() ?: "")
@@ -109,7 +109,7 @@ class AdminEditPromotionActivity : BaseActivity() {
             }
         } else {
             binding.tvFormTitle.text = getString(R.string.auto_str_add_new_promotion)
-            binding.actvDiscountType.setText("Percentage (%)", false)
+            binding.actvDiscountType.setText(getString(R.string.promo_percentage), false)
         }
     }
 

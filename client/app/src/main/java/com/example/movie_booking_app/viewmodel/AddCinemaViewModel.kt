@@ -56,7 +56,7 @@ class AddCinemaViewModel @Inject constructor(
                     image.value = cinema.image.orEmpty()
                 }
             } catch (e: Exception) {
-                _errorMessage.value = e.message ?: "Failed to load cinema details"
+                _errorMessage.value = e.message ?: context.getString(R.string.error_load_cinema_details)
             } finally {
                 _isLoading.value = false
             }
@@ -146,10 +146,10 @@ class AddCinemaViewModel @Inject constructor(
                 if (result.isSuccess) {
                     _isSuccess.value = true
                 } else {
-                    _errorMessage.value = result.exceptionOrNull()?.message ?: (if (currentId != null) "Failed to update cinema" else "Failed to create cinema")
+                    _errorMessage.value = result.exceptionOrNull()?.message ?: (if (currentId != null) context.getString(R.string.error_update_cinema) else context.getString(R.string.error_create_cinema))
                 }
             } catch (e: Exception) {
-                _errorMessage.value = e.message ?: "An error occurred"
+                _errorMessage.value = e.message ?: context.getString(R.string.error_an_error_occurred)
             } finally {
                 _isLoading.value = false
             }

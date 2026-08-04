@@ -134,8 +134,8 @@ class StaffSalesFragment : Fragment() {
                 val formattedPrice = formatter.format(price)
 
                 binding.tvOrderMovieTitle.text = movie?.movieName ?: "N/A"
-                binding.tvOrderDetails.text = "Showtime: $showtimeStr • Date: $dateStr • Seats: $seatLabels"
-                binding.tvOrderPrice.text = "Subtotal: $formattedPrice"
+                binding.tvOrderDetails.text = getString(R.string.staff_sales_showtime_format, showtimeStr, dateStr, seatLabels)
+                binding.tvOrderPrice.text = getString(R.string.subtotal_format, formattedPrice)
 
                 viewModel.nextStep()
             } else if (step == 2) {
@@ -150,8 +150,8 @@ class StaffSalesFragment : Fragment() {
                 val formattedPrice = formatter.format(price)
 
                 binding.tvPromoOrderMovieTitle.text = movie?.movieName ?: "N/A"
-                binding.tvPromoOrderDetails.text = "Showtime: $showtimeStr • Date: $dateStr • Seats: $seatLabels"
-                binding.tvPromoOrderPrice.text = "Subtotal: $formattedPrice"
+                binding.tvPromoOrderDetails.text = getString(R.string.staff_sales_showtime_format, showtimeStr, dateStr, seatLabels)
+                binding.tvPromoOrderPrice.text = getString(R.string.subtotal_format, formattedPrice)
 
                 viewModel.loadAvailablePromotions()
                 viewModel.nextStep()
@@ -165,12 +165,12 @@ class StaffSalesFragment : Fragment() {
                 val member = viewModel.verifiedMember.value
 
                 binding.tvFinalMovie.text = movie?.movieName ?: "N/A"
-                binding.tvFinalShowtime.text = "Showtime: $showtimeStr • Date: $dateStr"
-                binding.tvFinalSeats.text = "Seats: $seatLabels"
+                binding.tvFinalShowtime.text = getString(R.string.staff_sales_showtime_date_format, showtimeStr, dateStr)
+                binding.tvFinalSeats.text = getString(R.string.staff_sales_seats_format, seatLabels)
                 binding.tvFinalMember.text = if (member != null) {
-                    "Member: ${member.memberName} (${member.phoneNumber})"
+                    getString(R.string.staff_sales_member_format, member.memberName, member.phoneNumber)
                 } else {
-                    "Customer: Walk-in"
+                    getString(R.string.customer_walk_in)
                 }
 
                 viewModel.nextStep()
@@ -311,7 +311,7 @@ class StaffSalesFragment : Fragment() {
             viewModel.selectedSeats.collectLatest { selected ->
                 if (selected.isNotEmpty()) {
                     val seatLabels = selected.joinToString(", ") { it.label }
-                    binding.tvSelectedSeats.text = "Selected seats: $seatLabels"
+                    binding.tvSelectedSeats.text = getString(R.string.selected_seats_format, seatLabels)
                     if (viewModel.currentStep.value == 1) {
                         binding.btnNext.isEnabled = true
                         binding.btnNext.alpha = 1.0f
@@ -330,14 +330,14 @@ class StaffSalesFragment : Fragment() {
             viewModel.totalPrice.collectLatest { price ->
                 val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
                 val formattedPrice = formatter.format(price)
-                binding.tvTotalPrice.text = "Subtotal: $formattedPrice"
+                binding.tvTotalPrice.text = getString(R.string.subtotal_format, formattedPrice)
             }
         }
 
         // Observe Current Step
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.currentStep.collectLatest { step ->
-                binding.tvStepText.text = "$step of 4"
+                binding.tvStepText.text = getString(R.string.step_of_total_format, step)
 
                 val isMovieSelected = viewModel.selectedMovie.value != null
                 binding.btnBack.visibility = if (isMovieSelected || step > 1) View.VISIBLE else View.GONE
@@ -392,14 +392,14 @@ class StaffSalesFragment : Fragment() {
             viewModel.verifiedMember.collectLatest { member ->
                 if (member != null) {
                     binding.cardMemberResult.visibility = View.VISIBLE
-                    binding.tvMemberName.text = "Full name: ${member.memberName}"
-                    binding.tvMemberPhone.text = "Phone number: ${member.phoneNumber}"
-                    binding.tvMemberScore.text = "Accumulated points: ${member.currentScore} pts"
+                    binding.tvMemberName.text = getString(R.string.full_name_format, member.memberName)
+                    binding.tvMemberPhone.text = getString(R.string.phone_number_format, member.phoneNumber)
+                    binding.tvMemberScore.text = getString(R.string.accumulated_points_format, member.currentScore.toString())
                     binding.cardWalkInAlert.visibility = View.GONE
 
                     // Step 3 points redemption
                     binding.cardPointsRedemption.visibility = View.VISIBLE
-                    binding.tvPromoMemberPoints.text = "Available points: ${member.currentScore} pts"
+                    binding.tvPromoMemberPoints.text = getString(R.string.available_points_format, member.currentScore.toString())
                 } else {
                     binding.cardMemberResult.visibility = View.GONE
                     binding.cardWalkInAlert.visibility = View.VISIBLE
@@ -424,7 +424,7 @@ class StaffSalesFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.isVerifyingMember.collectLatest { isVerifying ->
                 binding.btnVerifyMember.isEnabled = !isVerifying
-                binding.btnVerifyMember.text = if (isVerifying) "VERIFYING..." else "VERIFY"
+                binding.btnVerifyMember.text = if (isVerifying) getString(R.string.verifying) else getString(R.string.auto_str_verify)
             }
         }
 
@@ -435,7 +435,7 @@ class StaffSalesFragment : Fragment() {
             viewModel.appliedPromotion.collectLatest { promo ->
                 if (promo != null) {
                     binding.tvFinalPromoApplied.visibility = View.VISIBLE
-                    binding.tvFinalPromoApplied.text = "Promotion: ${promo.title}"
+                    binding.tvFinalPromoApplied.text = getString(R.string.promotion_format, promo.title)
                 } else {
                     binding.tvFinalPromoApplied.visibility = View.GONE
                 }
@@ -468,7 +468,7 @@ class StaffSalesFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.isApplyingPromo.collectLatest { isApplying ->
                 binding.btnApplyPromo.isEnabled = !isApplying
-                binding.btnApplyPromo.text = if (isApplying) "APPLYING..." else "APPLY"
+                binding.btnApplyPromo.text = if (isApplying) getString(R.string.applying) else getString(R.string.auto_str_apply)
             }
         }
 
@@ -499,7 +499,7 @@ class StaffSalesFragment : Fragment() {
                     val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
                     binding.tvSummaryPointDiscount.text = "-${formatter.format(discount)}"
                     binding.tvFinalPointsUsed.visibility = View.VISIBLE
-                    binding.tvFinalPointsUsed.text = "Use points: Yes (Discount ${formatter.format(discount)})"
+                    binding.tvFinalPointsUsed.text = getString(R.string.use_points_yes_discount_format, formatter.format(discount))
                 } else {
                     binding.layoutSummaryPointDiscount.visibility = View.GONE
                     binding.tvFinalPointsUsed.visibility = View.GONE
@@ -519,7 +519,7 @@ class StaffSalesFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.isCheckingOut.collectLatest { isChecking ->
                 binding.btnConfirmBooking.isEnabled = !isChecking
-                binding.btnConfirmBooking.text = if (isChecking) "CHECKING OUT..." else "CONFIRM CHECKOUT"
+                binding.btnConfirmBooking.text = if (isChecking) getString(R.string.checking_out) else getString(R.string.confirm_checkout)
             }
         }
 
@@ -535,7 +535,7 @@ class StaffSalesFragment : Fragment() {
             viewModel.checkoutSuccess.collectLatest { success ->
                 if (success) {
                     val code = viewModel.checkoutCode.value ?: "N/A"
-                    showSuccessDialog("Ticket sold successfully!\nBooking ID: $code\n\nPrinting receipt and ticket...")
+                    showSuccessDialog(getString(R.string.ticket_sold_success_format, code))
                 }
             }
         }

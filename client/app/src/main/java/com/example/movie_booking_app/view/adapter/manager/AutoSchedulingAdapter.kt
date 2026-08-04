@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter.manager
 
+import com.example.movie_booking_app.R
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -26,9 +27,9 @@ class AutoSchedulingAdapter : RecyclerView.Adapter<AutoSchedulingAdapter.ViewHol
                 val start = LocalDateTime.parse(item.start_time, DateTimeFormatter.ISO_DATE_TIME)
                 val end = LocalDateTime.parse(item.end_time, DateTimeFormatter.ISO_DATE_TIME)
                 val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
-                binding.tvSubtitle.text = "${item.room_name} · ${start.format(timeFormatter)} - ${end.format(timeFormatter)}"
+                binding.tvSubtitle.text = binding.root.context.getString(R.string.auto_schedule_format, item.room_name, start.format(timeFormatter), end.format(timeFormatter))
             } catch (e: Exception) {
-                binding.tvSubtitle.text = "${item.room_name} · ${item.start_time}"
+                binding.tvSubtitle.text = binding.root.context.getString(R.string.auto_schedule_format_fallback, item.room_name, item.start_time)
             }
         }
     }

@@ -153,7 +153,7 @@ class ChatAdapter(
 
                         matches.forEach { cinemaName ->
                             val btn = TextView(itemView.context).apply {
-                                text = "🍿 Xem lịch chiếu tại: $cinemaName"
+                                text = itemView.context.getString(R.string.chat_cinema_link, cinemaName)
                                 setTextColor(Color.parseColor("#F5C518"))
                                 textSize = 13f
                                 setTypeface(null, Typeface.BOLD)

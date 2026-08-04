@@ -151,6 +151,6 @@ class SelectFoodActivity : AppCompatActivity() {
 
     private fun formatCurrency(amount: Int): String {
         val formatter = NumberFormat.getInstance(Locale.GERMANY)
-        return "${formatter.format(amount)} VND"
+        return getString(R.string.booking_price_vnd, formatter.format(amount))
     }
 }

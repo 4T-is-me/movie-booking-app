@@ -63,7 +63,7 @@ class ManagerCreateImportOrderActivity : AppCompatActivity() {
     private fun setupButtons() {
         binding.btnAddItem.setOnClickListener {
             if (inventoryList.isEmpty()) {
-                Toast.makeText(this, "Loading products list...", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.goods_intake_loading), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             showAddItemDialog()

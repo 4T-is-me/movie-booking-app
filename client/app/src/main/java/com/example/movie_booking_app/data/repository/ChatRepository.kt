@@ -8,13 +8,17 @@ import com.example.movie_booking_app.data.model.ChatMessage
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import android.content.Context
+import com.example.movie_booking_app.R
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 import okhttp3.MultipartBody
 
 @Singleton
 class ChatRepository @Inject constructor(
-    private val chatApi: ChatApi
+    private val chatApi: ChatApi,
+    @ApplicationContext private val context: Context
 ) {
     // In-memory cache for chat history throughout active app session
     private val messageHistory = mutableListOf<ChatMessage>()
@@ -28,7 +32,7 @@ class ChatRepository @Inject constructor(
         if (messageHistory.isEmpty()) {
             val welcomeMsg = ChatMessage(
                 role = "bot",
-                content = "👋 **Xin chào bạn! Mình là Trợ Lý AI Rạp Phim.** 🎬\n\nMình có thể giúp bạn tra cứu lịch chiếu, bảng giá vé, khuyến mãi hoặc gợi ý phim theo tâm trạng. Bạn cần hỗ trợ thông tin gì ngay bây giờ ạ? 😊",
+                content = context.getString(R.string.ai_assistant_welcome_message),
                 timestamp = timeFormat.format(Date())
             )
             messageHistory.add(welcomeMsg)
@@ -64,7 +68,7 @@ class ChatRepository @Inject constructor(
             if (response.isSuccessful && response.body() != null) {
                 Result.success(response.body()!!)
             } else {
-                val errorMsg = response.body()?.reply ?: "Could not connect to AI Assistant (${response.code()})"
+                val errorMsg = response.body()?.reply ?: context.getString(R.string.error_ai_connection_failed, response.code())
                 Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {

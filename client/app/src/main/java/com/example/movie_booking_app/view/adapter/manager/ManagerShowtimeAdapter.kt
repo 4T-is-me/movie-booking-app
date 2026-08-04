@@ -25,8 +25,8 @@ class ManagerShowtimeAdapter : ListAdapter<ShowtimeTodayResponse, ManagerShowtim
         fun bind(item: ShowtimeTodayResponse) {
             val context = binding.root.context
             binding.tvMovieName.text = item.movieName
-            binding.tvRoomAndTime.text = "${item.roomName} · ${item.startTime} - ${item.endTime}"
-            binding.tvSeatsCount.text = "${item.bookedSeats}/${item.totalSeats} seats"
+            binding.tvRoomAndTime.text = context.getString(R.string.auto_schedule_format, item.roomName, item.startTime, item.endTime)
+            binding.tvSeatsCount.text = context.getString(R.string.manager_showtime_seats, item.bookedSeats, item.totalSeats)
 
             val rateInt = item.occupancyRate.toInt()
             binding.tvOccupancyPercentage.text = "$rateInt%"

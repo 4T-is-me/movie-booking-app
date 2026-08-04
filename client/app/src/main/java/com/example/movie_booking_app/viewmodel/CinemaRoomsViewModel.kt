@@ -57,7 +57,7 @@ class CinemaRoomsViewModel @Inject constructor(
                     _isLoading.value = false
                 }
             } catch (e: Exception) {
-                _error.value = e.message ?: "Failed to load cinema rooms"
+                _error.value = e.message ?: context.getString(R.string.error_load_cinema_rooms)
                 _isLoading.value = false
             }
         }
@@ -76,7 +76,7 @@ class CinemaRoomsViewModel @Inject constructor(
                     _error.value = context.getString(R.string.auto_str_failed_to_update_room_status)
                 }
             } catch (e: Exception) {
-                _error.value = e.message ?: "Failed to update room status"
+                _error.value = e.message ?: context.getString(R.string.error_update_room_status)
             } finally {
                 _isLoading.value = false
             }

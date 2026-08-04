@@ -43,11 +43,11 @@ class CinemaRoomsAdapter(
             tvRoomName.text = room.roomName
             
             // Format type: e.g., Standard • 2D
-            val formattedType = "${room.roomType ?: "Standard"} • ${room.screenType ?: "2D"}"
+            val formattedType = itemView.context.getString(R.string.admin_room_type_format, room.roomType ?: "Standard", room.screenType ?: "2D")
             tvRoomType.text = formattedType
 
             // Format capacity: e.g., 120 seats
-            tvCapacity.text = "${room.totalSeats} seats"
+            tvCapacity.text = itemView.context.getString(R.string.admin_room_seats_count, room.totalSeats)
 
             // Adjust status chip presentation using existing drawables
             val status = room.status ?: "active"
@@ -57,17 +57,17 @@ class CinemaRoomsAdapter(
 
             when (status.lowercase()) {
                 "active", "operating", "open" -> {
-                    statusText = "Active"
+                    statusText = itemView.context.getString(R.string.status_active_en)
                     textColor = ContextCompat.getColor(itemView.context, R.color.color_green)
                     backgroundRes = R.drawable.bg_label_operating
                 }
                 "maintenance", "maintain" -> {
-                    statusText = "Maintenance"
+                    statusText = itemView.context.getString(R.string.status_maintenance_en)
                     textColor = ContextCompat.getColor(itemView.context, R.color.auto_color_F59E0B)
                     backgroundRes = R.drawable.bg_label_maintain
                 }
                 else -> {
-                    statusText = "Closed"
+                    statusText = itemView.context.getString(R.string.status_closed_en)
                     textColor = ContextCompat.getColor(itemView.context, R.color.color_error_red)
                     backgroundRes = R.drawable.bg_label_close
                 }
@@ -81,11 +81,11 @@ class CinemaRoomsAdapter(
 
             ivOptions.setOnClickListener { view ->
                 val popup = PopupMenu(view.context, view)
-                popup.menu.add(0, 1, 0, "Edit Room")
+                popup.menu.add(0, 1, 0, view.context.getString(R.string.admin_room_edit))
                 if (status.lowercase() == "active") {
-                    popup.menu.add(0, 2, 1, "Close Room")
+                    popup.menu.add(0, 2, 1, view.context.getString(R.string.admin_room_close))
                 } else {
-                    popup.menu.add(0, 3, 1, "Reactivate Room")
+                    popup.menu.add(0, 3, 1, view.context.getString(R.string.admin_room_reactivate))
                 }
 
                 popup.setOnMenuItemClickListener { item ->

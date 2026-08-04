@@ -102,7 +102,7 @@ class ProfileFragment : Fragment() {
 
 
         binding.layoutChangeLanguage.setOnClickListener {
-            val languages = arrayOf("English", "Tiếng Việt", "日本語")
+            val languages = arrayOf(getString(R.string.lang_english), getString(R.string.lang_vietnamese), getString(R.string.lang_japanese))
             val langCodes = arrayOf("en", "vi", "ja")
             val prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
             val currentLang = prefs.getString("language_code", "en") ?: "en"
@@ -183,7 +183,7 @@ class ProfileFragment : Fragment() {
 
                     // Apply badge background and texts
                     binding.layoutBadge.setBackgroundResource(badgeBgRes)
-                    binding.tvRank.text = "${rank.replaceFirstChar { it.uppercase() }} Member"
+                    binding.tvRank.text = getString(R.string.member_rank_format, rank.replaceFirstChar { it.uppercase() })
                     binding.tvRank.setTextColor(badgeColor)
 
                     // Tint crown icon inside the badge
@@ -200,7 +200,7 @@ class ProfileFragment : Fragment() {
                     binding.ivAvatar.strokeColor = ColorStateList.valueOf(badgeColor)
 
                     val points = userProfile?.rewardPoints ?: 0
-                    binding.tvPoints.text = "$points pts"
+                    binding.tvPoints.text = getString(R.string.points_format_str, points.toString())
 
                     val spent = userProfile?.totalSpent ?: 0
                     val symbols = DecimalFormatSymbols(Locale("vi", "VN")).apply {

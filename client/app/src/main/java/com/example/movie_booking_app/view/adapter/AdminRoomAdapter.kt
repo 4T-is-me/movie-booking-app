@@ -32,7 +32,7 @@ class AdminRoomAdapter(
 
         fun bind(room: CinemaRoom) {
             tvRoomName.text = room.roomName
-            tvTotalSeats.text = "Total Seats: ${room.totalSeats}"
+            tvTotalSeats.text = itemView.context.getString(R.string.admin_room_total_seats, room.totalSeats)
             tvRoomHint.text = itemView.context.getString(R.string.auto_str_tap_to_edit_seat_layout)
         }
     }

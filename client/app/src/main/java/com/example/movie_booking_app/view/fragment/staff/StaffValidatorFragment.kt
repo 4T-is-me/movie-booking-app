@@ -267,7 +267,7 @@ class StaffValidatorFragment : Fragment() {
             bindingDialog.tvSeats.text = "Seats: ${data.seatNames?.joinToString(", ") ?: "None"}"
             bindingDialog.tvBookingCode.text = "Code: ${data.bookingCode}"
             
-            val comboStr = data.combos?.joinToString(", ") { "${it.name} x${it.quantity}" }
+            val comboStr = data.combos?.joinToString(", ") { getString(R.string.selected_fb_format, it.name, it.quantity) }
             if (!comboStr.isNullOrEmpty()) {
                 bindingDialog.tvCombos.text = "Combos: $comboStr"
                 bindingDialog.tvCombos.visibility = View.VISIBLE

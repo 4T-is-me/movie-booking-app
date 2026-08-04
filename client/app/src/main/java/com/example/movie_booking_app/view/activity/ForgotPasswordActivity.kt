@@ -60,7 +60,7 @@ class ForgotPasswordActivity : EnglishBaseActivity() {
                     withContext(Dispatchers.Main) {
                         btnSend.isEnabled = true
                         pbLoading.visibility = View.GONE
-                        showAlert("Network Error", getString(R.string.connection_error))
+                        showAlert(getString(R.string.title_network_error), getString(R.string.connection_error))
                     }
                 }
             }
