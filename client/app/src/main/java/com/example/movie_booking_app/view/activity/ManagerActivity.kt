@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
+import com.example.movie_booking_app.utils.AuthUtils
 import com.example.movie_booking_app.data.local.TokenManager
 import com.example.movie_booking_app.data.model.response.WeeklyRevenueResponse
 import com.example.movie_booking_app.databinding.ActivityManagerBinding
@@ -108,21 +109,7 @@ class ManagerActivity : AppCompatActivity() {
 
     }
 
-    private fun performLogout() {
-        TokenManager.clearTokens(this)
-        val sharedPref = getSharedPreferences("app_prefs", MODE_PRIVATE)
-        with(sharedPref.edit()) {
-            remove("auth_token")
-            remove("username")
-            remove("role")
-            apply()
-        }
-        Toast.makeText(this, getString(R.string.auto_str_logged_out_successfully), Toast.LENGTH_SHORT).show()
-        val intent = Intent(this, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-        finish()
-    }
+
 
     private fun observeDashboardData() {
         lifecycleScope.launch {
@@ -266,7 +253,7 @@ class ManagerActivity : AppCompatActivity() {
 
         binding.navigationView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_logout -> performLogout()
+                R.id.nav_logout -> AuthUtils.showLogoutConfirmationDialog(this)
                 R.id.nav_dashboard -> {
                     showDashboard()
                 }
@@ -308,12 +295,46 @@ class ManagerActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.manager_container, fragment)
             .commit()
+
+        val itemId = when (fragment) {
+            is ManagerNotificationsFragment -> R.id.nav_notifications
+            is ManagerRoomFragment -> R.id.nav_rooms
+            is ManagerReportFragment -> R.id.nav_reports
+            is ManagerStaffFragment -> R.id.nav_staff
+            is ManagerScheduleFragment -> R.id.nav_schedule
+            is ManagerImportOrderFragment -> R.id.nav_import_orders
+            is ManagerProfileFragment -> R.id.nav_profile
+            is ManagerPayrollFragment -> R.id.nav_payroll
+            else -> null
+        }
+        if (itemId != null) {
+            updateMenuCheckedState(itemId)
+        }
     }
 
     private fun showDashboard() {
         binding.tvHeaderTitle.text = getString(R.string.auto_str_dashboard)
         binding.managerContainer.visibility = View.GONE
         binding.scrollDashboard.visibility = View.VISIBLE
+        updateMenuCheckedState(R.id.nav_dashboard)
+    }
+
+    private fun updateMenuCheckedState(checkedId: Int) {
+        val menu = binding.navigationView.menu
+        for (i in 0 until menu.size()) {
+            val item = menu.getItem(i)
+            if (item.hasSubMenu()) {
+                val subMenu = item.subMenu
+                if (subMenu != null) {
+                    for (j in 0 until subMenu.size()) {
+                        val subItem = subMenu.getItem(j)
+                        subItem.isChecked = (subItem.itemId == checkedId)
+                    }
+                }
+            } else {
+                item.isChecked = (item.itemId == checkedId)
+            }
+        }
     }
 
 

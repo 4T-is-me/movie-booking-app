@@ -55,8 +55,11 @@ class SelectSeatViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SeatingUiState.IDLE)
     val uiState: StateFlow<SeatingUiState> = _uiState.asStateFlow()
 
-    private var lastHeldSeatIds: List<String>? = null
     private var countdownCollectJob: Job? = null
+
+    private var lastHeldSeatIds: List<String>?
+        get() = savedStateHandle["lastHeldSeatIds"]
+        set(value) { savedStateHandle["lastHeldSeatIds"] = value }
 
     private val _allShowtimes = MutableStateFlow<List<Showtime>>(emptyList())
 
@@ -188,10 +191,27 @@ class SelectSeatViewModel @Inject constructor(
             _isLoading.value = true
             repository.getSeats(showtimeId).collect { seatMapData ->
                 val seatList = seatMapData.seats ?: emptyList()
-                _seats.value = seatList
+                
+                // Map HOLDING status to SELECTED if they are the user's previously held seats
+                val mappedSeats = if (!lastHeldSeatIds.isNullOrEmpty()) {
+                    seatList.map { seat ->
+                        if (seat.id in lastHeldSeatIds!! && seat.displayStatus == SeatStatus.HOLDING) {
+                            seat.copy(displayStatus = SeatStatus.SELECTED)
+                        } else {
+                            seat
+                        }
+                    }
+                } else {
+                    seatList
+                }
+
+                _seats.value = mappedSeats
                 _cinemaRoomName.value = seatMapData.cinemaRoomName
                 _cinemaName.value = seatMapData.cinemaName
-                _selectedSeats.value = emptyList()
+                
+                // If we restored SELECTED seats from HOLDING, update _selectedSeats
+                _selectedSeats.value = mappedSeats.filter { it.displayStatus == SeatStatus.SELECTED }
+
                 _isLoading.value = false
                 if (seatList.isEmpty()) {
                     _errorMessage.emit(savedStateHandle.get<String>("error_no_seats") ?: "error_no_seats")

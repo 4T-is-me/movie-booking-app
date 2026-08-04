@@ -10,13 +10,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.data.model.entity.Inventory
 import com.example.movie_booking_app.databinding.ItemAdminInventoryBinding
 
-class InventoryAdapter(
-    private val onRefillClick: (Inventory) -> Unit
-) : ListAdapter<Inventory, InventoryAdapter.ViewHolder>(DiffCallback()) {
+class InventoryAdapter : ListAdapter<Inventory, InventoryAdapter.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemAdminInventoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ViewHolder(binding, onRefillClick)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -24,8 +22,7 @@ class InventoryAdapter(
     }
 
     class ViewHolder(
-        private val binding: ItemAdminInventoryBinding,
-        private val onRefillClick: (Inventory) -> Unit
+        private val binding: ItemAdminInventoryBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Inventory) {
@@ -42,8 +39,6 @@ class InventoryAdapter(
                 } else {
                     tvQuantity.setTextColor(Color.WHITE)
                 }
-
-                btnRefill.setOnClickListener { onRefillClick(item) }
             }
         }
     }

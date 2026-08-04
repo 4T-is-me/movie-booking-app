@@ -95,7 +95,7 @@ class FoodBeverageAdapter(
         fun updateQuantityOnly(item: FoodBeverage) {
             with(binding) {
                 tvQuantity.text = item.selectedQuantity.toString()
-                tvStock.text = if (item.stock < 999) "In stock: ${item.stock}" else ""
+                tvStock.text = itemView.context.getString(R.string.fb_in_stock, item.stock)
                 btnMinus.isVisible = item.selectedQuantity > 0
                 btnPlus.isEnabled = item.selectedQuantity < item.stock
                 btnPlus.alpha = if (btnPlus.isEnabled) 1.0f else 0.5f
@@ -129,18 +129,8 @@ class FoodBeverageAdapter(
             val dialog = AlertDialog.Builder(context)
                 .setTitle("Enter Quantity")
                 .setMessage("Max available: ${item.stock}")
-                .setView(input)
-                .setPositiveButton("OK") { _, _ ->
-                    val value = input.text.toString().toIntOrNull() ?: 0
-                    if (value > item.stock) {
-                        item.selectedQuantity = item.stock
-                        Toast.makeText(context, itemView.context.getString(R.string.auto_str_quantity_adjusted_to_max_stock), Toast.LENGTH_SHORT).show()
-                    } else {
-                        item.selectedQuantity = value
-                    }
-                    updateQuantityOnly(item)
-                    onQuantityChanged(item)
-                }
+                .setView(container)
+                .setPositiveButton("OK", null)
                 .setNegativeButton("Cancel", null)
                 .create()
 

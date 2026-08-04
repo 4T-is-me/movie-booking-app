@@ -64,18 +64,6 @@
             app:layout_constraintTop_toBottomOf="@id/tvItemCode"
             tools:visibility="visible" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnRefill"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/fb_refill"
-            android:textColor="@color/auto_color_F5C542"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/tvQuantity"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Refill" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>

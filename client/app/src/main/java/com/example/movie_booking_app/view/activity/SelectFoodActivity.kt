@@ -45,6 +45,7 @@ class SelectFoodActivity : AppCompatActivity() {
 
         setupUI()
         setupTabs()
+        setupListeners(booking)
         observeViewModel(booking)
     }
 
@@ -59,6 +60,30 @@ class SelectFoodActivity : AppCompatActivity() {
         }
 
         binding.btnBack.setOnClickListener { finish() }
+    }
+
+    private fun setupListeners(currentBooking: Booking) {
+        binding.btnContinue.setOnClickListener {
+            if (viewModel.uiState.value.isExpired) {
+                showExpiredDialog()
+                return@setOnClickListener
+            }
+
+            val selectedFB = viewModel.getSelectedItems()
+            val state = viewModel.uiState.value
+            val updatedBooking = currentBooking.copy(
+                combos = selectedFB.map {
+                    ComboDetail(it.id, it.name, it.selectedQuantity, it.price)
+                },
+                comboTotal = state.totalFBPrice,
+                grandTotal = currentBooking.ticketTotal + state.totalFBPrice + currentBooking.bookingFee
+            )
+
+            val intent = Intent(this@SelectFoodActivity, PaymentActivity::class.java).apply {
+                putExtra("BOOKING_SESSION", updatedBooking)
+            }
+            startActivity(intent)
+        }
     }
 
     private fun setupTabs() {
@@ -103,27 +128,6 @@ class SelectFoodActivity : AppCompatActivity() {
                     if (state.isExpired && !isExpiredDialogShown) {
                         isExpiredDialogShown = true
                         showExpiredDialog()
-                    }
-
-                    binding.btnContinue.setOnClickListener {
-                        if (state.isExpired) {
-                            showExpiredDialog()
-                            return@setOnClickListener
-                        }
-                        
-                        val selectedFB = viewModel.getSelectedItems()
-                        val updatedBooking = currentBooking.copy(
-                            combos = selectedFB.map { 
-                                ComboDetail(it.id, it.name, it.selectedQuantity, it.price)
-                            },
-                            comboTotal = state.totalFBPrice,
-                            grandTotal = currentBooking.ticketTotal + state.totalFBPrice + currentBooking.bookingFee
-                        )
-
-                        val intent = Intent(this@SelectFoodActivity, PaymentActivity::class.java).apply {
-                            putExtra("BOOKING_SESSION", updatedBooking)
-                        }
-                        startActivity(intent)
                     }
                 }
             }
