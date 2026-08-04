@@ -56,6 +56,9 @@ object Constants {
 
         const val SEPARATOR_DASH = "-"
         const val SEPARATOR_SLASH = "/"
+        const val SEPARATOR_COMMA = ","
+        const val DEFAULT_CENSORSHIP = "P"
+        val CENSORSHIP_CODES = arrayOf("P", "K", "T13", "T16", "T18", "C")
     }
 
     object MovieStatus {
