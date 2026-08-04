@@ -10,9 +10,9 @@
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/imgServiceIcon"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:padding="12dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:padding="6dp"
         android:background="@color/card_dark"
         app:shapeAppearanceOverlay="@style/RoundedImageView16dp" />
 

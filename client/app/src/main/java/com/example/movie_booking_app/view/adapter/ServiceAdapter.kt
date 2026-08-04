@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Service
 import com.example.movie_booking_app.databinding.ItemServicesBinding
@@ -29,9 +30,24 @@ class ServiceAdapter : ListAdapter<Service, ServiceAdapter.ServiceViewHolder>(Se
 
         fun bind(service: Service) {
             tvName.text = service.name
-            // Placeholder logic for service icons
-            imgIcon.setImageResource(android.R.drawable.ic_menu_info_details)
-            imgIcon.setColorFilter(ContextCompat.getColor(itemView.context, R.color.white))
+            
+            val imageUrl = when {
+                service.name.contains("4DX", ignoreCase = true) -> "https://res.cloudinary.com/fmu581pj/image/upload/v1783842048/4dx_xjfljb.webp"
+                service.name.contains("IMAX", ignoreCase = true) -> "https://res.cloudinary.com/fmu581pj/image/upload/v1783842047/imax_jhxh12.jpg"
+                else -> service.iconUrl
+            }
+
+            if (imageUrl.isNotEmpty()) {
+                imgIcon.clearColorFilter()
+                Glide.with(itemView.context)
+                    .load(imageUrl)
+                    .placeholder(android.R.drawable.ic_menu_info_details)
+                    .error(android.R.drawable.ic_menu_info_details)
+                    .into(imgIcon)
+            } else {
+                imgIcon.setImageResource(android.R.drawable.ic_menu_info_details)
+                imgIcon.setColorFilter(ContextCompat.getColor(itemView.context, R.color.white))
+            }
         }
     }
 
