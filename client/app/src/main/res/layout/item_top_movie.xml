@@ -33,7 +33,7 @@
             android:layout_centerVertical="true"
             android:text="@string/auto_str_dune_part_two"
             android:textColor="@color/auto_color_FFFFFF"
-            android:textSize="15sp"
+            android:textSize="13sp"
             android:textStyle="bold" />
 
         <TextView

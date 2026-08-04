@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.PayrollItem
 import com.example.movie_booking_app.databinding.FragmentManagerPayrollBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.utils.NameFormatter
 import com.example.movie_booking_app.view.activity.PayrollConfigActivity
 import com.example.movie_booking_app.view.activity.PayrollDetailActivity
@@ -40,7 +41,7 @@ class ManagerPayrollFragment : Fragment() {
     // Keep track of data to filter locally
     private var allStaffPayrolls: List<PayrollItem> = emptyList()
     private var currentSearchQuery: String = ""
-    private var currentStatusFilter: String = "All"
+    private var currentStatusFilter: String = Constants.STATUS_OPTIONS[0]
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -91,13 +92,12 @@ class ManagerPayrollFragment : Fragment() {
         })
 
         // Setup Spinner status
-        val statusOptions = listOf("All", "Draft", "Paid")
-        val spinnerAdapter = ArrayAdapter(requireContext(), R.layout.item_spinner_text, statusOptions)
+        val spinnerAdapter = ArrayAdapter(requireContext(), R.layout.item_spinner_text, Constants.STATUS_OPTIONS)
         spinnerAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown)
         binding.spinnerStatusFilter.adapter = spinnerAdapter
         binding.spinnerStatusFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                currentStatusFilter = statusOptions[position]
+                currentStatusFilter = Constants.STATUS_OPTIONS[position]
                 filterStaffList()
             }
 

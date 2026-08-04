@@ -23,6 +23,7 @@ object Constants {
     const val FULLTIME = "08h–22h"
     const val MAX_SHIFT_OF_DATE = 4
     val SHIFTS = listOf("Morning", "Afternoon", "Evening", "Night")
+
     val STATUS_SHIFT = listOf("Active","Assigned", "Completed", "Absent", "NeedReplacement")
 
     val STATUS_REQUEST = listOf("pending", "approved", "rejected")
@@ -35,6 +36,15 @@ object Constants {
     }
 
     val STATUS_PAYROLL = listOf("All Status", "Draft", "Paid")
+    val IMPORT_ORDER_STATUS = listOf("PENDING", "APPROVED", "REJECTED")
+    val STATUS_OPTIONS = listOf("All", "Draft", "Paid")
+    val TIME = listOf("day", "week", "month", "year")
+    const val LIMIT_TITLE = 30
+    const val CURRENT_TAB = "staff_list"
+    const val LEAVE_REQUEST_TAB = "leave_requests"
+    const val  LEAVE_REQUEST_CREATED = "LEAVE_REQUEST_CREATED"
+    const val  SHIFT_CHANGE_ACCEPTED =  "SHIFT_CHANGE_ACCEPTED"
+    const val TARGET_TAB = "target_tab"
 
     object Movie {
         const val EXTRA_MOVIE_DATA = "movie"
@@ -86,6 +96,18 @@ object Constants {
         const val DRINK = "drink"
         const val FOOD = "food"
     }
+    object ShiftPair{
+        const val MORNING_AFTERNOON = "Morning - Afternoon"
+        const val EVENING_NIGHT = "Evening - Night"
+    }
+
+    object SeatStatus {
+        const val ACTIVE = "active"
+        const val MAINTENANCE = "maintenance"
+    }
+
+
+
 }
 
 

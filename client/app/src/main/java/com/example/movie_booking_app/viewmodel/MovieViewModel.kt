@@ -12,6 +12,7 @@ import com.example.movie_booking_app.data.model.ui.HomeItem
 import com.example.movie_booking_app.data.repository.MovieRepository
 import com.example.movie_booking_app.data.repository.NewsRepository
 import com.example.movie_booking_app.data.repository.ProfileRepository
+import com.example.movie_booking_app.utils.Constants
 import com.google.gson.JsonParser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.File
@@ -80,7 +81,7 @@ class MovieViewModel @Inject constructor(
     @OptIn(FlowPreview::class)
     private fun setupSearch() {
         _searchQuery
-            .debounce(com.example.movie_booking_app.utils.Constants.BookingConfig.DEBOUNCE_SEARCH_MS)
+            .debounce(Constants.BookingConfig.DEBOUNCE_SEARCH_MS)
             .distinctUntilChanged()
             .onEach { query ->
                 if (query.isNotEmpty()) {
@@ -138,7 +139,7 @@ class MovieViewModel @Inject constructor(
                 repository.getNews().onStart { emit(emptyList()) }
             ) { movies, promos, services, news ->
                 val list = mutableListOf<HomeItem>()
-                val movieStatus = com.example.movie_booking_app.utils.Constants.MovieStatus
+                val movieStatus = Constants.MovieStatus
                 
                 // Helper to filter status
                 fun Movie.hasStatus(vararg keys: String) = keys.any { status?.lowercase()?.contains(it) == true }

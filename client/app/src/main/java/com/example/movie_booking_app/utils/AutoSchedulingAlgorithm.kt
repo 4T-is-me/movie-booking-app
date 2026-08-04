@@ -50,8 +50,8 @@ object AutoSchedulingAlgorithm {
         holidayDates: List<String> = emptyList(),
         existingShowtimes: List<ShowtimeDraft> = emptyList()
     ): List<ShowtimeDraft> {
-        val activeMovies = movies.filter { it.status.equals("showing", ignoreCase = true) }
-        val activeRooms = rooms.filter { it.status.equals("active", ignoreCase = true) }
+        val activeMovies = movies.filter { it.status.equals(Constants.MovieStatus.SHOWING, ignoreCase = true) }
+        val activeRooms = rooms.filter { it.status.equals(Constants.MovieStatus.ACTIVE, ignoreCase = true) }
         val result = mutableListOf<ShowtimeDraft>()
 
         var currentDate = startDate

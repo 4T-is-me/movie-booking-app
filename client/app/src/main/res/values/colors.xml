@@ -421,4 +421,6 @@
     <color name="auto_color_33EF4444">#33EF4444</color>
     <color name="import_order_card_bg">#1A2333</color>
     <color name="auto_color_1A1D2D">#1A1D2D</color>
+    <color name="switch_enabled">#38BDF8</color>
+    <color name="switch_disabled">#94A3B8</color>
 </resources>
