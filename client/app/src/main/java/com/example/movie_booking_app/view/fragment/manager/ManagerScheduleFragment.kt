@@ -103,6 +103,7 @@ class ManagerScheduleFragment : Fragment() {
                 try {
                     binding.pbLoading.visibility = View.VISIBLE
                     binding.layoutLoading.visibility = View.VISIBLE
+                    binding.ivResultIcon.visibility = View.GONE
                     binding.tvLoadingText.text = getString(R.string.auto_str_saving_to_database)
 
                     val response = RetrofitClient.managerApi.createBulkShowtimes(requestBody)
@@ -111,7 +112,12 @@ class ManagerScheduleFragment : Fragment() {
                         binding.pbLoading.visibility = View.GONE
                         binding.ivResultIcon.visibility = View.VISIBLE
                         binding.ivResultIcon.setImageResource(R.drawable.baseline_check_circle_24)
+                        binding.ivResultIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.auto_color_00C853))
                         binding.tvLoadingText.text = getString(R.string.auto_str_saved_successfully)
+                        
+                        // Clear the drafts that were just saved
+                        allGeneratedShowtimes.removeAll { it.is_auto_generated && it.room_id == selectedRoomId }
+                        
                         delay(1500)
                         binding.layoutLoading.visibility = View.GONE
                         binding.btnSave.isEnabled = true
@@ -119,15 +125,24 @@ class ManagerScheduleFragment : Fragment() {
                         Toast.makeText(requireContext(), getString(R.string.auto_str_showtimes_saved_to_database), Toast.LENGTH_SHORT).show()
                         fetchExistingShowtimes(currentWeekStart, currentWeekStart.plusDays(6))
                     } else {
+                        binding.pbLoading.visibility = View.GONE
+                        binding.ivResultIcon.visibility = View.VISIBLE
+                        binding.ivResultIcon.setImageResource(R.drawable.ic_error)
+                        binding.ivResultIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.auto_color_E53935))
+                        binding.tvLoadingText.text = "Server error: ${response.message()}"
+                        delay(2000)
                         binding.layoutLoading.visibility = View.GONE
                         binding.btnSave.isEnabled = true
-                        Toast.makeText(requireContext(), "Server error: ${response.message()}", Toast.LENGTH_LONG).show()
                     }
                 } catch (e: Exception) {
-                    binding.layoutLoading.visibility = View.GONE
+                    binding.pbLoading.visibility = View.GONE
+                    binding.ivResultIcon.visibility = View.VISIBLE
+                    binding.ivResultIcon.setImageResource(R.drawable.ic_error)
+                    binding.ivResultIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.auto_color_E53935))
+                    binding.tvLoadingText.text = "Connection error: ${e.message}"
+                    delay(2000)
                     binding.layoutLoading.visibility = View.GONE
                     binding.btnSave.isEnabled = true
-                    Toast.makeText(requireContext(), "Network connection error: ${e.message}", Toast.LENGTH_LONG).show()
                 }
             }
         }
@@ -151,22 +166,25 @@ class ManagerScheduleFragment : Fragment() {
     }
 
     private fun fetchRoomsAndPopulateTabs() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val roomResponse = RetrofitClient.managerRoomApi.getRooms()
-                allRooms = roomResponse.body()?.data?.map {
-                    RoomDraft(it.id, it.roomName ?: "Unknown Room", "c1", it.status ?: "active")
-                } ?: emptyList()
+                val apiRooms = roomResponse.body()?.data
                 
-                if (allRooms.isEmpty()) {
-                    allRooms = listOf(
+                allRooms = if (apiRooms.isNullOrEmpty()) {
+                    listOf(
                         RoomDraft("room1", "Room 1", "c1", "active"),
                         RoomDraft("room2", "Room 2", "c1", "active")
                     )
+                } else {
+                    apiRooms.map {
+                        RoomDraft(it.id, it.roomName ?: "Unknown Room", "c1", it.status ?: "active")
+                    }
                 }
                 
                 if (allRooms.isNotEmpty()) {
-                    selectedRoomId = allRooms.firstOrNull { it.status == "active" }?._id ?: allRooms.first()._id
+                    selectedRoomId = allRooms.firstOrNull { it.status.equals("active", ignoreCase = true) }?._id 
+                        ?: allRooms.first()._id
                 }
                 
                 renderRoomTabs()
@@ -197,10 +215,12 @@ class ManagerScheduleFragment : Fragment() {
             params.setMargins(0, 0, 24, 0)
             tv.layoutParams = params
 
+            val isActive = room.status.equals("active", ignoreCase = true)
+
             if (room._id == selectedRoomId) {
                 tv.setBackgroundResource(R.drawable.bg_button_gold)
                 tv.setTextColor(android.graphics.Color.WHITE)
-            } else if (room.status != "active") {
+            } else if (!isActive) {
                 tv.setBackgroundResource(R.drawable.bg_rounded_border)
                 tv.setTextColor(ContextCompat.getColor(requireContext(), R.color.auto_color_999999))
             } else {
@@ -311,13 +331,15 @@ class ManagerScheduleFragment : Fragment() {
     }
 
     private fun fetchExistingShowtimes(startDate: LocalDate, endDate: LocalDate) {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             try {
                 binding.pbLoading.visibility = View.VISIBLE
                 val response = RetrofitClient.managerApi.getShowtimes(startDate.toString(), endDate.toString())
                 if (response.isSuccessful) {
                     val apiShowtimes = response.body()?.data ?: emptyList()
-                    allGeneratedShowtimes.clear()
+                    
+                    // Only clear and replace non-auto-generated items
+                    allGeneratedShowtimes.removeAll { !it.is_auto_generated }
                     
                     for (apiItem in apiShowtimes) {
                         if (apiItem.movieId != null && apiItem.roomId != null) {
@@ -335,12 +357,15 @@ class ManagerScheduleFragment : Fragment() {
                                     .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
                             } catch (e: Exception) { apiItem.endTime }
 
+                            val roomRef = apiItem.roomId
+                            val movieRef = apiItem.movieId
+
                             allGeneratedShowtimes.add(ShowtimeDraft(
                                 show_date = apiItem.showDate.substring(0, 10),
-                                room_id = apiItem.roomId._id,
-                                room_name = apiItem.roomId.roomName,
-                                movie_id = apiItem.movieId._id,
-                                movie_name = apiItem.movieId.movieName,
+                                room_id = roomRef._id ?: "",
+                                room_name = roomRef.roomName ?: "Unknown",
+                                movie_id = movieRef._id ?: "",
+                                movie_name = movieRef.movieName ?: "Unknown",
                                 cinema_id = "",
                                 start_time = startLocal,
                                 end_time = endLocal,
@@ -349,10 +374,14 @@ class ManagerScheduleFragment : Fragment() {
                             ))
                         }
                     }
-                    filterAndDisplaySchedule()
+                    withContext(Dispatchers.Main) {
+                        filterAndDisplaySchedule()
+                    }
                 }
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Error loading showtimes: ${e.message}", Toast.LENGTH_SHORT).show()
+                if (_binding != null) {
+                    Toast.makeText(requireContext(), "Error loading showtimes: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
             } finally {
                 if (_binding != null) binding.pbLoading.visibility = View.GONE
             }
@@ -370,15 +399,26 @@ class ManagerScheduleFragment : Fragment() {
     private fun fetchMoviesAndGenerateSchedule() {
         binding.layoutLoading.visibility = View.VISIBLE
         binding.pbLoading.visibility = View.VISIBLE
+        binding.ivResultIcon.visibility = View.GONE
         binding.tvLoadingText.text = getString(R.string.auto_str_generating)
         binding.tvLoadingText.setTextColor(ContextCompat.getColor(requireContext(), R.color.auto_color_333333))
         
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val movieResponse = RetrofitClient.movieApi.getMovies()
-                val movies = movieResponse.body()?.data?.map {
+                val apiMovies = movieResponse.body()?.data
+                
+                // Log for debugging
+                // println("API Movies: ${apiMovies?.size}")
+
+                val movies = apiMovies?.map {
                     MovieDraft(it.id ?: "", it.movieName ?: "Unknown Movie", it.duration ?: 120, it.status ?: "showing", it.tier ?: 1)
                 } ?: emptyList()
+
+                val activeMovies = movies.filter { it.status.equals("showing", ignoreCase = true) }
+                if (activeMovies.isEmpty()) {
+                    throw Exception("No movies found with status 'showing'")
+                }
 
                 val roomsToGenerate = if (selectedRoomId != null) {
                     allRooms.filter { it._id == selectedRoomId }
@@ -386,42 +426,54 @@ class ManagerScheduleFragment : Fragment() {
                     allRooms
                 }
 
+                val activeRooms = roomsToGenerate.filter { it.status.equals("active", ignoreCase = true) }
+                if (activeRooms.isEmpty()) {
+                    throw Exception("Selected room is not active")
+                }
+
                 val config = CinemaConfigDraft(15)
+                // Filter out auto-generated showtimes from other rooms to avoid conflicts during calculation
                 val existingOtherRooms = allGeneratedShowtimes.filter { it.room_id != selectedRoomId }
 
                 val schedule = withContext(Dispatchers.Default) {
                     AutoSchedulingAlgorithm.generateWeeklySchedule(
-                        currentWeekStart, currentWeekStart.plusDays(6), movies, roomsToGenerate, config, currentWeekHolidays, existingOtherRooms
+                        currentWeekStart, currentWeekStart.plusDays(6), movies, activeRooms, config, currentWeekHolidays, existingOtherRooms
                     )
                 }
 
-                allGeneratedShowtimes.removeAll { 
-                    val d = LocalDate.parse(it.show_date)
-                    !d.isBefore(currentWeekStart) && !d.isAfter(currentWeekStart.plusDays(6)) && 
-                    it.room_id == selectedRoomId && !d.isBefore(LocalDate.now())
+                if (schedule.isEmpty()) {
+                    throw Exception("Algorithm generated 0 showtimes. Check movies/rooms/conflicts.")
                 }
+
+                // Remove previous drafts for this room
+                allGeneratedShowtimes.removeAll { 
+                    it.is_auto_generated && it.room_id == selectedRoomId
+                }
+                
+                // Add the new drafts
                 allGeneratedShowtimes.addAll(schedule)
                 
                 withContext(Dispatchers.Main) {
                     filterAndDisplaySchedule()
+                    
+                    binding.pbLoading.visibility = View.GONE
+                    binding.ivResultIcon.visibility = View.VISIBLE
+                    binding.ivResultIcon.setImageResource(R.drawable.baseline_check_circle_24)
+                    binding.ivResultIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.auto_color_00C853))
+                    binding.tvLoadingText.text = getString(R.string.auto_str_generated_successfully)
+                    binding.tvLoadingText.setTextColor(ContextCompat.getColor(requireContext(), R.color.auto_color_00C853))
+                    
+                    delay(1500)
+                    binding.layoutLoading.visibility = View.GONE
                 }
-                
-                binding.pbLoading.visibility = View.GONE
-                binding.ivResultIcon.visibility = View.VISIBLE
-                binding.ivResultIcon.setImageResource(R.drawable.baseline_check_circle_24)
-                binding.ivResultIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.auto_color_00C853))
-                binding.tvLoadingText.text = getString(R.string.auto_str_generated_successfully)
-                binding.tvLoadingText.setTextColor(ContextCompat.getColor(requireContext(), R.color.auto_color_00C853))
-                delay(1500)
-                binding.layoutLoading.visibility = View.GONE
             } catch (e: Exception) {
                 binding.pbLoading.visibility = View.GONE
                 binding.ivResultIcon.visibility = View.VISIBLE
                 binding.ivResultIcon.setImageResource(R.drawable.ic_error)
                 binding.ivResultIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.auto_color_E53935))
-                binding.tvLoadingText.text = getString(R.string.auto_str_generation_failed)
+                binding.tvLoadingText.text = e.message ?: getString(R.string.auto_str_generation_failed)
                 binding.tvLoadingText.setTextColor(ContextCompat.getColor(requireContext(), R.color.auto_color_E53935))
-                delay(1500)
+                delay(2500)
                 binding.layoutLoading.visibility = View.GONE
             }
         }

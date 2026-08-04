@@ -29,9 +29,6 @@ class ManagerLeaveRequestAdapter(private val listener: LeaveRequestListener) :
     private val actionStates = mutableMapOf<String, String>()
 
     fun updateData(newItems: List<ManagerLeaveRequestResponse>) {
-        // Clear actionStates for items whose server status is no longer Pending.
-        // This prevents stale local states from being applied to wrong ViewHolders
-        // during DiffUtil dispatch animations (position shift issue).
         newItems.forEach { item ->
             if (item.status != "Pending") {
                 actionStates.remove(item.leaveRequestId)
