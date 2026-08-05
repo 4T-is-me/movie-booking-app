@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
  * Activity for Cinema Seat Selection screen.
  */
 @AndroidEntryPoint
-class SelectSeatActivity : AppCompatActivity() {
+class SelectSeatActivity : BaseActivity() {
 
     private lateinit var binding: ActivitySelectSeatBinding
     private val viewModel: SelectSeatViewModel by viewModels()

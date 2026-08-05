@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MovieDetailActivity : AppCompatActivity() {
+class MovieDetailActivity : BaseActivity() {
 
     private lateinit var binding: ActivityMovieDetailBinding
     private val viewModel: MovieViewModel by viewModels()

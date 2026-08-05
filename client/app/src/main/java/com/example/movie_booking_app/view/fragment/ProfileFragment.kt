@@ -102,26 +102,38 @@ class ProfileFragment : Fragment() {
 
 
         binding.layoutChangeLanguage.setOnClickListener {
-            val languages = arrayOf(getString(R.string.lang_english), getString(R.string.lang_vietnamese), getString(R.string.lang_japanese))
-            val langCodes = arrayOf("en", "vi", "ja")
+            val dialog = com.google.android.material.bottomsheet.BottomSheetDialog(requireContext())
+            val sheetBinding = com.example.movie_booking_app.databinding.BottomSheetLanguageBinding.inflate(layoutInflater)
+            dialog.setContentView(sheetBinding.root)
+
             val prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
             val currentLang = prefs.getString("language_code", "en") ?: "en"
-            val checkedItem = langCodes.indexOf(currentLang).takeIf { it >= 0 } ?: 0
+            
+            when (currentLang) {
+                "en" -> sheetBinding.rgLanguages.check(R.id.rbEnglish)
+                "vi" -> sheetBinding.rgLanguages.check(R.id.rbVietnamese)
+                "ja" -> sheetBinding.rgLanguages.check(R.id.rbJapanese)
+            }
 
-            AlertDialog.Builder(requireContext())
-                .setTitle(getString(R.string.auto_str_change_language))
-                .setSingleChoiceItems(languages, checkedItem) { dialog, which ->
-                    val selectedLang = langCodes[which]
-                    if (selectedLang != currentLang) {
-                        prefs.edit().putString("language_code", selectedLang).apply()
-                        // Restart app/activity to apply changes
-                        val intent = Intent(requireContext(), MainActivity::class.java)
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        startActivity(intent)
-                    }
-                    dialog.dismiss()
+            sheetBinding.btnApplyLanguage.setOnClickListener {
+                val selectedLang = when (sheetBinding.rgLanguages.checkedRadioButtonId) {
+                    R.id.rbEnglish -> "en"
+                    R.id.rbVietnamese -> "vi"
+                    R.id.rbJapanese -> "ja"
+                    else -> currentLang
                 }
-                .show()
+                
+                if (selectedLang != currentLang) {
+                    prefs.edit().putString("language_code", selectedLang).apply()
+                    // Restart app/activity to apply changes
+                    val intent = Intent(requireContext(), MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                }
+                dialog.dismiss()
+            }
+            
+            dialog.show()
         }
         binding.layoutChangePassword.setOnClickListener {
             val intent = Intent(requireContext(), ChangePasswordActivity::class.java)

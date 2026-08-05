@@ -13,6 +13,7 @@ open class EnglishBaseActivity : AppCompatActivity() {
 
     override fun attachBaseContext(newBase: Context) {
         val locale = Locale("en")
+        Locale.setDefault(locale)
         val config = newBase.resources.configuration
         config.setLocale(locale)
         val context = newBase.createConfigurationContext(config)

@@ -23,7 +23,7 @@ import java.util.Locale
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class SelectFoodActivity : AppCompatActivity() {
+class SelectFoodActivity : BaseActivity() {
 
     private lateinit var binding: ActivitySelectFoodBinding
     private val viewModel: SelectFoodViewModel by viewModels()

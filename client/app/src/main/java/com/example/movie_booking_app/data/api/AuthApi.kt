@@ -33,4 +33,7 @@ interface AuthApi {
 
     @POST("api/auth/reset-password")
     suspend fun resetPassword(@Body request: ResetPasswordRequest): Response<ResponseBody>
+
+    @POST("api/auth/refresh-token") // Đảm bảo URL này đúng với backend của bạn
+    fun refreshToken(@Body request: com.example.movie_booking_app.data.model.request.RefreshTokenRequest): retrofit2.Call<LoginResponse>
 }
