@@ -137,8 +137,7 @@ object AutoStaffSchedulingAlgorithm {
                 baseStaffPerShift
             }
 
-            val isToday = dateStr == todayStr
-            val initialStatus = if (isToday) Constants.STATUS_SHIFT[0] else Constants.STATUS_SHIFT[1]
+            val initialStatus = Constants.STATUS_SHIFT[1]
 
             val availableStaffForDay = selectedStaff.filter { staff ->
                 val hasLeaveApproved = approvedLeaveRequests.any { it.first == staff.id && it.second == dateStr }
