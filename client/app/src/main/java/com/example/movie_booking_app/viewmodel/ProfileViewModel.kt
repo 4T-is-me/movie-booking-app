@@ -8,6 +8,9 @@ import com.example.movie_booking_app.data.repository.ProfileRepository
 import com.example.movie_booking_app.data.repository.UnauthorizedException
 import com.google.gson.JsonParser
 import dagger.hilt.android.lifecycle.HiltViewModel
+import android.content.Context
+import com.example.movie_booking_app.R
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,6 +24,7 @@ import kotlinx.coroutines.launch
  */
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val repository: ProfileRepository
 ) : ViewModel() {
 
@@ -59,7 +63,7 @@ class ProfileViewModel @Inject constructor(
                     if (exception is UnauthorizedException) {
                         _isUnauthorized.value = true
                     } else {
-                        _error.value = exception.message ?: "Failed to load profile"
+                        _error.value = exception.message ?: context.getString(R.string.error_failed_load_profile)
                     }
                 }
                 .collect { profile ->
@@ -87,7 +91,7 @@ class ProfileViewModel @Inject constructor(
                     if (exception is UnauthorizedException) {
                         _isUnauthorized.value = true
                     } else {
-                        val rawMsg = exception.message ?: "Failed to update profile"
+                        val rawMsg = exception.message ?: context.getString(R.string.error_failed_update_profile)
                         _error.value = parseErrorMessage(rawMsg)
                     }
                 }

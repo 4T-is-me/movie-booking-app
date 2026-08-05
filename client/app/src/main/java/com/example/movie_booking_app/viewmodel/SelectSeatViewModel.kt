@@ -40,11 +40,11 @@ class SelectSeatViewModel @Inject constructor(
     val timerManager: BookingTimerManager
 ) : ViewModel() {
 
-    private val isoFormat by lazy { SimpleDateFormat("yyyy-MM-dd", Locale.US) }
-    private val dayFormat by lazy { SimpleDateFormat("dd", Locale.getDefault()) }
-    private val monthFormat by lazy { SimpleDateFormat("MMM", Locale.getDefault()) }
-    private val dowFormat by lazy { SimpleDateFormat("EEE", Locale.getDefault()) }
-    private val yearFormat by lazy { SimpleDateFormat("yyyy", Locale.getDefault()) }
+    private val isoFormat get() = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+    private val dayFormat get() = SimpleDateFormat("dd", Locale.getDefault())
+    private val monthFormat get() = SimpleDateFormat("MMM", Locale.getDefault())
+    private val dowFormat get() = SimpleDateFormat("EEE", Locale.getDefault())
+    private val yearFormat get() = SimpleDateFormat("yyyy", Locale.getDefault())
 
     private val movieId: String = savedStateHandle["movieId"] ?: ""
     private val targetCinemaId: String? = savedStateHandle["cinemaId"]

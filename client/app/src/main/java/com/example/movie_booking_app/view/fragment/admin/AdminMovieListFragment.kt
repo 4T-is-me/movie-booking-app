@@ -82,11 +82,11 @@ class AdminMovieListFragment : Fragment() {
 
         binding.tabActiveMovie.setOnClickListener {
             switchTab(TAB_ACTIVE)
-            viewModel.loadAdminMovies("active")
+            viewModel.loadAdminMovies(Constants.Status.ACTIVE.lowercase())
         }
         binding.tabInactiveMovie.setOnClickListener {
             switchTab(TAB_INACTIVE)
-            viewModel.loadAdminMovies("deleted")
+            viewModel.loadAdminMovies(Constants.Status.DELETE.lowercase())
         }
 
         binding.fabAddMovie.setOnClickListener {
@@ -163,9 +163,9 @@ class AdminMovieListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.movieActionSuccess.collect { success ->
                 val message = if (success) {
-                    if (selectedTab == TAB_ACTIVE) "Movie deleted successfully" else "Movie restored successfully"
+                    if (selectedTab == TAB_ACTIVE) getString(R.string.movie_deleted_successfully) else getString(R.string.movie_restored_successfully)
                 } else {
-                    if (selectedTab == TAB_ACTIVE) "Failed to delete movie" else "Failed to restore movie"
+                    if (selectedTab == TAB_ACTIVE) getString(R.string.failed_to_delete_movie) else getString(R.string.failed_to_restore_movie)
                 }
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             }
@@ -173,16 +173,16 @@ class AdminMovieListFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.movieActionMessage.collect { message ->
-                val displayMsg = when(message) {
-                    "msg_movie_deleted_success" -> getString(R.string.msg_movie_deleted_success)
-                    "msg_movie_restored_success" -> getString(R.string.msg_movie_restored_success)
-                    "msg_movie_delete_failed" -> getString(R.string.msg_movie_delete_failed)
-                    "msg_movie_restore_failed" -> getString(R.string.msg_movie_restore_failed)
-                    "msg_movie_added_success" -> getString(R.string.msg_movie_added_success)
-                    "msg_movie_add_failed" -> getString(R.string.msg_movie_add_failed)
-                    "msg_movie_updated_success" -> getString(R.string.msg_movie_updated_success)
-                    "msg_movie_update_failed" -> getString(R.string.msg_movie_update_failed)
-                    "error_unknown" -> getString(R.string.error_unknown)
+                val displayMsg = when (message) {
+                    Constants.MovieActionMessage.DELETED_SUCCESS -> getString(R.string.msg_movie_deleted_success)
+                    Constants.MovieActionMessage.RESTORED_SUCCESS -> getString(R.string.msg_movie_restored_success)
+                    Constants.MovieActionMessage.DELETE_FAILED -> getString(R.string.msg_movie_delete_failed)
+                    Constants.MovieActionMessage.RESTORE_FAILED -> getString(R.string.msg_movie_restore_failed)
+                    Constants.MovieActionMessage.ADDED_SUCCESS -> getString(R.string.msg_movie_added_success)
+                    Constants.MovieActionMessage.ADD_FAILED -> getString(R.string.msg_movie_add_failed)
+                    Constants.MovieActionMessage.UPDATED_SUCCESS -> getString(R.string.msg_movie_updated_success)
+                    Constants.MovieActionMessage.UPDATE_FAILED -> getString(R.string.msg_movie_update_failed)
+                    Constants.ERROR_UNKNOWN -> getString(R.string.error_unknown)
                     else -> message
                 }
                 Toast.makeText(context, displayMsg, Toast.LENGTH_SHORT).show()

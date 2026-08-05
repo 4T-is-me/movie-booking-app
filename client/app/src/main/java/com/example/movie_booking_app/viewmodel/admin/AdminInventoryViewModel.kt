@@ -8,7 +8,10 @@ import com.example.movie_booking_app.data.model.entity.Inventory
 import com.example.movie_booking_app.data.repository.CinemasRepository
 import com.example.movie_booking_app.data.repository.InventoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+import android.content.Context
+import com.example.movie_booking_app.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,7 +31,8 @@ data class AdminInventoryUiState(
 @HiltViewModel
 class AdminInventoryViewModel @Inject constructor(
     private val inventoryRepository: InventoryRepository,
-    private val cinemasRepository: CinemasRepository
+    private val cinemasRepository: CinemasRepository,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AdminInventoryUiState())
@@ -88,7 +92,7 @@ class AdminInventoryViewModel @Inject constructor(
                             it.copy(
                                 inventoryItems = updatedList, 
                                 isLoading = false,
-                                refillSuccess = "Refilled ${updatedItem.itemName} successfully"
+                                refillSuccess = context.getString(R.string.refilled_successfully_format, updatedItem.itemName)
                             ) 
                         }
                     }.onFailure { e ->

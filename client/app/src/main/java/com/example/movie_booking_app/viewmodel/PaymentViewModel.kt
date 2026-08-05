@@ -10,7 +10,10 @@ import com.example.movie_booking_app.data.repository.MovieRepository
 import com.example.movie_booking_app.data.repository.PaymentRepository
 import com.example.movie_booking_app.data.repository.ProfileRepository
 import com.example.movie_booking_app.utils.BookingTimerManager
+import android.content.Context
+import com.example.movie_booking_app.R
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlin.math.floor
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +26,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class PaymentViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val repository: PaymentRepository,
     private val profileRepository: ProfileRepository,
     private val movieRepository: MovieRepository,
@@ -148,7 +152,7 @@ class PaymentViewModel @Inject constructor(
 
     fun applyCoupon(code: String) {
         if (code.trim().isEmpty()) {
-            _uiState.update { it.copy(couponError = "Please enter a valid coupon code") }
+            _uiState.update { it.copy(couponError = context.getString(R.string.error_valid_coupon)) }
             return
         }
 
@@ -160,7 +164,7 @@ class PaymentViewModel @Inject constructor(
                 .catch { exception ->
                     _uiState.update { it.copy(
                         isLoading = false,
-                        couponError = exception.message ?: "Invalid or expired coupon"
+                        couponError = exception.message ?: context.getString(R.string.error_invalid_coupon)
                     ) }
                 }
                 .collect { response ->
@@ -171,7 +175,7 @@ class PaymentViewModel @Inject constructor(
                     _uiState.update { it.copy(
                         isLoading = false,
                         couponApplied = true,
-                        couponSuccessMessage = response.message ?: "Coupon applied!",
+                        couponSuccessMessage = response.message ?: context.getString(R.string.msg_coupon_applied),
                         promotionId = response.data?.id
                     ) }
                     recalculateTotals()
@@ -184,12 +188,12 @@ class PaymentViewModel @Inject constructor(
         val booking = state.booking ?: return
 
         if (state.selectedPaymentMethod == null) {
-            _uiState.update { it.copy(error = "Please select a payment method") }
+            _uiState.update { it.copy(error = context.getString(R.string.error_select_payment)) }
             return
         }
 
         if (state.isCountdownExpired) {
-            _uiState.update { it.copy(error = "Booking session expired") }
+            _uiState.update { it.copy(error = context.getString(R.string.error_booking_expired)) }
             return
         }
 
@@ -213,12 +217,12 @@ class PaymentViewModel @Inject constructor(
                     _uiState.update { it.copy(isCheckingOut = true, error = null) }
                 }
                 .catch { exception ->
-                    val errorMsg = exception.message ?: "Checkout failed"
+                    val errorMsg = exception.message ?: context.getString(R.string.error_checkout_failed)
                     if (errorMsg.contains("Not enough reward points", ignoreCase = true)) {
                         _uiState.update { it.copy(
                             isCheckingOut = false,
                             useRewardPoints = false,
-                            error = "You don't have enough reward points."
+                            error = context.getString(R.string.error_insufficient_points)
                         ) }
                         recalculateTotals()
                     } else {

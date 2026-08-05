@@ -15,6 +15,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.ActivityAdminInventoryBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.view.adapter.admin.InventoryAdapter
 import com.example.movie_booking_app.viewmodel.admin.AdminInventoryViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -73,7 +74,7 @@ class AdminInventoryFragment : Fragment() {
                     binding.progressBar.isVisible = state.isLoading
 
                     if (state.cinemas.isNotEmpty() && binding.actvCinema.adapter == null) {
-                        val names = state.cinemas.map { it.cinemaName ?: "Unknown" }
+                        val names = state.cinemas.map { it.cinemaName ?: Constants.UNKNOWN }
                         val adapter = ArrayAdapter(requireContext(), R.layout.item_spinner_dropdown, names)
                         binding.actvCinema.setAdapter(adapter)
                         

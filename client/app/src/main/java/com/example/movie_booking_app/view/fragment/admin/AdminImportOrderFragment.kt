@@ -22,6 +22,7 @@ import com.example.movie_booking_app.data.model.entity.ImportOrder
 import com.example.movie_booking_app.databinding.ActivityAdminImportOrderBinding
 import com.example.movie_booking_app.databinding.DialogApproveImportOrderBinding
 import com.example.movie_booking_app.databinding.DialogRejectImportOrderBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.view.adapter.admin.AdminImportOrderAdapter
 import com.example.movie_booking_app.viewmodel.admin.AdminImportOrderViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -54,7 +55,7 @@ class AdminImportOrderFragment : Fragment() {
         setupRecyclerView()
         setupFilterChips()
         observeViewModel()
-        viewModel.loadOrders("PENDING")
+        viewModel.loadOrders(Constants.ImportOrderStatus.PENDING)
     }
 
     private fun setupRecyclerView() {
@@ -90,33 +91,33 @@ class AdminImportOrderFragment : Fragment() {
         val inactiveTextColor = ContextCompat.getColor(context, R.color.text_secondary)
 
         binding.tabPending.apply {
-            background = if (selectedStatus == "PENDING") activeBg else null
-            setTextColor(if (selectedStatus == "PENDING") activeTextColor else inactiveTextColor)
+            background = if (selectedStatus == Constants.ImportOrderStatus.PENDING) activeBg else null
+            setTextColor(if (selectedStatus == Constants.ImportOrderStatus.PENDING) activeTextColor else inactiveTextColor)
         }
         binding.tabApproved.apply {
-            background = if (selectedStatus == "APPROVED") activeBg else null
-            setTextColor(if (selectedStatus == "APPROVED") activeTextColor else inactiveTextColor)
+            background = if (selectedStatus == Constants.ImportOrderStatus.APPROVED) activeBg else null
+            setTextColor(if (selectedStatus == Constants.ImportOrderStatus.APPROVED) activeTextColor else inactiveTextColor)
         }
         binding.tabRejected.apply {
-            background = if (selectedStatus == "REJECTED") activeBg else null
-            setTextColor(if (selectedStatus == "REJECTED") activeTextColor else inactiveTextColor)
+            background = if (selectedStatus == Constants.ImportOrderStatus.REJECTED) activeBg else null
+            setTextColor(if (selectedStatus == Constants.ImportOrderStatus.REJECTED) activeTextColor else inactiveTextColor)
         }
     }
 
     private fun setupFilterChips() {
-        updateTabStyles("PENDING")
+        updateTabStyles(Constants.ImportOrderStatus.PENDING)
 
         binding.tabPending.setOnClickListener {
-            updateTabStyles("PENDING")
-            viewModel.loadOrders("PENDING")
+            updateTabStyles(Constants.ImportOrderStatus.PENDING)
+            viewModel.loadOrders(Constants.ImportOrderStatus.PENDING)
         }
         binding.tabApproved.setOnClickListener {
-            updateTabStyles("APPROVED")
-            viewModel.loadOrders("APPROVED")
+            updateTabStyles(Constants.ImportOrderStatus.APPROVED)
+            viewModel.loadOrders(Constants.ImportOrderStatus.APPROVED)
         }
         binding.tabRejected.setOnClickListener {
-            updateTabStyles("REJECTED")
-            viewModel.loadOrders("REJECTED")
+            updateTabStyles(Constants.ImportOrderStatus.REJECTED)
+            viewModel.loadOrders(Constants.ImportOrderStatus.REJECTED)
         }
 
         binding.etSearch.addTextChangedListener(object : TextWatcher {

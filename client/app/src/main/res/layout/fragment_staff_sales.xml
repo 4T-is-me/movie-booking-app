@@ -401,11 +401,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
-                            android:hint="@string/auto_str_enter_member_id_phone_number_i"
                             android:textColorHint="@color/admin_text_secondary"
                             app:hintTextColor="@color/admin_text_secondary"
                             app:boxStrokeColor="@color/gold_selected"
-                            app:placeholderText="Example: 0987654321"
+                            android:hint="@string/hint_example_phone"
                             app:placeholderTextColor="@color/admin_text_secondary">
 
                             <com.google.android.material.textfield.TextInputEditText

@@ -55,12 +55,12 @@ class MyTicketViewModel @Inject constructor(
                             _error.value = context.getString(R.string.auto_str_failed_to_load_active_tickets)
                         }
                     } else {
-                        _error.value = "Server returned an error: ${response.code()}"
+                        _error.value = context.getString(R.string.error_server_code, response.code().toString())
                     }
                 }
             } catch (e: Exception) {
                 _isLoading.value = false
-                _error.value = "Network error: ${e.localizedMessage ?: "Unknown error"}"
+                _error.value = context.getString(R.string.error_network_localized, e.localizedMessage ?: context.getString(R.string.error_unknown))
             }
         }
     }
@@ -76,14 +76,14 @@ class MyTicketViewModel @Inject constructor(
                     val errorBody = response.errorBody()?.string() ?: ""
                     val message = try {
                         val json = JsonParser.parseString(errorBody).asJsonObject
-                        json.get("message")?.asString ?: "Error ${response.code()}"
+                        json.get("message")?.asString ?: context.getString(R.string.error_server_code, response.code().toString())
                     } catch (_: Exception) {
-                        "Error ${response.code()}"
+                        context.getString(R.string.error_server_code, response.code().toString())
                     }
                     _rateErrorMessage.emit(message)
                 }
             } catch (e: Exception) {
-                _rateErrorMessage.emit("Network error: ${e.localizedMessage}")
+                _rateErrorMessage.emit(context.getString(R.string.error_network_localized, e.localizedMessage))
             }
         }
     }

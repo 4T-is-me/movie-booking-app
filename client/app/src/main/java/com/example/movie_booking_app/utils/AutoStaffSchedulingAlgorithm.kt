@@ -23,8 +23,8 @@ object AutoStaffSchedulingAlgorithm {
     data class ShiftPair(val name: String, val shifts: List<String>)
 
     private val SHIFT_PAIRS = listOf(
-        ShiftPair("Morning - Afternoon", listOf("Morning", "Afternoon")),
-        ShiftPair("Evening - Night", listOf("Evening", "Night"))
+        ShiftPair(Constants.ShiftPair.MORNING_AFTERNOON, listOf(Constants.SHIFTS[0],Constants.SHIFTS[1])),
+        ShiftPair(Constants.ShiftPair.EVENING_NIGHT, listOf(Constants.SHIFTS[2],Constants.SHIFTS[3]))
     )
 
     /**
@@ -138,7 +138,7 @@ object AutoStaffSchedulingAlgorithm {
             }
 
             val isToday = dateStr == todayStr
-            val initialStatus = if (isToday) "Active" else "Assigned"
+            val initialStatus = if (isToday) Constants.STATUS_SHIFT[0] else Constants.STATUS_SHIFT[1]
 
             val availableStaffForDay = selectedStaff.filter { staff ->
                 val hasLeaveApproved = approvedLeaveRequests.any { it.first == staff.id && it.second == dateStr }

@@ -47,7 +47,7 @@
             android:src="@android:drawable/ic_menu_delete"
             app:tint="@color/accent_primary"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Clear All" />
+            android:contentDescription="@string/btn_clear_all" />
     </RelativeLayout>
 
     <!-- Empty State Layout -->
@@ -65,7 +65,7 @@
             android:layout_height="100dp"
             android:src="@drawable/ic_notifications"
             app:tint="@color/text_muted"
-            android:contentDescription="No Notifications" />
+            android:contentDescription="@string/msg_no_notifications" />
 
         <TextView
             android:layout_width="wrap_content"

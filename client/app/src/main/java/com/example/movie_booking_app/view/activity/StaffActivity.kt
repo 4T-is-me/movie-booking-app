@@ -17,6 +17,7 @@ import com.example.movie_booking_app.data.local.FcmTokenHelper
 import com.example.movie_booking_app.databinding.ActivityStaffBinding
 import com.example.movie_booking_app.databinding.LayoutMenuBadgeBinding
 import com.example.movie_booking_app.utils.AuthUtils
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.view.fragment.staff.StaffNotificationsFragment
 import com.example.movie_booking_app.view.fragment.staff.StaffPayrollFragment
 import com.example.movie_booking_app.view.fragment.staff.StaffProfileFragment
@@ -151,9 +152,13 @@ class StaffActivity : BaseActivity() {
         val title = intent.getStringExtra("title")
         val body = intent.getStringExtra("body")
 
-        val isStaffNotif = type == "SHIFT_ASSIGNED" || type == "SHIFT_UPDATED" ||
-                type == "LEAVE_APPROVED" || type == "LEAVE_REJECTED" || type == "LEAVE_CANCELLED" ||
-                type?.startsWith("LEAVE_") == true || type?.startsWith("SHIFT_") == true
+        val isStaffNotif = type == Constants.NotificationType.SHIFT_ASSIGNED ||
+                type == Constants.NotificationType.SHIFT_UPDATED ||
+                type == Constants.NotificationType.LEAVE_APPROVED ||
+                type == Constants.NotificationType.LEAVE_REJECTED ||
+                type == Constants.NotificationType.LEAVE_CANCELLED ||
+                type?.startsWith(Constants.NotificationType.PREFIX_LEAVE) == true ||
+                type?.startsWith(Constants.NotificationType.PREFIX_SHIFT) == true
 
         if (isStaffNotif) {
             binding.navigationView.setCheckedItem(R.id.nav_staff_notifications)

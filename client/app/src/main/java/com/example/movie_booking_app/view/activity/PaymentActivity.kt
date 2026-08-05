@@ -36,7 +36,7 @@ import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class PaymentActivity : AppCompatActivity() {
+class PaymentActivity : BaseActivity() {
 
     private lateinit var binding: ActivityPaymentBinding
     private val viewModel: PaymentViewModel by viewModels()
@@ -81,11 +81,11 @@ class PaymentActivity : AppCompatActivity() {
 
     private fun setupClickListeners() {
         // Payment methods click listeners
-        binding.cardMoMo.setOnClickListener { viewModel.selectPaymentMethod("MoMo") }
-        binding.cardZaloPay.setOnClickListener { viewModel.selectPaymentMethod("ZaloPay") }
-        binding.cardShopeePay.setOnClickListener { viewModel.selectPaymentMethod("ShopeePay") }
-        binding.cardATM.setOnClickListener { viewModel.selectPaymentMethod("ATM") }
-        binding.cardInternational.setOnClickListener { viewModel.selectPaymentMethod("International") }
+        binding.cardMoMo.setOnClickListener { viewModel.selectPaymentMethod(Constants.PaymentMethod.MOMO) }
+        binding.cardZaloPay.setOnClickListener { viewModel.selectPaymentMethod(Constants.PaymentMethod.ZALO_PAY) }
+        binding.cardShopeePay.setOnClickListener { viewModel.selectPaymentMethod(Constants.PaymentMethod.SHOPEE_PAY) }
+        binding.cardATM.setOnClickListener { viewModel.selectPaymentMethod(Constants.PaymentMethod.ATM) }
+        binding.cardInternational.setOnClickListener { viewModel.selectPaymentMethod(Constants.PaymentMethod.INTERNATIONAL) }
 
         // Apply Promotion Coupon
         binding.btnApplyCoupon.setOnClickListener {
@@ -113,7 +113,7 @@ class PaymentActivity : AppCompatActivity() {
         binding.btnContinue.setOnClickListener {
             val selectedMethod = viewModel.uiState.value.selectedPaymentMethod
             if (selectedMethod == null) {
-                Snackbar.make(binding.root, "Please select a payment method", Snackbar.LENGTH_LONG).show()
+                Snackbar.make(binding.root, getString(R.string.payment_method_required), Snackbar.LENGTH_LONG).show()
                 return@setOnClickListener
             }
             viewModel.confirmCheckout()
@@ -164,7 +164,7 @@ class PaymentActivity : AppCompatActivity() {
                         binding.tvAvailablePoints.text = getString(R.string.auto_str_no_reward_points_available)
                     } else {
                         binding.switchRewardPoints.isEnabled = true
-                        binding.tvAvailablePoints.text = "Available: ${state.availablePoints} pts"
+                        binding.tvAvailablePoints.text = getString(R.string.payment_available_pts, state.availablePoints)
                     }
 
                     if (binding.switchRewardPoints.isChecked != state.useRewardPoints) {
@@ -173,17 +173,17 @@ class PaymentActivity : AppCompatActivity() {
 
                     // Summary bindings
                     state.booking?.let { booking ->
-                        binding.tvMovieName.text = booking.movieName ?: "Movie Title"
-                        binding.tvGenre.text = booking.movieGenre ?: "Genres"
-                        binding.tvCinemaName.text = booking.cinemaName ?: "Cinema Center"
-                        binding.tvCinemaAddress.text = booking.cinemaAddress ?: "Address details"
-                        binding.tvRoom.text = booking.roomName ?: "Room 1"
+                        binding.tvMovieName.text = booking.movieName ?: getString(R.string.default_movie_title)
+                        binding.tvGenre.text = booking.movieGenre ?: getString(R.string.default_genres)
+                        binding.tvCinemaName.text = booking.cinemaName ?: getString(R.string.default_cinema_name)
+                        binding.tvCinemaAddress.text = booking.cinemaAddress ?: getString(R.string.default_cinema_address)
+                        binding.tvRoom.text = booking.roomName ?: getString(R.string.default_room_name)
                         binding.tvShowDate.text = DateUtils.formatMovieDate(booking.showDate)
                         binding.tvShowTime.text = DateUtils.formatMovieTime(booking.showTime)
 
                         binding.tvOrderId.text = booking.orderId
                         binding.tvSeats.text = booking.seatNames.joinToString(", ")
-                        binding.tvSeatCount.text = "${booking.seatIds.size} seats"
+                        binding.tvSeatCount.text = getString(R.string.payment_seat_count, booking.seatIds.size)
                         binding.tvSeatType.text = booking.seatTypes.joinToString(", ")
 
                         // Dynamic F&B items summary using RecyclerView
@@ -217,7 +217,7 @@ class PaymentActivity : AppCompatActivity() {
                     // Observe checkoutSuccess to display Success dialog
                     if (state.checkoutSuccess && !isSuccessDialogShown) {
                         isSuccessDialogShown = true
-                        showPremiumSuccessDialog("Booking completed successfully!") {
+                        showPremiumSuccessDialog(getString(R.string.payment_booking_success)) {
                             val intent = Intent(this@PaymentActivity, MainActivity::class.java).apply {
                                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                                 putExtra("TARGET_SECTION", "Ticket")
@@ -238,7 +238,7 @@ class PaymentActivity : AppCompatActivity() {
                     // Reward points discount summary row
                     if (state.useRewardPoints && state.rewardDiscount > 0) {
                         binding.layoutRewardDiscount.isVisible = true
-                        binding.tvRewardDiscount.text = "-${formatCurrency(state.rewardDiscount)} (${state.rewardDiscount / 10} pts)"
+                        binding.tvRewardDiscount.text = getString(R.string.payment_discount_format, formatCurrency(state.rewardDiscount), state.rewardDiscount / 10)
                     } else {
                         binding.layoutRewardDiscount.isVisible = false
                     }
@@ -278,25 +278,35 @@ class PaymentActivity : AppCompatActivity() {
         val activeColor = ContextCompat.getColor(this@PaymentActivity, R.color.cinema_primary)
         val inactiveColor = Color.TRANSPARENT
 
-        binding.cardMoMo.strokeColor = if (selectedMethod == "MoMo") activeColor else inactiveColor
-        binding.cardMoMo.strokeWidth = if (selectedMethod == "MoMo") dpToPx(2) else 0
-        binding.rbMoMo.isChecked = (selectedMethod == "MoMo")
+        binding.cardMoMo.strokeColor =
+            if (selectedMethod == Constants.PaymentMethod.MOMO) activeColor else inactiveColor
+        binding.cardMoMo.strokeWidth =
+            if (selectedMethod == Constants.PaymentMethod.MOMO) dpToPx(2) else 0
+        binding.rbMoMo.isChecked = selectedMethod == Constants.PaymentMethod.MOMO
 
-        binding.cardZaloPay.strokeColor = if (selectedMethod == "ZaloPay") activeColor else inactiveColor
-        binding.cardZaloPay.strokeWidth = if (selectedMethod == "ZaloPay") dpToPx(2) else 0
-        binding.rbZaloPay.isChecked = (selectedMethod == "ZaloPay")
+        binding.cardZaloPay.strokeColor =
+            if (selectedMethod == Constants.PaymentMethod.ZALO_PAY) activeColor else inactiveColor
+        binding.cardZaloPay.strokeWidth =
+            if (selectedMethod == Constants.PaymentMethod.ZALO_PAY) dpToPx(2) else 0
+        binding.rbZaloPay.isChecked = selectedMethod == Constants.PaymentMethod.ZALO_PAY
 
-        binding.cardShopeePay.strokeColor = if (selectedMethod == "ShopeePay") activeColor else inactiveColor
-        binding.cardShopeePay.strokeWidth = if (selectedMethod == "ShopeePay") dpToPx(2) else 0
-        binding.rbShopeePay.isChecked = (selectedMethod == "ShopeePay")
+        binding.cardShopeePay.strokeColor =
+            if (selectedMethod == Constants.PaymentMethod.SHOPEE_PAY) activeColor else inactiveColor
+        binding.cardShopeePay.strokeWidth =
+            if (selectedMethod == Constants.PaymentMethod.SHOPEE_PAY) dpToPx(2) else 0
+        binding.rbShopeePay.isChecked = selectedMethod == Constants.PaymentMethod.SHOPEE_PAY
 
-        binding.cardATM.strokeColor = if (selectedMethod == "ATM") activeColor else inactiveColor
-        binding.cardATM.strokeWidth = if (selectedMethod == "ATM") dpToPx(2) else 0
-        binding.rbATM.isChecked = (selectedMethod == "ATM")
+        binding.cardATM.strokeColor =
+            if (selectedMethod == Constants.PaymentMethod.ATM) activeColor else inactiveColor
+        binding.cardATM.strokeWidth =
+            if (selectedMethod == Constants.PaymentMethod.ATM) dpToPx(2) else 0
+        binding.rbATM.isChecked = selectedMethod == Constants.PaymentMethod.ATM
 
-        binding.cardInternational.strokeColor = if (selectedMethod == "International") activeColor else inactiveColor
-        binding.cardInternational.strokeWidth = if (selectedMethod == "International") dpToPx(2) else 0
-        binding.rbInternational.isChecked = (selectedMethod == "International")
+        binding.cardInternational.strokeColor =
+            if (selectedMethod == Constants.PaymentMethod.INTERNATIONAL) activeColor else inactiveColor
+        binding.cardInternational.strokeWidth =
+            if (selectedMethod == Constants.PaymentMethod.INTERNATIONAL) dpToPx(2) else 0
+        binding.rbInternational.isChecked = selectedMethod == Constants.PaymentMethod.INTERNATIONAL
     }
 
     private fun showPremiumSuccessDialog(message: String, onDismiss: () -> Unit) {
@@ -324,8 +334,8 @@ class PaymentActivity : AppCompatActivity() {
 
     private fun showExpiredDialog() {
         AlertDialog.Builder(this)
-            .setTitle("Booking Session Expired")
-            .setMessage("Your 10-minute booking window has expired. Please select seats again.")
+            .setTitle(getString(R.string.payment_session_expired_title))
+            .setMessage(getString(R.string.payment_session_expired_msg))
             .setCancelable(false)
             .setPositiveButton("OK") { _, _ ->
                 val intent = Intent(this, SelectSeatActivity::class.java).apply {
@@ -339,7 +349,7 @@ class PaymentActivity : AppCompatActivity() {
 
     private fun formatCurrency(amount: Int): String {
         val formatter = NumberFormat.getInstance(Locale.GERMANY)
-        return "${formatter.format(amount)} VND"
+        return getString(R.string.booking_price_vnd, formatter.format(amount))
     }
 
     private fun dpToPx(dp: Int): Int {

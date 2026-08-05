@@ -49,7 +49,7 @@ class PromoSeeAllAdapter : ListAdapter<Promo, PromoSeeAllAdapter.PromoViewHolder
 
         fun bind(promo: Promo) {
             tvPromoTitle.text = promo.title
-            tvPromoDetail.text = promo.detail ?: "No details available"
+            tvPromoDetail.text = promo.detail ?: itemView.context.getString(R.string.no_details_available)
             tvCouponCode.text = promo.discountCode
 
             // Load banner image
@@ -72,14 +72,14 @@ class PromoSeeAllAdapter : ListAdapter<Promo, PromoSeeAllAdapter.PromoViewHolder
             val minSpend = promo.minOrderValue ?: 0.0
             if (minSpend > 0) {
                 val formatter = NumberFormat.getInstance(Locale.GERMANY)
-                tvMinOrderValue.text = "Min Spend: ${formatter.format(minSpend.toInt())} VND"
+                tvMinOrderValue.text = itemView.context.getString(R.string.min_spend_format, formatter.format(minSpend.toInt()))
             } else {
                 tvMinOrderValue.text = itemView.context.getString(R.string.auto_str_no_minimum_spend_required)
             }
 
             // Parse and format date range
             val formattedDate = formatIsoDate(promo.endDate)
-            tvPromoDateRange.text = "Valid until: $formattedDate"
+            tvPromoDateRange.text = itemView.context.getString(R.string.valid_until_format, formattedDate)
 
             // Click card to open details screen
             itemView.setOnClickListener {
@@ -105,7 +105,7 @@ class PromoSeeAllAdapter : ListAdapter<Promo, PromoSeeAllAdapter.PromoViewHolder
                 val clip = ClipData.newPlainText("promo_code", promo.discountCode)
                 clipboard.setPrimaryClip(clip)
 
-                Toast.makeText(context, "Code ${promo.discountCode} copied!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.code_copied_format, promo.discountCode), Toast.LENGTH_SHORT).show()
 
                 // Animate Copy Button transition state
                 btnCopyCode.animate().alpha(0f).setDuration(120).withEndAction {

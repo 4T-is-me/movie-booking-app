@@ -23,7 +23,7 @@ import java.util.Locale
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class SelectFoodActivity : AppCompatActivity() {
+class SelectFoodActivity : BaseActivity() {
 
     private lateinit var binding: ActivitySelectFoodBinding
     private val viewModel: SelectFoodViewModel by viewModels()
@@ -151,6 +151,6 @@ class SelectFoodActivity : AppCompatActivity() {
 
     private fun formatCurrency(amount: Int): String {
         val formatter = NumberFormat.getInstance(Locale.GERMANY)
-        return "${formatter.format(amount)} VND"
+        return getString(R.string.booking_price_vnd, formatter.format(amount))
     }
 }

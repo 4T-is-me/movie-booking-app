@@ -5,7 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.response.PayrollItem
 import com.example.movie_booking_app.data.repository.PayrollRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+import android.content.Context
+import com.example.movie_booking_app.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,7 +16,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class StaffPayrollViewModel @Inject constructor(
-    private val payrollRepository: PayrollRepository
+    private val payrollRepository: PayrollRepository,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _payrollListState = MutableStateFlow<List<PayrollItem>>(emptyList())
@@ -33,7 +37,7 @@ class StaffPayrollViewModel @Inject constructor(
                 result.onSuccess { response ->
                     _payrollListState.value = response.data ?: emptyList()
                 }.onFailure { exception ->
-                    _errorMessage.value = exception.message ?: "Failed to load staff payrolls"
+                    _errorMessage.value = exception.message ?: context.getString(R.string.failed_to_load_staff_payrolls)
                 }
             }
         }

@@ -12,9 +12,13 @@ import com.example.movie_booking_app.data.model.ui.HomeItem
 import com.example.movie_booking_app.data.repository.MovieRepository
 import com.example.movie_booking_app.data.repository.NewsRepository
 import com.example.movie_booking_app.data.repository.ProfileRepository
+import com.example.movie_booking_app.utils.Constants
 import com.google.gson.JsonParser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.File
+import android.content.Context
+import com.example.movie_booking_app.R
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -34,6 +38,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MovieViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val repository: MovieRepository,
     private val profileRepository: ProfileRepository,
     private val newsRepository: NewsRepository
@@ -80,7 +85,7 @@ class MovieViewModel @Inject constructor(
     @OptIn(FlowPreview::class)
     private fun setupSearch() {
         _searchQuery
-            .debounce(com.example.movie_booking_app.utils.Constants.BookingConfig.DEBOUNCE_SEARCH_MS)
+            .debounce(Constants.BookingConfig.DEBOUNCE_SEARCH_MS)
             .distinctUntilChanged()
             .onEach { query ->
                 if (query.isNotEmpty()) {
@@ -138,7 +143,7 @@ class MovieViewModel @Inject constructor(
                 repository.getNews().onStart { emit(emptyList()) }
             ) { movies, promos, services, news ->
                 val list = mutableListOf<HomeItem>()
-                val movieStatus = com.example.movie_booking_app.utils.Constants.MovieStatus
+                val movieStatus = Constants.MovieStatus
                 
                 // Helper to filter status
                 fun Movie.hasStatus(vararg keys: String) = keys.any { status?.lowercase()?.contains(it) == true }
@@ -182,7 +187,7 @@ class MovieViewModel @Inject constructor(
 
             repository.getMovieDetailsById(id)
                 .catch { e ->
-                    _detailError.value = "Error: ${e.localizedMessage}"
+                    _detailError.value = context.getString(R.string.error_localized, e.localizedMessage)
                 }
                 .collect { movieData ->
                     _movieDetail.value = MovieResponse(data = movieData)
@@ -197,7 +202,7 @@ class MovieViewModel @Inject constructor(
 
             repository.getMovieShowtimes(movieId)
                 .catch { e ->
-                    _showtimeError.value = "Error: ${e.localizedMessage}"
+                    _showtimeError.value = context.getString(R.string.error_localized, e.localizedMessage)
                 }
                 .collect { showtimes ->
                     _movieShowtimes.value = showtimes
@@ -212,13 +217,13 @@ class MovieViewModel @Inject constructor(
                 _movieActionSuccess.emit(success)
                 if (success) {
                     loadAdminMovies(status)
-                    _movieActionMessage.emit("msg_movie_deleted_success")
+                    _movieActionMessage.emit(Constants.MovieActionMessage.DELETED_SUCCESS)
                 } else {
-                    _movieActionMessage.emit("msg_movie_delete_failed")
+                    _movieActionMessage.emit(Constants.MovieActionMessage.DELETE_FAILED)
                 }
             } catch (e: Exception) {
                 _movieActionSuccess.emit(false)
-                _movieActionMessage.emit("error_unknown")
+                _movieActionMessage.emit(Constants.MovieActionMessage.ERROR_UNKNOWN)
             }
         }
     }
@@ -231,13 +236,13 @@ class MovieViewModel @Inject constructor(
                 if (success) {
                     loadAdminMovies()
                     loadHomeData()
-                    _movieActionMessage.emit("msg_movie_added_success")
+                    _movieActionMessage.emit(Constants.MovieActionMessage.ADDED_SUCCESS)
                 } else {
-                    _movieActionMessage.emit("msg_movie_add_failed")
+                    _movieActionMessage.emit(Constants.MovieActionMessage.ADD_FAILED)
                 }
             } catch (e: Exception) {
                 _movieActionSuccess.emit(false)
-                _movieActionMessage.emit("error_unknown")
+                _movieActionMessage.emit(Constants.MovieActionMessage.ERROR_UNKNOWN)
             }
         }
     }
@@ -250,13 +255,13 @@ class MovieViewModel @Inject constructor(
                 if (success) {
                     loadAdminMovies(status)
                     loadHomeData()
-                    _movieActionMessage.emit("msg_movie_updated_success")
+                    _movieActionMessage.emit(Constants.MovieActionMessage.UPDATED_SUCCESS)
                 } else {
-                    _movieActionMessage.emit("msg_movie_update_failed")
+                    _movieActionMessage.emit(Constants.MovieActionMessage.UPDATE_FAILED)
                 }
             } catch (e: Exception) {
                 _movieActionSuccess.emit(false)
-                _movieActionMessage.emit("error_unknown")
+                _movieActionMessage.emit(Constants.MovieActionMessage.ERROR_UNKNOWN)
             }
         }
     }
@@ -282,7 +287,7 @@ class MovieViewModel @Inject constructor(
                     fetchMovieDetail(movieId)
                     fetchMovieReviews(movieId)
                 } else {
-                    val errorMsg = response.body()?.message ?: response.errorBody()?.string() ?: "Unknown error"
+                    val errorMsg = response.body()?.message ?: response.errorBody()?.string() ?: context.getString(R.string.error_unknown)
                     // Try to parse JSON error message if possible
                     val parsedMsg = try {
                         val json = JsonParser.parseString(errorMsg).asJsonObject
@@ -294,7 +299,7 @@ class MovieViewModel @Inject constructor(
                     _reviewActionSuccess.emit(false)
                 }
             } catch (e: Exception) {
-                _reviewErrorMessage.emit(e.localizedMessage ?: "Network error")
+                _reviewErrorMessage.emit(e.localizedMessage ?: context.getString(R.string.error_network))
                 _reviewActionSuccess.emit(false)
             }
         }

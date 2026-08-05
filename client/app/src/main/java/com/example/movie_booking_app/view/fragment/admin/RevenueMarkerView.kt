@@ -1,8 +1,7 @@
 package com.example.movie_booking_app.view.fragment.admin
 
 import android.content.Context
-import android.widget.TextView
-import com.example.movie_booking_app.R
+import com.example.movie_booking_app.databinding.LayoutChartMarkerBinding
 import com.github.mikephil.charting.components.MarkerView
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.formatter.ValueFormatter
@@ -17,13 +16,12 @@ class RevenueMarkerView(
     private val xAxisFormatter: ValueFormatter
 ) : MarkerView(context, layoutResource) {
 
-    private val tvDate: TextView = findViewById(R.id.tvMarkerDate)
-    private val tvValue: TextView = findViewById(R.id.tvMarkerValue)
+    private val binding = LayoutChartMarkerBinding.bind(getChildAt(0))
     private val currencyFormat = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
 
     override fun refreshContent(e: Entry, highlight: Highlight) {
-        tvDate.text = xAxisFormatter.getFormattedValue(e.x)
-        tvValue.text = currencyFormat.format(e.y)
+        binding.tvMarkerDate.text = xAxisFormatter.getFormattedValue(e.x)
+        binding.tvMarkerValue.text = currencyFormat.format(e.y)
         super.refreshContent(e, highlight)
     }
 

@@ -25,6 +25,7 @@ import com.example.movie_booking_app.data.model.response.ManagerLeaveRequestResp
 import com.example.movie_booking_app.data.model.response.ShiftItemResponse
 import com.example.movie_booking_app.databinding.FragmentManagerStaffBinding
 import com.example.movie_booking_app.databinding.DialogErrorCustomBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.view.activity.manager.ManagerShiftDetailActivity
 import com.example.movie_booking_app.view.adapter.manager.ManagerLeaveRequestAdapter
 import com.example.movie_booking_app.view.adapter.manager.ManagerStaffShiftAdapter
@@ -51,7 +52,7 @@ class ManagerStaffFragment : Fragment() {
     private lateinit var leaveRequestAdapter: ManagerLeaveRequestAdapter
 
     private var selectedStatusFilter: String? = null
-    private var currentTab = "staff_list"
+    private var currentTab = Constants.CURRENT_TAB
     private lateinit var staffShiftAdapter: ManagerStaffShiftAdapter
 
     override fun onCreateView(
@@ -82,11 +83,11 @@ class ManagerStaffFragment : Fragment() {
         observeUpdateShiftResult()
         setUpSearchListener()
 
-        val targetTab = arguments?.getString("target_tab")
-        if (targetTab == "leave_requests") {
-            setActiveTab(binding.tabLeaveRequests, "leave_requests")
+        val targetTab = arguments?.getString(Constants.TARGET_TAB)
+        if (targetTab == Constants.LEAVE_REQUEST_TAB) {
+            setActiveTab(binding.tabLeaveRequests, Constants.LEAVE_REQUEST_TAB)
         } else {
-            setActiveTab(binding.tabStaffList, "staff_list")
+            setActiveTab(binding.tabStaffList, Constants.CURRENT_TAB)
         }
     }
 
@@ -123,10 +124,10 @@ class ManagerStaffFragment : Fragment() {
 
     private fun setUpClickListeners() {
         binding.tabStaffList.setOnClickListener {
-            setActiveTab(binding.tabStaffList, "staff_list")
+            setActiveTab(binding.tabStaffList, Constants.CURRENT_TAB)
         }
         binding.tabLeaveRequests.setOnClickListener {
-            setActiveTab(binding.tabLeaveRequests, "leave_requests")
+            setActiveTab(binding.tabLeaveRequests, Constants.LEAVE_REQUEST_TAB)
         }
 
         binding.btnAdvancedFilter.setOnClickListener {
@@ -153,7 +154,7 @@ class ManagerStaffFragment : Fragment() {
         selectedTab.setTextColor(ContextCompat.getColor(requireContext(), R.color.bg_primary))
         selectedTab.setTypeface(null, Typeface.BOLD)
 
-        if (tabType == "staff_list") {
+        if (tabType == Constants.CURRENT_TAB) {
             binding.btnGenerateShift.visibility = View.VISIBLE
             binding.rvStaffList.adapter = staffShiftAdapter
             viewModel.loadStaffShifts()

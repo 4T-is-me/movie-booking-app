@@ -83,7 +83,7 @@ class AdminCreateMovieFragment : Fragment() {
 
     private fun setupDatePickers() {
         binding.edtReleaseDate.setOnClickListener {
-            // Only prevent past dates if it's a NEW movie. 
+            // Only prevent past dates if it's a NEW movie.
             // For editing, we allow historical dates.
             val minDate = if (editingMovie == null) System.currentTimeMillis() - 1000 else null
             showDatePicker(binding.edtReleaseDate, minDate)
@@ -297,7 +297,8 @@ class AdminCreateMovieFragment : Fragment() {
                 }
             }
             tempFile
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            e.printStackTrace()
             null
         }
     }

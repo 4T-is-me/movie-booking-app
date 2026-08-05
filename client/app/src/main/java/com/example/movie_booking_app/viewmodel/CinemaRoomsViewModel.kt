@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.CinemaRoom
 import com.example.movie_booking_app.data.repository.CinemaRoomsRepository
+import com.example.movie_booking_app.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -57,7 +58,7 @@ class CinemaRoomsViewModel @Inject constructor(
                     _isLoading.value = false
                 }
             } catch (e: Exception) {
-                _error.value = e.message ?: "Failed to load cinema rooms"
+                _error.value = e.message ?: context.getString(R.string.error_load_cinema_rooms)
                 _isLoading.value = false
             }
         }
@@ -68,7 +69,7 @@ class CinemaRoomsViewModel @Inject constructor(
             _isLoading.value = true
             _error.value = null
             try {
-                val newStatus = if (currentStatus.lowercase() == "active") "inactive" else "active"
+                val newStatus = if (currentStatus.lowercase() == Constants.Status.ACTIVE.lowercase()) Constants.Status.INACTIVE.lowercase() else Constants.Status.ACTIVE.lowercase()
                 val success = repository.updateRoomStatus(roomId, newStatus)
                 if (success) {
                     loadRooms(cinemaId)
@@ -76,7 +77,7 @@ class CinemaRoomsViewModel @Inject constructor(
                     _error.value = context.getString(R.string.auto_str_failed_to_update_room_status)
                 }
             } catch (e: Exception) {
-                _error.value = e.message ?: "Failed to update room status"
+                _error.value = e.message ?: context.getString(R.string.error_update_room_status)
             } finally {
                 _isLoading.value = false
             }

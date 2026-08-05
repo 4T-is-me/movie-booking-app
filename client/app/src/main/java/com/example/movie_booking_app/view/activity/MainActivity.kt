@@ -18,6 +18,7 @@ import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.api.AuthEvent
 import com.example.movie_booking_app.data.local.FcmTokenHelper
 import com.example.movie_booking_app.databinding.ActivityMainBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.utils.RoleConstants
 import com.example.movie_booking_app.view.fragment.GenericGridFragment
 import com.example.movie_booking_app.view.fragment.HomeFragment
@@ -112,7 +113,7 @@ class MainActivity : BaseActivity() {
         }
 
         // 1. Get requested target section, fallback to Home on standard launch
-        val target = intent.getStringExtra("TARGET_SECTION") ?: "Home"
+        val target = intent.getStringExtra("TARGET_SECTION") ?: Constants.NAV.HOME
 
         // 2. Deep-linking from background/killed push notifications
         val type = intent.getStringExtra("type")
@@ -162,27 +163,27 @@ class MainActivity : BaseActivity() {
 
     private fun updateNavHighlightByFragment(fragment: Fragment?) {
         val target = when (fragment) {
-            is HomeFragment -> "Home"
-            is MovieGridFragment -> "Movie"
-            is GenericGridFragment -> "Movie" 
+            is HomeFragment -> Constants.NAV.HOME
+            is MovieGridFragment -> Constants.NAV.MOVIE
+            is GenericGridFragment -> Constants.NAV.MOVIE
             is PlaceholderFragment -> {
                 val title = fragment.arguments?.getString("TITLE") ?: ""
-                if (title.contains("Ticket", true)) "Ticket"
-                else if (title.contains("Profile", true)) "Profile"
-                else "Home"
+                if (title.contains(Constants.NAV.TICKET, true)) Constants.NAV.TICKET
+                else if (title.contains(Constants.NAV.PROFILE, true)) Constants.NAV.PROFILE
+                else Constants.NAV.HOME
             }
-            is MyTicketFragment -> "Ticket"
-            is ProfileFragment -> "Profile"
-            else -> "Home"
+            is MyTicketFragment -> Constants.NAV.TICKET
+            is ProfileFragment -> Constants.NAV.PROFILE
+            else ->  Constants.NAV.HOME
         }
         highlightNav(target)
     }
 
     private fun setupBottomNav() {
-        binding.btnNavHome.setOnClickListener { navigateToSection("Home") }
-        binding.btnNavMovie.setOnClickListener { navigateToSection("Now Playing") }
-        binding.btnNavTicket.setOnClickListener { navigateToSection("Ticket") }
-        binding.btnNavProfile.setOnClickListener { navigateToSection("Profile") }
+        binding.btnNavHome.setOnClickListener { navigateToSection(Constants.NAV.HOME) }
+        binding.btnNavMovie.setOnClickListener { navigateToSection(Constants.NAV.NOW_PLAYING) }
+        binding.btnNavTicket.setOnClickListener { navigateToSection(Constants.NAV.TICKET) }
+        binding.btnNavProfile.setOnClickListener { navigateToSection(Constants.NAV.PROFILE) }
         binding.fabAiChat.setOnClickListener {
             val intent = Intent(this, ChatActivity::class.java)
             startActivity(intent)
@@ -194,11 +195,11 @@ class MainActivity : BaseActivity() {
         currentSection = section
         
         val fragment: Fragment = when (section) {
-            "Home" -> HomeFragment()
-            "Now Playing", "Coming Soon" -> MovieGridFragment.newInstance(section)
-            "Ticket" -> MyTicketFragment()
-            "Profile" -> ProfileFragment()
-            "Promo", "Service", "News" -> GenericGridFragment.newInstance(section)
+            Constants.NAV.HOME -> HomeFragment()
+            Constants.NAV.NOW_PLAYING, Constants.NAV.COMING_SOON -> MovieGridFragment.newInstance(section)
+            Constants.NAV.TICKET -> MyTicketFragment()
+            Constants.NAV.PROFILE -> ProfileFragment()
+            Constants.SECTION_NAMES.PROMO, Constants.SECTION_NAMES.SERVICE,Constants.SECTION_NAMES.NEWS -> GenericGridFragment.newInstance(section)
             else -> HomeFragment()
         }
 
@@ -206,7 +207,7 @@ class MainActivity : BaseActivity() {
             .replace(R.id.main_container, fragment)
             .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
         
-        if (section != "Home") {
+        if (section != Constants.NAV.HOME) {
             transaction.addToBackStack(section)
         } else {
             supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
@@ -214,7 +215,7 @@ class MainActivity : BaseActivity() {
             
         transaction.commit()
 
-        val navHighlight = if (section == "Now Playing" || section == "Coming Soon") "Movie" else section
+        val navHighlight = if (section == Constants.NAV.NOW_PLAYING || section == Constants.NAV.COMING_SOON) Constants.NAV.MOVIE else section
         highlightNav(navHighlight)
     }
 
@@ -228,10 +229,10 @@ class MainActivity : BaseActivity() {
         resetNavItem(binding.imgNavProfile, binding.tvNavProfile, inactive)
 
         when(target) {
-            "Home" -> highlightNavItem(binding.imgNavHome, binding.tvNavHome, yellow)
-            "Movie", "Now Playing", "Coming Soon" -> highlightNavItem(binding.imgNavMovie, binding.tvNavMovie, yellow)
-            "Ticket" -> highlightNavItem(binding.imgNavTicket, binding.tvNavTicket, yellow)
-            "Profile" -> highlightNavItem(binding.imgNavProfile, binding.tvNavProfile, yellow)
+            Constants.NAV.HOME -> highlightNavItem(binding.imgNavHome, binding.tvNavHome, yellow)
+            Constants.NAV.MOVIE, Constants.NAV.NOW_PLAYING, Constants.NAV.COMING_SOON -> highlightNavItem(binding.imgNavMovie, binding.tvNavMovie, yellow)
+            Constants.NAV.TICKET -> highlightNavItem(binding.imgNavTicket, binding.tvNavTicket, yellow)
+            Constants.NAV.PROFILE -> highlightNavItem(binding.imgNavProfile, binding.tvNavProfile, yellow)
         }
     }
 

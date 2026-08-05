@@ -53,7 +53,7 @@ class PurchaseHistoryAdapter(
             onRateMovieClick: ((BookingHistoryItem) -> Unit)?
         ) {
             binding.tvMovieTitle.text = item.movie
-            binding.tvBookingCode.text = "Code: ${item.bookingCode}"
+            binding.tvBookingCode.text = itemView.context.getString(R.string.code_format, item.bookingCode)
             binding.tvShowtime.text = "${item.showDate} • ${item.showtime}"
             binding.tvCinemaRoom.text = "${item.cinemaName} • ${item.roomName}"
             

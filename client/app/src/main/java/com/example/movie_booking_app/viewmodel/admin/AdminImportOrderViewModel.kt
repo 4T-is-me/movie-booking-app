@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.ImportOrder
 import com.example.movie_booking_app.data.repository.ImportOrderRepository
+import com.example.movie_booking_app.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,7 +33,7 @@ class AdminImportOrderViewModel @Inject constructor(
     val uiState: StateFlow<AdminImportOrderUiState> = _uiState.asStateFlow()
 
     init {
-        loadOrders("PENDING")
+        loadOrders(Constants.ImportOrderStatus.PENDING)
     }
 
     fun loadOrders(status: String? = null, cinemaId: String? = null) {

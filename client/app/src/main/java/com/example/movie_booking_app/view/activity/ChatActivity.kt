@@ -149,9 +149,9 @@ class ChatActivity : BaseActivity() {
                     setListeningUI(false)
                     isListening = false
                     val errorMsg = when (error) {
-                        SpeechRecognizer.ERROR_NO_MATCH -> "Chưa nghe rõ, bạn thử nói lại nhé."
-                        SpeechRecognizer.ERROR_AUDIO -> "Lỗi mic thu âm."
-                        SpeechRecognizer.ERROR_NETWORK -> "Lỗi kết nối mạng."
+                        SpeechRecognizer.ERROR_NO_MATCH -> getString(R.string.chat_error_unrecognized)
+                        SpeechRecognizer.ERROR_AUDIO -> getString(R.string.chat_error_mic)
+                        SpeechRecognizer.ERROR_NETWORK -> getString(R.string.chat_error_network)
                         else -> null
                     }
                     if (errorMsg != null) {
@@ -203,11 +203,11 @@ class ChatActivity : BaseActivity() {
 
     private fun setListeningUI(listening: Boolean) {
         if (listening) {
-            binding.btnVoice.setColorFilter(Color.parseColor("#E5484D")) // Đỏ nhấp nháy/báo hiệu đang nghe
-            binding.etChatMessage.hint = "🔴 Đang nghe bạn nói..."
+            binding.btnVoice.setColorFilter(ContextCompat.getColor(this, R.color.text_error)) // Đỏ nhấp nháy/báo hiệu đang nghe
+            binding.etChatMessage.hint = getString(R.string.chat_listening)
         } else {
             binding.btnVoice.clearColorFilter()
-            binding.etChatMessage.hint = "Nhập câu hỏi (giá vé, lịch chiếu...)..."
+            binding.etChatMessage.hint = getString(R.string.chat_hint_input)
         }
     }
 
@@ -232,7 +232,7 @@ class ChatActivity : BaseActivity() {
             viewModel.analyzeImage(body) { recognizedMovie ->
                 runOnUiThread {
                     if (!recognizedMovie.isNullOrBlank()) {
-                        Toast.makeText(this, "🎬 Đã tìm thấy phim: $recognizedMovie", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, getString(R.string.chat_movie_found, recognizedMovie), Toast.LENGTH_LONG).show()
                         viewModel.sendMessage(recognizedMovie, sessionId, isFromVision = true)
                     } else {
                         Toast.makeText(this, getString(R.string.auto_str_ai_kh_ng_nh_n_ra_t_n_phim_tron), Toast.LENGTH_SHORT).show()
@@ -241,7 +241,7 @@ class ChatActivity : BaseActivity() {
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(this, "Lỗi khi xử lý ảnh: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.chat_error_vision, e.message ?: ""), Toast.LENGTH_SHORT).show()
         }
     }
 

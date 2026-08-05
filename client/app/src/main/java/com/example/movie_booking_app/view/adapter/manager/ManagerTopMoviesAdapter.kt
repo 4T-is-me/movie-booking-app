@@ -43,7 +43,7 @@ class ManagerTopMoviesAdapter : RecyclerView.Adapter<ManagerTopMoviesAdapter.Top
             binding.apply {
                 txtRank.text = rank.toString()
                 txtMovieTitle.text = item.title
-                txtTicketCount.text = String.format("%,d tkts", item.totalTickets)
+                txtTicketCount.text = context.getString(R.string.manager_top_movies_tickets, item.totalTickets)
 
                 val goldColor = ContextCompat.getColor(context, R.color.color_gold)
                 val purpleColor = ContextCompat.getColor(context, R.color.color_bg_text_bottom)

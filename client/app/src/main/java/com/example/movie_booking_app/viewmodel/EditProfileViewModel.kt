@@ -9,6 +9,9 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import android.content.Context
+import com.example.movie_booking_app.R
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,6 +27,7 @@ import okhttp3.RequestBody.Companion.asRequestBody
 
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val repository: ProfileRepository
 ) : ViewModel() {
 
@@ -43,7 +47,7 @@ class EditProfileViewModel @Inject constructor(
                 .catch { exception ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = exception.message ?: "Failed to load profile details"
+                        error = exception.message ?: context.getString(R.string.error_load_profile)
                     )
                 }
                 .collect { profile ->
@@ -73,7 +77,7 @@ class EditProfileViewModel @Inject constructor(
                     .catch { exception ->
                         _uiState.value = _uiState.value.copy(
                             isUploadingAvatar = false,
-                            error = exception.message ?: "Unable to update profile. Please try again."
+                            error = exception.message ?: context.getString(R.string.error_update_profile)
                         )
                     }
                     .collect { response ->
@@ -83,7 +87,7 @@ class EditProfileViewModel @Inject constructor(
                                 .catch { exception ->
                                     _uiState.value = _uiState.value.copy(
                                         isUploadingAvatar = false,
-                                        error = exception.message ?: "Unable to update profile. Please try again."
+                                        error = exception.message ?: context.getString(R.string.error_update_profile)
                                     )
                                 }
                                 .collect { updatedProfile ->
@@ -96,14 +100,14 @@ class EditProfileViewModel @Inject constructor(
                         } else {
                             _uiState.value = _uiState.value.copy(
                                 isUploadingAvatar = false,
-                                error = "Unable to update profile. Please try again."
+                                error = context.getString(R.string.error_update_profile)
                             )
                         }
                     }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isUploadingAvatar = false,
-                    error = "Unable to update profile. Please try again."
+                    error = context.getString(R.string.error_update_profile)
                 )
             }
         }
@@ -129,22 +133,22 @@ class EditProfileViewModel @Inject constructor(
         var addressErr: String? = null
 
         if (fullName.isEmpty()) {
-            nameErr = "Full name cannot be empty"
+            nameErr = context.getString(R.string.error_empty_fullname)
             hasError = true
         }
 
         if (!phone.matches(Regex("^0\\d{9}$"))) {
-            phoneErr = "Phone number must be 10 digits and start with 0"
+            phoneErr = context.getString(R.string.error_invalid_phone)
             hasError = true
         }
 
         if (!identityCard.matches(Regex("^\\d{12}$"))) {
-            idCardErr = "Identity card must be exactly 12 digits"
+            idCardErr = context.getString(R.string.error_invalid_id_card)
             hasError = true
         }
 
         if (address.isEmpty()) {
-            addressErr = "Address cannot be empty"
+            addressErr = context.getString(R.string.error_empty_address)
             hasError = true
         }
 
@@ -159,15 +163,15 @@ class EditProfileViewModel @Inject constructor(
                 }
                 val date = sdf.parse(dob)
                 if (date != null && date.after(Calendar.getInstance().time)) {
-                    dobErr = "Date of birth cannot be in the future"
+                    dobErr = context.getString(R.string.error_future_dob)
                     hasError = true
                 }
             } catch (e: Exception) {
-                dobErr = "Invalid date format"
+                dobErr = context.getString(R.string.error_invalid_date_format)
                 hasError = true
             }
         } else {
-            dobErr = "Date of birth cannot be empty"
+            dobErr = context.getString(R.string.error_dob_empty)
             hasError = true
         }
 
@@ -227,7 +231,7 @@ class EditProfileViewModel @Inject constructor(
                 .catch { exception ->
                     _uiState.value = _uiState.value.copy(
                         isSaving = false,
-                        error = exception.message ?: "Failed to update profile"
+                        error = exception.message ?: context.getString(R.string.error_failed_update_profile)
                     )
                 }
                 .collect { updatedProfile ->

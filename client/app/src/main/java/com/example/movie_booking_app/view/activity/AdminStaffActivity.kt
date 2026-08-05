@@ -14,6 +14,7 @@ import com.example.movie_booking_app.data.model.entity.Staff
 import com.example.movie_booking_app.data.model.request.CreateStaffRequest
 import com.example.movie_booking_app.data.model.request.UpdateStaffRequest
 import com.example.movie_booking_app.databinding.ActivityAdminStaffBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.utils.RoleConstants
 import com.example.movie_booking_app.viewmodel.admin.AdminStaffViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -76,7 +77,7 @@ class AdminStaffActivity : BaseActivity() {
                 binding.edtStartDate.setText(staff.startDate?.take(10) ?: "")
                 binding.edtAddress.setText(staff.address)
                 
-                val statusText = if (staff.status != 0) "Active" else "Inactive"
+                val statusText = if (staff.status != 0)  Constants.Status.ACTIVE else  Constants.Status.INACTIVE
                 binding.actvStatus.setText(statusText, false)
 
                 // Set identity card non-editable in edit mode
@@ -84,7 +85,7 @@ class AdminStaffActivity : BaseActivity() {
                 binding.layoutIdentityCard.alpha = 0.6f
             }
         } else {
-            binding.tvFormTitle.text = "Add New $intentRole"
+            binding.tvFormTitle.text = getString(R.string.admin_staff_add_new, intentRole)
             binding.layoutUsername.visibility = View.VISIBLE
             binding.layoutPassword.visibility = View.VISIBLE
             binding.layoutAddress.visibility = View.VISIBLE
@@ -97,7 +98,7 @@ class AdminStaffActivity : BaseActivity() {
         binding.actvRole.setAdapter(roleAdapter)
 
         // Setup Status autocomplete dropdown
-        val statuses = arrayOf("Active", "Inactive")
+        val statuses = arrayOf( Constants.Status.ACTIVE,  Constants.Status.INACTIVE)
         val statusAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, statuses)
         binding.actvStatus.setAdapter(statusAdapter)
 
@@ -273,7 +274,7 @@ class AdminStaffActivity : BaseActivity() {
             }
             val address = binding.edtAddress.text.toString().trim()
             val statusText = binding.actvStatus.text.toString()
-            val statusVal = if (statusText.equals("Active", ignoreCase = true)) 1 else 0
+            val statusVal = if (statusText.equals( Constants.Status.ACTIVE, ignoreCase = true)) 1 else 0
             val request = UpdateStaffRequest(
                 fullName = fullName,
                 email = email,

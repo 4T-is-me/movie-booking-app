@@ -3,17 +3,17 @@
     <item
         android:id="@+id/nav_staff_checkin"
         android:icon="@drawable/ic_camera"
-        android:title="Check-in" />
+        android:title="@string/menu_check_in" />
     <item
         android:id="@+id/nav_staff_sales"
         android:icon="@drawable/ic_ticket"
-        android:title="Sales" />
+        android:title="@string/menu_sales" />
     <item
         android:id="@+id/nav_staff_schedule"
         android:icon="@drawable/ic_calendar_month_24"
-        android:title="Schedule" />
+        android:title="@string/menu_schedule" />
     <item
         android:id="@+id/nav_staff_requests"
         android:icon="@drawable/ic_receipt"
-        android:title="Requests" />
+        android:title="@string/menu_requests" />
 </menu>

@@ -12,6 +12,21 @@ const isAuthorized = async (req, res, next) => {
 
         const accessToken = authorizationHeader.replace('Bearer ', '').trim()
         const decoded = jwtProvider.verifyAccessToken(accessToken)
+        
+        // --- ADDED: Check Token Version ---
+        // Need to import Account at the top of the file if not imported.
+        // Actually, let's use dynamic import or just standard import.
+        // Wait, Account is not imported. I need to add the import at the top of the file as well!
+        const { Account } = await import('../models/accountModel.js');
+        const account = await Account.findById(decoded.accountId).select('tokenVersion');
+        if (!account) {
+            throw new ApiError(StatusCodes.UNAUTHORIZED, 'Account not found');
+        }
+        if (account.tokenVersion !== decoded.tokenVersion) {
+            throw new ApiError(StatusCodes.UNAUTHORIZED, 'Session expired. Account logged in on another device.');
+        }
+        // ----------------------------------
+
         req.user = decoded
         req.jwtDecoded = decoded
 

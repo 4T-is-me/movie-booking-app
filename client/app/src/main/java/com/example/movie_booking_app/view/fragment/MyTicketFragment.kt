@@ -11,7 +11,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RatingBar
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -21,14 +20,14 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.BookingHistoryItem
 import com.example.movie_booking_app.databinding.DialogQrCodeBinding
+import com.example.movie_booking_app.databinding.DialogRateStaffBinding
 import com.example.movie_booking_app.databinding.FragmentMyTicketBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.view.activity.BookingDetailActivity
 import com.example.movie_booking_app.view.activity.MainActivity
 import com.example.movie_booking_app.view.adapter.MyTicketAdapter
 import com.example.movie_booking_app.viewmodel.MyTicketViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.textfield.TextInputEditText
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -89,7 +88,7 @@ class MyTicketFragment : Fragment() {
         binding.rvActiveTickets.adapter = adapter
 
         binding.btnBookMovie.setOnClickListener {
-            (activity as? MainActivity)?.navigateToSection("Home")
+            (activity as? MainActivity)?.navigateToSection(Constants.NAV.HOME)
         }
 
         binding.btnRetry.setOnClickListener {
@@ -182,16 +181,12 @@ class MyTicketFragment : Fragment() {
 
     private fun showRateStaffDialog(bookingId: String) {
         val dialog = BottomSheetDialog(requireContext())
-        val dialogView = layoutInflater.inflate(R.layout.dialog_rate_staff, null)
-        dialog.setContentView(dialogView)
+        val dialogBinding = DialogRateStaffBinding.inflate(layoutInflater)
+        dialog.setContentView(dialogBinding.root)
 
-        val ratingBar = dialogView.findViewById<RatingBar>(R.id.ratingBar)
-        val etComment = dialogView.findViewById<TextInputEditText>(R.id.etComment)
-        val btnSubmit = dialogView.findViewById<MaterialButton>(R.id.btnSubmitRating)
-
-        btnSubmit.setOnClickListener {
-            val rating = ratingBar.rating.toInt()
-            val comment = etComment.text?.toString()?.trim()
+        dialogBinding.btnSubmitRating.setOnClickListener {
+            val rating = dialogBinding.ratingBar.rating.toInt()
+            val comment = dialogBinding.etComment.text?.toString()?.trim()
             if (rating > 0) {
                 viewModel.rateStaff(bookingId, rating, comment)
                 dialog.dismiss()

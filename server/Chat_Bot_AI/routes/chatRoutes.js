@@ -50,6 +50,43 @@ export const resetChatbotSessionState = () => {
 export { lastSuggestedMoviesMap, pendingContextMap };
 
 /**
+ * Hàm hỗ trợ dịch đa ngôn ngữ bằng Gemini
+ */
+const translateWithGemini = async (input, direction = 'to_vi') => {
+  try {
+    const apiKey = (process.env.GEMINI_API_KEY || process.env.GOOGLE_CALENDAR_API_KEY || '').trim();
+    if (!apiKey) return typeof input === 'string' ? input : input.reply;
+    
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+    
+    let prompt = "";
+    if (direction === 'to_vi') {
+      prompt = `Detect the language of the following text. If it is English or Japanese, translate it accurately to Vietnamese. If it is already in Vietnamese or any other language, keep it as is. Do not add any extra comments, quotes, or markdown. Output only the translated text.\n\nText: "${input}"`;
+    } else if (direction === 'to_user_lang') {
+      const { userMessage, reply } = input;
+      prompt = `Detect the language of the following User message.
+If the language is English, translate the Reply into English.
+If the language is Japanese, translate the Reply into Japanese.
+If the language is Vietnamese, output the Reply exactly as it is without translation.
+If the language is anything else, default to translating the Reply into English.
+Do not add any extra comments or quotes. Preserve all markdown formatting and emojis.
+Only output the translated Reply.
+
+User message: "${userMessage}"
+Reply to translate: "${reply}"`;
+    }
+    
+    const result = await model.generateContent(prompt);
+    const translated = result.response.text().trim();
+    return translated || (typeof input === 'string' ? input : input.reply);
+  } catch (error) {
+    console.error("[Translation API Error]:", error?.message);
+    return typeof input === 'string' ? input : input.reply;
+  }
+};
+
+/**
  * Kiểm tra rate limit đơn giản theo sessionId
  * @param {string} sessionId
  * @returns {boolean} - true nếu vượt quá giới hạn, false nếu hợp lệ
@@ -136,7 +173,9 @@ router.post('/', async (req, res) => {
     saveMessageToHistory(effectiveSessionId, 'user', maskedMessage);
 
     // 3.5. Xử lý câu hỏi gộp nhiều dòng / nhiều ý (Multi-Question Split)
-    const subQuestions = message.split(/[\n;?]+/).map(s => s.trim()).filter(s => s.length >= 2);
+    // Translate the user message to Vietnamese before any NLP processing
+    const translatedMsg = await translateWithGemini(message, 'to_vi');
+    const subQuestions = translatedMsg.split(/[\n;?]+/).map(s => s.trim()).filter(s => s.length >= 2);
     if (subQuestions.length > 1) {
       const multiReplies = [];
       let allMatchedMovies = [];
@@ -170,13 +209,15 @@ router.post('/', async (req, res) => {
 
       if (multiReplies.length > 0) {
         const combinedReply = multiReplies.join('\n\n---\n\n');
-        saveMessageToHistory(effectiveSessionId, 'bot', combinedReply);
+        // Dịch ngược lại ngôn ngữ người dùng
+        const translatedCombinedReply = await translateWithGemini({ userMessage: message, reply: combinedReply }, 'to_user_lang');
+        saveMessageToHistory(effectiveSessionId, 'bot', translatedCombinedReply);
         const cleanMovies = allMatchedMovies.map(sanitizeMovieForResponse).filter(Boolean);
         if (cleanMovies.length > 0) lastSuggestedMoviesMap.set(effectiveSessionId, cleanMovies);
 
         return res.json({
           success: true,
-          reply: combinedReply,
+          reply: translatedCombinedReply,
           matchedIntent: 'multi_question_result',
           matchedMovies: cleanMovies
         });
@@ -184,8 +225,9 @@ router.post('/', async (req, res) => {
     }
 
     // 4. Chuẩn hóa tin nhắn và phân loại ý định
-    const rawMsg = message.trim();
-    const normalizedMessage = normalizeText(message);
+    // (Sử dụng translatedMsg thay vì message gốc để NLP hiểu tiếng Việt)
+    const rawMsg = translatedMsg.trim();
+    const normalizedMessage = normalizeText(translatedMsg);
     
     let classification;
     if (isFromVision) {
@@ -217,7 +259,7 @@ router.post('/', async (req, res) => {
       const cinemaList = activePending.cinemaList || [];
       let selectedCinema = null;
 
-      const rawMsgTrim = message.trim();
+      const rawMsgTrim = translatedMsg.trim();
       const msgLower = normalizedMessage.toLowerCase();
       const rawMsgLower = rawMsgTrim.toLowerCase();
 
@@ -599,13 +641,17 @@ router.post('/', async (req, res) => {
       lastSuggestedMoviesMap.set(effectiveSessionId, cleanMatchedMovies);
     }
 
-    // 6. Lưu câu trả lời của bot vào history
-    saveMessageToHistory(effectiveSessionId, 'bot', reply);
+    // ==========================================
+    // 7. GỬI PHẢN HỒI (VÀ LƯU LỊCH SỬ)
+    // ==========================================
+    
+    const finalReply = await translateWithGemini({ userMessage: message, reply }, 'to_user_lang');
+    
+    saveMessageToHistory(effectiveSessionId, 'bot', finalReply);
 
-    // 7. Trả về JSON cho client
     const resPayload = {
       success: true,
-      reply,
+      reply: finalReply,
       matchedIntent: intent,
       matchedMovies: cleanMatchedMovies
     };

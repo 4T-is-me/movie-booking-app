@@ -129,7 +129,7 @@ class ManagerScheduleFragment : Fragment() {
                         binding.ivResultIcon.visibility = View.VISIBLE
                         binding.ivResultIcon.setImageResource(R.drawable.ic_error)
                         binding.ivResultIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.auto_color_E53935))
-                        binding.tvLoadingText.text = "Server error: ${response.message()}"
+                        binding.tvLoadingText.text = getString(R.string.server_error_format, response.message())
                         delay(2000)
                         binding.layoutLoading.visibility = View.GONE
                         binding.btnSave.isEnabled = true
@@ -139,7 +139,7 @@ class ManagerScheduleFragment : Fragment() {
                     binding.ivResultIcon.visibility = View.VISIBLE
                     binding.ivResultIcon.setImageResource(R.drawable.ic_error)
                     binding.ivResultIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.auto_color_E53935))
-                    binding.tvLoadingText.text = "Connection error: ${e.message}"
+                    binding.tvLoadingText.text = getString(R.string.connection_error_format, e.message)
                     delay(2000)
                     binding.layoutLoading.visibility = View.GONE
                     binding.btnSave.isEnabled = true
@@ -173,12 +173,12 @@ class ManagerScheduleFragment : Fragment() {
                 
                 allRooms = if (apiRooms.isNullOrEmpty()) {
                     listOf(
-                        RoomDraft("room1", "Room 1", "c1", "active"),
-                        RoomDraft("room2", "Room 2", "c1", "active")
+                        RoomDraft("room1", getString(R.string.default_room_name), "c1", "active"),
+                        RoomDraft("room2", getString(R.string.room_2), "c1", "active")
                     )
                 } else {
                     apiRooms.map {
-                        RoomDraft(it.id, it.roomName ?: "Unknown Room", "c1", it.status ?: "active")
+                        RoomDraft(it.id, it.roomName ?: getString(R.string.unknown_room), "c1", it.status ?: "active")
                     }
                 }
                 
@@ -190,8 +190,8 @@ class ManagerScheduleFragment : Fragment() {
                 renderRoomTabs()
             } catch (e: Exception) {
                 allRooms = listOf(
-                    RoomDraft("room1", "Room 1", "c1", "active"),
-                    RoomDraft("room2", "Room 2", "c1", "active")
+                    RoomDraft("room1", getString(R.string.default_room_name), "c1", "active"),
+                    RoomDraft("room2", getString(R.string.room_2), "c1", "active")
                 )
                 selectedRoomId = allRooms.first()._id
                 renderRoomTabs()
@@ -242,7 +242,7 @@ class ManagerScheduleFragment : Fragment() {
         if (_binding == null) return
         val formatter = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")
         val weekEnd = currentWeekStart.plusDays(6)
-        binding.tvSelectedWeek.text = "Selected week: ${currentWeekStart.format(formatter)} - ${weekEnd.format(formatter)}"
+        binding.tvSelectedWeek.text = getString(R.string.selected_week_format, currentWeekStart.format(formatter), weekEnd.format(formatter))
         
         val monthFormatter = DateTimeFormatter.ofPattern("MMMM yyyy", Locale.ENGLISH)
         binding.tvMonthYear.text = currentWeekStart.format(monthFormatter)
@@ -380,7 +380,7 @@ class ManagerScheduleFragment : Fragment() {
                 }
             } catch (e: Exception) {
                 if (_binding != null) {
-                    Toast.makeText(requireContext(), "Error loading showtimes: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.error_loading_showtimes_format, e.message), Toast.LENGTH_SHORT).show()
                 }
             } finally {
                 if (_binding != null) binding.pbLoading.visibility = View.GONE
@@ -412,7 +412,7 @@ class ManagerScheduleFragment : Fragment() {
                 // println("API Movies: ${apiMovies?.size}")
 
                 val movies = apiMovies?.map {
-                    MovieDraft(it.id ?: "", it.movieName ?: "Unknown Movie", it.duration ?: 120, it.status ?: "showing", it.tier ?: 1)
+                    MovieDraft(it.id ?: "", it.movieName ?: getString(R.string.unknown_movie), it.duration ?: 120, it.status ?: "showing", it.tier ?: 1)
                 } ?: emptyList()
 
                 val activeMovies = movies.filter { it.status.equals("showing", ignoreCase = true) }

@@ -29,7 +29,7 @@ class ReplacementShiftAdapter(private val onAcceptClick: (ReplacementShiftRespon
             binding.tvBadgeMonthName.text = monthName
 
             binding.tvReplaceShiftName.text = "${item.shift ?: "Flexible"} Shift"
-            binding.tvReplaceStaffName.text = item.staffName ?: "Unknown Staff"
+            binding.tvReplaceStaffName.text = item.staffName ?: context.getString(R.string.unknown_staff)
             binding.tvReplacePosition.text = item.staffPosition ?: "Staff"
 
             binding.tvShiftTimeText.text = when (item.shift) {
@@ -48,7 +48,7 @@ class ReplacementShiftAdapter(private val onAcceptClick: (ReplacementShiftRespon
             item.approvedAt?.let { approvedDate ->
                 val cleanApproved =
                     if (approvedDate.contains("T")) approvedDate.substringBefore("T") else approvedDate
-                binding.tvApprovedAt.text = "Approved: $cleanApproved"
+                binding.tvApprovedAt.text = context.getString(R.string.approved_format, cleanApproved)
             } ?: run {
                 binding.tvApprovedAt.text = itemView.context.getString(R.string.auto_str_approved)
             }

@@ -51,7 +51,7 @@ class PurchaseHistoryViewModel @Inject constructor(
                             _error.value = context.getString(R.string.auto_str_failed_to_load_booking_history)
                         }
                     } else {
-                        _error.value = "Server returned an error: ${response.code()}"
+                        _error.value = context.getString(R.string.error_server_code, response.code().toString())
                     }
                 }
             } catch (e: Exception) {
@@ -69,10 +69,10 @@ class PurchaseHistoryViewModel @Inject constructor(
                     _rateSuccess.emit(true)
                     loadHistory()
                 } else {
-                    _error.value = "Failed to submit rating: ${response.code()}"
+                    _error.value = context.getString(R.string.error_failed_submit_rating, response.code().toString())
                 }
             } catch (e: Exception) {
-                _error.value = "Rating error: ${e.localizedMessage}"
+                _error.value = context.getString(R.string.error_rating_localized, e.localizedMessage)
             }
         }
     }

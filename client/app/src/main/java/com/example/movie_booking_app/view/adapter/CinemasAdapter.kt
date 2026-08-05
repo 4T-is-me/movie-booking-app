@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Cinema
 import com.example.movie_booking_app.databinding.ItemCinemaRoomBinding
+import com.example.movie_booking_app.utils.Constants
 
 class CinemasAdapter(
     private val onCinemaClick: (Cinema) -> Unit,
@@ -46,12 +47,12 @@ class CinemasAdapter(
             val statusColor: Int
             val backgroundRes: Int
 
-            if (status == "active") {
-                statusText = "Active"
+            if (status == Constants.CinemaRoomStatus.ACTIVE) {
+                statusText = Constants.CinemaRoomStatus.ACTIVE
                 statusColor = ContextCompat.getColor(itemView.context, R.color.color_green)
                 backgroundRes = R.drawable.bg_label_operating
             } else {
-                statusText = "Closed"
+                statusText = Constants.CinemaRoomStatus.DISPLAY_CLOSED
                 statusColor = ContextCompat.getColor(itemView.context, R.color.color_error_red)
                 backgroundRes = R.drawable.bg_label_close
             }
@@ -61,18 +62,18 @@ class CinemasAdapter(
             tvStatusChip.background = ContextCompat.getDrawable(itemView.context, backgroundRes)
 
             val totalRooms = cinema.totalRooms ?: 0
-            tvCapacity.text = if (totalRooms == 1) "1 room" else "$totalRooms rooms"
+            tvCapacity.text = if (totalRooms == 1) itemView.context.getString(R.string.admin_cinema_one_room) else itemView.context.getString(R.string.admin_cinema_rooms, totalRooms)
             tvRoomType.text = "${cinema.address ?: ""}, ${cinema.city ?: ""}"
 
             itemView.setOnClickListener { onClick(cinema) }
 
             ivOptions.setOnClickListener { view ->
                 val popup = PopupMenu(view.context, view)
-                popup.menu.add(0, 1, 0, "Edit Cinema")
+                popup.menu.add(0, 1, 0, view.context.getString(R.string.admin_cinema_edit))
                 if (status == "active") {
-                    popup.menu.add(0, 2, 1, "Close Cinema")
+                    popup.menu.add(0, 2, 1, view.context.getString(R.string.admin_cinema_close))
                 } else {
-                    popup.menu.add(0, 3, 1, "Reactivate Cinema")
+                    popup.menu.add(0, 3, 1, view.context.getString(R.string.admin_cinema_reactivate))
                 }
 
                 popup.setOnMenuItemClickListener { item ->

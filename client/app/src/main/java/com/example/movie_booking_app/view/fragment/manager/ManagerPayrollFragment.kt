@@ -1,17 +1,14 @@
 package com.example.movie_booking_app.view.fragment.manager
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -21,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.PayrollItem
 import com.example.movie_booking_app.databinding.FragmentManagerPayrollBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.utils.NameFormatter
 import com.example.movie_booking_app.view.activity.PayrollConfigActivity
 import com.example.movie_booking_app.view.activity.PayrollDetailActivity
@@ -40,7 +38,7 @@ class ManagerPayrollFragment : Fragment() {
     // Keep track of data to filter locally
     private var allStaffPayrolls: List<PayrollItem> = emptyList()
     private var currentSearchQuery: String = ""
-    private var currentStatusFilter: String = "All"
+    private var currentStatusFilter: String = Constants.STATUS_OPTIONS[0]
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -74,10 +72,6 @@ class ManagerPayrollFragment : Fragment() {
 
     private fun setupFilters() {
         // Setup Search
-        val searchText = binding.searchView.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
-        searchText?.setTextColor(Color.WHITE)
-        searchText?.setHintTextColor(ContextCompat.getColor(requireContext(), R.color.text_secondary))
-
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
@@ -91,13 +85,12 @@ class ManagerPayrollFragment : Fragment() {
         })
 
         // Setup Spinner status
-        val statusOptions = listOf("All", "Draft", "Paid")
-        val spinnerAdapter = ArrayAdapter(requireContext(), R.layout.item_spinner_text, statusOptions)
+        val spinnerAdapter = ArrayAdapter(requireContext(), R.layout.item_spinner_text, Constants.STATUS_OPTIONS)
         spinnerAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown)
         binding.spinnerStatusFilter.adapter = spinnerAdapter
         binding.spinnerStatusFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                currentStatusFilter = statusOptions[position]
+                currentStatusFilter = Constants.STATUS_OPTIONS[position]
                 filterStaffList()
             }
 
@@ -127,10 +120,10 @@ class ManagerPayrollFragment : Fragment() {
                     viewModel.payrollListState.collect { list ->
                         // 1. Separate Manager and Staff Data
                         val managerPayroll = list.find {
-                            it.employee?.role?.contains("manager", ignoreCase = true) == true
+                            it.employee?.role?.contains(Constants.ROLE.MANAGER, ignoreCase = true) == true
                         }
                         allStaffPayrolls = list.filter {
-                            it.employee?.role?.contains("manager", ignoreCase = true) == false
+                            it.employee?.role?.contains(Constants.ROLE.MANAGER, ignoreCase = true) == false
                         }
 
                         // 2. Bind Manager Card directly
@@ -170,13 +163,13 @@ class ManagerPayrollFragment : Fragment() {
         val name = managerPayroll.employee?.fullName ?: managerPayroll.employee?.username ?: ""
         binding.tvManagerName.text = name
         binding.tvManagerAvatarText.text = NameFormatter.getAvatarInitials(name)
-        binding.tvManagerCinemaName.text = managerPayroll.cinema?.cinemaName ?: "Lumina Cinema"
+        binding.tvManagerCinemaName.text = managerPayroll.cinema?.cinemaName ?: getString(R.string.lumina_cinema)
         binding.tvManagerBaseSalary.text = PayrollAdapter.formatVnd(managerPayroll.baseSalary ?: 0.0)
         binding.tvManagerBonus.text = getString(R.string.auto_str_str_auto) + PayrollAdapter.formatVnd(managerPayroll.bonus ?: 0.0)
         binding.tvManagerTotalSalary.text = PayrollAdapter.formatVnd(managerPayroll.totalSalary)
 
         // Status Badge Style
-        val isDraft = managerPayroll.status.equals("Draft", ignoreCase = true)
+        val isDraft = managerPayroll.status.equals(Constants.Status.DRAFT, ignoreCase = true)
         if (isDraft) {
             binding.tvManagerStatus.text = ctx.getString(R.string.status_draft)
             binding.tvManagerStatus.setTextColor(ctx.getColor(R.color.color_draft_status))

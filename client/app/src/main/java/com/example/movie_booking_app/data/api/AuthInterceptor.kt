@@ -26,16 +26,6 @@ class AuthInterceptor(private val context: Context) : Interceptor {
 
         val response = chain.proceed(requestBuilder.build())
 
-        if (response.code == 401) {
-            // Token is invalid or expired
-            TokenManager.clearTokens(context)
-            
-            // Notify AuthViewModel or other listeners
-            runBlocking {
-                AuthEventBus.emit(AuthEvent.SessionExpired)
-            }
-        }
-
         return response
     }
 }

@@ -28,10 +28,10 @@ class PromotionDetailActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Bind incoming promo data
-        val title = intent.getStringExtra("promo_title") ?: "Promotion Details"
+        val title = intent.getStringExtra("promo_title") ?: getString(R.string.promo_details_title)
         val imageUrl = intent.getStringExtra("promo_image") ?: ""
         val code = intent.getStringExtra("promo_code") ?: ""
-        val detail = intent.getStringExtra("promo_detail") ?: "No description provided."
+        val detail = intent.getStringExtra("promo_detail") ?: getString(R.string.promo_no_description)
         val discountType = intent.getStringExtra("promo_discount_type") ?: ""
         val discountValue = intent.extras?.getDouble("promo_discount_value", 0.0) ?: 0.0
         val minOrderValue = intent.extras?.getDouble("promo_min_order", 0.0) ?: 0.0
@@ -54,20 +54,20 @@ class PromotionDetailActivity : AppCompatActivity() {
             binding.tvDiscountValue.text = "-${discountValue.toInt()}%"
         } else {
             val formatter = NumberFormat.getInstance(Locale.GERMANY)
-            binding.tvDiscountValue.text = "-${formatter.format(discountValue.toInt())} VND"
+            binding.tvDiscountValue.text = getString(R.string.booking_price_vnd_negative, formatter.format(discountValue.toInt()))
         }
 
         // Format min spend
         if (minOrderValue > 0) {
             val formatter = NumberFormat.getInstance(Locale.GERMANY)
-            binding.tvMinOrderValue.text = "Minimum spending: ${formatter.format(minOrderValue.toInt())} VND"
+            binding.tvMinOrderValue.text = getString(R.string.promo_min_spending, formatter.format(minOrderValue.toInt()))
         } else {
             binding.tvMinOrderValue.text = getString(R.string.auto_str_no_minimum_spending_required)
         }
 
         // Parse and format date range
         val formattedDate = formatIsoDate(endDate)
-        binding.tvPromoDateRange.text = "Expiry date: $formattedDate"
+        binding.tvPromoDateRange.text = getString(R.string.promo_expiry_date, formattedDate)
 
         // Set listeners
         binding.btnBack.setOnClickListener {
@@ -80,7 +80,7 @@ class PromotionDetailActivity : AppCompatActivity() {
             val clip = ClipData.newPlainText("promo_code", code)
             clipboard.setPrimaryClip(clip)
 
-            Toast.makeText(this, "Code $code copied!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.promo_code_copied, code), Toast.LENGTH_SHORT).show()
 
             // Animate Copy Button transition state
             binding.btnCopyCode.animate().alpha(0f).setDuration(120).withEndAction {

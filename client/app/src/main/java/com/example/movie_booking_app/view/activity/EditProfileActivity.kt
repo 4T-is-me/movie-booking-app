@@ -39,18 +39,9 @@ class EditProfileActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEditProfileBinding
     private val viewModel: EditProfileViewModel by viewModels()
 
-    private val genderOptions = arrayOf("Male", "Female", "Other")
-    private val cinemaOptions = arrayOf(
-        "CGV Vincom Center",
-        "BHD Star 3/2",
-        "Lotte Cinema Cantavil",
-        "Galaxy Nguyen Du",
-        "Beta Cinema"
-    )
-    private val genreOptions = arrayOf(
-        "Action", "Comedy", "Drama", "Horror", "Romance",
-        "Sci-Fi", "Thriller", "Animation", "Adventure", "Fantasy"
-    )
+    private val genderOptions = Constants.GENDER_OPTIONS
+    private val cinemaOptions = Constants.CINEMA_OPTIONS
+    private val genreOptions = Constants.GENRE_OPTIONS
 
     private val selectedGenres = mutableListOf<String>()
     private var lastLoadedAvatarUrl: String? = null
@@ -114,13 +105,13 @@ class EditProfileActivity : AppCompatActivity() {
 
         // Fixed bottom navigation click listeners
         binding.btnNavHome.setOnClickListener {
-            navigateToMainSection("Home")
+            navigateToMainSection(Constants.NAV.HOME)
         }
         binding.btnNavTicket.setOnClickListener {
-            navigateToMainSection("Ticket")
+            navigateToMainSection(Constants.NAV.TICKET)
         }
         binding.btnNavMovie.setOnClickListener {
-            navigateToMainSection("Movie")
+            navigateToMainSection(Constants.NAV.MOVIE)
         }
         binding.btnNavProfile.setOnClickListener {
             // Already editing profile; just close this screen to return to profile
@@ -185,7 +176,7 @@ class EditProfileActivity : AppCompatActivity() {
                     // Handle success state
                     if (state.saveSuccess) {
                         viewModel.resetSaveSuccess()
-                        Snackbar.make(binding.root, "Profile updated successfully.", Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(binding.root, getString(R.string.profile_update_success), Snackbar.LENGTH_SHORT).show()
                         binding.root.postDelayed({
                             finish()
                         }, 1200)

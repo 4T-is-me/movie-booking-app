@@ -34,7 +34,7 @@ class VerifyOtpActivity : EnglishBaseActivity() {
         email = intent.getStringExtra("email") ?: ""
         type = intent.getStringExtra("type") ?: "forgot_password"
         
-        binding.tvOtpMessage.text = "Enter 6-digit OTP sent to:\n$email"
+        binding.tvOtpMessage.text = getString(R.string.verify_otp_msg, email)
         binding.ivBack.setOnClickListener { finish() }
 
         val otpBoxes = arrayOf(

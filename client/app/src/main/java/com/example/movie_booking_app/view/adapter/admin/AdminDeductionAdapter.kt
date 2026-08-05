@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter.admin
 
+import com.example.movie_booking_app.R
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -53,7 +54,7 @@ class AdminDeductionAdapter : RecyclerView.Adapter<AdminDeductionAdapter.ViewHol
         fun bind(product: FoodBeverage, itemCode: String, quantity: Int, onQtyChanged: (Int) -> Unit) {
             var currentQty = quantity
             binding.tvItemName.text = product.name
-            binding.tvItemCode.text = "Code: $itemCode"
+            binding.tvItemCode.text = binding.root.context.getString(R.string.admin_deduction_code, itemCode)
             binding.tvQuantity.text = currentQty.toString()
 
             binding.btnPlus.setOnClickListener {

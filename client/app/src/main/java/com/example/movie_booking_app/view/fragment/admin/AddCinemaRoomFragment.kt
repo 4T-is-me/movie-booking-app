@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.FragmentAddCinemaRoomBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.view.adapter.SeatPreviewAdapter
 import com.example.movie_booking_app.viewmodel.AddCinemaRoomViewModel
 import com.google.android.material.button.MaterialButton
@@ -134,23 +135,23 @@ class AddCinemaRoomFragment : Fragment() {
     }
 
     private fun setupDropdowns() {
-        val roomTypes = arrayOf("Standard", "VIP", "IMAX")
+        val roomTypes = Constants.ROOM_TYPES
         val roomTypeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, roomTypes)
         actvRoomType.setAdapter(roomTypeAdapter)
         actvRoomType.setText(roomTypes[0], false)
         viewModel.roomType.value = roomTypes[0]
 
-        val screenTypes = arrayOf("2D", "3D", "IMAX")
+        val screenTypes = Constants.SCREEN_TYPES
         val screenTypeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, screenTypes)
         actvScreenType.setAdapter(screenTypeAdapter)
         actvScreenType.setText(screenTypes[0], false)
         viewModel.screenType.value = screenTypes[0]
 
-        val statuses = arrayOf("Active", "Maintenance", "Inactive")
+        val statuses = arrayOf( Constants.Status.ACTIVE, Constants.Status.MAINTENANCE,  Constants.Status.INACTIVE)
         val statusAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, statuses)
         actvStatus.setAdapter(statusAdapter)
         actvStatus.setText(statuses[0], false)
-        viewModel.status.value = "active" // Backend expects lowercase string representation
+        viewModel.status.value = Constants.Status.ACTIVE.lowercase() // Backend expects lowercase string representation
 
         // Handle selection updates
         actvRoomType.setOnItemClickListener { _, _, position, _ ->
@@ -251,9 +252,9 @@ class AddCinemaRoomFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.status.collectLatest { stat ->
                 val display = when (stat.lowercase()) {
-                    "active" -> "Active"
-                    "maintenance" -> "Maintenance"
-                    else -> "Inactive"
+                    Constants.Status.ACTIVE.lowercase() -> Constants.Status.ACTIVE
+                    Constants.Status.MAINTENANCE.lowercase(), -> Constants.Status.MAINTENANCE
+                    else -> Constants.Status.INACTIVE
                 }
                 if (actvStatus.text?.toString() != display) {
                     actvStatus.setText(display, false)
@@ -264,7 +265,7 @@ class AddCinemaRoomFragment : Fragment() {
         // Observe capacity state
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.capacity.collectLatest { cap ->
-                etCapacity.setText("$cap seats")
+                etCapacity.setText(getString(R.string.seats_format, cap.toString()))
             }
         }
 
@@ -310,7 +311,7 @@ class AddCinemaRoomFragment : Fragment() {
                     btnSave.isEnabled = false
                 } else {
                     pbLoading.visibility = View.GONE
-                    btnSave.text = if (roomId != null) "Update Room" else "Save Room"
+                    btnSave.text = if (roomId != null) getString(R.string.auto_str_update) else getString(R.string.save_room)
                     btnSave.isEnabled = true
                 }
             }
@@ -329,7 +330,7 @@ class AddCinemaRoomFragment : Fragment() {
     private fun showSuccessDialog() {
         AlertDialog.Builder(requireContext())
             .setTitle("Success")
-            .setMessage(if (roomId != null) "Cinema room updated successfully." else "Cinema room created successfully.")
+            .setMessage(if (roomId != null) getString(R.string.cinema_room_updated_successfully) else getString(R.string.cinema_room_created_successfully))
             .setCancelable(false)
             .setPositiveButton("OK") { dialog, _ ->
                 dialog.dismiss()

@@ -26,6 +26,7 @@ import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.FoodBeverage
 import com.example.movie_booking_app.databinding.ActivityAdminFoodMenuBinding
 import com.example.movie_booking_app.databinding.DialogAddEditFoodBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.view.adapter.admin.AdminDeductionAdapter
 import com.example.movie_booking_app.view.adapter.admin.AdminFoodAdapter
 import com.example.movie_booking_app.viewmodel.admin.AdminFoodViewModel
@@ -169,7 +170,7 @@ class AdminFoodMenuFragment : Fragment() {
         
         binding.switchActive.isVisible = !isEdit
 
-        val categories = listOf("drink", "food", "combo")
+        val categories = Constants.CATEGORIES
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerCategory.adapter = adapter
@@ -208,7 +209,7 @@ class AdminFoodMenuFragment : Fragment() {
         }
 
         AlertDialog.Builder(requireContext())
-            .setTitle(if (isEdit) "Edit Product" else "Add New Product")
+            .setTitle(if (isEdit) getString(R.string.edit_product) else getString(R.string.add_new_product))
             .setView(binding.root)
             .setPositiveButton("Save") { _, _ ->
                 val name = binding.etName.text.toString()
@@ -271,11 +272,11 @@ class AdminFoodMenuFragment : Fragment() {
 
     private fun showDeleteConfirm(item: FoodBeverage) {
         val isActive = item.isActive
-        val title = if (isActive) "Deactivate Product" else "Reactivate Product"
+        val title = if (isActive) getString(R.string.deactivate_product) else getString(R.string.reactivate_product)
         val message = if (isActive) 
-            "Are you sure you want to deactivate ${item.name}?" 
+            getString(R.string.deactivate_product_confirm, item.name)
         else 
-            "Are you sure you want to reactivate ${item.name}?"
+            getString(R.string.reactivate_product_confirm, item.name)
 
         AlertDialog.Builder(requireContext())
             .setTitle(title)

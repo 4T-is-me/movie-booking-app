@@ -428,7 +428,7 @@
                                     android:textColor="@color/auto_color_FFFFFF"
                                     android:textSize="13sp"
                                     android:textStyle="bold"
-                                    android:backgroundTint="#F59E0B"
+                                    android:backgroundTint="@color/auto_color_F59E0B"
                                     android:padding="0dp"/>
                             </LinearLayout>
                         </LinearLayout>

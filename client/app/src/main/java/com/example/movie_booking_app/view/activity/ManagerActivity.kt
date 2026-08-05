@@ -119,7 +119,7 @@ class ManagerActivity : AppCompatActivity() {
 
                     val currencyFormatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
                     val tvManager = data.managerId.slice(0..2).uppercase()
-                    binding.tvAllRoom.text = "MGR-${tvManager}  ${kpi.allScreenToday} Rooms"
+                    binding.tvAllRoom.text = getString(R.string.manager_kpi_rooms, tvManager, kpi.allScreenToday.toString())
                     binding.tvManagerName.text = data.managerName
                     if (!data.cinemaName.isNullOrEmpty()) {
                         binding.tvCinemaName.text = data.cinemaName
@@ -183,7 +183,7 @@ class ManagerActivity : AppCompatActivity() {
         }
 
         //lines data
-        val lineDataSet = LineDataSet(entries, "Revenue (VND)").apply {
+        val lineDataSet = LineDataSet(entries, getString(R.string.manager_revenue)).apply {
             color = yellowColor
             setCircleColor(yellowColor)
             lineWidth = 3f                      // Line thickness
@@ -273,7 +273,7 @@ class ManagerActivity : AppCompatActivity() {
                     replaceFragment(ManagerScheduleFragment(), getString(R.string.auto_str_weekly_timetable))
                 }
                 R.id.nav_import_orders -> {
-                    replaceFragment(ManagerImportOrderFragment(), "Goods Intake Orders")
+                    replaceFragment(ManagerImportOrderFragment(), getString(R.string.goods_intake_orders))
                 }
                 R.id.nav_profile -> {
                     replaceFragment(ManagerProfileFragment(), getString(R.string.auto_str_my_profile))
@@ -350,10 +350,10 @@ class ManagerActivity : AppCompatActivity() {
         val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
 
         return when (currentHour) {
-            in 5..11 -> "Good morning ☀️"
-            in 12..16 -> "Good afternoon 🌤️"
-            in 17..21 -> "Good evening 🌙"
-            else -> "Good night 💤"
+            in 5..11 -> getString(R.string.greeting_morning)
+            in 12..16 -> getString(R.string.greeting_afternoon)
+            in 17..21 -> getString(R.string.greeting_evening)
+            else -> getString(R.string.greeting_night)
         }
     }
 

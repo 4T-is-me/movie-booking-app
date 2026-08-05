@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.request.AddCinemaRequest
 import com.example.movie_booking_app.data.repository.CinemasRepository
+import com.example.movie_booking_app.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -28,7 +29,7 @@ class AddCinemaViewModel @Inject constructor(
     val address = MutableStateFlow("")
     val city = MutableStateFlow("")
     val hotline = MutableStateFlow("")
-    val status = MutableStateFlow("active")
+    val status = MutableStateFlow(Constants.CinemaRoomStatus.ACTIVE)
     val image = MutableStateFlow("")
 
     private val _isLoading = MutableStateFlow(false)
@@ -56,7 +57,7 @@ class AddCinemaViewModel @Inject constructor(
                     image.value = cinema.image.orEmpty()
                 }
             } catch (e: Exception) {
-                _errorMessage.value = e.message ?: "Failed to load cinema details"
+                _errorMessage.value = e.message ?: context.getString(R.string.error_load_cinema_details)
             } finally {
                 _isLoading.value = false
             }
@@ -146,10 +147,10 @@ class AddCinemaViewModel @Inject constructor(
                 if (result.isSuccess) {
                     _isSuccess.value = true
                 } else {
-                    _errorMessage.value = result.exceptionOrNull()?.message ?: (if (currentId != null) "Failed to update cinema" else "Failed to create cinema")
+                    _errorMessage.value = result.exceptionOrNull()?.message ?: (if (currentId != null) context.getString(R.string.error_update_cinema) else context.getString(R.string.error_create_cinema))
                 }
             } catch (e: Exception) {
-                _errorMessage.value = e.message ?: "An error occurred"
+                _errorMessage.value = e.message ?: context.getString(R.string.error_an_error_occurred)
             } finally {
                 _isLoading.value = false
             }

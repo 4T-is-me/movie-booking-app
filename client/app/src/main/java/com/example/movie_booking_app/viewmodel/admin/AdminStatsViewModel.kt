@@ -1,13 +1,16 @@
 package com.example.movie_booking_app.viewmodel.admin
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.admin.DailyRevenueItem
 import com.example.movie_booking_app.data.model.admin.MonthlyRevenueItem
 import com.example.movie_booking_app.data.model.admin.MovieRevenueItem
 import com.example.movie_booking_app.data.model.admin.StatsOverview
 import com.example.movie_booking_app.data.repository.admin.StatsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -33,7 +36,8 @@ data class AdminStatsUiState(
 
 @HiltViewModel
 class AdminStatsViewModel @Inject constructor(
-    private val repository: StatsRepository
+    private val repository: StatsRepository,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AdminStatsUiState())
@@ -77,7 +81,7 @@ class AdminStatsViewModel @Inject constructor(
                             monthlyRevenue = if (monthlyRes?.isSuccessful == true) monthlyRes.body()?.data ?: emptyList() else _uiState.value.monthlyRevenue,
                             movieRevenue = if (movieRes?.isSuccessful == true) movieRes.body()?.data ?: emptyList() else _uiState.value.movieRevenue,
                             error = if (overviewRes == null && dailyRes == null && monthlyRes == null && movieRes == null) 
-                                "Connection error or data parsing failed" else null
+                                context.getString(R.string.connection_or_parsing_error) else null
                         )
                     }
 
@@ -86,7 +90,7 @@ class AdminStatsViewModel @Inject constructor(
                     withContext(Dispatchers.Main) {
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
-                            error = e.message ?: "An unknown error occurred"
+                            error = e.message ?: context.getString(R.string.unknown_error_occurred)
                         )
                     }
                 }

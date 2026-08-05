@@ -11,6 +11,7 @@ import com.example.movie_booking_app.data.model.request.UpdateStaffRequest
 import com.example.movie_booking_app.data.model.response.MemberItem
 import com.example.movie_booking_app.data.model.response.ScoreAdjustState
 import com.example.movie_booking_app.data.repository.admin.AdminRepository
+import com.example.movie_booking_app.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -81,7 +82,7 @@ class AdminStaffViewModel @Inject constructor(
 
     private fun loadManagers() {
         viewModelScope.launch {
-            repository.getStaffListFlow(page = 1, limit = 100, search = null, role = "Manager")
+            repository.getStaffListFlow(page = 1, limit = 100, search = null, role = Constants.ROLE.MANAGER)
                 .catch { }
                 .collect { staffItems ->
                     val mappedStaffs = staffItems.map { dbStaff ->
