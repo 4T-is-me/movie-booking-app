@@ -8,7 +8,6 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -171,9 +170,9 @@ class AdminFoodMenuFragment : Fragment() {
         binding.switchActive.isVisible = !isEdit
 
         val categories = Constants.CATEGORIES
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spinnerCategory.adapter = adapter
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, categories)
+        binding.spinnerCategory.setAdapter(adapter)
+        binding.spinnerCategory.setOnClickListener { binding.spinnerCategory.showDropDown() }
 
         val deductionAdapter = AdminDeductionAdapter()
         binding.rvDeductions.apply {
@@ -182,20 +181,18 @@ class AdminFoodMenuFragment : Fragment() {
         }
         deductionAdapter.setSourceItems(viewModel.uiState.value.menuItems, item?.inventoryDeductions)
 
-        binding.spinnerCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val isCombo = categories[position] == "combo"
-                binding.layoutComboRecipe.isVisible = isCombo
-            }
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        binding.spinnerCategory.setOnItemClickListener { _, _, position, _ ->
+            val isCombo = categories[position] == "combo"
+            binding.layoutComboRecipe.isVisible = isCombo
         }
 
         if (isEdit && item != null) {
             binding.etName.setText(item.name)
             binding.etPrice.setText(item.price.toString())
             binding.etDescription.setText(item.description)
-            binding.spinnerCategory.setSelection(categories.indexOf(item.category))
+            binding.spinnerCategory.setText(item.category, false)
             binding.switchActive.isChecked = item.isActive
+            binding.layoutComboRecipe.isVisible = item.category == "combo"
             
             Glide.with(this)
                 .load(item.imageUrl)
@@ -208,14 +205,14 @@ class AdminFoodMenuFragment : Fragment() {
             imagePickerLauncher.launch(intent)
         }
 
-        AlertDialog.Builder(requireContext())
+        AlertDialog.Builder(requireContext(), R.style.Theme_Moviebookingapp_DarkDialog)
             .setTitle(if (isEdit) "Edit Product" else "Add New Product")
             .setView(binding.root)
             .setPositiveButton("Save") { _, _ ->
                 val name = binding.etName.text.toString()
                 val price = binding.etPrice.text.toString().toIntOrNull() ?: 0
                 val desc = binding.etDescription.text.toString()
-                val cat = binding.spinnerCategory.selectedItem.toString()
+                val cat = binding.spinnerCategory.text.toString()
                 val active = binding.switchActive.isChecked
 
                 if (name.isBlank()) {
@@ -278,7 +275,7 @@ class AdminFoodMenuFragment : Fragment() {
         else 
             "Are you sure you want to reactivate ${item.name}?"
 
-        AlertDialog.Builder(requireContext())
+        AlertDialog.Builder(requireContext(), R.style.Theme_Moviebookingapp_DarkDialog)
             .setTitle(title)
             .setMessage(message)
             .setPositiveButton("Yes") { _, _ ->
