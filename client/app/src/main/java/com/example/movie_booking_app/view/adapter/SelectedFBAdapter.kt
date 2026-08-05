@@ -1,5 +1,6 @@
 package com.example.movie_booking_app.view.adapter
 
+import com.example.movie_booking_app.R
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -23,7 +24,7 @@ class SelectedFBAdapter : ListAdapter<ComboDetail, SelectedFBAdapter.ViewHolder>
 
     class ViewHolder(private val binding: ItemPaymentFbSummaryBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ComboDetail) {
-            binding.tvItemName.text = "${item.name} x${item.quantity}"
+            binding.tvItemName.text = itemView.context.getString(R.string.selected_fb_format, item.name, item.quantity)
             binding.tvItemPrice.text = formatCurrency(item.price * item.quantity)
         }
 

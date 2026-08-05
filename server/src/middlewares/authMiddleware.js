@@ -1,6 +1,7 @@
 import { StatusCodes } from 'http-status-codes'
 import ApiError from '../utils/ApiError.js'
 import { jwtProvider } from '../utils/jwtProvider.js'
+import { Account } from '../models/accountModel.js'
 
 const isAuthorized = async (req, res, next) => {
     try {
@@ -12,6 +13,16 @@ const isAuthorized = async (req, res, next) => {
 
         const accessToken = authorizationHeader.replace('Bearer ', '').trim()
         const decoded = jwtProvider.verifyAccessToken(accessToken)
+        
+        const account = await Account.findById(decoded.accountId).select('tokenVersion');
+        if (!account) {
+            throw new ApiError(StatusCodes.UNAUTHORIZED, 'Account not found');
+        }
+        if (account.tokenVersion !== decoded.tokenVersion) {
+            throw new ApiError(StatusCodes.UNAUTHORIZED, 'Session expired. Account logged in on another device.');
+        }
+        // ----------------------------------
+
         req.user = decoded
         req.jwtDecoded = decoded
 

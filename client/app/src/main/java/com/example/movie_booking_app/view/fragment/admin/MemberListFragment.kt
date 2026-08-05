@@ -85,7 +85,7 @@ class MemberListFragment : Fragment() {
         dialogBinding.tvDetailAddress.text = member.address ?: getString(R.string.user_name_placeholder)
         dialogBinding.tvDetailRank.text = member.membershipRank ?: getString(R.string.admin_default_rank)
         dialogBinding.tvDetailPoints.text = String.format(Locale.getDefault(), "%,d", member.rewardPoints ?: 0)
-        dialogBinding.tvDetailTotalSpent.text = String.format(Locale.getDefault(), "%,.0f ₫", member.totalSpent ?: 0.0)
+        dialogBinding.tvDetailTotalSpent.text = String.format(Locale.getDefault(), getString(R.string.currency_format_vnd), member.totalSpent ?: 0.0)
 
         dialogBinding.btnCloseDetail.setOnClickListener { dialog.dismiss() }
         dialog.show()

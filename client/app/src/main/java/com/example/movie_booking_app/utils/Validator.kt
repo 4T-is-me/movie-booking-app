@@ -54,7 +54,6 @@ object Validator {
         val pass = password ?: ""
         if (pass.isEmpty()) return R.string.error_password_required
         
-        val lengthValid = pass.length >= 6
         val uppercaseValid = pass.any { it in 'A'..'Z' }
         val lowercaseValid = pass.any { it in 'a'..'z' }
         val numberValid = pass.any { it in '0'..'9' }
@@ -62,7 +61,6 @@ object Validator {
         val specialValid = pass.any { it in specialChars }
         
         return when {
-            !lengthValid -> R.string.error_password_length
             !uppercaseValid -> R.string.error_password_uppercase
             !lowercaseValid -> R.string.error_password_lowercase
             !numberValid -> R.string.error_password_number

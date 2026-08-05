@@ -14,12 +14,20 @@ open class BaseActivity : AppCompatActivity() {
 
     override fun attachBaseContext(newBase: Context) {
         val prefs = newBase.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
-        val langCode = prefs.getString("language_code", "en") ?: "en"
-        val locale = Locale(langCode)
-        val config = newBase.resources.configuration
-        config.setLocale(locale)
-        val context = newBase.createConfigurationContext(config)
-        super.attachBaseContext(context)
+        val role = prefs.getString("role", "Customer")?.lowercase() ?: "customer"
+        
+        // Only apply user's chosen language if they are a customer
+        if (role == "customer" || role == "user") {
+            val langCode = prefs.getString("language_code", "en") ?: "en"
+            val locale = Locale(langCode)
+            Locale.setDefault(locale)
+            val config = newBase.resources.configuration
+            config.setLocale(locale)
+            val context = newBase.createConfigurationContext(config)
+            super.attachBaseContext(context)
+        } else {
+            super.attachBaseContext(newBase)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -14,6 +14,8 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import android.content.Context
+import com.example.movie_booking_app.R
 
 class ReviewAdapter(
     @Suppress("UNUSED_PARAMETER") items: List<ReviewItem> = emptyList()
@@ -67,10 +69,10 @@ class ReviewAdapter(
         }
 
         // Creation date
-        binding.tvReviewDate.text = formatRelativeDate(review.createdAt)
+        binding.tvReviewDate.text = formatRelativeDate(holder.itemView.context, review.createdAt)
     }
 
-    private fun formatRelativeDate(isoString: String?): String {
+    private fun formatRelativeDate(context: Context, isoString: String?): String {
         if (isoString.isNullOrEmpty()) return ""
         return try {
             val instant = Instant.parse(isoString)
@@ -80,10 +82,10 @@ class ReviewAdapter(
             val diffHours = diffMinutes / 60
             val diffDays = diffHours / 24
             when {
-                diffMinutes < 1 -> "Just now"
-                diffMinutes < 60 -> "${diffMinutes}m ago"
-                diffHours < 24 -> "${diffHours}h ago"
-                diffDays < 30 -> "${diffDays}d ago"
+                diffMinutes < 1 -> context.getString(R.string.just_now)
+                diffMinutes < 60 -> context.getString(R.string.minutes_ago_format, diffMinutes)
+                diffHours < 24 -> context.getString(R.string.hours_ago_format, diffHours)
+                diffDays < 30 -> context.getString(R.string.days_ago_format, diffDays)
                 else -> {
                     val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
                         .withZone(ZoneId.of("Asia/Ho_Chi_Minh"))

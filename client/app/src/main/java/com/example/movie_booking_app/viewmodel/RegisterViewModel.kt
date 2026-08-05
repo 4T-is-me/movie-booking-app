@@ -38,9 +38,9 @@ class RegisterViewModel @Inject constructor(
             try {
                 val response = repository.register(request)
                 if (response.isSuccessful && response.body() != null) {
-                    _uiState.value = RegisterUiState.Success("Registration successful!")
+                    _uiState.value = RegisterUiState.Success(context.getString(R.string.msg_registration_successful))
                 } else {
-                    val errorMsg = response.errorBody()?.string() ?: "Registration failed"
+                    val errorMsg = response.errorBody()?.string() ?: context.getString(R.string.error_registration_failed)
                     var displayMsg = errorMsg
                     try {
                         val jsonObject = JSONObject(errorMsg)

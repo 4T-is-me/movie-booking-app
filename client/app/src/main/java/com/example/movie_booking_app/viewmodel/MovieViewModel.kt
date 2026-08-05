@@ -16,6 +16,9 @@ import com.example.movie_booking_app.utils.Constants
 import com.google.gson.JsonParser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.File
+import android.content.Context
+import com.example.movie_booking_app.R
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
@@ -35,6 +38,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MovieViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val repository: MovieRepository,
     private val profileRepository: ProfileRepository,
     private val newsRepository: NewsRepository
@@ -183,7 +187,7 @@ class MovieViewModel @Inject constructor(
 
             repository.getMovieDetailsById(id)
                 .catch { e ->
-                    _detailError.value = "Error: ${e.localizedMessage}"
+                    _detailError.value = context.getString(R.string.error_localized, e.localizedMessage)
                 }
                 .collect { movieData ->
                     _movieDetail.value = MovieResponse(data = movieData)
@@ -198,7 +202,7 @@ class MovieViewModel @Inject constructor(
 
             repository.getMovieShowtimes(movieId)
                 .catch { e ->
-                    _showtimeError.value = "Error: ${e.localizedMessage}"
+                    _showtimeError.value = context.getString(R.string.error_localized, e.localizedMessage)
                 }
                 .collect { showtimes ->
                     _movieShowtimes.value = showtimes
@@ -283,7 +287,7 @@ class MovieViewModel @Inject constructor(
                     fetchMovieDetail(movieId)
                     fetchMovieReviews(movieId)
                 } else {
-                    val errorMsg = response.body()?.message ?: response.errorBody()?.string() ?: "Unknown error"
+                    val errorMsg = response.body()?.message ?: response.errorBody()?.string() ?: context.getString(R.string.error_unknown)
                     // Try to parse JSON error message if possible
                     val parsedMsg = try {
                         val json = JsonParser.parseString(errorMsg).asJsonObject
@@ -295,7 +299,7 @@ class MovieViewModel @Inject constructor(
                     _reviewActionSuccess.emit(false)
                 }
             } catch (e: Exception) {
-                _reviewErrorMessage.emit(e.localizedMessage ?: "Network error")
+                _reviewErrorMessage.emit(e.localizedMessage ?: context.getString(R.string.error_network))
                 _reviewActionSuccess.emit(false)
             }
         }

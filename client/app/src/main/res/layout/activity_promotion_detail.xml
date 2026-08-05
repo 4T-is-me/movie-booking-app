@@ -32,7 +32,7 @@
                     android:layout_height="wrap_content"
                     android:adjustViewBounds="true"
                     android:scaleType="fitXY"
-                    android:contentDescription="Promotion Banner"
+                    android:contentDescription="@string/content_desc_promotion_banner"
                     tools:src="@color/card_dark" />
 
                 <View

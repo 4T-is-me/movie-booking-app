@@ -34,7 +34,7 @@ class PlaceholderFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val title = arguments?.getString("TITLE") ?: "In Progress"
+        val title = arguments?.getString("TITLE") ?: getString(R.string.in_progress)
         val iconRes = arguments?.getInt("ICON") ?: android.R.drawable.ic_menu_info_details
         binding.tvTitle.text = title
         binding.imgIcon.setImageResource(iconRes)

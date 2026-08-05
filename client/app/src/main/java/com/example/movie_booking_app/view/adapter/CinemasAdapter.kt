@@ -62,18 +62,18 @@ class CinemasAdapter(
             tvStatusChip.background = ContextCompat.getDrawable(itemView.context, backgroundRes)
 
             val totalRooms = cinema.totalRooms ?: 0
-            tvCapacity.text = if (totalRooms == 1) "1 room" else "$totalRooms rooms"
+            tvCapacity.text = if (totalRooms == 1) itemView.context.getString(R.string.admin_cinema_one_room) else itemView.context.getString(R.string.admin_cinema_rooms, totalRooms)
             tvRoomType.text = "${cinema.address ?: ""}, ${cinema.city ?: ""}"
 
             itemView.setOnClickListener { onClick(cinema) }
 
             ivOptions.setOnClickListener { view ->
                 val popup = PopupMenu(view.context, view)
-                popup.menu.add(0, 1, 0, Constants.CinemaRoomStatus.MENU_EDIT)
+                popup.menu.add(0, 1, 0, view.context.getString(R.string.admin_cinema_edit))
                 if (status == "active") {
-                    popup.menu.add(0, 2, 1, Constants.CinemaRoomStatus.MENU_CLOSE_CINEMA)
+                    popup.menu.add(0, 2, 1, view.context.getString(R.string.admin_cinema_close))
                 } else {
-                    popup.menu.add(0, 3, 1, Constants.CinemaRoomStatus.MENU_REACTIVATE_CINEMA)
+                    popup.menu.add(0, 3, 1, view.context.getString(R.string.admin_cinema_reactivate))
                 }
 
                 popup.setOnMenuItemClickListener { item ->

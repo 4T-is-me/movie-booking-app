@@ -121,7 +121,7 @@ class StaffRequestsFragment : Fragment() {
 
         val dialogBinding = DialogEditLeaveRequestBinding.inflate(layoutInflater)
         dialogBinding.etDialogWorkDate.setText(DateUtils.formatMovieDate(item.workDate))
-        dialogBinding.etDialogShift.setText("${item.shift} Shift")
+        dialogBinding.etDialogShift.setText(getString(R.string.shift_format, item.shift))
         dialogBinding.etDialogReason.setText(item.reason ?: "")
         dialogBinding.etDialogReason.setSelection(dialogBinding.etDialogReason.text.length)
 

@@ -56,7 +56,7 @@ class StaffMovieAdapter(
 
             // Rating & Votes
             tvMovieRating.text = String.format("%.1f", movie.rating ?: 0.0)
-            tvMovieVotes.text = "(${movie.totalReviews ?: 0} votes)"
+            tvMovieVotes.text = itemView.context.getString(R.string.votes_format, movie.totalReviews ?: 0)
 
             // Now Playing status badge visibility
             val status = movie.status ?: ""

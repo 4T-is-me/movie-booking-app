@@ -1,17 +1,14 @@
 package com.example.movie_booking_app.view.fragment.manager
 
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -75,10 +72,6 @@ class ManagerPayrollFragment : Fragment() {
 
     private fun setupFilters() {
         // Setup Search
-        val searchText = binding.searchView.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
-        searchText?.setTextColor(Color.WHITE)
-        searchText?.setHintTextColor(ContextCompat.getColor(requireContext(), R.color.text_secondary))
-
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
@@ -170,7 +163,7 @@ class ManagerPayrollFragment : Fragment() {
         val name = managerPayroll.employee?.fullName ?: managerPayroll.employee?.username ?: ""
         binding.tvManagerName.text = name
         binding.tvManagerAvatarText.text = NameFormatter.getAvatarInitials(name)
-        binding.tvManagerCinemaName.text = managerPayroll.cinema?.cinemaName ?: "Lumina Cinema"
+        binding.tvManagerCinemaName.text = managerPayroll.cinema?.cinemaName ?: getString(R.string.lumina_cinema)
         binding.tvManagerBaseSalary.text = PayrollAdapter.formatVnd(managerPayroll.baseSalary ?: 0.0)
         binding.tvManagerBonus.text = getString(R.string.auto_str_str_auto) + PayrollAdapter.formatVnd(managerPayroll.bonus ?: 0.0)
         binding.tvManagerTotalSalary.text = PayrollAdapter.formatVnd(managerPayroll.totalSalary)

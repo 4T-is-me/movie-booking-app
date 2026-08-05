@@ -2,17 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_home"
-        android:title="Home" />
+        android:title="@string/menu_home" />
     <item
         android:id="@+id/nav_schedule"
-        android:title="Schedule" />
+        android:title="@string/menu_schedule" />
     <item
         android:id="@+id/nav_rooms"
-        android:title="Rooms" />
+        android:title="@string/menu_rooms" />
     <item
         android:id="@+id/nav_staff"
-        android:title="Staff" />
+        android:title="@string/menu_staff" />
     <item
         android:id="@+id/nav_reports"
-        android:title="Reports" />
+        android:title="@string/menu_reports" />
 </menu>

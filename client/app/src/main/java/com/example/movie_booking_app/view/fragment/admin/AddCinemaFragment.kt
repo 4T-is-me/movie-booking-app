@@ -262,7 +262,7 @@ class AddCinemaFragment : Fragment() {
                     btnSave.isEnabled = false
                 } else {
                     pbLoading.visibility = View.GONE
-                    btnSave.text = if (cinemaId != null) "Update Cinema" else "Save Cinema"
+                    btnSave.text = if (cinemaId != null) getString(R.string.update_cinema) else getString(R.string.save_cinema)
                     btnSave.isEnabled = true
                 }
             }
@@ -280,7 +280,7 @@ class AddCinemaFragment : Fragment() {
     private fun showSuccessDialog() {
         AlertDialog.Builder(requireContext())
             .setTitle("Success")
-            .setMessage(if (cinemaId != null) "Cinema updated successfully." else "Cinema created successfully.")
+            .setMessage(if (cinemaId != null) getString(R.string.cinema_updated_successfully) else getString(R.string.cinema_created_successfully))
             .setCancelable(false)
             .setPositiveButton("OK") { dialog, _ ->
                 dialog.dismiss()

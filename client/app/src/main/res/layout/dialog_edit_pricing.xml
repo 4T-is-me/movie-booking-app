@@ -80,6 +80,6 @@
             android:layout_weight="1"
             android:text="@string/auto_str_save_temporary"
             android:backgroundTint="@color/auto_color_10B981"
-            android:textColor="@color/auto_color_FFFFFF" />
+            android:textColor="@color/black" />
     </LinearLayout>
 </LinearLayout>

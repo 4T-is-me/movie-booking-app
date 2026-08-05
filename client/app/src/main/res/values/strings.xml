@@ -787,9 +787,9 @@
     <string name="admin_address">Address</string>
     <string name="admin_actions">Actions</string>
 
-    <string name="status_pending">PENDING</string>
-    <string name="status_approved">APPROVED</string>
-    <string name="status_rejected">REJECTED</string>
+    <string name="admin_status_pending">PENDING</string>
+    <string name="admin_status_approved">APPROVED</string>
+    <string name="admin_status_rejected">REJECTED</string>
 
     <string name="undo_message_approved">Request approved · Tap to undo</string>
     <string name="undo_message_rejected">Request rejected · Tap to undo</string>
@@ -1259,8 +1259,8 @@
 
 
     <!-- Auto-extracted strings (Node Script) -->
-    <string name="auto_str_tr_l_ai_xem_phim">Trợ Lý AI Xem Phim 🎬</string>
-    <string name="auto_str_ang_tr_c_tuy_n_h_tr_24_7">🟢 Đang trực tuyến (Hỗ trợ 24/7)</string>
+    <string name="auto_str_tr_l_ai_xem_phim">AI Movie Assistant 🎬</string>
+    <string name="auto_str_ang_tr_c_tuy_n_h_tr_24_7">🟢 Online (24/7 Support)</string>
     <string name="auto_str_my_profile">My Profile</string>
     <string name="auto_str_personal_information">Personal Information</string>
     <string name="auto_str_update_profile">Update Profile</string>
@@ -1291,15 +1291,15 @@
     <string name="auto_str_choose_f_amp_b">Choose F&amp;B</string>
     <string name="auto_str_total_price">Total Price</string>
     <string name="auto_str_checkout">Checkout</string>
-    <string name="auto_str_th_m_h_nh_nh_nh_n_di_n_phim">Thêm hình ảnh nhận diện phim 🎬</string>
-    <string name="auto_str_ch_p_nh_m_i">Chụp ảnh mới</string>
-    <string name="auto_str_d_ng_m_y_nh">Dùng máy ảnh</string>
-    <string name="auto_str_t_i_nh_l_n">Tải ảnh lên</string>
-    <string name="auto_str_ch_n_t_th_vi_n">Chọn từ thư viện</string>
-    <string name="auto_str_s_c_ph_ng_chi_u_c_n_x_c_nh_n">Sự cố phòng chiếu - Cần xác nhận</string>
-    <string name="auto_str_ng_d_i_v">✓  ĐỒNG Ý DỜI VÉ</string>
-    <string name="auto_str_t_ch_i_ho_n_100_i_m">✕  Từ chối (Hoàn 100% điểm)</string>
-    <string name="auto_str_sau">Để sau</string>
+    <string name="auto_str_th_m_h_nh_nh_nh_n_di_n_phim">Add movie identification image 🎬</string>
+    <string name="auto_str_ch_p_nh_m_i">Take a new photo</string>
+    <string name="auto_str_d_ng_m_y_nh">Use camera</string>
+    <string name="auto_str_t_i_nh_l_n">Upload photo</string>
+    <string name="auto_str_ch_n_t_th_vi_n">Choose from library</string>
+    <string name="auto_str_s_c_ph_ng_chi_u_c_n_x_c_nh_n">Cinema room issue - Confirmation needed</string>
+    <string name="auto_str_ng_d_i_v">✓  AGREE TO RESCHEDULE</string>
+    <string name="auto_str_t_ch_i_ho_n_100_i_m">✕  Reject (100% points refund)</string>
+    <string name="auto_str_sau">Later</string>
 
     <!-- Auto-extracted strings (Node Script) -->
     <string name="auto_str_manual_check_in">Manual Check-in</string>
@@ -1324,11 +1324,11 @@
     <!-- Auto-extracted strings (Node Script) -->
     <string name="auto_str_cinema_club">Cinema Club ✔️</string>
     <string name="auto_str_2d">2d • 🌐</string>
-    <string name="auto_str_mua_v_t_i_y">Mua vé tại đây 🔍</string>
+    <string name="auto_str_mua_v_t_i_y">Buy tickets here 🔍</string>
     <string name="auto_str_1_9k">👍❤️ 1.9k</string>
     <string name="auto_str_222_comments">222 comments</string>
-    <string name="auto_str_th_ch">Thích</string>
-    <string name="auto_str_b_nh_lu_n">Bình luận</string>
+    <string name="auto_str_th_ch">Like</string>
+    <string name="auto_str_b_nh_lu_n">Comment</string>
     <string name="auto_str_rate_movie">Rate Movie</string>
     <string name="auto_str_need_replacement">Need Replacement</string>
     <string name="auto_str_nguy_n_v_n_a">Nguyễn Văn A</string>
@@ -1366,12 +1366,12 @@
     <string name="auto_str_please_enter_username_and_pass">Please enter username and password</string>
     <string name="auto_str_username_must_be_between_3_and">Username must be between 3 and 30 characters</string>
     <string name="auto_str_password_must_be_at_least_6_ch">Password must be at least 6 characters</string>
-    <string name="auto_str_kh_ng_c_nh_n_o_c_ch_n">Không có ảnh nào được chọn.</string>
-    <string name="auto_str_c_n_c_p_quy_n_micro_thu_m_gi_n">Cần cấp quyền Micro để thu âm giọng nói.</string>
-    <string name="auto_str_kh_ng_th_k_ch_ho_t_micro">Không thể kích hoạt Micro.</string>
-    <string name="auto_str_nh_kh_ng_h_p_l_vui_l_ng_th_l_i">Ảnh không hợp lệ, vui lòng thử lại.</string>
-    <string name="auto_str_gemini_ai_ang_ph_n_t_ch_h_nh_n">⏳ Gemini AI đang phân tích hình ảnh...</string>
-    <string name="auto_str_ai_kh_ng_nh_n_ra_t_n_phim_tron">AI không nhận ra tên phim trong ảnh này.</string>
+    <string name="auto_str_kh_ng_c_nh_n_o_c_ch_n">No image selected.</string>
+    <string name="auto_str_c_n_c_p_quy_n_micro_thu_m_gi_n">Microphone permission is required to record voice.</string>
+    <string name="auto_str_kh_ng_th_k_ch_ho_t_micro">Cannot activate Microphone.</string>
+    <string name="auto_str_nh_kh_ng_h_p_l_vui_l_ng_th_l_i">Invalid image, please try again.</string>
+    <string name="auto_str_gemini_ai_ang_ph_n_t_ch_h_nh_n">⏳ Analyzing the image...</string>
+    <string name="auto_str_ai_kh_ng_nh_n_ra_t_n_phim_tron">AI could not recognize the movie name in this image.</string>
     <string name="auto_str_unable_to_process_selected_ima">Unable to process selected image.</string>
     <string name="auto_str_google_sign_in_is_not_availabl">Google Sign-In is not available</string>
     <string name="auto_str_login_successful">Login successful</string>
@@ -1383,13 +1383,13 @@
     <string name="auto_str_generation_failed">Generation failed!</string>
 
     <!-- Auto-extracted strings from Kotlin (Node Script) -->
-    <string name="auto_str_c_p_nh_t_tr_ng_th_i_nh_m_gh_th">Cập nhật trạng thái nhóm ghế thất bại</string>
+    <string name="auto_str_c_p_nh_t_tr_ng_th_i_nh_m_gh_th">Failed to update seat group status</string>
     <string name="auto_str_maintenance_2">✓ Maintenance</string>
     <string name="auto_str_closed_1">Closed</string>
     <string name="auto_str_closed_2">✓ Closed</string>
     <string name="auto_str_changes_saved_successfully">Changes saved successfully</string>
     <string name="auto_str_failed_to_save_changes">Failed to save changes</string>
-    <string name="auto_str_c_p_nh_t_tr_ng_th_i_gh_th_t_b">Cập nhật trạng thái ghế thất bại</string>
+    <string name="auto_str_c_p_nh_t_tr_ng_th_i_gh_th_t_b">Failed to update seat status</string>
     <string name="auto_str_payroll">Payroll</string>
     <string name="auto_str_feature_coming_soon">Feature coming soon</string>
     <string name="auto_str_today">Today</string>
@@ -1561,8 +1561,377 @@
     <string name="dialog_logout_message">Are you sure you want to log out?</string>
     <string name="dialog_logout_cancel">Cancel</string>
 
+    <string name="dialog_logout_confirm">Log Out</string>
+    <!-- FCM Notifications -->
+    <string name="channel_name">Movie Booking Notifications</string>
+    <string name="channel_desc">Movie booking and promotion notifications</string>
+    <string name="default_notification_title">Movie Booking</string>
+    <string name="error_generate_shifts_failed">Generate shifts failed</string>
+    <string name="error_shift_update_failed">Shift update failed with status: %1$d</string>
+    <string name="ai_assistant_welcome_message">👋 **Hello! I am the Cinema AI Assistant.** 🎬\n\nI can help you look up showtimes, ticket prices, promotions, or suggest movies based on your mood. What information do you need help with right now? 😊</string>
+    <string name="error_ai_connection_failed">Could not connect to AI Assistant (%1$d)</string>
+    <!-- Misc Extracted Strings -->
+    <string name="goods_intake_loading">Loading products list...</string>
+    <string name="seat_room_name">Room Name</string>
+    <string name="seat_status_maintenance">Bảo trì</string>
+    <string name="seat_status_active">Hoạt động</string>
+    <string name="seat_status_changed_success">Đã đổi %1$d ghế sang %2$s</string>
+    <string name="promo_percentage">Percentage (%)</string>
+    <string name="promo_fixed_amount">Fixed Amount (VND)</string>
+    <string name="admin_staff_add_new">Add New %1$s</string>
+    <string name="booking_member_rank">%1$s Member</string>
+    <string name="booking_combo_format">• %1$s × %2$d</string>
+    <string name="booking_price_vnd">%1$s VND</string>
+    <string name="booking_price_vnd_negative">-%1$s VND</string>
+    <string name="booking_points_earned">+%1$s Points</string>
+    <string name="booking_paid_via">Paid via %1$s</string>
+    <string name="chat_error_unrecognized">Chưa nghe rõ, bạn thử nói lại nhé.</string>
+    <string name="chat_error_mic">Lỗi mic thu âm.</string>
+    <string name="chat_error_network">Lỗi kết nối mạng.</string>
+    <string name="chat_listening">🔴 Đang nghe bạn nói...</string>
+    <string name="chat_hint_input">Nhập câu hỏi (giá vé, lịch chiếu...)...</string>
+    <string name="chat_movie_found">🎬 Đã tìm thấy phim: %1$s</string>
+    <string name="chat_error_vision">Lỗi khi xử lý ảnh: %1$s</string>
+    <string name="profile_update_success">Profile updated successfully.</string>
+    <string name="title_network_error">Network Error</string>
+    <!-- MainActivity & MovieDetailActivity & NewsDetailActivity -->
+    <string name="home_now_playing">Now Playing</string>
+    <string name="home_coming_soon">Coming Soon</string>
+    <string name="movie_showtimes_format">Showtimes: %1$s</string>
+    <string name="news_published_on">Published on %1$s</string>
+    <string name="news_movie_details">Movie Details</string>
+    <!-- ManagerActivity -->
+    <string name="manager_kpi_rooms">MGR-%1$s  %2$s Rooms</string>
+    <string name="manager_revenue">Revenue (VND)</string>
+
+
+
     <string name="greeting_morning">Good morning ☀️</string>
     <string name="greeting_afternoon">Good afternoon 🌤️</string>
     <string name="greeting_evening">Good evening 🌙</string>
     <string name="greeting_night">Good night 💤</string>
+
+    <!-- ManagerSeatActivity -->
+    <!-- NewsDetailActivity -->
+    <string name="news_replying_to">Replying to %1$s</string>
+    <!-- NotificationActivity -->
+    <string name="noti_transfer_success">Thank you! Confirming ticket transfer successful. Compensation voucher has been sent to your wallet.</string>
+    <string name="noti_transfer_declined">Ticket transfer declined! 100% of reward points have been refunded to your wallet.</string>
+    <string name="noti_transfer_conflict">Notice: This ticket has already been confirmed or cancelled.</string>
+    <string name="noti_transfer_failed">Failed to process ticket transfer (Code: %1$d)</string>
+    <string name="noti_connection_error">Connection error: %1$s</string>
+    <!-- PaymentActivity -->
+    <string name="payment_method_required">Please select a payment method</string>
+    <string name="payment_available_pts">Available: %1$d pts</string>
+    <string name="payment_seat_count">%1$d seats</string>
+    <string name="payment_booking_success">Booking completed successfully!</string>
+    <string name="payment_discount_format">-%1$s (%2$d pts)</string>
+    <string name="payment_session_expired_title">Booking Session Expired</string>
+    <!-- PromotionDetailActivity -->
+    <string name="promo_details_title">Promotion Details</string>
+    <string name="promo_no_description">No description provided.</string>
+    <string name="promo_min_spending">Minimum spending: %1$s VND</string>
+    <string name="promo_expiry_date">Expiry date: %1$s</string>
+    <string name="promo_code_copied">Code %1$s copied!</string>
+    <string name="reward_rank_gold">GOLD MEMBER</string>
+    <string name="reward_thanks_gold">Thank you for being our Gold Member!</string>
+    <string name="reward_rank_silver">SILVER MEMBER</string>
+    <string name="reward_ratio_format">%1$,d / %2$,d</string>
+    <string name="reward_progress_to_gold">Progress to Gold Member</string>
+    <string name="reward_more_to_gold">%1$,d more to reach Gold Member</string>
+    <string name="reward_rank_bronze">BRONZE MEMBER</string>
+    <string name="reward_progress_to_silver">Progress to Silver Member</string>
+    <string name="reward_more_to_silver">%1$,d more to reach Silver Member</string>
+    <!-- RegisterActivity -->
+    <string name="register_check_email_otp">Please check your email for the OTP!</string>
+    <!-- RewardPointsActivity -->
+    <string name="reward_max_rank">MAX RANK</string>
+    <string name="reward_max_tier_msg">You are at maximum tier</string>
+    <!-- VerifyOtpActivity -->
+    <string name="verify_otp_msg">Enter 6-digit OTP sent to:\n%1$s</string>
+    <!-- Admin Adapters -->
+    <string name="admin_deduction_code">Code: %1$s</string>
+    <string name="admin_import_item_count">%1$d items</string>
+    <string name="admin_import_no_notes">No notes</string>
+    <string name="admin_import_item_format">%1$s (x%2$d)</string>
+    <string name="admin_import_items_list">Items: %1$s</string>
+    <string name="admin_member_reactivate">Reactivate Member</string>
+    <string name="admin_member_delete">Delete Member</string>
+    <!-- AutoSchedulingAdapter -->
+    <string name="auto_schedule_format">%1$s · %2$s - %3$s</string>
+    <string name="auto_schedule_format_fallback">%1$s · %2$s</string>
+    <string name="import_order_unknown_supplier">Unknown Supplier</string>
+    <string name="manager_top_movies_tickets">%1$,d tkts</string>
+    <string name="admin_promo_no_details">No details</string>
+    <string name="admin_room_total_seats">Total Seats: %1$d</string>
+    <string name="chat_cinema_link">🍿 View showtimes at: %1$s</string>
+    <string name="admin_room_type_format">%1$s • %2$s</string>
+    <string name="admin_room_seats_count">%1$d seats</string>
+    <string name="admin_room_edit">Edit Room</string>
+    <string name="admin_room_close">Close Room</string>
+    <string name="admin_room_reactivate">Reactivate Room</string>
+    <string name="status_active_en">Active</string>
+    <string name="status_maintenance_en">Maintenance</string>
+    <string name="status_closed_en">Closed</string>
+    <string name="admin_cinema_one_room">1 room</string>
+    <string name="admin_cinema_rooms">%1$d rooms</string>
+    <string name="admin_cinema_edit">Edit Cinema</string>
+    <string name="admin_cinema_close">Close Cinema</string>
+    <string name="admin_cinema_reactivate">Reactivate Cinema</string>
+    <!-- FoodBeverageAdapter -->
+    <string name="food_quantity_max">Quantity (Max: %1$d)</string>
+    <string name="food_enter_quantity">Enter Quantity</string>
+    <string name="food_max_available">Max available: %1$d</string>
+    <string name="food_exceeds_stock">Exceeds max stock (%1$d)</string>
+    <!-- MovieNewsAdapter -->
+    <string name="news_author_verified">Cinema Club ✔️</string>
+    <string name="news_author_default">Cinema Club</string>
+    <string name="news_comments_count">%1$d comments</string>
+    <!-- MyLeaveRequestsAdapter -->
+    <string name="leave_no_reason">No reason provided</string>
+    <string name="leave_no_feedback">No feedback provided.</string>
+    <string name="status_pending">Pending</string>
+    <string name="status_approved">Approved</string>
+    <string name="status_rejected">Rejected</string>
+    <!-- MyTicketAdapter -->
+    <string name="ticket_seats">Seats: %1$s</string>
+    <string name="ticket_booking_id">Booking ID: %1$s</string>
+    <string name="ticket_total_paid">Total Paid: %1$s ₫</string>
+    <string name="default_movie_title">Movie Title</string>
+    <string name="default_genres">Genres</string>
+    <string name="default_cinema_name">Cinema Center</string>
+    <string name="default_cinema_address">Address details</string>
+    <string name="no_details_available">No details available</string>
+    <string name="min_spend_format">Min Spend: %s VND</string>
+    <string name="valid_until_format">Valid until: %s</string>
+    <string name="code_copied_format">Code %s copied!</string>
+    <string name="code_format">Code: %s</string>
+    <string name="unknown_staff">Unknown Staff</string>
+    <string name="approved_format">Approved: %s</string>
+    <string name="just_now">Just now</string>
+    <string name="hours_ago_format">%1$dh ago</string>
+    <string name="minutes_ago_format">%1$dm ago</string>
+    <string name="days_ago_format">%1$dd ago</string>
+    <string name="used_points_format">-%1$d pts</string>
+    <string name="earned_points_format">+%1$d pts</string>
+    <string name="selected_fb_format">%1$s x%2$d</string>
+    <string name="votes_format">(%1$d votes)</string>
+    <string name="no_detailed_description">No detailed description</string>
+    <string name="update_cinema">Update Cinema</string>
+    <string name="save_cinema">Save Cinema</string>
+    <string name="cinema_updated_successfully">Cinema updated successfully.</string>
+    <string name="cinema_created_successfully">Cinema created successfully.</string>
+    <string name="seats_format">%1$s seats</string>
+    <string name="save_room">Save Room</string>
+    <string name="cinema_room_updated_successfully">Cinema room updated successfully.</string>
+    <string name="cinema_room_created_successfully">Cinema room created successfully.</string>
+    <string name="one_cinema">1 cinema</string>
+    <string name="cinemas_format">%1$d cinemas</string>
+    <string name="edit_product">Edit Product</string>
+    <string name="add_new_product">Add New Product</string>
+    <string name="deactivate_product">Deactivate Product</string>
+    <string name="reactivate_product">Reactivate Product</string>
+    <string name="deactivate_product_confirm">Are you sure you want to deactivate %1$s?</string>
+    <string name="reactivate_product_confirm">Are you sure you want to reactivate %1$s?</string>
+    <string name="movie_deleted_successfully">Movie deleted successfully</string>
+    <string name="movie_restored_successfully">Movie restored successfully</string>
+    <string name="failed_to_delete_movie">Failed to delete movie</string>
+    <string name="failed_to_restore_movie">Failed to restore movie</string>
+    <string name="seat_layout">Seat Layout</string>
+    <string name="seat_layout_format">Seat layout · %1$d seats</string>
+    <string name="rooms_format">%1$d rooms</string>
+    <string name="one_room">1 room</string>
+    <string name="currency_format_vnd">%,.0f ₫</string>
+    <string name="lumina_cinema">Lumina Cinema</string>
+    <string name="full_name_required">Full Name is required</string>
+    <string name="full_name_no_numbers">Full Name cannot contain numbers</string>
+    <string name="email_required">Email is required</string>
+    <string name="email_invalid_format">Email must end with \@gmail.com</string>
+    <string name="phone_required">Phone number is required</string>
+    <string name="phone_invalid_format">Phone must be 10 digits and start with 0</string>
+    <string name="profile_updated_successfully">Profile updated successfully!</string>
+    <string name="ticket_revenue">Ticket Revenue</string>
+    <string name="fb_revenue">F&amp;B Revenue</string>
+    <string name="server_error_format">Server error: %1$s</string>
+    <string name="connection_error_format">Connection error: %1$s</string>
+    <string name="room_2">Room 2</string>
+    <string name="unknown_room">Unknown Room</string>
+    <string name="selected_week_format">Selected week: %1$s - %2$s</string>
+    <string name="error_loading_showtimes_format">Error loading showtimes: %1$s</string>
+    <string name="shift_format">%1$s Shift</string>
+    <string name="staff_sales_showtime_format">Showtime: %1$s • Date: %2$s • Seats: %3$s</string>
+    <string name="subtotal_format">Subtotal: %1$s</string>
+    <string name="staff_sales_showtime_date_format">Showtime: %1$s • Date: %2$s</string>
+    <string name="staff_sales_seats_format">Seats: %1$s</string>
+    <string name="staff_sales_member_format">Member: %1$s (%2$s)</string>
+    <string name="customer_walk_in">Customer: Walk-in</string>
+    <string name="selected_seats_format">Selected seats: %1$s</string>
+    <string name="step_of_total_format">%1$d of 4</string>
+    <string name="full_name_format">Full name: %1$s</string>
+    <string name="phone_number_format">Phone number: %1$s</string>
+    <string name="accumulated_points_format">Accumulated points: %1$s pts</string>
+    <string name="available_points_format">Available points: %1$s pts</string>
+    <string name="verifying">VERIFYING...</string>
+    <string name="promotion_format">Promotion: %1$s</string>
+    <string name="applying">APPLYING...</string>
+    <string name="use_points_yes_discount_format">Use points: Yes (Discount %1$s)</string>
+    <string name="checking_out">CHECKING OUT...</string>
+    <string name="confirm_checkout">CONFIRM CHECKOUT</string>
+    <string name="ticket_sold_success_format">Ticket sold successfully!\nBooking ID: %1$s\n\nPrinting receipt and ticket...</string>
+    <string name="shifts_created_format">%1$d Shifts Created</string>
+    <string name="in_progress">In Progress</string>
+    <string name="member_rank_format">%1$s Member</string>
+    <string name="points_format_str">%1$s pts</string>
+    <string name="added_successfully">Added successfully</string>
+    <string name="updated_successfully">Updated successfully</string>
+    <string name="deactivated_successfully">Deactivated successfully</string>
+    <string name="refilled_successfully_format">Refilled %1$s successfully</string>
+    <string name="failed_to_load_promotions">Failed to load promotions</string>
+    <string name="network_connection_error">Network connection error</string>
+    <string name="promotion_added_successfully">Promotion added successfully!</string>
+    <string name="failed_to_add_promotion">Failed to add promotion</string>
+    <string name="promotion_updated_successfully">Promotion updated successfully!</string>
+    <string name="failed_to_update_promotion">Failed to update promotion</string>
+    <string name="promotion_deleted_successfully">Promotion deleted successfully!</string>
+    <string name="failed_to_delete_promotion">Failed to delete promotion</string>
+    <string name="connection_or_parsing_error">Connection error or data parsing failed</string>
+    <string name="error_account_locked">Account has been locked!</string>
+    <string name="unknown_error_occurred">An unknown error occurred</string>
+    <string name="failed_to_load_manager_payrolls">Failed to load manager payrolls</string>
+    <string name="failed_to_load_staff_payrolls">Failed to load staff payrolls</string>
+    <string name="system_error_verification">System error during verification</string>
+    <string name="insufficient_points_format">Insufficient reward points (Available: %1$s pts)</string>
+    <string name="invalid_expired_promo">Invalid or expired promotion code</string>
+    <string name="promo_applied_successfully">Promotion applied successfully!</string>
+    <string name="invalid_coupon_code">Invalid coupon code</string>
+    <string name="hold_seat_failed_format">Hold seat failed: %1$s</string>
+    <string name="checkout_failed">Checkout failed</string>
+    <!-- Extracted Error Messages -->
+    <string name="error_checkout_failed">Checkout failed</string>
+    <string name="error_response_format">Response format error: %1$s</string>
+    <string name="error_load_room_details">Failed to load room details</string>
+    <string name="error_update_room_unique">Unable to update cinema room. Make sure the name is unique.</string>
+    <string name="error_create_room_unique">Unable to create cinema room. Make sure the name is unique.</string>
+    <string name="error_save_cinema_room">Failed to save cinema room</string>
+    <string name="error_load_cinema_details">Failed to load cinema details</string>
+    <string name="error_update_cinema">Failed to update cinema</string>
+    <string name="error_create_cinema">Failed to create cinema</string>
+    <string name="error_an_error_occurred">An error occurred</string>
+    <string name="error_load_cinemas">Failed to load cinemas</string>
+    <string name="error_update_status">Failed to update status</string>
+    <string name="error_server_returned">Server returned an error: %1$s</string>
+    <string name="error_chat_no_response">Sorry, no response received from the system.</string>
+    <string name="error_chat_connection">A connection error occurred. Please check your network connection.</string>
+    <string name="error_load_cinema_rooms">Failed to load cinema rooms</string>
+    <string name="error_update_room_status">Failed to update room status</string>
+    <string name="error_load_profile">Failed to load profile details</string>
+    <string name="error_update_profile">Unable to update profile. Please try again.</string>
+    <string name="error_empty_fullname">Full name cannot be empty</string>
+    <string name="error_invalid_phone">Phone number must be 10 digits and start with 0</string>
+    <string name="error_invalid_id_card">Identity card must be exactly 12 digits</string>
+    <string name="error_empty_address">Address cannot be empty</string>
+    <string name="error_future_dob">Date of birth cannot be in the future</string>
+    <!-- More Extracted Error Messages -->
+    <string name="lang_english">English</string>
+    <string name="lang_vietnamese">Vietnamese</string>
+    <string name="lang_japanese">日本語</string>
+    <string name="error_invalid_date_format">Invalid date format</string>
+    <string name="error_dob_empty">Date of birth cannot be empty</string>
+    <string name="error_failed_update_profile">Failed to update profile</string>
+    <string name="error_invalid_credentials">Invalid credentials</string>
+    <string name="error_invalid_username_password">Invalid username or password</string>
+    <string name="error_google_login_failed">Google login failed</string>
+    <string name="error_localized">Error: %1$s</string>
+    <string name="error_network">Network error</string>
+    <string name="error_server_code">Error %1$s</string>
+    <string name="error_network_localized">Network error: %1$s</string>
+    <string name="error_invalid_otp">Invalid or expired OTP code</string>
+    <string name="error_valid_coupon">Please enter a valid coupon code</string>
+    <string name="error_invalid_coupon">Invalid or expired coupon</string>
+    <string name="msg_coupon_applied">Coupon applied!</string>
+    <string name="error_select_payment">Please select a payment method</string>
+    <string name="error_booking_expired">Booking session expired</string>
+    <string name="error_insufficient_points">You don\'t have enough reward points.</string>
+    <string name="error_failed_load_profile">Failed to load profile</string>
+    <string name="error_failed_submit_rating">Failed to submit rating: %1$s</string>
+    <string name="error_rating_localized">Rating error: %1$s</string>
+    <string name="msg_registration_successful">Registration successful!</string>
+    <string name="error_registration_failed">Registration failed</string>
+    <string name="payment_session_expired_msg">Your payment session has expired. Please try again.</string>
+    <string name="seat_info_format">%1$s Seats • %2$s</string>
+    <string name="manager_showtime_seats">%1$s / %2$s Seats</string>
+    <string name="auto_str_update">Update</string>
+    <string name="auto_str_verify">Verify</string>
+
+
+    <string name="banner_preview">Banner Preview</string>
+    <string name="chat_input_hint">Enter your question (ticket price, showtimes...)...</string>
+    <string name="hint_full_name">Full Name</string>
+    <string name="label_full_name">Full name</string>
+    <string name="label_date_of_birth">Date of birth</string>
+    <string name="hint_phone_number">Phone Number</string>
+    <string name="hint_identity_card">Identity Card</string>
+    <string name="label_identity_card">Identity card</string>
+    <string name="hint_email_address">Email Address</string>
+    <string name="hint_enter_address">Enter your address</string>
+    <string name="label_favorite_cinema">Favorite Cinema</string>
+    <string name="label_favorite_genre">Favorite Genre</string>
+    <!-- Menu Strings -->
+    <string name="menu_work_schedule">Work Schedule</string>
+    <string name="menu_ticket_validator">Ticket Validator</string>
+    <string name="menu_ticket_sales">Ticket Sales</string>
+    <string name="menu_leave_requests">Leave Requests</string>
+    <string name="menu_account">Account</string>
+    <string name="menu_notifications">Notifications</string>
+    <string name="menu_my_profile">My Profile</string>
+    <string name="menu_my_payroll">My Payroll</string>
+    <string name="menu_sign_out">Sign Out</string>
+    <string name="menu_check_in">Check-in</string>
+    <string name="menu_sales">Sales</string>
+    <string name="menu_schedule">Schedule</string>
+    <string name="menu_requests">Requests</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_ticket">Ticket</string>
+    <string name="menu_movie">Movie</string>
+    <string name="menu_profile">Profile</string>
+    <string name="menu_dashboard">Dashboard</string>
+    <string name="menu_showtime_scheduling">Showtime Scheduling</string>
+    <string name="menu_cinema_rooms">Cinema Rooms</string>
+    <string name="menu_staff_management">Staff Management</string>
+    <string name="menu_branch_reports">Branch Reports</string>
+    <string name="menu_goods_intake">Goods Intake</string>
+    <string name="menu_payroll">Payroll</string>
+    <string name="menu_rooms">Rooms</string>
+    <string name="menu_staff">Staff</string>
+    <string name="menu_reports">Reports</string>
+    <string name="menu_movies">Movies</string>
+    <string name="menu_staff_manager">Staff &amp; Manager</string>
+    <string name="menu_cinemas">Cinemas</string>
+    <string name="menu_promotions">Promotions</string>
+    <string name="menu_fb_menu">F&amp;B Menu</string>
+    <string name="menu_inventory">Inventory</string>
+    <string name="menu_import_orders">Import Orders</string>
+    <string name="menu_members">Members</string>
+    <string name="menu_payrolls">Payrolls</string>
+    <string name="menu_logout">Logout</string>
+    <!-- Content Descriptions & Hints -->
+    <string name="content_desc_cancel_reply">Cancel reply</string>
+    <string name="btn_clear_all">Clear All</string>
+    <string name="msg_no_notifications">No Notifications</string>
+    <string name="content_desc_promotion_banner">Promotion Banner</string>
+    <string name="content_desc_movie_poster">Movie Poster</string>
+    <string name="content_desc_error_icon">Error Icon</string>
+    <string name="hint_search_cinemas">Search cinemas...</string>
+
+    <string name="label_email_address">Email Address</string>
+    <string name="label_phone_number">Phone Number</string>
+    <string name="hint_example_phone">Example: 0987654321</string>
+    <string name="menu_edit_movie">Edit Movie</string>
+    <string name="menu_restore_movie">Restore Movie</string>
+    <string name="menu_edit_promotion">Edit Promotion</string>
+    <string name="menu_delete_promotion">Delete Promotion</string>
+    <string name="menu_staff_detail">Staff Detail</string>
+    <string name="menu_edit_staff">Edit Staff</string>
+    <string name="content_desc_decrease_qty">Decrease quantity</string>
+    <string name="content_desc_increase_qty">Increase quantity</string>
 </resources>

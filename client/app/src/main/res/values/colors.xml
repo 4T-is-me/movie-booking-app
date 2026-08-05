@@ -181,7 +181,7 @@
     <color name="auto_color_D9111827">#D9111827</color>
     <color name="auto_color_94A3B8">#94A3B8</color>
     <color name="auto_color_CBD5E1">#CBD5E1</color>
-    <color name="auto_color_10B981">#10B981</color>
+    <color name="auto_color_10B981">#EAB308</color>
     <color name="auto_color_8A8A8F">#8A8A8F</color>
     <color name="auto_color_151A2C">#151A2C</color>
     <color name="auto_color_666666">#666666</color>
@@ -269,7 +269,7 @@
     <color name="auto_color_1AA855F7">#1AA855F7</color>
     <color name="auto_color_A855F7">#A855F7</color>
     <color name="auto_color_1A60A5FA">#1A60A5FA</color>
-    <color name="auto_color_1A10B981">#1A10B981</color>
+    <color name="auto_color_1A10B981">#1AEAB308</color>
     <color name="auto_color_D4AF37">#D4AF37</color>
     <color name="auto_color_4285F4">#4285F4</color>
     <color name="auto_color_1A000000">#1A000000</color>
@@ -311,15 +311,15 @@
     <color name="auto_color_252525">#252525</color>
     <color name="auto_color_451A1A">#451A1A</color>
     <color name="auto_color_423812">#423812</color>
-    <color name="auto_color_064E3B">#064E3B</color>
+    <color name="auto_color_064E3B">#2E2401</color>
     <color name="auto_color_1F2937">#1F2937</color>
     <color name="auto_color_4D4D4D">#4D4D4D</color>
     <color name="auto_color_00C084FC">#00C084FC</color>
     <color name="auto_color_40C084FC">#40C084FC</color>
     <color name="auto_color_262626">#262626</color>
     <color name="auto_color_171E2D">#171E2D</color>
-    <color name="auto_color_1F10B981">#1F10B981</color>
-    <color name="auto_color_4010B981">#4010B981</color>
+    <color name="auto_color_1F10B981">#1FEAB308</color>
+    <color name="auto_color_4010B981">#40EAB308</color>
     <color name="auto_color_2A3045">#2A3045</color>
     <color name="auto_color_FFFFFFFF">#FFFFFFFF</color>
     <color name="auto_color_99FFC107">#99FFC107</color>
@@ -348,11 +348,11 @@
     <color name="cinema_text_muted">#64748B</color>
 
     <color name="color_red">#F43F5E</color>
-    <color name="color_green">#10B981</color>
+    <color name="color_green">#EAB308</color>
 
     <!-- Badge status -->
     <color name="bg_pending_badge">#1AF5C518</color>
-    <color name="bg_approved_badge">#1A10B981</color>
+    <color name="bg_approved_badge">#1AEAB308</color>
     <color name="bg_rejected_badge">#1AF43F5E</color>
 
     <!--  dialog  -->

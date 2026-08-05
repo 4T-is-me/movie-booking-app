@@ -278,22 +278,22 @@ class NotificationActivity : AppCompatActivity() {
                 )
                 if (response.isSuccessful) {
                     val msg = if (action == "accept") {
-                        "Thank you! Confirming ticket transfer successful. Compensation voucher has been sent to your wallet."
+                        getString(R.string.noti_transfer_success)
                     } else {
-                        "Ticket transfer declined! 100% of reward points have been refunded to your wallet."
+                        getString(R.string.noti_transfer_declined)
                     }
                     Toast.makeText(this@NotificationActivity, msg, Toast.LENGTH_LONG).show()
                     loadNotifications()
                 } else {
                     val errorMsg = if (response.code() == 409) {
-                        "Notice: This ticket has already been confirmed or cancelled."
+                        getString(R.string.noti_transfer_conflict)
                     } else {
-                        "Failed to process ticket transfer (Code: ${response.code()})"
+                        getString(R.string.noti_transfer_failed, response.code())
                     }
                     Toast.makeText(this@NotificationActivity, errorMsg, Toast.LENGTH_LONG).show()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@NotificationActivity, "Connection error: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@NotificationActivity, getString(R.string.noti_connection_error, e.localizedMessage), Toast.LENGTH_LONG).show()
             }
         }
     }

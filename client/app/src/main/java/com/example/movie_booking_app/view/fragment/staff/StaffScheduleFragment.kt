@@ -234,7 +234,7 @@ class StaffScheduleFragment : Fragment() {
                     false
                 )
                 // shift name data (Morning, Afternoon,...)
-                itemBinding.tvSubShiftTitle.text = "${item.shift} Shift"
+                itemBinding.tvSubShiftTitle.text = getString(R.string.shift_format, item.shift)
                 // stauts Badge
                 itemBinding.tvSubStatusBadge.text = item.status ?: "Assigned"
 
@@ -375,7 +375,7 @@ class StaffScheduleFragment : Fragment() {
                     binding.layoutShiftTime.visibility = View.VISIBLE
                     binding.tvShiftName.setTextColor(Color.WHITE)
 
-                    val shiftName = "${item.shift} Shift"
+                    val shiftName = getString(R.string.shift_format, item.shift)
                     val shiftTime = when (item.shift) {
                         Constants.SHIFTS[0] -> Constants.MORNING
                         Constants.SHIFTS[1]-> Constants.AFTERNOON

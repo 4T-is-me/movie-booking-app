@@ -34,11 +34,11 @@ class MemberAdapter(
             
             if (!isActive) {
                 binding.btnToggleMemberStatus.setImageResource(android.R.drawable.ic_menu_view)
-                binding.btnToggleMemberStatus.contentDescription = "Reactivate Member"
+                binding.btnToggleMemberStatus.contentDescription = binding.root.context.getString(R.string.admin_member_reactivate)
                 binding.btnToggleMemberStatus.setColorFilter(binding.root.context.getColor(R.color.color_green_status))
             } else {
                 binding.btnToggleMemberStatus.setImageResource(android.R.drawable.ic_menu_delete)
-                binding.btnToggleMemberStatus.contentDescription = "Delete Member"
+                binding.btnToggleMemberStatus.contentDescription = binding.root.context.getString(R.string.admin_member_delete)
                 binding.btnToggleMemberStatus.setColorFilter(binding.root.context.getColor(R.color.deduct))
             }
 

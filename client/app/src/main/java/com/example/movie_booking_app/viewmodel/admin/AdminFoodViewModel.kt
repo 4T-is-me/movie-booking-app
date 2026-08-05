@@ -7,7 +7,10 @@ import com.example.movie_booking_app.data.model.entity.InventoryDeduction
 import com.example.movie_booking_app.data.repository.FoodRepository
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+import android.content.Context
+import com.example.movie_booking_app.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,7 +31,8 @@ data class AdminFoodUiState(
 
 @HiltViewModel
 class AdminFoodViewModel @Inject constructor(
-    private val repository: FoodRepository
+    private val repository: FoodRepository,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AdminFoodUiState())
@@ -81,7 +85,7 @@ class AdminFoodViewModel @Inject constructor(
 
             result.onSuccess { 
                 loadMenu()
-                _uiState.update { it.copy(successMessage = if (id.isNullOrBlank()) "Added successfully" else "Updated successfully") }
+                _uiState.update { it.copy(successMessage = if (id.isNullOrBlank()) context.getString(R.string.added_successfully) else context.getString(R.string.updated_successfully)) }
             }.onFailure { e ->
                 _uiState.update { it.copy(error = e.message, isLoading = false) }
             }
@@ -94,7 +98,7 @@ class AdminFoodViewModel @Inject constructor(
             repository.deleteProduct(id)
                 .onSuccess { 
                     loadMenu()
-                    _uiState.update { it.copy(successMessage = "Deactivated successfully") }
+                    _uiState.update { it.copy(successMessage = context.getString(R.string.deactivated_successfully)) }
                 }
                 .onFailure { e ->
                     _uiState.update { it.copy(error = e.message, isLoading = false) }

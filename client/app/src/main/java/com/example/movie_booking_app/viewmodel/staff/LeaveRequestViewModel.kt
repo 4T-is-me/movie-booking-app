@@ -23,8 +23,9 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class LeaveRequestViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
-    private val repository: LeaveRequestRepository) : ViewModel() {
+    private val repository: LeaveRequestRepository,
+    @ApplicationContext private val context: Context
+) : ViewModel() {
 
     // --- States cho Staff ---
     private val _createLeaveResult = MutableStateFlow<CreateLeaveResponse?>(null)
@@ -74,7 +75,7 @@ class LeaveRequestViewModel @Inject constructor(
                 result.onSuccess { response ->
                     _createLeaveResult.value = response
                 }.onFailure { exception ->
-                    _errorMessage.value = exception.message ?: "An unknown error occurred"
+                    _errorMessage.value = exception.message ?: context.getString(R.string.unknown_error_occurred)
                 }
             }
         }

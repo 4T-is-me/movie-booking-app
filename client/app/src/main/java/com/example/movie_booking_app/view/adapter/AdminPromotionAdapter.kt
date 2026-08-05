@@ -47,7 +47,7 @@ class AdminPromotionAdapter(
             btnDeletePromo.setOnClickListener { onDeleteClick(promotion) }
 
             tvPromoTitle.text = promotion.title
-            tvPromoDetail.text = promotion.detail ?: "No details"
+            tvPromoDetail.text = promotion.detail ?: itemView.context.getString(R.string.admin_promo_no_details)
             tvCouponCode.text = promotion.couponCode ?: ""
 
             // Format discount value

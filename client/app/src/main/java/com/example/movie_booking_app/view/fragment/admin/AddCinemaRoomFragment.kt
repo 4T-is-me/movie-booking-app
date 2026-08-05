@@ -265,7 +265,7 @@ class AddCinemaRoomFragment : Fragment() {
         // Observe capacity state
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.capacity.collectLatest { cap ->
-                etCapacity.setText("$cap seats")
+                etCapacity.setText(getString(R.string.seats_format, cap.toString()))
             }
         }
 
@@ -311,7 +311,7 @@ class AddCinemaRoomFragment : Fragment() {
                     btnSave.isEnabled = false
                 } else {
                     pbLoading.visibility = View.GONE
-                    btnSave.text = if (roomId != null) "Update Room" else "Save Room"
+                    btnSave.text = if (roomId != null) getString(R.string.auto_str_update) else getString(R.string.save_room)
                     btnSave.isEnabled = true
                 }
             }
@@ -330,7 +330,7 @@ class AddCinemaRoomFragment : Fragment() {
     private fun showSuccessDialog() {
         AlertDialog.Builder(requireContext())
             .setTitle("Success")
-            .setMessage(if (roomId != null) "Cinema room updated successfully." else "Cinema room created successfully.")
+            .setMessage(if (roomId != null) getString(R.string.cinema_room_updated_successfully) else getString(R.string.cinema_room_created_successfully))
             .setCancelable(false)
             .setPositiveButton("OK") { dialog, _ ->
                 dialog.dismiss()

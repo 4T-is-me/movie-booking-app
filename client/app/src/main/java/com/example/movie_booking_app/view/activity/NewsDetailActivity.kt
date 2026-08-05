@@ -72,7 +72,7 @@ class NewsDetailActivity : AppCompatActivity() {
 
         // Bind main news content
         binding.tvNewsTitle.text = title
-        binding.tvNewsDate.text = "Published on $date"
+        binding.tvNewsDate.text = getString(R.string.news_published_on, date)
         binding.tvNewsContent.text = content
 
         Glide.with(this)
@@ -84,7 +84,7 @@ class NewsDetailActivity : AppCompatActivity() {
         // Bind Movie Tag Card if present
         if (!taggedMovieId.isNullOrEmpty()) {
             binding.cardMovieTag.visibility = View.VISIBLE
-            binding.tvMovieName.text = taggedMovieName ?: "Movie Details"
+            binding.tvMovieName.text = taggedMovieName ?: getString(R.string.news_movie_details)
 
             val fullPosterUrl = when {
                 taggedMoviePoster.isNullOrEmpty() -> ""
@@ -115,7 +115,7 @@ class NewsDetailActivity : AppCompatActivity() {
                 // Enable replying to user state
                 selectedParentId = comment.id
                 binding.layoutReplyIndicator.visibility = View.VISIBLE
-                binding.tvReplyUser.text = "Replying to ${comment.commenterName}"
+                binding.tvReplyUser.text = getString(R.string.news_replying_to, comment.commenterName)
                 binding.etComment.requestFocus()
             },
             onLikeClick = { comment, type ->

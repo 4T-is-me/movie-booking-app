@@ -33,7 +33,7 @@ class StaffPromotionAdapter(
 
         fun bind(promo: Promo) {
             tvStaffPromoTitle.text = promo.title
-            tvStaffPromoDetail.text = promo.detail ?: "No detailed description"
+            tvStaffPromoDetail.text = promo.detail ?: itemView.context.getString(R.string.no_detailed_description)
             tvStaffPromoCode.text = promo.discountCode
 
             Glide.with(itemView.context)

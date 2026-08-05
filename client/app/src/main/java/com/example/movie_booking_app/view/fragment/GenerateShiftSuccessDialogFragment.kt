@@ -23,7 +23,7 @@ class GenerateShiftSuccessDialogFragment(private val response: GenerateShiftResp
         super.onViewCreated(view, savedInstanceState)
 
         // Binding data response
-        binding.tvGeneratedCount.text = "${response.generated} Shifts Created"
+        binding.tvGeneratedCount.text = getString(R.string.shifts_created_format, response.generated)
         binding.tvSuccessMessage.text = response.message
 
         binding.btnDone.setOnClickListener {

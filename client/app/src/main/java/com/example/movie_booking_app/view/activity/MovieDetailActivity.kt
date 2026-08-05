@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MovieDetailActivity : AppCompatActivity() {
+class MovieDetailActivity : BaseActivity() {
 
     private lateinit var binding: ActivityMovieDetailBinding
     private val viewModel: MovieViewModel by viewModels()
@@ -272,7 +272,7 @@ class MovieDetailActivity : AppCompatActivity() {
                 }
                 launch {
                     viewModel.showtimeError.collect { error ->
-                        error?.let { Toast.makeText(this@MovieDetailActivity, "Showtimes: $it", Toast.LENGTH_SHORT).show() }
+                        error?.let { Toast.makeText(this@MovieDetailActivity, getString(R.string.movie_showtimes_format, it), Toast.LENGTH_SHORT).show() }
                     }
                 }
 

@@ -41,6 +41,7 @@ authRouter.post('/forgot-password/send-otp', accountController.sendOtp)
 authRouter.post('/forgot-password/verify-otp', accountController.verifyOtp)
 authRouter.post('/verify-otp', accountController.verifyOtp)
 authRouter.post('/reset-password', accountValidation.resetPassword, accountController.resetPassword)
+authRouter.post('/refresh-token', accountController.refreshToken)
 
 const accountRouter = express.Router()
 accountRouter.get('/profile', authMiddleware.isAuthorized, accountController.getProfile)

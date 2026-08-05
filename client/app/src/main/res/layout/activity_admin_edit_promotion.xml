@@ -309,7 +309,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:contentDescription="Banner Preview"
+                android:contentDescription="@string/banner_preview"
                 android:src="@color/card_dark" />
 
         </com.google.android.material.card.MaterialCardView>

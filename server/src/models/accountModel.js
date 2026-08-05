@@ -24,6 +24,11 @@ const accountSchema = new mongoose.Schema({
         type: String
     },
 
+    tokenVersion: {
+        type: Number,
+        default: 0
+    },
+
     // FCM token for push notification delivery (Android / iOS)
     fcmToken: {
         type: String,

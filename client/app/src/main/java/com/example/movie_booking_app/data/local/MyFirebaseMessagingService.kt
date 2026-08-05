@@ -48,8 +48,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     companion object {
         private const val TAG              = "MyFCMService"
         private const val CHANNEL_ID      = "movie_booking_channel"
-        private const val CHANNEL_NAME    = "Movie Booking Notifications"
-        private const val CHANNEL_DESC    = "Movie booking and promotion notifications"
         private const val NOTIFICATION_ID = 1001   // base ID; incremented per message
     }
 
@@ -84,7 +82,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         // ── 1. Extract title / body ──────────────────────────────
         val title = remoteMessage.notification?.title
             ?: remoteMessage.data["title"]
-            ?: "Movie Booking"
+            ?: getString(R.string.default_notification_title)
 
         val body = remoteMessage.notification?.body
             ?: remoteMessage.data["body"]
@@ -174,10 +172,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     private fun ensureChannelExists(manager: NotificationManager) {
         val channel = NotificationChannel(
             CHANNEL_ID,
-            CHANNEL_NAME,
+            getString(R.string.channel_name),
             NotificationManager.IMPORTANCE_HIGH
         ).apply {
-            description = CHANNEL_DESC
+            description = getString(R.string.channel_desc)
             enableLights(true)
             enableVibration(true)
         }

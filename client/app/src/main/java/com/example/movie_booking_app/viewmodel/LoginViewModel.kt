@@ -6,6 +6,9 @@ import com.example.movie_booking_app.data.model.request.LoginRequest
 import com.example.movie_booking_app.data.repository.AuthRepository
 import com.example.movie_booking_app.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
+import android.content.Context
+import com.example.movie_booking_app.R
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,11 +25,19 @@ sealed class LoginUiState {
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val repository: AuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
+
+    private fun getStringEn(resId: Int, vararg formatArgs: Any): String {
+        val config = android.content.res.Configuration(context.resources.configuration)
+        config.setLocale(java.util.Locale.ENGLISH)
+        val localizedContext = context.createConfigurationContext(config)
+        return localizedContext.getString(resId, *formatArgs)
+    }
 
     fun login(request: LoginRequest) {
         viewModelScope.launch {
@@ -51,19 +62,37 @@ class LoginViewModel @Inject constructor(
                     _uiState.value = LoginUiState.Success(roleNameStr, dbUsername)
                 } else {
                     val errorStr = response.errorBody()?.string()
-                    val message = try {
+                    var message = try {
                         if (errorStr != null && errorStr.trim().startsWith("{")) {
-                            JSONObject(errorStr).optString("message", "Invalid credentials")
+                            JSONObject(errorStr).optString("message", getStringEn(R.string.error_invalid_credentials))
                         } else {
-                            "Invalid username or password"
+                            getStringEn(R.string.error_invalid_username_password)
                         }
                     } catch (e: Exception) {
-                        "Invalid username or password"
+                        getStringEn(R.string.error_invalid_username_password)
                     }
+
+                    // Map based on HTTP Status Code for precision
+                    if (response.code() == 401) {
+                        message = getStringEn(R.string.error_invalid_username_password)
+                    } else if (response.code() == 403) {
+                        message = getStringEn(R.string.error_account_locked)
+                    } else {
+                        // Fallback to string matching if status code is generic
+                        if (message.contains("Username, email, phone or password is incorrect", ignoreCase = true) ||
+                            message.contains("Sai tài khoản hoặc mật khẩu", ignoreCase = true)
+                        ) {
+                            message = getStringEn(R.string.error_invalid_username_password)
+                        } else if (message.contains("Account has been locked", ignoreCase = true) || 
+                                   message.contains("Tài khoản của bạn đã bị khóa", ignoreCase = true)) {
+                            message = getStringEn(R.string.error_account_locked)
+                        }
+                    }
+
                     _uiState.value = LoginUiState.Error(message)
                 }
             } catch (e: Exception) {
-                _uiState.value = LoginUiState.Error("Connection error: ${e.localizedMessage}")
+                _uiState.value = LoginUiState.Error(getStringEn(R.string.connection_error_format, e.localizedMessage ?: "Unknown error"))
             }
         }
     }
@@ -93,17 +122,17 @@ class LoginViewModel @Inject constructor(
                     val errorStr = response.errorBody()?.string()
                     val message = try {
                         if (errorStr != null && errorStr.trim().startsWith("{")) {
-                            JSONObject(errorStr).optString("message", "Google login failed")
+                            JSONObject(errorStr).optString("message", getStringEn(R.string.error_google_login_failed))
                         } else {
-                            "Google login failed"
+                            getStringEn(R.string.error_google_login_failed)
                         }
                     } catch (e: Exception) {
-                        "Google login failed"
+                        getStringEn(R.string.error_google_login_failed)
                     }
                     _uiState.value = LoginUiState.Error(message)
                 }
             } catch (e: Exception) {
-                _uiState.value = LoginUiState.Error("Connection error: ${e.localizedMessage}")
+                _uiState.value = LoginUiState.Error(getStringEn(R.string.connection_error_format, e.localizedMessage ?: "Unknown error"))
             }
         }
     }

@@ -206,7 +206,7 @@ class AdminFoodMenuFragment : Fragment() {
         }
 
         AlertDialog.Builder(requireContext(), R.style.Theme_Moviebookingapp_DarkDialog)
-            .setTitle(if (isEdit) "Edit Product" else "Add New Product")
+            .setTitle(if (isEdit) getString(R.string.edit_product) else getString(R.string.add_new_product))
             .setView(binding.root)
             .setPositiveButton("Save") { _, _ ->
                 val name = binding.etName.text.toString()
@@ -269,11 +269,11 @@ class AdminFoodMenuFragment : Fragment() {
 
     private fun showDeleteConfirm(item: FoodBeverage) {
         val isActive = item.isActive
-        val title = if (isActive) "Deactivate Product" else "Reactivate Product"
+        val title = if (isActive) getString(R.string.deactivate_product) else getString(R.string.reactivate_product)
         val message = if (isActive) 
-            "Are you sure you want to deactivate ${item.name}?" 
+            getString(R.string.deactivate_product_confirm, item.name)
         else 
-            "Are you sure you want to reactivate ${item.name}?"
+            getString(R.string.reactivate_product_confirm, item.name)
 
         AlertDialog.Builder(requireContext(), R.style.Theme_Moviebookingapp_DarkDialog)
             .setTitle(title)

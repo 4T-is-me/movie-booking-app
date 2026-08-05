@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
@@ -13,6 +12,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.ChatMessage
+import com.example.movie_booking_app.databinding.ItemChatMessageBotBinding
+import com.example.movie_booking_app.databinding.ItemChatMessageUserBinding
 
 class ChatAdapter(
     private val onCinemaSelected: ((String) -> Unit)? = null
@@ -44,11 +45,11 @@ class ChatAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return if (viewType == VIEW_TYPE_USER) {
-            val view = inflater.inflate(R.layout.item_chat_message_user, parent, false)
-            UserMessageViewHolder(view)
+            val binding = ItemChatMessageUserBinding.inflate(inflater, parent, false)
+            UserMessageViewHolder(binding)
         } else {
-            val view = inflater.inflate(R.layout.item_chat_message_bot, parent, false)
-            BotMessageViewHolder(view, onCinemaSelected)
+            val binding = ItemChatMessageBotBinding.inflate(inflater, parent, false)
+            BotMessageViewHolder(binding, onCinemaSelected)
         }
     }
 
@@ -61,44 +62,36 @@ class ChatAdapter(
         }
     }
 
-    class UserMessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val tvContent: TextView = itemView.findViewById(R.id.tvMessageContent)
-        private val tvTime: TextView = itemView.findViewById(R.id.tvMessageTime)
-
+    class UserMessageViewHolder(private val binding: ItemChatMessageUserBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(message: ChatMessage) {
-            tvContent.text = message.content
-            tvTime.text = message.timestamp
+            binding.tvMessageContent.text = message.content
+            binding.tvMessageTime.text = message.timestamp
         }
     }
 
     class BotMessageViewHolder(
-        itemView: View,
+        private val binding: ItemChatMessageBotBinding,
         private val onCinemaSelected: ((String) -> Unit)?
-    ) : RecyclerView.ViewHolder(itemView) {
-        private val tvContent: TextView = itemView.findViewById(R.id.tvMessageContent)
-        private val tvTime: TextView = itemView.findViewById(R.id.tvMessageTime)
-        private val pbLoading: ProgressBar = itemView.findViewById(R.id.pbBotLoading)
-        private val llCinemaOptionsContainer: LinearLayout = itemView.findViewById(R.id.llCinemaOptionsContainer)
-
+    ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(message: ChatMessage) {
             if (message.isLoading) {
-                pbLoading.visibility = View.VISIBLE
-                tvContent.visibility = View.GONE
-                tvTime.visibility = View.GONE
-                llCinemaOptionsContainer.visibility = View.GONE
+                binding.pbBotLoading.visibility = View.VISIBLE
+                binding.tvMessageContent.visibility = View.GONE
+                binding.tvMessageTime.visibility = View.GONE
+                binding.llCinemaOptionsContainer.visibility = View.GONE
             } else {
-                pbLoading.visibility = View.GONE
-                tvContent.visibility = View.VISIBLE
-                tvTime.visibility = View.VISIBLE
-                tvContent.text = message.content
-                tvTime.text = message.timestamp
+                binding.pbBotLoading.visibility = View.GONE
+                binding.tvMessageContent.visibility = View.VISIBLE
+                binding.tvMessageTime.visibility = View.VISIBLE
+                binding.tvMessageContent.text = message.content
+                binding.tvMessageTime.text = message.timestamp
 
                 // Hiển thị danh sách Nút chọn rạp (Cinema Buttons) kèm địa chỉ bên trong nút
                 val cinemaList = message.cinemaOptions
 
                 if (!cinemaList.isNullOrEmpty()) {
-                    llCinemaOptionsContainer.removeAllViews()
-                    llCinemaOptionsContainer.visibility = View.VISIBLE
+                    binding.llCinemaOptionsContainer.removeAllViews()
+                    binding.llCinemaOptionsContainer.visibility = View.VISIBLE
 
                     cinemaList.forEach { cinema ->
                         val cardBtn = LinearLayout(itemView.context).apply {
@@ -137,19 +130,19 @@ class ChatAdapter(
                                 onCinemaSelected?.invoke(cinema.cinemaName)
                             }
                         }
-                        llCinemaOptionsContainer.addView(cardBtn)
+                        binding.llCinemaOptionsContainer.addView(cardBtn)
                     }
                 } else {
                     val cinemaRegex = Regex("""\*\*\d+\.\*\*\s*\*\*([^*]+)\*\*""")
                     val matches = cinemaRegex.findAll(message.content).map { it.groupValues[1].trim() }.toList()
 
                     if (matches.isNotEmpty()) {
-                        llCinemaOptionsContainer.removeAllViews()
-                        llCinemaOptionsContainer.visibility = View.VISIBLE
+                        binding.llCinemaOptionsContainer.removeAllViews()
+                        binding.llCinemaOptionsContainer.visibility = View.VISIBLE
 
                         matches.forEach { cinemaName ->
                             val btn = TextView(itemView.context).apply {
-                                text = "Xem lịch chiếu tại: $cinemaName"
+                                text = itemView.context.getString(R.string.chat_cinema_link, cinemaName)
                                 setTextColor(ContextCompat.getColor(context, R.color.chat_cinema_title))
                                 textSize = 13f
                                 setTypeface(null, Typeface.BOLD)
@@ -168,11 +161,11 @@ class ChatAdapter(
                                     onCinemaSelected?.invoke(cinemaName)
                                 }
                             }
-                            llCinemaOptionsContainer.addView(btn)
+                            binding.llCinemaOptionsContainer.addView(btn)
                         }
                     } else {
-                        llCinemaOptionsContainer.removeAllViews()
-                        llCinemaOptionsContainer.visibility = View.GONE
+                        binding.llCinemaOptionsContainer.removeAllViews()
+                        binding.llCinemaOptionsContainer.visibility = View.GONE
                     }
                 }
             }

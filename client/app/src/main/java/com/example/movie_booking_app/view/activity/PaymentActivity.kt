@@ -36,7 +36,7 @@ import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class PaymentActivity : AppCompatActivity() {
+class PaymentActivity : BaseActivity() {
 
     private lateinit var binding: ActivityPaymentBinding
     private val viewModel: PaymentViewModel by viewModels()
@@ -113,7 +113,7 @@ class PaymentActivity : AppCompatActivity() {
         binding.btnContinue.setOnClickListener {
             val selectedMethod = viewModel.uiState.value.selectedPaymentMethod
             if (selectedMethod == null) {
-                Snackbar.make(binding.root, "Please select a payment method", Snackbar.LENGTH_LONG).show()
+                Snackbar.make(binding.root, getString(R.string.payment_method_required), Snackbar.LENGTH_LONG).show()
                 return@setOnClickListener
             }
             viewModel.confirmCheckout()
@@ -164,7 +164,7 @@ class PaymentActivity : AppCompatActivity() {
                         binding.tvAvailablePoints.text = getString(R.string.auto_str_no_reward_points_available)
                     } else {
                         binding.switchRewardPoints.isEnabled = true
-                        binding.tvAvailablePoints.text = "Available: ${state.availablePoints} pts"
+                        binding.tvAvailablePoints.text = getString(R.string.payment_available_pts, state.availablePoints)
                     }
 
                     if (binding.switchRewardPoints.isChecked != state.useRewardPoints) {
@@ -173,17 +173,17 @@ class PaymentActivity : AppCompatActivity() {
 
                     // Summary bindings
                     state.booking?.let { booking ->
-                        binding.tvMovieName.text = booking.movieName ?: "Movie Title"
-                        binding.tvGenre.text = booking.movieGenre ?: "Genres"
-                        binding.tvCinemaName.text = booking.cinemaName ?: "Cinema Center"
-                        binding.tvCinemaAddress.text = booking.cinemaAddress ?: "Address details"
-                        binding.tvRoom.text = booking.roomName ?: "Room 1"
+                        binding.tvMovieName.text = booking.movieName ?: getString(R.string.default_movie_title)
+                        binding.tvGenre.text = booking.movieGenre ?: getString(R.string.default_genres)
+                        binding.tvCinemaName.text = booking.cinemaName ?: getString(R.string.default_cinema_name)
+                        binding.tvCinemaAddress.text = booking.cinemaAddress ?: getString(R.string.default_cinema_address)
+                        binding.tvRoom.text = booking.roomName ?: getString(R.string.default_room_name)
                         binding.tvShowDate.text = DateUtils.formatMovieDate(booking.showDate)
                         binding.tvShowTime.text = DateUtils.formatMovieTime(booking.showTime)
 
                         binding.tvOrderId.text = booking.orderId
                         binding.tvSeats.text = booking.seatNames.joinToString(", ")
-                        binding.tvSeatCount.text = "${booking.seatIds.size} seats"
+                        binding.tvSeatCount.text = getString(R.string.payment_seat_count, booking.seatIds.size)
                         binding.tvSeatType.text = booking.seatTypes.joinToString(", ")
 
                         // Dynamic F&B items summary using RecyclerView
@@ -217,7 +217,7 @@ class PaymentActivity : AppCompatActivity() {
                     // Observe checkoutSuccess to display Success dialog
                     if (state.checkoutSuccess && !isSuccessDialogShown) {
                         isSuccessDialogShown = true
-                        showPremiumSuccessDialog("Booking completed successfully!") {
+                        showPremiumSuccessDialog(getString(R.string.payment_booking_success)) {
                             val intent = Intent(this@PaymentActivity, MainActivity::class.java).apply {
                                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
                                 putExtra("TARGET_SECTION", "Ticket")
@@ -238,7 +238,7 @@ class PaymentActivity : AppCompatActivity() {
                     // Reward points discount summary row
                     if (state.useRewardPoints && state.rewardDiscount > 0) {
                         binding.layoutRewardDiscount.isVisible = true
-                        binding.tvRewardDiscount.text = "-${formatCurrency(state.rewardDiscount)} (${state.rewardDiscount / 10} pts)"
+                        binding.tvRewardDiscount.text = getString(R.string.payment_discount_format, formatCurrency(state.rewardDiscount), state.rewardDiscount / 10)
                     } else {
                         binding.layoutRewardDiscount.isVisible = false
                     }
@@ -334,8 +334,8 @@ class PaymentActivity : AppCompatActivity() {
 
     private fun showExpiredDialog() {
         AlertDialog.Builder(this)
-            .setTitle("Booking Session Expired")
-            .setMessage("Your 10-minute booking window has expired. Please select seats again.")
+            .setTitle(getString(R.string.payment_session_expired_title))
+            .setMessage(getString(R.string.payment_session_expired_msg))
             .setCancelable(false)
             .setPositiveButton("OK") { _, _ ->
                 val intent = Intent(this, SelectSeatActivity::class.java).apply {
@@ -349,7 +349,7 @@ class PaymentActivity : AppCompatActivity() {
 
     private fun formatCurrency(amount: Int): String {
         val formatter = NumberFormat.getInstance(Locale.GERMANY)
-        return "${formatter.format(amount)} VND"
+        return getString(R.string.booking_price_vnd, formatter.format(amount))
     }
 
     private fun dpToPx(dp: Int): Int {
