@@ -65,39 +65,6 @@ class AdminCreateMovieFragment : Fragment() {
         setupDropdowns()
 
         val availableGenres = resources.getStringArray(R.array.movie_genres)
-        
-        // Setup Censorship Dropdown
-        val censorshipOptions = resources.getStringArray(R.array.censorship_options)
-        val censorshipCodes = Constants.CENSORSHIPCODES
-        val spnCensorship = binding.spnCensorship
-        val censorshipAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_dropdown_item_1line,
-            censorshipOptions
-        )
-        spnCensorship.setAdapter(censorshipAdapter)
-        spnCensorship.setOnClickListener { spnCensorship.showDropDown() }
-
-        // Setup Country Search Dropdown
-        val countryOptions = resources.getStringArray(R.array.country_options)
-        val edtCountry = binding.edtCountry
-        val countryAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_dropdown_item_1line,
-            countryOptions
-        )
-        edtCountry.setAdapter(countryAdapter)
-        edtCountry.setOnClickListener { edtCountry.showDropDown() }
-
-        // Setup Language Dropdown
-        val languageOptions = resources.getStringArray(R.array.language_options)
-        val languageAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_dropdown_item_1line,
-            languageOptions
-        )
-        spnLanguage.setAdapter(languageAdapter)
-        spnLanguage.setOnClickListener { spnLanguage.showDropDown() }
 
         // Pre-fill if editing
         editingMovie = arguments?.getSerializable(Constants.Movie.EXTRA_MOVIE_DATA) as? Movie
@@ -116,7 +83,7 @@ class AdminCreateMovieFragment : Fragment() {
 
     private fun setupDatePickers() {
         binding.edtReleaseDate.setOnClickListener {
-            // Only prevent past dates if it's a NEW movie. 
+            // Only prevent past dates if it's a NEW movie.
             // For editing, we allow historical dates.
             val minDate = if (editingMovie == null) System.currentTimeMillis() - 1000 else null
             showDatePicker(binding.edtReleaseDate, minDate)
@@ -329,48 +296,10 @@ class AdminCreateMovieFragment : Fragment() {
                     input.copyTo(output)
                 }
             }
-
-            val viewModel = ViewModelProvider(requireActivity())[MovieViewModel::class.java]
-            val posterFile = selectedPosterUri?.let { createPosterFile(it) }
-
-            if (editingMovie != null) {
-                val request = UpdateMovieRequest(
-                    movieName = name,
-                    duration = duration,
-                    releaseDate = releaseDate,
-                    endDate = endDate,
-                    movieGenre = selectedGenres.toList(),
-                    director = director,
-                    actors = actors,
-                    description = description,
-                    country = country,
-                    language = language,
-                    censorship = censorshipCode,
-                    isDeleted = editingMovie?.isDeleted ?: true
-                )
-                editingMovie?.id?.let { id ->
-                    val currentStatus = if (editingMovie?.isDeleted == true) Constants.Status.DELETE.lowercase() else Constants.Status.ACTIVE.lowercase()
-                    viewModel.updateMovie(id, request, posterFile, currentStatus)
-                }
-                Toast.makeText(requireContext(), getString(R.string.auto_str_updating_movie), Toast.LENGTH_SHORT).show()
-            } else {
-                val request = AddMovieRequest(
-                    movieName = name,
-                    duration = duration,
-                    releaseDate = releaseDate,
-                    endDate = endDate,
-                    movieGenre = selectedGenres.toList(),
-                    director = director,
-                    actors = actors,
-                    description = description,
-                    country = country,
-                    language = language,
-                    censorship = censorshipCode
-                )
-                viewModel.addMovie(request, posterFile)
-                Toast.makeText(requireContext(), getString(R.string.auto_str_adding_movie), Toast.LENGTH_SHORT).show()
-            }
-            parentFragmentManager.popBackStack()
+            tempFile
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
     }
 
