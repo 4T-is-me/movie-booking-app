@@ -1,6 +1,7 @@
 import { CinemaRoom } from "../models/cinemaRoomModel.js";
 import { Showtime } from "../models/showTimeModel.js";
 import { Manager } from "../models/managerModel.js";
+import { ImportOrder } from "../models/importOrderModel.js";
 import ApiError from "../utils/ApiError.js";
 import { StatusCodes } from "http-status-codes";
 import mongoose from "mongoose";
@@ -227,11 +228,8 @@ const getStatsByRange = async (cinemaId, start, end) => {
     totalFbRevenue: 0,
     totalTicketsSold: 0,
   };
-  const avg = res.totalTicketsSold > 0
-      ? Math.round(res.totalTicketRevenue / res.totalTicketsSold)
-      : 0;
 
-  return { ...res, avgTicketPrice: avg };
+  return { ...res };
 };
 
 /**
@@ -712,6 +710,28 @@ const getTopMoviesByRange = async (cinemaId, start, end) => {
 }
 
 
+/**
+ * Tính tổng tiền nhập hàng (APPROVED ImportOrders) trong khoảng thời gian
+ */
+const getImportCostByRange = async (cinemaId, start, end) => {
+  const result = await ImportOrder.aggregate([
+    {
+      $match: {
+        cinemaId: new mongoose.Types.ObjectId(cinemaId),
+        status: "APPROVED",
+        createdAt: { $gte: start, $lte: end },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalImportCost: { $sum: "$totalAmount" },
+      },
+    },
+  ]);
+  console.log("[DEBUG getImportCostByRange]", { cinemaId, start, end, result });
+  return result[0]?.totalImportCost ?? 0;
+};
 
 /**
  * Get manager report data (Day, Week, Month, Year) including revenue, ticket count, growth and chart data
@@ -733,25 +753,29 @@ const getManagerReport = async (accountId, reportType = "day") => {
   const currentElapsedRange = getCurrentElapsedRange(reportType, now);
   const previousElapsedRange = getPreviousElapsedRange(reportType, now);
 
-  const [currentData, currentElapsedData, previousElapsedData, chartData, topMovies] =
+  const [currentData, currentElapsedData, previousElapsedData, chartData, topMovies,
+    currentImportCost, currentElapsedImportCost, previousElapsedImportCost] =
     await Promise.all([
       getStatsByRange(cinemaId, currentRange.start, currentRange.end),
       getStatsByRange(cinemaId, currentElapsedRange.start, currentElapsedRange.end),
       getStatsByRange(cinemaId, previousElapsedRange.start, previousElapsedRange.end),
       getChartDataByRange(cinemaId, currentRange.start, currentRange.end, reportType),
-      getTopMoviesByRange(cinemaId, currentRange.start, currentRange.end, 5)
+      getTopMoviesByRange(cinemaId, currentRange.start, currentRange.end, 5),
+      getImportCostByRange(cinemaId, currentRange.start, currentRange.end),
+      getImportCostByRange(cinemaId, currentElapsedRange.start, currentElapsedRange.end),
+      getImportCostByRange(cinemaId, previousElapsedRange.start, previousElapsedRange.end)
     ]);
 
   return {
     ticketRevenue: currentData.totalTicketRevenue,
     fbRevenue: currentData.totalFbRevenue,
     totalTickets: currentData.totalTicketsSold,
-    avgTicket: currentData.avgTicketPrice,
+    totalImportCost: currentImportCost,
     growth: {
       ticket: calculateGrowthRate( currentElapsedData.totalTicketRevenue, previousElapsedData.totalTicketRevenue),
       fb: calculateGrowthRate( currentElapsedData.totalFbRevenue, previousElapsedData.totalFbRevenue ),
       totalTickets: calculateGrowthRate( currentElapsedData.totalTicketsSold, previousElapsedData.totalTicketsSold),
-      avgTicket: calculateGrowthRate( currentElapsedData.avgTicketPrice, previousElapsedData.avgTicketPrice ),
+      totalImportCost: calculateGrowthRate( currentElapsedImportCost, previousElapsedImportCost ),
     },
     chartData: chartData,
     topMovies: topMovies
