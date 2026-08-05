@@ -126,7 +126,7 @@ class ManagerCreateImportOrderActivity : AppCompatActivity() {
 
     private fun showAddItemDialog() {
         val items = inventoryList
-        val names = items.map { "${it.itemName} (${it.itemCode})" }.toTypedArray()
+        val names = items.map { it.itemName }.toTypedArray()
         var selectedIndex = -1
 
         val contextWrapper = androidx.appcompat.view.ContextThemeWrapper(this, R.style.Theme_Moviebookingapp_DarkDialog)

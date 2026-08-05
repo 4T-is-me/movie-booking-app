@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/admin_bg">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,88 +14,137 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/ivPosterPreview"
-            android:layout_width="match_parent"
-            android:layout_height="180dp"
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginBottom="12dp"
             android:scaleType="centerCrop"
             android:src="@android:drawable/ic_menu_gallery"
+            android:background="@color/card_dark"
             app:shapeAppearanceOverlay="@style/RoundedImageView" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSelectImage"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="24dp"
+            android:text="@string/fb_select_image"
+            app:strokeColor="@color/gold_selected"
+            android:textColor="@color/white" />
+
+        <!-- Product Name -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:text="@string/fb_select_image"
-            app:strokeColor="@color/auto_color_F5C542"
-            android:textColor="@color/auto_color_F5C542" />
+            android:hint="@string/fb_product_name"
+            app:boxStrokeColor="@color/auto_color_F5C542"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxBackgroundMode="outline"
+            app:hintTextColor="@color/auto_color_808080">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/fb_product_name"
-            android:textColor="@color/auto_color_9A9A9A"
-            android:textSize="12sp" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/etName"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:hint="@string/hint_food_name"
-            android:inputType="text" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/fb_category"
-            android:textColor="@color/auto_color_9A9A9A"
-            android:textSize="12sp" />
-
-        <Spinner
-            android:id="@+id/spinnerCategory"
-            android:layout_width="match_parent"
-            android:layout_height="48dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/fb_price_vnd"
-            android:textColor="@color/auto_color_9A9A9A"
-            android:textSize="12sp" />
-
-        <EditText
-            android:id="@+id/etPrice"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:hint="@string/hint_food_price"
-            android:inputType="number" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/fb_description"
-            android:textColor="@color/auto_color_9A9A9A"
-            android:textSize="12sp" />
-
-        <EditText
-            android:id="@+id/etDescription"
+        <!-- Category -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/hint_food_desc"
-            android:inputType="textMultiLine"
-            android:minLines="2" />
+            android:layout_marginBottom="16dp"
+            android:hint="@string/fb_category"
+            app:boxStrokeColor="@color/auto_color_F5C542"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxBackgroundMode="outline"
+            app:hintTextColor="@color/auto_color_808080">
 
-        <androidx.appcompat.widget.SwitchCompat
+            <AutoCompleteTextView
+                android:id="@+id/spinnerCategory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:textColor="@color/white" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Price -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="@string/fb_price_vnd"
+            app:boxStrokeColor="@color/auto_color_F5C542"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxBackgroundMode="outline"
+            app:hintTextColor="@color/auto_color_808080">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Description -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="@string/fb_description"
+            app:boxStrokeColor="@color/auto_color_F5C542"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxCornerRadiusTopStart="12dp"
+            app:boxCornerRadiusTopEnd="12dp"
+            app:boxCornerRadiusBottomStart="12dp"
+            app:boxCornerRadiusBottomEnd="12dp"
+            app:boxBackgroundMode="outline"
+            app:hintTextColor="@color/auto_color_808080">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:inputType="textMultiLine"
+                android:minLines="2" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/switchActive"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
             android:checked="true"
-            android:text="@string/fb_active_status" />
+            android:text="@string/fb_active_status"
+            android:textColor="@color/white"
+            app:thumbTint="@color/gold_selected"
+            app:trackTint="@color/admin_hint_gray" />
 
         <!-- Deduction section for Combo -->
         <LinearLayout
@@ -102,7 +152,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:visibility="gone"
             tools:visibility="visible">
 
@@ -110,23 +160,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/fb_combo_recipe"
-                android:textColor="@color/auto_color_F5C542"
+                android:textColor="@color/gold_selected"
                 android:textStyle="bold"
-                android:textSize="14sp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/fb_combo_recipe_desc"
-                android:textColor="@color/auto_color_9A9A9A"
-                android:textSize="11sp" />
+                android:textColor="@color/auto_color_808080"
+                android:textSize="12sp"
+                android:layout_marginBottom="12dp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvDeductions"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/bg_profile_field" />
+                android:layout_height="240dp"
+                android:background="@drawable/bg_profile_field"
+                android:padding="4dp" />
 
         </LinearLayout>
 
