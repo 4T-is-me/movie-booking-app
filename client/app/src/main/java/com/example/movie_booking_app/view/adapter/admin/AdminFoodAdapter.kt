@@ -42,9 +42,11 @@ class AdminFoodAdapter(
                 if (!item.isActive) {
                     root.alpha = 0.5f
                     btnDelete.setImageResource(android.R.drawable.ic_menu_rotate)
+                    btnDelete.setColorFilter(itemView.context.getColor(R.color.yellow))
                 } else {
                     root.alpha = 1.0f
-                    btnDelete.setImageResource(R.drawable.ic_delete)
+                    btnDelete.setImageResource(android.R.drawable.ic_menu_delete)
+                    btnDelete.setColorFilter(itemView.context.getColor(android.R.color.holo_red_light))
                 }
 
                 val imageUrl = when {
