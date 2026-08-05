@@ -51,8 +51,8 @@ class MyLeaveRequestsAdapter(
                     binding.btnDeleteLeave.setOnClickListener { onDeleteClick(item) }
                 }
                 "Approved" -> {
-                    val textColor = ContextCompat.getColor(context, R.color.color_green)
-                    val bgColor = ContextCompat.getColor(context, R.color.bg_approved_badge)
+                    val textColor = ContextCompat.getColor(context, R.color.color_success_green)
+                    val bgColor = ContextCompat.getColor(context, R.color.color_green_status_bg)
 
                     setDynamicBadge(binding.tvLeaveStatusBadge, "Approved", textColor, bgColor)
 
