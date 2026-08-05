@@ -27,7 +27,7 @@ data class Seat(
     @SerializedName("status")
     val rawStatus: String? = null,
     val price: Int = 0,
-    
+
     @Transient
     var displayStatus: SeatStatus = SeatStatus.AVAILABLE
 ) {

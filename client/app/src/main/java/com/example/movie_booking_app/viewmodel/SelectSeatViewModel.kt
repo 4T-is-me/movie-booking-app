@@ -187,15 +187,28 @@ class SelectSeatViewModel @Inject constructor(
 
         _showTimes.update { list -> list.map { it.copy(isSelected = it.id == showtimeId) } }
         
+        // Restore locally held seats for this showtime if we don't have them in the current instance
+        val persistentHeld = repository.getLocalHeldSeats(showtimeId)
+        if (lastHeldSeatIds.isNullOrEmpty() && persistentHeld.isNotEmpty()) {
+            lastHeldSeatIds = persistentHeld
+            _uiState.value = SeatingUiState.HELD
+            // Restart countdown if timer is active
+            if (timerManager.isActive.value) {
+                startCountdown(showtimeId, persistentHeld)
+            }
+        }
+
         viewModelScope.launch {
             _isLoading.value = true
             repository.getSeats(showtimeId).collect { seatMapData ->
                 val seatList = seatMapData.seats ?: emptyList()
                 
-                // Map HOLDING status to SELECTED if they are the user's previously held seats
+                // Map HOLDING status to SELECTED if they are the user's own previously held seats
                 val mappedSeats = if (!lastHeldSeatIds.isNullOrEmpty()) {
                     seatList.map { seat ->
-                        if (seat.id in lastHeldSeatIds!! && seat.displayStatus == SeatStatus.HOLDING) {
+                        // Check for both displayStatus (mapped) and rawStatus (from server) to be safe
+                        val isHeldByMe = seat.id in lastHeldSeatIds!! && (seat.displayStatus == SeatStatus.HOLDING || seat.rawStatus == "holding")
+                        if (isHeldByMe) {
                             seat.copy(displayStatus = SeatStatus.SELECTED)
                         } else {
                             seat
