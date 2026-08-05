@@ -20,41 +20,53 @@ class TokenAuthenticator(
             return null
         }
 
-        val refreshToken = TokenManager.getRefreshToken(context)
+        synchronized(TokenManager) {
+            val failedToken = response.request.header("Authorization")?.removePrefix("Bearer ")?.trim()
+            val currentToken = TokenManager.getAccessToken(context)
 
-        if (refreshToken.isNullOrEmpty()) {
+            // Kiểm tra xem token đã được refresh bởi một thread khác chưa
+            if (currentToken != null && currentToken != failedToken) {
+                return response.request.newBuilder()
+                    .header("Authorization", "Bearer $currentToken")
+                    .build()
+            }
+
+            val refreshToken = TokenManager.getRefreshToken(context)
+
+            if (refreshToken.isNullOrEmpty()) {
+                return logout(context)
+            }
+
+            // Gọi API refresh token một cách ĐỒNG BỘ (chặn thread hiện tại)
+            val authApi = getAuthApi()
+            val refreshCall = authApi.refreshToken(RefreshTokenRequest(refreshToken))
+
+            try {
+                val refreshResponse = refreshCall.execute() // Synchronous call
+
+                if (refreshResponse.isSuccessful) {
+                    val newTokens = refreshResponse.body()
+                    
+                    if (newTokens != null && newTokens.accessToken != null && newTokens.refreshToken != null) {
+                        val newAccessToken = newTokens.accessToken
+                        val newRefreshToken = newTokens.refreshToken
+                        
+                        // Lưu tokens mới vào TokenManager
+                        TokenManager.saveTokens(context, newAccessToken, newRefreshToken)
+
+                        // Tạo lại request ban đầu nhưng với Access Token mới
+                        return response.request.newBuilder()
+                            .header("Authorization", "Bearer $newAccessToken")
+                            .build()
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+            // Nếu gọi api refresh thất bại hoặc refresh token hết hạn
             return logout(context)
         }
-
-        // Gọi API refresh token một cách ĐỒNG BỘ (chặn thread hiện tại)
-        val authApi = getAuthApi()
-        val refreshCall = authApi.refreshToken(RefreshTokenRequest(refreshToken))
-
-        try {
-            val refreshResponse = refreshCall.execute() // Synchronous call
-
-            if (refreshResponse.isSuccessful) {
-                val newTokens = refreshResponse.body()
-                
-                if (newTokens != null && newTokens.accessToken != null && newTokens.refreshToken != null) {
-                    val newAccessToken = newTokens.accessToken
-                    val newRefreshToken = newTokens.refreshToken
-                    
-                    // Lưu tokens mới vào TokenManager
-                    TokenManager.saveTokens(context, newAccessToken, newRefreshToken)
-
-                    // Tạo lại request ban đầu nhưng với Access Token mới
-                    return response.request.newBuilder()
-                        .header("Authorization", "Bearer $newAccessToken")
-                        .build()
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        // Nếu gọi api refresh thất bại hoặc refresh token hết hạn
-        return logout(context)
     }
 
     private fun logout(context: Context): Request? {
