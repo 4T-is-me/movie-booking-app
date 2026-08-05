@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -81,13 +80,7 @@ class HomeFragment : Fragment() {
         val name = sharedPref.getString("username", "User") ?: "User"
         val isLoggedIn = !sharedPref.getString("auth_token", null).isNullOrEmpty()
 
-        val headerView = binding.layoutHeader.root
-        val tvHi = headerView.findViewById<TextView>(R.id.tvHi)
-        val btnLogin = headerView.findViewById<View>(R.id.btnLogin)
-        val layoutNotificationBell = headerView.findViewById<View>(R.id.layoutNotificationBell)
-        val viewBellBadge = headerView.findViewById<View>(R.id.viewBellBadge)
-
-        tvHi.text = context.getString(R.string.hi_user, name)
+        binding.layoutHeader.tvHi.text = context.getString(R.string.hi_user, name)
 
         if (isLoggedIn) {
             binding.layoutHeader.btnLogin.visibility = View.GONE
