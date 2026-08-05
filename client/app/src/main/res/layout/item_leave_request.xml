@@ -167,13 +167,13 @@
                 android:layout_width="16dp"
                 android:layout_height="16dp"
                 android:src="@drawable/ic_thumb_up"
-                app:tint="@color/auto_color_10B981" />
+                app:tint="@color/color_success_green" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/btn_approve"
-                android:textColor="@color/auto_color_10B981"
+                android:textColor="@color/color_success_green"
                 android:textStyle="bold"
                 android:textSize="13sp"
                 android:layout_marginStart="6dp"/>
@@ -229,7 +229,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/undo_message_default"
-            android:textColor="@color/auto_color_10B981"
+            android:textColor="@color/color_success_green"
             android:textSize="12sp" />
 
         <TextView

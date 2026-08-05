@@ -411,7 +411,7 @@
                                     android:layout_height="40dp"
                                     android:layout_weight="1"
                                     android:text="@string/auto_str_ho_t_ng"
-                                    android:textColor="@color/auto_color_FFFFFF"
+                                    android:textColor="@color/black"
                                     android:textSize="13sp"
                                     android:textStyle="bold"
                                     android:backgroundTint="@color/auto_color_10B981"
@@ -552,7 +552,7 @@
                 android:layout_height="56dp"
                 android:layout_marginTop="32dp"
                 android:text="@string/auto_str_save_all_changes"
-                android:textColor="@color/auto_color_FFFFFF"
+                android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:backgroundTint="@color/auto_color_10B981" />
