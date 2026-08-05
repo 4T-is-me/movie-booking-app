@@ -39,6 +39,34 @@ data class ShowtimeDraft(
     val is_auto_generated: Boolean = true
 )
 
+class TierTracker {
+    private val tierCounts = mutableMapOf<Int, Int>()
+    private val movieCounts = mutableMapOf<String, Int>()
+    private var total = 0
+
+    fun add(tier: Int, movieId: String) {
+        tierCounts[tier] = (tierCounts[tier] ?: 0) + 1
+        movieCounts[movieId] = (movieCounts[movieId] ?: 0) + 1
+        total++
+    }
+
+    fun getTierDeficit(tier: Int): Double {
+        val target = when (tier) {
+            1 -> 0.40
+            2 -> 0.30
+            3 -> 0.20
+            4 -> 0.10
+            else -> 0.0
+        }
+        val current = if (total == 0) 0.0 else (tierCounts[tier] ?: 0).toDouble() / total
+        return target - current
+    }
+
+    fun getMovieCount(movieId: String): Int {
+        return movieCounts[movieId] ?: 0
+    }
+}
+
 object AutoSchedulingAlgorithm {
 
     fun generateWeeklySchedule(
@@ -54,11 +82,19 @@ object AutoSchedulingAlgorithm {
         val activeRooms = rooms.filter { it.status.equals(Constants.MovieStatus.ACTIVE, ignoreCase = true) }
         val result = mutableListOf<ShowtimeDraft>()
 
+        val tracker = TierTracker()
+        existingShowtimes.forEach { st ->
+            val m = movies.find { it._id == st.movie_id }
+            if (m != null) {
+                tracker.add(m.tier, m._id)
+            }
+        }
+
         var currentDate = startDate
         while (!currentDate.isAfter(endDate)) {
             val isHoliday = holidayDates.contains(currentDate.toString())
             val existingForDay = existingShowtimes.filter { it.show_date == currentDate.toString() }
-            val dailySchedule = generateDailySchedule(currentDate, activeMovies, activeRooms, config, isHoliday, existingForDay)
+            val dailySchedule = generateDailySchedule(currentDate, activeMovies, activeRooms, config, isHoliday, existingForDay, tracker)
             result.addAll(dailySchedule)
             currentDate = currentDate.plusDays(1)
         }
@@ -71,7 +107,8 @@ object AutoSchedulingAlgorithm {
         rooms: List<RoomDraft>,
         config: CinemaConfigDraft,
         isHoliday: Boolean,
-        existingShowtimesForDay: List<ShowtimeDraft>
+        existingShowtimesForDay: List<ShowtimeDraft>,
+        tracker: TierTracker
     ): List<ShowtimeDraft> {
         // Block completely if the scheduled date is in the past
         if (date.isBefore(LocalDate.now())) {
@@ -96,62 +133,56 @@ object AutoSchedulingAlgorithm {
         
         if (isWeekend) {
             // Rule B: Weekend allocation (Sat - Sun)
-            // 08:00 - 00:00 Continuous Bin Packing, prioritize Tier 1
+            // 08:00 - 00:00 Continuous Bin Packing
             val weekendStart = getAdjustedStart(LocalTime.of(8, 0))
             val weekendEnd = LocalTime.of(23, 59)
             if (weekendStart.isBefore(weekendEnd)) {
                 for (room in rooms) {
-                    fillSlot(room, date, weekendStart, weekendEnd, Int.MAX_VALUE, movies, config, result, existingShowtimesForDay, preferLowTier = false)
+                    fillSlot(room, date, weekendStart, weekendEnd, Int.MAX_VALUE, movies, config, result, existingShowtimesForDay, tracker)
                 }
             }
         } else {
             // Rule A: Weekday & Seasonal allocation (Mon - Fri)
             if (isHighSeason) {
                 // High Season: 08:00 - 00:00
-                // Morning (08:30 - 11:45): 2 slots (prefer low tier)
-                // Afternoon (12:00 - 16:30): 2 slots (prefer low tier)
-                // Evening (17:00 - 00:00): Full, prioritize Tier 1
                 for (room in rooms) {
                     val morningStart = getAdjustedStart(LocalTime.of(8, 30))
                     val morningEnd = LocalTime.of(11, 45)
                     if (morningStart.isBefore(morningEnd)) {
-                        fillSlot(room, date, morningStart, morningEnd, 2, movies, config, result, existingShowtimesForDay, preferLowTier = true)
+                        fillSlot(room, date, morningStart, morningEnd, 2, movies, config, result, existingShowtimesForDay, tracker)
                     }
 
                     val afternoonStart = getAdjustedStart(LocalTime.of(12, 0))
                     val afternoonEnd = LocalTime.of(16, 30)
                     if (afternoonStart.isBefore(afternoonEnd)) {
-                        fillSlot(room, date, afternoonStart, afternoonEnd, 2, movies, config, result, existingShowtimesForDay, preferLowTier = true)
+                        fillSlot(room, date, afternoonStart, afternoonEnd, 2, movies, config, result, existingShowtimesForDay, tracker)
                     }
 
                     val eveningStart = getAdjustedStart(LocalTime.of(17, 0))
                     val eveningEnd = LocalTime.of(23, 59)
                     if (eveningStart.isBefore(eveningEnd)) {
-                        fillSlot(room, date, eveningStart, eveningEnd, Int.MAX_VALUE, movies, config, result, existingShowtimesForDay, preferLowTier = false)
+                        fillSlot(room, date, eveningStart, eveningEnd, Int.MAX_VALUE, movies, config, result, existingShowtimesForDay, tracker)
                     }
                 }
             } else {
                 // Low Season: 09:00 - 00:00
-                // Morning (09:30 - 11:45): 1 slot (prefer low tier)
-                // Afternoon (12:00 - 16:30): 2 slots (prefer low tier)
-                // Evening (17:00 - 00:00): Full, prioritize Tier 1
                 for (room in rooms) {
                     val morningStart = getAdjustedStart(LocalTime.of(9, 30))
                     val morningEnd = LocalTime.of(11, 45)
                     if (morningStart.isBefore(morningEnd)) {
-                        fillSlot(room, date, morningStart, morningEnd, 1, movies, config, result, existingShowtimesForDay, preferLowTier = true)
+                        fillSlot(room, date, morningStart, morningEnd, 1, movies, config, result, existingShowtimesForDay, tracker)
                     }
 
                     val afternoonStart = getAdjustedStart(LocalTime.of(12, 0))
                     val afternoonEnd = LocalTime.of(16, 30)
                     if (afternoonStart.isBefore(afternoonEnd)) {
-                        fillSlot(room, date, afternoonStart, afternoonEnd, 2, movies, config, result, existingShowtimesForDay, preferLowTier = true)
+                        fillSlot(room, date, afternoonStart, afternoonEnd, 2, movies, config, result, existingShowtimesForDay, tracker)
                     }
 
                     val eveningStart = getAdjustedStart(LocalTime.of(17, 0))
                     val eveningEnd = LocalTime.of(23, 59)
                     if (eveningStart.isBefore(eveningEnd)) {
-                        fillSlot(room, date, eveningStart, eveningEnd, Int.MAX_VALUE, movies, config, result, existingShowtimesForDay, preferLowTier = false)
+                        fillSlot(room, date, eveningStart, eveningEnd, Int.MAX_VALUE, movies, config, result, existingShowtimesForDay, tracker)
                     }
                 }
             }
@@ -163,7 +194,7 @@ object AutoSchedulingAlgorithm {
         room: RoomDraft, date: LocalDate, start: LocalTime, end: LocalTime, maxSlots: Int,
         movies: List<MovieDraft>, config: CinemaConfigDraft, result: MutableList<ShowtimeDraft>,
         existingShowtimesForDay: List<ShowtimeDraft>,
-        preferLowTier: Boolean
+        tracker: TierTracker
     ) {
         var currentDateTime = LocalDateTime.of(date, start)
         val endDateTimeLimit = LocalDateTime.of(date, end)
@@ -176,7 +207,7 @@ object AutoSchedulingAlgorithm {
             // Try to find a non-conflicting movie by shifting start time in 15 min increments
             while (actualStartDT.isBefore(endDateTimeLimit)) {
                 val combinedExisting = result + existingShowtimesForDay
-                movie = selectBestMovie(actualStartDT.toLocalTime(), movies, combinedExisting, date, preferLowTier)
+                movie = selectBestMovie(actualStartDT.toLocalTime(), movies, combinedExisting, date, tracker)
                 if (movie != null) {
                     val endDT = actualStartDT.plusMinutes(movie.duration.toLong())
                     // Check if it fits the time block before ending
@@ -188,7 +219,10 @@ object AutoSchedulingAlgorithm {
                 
                 if (movie == null) {
                     // Try to pick a shorter movie instead of advancing time
-                    val allMovies = if (preferLowTier) movies.sortedByDescending { it.tier } else movies.sortedBy { it.tier }
+                    val allMovies = movies.sortedWith(
+                        compareByDescending<MovieDraft> { tracker.getTierDeficit(it.tier) }
+                            .thenBy { tracker.getMovieCount(it._id) }
+                    )
                     movie = allMovies.firstOrNull { m ->
                         val hasConflict = combinedExisting.any { r ->
                             r.movie_id == m._id && r.show_date == date.toString() && isConflict(r.start_time, actualStartDT)
@@ -210,6 +244,7 @@ object AutoSchedulingAlgorithm {
             val endDateTime = startDateTime.plusMinutes(movie.duration.toLong())
 
             result.add(createDraft(room, movie, date, startDateTime, endDateTime))
+            tracker.add(movie.tier, movie._id)
             
             // Calculate next available time and round up to the nearest 5 minutes ("even number")
             val rawNextTime = endDateTime.plusMinutes(config.cleaning_time_minutes.toLong())
@@ -226,13 +261,12 @@ object AutoSchedulingAlgorithm {
 
     private fun selectBestMovie(
         time: LocalTime, movies: List<MovieDraft>, existing: List<ShowtimeDraft>, 
-        date: LocalDate, preferLowTier: Boolean
+        date: LocalDate, tracker: TierTracker
     ): MovieDraft? {
-        val sortedMovies = if (preferLowTier) {
-            movies.sortedByDescending { it.tier }
-        } else {
-            movies.sortedBy { it.tier }
-        }
+        val sortedMovies = movies.sortedWith(
+            compareByDescending<MovieDraft> { tracker.getTierDeficit(it.tier) }
+                .thenBy { tracker.getMovieCount(it._id) }
+        )
         
         for (movie in sortedMovies) {
             val hasConflict = existing.any { 
