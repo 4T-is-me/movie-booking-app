@@ -129,9 +129,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 app:fieldEditable="true"
-                app:fieldHint="@string/hint_full_name"
+                app:fieldHint="@string/full_name_hint"
                 app:fieldIcon="@drawable/ic_profile"
-                app:fieldLabel="@string/label_full_name" />
+                app:fieldLabel="@string/full_name_label" />
 
             <com.example.movie_booking_app.view.widget.ProfileFieldView
                 android:id="@+id/fieldDateOfBirth"
@@ -139,9 +139,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 app:fieldEditable="false"
-                app:fieldHint="DD/MM/YYYY"
+                app:fieldHint="@string/dob_hint"
                 app:fieldIcon="@drawable/ic_calendar_month_24"
-                app:fieldLabel="@string/label_date_of_birth" />
+                app:fieldLabel="@string/dob_label" />
 
             <com.example.movie_booking_app.view.widget.ProfileFieldView
                 android:id="@+id/fieldGender"
@@ -149,9 +149,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 app:fieldEditable="false"
-                app:fieldHint="Select Gender"
+                app:fieldHint="@string/gender_label"
                 app:fieldIcon="@drawable/ic_gender"
-                app:fieldLabel="Gender" />
+                app:fieldLabel="@string/gender_label" />
 
             <com.example.movie_booking_app.view.widget.ProfileFieldView
                 android:id="@+id/fieldPhone"
@@ -159,9 +159,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 app:fieldEditable="true"
-                app:fieldHint="@string/hint_phone_number"
+                app:fieldHint="@string/phone_hint"
                 app:fieldIcon="@drawable/ic_phone"
-                app:fieldLabel="Phone" />
+                app:fieldLabel="@string/phone_label" />
 
             <com.example.movie_booking_app.view.widget.ProfileFieldView
                 android:id="@+id/fieldIdentityCard"
@@ -169,9 +169,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 app:fieldEditable="true"
-                app:fieldHint="@string/hint_identity_card"
+                app:fieldHint="@string/id_card_hint"
                 app:fieldIcon="@drawable/ic_id_card"
-                app:fieldLabel="@string/label_identity_card" />
+                app:fieldLabel="@string/id_card_label" />
 
             <com.example.movie_booking_app.view.widget.ProfileFieldView
                 android:id="@+id/fieldEmail"
@@ -179,9 +179,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 app:fieldEditable="false"
-                app:fieldHint="@string/hint_email_address"
+                app:fieldHint="@string/email_hint"
                 app:fieldIcon="@drawable/ic_email"
-                app:fieldLabel="Email" />
+                app:fieldLabel="@string/email_label" />
 
             <!-- Address Header -->
             <TextView
@@ -199,9 +199,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 app:fieldEditable="true"
-                app:fieldHint="@string/hint_enter_address"
+                app:fieldHint="@string/address_hint"
                 app:fieldIcon="@drawable/ic_location"
-                app:fieldLabel="Address" />
+                app:fieldLabel="@string/address_label" />
 
             <!-- Preferences Header -->
             <TextView
@@ -219,7 +219,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 app:fieldEditable="false"
-                app:fieldHint="Select Favorite Cinema"
+                app:fieldHint="@string/label_favorite_cinema"
                 app:fieldIcon="@drawable/ic_cinema"
                 app:fieldLabel="@string/label_favorite_cinema" />
 
@@ -229,7 +229,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="28dp"
                 app:fieldEditable="false"
-                app:fieldHint="Select Favorite Genres"
+                app:fieldHint="@string/label_favorite_genre"
                 app:fieldIcon="@drawable/ic_genre"
                 app:fieldLabel="@string/label_favorite_genre" />
 

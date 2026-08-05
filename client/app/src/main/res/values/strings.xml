@@ -1259,8 +1259,8 @@
 
 
     <!-- Auto-extracted strings (Node Script) -->
-    <string name="auto_str_tr_l_ai_xem_phim">Trợ Lý AI Xem Phim 🎬</string>
-    <string name="auto_str_ang_tr_c_tuy_n_h_tr_24_7">🟢 Đang trực tuyến (Hỗ trợ 24/7)</string>
+    <string name="auto_str_tr_l_ai_xem_phim">AI Movie Assistant 🎬</string>
+    <string name="auto_str_ang_tr_c_tuy_n_h_tr_24_7">🟢 Online (24/7 Support)</string>
     <string name="auto_str_my_profile">My Profile</string>
     <string name="auto_str_personal_information">Personal Information</string>
     <string name="auto_str_update_profile">Update Profile</string>
@@ -1291,15 +1291,15 @@
     <string name="auto_str_choose_f_amp_b">Choose F&amp;B</string>
     <string name="auto_str_total_price">Total Price</string>
     <string name="auto_str_checkout">Checkout</string>
-    <string name="auto_str_th_m_h_nh_nh_nh_n_di_n_phim">Thêm hình ảnh nhận diện phim 🎬</string>
-    <string name="auto_str_ch_p_nh_m_i">Chụp ảnh mới</string>
-    <string name="auto_str_d_ng_m_y_nh">Dùng máy ảnh</string>
-    <string name="auto_str_t_i_nh_l_n">Tải ảnh lên</string>
-    <string name="auto_str_ch_n_t_th_vi_n">Chọn từ thư viện</string>
-    <string name="auto_str_s_c_ph_ng_chi_u_c_n_x_c_nh_n">Sự cố phòng chiếu - Cần xác nhận</string>
-    <string name="auto_str_ng_d_i_v">✓  ĐỒNG Ý DỜI VÉ</string>
-    <string name="auto_str_t_ch_i_ho_n_100_i_m">✕  Từ chối (Hoàn 100% điểm)</string>
-    <string name="auto_str_sau">Để sau</string>
+    <string name="auto_str_th_m_h_nh_nh_nh_n_di_n_phim">Add movie identification image 🎬</string>
+    <string name="auto_str_ch_p_nh_m_i">Take a new photo</string>
+    <string name="auto_str_d_ng_m_y_nh">Use camera</string>
+    <string name="auto_str_t_i_nh_l_n">Upload photo</string>
+    <string name="auto_str_ch_n_t_th_vi_n">Choose from library</string>
+    <string name="auto_str_s_c_ph_ng_chi_u_c_n_x_c_nh_n">Cinema room issue - Confirmation needed</string>
+    <string name="auto_str_ng_d_i_v">✓  AGREE TO RESCHEDULE</string>
+    <string name="auto_str_t_ch_i_ho_n_100_i_m">✕  Reject (100% points refund)</string>
+    <string name="auto_str_sau">Later</string>
 
     <!-- Auto-extracted strings (Node Script) -->
     <string name="auto_str_manual_check_in">Manual Check-in</string>
@@ -1324,11 +1324,11 @@
     <!-- Auto-extracted strings (Node Script) -->
     <string name="auto_str_cinema_club">Cinema Club ✔️</string>
     <string name="auto_str_2d">2d • 🌐</string>
-    <string name="auto_str_mua_v_t_i_y">Mua vé tại đây 🔍</string>
+    <string name="auto_str_mua_v_t_i_y">Buy tickets here 🔍</string>
     <string name="auto_str_1_9k">👍❤️ 1.9k</string>
     <string name="auto_str_222_comments">222 comments</string>
-    <string name="auto_str_th_ch">Thích</string>
-    <string name="auto_str_b_nh_lu_n">Bình luận</string>
+    <string name="auto_str_th_ch">Like</string>
+    <string name="auto_str_b_nh_lu_n">Comment</string>
     <string name="auto_str_rate_movie">Rate Movie</string>
     <string name="auto_str_need_replacement">Need Replacement</string>
     <string name="auto_str_nguy_n_v_n_a">Nguyễn Văn A</string>
@@ -1366,12 +1366,12 @@
     <string name="auto_str_please_enter_username_and_pass">Please enter username and password</string>
     <string name="auto_str_username_must_be_between_3_and">Username must be between 3 and 30 characters</string>
     <string name="auto_str_password_must_be_at_least_6_ch">Password must be at least 6 characters</string>
-    <string name="auto_str_kh_ng_c_nh_n_o_c_ch_n">Không có ảnh nào được chọn.</string>
-    <string name="auto_str_c_n_c_p_quy_n_micro_thu_m_gi_n">Cần cấp quyền Micro để thu âm giọng nói.</string>
-    <string name="auto_str_kh_ng_th_k_ch_ho_t_micro">Không thể kích hoạt Micro.</string>
-    <string name="auto_str_nh_kh_ng_h_p_l_vui_l_ng_th_l_i">Ảnh không hợp lệ, vui lòng thử lại.</string>
-    <string name="auto_str_gemini_ai_ang_ph_n_t_ch_h_nh_n">⏳ Gemini AI đang phân tích hình ảnh...</string>
-    <string name="auto_str_ai_kh_ng_nh_n_ra_t_n_phim_tron">AI không nhận ra tên phim trong ảnh này.</string>
+    <string name="auto_str_kh_ng_c_nh_n_o_c_ch_n">No image selected.</string>
+    <string name="auto_str_c_n_c_p_quy_n_micro_thu_m_gi_n">Microphone permission is required to record voice.</string>
+    <string name="auto_str_kh_ng_th_k_ch_ho_t_micro">Cannot activate Microphone.</string>
+    <string name="auto_str_nh_kh_ng_h_p_l_vui_l_ng_th_l_i">Invalid image, please try again.</string>
+    <string name="auto_str_gemini_ai_ang_ph_n_t_ch_h_nh_n">⏳ Analyzing the image...</string>
+    <string name="auto_str_ai_kh_ng_nh_n_ra_t_n_phim_tron">AI could not recognize the movie name in this image.</string>
     <string name="auto_str_unable_to_process_selected_ima">Unable to process selected image.</string>
     <string name="auto_str_google_sign_in_is_not_availabl">Google Sign-In is not available</string>
     <string name="auto_str_login_successful">Login successful</string>
@@ -1383,13 +1383,13 @@
     <string name="auto_str_generation_failed">Generation failed!</string>
 
     <!-- Auto-extracted strings from Kotlin (Node Script) -->
-    <string name="auto_str_c_p_nh_t_tr_ng_th_i_nh_m_gh_th">Cập nhật trạng thái nhóm ghế thất bại</string>
+    <string name="auto_str_c_p_nh_t_tr_ng_th_i_nh_m_gh_th">Failed to update seat group status</string>
     <string name="auto_str_maintenance_2">✓ Maintenance</string>
     <string name="auto_str_closed_1">Closed</string>
     <string name="auto_str_closed_2">✓ Closed</string>
     <string name="auto_str_changes_saved_successfully">Changes saved successfully</string>
     <string name="auto_str_failed_to_save_changes">Failed to save changes</string>
-    <string name="auto_str_c_p_nh_t_tr_ng_th_i_gh_th_t_b">Cập nhật trạng thái ghế thất bại</string>
+    <string name="auto_str_c_p_nh_t_tr_ng_th_i_gh_th_t_b">Failed to update seat status</string>
     <string name="auto_str_payroll">Payroll</string>
     <string name="auto_str_feature_coming_soon">Feature coming soon</string>
     <string name="auto_str_today">Today</string>
@@ -1568,7 +1568,7 @@
     <string name="default_notification_title">Movie Booking</string>
     <string name="error_generate_shifts_failed">Generate shifts failed</string>
     <string name="error_shift_update_failed">Shift update failed with status: %1$d</string>
-    <string name="ai_assistant_welcome_message">👋 **Xin chào bạn! Mình là Trợ Lý AI Rạp Phim.** 🎬\n\nMình có thể giúp bạn tra cứu lịch chiếu, bảng giá vé, khuyến mãi hoặc gợi ý phim theo tâm trạng. Bạn cần hỗ trợ thông tin gì ngay bây giờ ạ? 😊</string>
+    <string name="ai_assistant_welcome_message">👋 **Hello! I am the Cinema AI Assistant.** 🎬\n\nI can help you look up showtimes, ticket prices, promotions, or suggest movies based on your mood. What information do you need help with right now? 😊</string>
     <string name="error_ai_connection_failed">Could not connect to AI Assistant (%1$d)</string>
     <!-- Misc Extracted Strings -->
     <string name="goods_intake_loading">Loading products list...</string>
@@ -1664,7 +1664,7 @@
     <string name="manager_top_movies_tickets">%1$,d tkts</string>
     <string name="admin_promo_no_details">No details</string>
     <string name="admin_room_total_seats">Total Seats: %1$d</string>
-    <string name="chat_cinema_link">🍿 Xem lịch chiếu tại: %1$s</string>
+    <string name="chat_cinema_link">🍿 View showtimes at: %1$s</string>
     <string name="admin_room_type_format">%1$s • %2$s</string>
     <string name="admin_room_seats_count">%1$d seats</string>
     <string name="admin_room_edit">Edit Room</string>
@@ -1819,7 +1819,7 @@
     <string name="error_load_cinemas">Failed to load cinemas</string>
     <string name="error_update_status">Failed to update status</string>
     <string name="error_server_returned">Server returned an error: %1$s</string>
-    <string name="error_chat_no_response">Rất tiếc, không nhận được câu trả lời từ hệ thống.</string>
+    <string name="error_chat_no_response">Sorry, no response received from the system.</string>
     <string name="error_chat_connection">A connection error occurred. Please check your network connection.</string>
     <string name="error_load_cinema_rooms">Failed to load cinema rooms</string>
     <string name="error_update_room_status">Failed to update room status</string>
@@ -1832,7 +1832,7 @@
     <string name="error_future_dob">Date of birth cannot be in the future</string>
     <!-- More Extracted Error Messages -->
     <string name="lang_english">English</string>
-    <string name="lang_vietnamese">Tiếng Việt</string>
+    <string name="lang_vietnamese">Vietnamese</string>
     <string name="lang_japanese">日本語</string>
     <string name="error_invalid_date_format">Invalid date format</string>
     <string name="error_dob_empty">Date of birth cannot be empty</string>
@@ -1864,7 +1864,7 @@
 
 
     <string name="banner_preview">Banner Preview</string>
-    <string name="chat_input_hint">Nhập câu hỏi (giá vé, lịch chiếu...)...</string>
+    <string name="chat_input_hint">Enter your question (ticket price, showtimes...)...</string>
     <string name="hint_full_name">Full Name</string>
     <string name="label_full_name">Full name</string>
     <string name="label_date_of_birth">Date of birth</string>
@@ -1927,8 +1927,8 @@
     <string name="hint_example_phone">Example: 0987654321</string>
     <string name="menu_edit_movie">Edit Movie</string>
     <string name="menu_restore_movie">Restore Movie</string>
-    <string name="menu_edit_promotion">Sửa khuyến mãi</string>
-    <string name="menu_delete_promotion">Xóa khuyến mãi</string>
+    <string name="menu_edit_promotion">Edit Promotion</string>
+    <string name="menu_delete_promotion">Delete Promotion</string>
     <string name="menu_staff_detail">Staff Detail</string>
     <string name="menu_edit_staff">Edit Staff</string>
     <string name="content_desc_decrease_qty">Decrease quantity</string>
