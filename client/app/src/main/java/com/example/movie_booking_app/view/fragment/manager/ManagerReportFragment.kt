@@ -3,6 +3,7 @@ package com.example.movie_booking_app.view.fragment.manager
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -147,8 +148,9 @@ class ManagerReportFragment : Fragment() {
         binding.txtTotalTickets.text = data.totalTickets.toString()
         displayGrowth(binding.txtTotalTicketsGrowth, data.growth.totalTickets)
 
-        binding.txtAvgTicket.text = formatVND(data.avgTicket.toLong())
-        displayGrowth(binding.txtAvgTicketGrowth, data.growth.avgTicket)
+        binding.txtAvgTicket.text = formatVND(data.totalImportCost.toLong())
+        Log.d("test", data.totalImportCost.toString())
+        displayGrowth(binding.txtAvgTicketGrowth, data.growth.totalImportCost)
     }
 
     private fun updateTrendChart(chartList: List<ReportChartItemResponse>?) {
