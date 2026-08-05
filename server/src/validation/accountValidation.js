@@ -25,10 +25,6 @@ const validateAge = (value, helpers) => {
 
 const validatePassword = (value, helpers) => {
     if (!value) return value;
-    
-    if (value.length < 6) {
-        return helpers.message('Password must be at least 6 characters');
-    }
     if (!/[A-Z]/.test(value)) {
         return helpers.message('Password must contain at least one uppercase letter');
     }
@@ -97,8 +93,7 @@ const login = async (req, res, next) => {
         email: Joi.string().required().trim().strict().messages({
             'any.required': 'Username, email or phone is required'
         }),
-        password: Joi.string().required().min(6).strict().messages({
-            'string.min': 'Password must be at least 6 characters',
+        password: Joi.string().required().strict().messages({
             'any.required': 'Password is required'
         })
     })

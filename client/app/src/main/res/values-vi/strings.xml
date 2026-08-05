@@ -68,6 +68,37 @@
     <string name="edit">Chỉnh sửa</string>
     <string name="delete">Xóa</string>
 
+    <!-- Registration Validation Errors -->
+    <string name="error_username_required">Vui lòng nhập tên đăng nhập</string>
+    <string name="error_username_length">Tên đăng nhập phải từ 3-30 ký tự</string>
+    <string name="error_username_invalid">Tên đăng nhập chỉ chứa chữ cái, số và dấu gạch dưới _</string>
+    <string name="error_fullname_required">Vui lòng nhập họ và tên</string>
+    <string name="error_fullname_invalid">Họ và tên không được chứa chữ số</string>
+    <string name="error_dob_required">Vui lòng nhập ngày sinh</string>
+    <string name="error_dob_future">Ngày sinh không thể ở tương lai</string>
+    <string name="error_dob_min_age">Bạn phải từ 15 tuổi trở lên</string>
+    <string name="error_dob_max_age">Tuổi không được vượt quá 80</string>
+    <string name="error_dob_invalid">Định dạng ngày không hợp lệ (dd/MM/yyyy)</string>
+    <string name="error_email_required">Vui lòng nhập email</string>
+    <string name="error_email_invalid">Phải là email hợp lệ có đuôi @gmail.com</string>
+    <string name="error_phone_required">Vui lòng nhập số điện thoại</string>
+    <string name="error_phone_invalid">Số điện thoại phải có 10 chữ số và bắt đầu bằng số 0</string>
+    <string name="error_password_required">Vui lòng nhập mật khẩu</string>
+    <string name="error_password_length">Mật khẩu phải có ít nhất 6 ký tự</string>
+    <string name="error_password_uppercase">Mật khẩu phải chứa ít nhất 1 chữ hoa</string>
+    <string name="error_password_lowercase">Mật khẩu phải chứa ít nhất 1 chữ thường</string>
+    <string name="error_password_number">Mật khẩu phải chứa ít nhất 1 chữ số</string>
+    <string name="error_password_special_character">Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt</string>
+    <string name="error_confirm_password_required">Vui lòng xác nhận mật khẩu</string>
+    <string name="error_confirm_password_mismatch">Mật khẩu xác nhận không khớp</string>
+    <string name="error_address_required">Vui lòng nhập địa chỉ</string>
+    <string name="error_idcard_required">Vui lòng nhập số CCCD/CMND</string>
+    <string name="error_idcard_invalid">CCCD/CMND phải gồm 9 hoặc 12 chữ số</string>
+    <string name="error_otp_invalid">Vui lòng nhập đủ 6 số OTP</string>
+    <string name="error_coupon_invalid">Vui lòng nhập mã giảm giá hợp lệ</string>
+    <string name="error_invalid_credentials">Thông tin đăng nhập không hợp lệ</string>
+    <string name="error_invalid_username_password">Sai tài khoản hoặc mật khẩu</string>
+
     <!-- Select Seat Activity Strings -->
     <string name="legend_available">Ghế trống</string>
     <string name="legend_vip">Ghế VIP</string>
@@ -361,4 +392,5 @@
     <string name="auto_str_dune_awakening_booking">Đặt vé Dune: Awakening</string>
     <string name="auto_str_jun_13">Ngày 13 tháng 6</string>
     <string name="auto_str_540_pts">+540 điểm</string>
+    <string name="error_account_locked">Tài khoản của bạn đã bị khóa!</string>
 </resources>

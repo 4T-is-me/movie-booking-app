@@ -1795,6 +1795,7 @@
     <string name="promotion_deleted_successfully">Promotion deleted successfully!</string>
     <string name="failed_to_delete_promotion">Failed to delete promotion</string>
     <string name="connection_or_parsing_error">Connection error or data parsing failed</string>
+    <string name="error_account_locked">Account has been locked!</string>
     <string name="unknown_error_occurred">An unknown error occurred</string>
     <string name="failed_to_load_manager_payrolls">Failed to load manager payrolls</string>
     <string name="failed_to_load_staff_payrolls">Failed to load staff payrolls</string>

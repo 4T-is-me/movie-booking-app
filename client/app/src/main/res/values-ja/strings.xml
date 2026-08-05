@@ -361,4 +361,5 @@
     <string name="auto_str_dune_awakening_booking">Dune: Awakening Booking</string>
     <string name="auto_str_jun_13">Jun 13</string>
     <string name="auto_str_540_pts">+540 pts</string>
+    <string name="error_account_locked">アカウントがロックされています！</string>
 </resources>
