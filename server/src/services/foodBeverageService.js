@@ -72,8 +72,8 @@ const createProduct = async (data) => {
             await Inventory.findOneAndUpdate(
                 { cinemaId: cinema._id, itemCode: itemCode },
                 {
+                    $set: { itemName: product.name },
                     $setOnInsert: {
-                        itemName: product.name,
                         quantity: 0,
                         lowStockAlert: 15
                     }
@@ -106,8 +106,8 @@ const updateProduct = async (id, data) => {
             await Inventory.findOneAndUpdate(
                 { cinemaId: cinema._id, itemCode: itemCode },
                 {
+                    $set: { itemName: updatedProduct.name },
                     $setOnInsert: {
-                        itemName: updatedProduct.name,
                         quantity: 0,
                         lowStockAlert: 15
                     }

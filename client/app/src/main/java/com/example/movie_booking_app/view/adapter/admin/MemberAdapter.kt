@@ -29,13 +29,13 @@ class MemberAdapter(
             binding.tvMemberName.text = member.fullName ?: "Unknown"
             binding.tvMemberPoints.text = "${member.rewardPoints ?: 0}"
 
-            // Status: 1 is Active, 0 is Locked/Inactive
-            val isActive = member.account?.status == 1
+            // Status: 1 is Active, 0 is Locked/Inactive. Handle null as Active.
+            val isActive = member.account?.status != 0
             
             if (!isActive) {
-                binding.btnToggleMemberStatus.setImageResource(android.R.drawable.ic_menu_view)
+                binding.btnToggleMemberStatus.setImageResource(android.R.drawable.ic_menu_rotate)
                 binding.btnToggleMemberStatus.contentDescription = binding.root.context.getString(R.string.admin_member_reactivate)
-                binding.btnToggleMemberStatus.setColorFilter(binding.root.context.getColor(R.color.color_green_status))
+                binding.btnToggleMemberStatus.setColorFilter(binding.root.context.getColor(R.color.yellow))
             } else {
                 binding.btnToggleMemberStatus.setImageResource(android.R.drawable.ic_menu_delete)
                 binding.btnToggleMemberStatus.contentDescription = binding.root.context.getString(R.string.admin_member_delete)
