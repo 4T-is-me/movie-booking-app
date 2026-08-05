@@ -1,6 +1,5 @@
 package com.example.movie_booking_app.view.adapter
 
-import android.graphics.Color
 import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
@@ -99,7 +98,6 @@ class ChatAdapter(
                             orientation = LinearLayout.VERTICAL
                             setPadding(32, 20, 32, 20)
                             background = ContextCompat.getDrawable(context, R.drawable.bg_cinema_button)
-                            
                             val params = LinearLayout.LayoutParams(
                                 LinearLayout.LayoutParams.MATCH_PARENT,
                                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -108,21 +106,20 @@ class ChatAdapter(
                             }
                             layoutParams = params
 
-                            // Title: 🎭 Tên rạp — Thành phố
+
                             val tvTitle = TextView(context).apply {
-                                val headerText = if (cinema.city.isNotBlank()) "🎭 ${cinema.cinemaName} — ${cinema.city}" else "🎭 ${cinema.cinemaName}"
+                                val headerText = if (cinema.city.isNotBlank()) "${cinema.cinemaName} - ${cinema.city}" else cinema.cinemaName
                                 text = headerText
-                                setTextColor(Color.parseColor("#F5C518"))
+                                setTextColor(ContextCompat.getColor(context, R.color.chat_cinema_title))
                                 textSize = 14f
                                 setTypeface(null, Typeface.BOLD)
                             }
                             addView(tvTitle)
 
-                            // Subtitle: 📍 Địa chỉ chi tiết của rạp
                             if (cinema.address.isNotBlank()) {
                                 val tvAddress = TextView(context).apply {
-                                    text = "📍 ${cinema.address}"
-                                    setTextColor(Color.parseColor("#B0B3C6"))
+                                    text = cinema.address
+                                    setTextColor(ContextCompat.getColor(context, R.color.chat_cinema_address))
                                     textSize = 12f
                                     setPadding(0, 4, 0, 0)
                                 }
@@ -136,8 +133,7 @@ class ChatAdapter(
                         binding.llCinemaOptionsContainer.addView(cardBtn)
                     }
                 } else {
-                    // Fallback parse text cũ nếu message không có cinemaOptions
-                    val cinemaRegex = Regex("""\*\*\d+\.\*\*\s*🎭\s*\*\*([^*]+)\*\*""")
+                    val cinemaRegex = Regex("""\*\*\d+\.\*\*\s*\*\*([^*]+)\*\*""")
                     val matches = cinemaRegex.findAll(message.content).map { it.groupValues[1].trim() }.toList()
 
                     if (matches.isNotEmpty()) {
@@ -147,7 +143,7 @@ class ChatAdapter(
                         matches.forEach { cinemaName ->
                             val btn = TextView(itemView.context).apply {
                                 text = itemView.context.getString(R.string.chat_cinema_link, cinemaName)
-                                setTextColor(Color.parseColor("#F5C518"))
+                                setTextColor(ContextCompat.getColor(context, R.color.chat_cinema_title))
                                 textSize = 13f
                                 setTypeface(null, Typeface.BOLD)
                                 setPadding(28, 18, 28, 18)

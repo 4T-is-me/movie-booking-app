@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.LeaveRequestResponse
 import com.example.movie_booking_app.databinding.ItemMyLeaveRequestBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.utils.DateUtils
 
 class MyLeaveRequestsAdapter(
@@ -36,7 +37,7 @@ class MyLeaveRequestsAdapter(
             binding.tvLeaveReason.text = item.reason ?: context.getString(R.string.leave_no_reason)
 
             when (item.status) {
-                "Pending" -> {
+                Constants.LeaveStatus.PENDING -> {
                     val textColor = ContextCompat.getColor(context, R.color.color_gold)
                     val bgColor = ContextCompat.getColor(context, R.color.bg_pending_badge)
 
@@ -50,7 +51,8 @@ class MyLeaveRequestsAdapter(
                     binding.btnEditLeave.setOnClickListener { onEditClick(item) }
                     binding.btnDeleteLeave.setOnClickListener { onDeleteClick(item) }
                 }
-                "Approved" -> {
+
+                Constants.LeaveStatus.APPROVED -> {
                     val textColor = ContextCompat.getColor(context, R.color.color_green)
                     val bgColor = ContextCompat.getColor(context, R.color.bg_approved_badge)
 
@@ -61,7 +63,8 @@ class MyLeaveRequestsAdapter(
                     binding.layoutRejectReason.visibility = View.GONE
                     binding.layoutPendingActions.visibility = View.GONE
                 }
-                "Rejected" -> {
+
+                Constants.LeaveStatus.REJECTED -> {
                     val textColor = ContextCompat.getColor(context, R.color.color_red)
                     val bgColor = ContextCompat.getColor(context, R.color.bg_rejected_badge)
 
@@ -75,6 +78,7 @@ class MyLeaveRequestsAdapter(
                     binding.tvRejectReason.text = item.rejectReason ?: context.getString(R.string.leave_no_feedback)
                     binding.tvRejectReason.setTextColor(textColor)
                 }
+
                 else -> {
                     val textColor = ContextCompat.getColor(context, R.color.white)
                     val bgColor = ContextCompat.getColor(context, R.color.auto_color_94A3B8)

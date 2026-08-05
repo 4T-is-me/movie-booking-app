@@ -17,6 +17,7 @@ import com.example.movie_booking_app.data.model.response.ManagerSeat
 import com.example.movie_booking_app.data.model.response.ManagerSeatRow
 import com.example.movie_booking_app.databinding.ActivityManagerSeatBinding
 import com.example.movie_booking_app.databinding.ItemManagerSeatRowBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.view.adapter.manager.ManagerSeatAdapter
 import com.example.movie_booking_app.viewmodel.manager.ManagerRoomViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -31,7 +32,7 @@ class ManagerSeatActivity : AppCompatActivity() {
     private lateinit var binding: ActivityManagerSeatBinding
     private val formatMoney = DecimalFormat("#,### ₫")
 
-    private var currentStatus: String = "active"
+    private var currentStatus: String = Constants.SeatStatus.ACTIVE
     private var pendingRegularPrice: Double = 0.0
     private var pendingVipPrice: Double = 0.0
     private var pendingCouplePrice: Double = 0.0
@@ -85,11 +86,11 @@ class ManagerSeatActivity : AppCompatActivity() {
 
         // Bind clicks for Status
         binding.btnStatusOperating.setOnClickListener {
-            currentStatus = "active"
+            currentStatus = Constants.SeatStatus.ACTIVE
             updateStatusUI(currentStatus)
         }
         binding.btnStatusMaintenance.setOnClickListener {
-            currentStatus = "maintenance"
+            currentStatus = Constants.SeatStatus.MAINTENANCE
             updateStatusUI(currentStatus)
         }
 
@@ -115,11 +116,11 @@ class ManagerSeatActivity : AppCompatActivity() {
         }
 
         binding.btnBulkActive.setOnClickListener {
-            applyBulkStatus("active")
+            applyBulkStatus( Constants.SeatStatus.ACTIVE)
         }
 
         binding.btnBulkMaintenance.setOnClickListener {
-            applyBulkStatus("maintenance")
+            applyBulkStatus(Constants.SeatStatus.MAINTENANCE)
         }
 
         if (roomId != null) {
@@ -140,7 +141,10 @@ class ManagerSeatActivity : AppCompatActivity() {
         )
         binding.tvMultiSelectLabel.text = if (enable) getString(R.string.manager_select_multiple_checked) else getString(R.string.auto_str_ch_n_nhi_u)
         binding.tvMultiSelectLabel.setTextColor(
-            Color.parseColor(if (enable) "#38BDF8" else "#94A3B8")
+            ContextCompat.getColor(
+                this,
+                if (enable) R.color.switch_enabled else R.color.switch_disabled
+            )
         )
         updateBulkActionsUI()
         renderSeats(currentSeatRows)
@@ -159,7 +163,7 @@ class ManagerSeatActivity : AppCompatActivity() {
         if (selectedSeatIds.isEmpty() || roomIdToUpdate.isEmpty()) return
 
         val seatList = selectedSeatIds.toList()
-        val label = if (targetStatus == "maintenance") getString(R.string.seat_status_maintenance) else getString(R.string.seat_status_active)
+        val label = if (targetStatus == Constants.SeatStatus.MAINTENANCE) getString(R.string.seat_status_maintenance) else getString(R.string.seat_status_active)
 
         viewModel.bulkUpdateSeatStatus(roomIdToUpdate, seatList, targetStatus) { success ->
             if (success) {
@@ -331,7 +335,7 @@ class ManagerSeatActivity : AppCompatActivity() {
     private fun showSeatStatusDialog(seat: ManagerSeat) {
         val seatDisplayName = seat.seatName ?: "${seat.row ?: ""}${seat.col}"
         val options = arrayOf(getString(R.string.manager_seat_status_active_opt), getString(R.string.manager_seat_status_maintenance_opt))
-        val currentSelection = if (seat.status.equals("maintenance", ignoreCase = true)) 1 else 0
+        val currentSelection = if (seat.status.equals(Constants.SeatStatus.MAINTENANCE, ignoreCase = true)) 1 else 0
 
         var selectedOption = currentSelection
 
@@ -341,12 +345,12 @@ class ManagerSeatActivity : AppCompatActivity() {
                 selectedOption = which
             }
             .setPositiveButton(getString(R.string.manager_confirm)) { dialog, _ ->
-                val newStatus = if (selectedOption == 1) "maintenance" else "active"
+                val newStatus = if (selectedOption == 1) Constants.SeatStatus.MAINTENANCE else Constants.SeatStatus.ACTIVE
                 if (newStatus != seat.status) {
                     if (roomIdToUpdate.isNotEmpty()) {
                         viewModel.updateSeatStatus(roomIdToUpdate, seat.id, newStatus) { success ->
                             if (success) {
-                                val label = if (newStatus == "maintenance") getString(R.string.manager_seat_status_maintenance) else getString(R.string.manager_seat_status_active)
+                                val label = if (newStatus == Constants.SeatStatus.MAINTENANCE) getString(R.string.manager_seat_status_maintenance) else getString(R.string.manager_seat_status_active)
                                 Toast.makeText(this, getString(R.string.manager_seat_status_changed_success, seatDisplayName, label), Toast.LENGTH_SHORT).show()
                             } else {
                                 Toast.makeText(this, getString(R.string.auto_str_c_p_nh_t_tr_ng_th_i_gh_th_t_b), Toast.LENGTH_SHORT).show()

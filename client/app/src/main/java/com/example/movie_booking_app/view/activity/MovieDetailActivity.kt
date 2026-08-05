@@ -70,7 +70,7 @@ class MovieDetailActivity : AppCompatActivity() {
 
         binding.btnBookTicket.setOnClickListener {
             val movie = viewModel.movieDetail.value?.data
-            if (movie?.status == "coming-soon") {
+            if (movie?.status == Constants.MovieStatus.COMING_SOON_F) {
                 Toast.makeText(this, getString(R.string.auto_str_this_movie_is_coming_soon), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -155,7 +155,7 @@ class MovieDetailActivity : AppCompatActivity() {
                         response?.data?.let { movie ->
                             val descriptionText = movie.description ?: ""
 
-                            binding.txtTitle.text = movie.movieName ?: "Unknown"
+                            binding.txtTitle.text = movie.movieName ?: Constants.UNKNOWN
                             binding.txtDescription.text = descriptionText
                             binding.txtDescription.post {
 
@@ -181,7 +181,7 @@ class MovieDetailActivity : AppCompatActivity() {
                             binding.txtLanguage.text = movie.language ?: ""
                             binding.txtDuration.text = formatDuration(movie.duration)
                             binding.txtReleaseDate.text = DateUtils.formatMovieDate(movie.releaseDate)
-                            binding.txtRating.text = movie.rating?.toString() ?: "Unrated"
+                            binding.txtRating.text = movie.rating?.toString() ?: Constants.UNRATED
                             binding.txtVote.text = "(${movie.totalReviews ?: 0})"
 
                             // Update rating summary section
@@ -208,7 +208,7 @@ class MovieDetailActivity : AppCompatActivity() {
                             binding.btnWriteReview.visibility = View.GONE
 
                             // Handle coming-soon status
-                            if (movie.status == "coming-soon") {
+                            if (movie.status == Constants.MovieStatus.COMING_SOON_F) {
                                 binding.tvCinemaTitle.visibility = View.GONE
                                 binding.rvCinema.visibility = View.GONE
                                 binding.tvNoCinema.visibility = View.GONE
@@ -227,7 +227,7 @@ class MovieDetailActivity : AppCompatActivity() {
                 launch {
                     viewModel.movieShowtimes.collect { showtimes ->
                         val movie = viewModel.movieDetail.value?.data
-                        if (movie?.status == "coming-soon") {
+                        if (movie?.status == Constants.MovieStatus.COMING_SOON_F) {
                             binding.tvCinemaTitle.visibility = View.GONE
                             binding.rvCinema.visibility = View.GONE
                             binding.tvNoCinema.visibility = View.GONE

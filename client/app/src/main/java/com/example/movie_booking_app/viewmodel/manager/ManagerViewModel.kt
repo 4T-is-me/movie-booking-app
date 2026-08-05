@@ -12,6 +12,7 @@ import com.example.movie_booking_app.data.model.response.ShiftDetailResponse
 import com.example.movie_booking_app.data.model.response.ShiftResponse
 import com.example.movie_booking_app.data.model.response.UpdateShiftResponse
 import com.example.movie_booking_app.data.repository.manager.ManagerRepository
+import com.example.movie_booking_app.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,7 +48,7 @@ class ManagerViewModel @Inject constructor(private val repository: ManagerReposi
 
     init {
         // default = week
-        loadReport("week")
+        loadReport(Constants.TIME[1])
     }
     fun loadDashboard() {
         viewModelScope.launch {

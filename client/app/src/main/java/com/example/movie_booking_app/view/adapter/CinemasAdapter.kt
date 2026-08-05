@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Cinema
 import com.example.movie_booking_app.databinding.ItemCinemaRoomBinding
+import com.example.movie_booking_app.utils.Constants
 
 class CinemasAdapter(
     private val onCinemaClick: (Cinema) -> Unit,
@@ -46,12 +47,12 @@ class CinemasAdapter(
             val statusColor: Int
             val backgroundRes: Int
 
-            if (status == "active") {
-                statusText = "Active"
+            if (status == Constants.CinemaRoomStatus.ACTIVE) {
+                statusText = Constants.CinemaRoomStatus.ACTIVE
                 statusColor = ContextCompat.getColor(itemView.context, R.color.color_green)
                 backgroundRes = R.drawable.bg_label_operating
             } else {
-                statusText = "Closed"
+                statusText = Constants.CinemaRoomStatus.DISPLAY_CLOSED
                 statusColor = ContextCompat.getColor(itemView.context, R.color.color_error_red)
                 backgroundRes = R.drawable.bg_label_close
             }

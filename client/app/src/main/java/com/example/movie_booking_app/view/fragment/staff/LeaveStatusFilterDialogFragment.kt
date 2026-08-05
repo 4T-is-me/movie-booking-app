@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.DialogFragment
 import com.example.movie_booking_app.databinding.DialogLeaveStatusFilterBinding
+import com.example.movie_booking_app.utils.Constants
 
 class LeaveStatusFilterDialogFragment(private val onStatusSelected: (String?) -> Unit) : DialogFragment() {
     private var _binding: DialogLeaveStatusFilterBinding? = null
@@ -37,17 +38,17 @@ class LeaveStatusFilterDialogFragment(private val onStatusSelected: (String?) ->
             dismiss()
         }
         binding.btnFilterPending.setOnClickListener {
-            onStatusSelected("Pending")
+            onStatusSelected(Constants.LeaveStatus.PENDING)
             dismiss()
         }
 
         binding.btnFilterApproved.setOnClickListener {
-            onStatusSelected("Approved")
+            onStatusSelected(Constants.LeaveStatus.APPROVED)
             dismiss()
         }
 
         binding.btnFilterRejected.setOnClickListener {
-            onStatusSelected("Rejected")
+            onStatusSelected(Constants.LeaveStatus.REJECTED)
             dismiss()
         }
     }

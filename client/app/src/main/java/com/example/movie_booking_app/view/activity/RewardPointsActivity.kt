@@ -133,7 +133,7 @@ class RewardPointsActivity : AppCompatActivity() {
         val totalSpentLong = totalSpent.toLong()
 
         when (memberShipRank.lowercase().trim()) {
-            "gold" -> {
+            Constants.Rank.GOLD -> {
                 rankText = getString(R.string.reward_rank_gold)
                 colors = intArrayOf(
                     ContextCompat.getColor(this, R.color.rank_gold_start),
@@ -146,7 +146,7 @@ class RewardPointsActivity : AppCompatActivity() {
                 progressLabelText = getString(R.string.reward_max_tier_msg)
                 nextTierLeftText = getString(R.string.reward_thanks_gold)
             }
-            "silver" -> {
+            Constants.Rank.SILVER -> {
                 rankText = getString(R.string.reward_rank_silver)
                 colors = intArrayOf(
                     ContextCompat.getColor(this, R.color.rank_silver_start),
@@ -197,7 +197,6 @@ class RewardPointsActivity : AppCompatActivity() {
         binding.tvProgressLabel.text = progressLabelText
         binding.tvNextTierHint.text = nextTierLeftText
     }
-
     // A helper function that converts dp values to pixels to ensure accurate corner rounding across all phone screens.
     private fun dpToPx(dp: Int): Float {
         return dp * resources.displayMetrics.density

@@ -15,6 +15,7 @@ import com.example.movie_booking_app.databinding.ActivityAdminBinding
 import com.example.movie_booking_app.utils.AuthUtils
 import com.example.movie_booking_app.view.fragment.admin.AdminCinemasFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminFoodMenuFragment
+import com.example.movie_booking_app.view.fragment.admin.AdminImportOrderFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminInventoryFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminMovieListFragment
 import com.example.movie_booking_app.view.fragment.admin.AdminPayrollFragment
@@ -76,7 +77,7 @@ class AdminActivity : BaseActivity() {
                 }
                 R.id.nav_import_orders -> {
                     binding.tvHeaderTitle.text = getString(R.string.approve_goods_intake)
-                    loadFragment(com.example.movie_booking_app.view.fragment.admin.AdminImportOrderFragment())
+                    loadFragment(AdminImportOrderFragment())
                 }
                 R.id.nav_members -> {
                     binding.tvHeaderTitle.text = getString(R.string.admin_tab_members)

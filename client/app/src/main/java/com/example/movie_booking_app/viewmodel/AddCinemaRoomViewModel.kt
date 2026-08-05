@@ -8,6 +8,7 @@ import com.example.movie_booking_app.data.model.entity.SeatPreview
 import com.example.movie_booking_app.data.model.request.AddRoomRequest
 import com.example.movie_booking_app.data.model.request.SeatInput
 import com.example.movie_booking_app.data.repository.CinemaRoomsRepository
+import com.example.movie_booking_app.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -29,11 +30,11 @@ class AddCinemaRoomViewModel @Inject constructor(
 
     val roomId = MutableStateFlow<String?>(null)
     val roomName = MutableStateFlow("")
-    val roomType = MutableStateFlow("Standard")
-    val screenType = MutableStateFlow("2D")
-    val rowsStr = MutableStateFlow("8")
-    val columnsStr = MutableStateFlow("10")
-    val status = MutableStateFlow("active")
+    val roomType = MutableStateFlow(Constants.CinemaRoomStatus.DEFAULT_ROOM_TYPE)
+    val screenType = MutableStateFlow(Constants.CinemaRoomStatus.DEFAULT_SCREEN_TYPE)
+    val rowsStr = MutableStateFlow(Constants.CinemaRoomStatus.DEFAULT_ROW)
+    val columnsStr = MutableStateFlow(Constants.CinemaRoomStatus.DEFAULT_COLUMN)
+    val status = MutableStateFlow(Constants.CinemaRoomStatus.ACTIVE)
 
     private var isPrefilling = false
 
@@ -82,9 +83,9 @@ class AddCinemaRoomViewModel @Inject constructor(
             for (col in 1..cols) {
                 // Guess standard layout automatically: Standard, last 2 rows VIP, last row Couple
                 val defaultType = when {
-                    row == rows - 1 -> "couple"
-                    row == rows - 2 || row == rows - 3 -> "vip"
-                    else -> "standard"
+                    row == rows - 1 -> Constants.SeatConstants.TYPE_COUPLE.lowercase()
+                    row == rows - 2 || row == rows - 3 -> Constants.SeatConstants.TYPE_VIP.lowercase()
+                    else -> Constants.SeatConstants.TYPE_REGULAR.lowercase()
                 }
                 seats.add(SeatPreview(seatName = "$rowLetter$col", seatType = defaultType))
             }
@@ -97,9 +98,9 @@ class AddCinemaRoomViewModel @Inject constructor(
         if (position in currentList.indices) {
             val seat = currentList[position]
             val nextType = when (seat.seatType) {
-                "standard" -> "vip"
-                "vip" -> "couple"
-                else -> "standard"
+                Constants.SeatConstants.TYPE_REGULAR.lowercase() ->  Constants.SeatConstants.TYPE_VIP.lowercase()
+                Constants.SeatConstants.TYPE_VIP.lowercase() -> Constants.SeatConstants.TYPE_COUPLE.lowercase()
+                else -> Constants.SeatConstants.TYPE_REGULAR.lowercase()
             }
             currentList[position] = seat.copy(seatType = nextType)
             _previewSeats.value = currentList
@@ -116,11 +117,11 @@ class AddCinemaRoomViewModel @Inject constructor(
                 if (room != null) {
                     isPrefilling = true
                     roomName.value = room.roomName
-                    roomType.value = room.roomType ?: "Standard"
-                    screenType.value = room.screenType ?: "2D"
+                    roomType.value = room.roomType ?:  Constants.SeatConstants.TYPE_REGULAR
+                    screenType.value = room.screenType ?:Constants.CinemaRoomStatus.DEFAULT_SCREEN_TYPE
                     rowsStr.value = room.rows.toString()
                     columnsStr.value = room.columns.toString()
-                    status.value = room.status ?: "active"
+                    status.value = room.status ?:Constants.CinemaRoomStatus.ACTIVE
 
                     val seats = repository.getRoomSeats(id)
                     if (seats.isNotEmpty()) {

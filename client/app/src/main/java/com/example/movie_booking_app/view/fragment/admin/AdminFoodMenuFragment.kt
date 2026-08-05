@@ -26,6 +26,7 @@ import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.FoodBeverage
 import com.example.movie_booking_app.databinding.ActivityAdminFoodMenuBinding
 import com.example.movie_booking_app.databinding.DialogAddEditFoodBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.view.adapter.admin.AdminDeductionAdapter
 import com.example.movie_booking_app.view.adapter.admin.AdminFoodAdapter
 import com.example.movie_booking_app.viewmodel.admin.AdminFoodViewModel
@@ -169,7 +170,7 @@ class AdminFoodMenuFragment : Fragment() {
         
         binding.switchActive.isVisible = !isEdit
 
-        val categories = listOf("drink", "food", "combo")
+        val categories = Constants.CATEGORIES
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerCategory.adapter = adapter

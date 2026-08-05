@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.entity.Cinema
 import com.example.movie_booking_app.data.repository.CinemasRepository
+import com.example.movie_booking_app.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -61,7 +62,7 @@ class AdminCinemasViewModel @Inject constructor(
             _isLoading.value = true
             _error.value = null
             try {
-                val newStatus = if (currentStatus.lowercase() == "active") "inactive" else "active"
+                val newStatus = if (currentStatus.lowercase() == Constants.Status.ACTIVE.lowercase()) Constants.Status.INACTIVE.lowercase() else Constants.Status.ACTIVE.lowercase()
                 val success = repository.updateCinemaStatus(cinemaId, newStatus)
                 if (success) {
                     loadCinemas()

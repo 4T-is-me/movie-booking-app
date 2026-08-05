@@ -7,6 +7,7 @@ import com.example.movie_booking_app.data.local.NotificationItem
 import com.example.movie_booking_app.data.local.NotificationLocalStorage
 import com.example.movie_booking_app.data.model.response.NotificationItemResponse
 import com.example.movie_booking_app.data.repository.NotificationRepository
+import com.example.movie_booking_app.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.text.SimpleDateFormat
@@ -56,9 +57,12 @@ class NotificationViewModel @Inject constructor(
             // Filter local list to only include staff-related notifications
             val localList = NotificationLocalStorage.getAll(context).filter { item ->
                 val type = item.type.uppercase()
-                type.startsWith("LEAVE_") || type.startsWith("SHIFT_") ||
-                        type == "SHIFT_ASSIGNED" || type == "SHIFT_UPDATED" ||
-                        type == "LEAVE_APPROVED" || type == "LEAVE_REJECTED"
+                type?.startsWith(Constants.NotificationType.PREFIX_LEAVE) == true ||
+                        type?.startsWith(Constants.NotificationType.PREFIX_SHIFT) == true ||
+                        type == Constants.NotificationType.SHIFT_ASSIGNED ||
+                        type == Constants.NotificationType.SHIFT_UPDATED ||
+                        type == Constants.NotificationType.LEAVE_APPROVED ||
+                        type == Constants.NotificationType.LEAVE_REJECTED
             }
             repository.getStaffNotifications().collect { response ->
                 _isLoading.value = false

@@ -19,6 +19,7 @@ import com.example.movie_booking_app.data.model.response.ReportChartItemResponse
 import com.example.movie_booking_app.data.model.response.ReportData
 import com.example.movie_booking_app.data.model.response.TopMoviesResponse
 import com.example.movie_booking_app.databinding.FragmentManagerReportBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.view.adapter.manager.ManagerTopMoviesAdapter
 import com.example.movie_booking_app.viewmodel.manager.ManagerViewModel
 import com.github.mikephil.charting.components.XAxis
@@ -41,7 +42,7 @@ class ManagerReportFragment : Fragment() {
     private var _binding: FragmentManagerReportBinding? = null
     private val binding get() = _binding!!
 
-    private var currentReportType = "week"
+    private var currentReportType = Constants.TIME[1]
 
     private val sourceDateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     private val sourceMonthFormat = SimpleDateFormat("yyyy-MM", Locale.getDefault())
@@ -72,7 +73,7 @@ class ManagerReportFragment : Fragment() {
         )
         setUpClickListeners()
         observeReportData()
-        setActiveTab(binding.btnWeekReport, "week")
+        setActiveTab(binding.btnWeekReport, Constants.TIME[1])
         setUpRecyclerView()
     }
 
@@ -162,16 +163,16 @@ class ManagerReportFragment : Fragment() {
     private fun formatChartLabel(label: String, reportType: String): String {
         return try {
             when (reportType) {
-                "day" -> label
-                "week" -> {
+                Constants.TIME[0] -> label
+                Constants.TIME[1] -> {
                     val date = sourceDateFormat.parse(label)
                     date?.let { targetWeekFormat.format(it) } ?: label
                 }
-                "month" -> {
+                Constants.TIME[2] -> {
                     val date = sourceDateFormat.parse(label)
                     date?.let { targetMonthFormat.format(it) } ?: label
                 }
-                "year" -> {
+                Constants.TIME[3] -> {
                     val date = sourceMonthFormat.parse(label)
                     date?.let { targetYearFormat.format(it) } ?: label
                 }
@@ -256,13 +257,25 @@ class ManagerReportFragment : Fragment() {
 
     private fun setUpTopMovies(topMovies: List<TopMoviesResponse>) {
         val movies = topMovies.orEmpty()
+
         if (movies.isEmpty()) {
             binding.rvTopMovies.visibility = View.GONE
             binding.txtNoMovieData.visibility = View.VISIBLE
         } else {
             binding.rvTopMovies.visibility = View.VISIBLE
             binding.txtNoMovieData.visibility = View.GONE
-            topMovieManagerAdapter.submitList(movies.toMutableList())
+
+            val displayMovies = movies.map {
+                it.copy(
+                    title = if (it.title.length > Constants.LIMIT_TITLE) {
+                        it.title.take(Constants.LIMIT_TITLE) + "..."
+                    } else {
+                        it.title
+                    }
+                )
+            }
+
+            topMovieManagerAdapter.submitList(displayMovies)
         }
     }
 

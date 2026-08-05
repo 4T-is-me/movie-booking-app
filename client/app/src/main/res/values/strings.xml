@@ -1560,6 +1560,7 @@
     <string name="dialog_logout_title">Log Out</string>
     <string name="dialog_logout_message">Are you sure you want to log out?</string>
     <string name="dialog_logout_cancel">Cancel</string>
+
     <string name="dialog_logout_confirm">Log Out</string>
     <!-- FCM Notifications -->
     <string name="channel_name">Movie Booking Notifications</string>
@@ -1602,10 +1603,14 @@
     <!-- ManagerActivity -->
     <string name="manager_kpi_rooms">MGR-%1$s  %2$s Rooms</string>
     <string name="manager_revenue">Revenue (VND)</string>
+
+
+
     <string name="greeting_morning">Good morning ☀️</string>
     <string name="greeting_afternoon">Good afternoon 🌤️</string>
     <string name="greeting_evening">Good evening 🌙</string>
     <string name="greeting_night">Good night 💤</string>
+
     <!-- ManagerSeatActivity -->
     <!-- NewsDetailActivity -->
     <string name="news_replying_to">Replying to %1$s</string>
@@ -1856,4 +1861,6 @@
     <string name="manager_showtime_seats">%1$s / %2$s Seats</string>
     <string name="auto_str_update">Update</string>
     <string name="auto_str_verify">Verify</string>
+
+
 </resources>

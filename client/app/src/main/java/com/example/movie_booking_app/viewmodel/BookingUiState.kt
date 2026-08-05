@@ -2,10 +2,11 @@ package com.example.movie_booking_app.viewmodel
 
 import com.example.movie_booking_app.data.model.entity.Booking
 import com.example.movie_booking_app.data.model.entity.Promo
+import com.example.movie_booking_app.utils.Constants
 
 data class BookingUiState(
     val booking: Booking? = null,
-    val countdownText: String = "10:00",
+    val countdownText: String = Constants.COUNT_DOWN,
     val isCountdownExpired: Boolean = false,
     val isLoading: Boolean = false,
     val error: String? = null,

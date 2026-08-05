@@ -22,6 +22,7 @@ import com.example.movie_booking_app.data.model.response.BookingHistoryItem
 import com.example.movie_booking_app.databinding.DialogQrCodeBinding
 import com.example.movie_booking_app.databinding.DialogRateStaffBinding
 import com.example.movie_booking_app.databinding.FragmentMyTicketBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.view.activity.BookingDetailActivity
 import com.example.movie_booking_app.view.activity.MainActivity
 import com.example.movie_booking_app.view.adapter.MyTicketAdapter
@@ -87,7 +88,7 @@ class MyTicketFragment : Fragment() {
         binding.rvActiveTickets.adapter = adapter
 
         binding.btnBookMovie.setOnClickListener {
-            (activity as? MainActivity)?.navigateToSection("Home")
+            (activity as? MainActivity)?.navigateToSection(Constants.NAV.HOME)
         }
 
         binding.btnRetry.setOnClickListener {

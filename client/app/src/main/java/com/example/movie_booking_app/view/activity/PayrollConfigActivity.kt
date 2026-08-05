@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.databinding.ActivityPayrollConfigBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.viewmodel.PayrollConfigViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -56,10 +57,10 @@ class PayrollConfigActivity : AppCompatActivity() {
     }
 
     private fun bindPayrollConfig(rates: Map<String, Double>, multiplier: Double, bonus: Double) {
-        binding.etMorningRate.setText(rates["Morning"]?.format() ?: "")
-        binding.etAfternoonRate.setText(rates["Afternoon"]?.format() ?: "")
-        binding.etEveningRate.setText(rates["Evening"]?.format() ?: "")
-        binding.etNightRate.setText(rates["Night"]?.format() ?: "")
+        binding.etMorningRate.setText(rates[Constants.SHIFTS[0]]?.format() ?: "")
+        binding.etAfternoonRate.setText(rates[Constants.SHIFTS[1]]?.format() ?: "")
+        binding.etEveningRate.setText(rates[Constants.SHIFTS[2]]?.format() ?: "")
+        binding.etNightRate.setText(rates[Constants.SHIFTS[3]]?.format() ?: "")
         binding.etHolidayMultiplier.setText(multiplier.format())
         binding.etManagerRevenueBonus.setText(bonus.format())
     }
@@ -67,7 +68,7 @@ class PayrollConfigActivity : AppCompatActivity() {
     private fun updatePayrollConfig() {
         val values = listOf(binding.etMorningRate, binding.etAfternoonRate, binding.etEveningRate, binding.etNightRate, binding.etHolidayMultiplier, binding.etManagerRevenueBonus).map { it.text.toString().toDoubleOrNull() }
         if (values.any { it == null || it < 0 } || values[4]!! < 1) { Toast.makeText(this, R.string.invalid_payroll_config, Toast.LENGTH_LONG).show(); return }
-        viewModel.updatePayrollConfig(mapOf("Morning" to values[0]!!, "Afternoon" to values[1]!!, "Evening" to values[2]!!, "Night" to values[3]!!), values[4]!!, values[5]!!)
+        viewModel.updatePayrollConfig(mapOf(Constants.SHIFTS[0] to values[0]!!, Constants.SHIFTS[1] to values[1]!!, Constants.SHIFTS[2] to values[2]!!, Constants.SHIFTS[3] to values[3]!!), values[4]!!, values[5]!!)
     }
 
     private fun Double.format() = if (this % 1.0 == 0.0) toLong().toString() else toString()

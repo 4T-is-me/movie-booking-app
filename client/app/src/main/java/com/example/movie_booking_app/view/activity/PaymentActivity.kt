@@ -81,11 +81,11 @@ class PaymentActivity : AppCompatActivity() {
 
     private fun setupClickListeners() {
         // Payment methods click listeners
-        binding.cardMoMo.setOnClickListener { viewModel.selectPaymentMethod("MoMo") }
-        binding.cardZaloPay.setOnClickListener { viewModel.selectPaymentMethod("ZaloPay") }
-        binding.cardShopeePay.setOnClickListener { viewModel.selectPaymentMethod("ShopeePay") }
-        binding.cardATM.setOnClickListener { viewModel.selectPaymentMethod("ATM") }
-        binding.cardInternational.setOnClickListener { viewModel.selectPaymentMethod("International") }
+        binding.cardMoMo.setOnClickListener { viewModel.selectPaymentMethod(Constants.PaymentMethod.MOMO) }
+        binding.cardZaloPay.setOnClickListener { viewModel.selectPaymentMethod(Constants.PaymentMethod.ZALO_PAY) }
+        binding.cardShopeePay.setOnClickListener { viewModel.selectPaymentMethod(Constants.PaymentMethod.SHOPEE_PAY) }
+        binding.cardATM.setOnClickListener { viewModel.selectPaymentMethod(Constants.PaymentMethod.ATM) }
+        binding.cardInternational.setOnClickListener { viewModel.selectPaymentMethod(Constants.PaymentMethod.INTERNATIONAL) }
 
         // Apply Promotion Coupon
         binding.btnApplyCoupon.setOnClickListener {
@@ -278,25 +278,35 @@ class PaymentActivity : AppCompatActivity() {
         val activeColor = ContextCompat.getColor(this@PaymentActivity, R.color.cinema_primary)
         val inactiveColor = Color.TRANSPARENT
 
-        binding.cardMoMo.strokeColor = if (selectedMethod == "MoMo") activeColor else inactiveColor
-        binding.cardMoMo.strokeWidth = if (selectedMethod == "MoMo") dpToPx(2) else 0
-        binding.rbMoMo.isChecked = (selectedMethod == "MoMo")
+        binding.cardMoMo.strokeColor =
+            if (selectedMethod == Constants.PaymentMethod.MOMO) activeColor else inactiveColor
+        binding.cardMoMo.strokeWidth =
+            if (selectedMethod == Constants.PaymentMethod.MOMO) dpToPx(2) else 0
+        binding.rbMoMo.isChecked = selectedMethod == Constants.PaymentMethod.MOMO
 
-        binding.cardZaloPay.strokeColor = if (selectedMethod == "ZaloPay") activeColor else inactiveColor
-        binding.cardZaloPay.strokeWidth = if (selectedMethod == "ZaloPay") dpToPx(2) else 0
-        binding.rbZaloPay.isChecked = (selectedMethod == "ZaloPay")
+        binding.cardZaloPay.strokeColor =
+            if (selectedMethod == Constants.PaymentMethod.ZALO_PAY) activeColor else inactiveColor
+        binding.cardZaloPay.strokeWidth =
+            if (selectedMethod == Constants.PaymentMethod.ZALO_PAY) dpToPx(2) else 0
+        binding.rbZaloPay.isChecked = selectedMethod == Constants.PaymentMethod.ZALO_PAY
 
-        binding.cardShopeePay.strokeColor = if (selectedMethod == "ShopeePay") activeColor else inactiveColor
-        binding.cardShopeePay.strokeWidth = if (selectedMethod == "ShopeePay") dpToPx(2) else 0
-        binding.rbShopeePay.isChecked = (selectedMethod == "ShopeePay")
+        binding.cardShopeePay.strokeColor =
+            if (selectedMethod == Constants.PaymentMethod.SHOPEE_PAY) activeColor else inactiveColor
+        binding.cardShopeePay.strokeWidth =
+            if (selectedMethod == Constants.PaymentMethod.SHOPEE_PAY) dpToPx(2) else 0
+        binding.rbShopeePay.isChecked = selectedMethod == Constants.PaymentMethod.SHOPEE_PAY
 
-        binding.cardATM.strokeColor = if (selectedMethod == "ATM") activeColor else inactiveColor
-        binding.cardATM.strokeWidth = if (selectedMethod == "ATM") dpToPx(2) else 0
-        binding.rbATM.isChecked = (selectedMethod == "ATM")
+        binding.cardATM.strokeColor =
+            if (selectedMethod == Constants.PaymentMethod.ATM) activeColor else inactiveColor
+        binding.cardATM.strokeWidth =
+            if (selectedMethod == Constants.PaymentMethod.ATM) dpToPx(2) else 0
+        binding.rbATM.isChecked = selectedMethod == Constants.PaymentMethod.ATM
 
-        binding.cardInternational.strokeColor = if (selectedMethod == "International") activeColor else inactiveColor
-        binding.cardInternational.strokeWidth = if (selectedMethod == "International") dpToPx(2) else 0
-        binding.rbInternational.isChecked = (selectedMethod == "International")
+        binding.cardInternational.strokeColor =
+            if (selectedMethod == Constants.PaymentMethod.INTERNATIONAL) activeColor else inactiveColor
+        binding.cardInternational.strokeWidth =
+            if (selectedMethod == Constants.PaymentMethod.INTERNATIONAL) dpToPx(2) else 0
+        binding.rbInternational.isChecked = selectedMethod == Constants.PaymentMethod.INTERNATIONAL
     }
 
     private fun showPremiumSuccessDialog(message: String, onDismiss: () -> Unit) {

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.request.AddCinemaRequest
 import com.example.movie_booking_app.data.repository.CinemasRepository
+import com.example.movie_booking_app.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -28,7 +29,7 @@ class AddCinemaViewModel @Inject constructor(
     val address = MutableStateFlow("")
     val city = MutableStateFlow("")
     val hotline = MutableStateFlow("")
-    val status = MutableStateFlow("active")
+    val status = MutableStateFlow(Constants.CinemaRoomStatus.ACTIVE)
     val image = MutableStateFlow("")
 
     private val _isLoading = MutableStateFlow(false)

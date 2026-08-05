@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.entity.FoodBeverage
 import com.example.movie_booking_app.data.repository.FoodRepository
 import com.example.movie_booking_app.utils.BookingTimerManager
+import com.example.movie_booking_app.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.Locale
 import javax.inject.Inject
@@ -78,7 +79,7 @@ class SelectFoodViewModel @Inject constructor(
 
     fun setCategory(category: String) {
         _uiState.update { state ->
-            val filtered = if (category == "All") {
+            val filtered = if (category == Constants.FoodCategory.ALL) {
                 state.menuItems
             } else {
                 state.menuItems.filter { it.category.equals(category, ignoreCase = true) }
@@ -96,7 +97,7 @@ class SelectFoodViewModel @Inject constructor(
         val totalPrice = updatedList.sumOf { it.price * it.selectedQuantity }
         
         _uiState.update { state ->
-            val filtered = if (state.selectedCategory == "All") {
+            val filtered = if (state.selectedCategory == Constants.FoodCategory.ALL) {
                 updatedList
             } else {
                 updatedList.filter { it.category.equals(state.selectedCategory, ignoreCase = true) }

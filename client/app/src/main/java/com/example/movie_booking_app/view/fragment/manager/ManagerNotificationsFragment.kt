@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.NotificationItemResponse
 import com.example.movie_booking_app.databinding.FragmentManagerNotificationsBinding
+import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.view.adapter.manager.ManagerNotifAdapter
 import com.example.movie_booking_app.viewmodel.NotificationViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -59,10 +60,10 @@ class ManagerNotificationsFragment : Fragment() {
             if (!item.isRead) {
                 viewModel.markAsRead(item.id, isStaff = false)
             }
-            if (item.type == "LEAVE_REQUEST_CREATED" || item.type == "SHIFT_CHANGE_ACCEPTED") {
+            if (item.type == Constants.LEAVE_REQUEST_CREATED || item.type == Constants.SHIFT_CHANGE_ACCEPTED) {
                 val fragment = ManagerStaffFragment().apply {
                     arguments = Bundle().apply {
-                        putString("target_tab", "leave_requests")
+                        putString(Constants.TARGET_TAB, Constants.LEAVE_REQUEST_TAB)
                     }
                 }
                 (activity as? com.example.movie_booking_app.view.activity.ManagerActivity)?.replaceFragment(
