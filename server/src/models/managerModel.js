@@ -27,10 +27,6 @@ const managerSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    salary: {
-        type: Number,
-        required: true
-    },
     kpiPoints: {
         type: Number,
         default: 0

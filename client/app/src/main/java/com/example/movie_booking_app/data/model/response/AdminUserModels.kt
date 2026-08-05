@@ -9,7 +9,6 @@ data class EmployeeItem(
     @SerializedName("phone") val phone: String? = null,
     @SerializedName("identityCard") val identityCard: String? = null,
     @SerializedName("position") val position: String? = null,
-    @SerializedName("salary") val salary: Double? = null,
     @SerializedName("cinemaId") val cinemaId: String? = null,
     @SerializedName("startDate") val startDate: String? = null,
     @SerializedName("address") val address: String? = null,

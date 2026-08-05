@@ -224,25 +224,6 @@
                         android:textSize="14sp" />
                 </LinearLayout>
 
-                <!-- Row: Salary -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingVertical="6dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/auto_str_salary"
-                        android:textColor="@color/auto_color_8E8E93"
-                        android:textSize="12sp" />
-                    <TextView
-                        android:id="@+id/tvDetailSalary"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/auto_color_FFFFFF"
-                        android:textSize="14sp" />
-                </LinearLayout>
 
                 <!-- Row: Start Date -->
                 <LinearLayout

@@ -17,7 +17,6 @@ data class Staff(
     @SerializedName("phone") val phone: String? = null,
     @SerializedName("address") val address: String? = null,
     @SerializedName("position") val position: String? = null,
-    @SerializedName("salary") val salary: Double? = null,
     @SerializedName("cinemaId") val cinemaId: String? = null,
     @SerializedName("startDate") val startDate: String? = null,
     @SerializedName("kpiPoints") val kpiPoints: Int? = null,

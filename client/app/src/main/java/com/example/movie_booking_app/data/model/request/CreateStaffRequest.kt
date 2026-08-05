@@ -12,7 +12,6 @@ data class CreateStaffRequest(
     @SerializedName("position") val position: String,
     @SerializedName("phone") val phone: String,
     @SerializedName("identityCard") val identityCard: String,
-    @SerializedName("salary") val salary: Double,
     @SerializedName("startDate") val startDate: String,
     @SerializedName("address") val address: String? = null
 )
