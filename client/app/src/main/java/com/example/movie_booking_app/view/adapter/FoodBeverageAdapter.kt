@@ -95,7 +95,7 @@ class FoodBeverageAdapter(
         fun updateQuantityOnly(item: FoodBeverage) {
             with(binding) {
                 tvQuantity.text = item.selectedQuantity.toString()
-                tvStock.text = itemView.context.getString(R.string.fb_in_stock, item.stock)
+                // Removed explicit tvStock text update to hide stock count from customers
                 btnMinus.isVisible = item.selectedQuantity > 0
                 btnPlus.isEnabled = item.selectedQuantity < item.stock
                 btnPlus.alpha = if (btnPlus.isEnabled) 1.0f else 0.5f
@@ -111,7 +111,7 @@ class FoodBeverageAdapter(
             }
 
             val til = TextInputLayout(context).apply {
-                hint = context.getString(R.string.food_quantity_max, item.stock)
+                hint = context.getString(R.string.goods_intake_quantity_hint)
                 errorIconDrawable = null
                 boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_OUTLINE
                 setBoxCornerRadii(12f, 12f, 12f, 12f)
@@ -128,7 +128,6 @@ class FoodBeverageAdapter(
 
             val dialog = AlertDialog.Builder(context)
                 .setTitle(context.getString(R.string.food_enter_quantity))
-                .setMessage(context.getString(R.string.food_max_available, item.stock))
                 .setView(container)
                 .setPositiveButton("OK", null)
                 .setNegativeButton("Cancel", null)

@@ -20,6 +20,9 @@ class BookingRepositoryRemoteImpl @Inject constructor(
     @ApplicationContext private val context: Context
 ) : BookingRepository {
 
+    // Simple in-memory storage to track seats held by the current user across screen transitions
+    private val localHeldSeatsStore = mutableMapOf<String, List<String>>()
+
     override fun getSeats(showtimeId: String): Flow<SeatMapData> = flow {
         try {
             val response = bookingApi.getSeats(showtimeId)
@@ -68,6 +71,7 @@ class BookingRepositoryRemoteImpl @Inject constructor(
         val payload = HoldSeatsRequest(seatIds)
         val response = bookingApi.holdSeats(showtimeId, payload)
         if (response.isSuccessful) {
+            saveLocalHeldSeats(showtimeId, seatIds)
             emit(Unit)
         } else if (response.code() == 409) {
             throw Exception("CONFLICT")
@@ -81,11 +85,22 @@ class BookingRepositoryRemoteImpl @Inject constructor(
         val payload = HoldSeatsRequest(seatIds)
         val response = bookingApi.releaseSeats(showtimeId, payload)
         if (response.isSuccessful) {
+            clearLocalHeldSeats(showtimeId)
             emit(Unit)
         } else {
             val errorMsg = response.errorBody()?.string() ?: context.getString(R.string.error_release_failed)
             throw Exception(parseErrorMessage(errorMsg))
         }
+    }
+
+    override fun getLocalHeldSeats(showtimeId: String): List<String> = localHeldSeatsStore[showtimeId] ?: emptyList()
+
+    override fun saveLocalHeldSeats(showtimeId: String, seatIds: List<String>) {
+        localHeldSeatsStore[showtimeId] = seatIds
+    }
+
+    override fun clearLocalHeldSeats(showtimeId: String) {
+        localHeldSeatsStore.remove(showtimeId)
     }
 
     private fun parseErrorMessage(raw: String): String {

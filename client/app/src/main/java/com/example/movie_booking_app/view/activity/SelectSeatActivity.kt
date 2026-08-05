@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -44,7 +45,19 @@ class SelectSeatActivity : BaseActivity() {
         setupRecyclerViews()
         setupLegend()
         setupListeners()
+        setupSystemBackHandling()
         observeViewModel()
+    }
+
+    private fun setupSystemBackHandling() {
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (viewModel.uiState.value == SeatingUiState.HELD) {
+                    viewModel.releaseCurrentHold()
+                }
+                finish()
+            }
+        })
     }
 
     private fun setupLegend() {
@@ -82,10 +95,7 @@ class SelectSeatActivity : BaseActivity() {
 
     private fun setupListeners() {
         binding.ivBack.setOnClickListener {
-            if (viewModel.uiState.value == SeatingUiState.HELD) {
-                viewModel.releaseCurrentHold()
-            }
-            finish()
+            onBackPressedDispatcher.onBackPressed()
         }
         
         binding.btnContinue.setOnClickListener {

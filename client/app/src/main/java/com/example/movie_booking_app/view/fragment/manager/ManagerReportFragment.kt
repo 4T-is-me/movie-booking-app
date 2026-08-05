@@ -149,7 +149,6 @@ class ManagerReportFragment : Fragment() {
         displayGrowth(binding.txtTotalTicketsGrowth, data.growth.totalTickets)
 
         binding.txtAvgTicket.text = formatVND(data.totalImportCost.toLong())
-        Log.d("test", data.totalImportCost.toString())
         displayGrowth(binding.txtAvgTicketGrowth, data.growth.totalImportCost)
     }
 

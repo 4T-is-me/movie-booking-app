@@ -74,7 +74,9 @@
                 android:fontFamily="sans-serif"
                 android:textColor="@color/hint_gray"
                 android:textSize="10sp"
-                tools:text="In stock: 15" />
+                android:visibility="gone"
+                tools:text="In stock: 15"
+                tools:visibility="visible" />
         </LinearLayout>
 
         <LinearLayout

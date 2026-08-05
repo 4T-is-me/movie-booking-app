@@ -45,7 +45,6 @@ class StaffRatingViewModel @Inject constructor(
                 repository.getMyRatings().collect { response ->
                     if (response != null && response.success == true) {
                         val items = response.data ?: emptyList()
-                        Log.d("StaffRating", "Data loaded: ${items.size} items")
                         _ratings.value = items
                         
                         if (items.isNotEmpty()) {

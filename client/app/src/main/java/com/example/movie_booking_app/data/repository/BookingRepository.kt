@@ -11,4 +11,9 @@ interface BookingRepository {
     fun getScoreHistory(): Flow<ScoreHistoryBaseResponse>
     fun holdSeats(showtimeId: String, seatIds: List<String>): Flow<Unit>
     fun releaseSeats(showtimeId: String, seatIds: List<String>): Flow<Unit>
+
+    // Persistence for held seats within the same app session to solve the "red seat on return" issue
+    fun getLocalHeldSeats(showtimeId: String): List<String>
+    fun saveLocalHeldSeats(showtimeId: String, seatIds: List<String>)
+    fun clearLocalHeldSeats(showtimeId: String)
 }

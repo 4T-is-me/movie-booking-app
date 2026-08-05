@@ -348,11 +348,11 @@
     <color name="cinema_text_muted">#64748B</color>
 
     <color name="color_red">#F43F5E</color>
-    <color name="color_green">#EAB308</color>
+    <color name="color_green">#10B981</color>
 
     <!-- Badge status -->
     <color name="bg_pending_badge">#1AF5C518</color>
-    <color name="bg_approved_badge">#1AEAB308</color>
+    <color name="bg_approved_badge">#1A10B981</color>
     <color name="bg_rejected_badge">#1AF43F5E</color>
 
     <!--  dialog  -->

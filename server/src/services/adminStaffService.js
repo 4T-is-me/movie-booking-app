@@ -152,7 +152,9 @@ export const createStaff = async (accountData, staffData) => {
         const roleDoc = await Role.findOne({
             $or: [
                 { name: { $regex: new RegExp(`^${lookupName}$`, 'i') } },
-                { roleName: { $regex: new RegExp(`^${lookupName}$`, 'i') } }
+                { roleName: { $regex: new RegExp(`^${lookupName}$`, 'i') } },
+                { name: { $regex: new RegExp(`^${role}$`, 'i') } },
+                { roleName: { $regex: new RegExp(`^${role}$`, 'i') } }
             ]
         }).lean();
         if (!roleDoc) {
@@ -165,19 +167,21 @@ export const createStaff = async (accountData, staffData) => {
             throw new ApiError(StatusCodes.BAD_REQUEST, 'Role does not exist in the system.');
         }
         const rName = roleDoc.roleName || roleDoc.name || '';
-        if (rName.toLowerCase() !== constants.ROLES.EMPLOYEE.toLowerCase() && rName.toLowerCase() !== constants.ROLES.MANAGER.toLowerCase()) {
-            throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid role. Only Staff (Employee) or Manager are accepted.');
+        if (rName.toLowerCase() !== constants.ROLES.EMPLOYEE.toLowerCase() && 
+            rName.toLowerCase() !== constants.ROLES.STAFF.toLowerCase() && 
+            rName.toLowerCase() !== constants.ROLES.MANAGER.toLowerCase()) {
+            throw new ApiError(StatusCodes.BAD_REQUEST, 'Invalid role. Only Staff (Employee/Staff) or Manager are accepted.');
         }
         targetRoleId = roleDoc._id;
     } else {
         const roleDoc = await Role.findOne({
             $or: [
-                { name: 'Employee' },
-                { roleName: 'Employee' }
+                { name: { $regex: /^(Employee|Staff)$/i } },
+                { roleName: { $regex: /^(Employee|Staff)$/i } }
             ]
         }).lean();
         if (!roleDoc) {
-            throw new ApiError(StatusCodes.BAD_REQUEST, 'Default role for Staff (Employee) not found.');
+            throw new ApiError(StatusCodes.BAD_REQUEST, 'Default role for Staff (Employee/Staff) not found.');
         }
         targetRoleId = roleDoc._id;
     }
@@ -254,7 +258,6 @@ export const createStaff = async (accountData, staffData) => {
                 fullName: staffData.fullName,
                 phoneNumber: staffData.phone,
                 identityCard: staffData.identityCard,
-                salary: staffData.salary,
                 revenueTarget: 100000000, // Default revenue target for new managers
                 startDate: staffData.startDate
             });
@@ -414,7 +417,9 @@ export const updateStaffRole = async (staffId, { role, roleId }) => {
         const roleDoc = await Role.findOne({
             $or: [
                 { name: { $regex: new RegExp(`^${lookupName}$`, 'i') } },
-                { roleName: { $regex: new RegExp(`^${lookupName}$`, 'i') } }
+                { roleName: { $regex: new RegExp(`^${lookupName}$`, 'i') } },
+                { name: { $regex: new RegExp(`^${role}$`, 'i') } },
+                { roleName: { $regex: new RegExp(`^${role}$`, 'i') } }
             ]
         }).lean();
         if (!roleDoc) {
@@ -429,6 +434,7 @@ export const updateStaffRole = async (staffId, { role, roleId }) => {
         const rName = roleDoc.roleName || roleDoc.name || '';
         if (
             rName.toLowerCase() !== constants.ROLES.EMPLOYEE.toLowerCase() &&
+            rName.toLowerCase() !== constants.ROLES.STAFF.toLowerCase() &&
             rName.toLowerCase() !== constants.ROLES.MANAGER.toLowerCase() &&
             rName.toLowerCase() !== constants.ROLES.ADMIN.toLowerCase()
         ) {

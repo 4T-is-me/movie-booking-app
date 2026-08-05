@@ -118,7 +118,6 @@ class AdminStaffViewModel @Inject constructor(
                             phone = dbStaff.phone ?: getString(R.string.user_name_placeholder),
                             address = dbStaff.address ?: getString(R.string.user_name_placeholder),
                             position = dbStaff.position ?: getString(R.string.user_name_placeholder),
-                            salary = dbStaff.salary?.toDouble() ?: 0.0,
                             cinemaId = dbStaff.cinemaId ?: "",
                             startDate = dbStaff.startDate ?: "",
                             kpiPoints = dbStaff.kpiPoints ?: 0,

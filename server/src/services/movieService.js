@@ -17,11 +17,9 @@ export const getMovies = async ({ status, page = 1, limit = 10, q }) => {
     }
 
     // Filter by screening status based on releaseDate / endDate / status:
-    //   now_showing  → releaseDate <= today AND (endDate >= today OR endDate is null)
+    //   active/showing/now_showing  → releaseDate <= today AND (endDate >= today OR endDate is null)
     //   coming_soon  → status === 'coming_soon' (endDate not set)
-    if (status === 'now_showing') {
-        const tomorrow = new Date(today);
-        tomorrow.setDate(tomorrow.getDate() + 1);
+    if (status === 'now_showing' || status === 'showing' || status === 'active') {
         conditions.push({
             releaseDate: { $lte: today },
             $or: [
