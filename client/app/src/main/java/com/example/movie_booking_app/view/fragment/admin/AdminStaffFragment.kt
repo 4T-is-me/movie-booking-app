@@ -159,7 +159,6 @@ class AdminStaffFragment : Fragment() {
         dialogBinding.tvDetailGender.text = staff.gender ?: getString(R.string.user_name_placeholder)
         dialogBinding.tvDetailIdentityCard.text = staff.identityCard ?: getString(R.string.user_name_placeholder)
         dialogBinding.tvDetailAddress.text = staff.address ?: getString(R.string.user_name_placeholder)
-        dialogBinding.tvDetailSalary.text = staff.salary?.let { String.format(Locale.getDefault(), getString(R.string.admin_currency_format), it) } ?: getString(R.string.user_name_placeholder)
         dialogBinding.tvDetailStartDate.text = staff.startDate?.take(10) ?: getString(R.string.user_name_placeholder)
         dialogBinding.tvDetailKpi.text = staff.kpiPoints?.toString() ?: "0"
         dialogBinding.tvDetailTicketSold.text = staff.ticketSold?.toString() ?: "0"

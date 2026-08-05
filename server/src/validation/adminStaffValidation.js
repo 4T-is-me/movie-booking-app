@@ -15,7 +15,6 @@ const createStaff = async (req, res, next) => {
         position: Joi.string().required().trim().strict(),
         phone: Joi.string().pattern(/^0\d{9}$/).required().trim().strict(),
         identityCard: Joi.string().required().length(12).pattern(/^[0-9]+$/).trim().strict(),
-        salary: Joi.number().required().min(0),
         startDate: Joi.date().required(),
         address: Joi.string().trim().strict().allow('', null)
     }).oxor('role', 'roleId');
@@ -37,7 +36,6 @@ const updateStaff = async (req, res, next) => {
         address: Joi.string().trim().strict().allow('', null),
         cinemaId: Joi.string().pattern(/^[0-9a-fA-F]{24}$/).trim().strict(),
         position: Joi.string().trim().strict(),
-        salary: Joi.number().min(0),
         startDate: Joi.date(),
         status: Joi.number().valid(0, 1)
     });

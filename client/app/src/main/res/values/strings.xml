@@ -1934,4 +1934,17 @@
     <string name="menu_edit_staff">Edit Staff</string>
     <string name="content_desc_decrease_qty">Decrease quantity</string>
     <string name="content_desc_increase_qty">Increase quantity</string>
+
+    <!-- Admin Staff Form Field Labels -->
+    <string name="form_username">Username (*)</string>
+    <string name="form_password">Password (*)</string>
+    <string name="form_full_name">Full Name (*)</string>
+    <string name="form_email">Email (*)</string>
+    <string name="form_phone_number">Phone Number (*)</string>
+    <string name="form_identity_card">Identity Card (12 digits) (*)</string>
+    <string name="form_role">Role (*)</string>
+    <string name="form_cinema">Cinema (*)</string>
+    <string name="form_position">Position (*)</string>
+    <string name="form_start_date">Start Date (*)</string>
+    <string name="form_address">Address</string>
 </resources>

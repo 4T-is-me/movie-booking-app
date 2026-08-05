@@ -7,7 +7,6 @@ const staffSchema = new mongoose.Schema({
     position: {type: String, required: true},
     phone: {type: String, required: true},
     identityCard: {type: String, required: true, unique: true},
-    salary: {type: Number, required: true},
     kpiPoints: {type: Number, default: 0},
     ticketSold: {type: Number, default: 0},
     rating: {type: Number, default: 0},

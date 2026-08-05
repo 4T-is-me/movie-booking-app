@@ -68,11 +68,7 @@ class AdminStaffActivity : BaseActivity() {
                 binding.edtIdentityCard.setText(staff.identityCard)
                 binding.edtPosition.setText(staff.position)
                 
-                // Fix scientific notation bug (e.g. 1.5E7) by using BigDecimal toPlainString()
-                val salaryText = staff.salary?.let { 
-                    BigDecimal.valueOf(it).toPlainString().replace(Regex("\\.0$"), "")
-                } ?: ""
-                binding.edtSalary.setText(salaryText)
+
 
                 binding.edtStartDate.setText(staff.startDate?.take(10) ?: "")
                 binding.edtAddress.setText(staff.address)
@@ -232,14 +228,13 @@ class AdminStaffActivity : BaseActivity() {
         val identityCard = binding.edtIdentityCard.text.toString().trim()
         val role = binding.actvRole.text.toString().trim()
         val position = binding.edtPosition.text.toString().trim()
-        val salaryStr = binding.edtSalary.text.toString().trim()
         val startDate = binding.edtStartDate.text.toString().trim()
 
         val isManager = role.equals(RoleConstants.MANAGER, ignoreCase = true)
         val finalPosition = if (isManager) RoleConstants.MANAGER else position
 
         if (fullName.isEmpty() || email.isEmpty() || phone.isEmpty() || identityCard.isEmpty() ||
-            role.isEmpty() || (!isManager && position.isEmpty()) || salaryStr.isEmpty() || startDate.isEmpty() ||
+            role.isEmpty() || (!isManager && position.isEmpty()) || startDate.isEmpty() ||
             selectedCinemaId == null) {
             Toast.makeText(this, getString(R.string.auto_str_please_fill_in_all_required_fi), Toast.LENGTH_SHORT).show()
             return
@@ -260,11 +255,7 @@ class AdminStaffActivity : BaseActivity() {
             return
         }
 
-        val salary = salaryStr.toDoubleOrNull()
-        if (salary == null || salary < 0) {
-            Toast.makeText(this, getString(R.string.auto_str_invalid_salary_amount), Toast.LENGTH_SHORT).show()
-            return
-        }
+
 
         if (isEditMode) {
             val staffId = currentStaff?.id
@@ -282,7 +273,6 @@ class AdminStaffActivity : BaseActivity() {
                 address = address.ifEmpty { null },
                 cinemaId = selectedCinemaId!!,
                 position = finalPosition,
-                salary = salary,
                 startDate = startDate,
                 status = statusVal
             )
@@ -317,7 +307,6 @@ class AdminStaffActivity : BaseActivity() {
                 position = finalPosition,
                 phone = phone,
                 identityCard = identityCard,
-                salary = salary,
                 startDate = startDate,
                 address = address.ifEmpty { null }
             )
