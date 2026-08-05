@@ -131,7 +131,7 @@ class AddCinemaRoomViewModel @Inject constructor(
                     isPrefilling = false
                 }
             } catch (e: Exception) {
-                _errorMessage.value = e.message ?: "Failed to load room details"
+                _errorMessage.value = e.message ?: context.getString(R.string.error_load_room_details)
             } finally {
                 _isLoading.value = false
             }
@@ -191,10 +191,10 @@ class AddCinemaRoomViewModel @Inject constructor(
                 if (success) {
                     _isSuccess.value = true
                 } else {
-                    _errorMessage.value = if (currentRoomId != null) "Unable to update cinema room. Make sure the name is unique." else "Unable to create cinema room. Make sure the name is unique."
+                    _errorMessage.value = if (currentRoomId != null) context.getString(R.string.error_update_room_unique) else context.getString(R.string.error_create_room_unique)
                 }
             } catch (e: Exception) {
-                _errorMessage.value = e.message ?: "Failed to save cinema room"
+                _errorMessage.value = e.message ?: context.getString(R.string.error_save_cinema_room)
             } finally {
                 _isLoading.value = false
             }

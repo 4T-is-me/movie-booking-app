@@ -149,7 +149,7 @@ class CinemaRoomsFragment : Fragment() {
             viewModel.filteredRooms.collectLatest { list ->
                 adapter.submitList(list)
                 // Set the summary card count dynamically based on the current dataset
-                tvTotalRooms.text = if (list.size == 1) "1 room" else "${list.size} rooms"
+                tvTotalRooms.text = if (list.size == 1) getString(R.string.one_room) else getString(R.string.rooms_format, list.size)
                 
                 var total = 0
                 var regular = 0

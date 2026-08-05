@@ -34,19 +34,14 @@ class MyLeaveRequestsAdapter(
         fun bind(item: LeaveRequestResponse) {
             binding.tvLeaveDate.text = DateUtils.formatMovieDate(item.workDate)
             binding.tvLeaveShift.text = "${item.shift}"
-            binding.tvLeaveReason.text = item.reason ?: "No reason provided"
+            binding.tvLeaveReason.text = item.reason ?: context.getString(R.string.leave_no_reason)
 
             when (item.status) {
                 Constants.LeaveStatus.PENDING -> {
                     val textColor = ContextCompat.getColor(context, R.color.color_gold)
                     val bgColor = ContextCompat.getColor(context, R.color.bg_pending_badge)
 
-                    setDynamicBadge(
-                        binding.tvLeaveStatusBadge,
-                        Constants.LeaveStatus.PENDING,
-                        textColor,
-                        bgColor
-                    )
+                    setDynamicBadge(binding.tvLeaveStatusBadge, context.getString(R.string.status_pending), textColor, bgColor)
 
                     binding.vStatusIndicator.setBackgroundColor(textColor)
 
@@ -61,12 +56,7 @@ class MyLeaveRequestsAdapter(
                     val textColor = ContextCompat.getColor(context, R.color.color_green)
                     val bgColor = ContextCompat.getColor(context, R.color.bg_approved_badge)
 
-                    setDynamicBadge(
-                        binding.tvLeaveStatusBadge,
-                        Constants.LeaveStatus.APPROVED,
-                        textColor,
-                        bgColor
-                    )
+                    setDynamicBadge(binding.tvLeaveStatusBadge, context.getString(R.string.status_approved), textColor, bgColor)
 
                     binding.vStatusIndicator.setBackgroundColor(textColor)
 
@@ -78,20 +68,14 @@ class MyLeaveRequestsAdapter(
                     val textColor = ContextCompat.getColor(context, R.color.color_red)
                     val bgColor = ContextCompat.getColor(context, R.color.bg_rejected_badge)
 
-                    setDynamicBadge(
-                        binding.tvLeaveStatusBadge,
-                        Constants.LeaveStatus.REJECTED,
-                        textColor,
-                        bgColor
-                    )
+                    setDynamicBadge(binding.tvLeaveStatusBadge, context.getString(R.string.status_rejected), textColor, bgColor)
 
                     // Update left vertical indicator color for Rejected status
                     binding.vStatusIndicator.setBackgroundColor(textColor)
 
                     binding.layoutPendingActions.visibility = View.GONE
                     binding.layoutRejectReason.visibility = View.VISIBLE
-                    binding.tvRejectReason.text =
-                        item.rejectReason ?: Constants.LeaveStatus.DEFAULT_NO_FEEDBACK
+                    binding.tvRejectReason.text = item.rejectReason ?: context.getString(R.string.leave_no_feedback)
                     binding.tvRejectReason.setTextColor(textColor)
                 }
 
@@ -99,12 +83,7 @@ class MyLeaveRequestsAdapter(
                     val textColor = ContextCompat.getColor(context, R.color.white)
                     val bgColor = ContextCompat.getColor(context, R.color.auto_color_94A3B8)
 
-                    setDynamicBadge(
-                        binding.tvLeaveStatusBadge,
-                        item.status ?: Constants.UNKNOWN,
-                        textColor,
-                        bgColor
-                    )
+                    setDynamicBadge(binding.tvLeaveStatusBadge, item.status ?: context.getString(R.string.status_unknown), textColor, bgColor)
                     binding.vStatusIndicator.setBackgroundColor(textColor)
 
                     binding.layoutPendingActions.visibility = View.GONE

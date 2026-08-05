@@ -6,7 +6,10 @@ import com.example.movie_booking_app.data.model.request.AdminPromotionRequest
 import com.example.movie_booking_app.data.model.response.AdminPromotion
 import com.example.movie_booking_app.data.repository.admin.AdminRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+import android.content.Context
+import com.example.movie_booking_app.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +28,8 @@ data class AdminPromotionUiState(
 
 @HiltViewModel
 class AdminPromotionViewModel @Inject constructor(
-    private val repository: AdminRepository
+    private val repository: AdminRepository,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AdminPromotionUiState())
@@ -56,7 +60,7 @@ class AdminPromotionViewModel @Inject constructor(
                                 error = null
                             )
                         } else {
-                            val errorMsg = response.errorBody()?.string() ?: "Failed to load promotions"
+                            val errorMsg = response.errorBody()?.string() ?: context.getString(R.string.failed_to_load_promotions)
                             _uiState.value = _uiState.value.copy(
                                 isLoading = false,
                                 error = errorMsg
@@ -67,7 +71,7 @@ class AdminPromotionViewModel @Inject constructor(
                     withContext(Dispatchers.Main) {
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,
-                            error = e.localizedMessage ?: "Network connection error"
+                            error = e.localizedMessage ?: context.getString(R.string.network_connection_error)
                         )
                     }
                 }
@@ -85,18 +89,18 @@ class AdminPromotionViewModel @Inject constructor(
                         _uiState.value = _uiState.value.copy(isLoading = false)
                         if (response.isSuccessful) {
                             _actionSuccess.emit(true)
-                            _actionMessage.emit("Promotion added successfully!")
+                            _actionMessage.emit(context.getString(R.string.promotion_added_successfully))
                             loadPromotions()
                         } else {
                             _actionSuccess.emit(false)
-                            _actionMessage.emit(response.errorBody()?.string() ?: "Failed to add promotion")
+                            _actionMessage.emit(response.errorBody()?.string() ?: context.getString(R.string.failed_to_add_promotion))
                         }
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
                         _uiState.value = _uiState.value.copy(isLoading = false)
                         _actionSuccess.emit(false)
-                        _actionMessage.emit(e.localizedMessage ?: "Network connection error")
+                        _actionMessage.emit(e.localizedMessage ?: context.getString(R.string.network_connection_error))
                     }
                 }
             }
@@ -113,18 +117,18 @@ class AdminPromotionViewModel @Inject constructor(
                         _uiState.value = _uiState.value.copy(isLoading = false)
                         if (response.isSuccessful) {
                             _actionSuccess.emit(true)
-                            _actionMessage.emit("Promotion updated successfully!")
+                            _actionMessage.emit(context.getString(R.string.promotion_updated_successfully))
                             loadPromotions()
                         } else {
                             _actionSuccess.emit(false)
-                            _actionMessage.emit(response.errorBody()?.string() ?: "Failed to update promotion")
+                            _actionMessage.emit(response.errorBody()?.string() ?: context.getString(R.string.failed_to_update_promotion))
                         }
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
                         _uiState.value = _uiState.value.copy(isLoading = false)
                         _actionSuccess.emit(false)
-                        _actionMessage.emit(e.localizedMessage ?: "Network connection error")
+                        _actionMessage.emit(e.localizedMessage ?: context.getString(R.string.network_connection_error))
                     }
                 }
             }
@@ -141,18 +145,18 @@ class AdminPromotionViewModel @Inject constructor(
                         _uiState.value = _uiState.value.copy(isLoading = false)
                         if (response.isSuccessful) {
                             _actionSuccess.emit(true)
-                            _actionMessage.emit("Promotion deleted successfully!")
+                            _actionMessage.emit(context.getString(R.string.promotion_deleted_successfully))
                             loadPromotions()
                         } else {
                             _actionSuccess.emit(false)
-                            _actionMessage.emit(response.errorBody()?.string() ?: "Failed to delete promotion")
+                            _actionMessage.emit(response.errorBody()?.string() ?: context.getString(R.string.failed_to_delete_promotion))
                         }
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
                         _uiState.value = _uiState.value.copy(isLoading = false)
                         _actionSuccess.emit(false)
-                        _actionMessage.emit(e.localizedMessage ?: "Network connection error")
+                        _actionMessage.emit(e.localizedMessage ?: context.getString(R.string.network_connection_error))
                     }
                 }
             }

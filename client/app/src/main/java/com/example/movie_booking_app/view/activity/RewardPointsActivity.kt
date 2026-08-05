@@ -134,7 +134,7 @@ class RewardPointsActivity : AppCompatActivity() {
 
         when (memberShipRank.lowercase().trim()) {
             Constants.Rank.GOLD -> {
-                rankText = Constants.Rank.GOLD_TEXT
+                rankText = getString(R.string.reward_rank_gold)
                 colors = intArrayOf(
                     ContextCompat.getColor(this, R.color.rank_gold_start),
                     ContextCompat.getColor(this, R.color.rank_gold_middle),
@@ -142,12 +142,12 @@ class RewardPointsActivity : AppCompatActivity() {
                 )
 
                 progressPercentage = 100
-                ratioText = Constants.Rank.MAX_RANK_RATIO
-                progressLabelText = Constants.Rank.PROGRESS_MAX_LABEL
-                nextTierLeftText = Constants.Rank.NEXT_TIER_GOLD_THANK
+                ratioText = getString(R.string.reward_max_rank)
+                progressLabelText = getString(R.string.reward_max_tier_msg)
+                nextTierLeftText = getString(R.string.reward_thanks_gold)
             }
             Constants.Rank.SILVER -> {
-                rankText = Constants.Rank.SILVER_TEXT
+                rankText = getString(R.string.reward_rank_silver)
                 colors = intArrayOf(
                     ContextCompat.getColor(this, R.color.rank_silver_start),
                     ContextCompat.getColor(this, R.color.rank_silver_middle),
@@ -156,14 +156,14 @@ class RewardPointsActivity : AppCompatActivity() {
 
                 progressPercentage = ((totalSpent / Constants.RANK_GOLD) * 100).toInt()
 
-                ratioText = String.format("%,d / %,d", totalSpentLong, Constants.RANK_GOLD.toLong())
+                ratioText = getString(R.string.reward_ratio_format, totalSpentLong, Constants.RANK_GOLD.toLong())
                 val moneyLeft = Constants.RANK_GOLD - totalSpentLong
 
-                progressLabelText = Constants.Rank.PROGRESS_TO_GOLD
-                nextTierLeftText = String.format(Constants.Rank.NEXT_TIER_GOLD_HINT, moneyLeft)
+                progressLabelText = getString(R.string.reward_progress_to_gold)
+                nextTierLeftText = getString(R.string.reward_more_to_gold, moneyLeft)
             }
             else -> { // Default to Bronze
-                rankText = Constants.Rank.BRONZE_TEXT
+                rankText = getString(R.string.reward_rank_bronze)
                 colors = intArrayOf(
                     ContextCompat.getColor(this, R.color.rank_bronze_start),
                     ContextCompat.getColor(this, R.color.rank_bronze_middle),
@@ -172,11 +172,11 @@ class RewardPointsActivity : AppCompatActivity() {
 
                 progressPercentage = ((totalSpent / Constants.RANK_SILVER) * 100).toInt()
 
-                ratioText = String.format("%,d / %,d", totalSpentLong, Constants.RANK_SILVER.toLong())
+                ratioText = getString(R.string.reward_ratio_format, totalSpentLong, Constants.RANK_SILVER.toLong())
                 val moneyLeft = Constants.RANK_SILVER - totalSpentLong
 
-                progressLabelText = Constants.Rank.PROGRESS_TO_SILVER
-                nextTierLeftText = String.format(Constants.Rank.NEXT_TIER_SILVER_HINT, moneyLeft)
+                progressLabelText = getString(R.string.reward_progress_to_silver)
+                nextTierLeftText = getString(R.string.reward_more_to_silver, moneyLeft)
             }
         }
 

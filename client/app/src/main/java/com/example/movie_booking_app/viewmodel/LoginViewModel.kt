@@ -6,6 +6,9 @@ import com.example.movie_booking_app.data.model.request.LoginRequest
 import com.example.movie_booking_app.data.repository.AuthRepository
 import com.example.movie_booking_app.utils.Constants
 import dagger.hilt.android.lifecycle.HiltViewModel
+import android.content.Context
+import com.example.movie_booking_app.R
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,6 +25,7 @@ sealed class LoginUiState {
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val repository: AuthRepository
 ) : ViewModel() {
 
@@ -53,12 +57,12 @@ class LoginViewModel @Inject constructor(
                     val errorStr = response.errorBody()?.string()
                     val message = try {
                         if (errorStr != null && errorStr.trim().startsWith("{")) {
-                            JSONObject(errorStr).optString("message", "Invalid credentials")
+                            JSONObject(errorStr).optString("message", context.getString(R.string.error_invalid_credentials))
                         } else {
-                            "Invalid username or password"
+                            context.getString(R.string.error_invalid_username_password)
                         }
                     } catch (e: Exception) {
-                        "Invalid username or password"
+                        context.getString(R.string.error_invalid_username_password)
                     }
                     _uiState.value = LoginUiState.Error(message)
                 }
@@ -93,12 +97,12 @@ class LoginViewModel @Inject constructor(
                     val errorStr = response.errorBody()?.string()
                     val message = try {
                         if (errorStr != null && errorStr.trim().startsWith("{")) {
-                            JSONObject(errorStr).optString("message", "Google login failed")
+                            JSONObject(errorStr).optString("message", context.getString(R.string.error_google_login_failed))
                         } else {
-                            "Google login failed"
+                            context.getString(R.string.error_google_login_failed)
                         }
                     } catch (e: Exception) {
-                        "Google login failed"
+                        context.getString(R.string.error_google_login_failed)
                     }
                     _uiState.value = LoginUiState.Error(message)
                 }

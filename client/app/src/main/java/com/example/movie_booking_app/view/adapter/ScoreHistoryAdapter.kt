@@ -44,13 +44,13 @@ class ScoreHistoryAdapter(private var list: List<ScoreHistory> = emptyList()) : 
             val isDeduct = item.usedPoints > 0 || item.reason == "USE_SCORE"
 
             if (isDeduct) {
-                tvPointsValue.text = "-${item.usedPoints} pts"
+                tvPointsValue.text = holder.itemView.context.getString(R.string.used_points_format, item.usedPoints)
                 tvPointsValue.setTextColor(deduct)
                 iconContainer.setCardBackgroundColor(backgroundDeduct)
                 ivHistoryIcon.setImageResource(R.drawable.ic_remove)
                 ivHistoryIcon.setColorFilter(iconDeduct)
             } else {
-                tvPointsValue.text = "+${item.earnedPoints} pts"
+                tvPointsValue.text = holder.itemView.context.getString(R.string.earned_points_format, item.earnedPoints)
                 tvPointsValue.setTextColor(textPlus)
                 iconContainer.setCardBackgroundColor(backgroundPlus)
                 ivHistoryIcon.setImageResource(R.drawable.ic_add)

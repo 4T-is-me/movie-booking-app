@@ -53,15 +53,15 @@ class MyTicketAdapter(
             binding.tvRoomName.text = item.roomName
             
             val seatList = item.seats ?: emptyList()
-            binding.tvSeats.text = "Seats: ${seatList.joinToString(", ").ifEmpty { "-" }}"
-            binding.tvBookingCode.text = "Booking ID: ${item.bookingCode}"
+            binding.tvSeats.text = itemView.context.getString(R.string.ticket_seats, seatList.joinToString(", ").ifEmpty { "-" })
+            binding.tvBookingCode.text = itemView.context.getString(R.string.ticket_booking_id, item.bookingCode)
 
             // Format Vietnamese currency
             val symbols = DecimalFormatSymbols(Locale("vi", "VN")).apply {
                 groupingSeparator = ','
             }
             val formatter = DecimalFormat("#,###", symbols)
-            binding.tvTotalPaid.text = "Total Paid: ${formatter.format(item.finalAmount)} ₫"
+            binding.tvTotalPaid.text = itemView.context.getString(R.string.ticket_total_paid, formatter.format(item.finalAmount))
 
             // Load Poster Image
             val url = item.poster

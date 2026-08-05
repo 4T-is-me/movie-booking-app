@@ -44,7 +44,7 @@ class BookingDetailViewModel @Inject constructor(
                         _error.value = context.getString(R.string.auto_str_failed_to_load_booking_details)
                     }
                 } else {
-                    _error.value = "Server returned an error: ${response.code()}"
+                    _error.value = context.getString(R.string.error_server_returned, response.code().toString())
                 }
             }
         }

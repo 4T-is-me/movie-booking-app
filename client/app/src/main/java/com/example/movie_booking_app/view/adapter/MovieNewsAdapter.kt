@@ -43,11 +43,11 @@ class MovieNewsAdapter(
                 news.date
             }
             binding.tvPostMeta.text = "$displayDate • 🌐"
-            binding.tvAuthorName.text = news.authorName ?: "Cinema Club ✔️"
+            binding.tvAuthorName.text = news.authorName ?: itemView.context.getString(R.string.news_author_verified)
 
             // Author Avatar loading
             val avatarUrl = news.authorAvatar ?: ""
-            val authorName = news.authorName ?: "Cinema Club"
+            val authorName = news.authorName ?: itemView.context.getString(R.string.news_author_default)
             val fallbackRes = NameFormatter.getFallbackAvatarRes(authorName)
 
             if (avatarUrl.isNotEmpty()) {
@@ -98,7 +98,7 @@ class MovieNewsAdapter(
 
             // Real Social tallies from DB
             binding.tvLikesTally.text = "👍❤️ ${news.likesCount}"
-            binding.tvCommentsTally.text = "${news.commentsCount} comments"
+            binding.tvCommentsTally.text = itemView.context.getString(R.string.news_comments_count, news.commentsCount)
 
             // Click listener for details redirection
             itemView.setOnClickListener {

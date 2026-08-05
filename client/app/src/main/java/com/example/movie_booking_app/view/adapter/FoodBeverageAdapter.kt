@@ -111,7 +111,7 @@ class FoodBeverageAdapter(
             }
 
             val til = TextInputLayout(context).apply {
-                hint = "Quantity (Max: ${item.stock})"
+                hint = context.getString(R.string.food_quantity_max, item.stock)
                 errorIconDrawable = null
                 boxBackgroundMode = TextInputLayout.BOX_BACKGROUND_OUTLINE
                 setBoxCornerRadii(12f, 12f, 12f, 12f)
@@ -127,8 +127,8 @@ class FoodBeverageAdapter(
             container.addView(til)
 
             val dialog = AlertDialog.Builder(context)
-                .setTitle("Enter Quantity")
-                .setMessage("Max available: ${item.stock}")
+                .setTitle(context.getString(R.string.food_enter_quantity))
+                .setMessage(context.getString(R.string.food_max_available, item.stock))
                 .setView(container)
                 .setPositiveButton("OK", null)
                 .setNegativeButton("Cancel", null)
@@ -144,7 +144,7 @@ class FoodBeverageAdapter(
                 override fun afterTextChanged(s: Editable?) {
                     val value = s.toString().toIntOrNull() ?: 0
                     if (value > item.stock) {
-                        til.error = "Exceeds max stock (${item.stock})"
+                        til.error = context.getString(R.string.food_exceeds_stock, item.stock)
                         okButton.isEnabled = false
                     } else {
                         til.error = null

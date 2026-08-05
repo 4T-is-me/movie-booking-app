@@ -124,7 +124,7 @@ class AdminCinemasFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.filteredCinemas.collectLatest { list ->
                 adapter.submitList(list)
-                tvTotalCinemas.text = if (list.size == 1) "1 cinema" else "${list.size} cinemas"
+                tvTotalCinemas.text = if (list.size == 1) getString(R.string.one_cinema) else getString(R.string.cinemas_format, list.size)
                 updateUiVisibility(list.isEmpty())
             }
         }

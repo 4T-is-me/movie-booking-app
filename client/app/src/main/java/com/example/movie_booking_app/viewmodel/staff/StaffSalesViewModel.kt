@@ -310,7 +310,7 @@ class StaffSalesViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 _verifiedMember.value = null
-                _memberVerificationError.value = e.message ?: "System error during verification"
+                _memberVerificationError.value = e.message ?: context.getString(R.string.system_error_verification)
                 _useScore.value = false
                 recalculateTotals()
             } finally {
@@ -370,7 +370,7 @@ class StaffSalesViewModel @Inject constructor(
         val member = _verifiedMember.value
         if (member != null) {
             if (score > member.currentScore) {
-                _scoreError.value = "Insufficient reward points (Available: ${member.currentScore} pts)"
+                _scoreError.value = context.getString(R.string.insufficient_points_format, member.currentScore.toString())
             } else {
                 _scoreError.value = null
             }
@@ -405,7 +405,7 @@ class StaffSalesViewModel @Inject constructor(
             paymentRepository.applyPromotion(code)
                 .catch { exception ->
                     _isApplyingPromo.value = false
-                    _promoError.value = exception.message ?: "Invalid or expired promotion code"
+                    _promoError.value = exception.message ?: context.getString(R.string.invalid_expired_promo)
                     _appliedPromotion.value = null
                     recalculateTotals()
                 }
@@ -413,11 +413,11 @@ class StaffSalesViewModel @Inject constructor(
                     _isApplyingPromo.value = false
                     if (response.success && response.data != null) {
                         _appliedPromotion.value = response.data
-                        _promoSuccessMessage.value = response.message ?: "Promotion applied successfully!"
+                        _promoSuccessMessage.value = response.message ?: context.getString(R.string.promo_applied_successfully)
                         _promoError.value = null
                     } else {
                         _appliedPromotion.value = null
-                        _promoError.value = response.message ?: "Invalid coupon code"
+                        _promoError.value = response.message ?: context.getString(R.string.invalid_coupon_code)
                     }
                     recalculateTotals()
                 }
@@ -487,7 +487,7 @@ class StaffSalesViewModel @Inject constructor(
             bookingRepository.holdSeats(showtime.id, seatIds)
                 .catch { exception ->
                     _isCheckingOut.value = false
-                    _checkoutError.value = "Hold seat failed: ${exception.message}"
+                    _checkoutError.value = context.getString(R.string.hold_seat_failed_format, exception.message)
                 }
                 .collect {
                     // Seats held successfully, proceed with booking checkout
@@ -507,7 +507,7 @@ class StaffSalesViewModel @Inject constructor(
                     paymentRepository.confirmBooking(request)
                         .catch { checkoutException ->
                             _isCheckingOut.value = false
-                            _checkoutError.value = checkoutException.message ?: "Checkout failed"
+                            _checkoutError.value = checkoutException.message ?: context.getString(R.string.checkout_failed)
                             // Release held seats on failure
                             bookingRepository.releaseSeats(showtime.id, seatIds).collectLatest {}
                         }
@@ -523,13 +523,13 @@ class StaffSalesViewModel @Inject constructor(
                                     _checkoutCode.value = bookingCode
                                     _checkoutSuccess.value = true
                                 } else {
-                                    val message = jsonObject.optString("message", "Checkout failed")
+                                    val message = jsonObject.optString("message", context.getString(R.string.error_checkout_failed))
                                     _checkoutError.value = message
                                     bookingRepository.releaseSeats(showtime.id, seatIds).collectLatest {}
                                 }
                             } catch (e: Exception) {
                                 _checkoutSuccess.value = false
-                                _checkoutError.value = "Response format error: ${e.message}"
+                                _checkoutError.value = context.getString(R.string.error_response_format, e.message)
                                 bookingRepository.releaseSeats(showtime.id, seatIds).collectLatest {}
                             }
                         }

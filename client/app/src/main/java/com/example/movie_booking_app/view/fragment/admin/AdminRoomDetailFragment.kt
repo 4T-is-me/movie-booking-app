@@ -57,7 +57,7 @@ class AdminRoomDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.tvRoomTitle.text = roomName ?: "Seat Layout"
+        binding.tvRoomTitle.text = roomName ?: getString(R.string.seat_layout)
         binding.tvRoomSummary.text = getString(R.string.auto_str_tap_on_seat_to_change_type)
 
         adapter = AdminSeatAdapter(
@@ -72,7 +72,7 @@ class AdminRoomDetailFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.seats.collect { seats ->
                 adapter.submitList(seats)
-                binding.tvRoomSummary.text = "Seat layout · ${seats.size} seats"
+                binding.tvRoomSummary.text = getString(R.string.seat_layout_format, seats.size)
             }
         }
 

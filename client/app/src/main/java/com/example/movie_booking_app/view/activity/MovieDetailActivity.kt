@@ -272,7 +272,7 @@ class MovieDetailActivity : AppCompatActivity() {
                 }
                 launch {
                     viewModel.showtimeError.collect { error ->
-                        error?.let { Toast.makeText(this@MovieDetailActivity, "Showtimes: $it", Toast.LENGTH_SHORT).show() }
+                        error?.let { Toast.makeText(this@MovieDetailActivity, getString(R.string.movie_showtimes_format, it), Toast.LENGTH_SHORT).show() }
                     }
                 }
 

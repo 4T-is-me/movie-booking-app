@@ -50,7 +50,7 @@ class AdminCinemasViewModel @Inject constructor(
                 val list = repository.getCinemas()
                 _cinemas.value = list
             } catch (e: Exception) {
-                _error.value = e.message ?: "Failed to load cinemas"
+                _error.value = e.message ?: context.getString(R.string.error_load_cinemas)
             } finally {
                 _isLoading.value = false
             }
@@ -70,7 +70,7 @@ class AdminCinemasViewModel @Inject constructor(
                     _error.value = context.getString(R.string.auto_str_failed_to_update_status)
                 }
             } catch (e: Exception) {
-                _error.value = e.message ?: "Failed to update status"
+                _error.value = e.message ?: context.getString(R.string.error_update_status)
             } finally {
                 _isLoading.value = false
             }

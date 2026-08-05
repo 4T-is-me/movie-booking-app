@@ -85,7 +85,7 @@ class AdminStaffActivity : BaseActivity() {
                 binding.layoutIdentityCard.alpha = 0.6f
             }
         } else {
-            binding.tvFormTitle.text = "Add New $intentRole"
+            binding.tvFormTitle.text = getString(R.string.admin_staff_add_new, intentRole)
             binding.layoutUsername.visibility = View.VISIBLE
             binding.layoutPassword.visibility = View.VISIBLE
             binding.layoutAddress.visibility = View.VISIBLE

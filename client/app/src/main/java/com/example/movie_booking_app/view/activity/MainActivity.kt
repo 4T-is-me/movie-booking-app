@@ -180,10 +180,10 @@ class MainActivity : BaseActivity() {
     }
 
     private fun setupBottomNav() {
-        binding.btnNavHome.setOnClickListener { navigateToSection( Constants.NAV.HOME) }
-        binding.btnNavMovie.setOnClickListener { navigateToSection("Now Playing") }
-        binding.btnNavTicket.setOnClickListener { navigateToSection( Constants.NAV.TICKET) }
-        binding.btnNavProfile.setOnClickListener { navigateToSection( Constants.NAV.PROFILE) }
+        binding.btnNavHome.setOnClickListener { navigateToSection(Constants.NAV.HOME) }
+        binding.btnNavMovie.setOnClickListener { navigateToSection(Constants.NAV.NOW_PLAYING) }
+        binding.btnNavTicket.setOnClickListener { navigateToSection(Constants.NAV.TICKET) }
+        binding.btnNavProfile.setOnClickListener { navigateToSection(Constants.NAV.PROFILE) }
         binding.fabAiChat.setOnClickListener {
             val intent = Intent(this, ChatActivity::class.java)
             startActivity(intent)

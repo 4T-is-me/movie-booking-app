@@ -5,6 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.movie_booking_app.data.model.request.VerifyOtpRequest
 import com.example.movie_booking_app.data.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import android.content.Context
+import com.example.movie_booking_app.R
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,6 +24,7 @@ sealed class OtpUiState {
 
 @HiltViewModel
 class OtpViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val repository: AuthRepository
 ) : ViewModel() {
 
@@ -39,12 +43,12 @@ class OtpViewModel @Inject constructor(
                     val errorStr = response.errorBody()?.string()
                     val message = try {
                         if (errorStr != null && errorStr.trim().startsWith("{")) {
-                            JSONObject(errorStr).optString("message", "Invalid or expired OTP code")
+                            JSONObject(errorStr).optString("message", context.getString(R.string.error_invalid_otp))
                         } else {
-                            "Invalid or expired OTP code"
+                            context.getString(R.string.error_invalid_otp)
                         }
                     } catch (e: Exception) {
-                        "Invalid or expired OTP code"
+                        context.getString(R.string.error_invalid_otp)
                     }
                     _uiState.value = OtpUiState.Error(message)
                 }

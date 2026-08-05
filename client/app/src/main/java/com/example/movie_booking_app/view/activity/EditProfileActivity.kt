@@ -176,7 +176,7 @@ class EditProfileActivity : AppCompatActivity() {
                     // Handle success state
                     if (state.saveSuccess) {
                         viewModel.resetSaveSuccess()
-                        Snackbar.make(binding.root, "Profile updated successfully.", Snackbar.LENGTH_SHORT).show()
+                        Snackbar.make(binding.root, getString(R.string.profile_update_success), Snackbar.LENGTH_SHORT).show()
                         binding.root.postDelayed({
                             finish()
                         }, 1200)

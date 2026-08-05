@@ -200,7 +200,7 @@ class ManagerReportFragment : Fragment() {
             labels.add(formatChartLabel(item.label, currentReportType))
         }
 
-        val ticketDataSet = LineDataSet(ticketEntries, "Ticket Revenue").apply {
+        val ticketDataSet = LineDataSet(ticketEntries, getString(R.string.ticket_revenue)).apply {
             color = yellowColor
             setCircleColor(yellowBgColor)
             lineWidth = 3f
@@ -210,7 +210,7 @@ class ManagerReportFragment : Fragment() {
             mode = LineDataSet.Mode.CUBIC_BEZIER
         }
 
-        val fbDataSet = LineDataSet(fbEntries, "F&B Revenue").apply {
+        val fbDataSet = LineDataSet(fbEntries, getString(R.string.fb_revenue)).apply {
             color = labelFbColor
             setCircleColor(labelFbColor)
             lineWidth = 3f
