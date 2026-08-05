@@ -59,7 +59,7 @@
             android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@android:drawable/ic_menu_edit"
-            android:contentDescription="Edit Movie"
+            android:contentDescription="@string/menu_edit_movie"
             app:tint="@color/yellow"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toStartOf="@id/btnDeleteMovie" />
@@ -81,7 +81,7 @@
             android:layout_height="40dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@android:drawable/ic_menu_rotate"
-            android:contentDescription="Restore Movie"
+            android:contentDescription="@string/menu_restore_movie"
             android:visibility="gone"
             app:tint="@color/yellow"
             app:layout_constraintTop_toTopOf="parent"

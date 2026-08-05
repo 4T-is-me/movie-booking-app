@@ -129,9 +129,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 app:fieldEditable="true"
-                app:fieldHint="Full Name"
+                app:fieldHint="@string/hint_full_name"
                 app:fieldIcon="@drawable/ic_profile"
-                app:fieldLabel="Full name" />
+                app:fieldLabel="@string/label_full_name" />
 
             <com.example.movie_booking_app.view.widget.ProfileFieldView
                 android:id="@+id/fieldDateOfBirth"
@@ -141,7 +141,7 @@
                 app:fieldEditable="false"
                 app:fieldHint="DD/MM/YYYY"
                 app:fieldIcon="@drawable/ic_calendar_month_24"
-                app:fieldLabel="Date of birth" />
+                app:fieldLabel="@string/label_date_of_birth" />
 
             <com.example.movie_booking_app.view.widget.ProfileFieldView
                 android:id="@+id/fieldGender"
@@ -159,7 +159,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 app:fieldEditable="true"
-                app:fieldHint="Phone Number"
+                app:fieldHint="@string/hint_phone_number"
                 app:fieldIcon="@drawable/ic_phone"
                 app:fieldLabel="Phone" />
 
@@ -169,9 +169,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 app:fieldEditable="true"
-                app:fieldHint="Identity Card"
+                app:fieldHint="@string/hint_identity_card"
                 app:fieldIcon="@drawable/ic_id_card"
-                app:fieldLabel="Identity card" />
+                app:fieldLabel="@string/label_identity_card" />
 
             <com.example.movie_booking_app.view.widget.ProfileFieldView
                 android:id="@+id/fieldEmail"
@@ -179,7 +179,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 app:fieldEditable="false"
-                app:fieldHint="Email Address"
+                app:fieldHint="@string/hint_email_address"
                 app:fieldIcon="@drawable/ic_email"
                 app:fieldLabel="Email" />
 
@@ -199,7 +199,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
                 app:fieldEditable="true"
-                app:fieldHint="Enter your address"
+                app:fieldHint="@string/hint_enter_address"
                 app:fieldIcon="@drawable/ic_location"
                 app:fieldLabel="Address" />
 
@@ -221,7 +221,7 @@
                 app:fieldEditable="false"
                 app:fieldHint="Select Favorite Cinema"
                 app:fieldIcon="@drawable/ic_cinema"
-                app:fieldLabel="Favorite Cinema" />
+                app:fieldLabel="@string/label_favorite_cinema" />
 
             <com.example.movie_booking_app.view.widget.ProfileFieldView
                 android:id="@+id/fieldFavoriteGenre"
@@ -231,7 +231,7 @@
                 app:fieldEditable="false"
                 app:fieldHint="Select Favorite Genres"
                 app:fieldIcon="@drawable/ic_genre"
-                app:fieldLabel="Favorite Genre" />
+                app:fieldLabel="@string/label_favorite_genre" />
 
             <!-- Save Changes Button -->
             <com.google.android.material.button.MaterialButton

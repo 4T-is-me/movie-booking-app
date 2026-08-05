@@ -41,7 +41,7 @@
                 android:textSize="12sp"
                 android:textStyle="bold"
                 tools:text="Chờ duyệt"
-                tools:textColor="#FFA500" />
+                tools:textColor="@color/status_pending" />
 
         </LinearLayout>
 

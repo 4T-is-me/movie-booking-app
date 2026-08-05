@@ -4,46 +4,46 @@
         <item
             android:id="@+id/nav_dashboard"
             android:icon="@android:drawable/ic_menu_mapmode"
-            android:title="Dashboard" />
+            android:title="@string/menu_dashboard" />
         <item
             android:id="@+id/nav_movies"
             android:icon="@android:drawable/ic_menu_camera"
-            android:title="Movies" />
+            android:title="@string/menu_movies" />
         <item
             android:id="@+id/nav_employees"
             android:icon="@android:drawable/ic_menu_myplaces"
-            android:title="Staff &amp; Manager" />
+            android:title="@string/menu_staff_manager" />
         <item
             android:id="@+id/nav_rooms"
             android:icon="@android:drawable/ic_menu_gallery"
-            android:title="Cinemas" />
+            android:title="@string/menu_cinemas" />
         <item
             android:id="@+id/nav_promotions"
             android:icon="@android:drawable/ic_menu_agenda"
-            android:title="Promotions" />
+            android:title="@string/menu_promotions" />
         <item
             android:id="@+id/nav_fb_menu"
             android:icon="@android:drawable/ic_menu_slideshow"
-            android:title="F&amp;B Menu" />
+            android:title="@string/menu_fb_menu" />
         <item
             android:id="@+id/nav_inventory"
             android:icon="@android:drawable/ic_menu_save"
-            android:title="Inventory" />
+            android:title="@string/menu_inventory" />
         <item
             android:id="@+id/nav_import_orders"
             android:icon="@android:drawable/ic_menu_manage"
-            android:title="Import Orders" />
+            android:title="@string/menu_import_orders" />
         <item
             android:id="@+id/nav_members"
             android:icon="@android:drawable/ic_menu_info_details"
-            android:title="Members" />
+            android:title="@string/menu_members" />
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_wallet"
-            android:title="Payrolls" />
+            android:title="@string/menu_payrolls" />
         <item
             android:id="@+id/nav_logout"
             android:icon="@android:drawable/ic_lock_power_off"
-            android:title="Logout" />
+            android:title="@string/menu_logout" />
     </group>
 </menu>

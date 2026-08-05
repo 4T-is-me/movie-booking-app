@@ -24,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="140dp"
             android:scaleType="centerCrop"
-            android:contentDescription="Promotion Banner"
+            android:contentDescription="@string/content_desc_promotion_banner"
             tools:src="@color/card_dark" />
 
         <androidx.constraintlayout.widget.ConstraintLayout

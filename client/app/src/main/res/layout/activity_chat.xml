@@ -127,7 +127,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/bg_input_dark"
-            android:hint="Nhập câu hỏi (giá vé, lịch chiếu...)..."
+            android:hint="@string/chat_input_hint"
             android:textColorHint="@color/nav_inactive"
             android:textColor="@color/white"
             android:textSize="14sp"

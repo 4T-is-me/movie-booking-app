@@ -1,6 +1,7 @@
 package com.example.movie_booking_app.view.adapter.manager
 
 import android.graphics.Color
+import androidx.core.content.ContextCompat
 import com.example.movie_booking_app.R
 import android.view.LayoutInflater
 import android.view.View
@@ -47,10 +48,10 @@ class ImportOrderAdapter(
 
                 // Status chip
                 val (statusText, statusColor) = when (order.status) {
-                    "PENDING"   -> Pair("Pending",  Color.parseColor("#FFA500"))
-                    "APPROVED"  -> Pair("Approved",   Color.parseColor("#4CAF50"))
-                    "REJECTED"  -> Pair("Rejected", Color.parseColor("#F44336"))
-                    "CANCELLED" -> Pair("Cancelled",     Color.parseColor("#9E9E9E"))
+                    "PENDING"   -> Pair("Pending",  ContextCompat.getColor(binding.root.context, R.color.status_pending))
+                    "APPROVED"  -> Pair("Approved",   ContextCompat.getColor(binding.root.context, R.color.status_approved))
+                    "REJECTED"  -> Pair("Rejected", ContextCompat.getColor(binding.root.context, R.color.status_rejected))
+                    "CANCELLED" -> Pair("Cancelled",     ContextCompat.getColor(binding.root.context, R.color.status_cancelled))
                     else        -> Pair(order.status,  Color.GRAY)
                 }
                 tvStatus.text = statusText

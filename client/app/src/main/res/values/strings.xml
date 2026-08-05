@@ -1863,4 +1863,74 @@
     <string name="auto_str_verify">Verify</string>
 
 
+    <string name="banner_preview">Banner Preview</string>
+    <string name="chat_input_hint">Nhập câu hỏi (giá vé, lịch chiếu...)...</string>
+    <string name="hint_full_name">Full Name</string>
+    <string name="label_full_name">Full name</string>
+    <string name="label_date_of_birth">Date of birth</string>
+    <string name="hint_phone_number">Phone Number</string>
+    <string name="hint_identity_card">Identity Card</string>
+    <string name="label_identity_card">Identity card</string>
+    <string name="hint_email_address">Email Address</string>
+    <string name="hint_enter_address">Enter your address</string>
+    <string name="label_favorite_cinema">Favorite Cinema</string>
+    <string name="label_favorite_genre">Favorite Genre</string>
+    <!-- Menu Strings -->
+    <string name="menu_work_schedule">Work Schedule</string>
+    <string name="menu_ticket_validator">Ticket Validator</string>
+    <string name="menu_ticket_sales">Ticket Sales</string>
+    <string name="menu_leave_requests">Leave Requests</string>
+    <string name="menu_account">Account</string>
+    <string name="menu_notifications">Notifications</string>
+    <string name="menu_my_profile">My Profile</string>
+    <string name="menu_my_payroll">My Payroll</string>
+    <string name="menu_sign_out">Sign Out</string>
+    <string name="menu_check_in">Check-in</string>
+    <string name="menu_sales">Sales</string>
+    <string name="menu_schedule">Schedule</string>
+    <string name="menu_requests">Requests</string>
+    <string name="menu_home">Home</string>
+    <string name="menu_ticket">Ticket</string>
+    <string name="menu_movie">Movie</string>
+    <string name="menu_profile">Profile</string>
+    <string name="menu_dashboard">Dashboard</string>
+    <string name="menu_showtime_scheduling">Showtime Scheduling</string>
+    <string name="menu_cinema_rooms">Cinema Rooms</string>
+    <string name="menu_staff_management">Staff Management</string>
+    <string name="menu_branch_reports">Branch Reports</string>
+    <string name="menu_goods_intake">Goods Intake</string>
+    <string name="menu_payroll">Payroll</string>
+    <string name="menu_rooms">Rooms</string>
+    <string name="menu_staff">Staff</string>
+    <string name="menu_reports">Reports</string>
+    <string name="menu_movies">Movies</string>
+    <string name="menu_staff_manager">Staff &amp; Manager</string>
+    <string name="menu_cinemas">Cinemas</string>
+    <string name="menu_promotions">Promotions</string>
+    <string name="menu_fb_menu">F&amp;B Menu</string>
+    <string name="menu_inventory">Inventory</string>
+    <string name="menu_import_orders">Import Orders</string>
+    <string name="menu_members">Members</string>
+    <string name="menu_payrolls">Payrolls</string>
+    <string name="menu_logout">Logout</string>
+    <!-- Content Descriptions & Hints -->
+    <string name="content_desc_cancel_reply">Cancel reply</string>
+    <string name="btn_clear_all">Clear All</string>
+    <string name="msg_no_notifications">No Notifications</string>
+    <string name="content_desc_promotion_banner">Promotion Banner</string>
+    <string name="content_desc_movie_poster">Movie Poster</string>
+    <string name="content_desc_error_icon">Error Icon</string>
+    <string name="hint_search_cinemas">Search cinemas...</string>
+
+    <string name="label_email_address">Email Address</string>
+    <string name="label_phone_number">Phone Number</string>
+    <string name="hint_example_phone">Example: 0987654321</string>
+    <string name="menu_edit_movie">Edit Movie</string>
+    <string name="menu_restore_movie">Restore Movie</string>
+    <string name="menu_edit_promotion">Sửa khuyến mãi</string>
+    <string name="menu_delete_promotion">Xóa khuyến mãi</string>
+    <string name="menu_staff_detail">Staff Detail</string>
+    <string name="menu_edit_staff">Edit Staff</string>
+    <string name="content_desc_decrease_qty">Decrease quantity</string>
+    <string name="content_desc_increase_qty">Increase quantity</string>
 </resources>
