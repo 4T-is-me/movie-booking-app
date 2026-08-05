@@ -161,9 +161,28 @@ class StaffActivity : BaseActivity() {
                 type?.startsWith(Constants.NotificationType.PREFIX_SHIFT) == true
 
         if (isStaffNotif) {
-            binding.navigationView.setCheckedItem(R.id.nav_staff_notifications)
-            binding.tvHeaderTitle.text = getString(R.string.auto_str_notifications_1)
-            loadFragment(StaffNotificationsFragment())
+            when {
+                type == Constants.NotificationType.SHIFT_ASSIGNED ||
+                type == Constants.NotificationType.SHIFT_UPDATED ||
+                type?.startsWith(Constants.NotificationType.PREFIX_SHIFT) == true -> {
+                    binding.navigationView.setCheckedItem(R.id.nav_staff_schedule)
+                    binding.tvHeaderTitle.text = getString(R.string.auto_str_work_schedule)
+                    loadFragment(StaffScheduleFragment())
+                }
+                type == Constants.NotificationType.LEAVE_APPROVED ||
+                type == Constants.NotificationType.LEAVE_REJECTED ||
+                type == Constants.NotificationType.LEAVE_CANCELLED ||
+                type?.startsWith(Constants.NotificationType.PREFIX_LEAVE) == true -> {
+                    binding.navigationView.setCheckedItem(R.id.nav_staff_requests)
+                    binding.tvHeaderTitle.text = getString(R.string.auto_str_leave_requests)
+                    loadFragment(StaffRequestsFragment())
+                }
+                else -> {
+                    binding.navigationView.setCheckedItem(R.id.nav_staff_notifications)
+                    binding.tvHeaderTitle.text = getString(R.string.auto_str_notifications_1)
+                    loadFragment(StaffNotificationsFragment())
+                }
+            }
         } else if (!type.isNullOrEmpty() || !referenceId.isNullOrEmpty() || !title.isNullOrEmpty()) {
             // First load default fragment so backstack is valid
             loadDefaultFragment()
@@ -185,6 +204,11 @@ class StaffActivity : BaseActivity() {
         binding.navigationView.setCheckedItem(R.id.nav_staff_schedule)
         binding.tvHeaderTitle.text = getString(R.string.auto_str_work_schedule_1)
         loadFragment(StaffScheduleFragment())
+    }
+
+    fun navigateToFragment(fragment: Fragment, headerTitle: String) {
+        binding.tvHeaderTitle.text = headerTitle
+        loadFragment(fragment)
     }
 
     private fun loadFragment(fragment: Fragment) {

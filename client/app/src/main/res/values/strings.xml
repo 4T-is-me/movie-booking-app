@@ -327,7 +327,7 @@
     <string name="auto_str_total_tickets">Total Tickets</string>
     <string name="auto_str_0_6">+0%</string>
     <string name="auto_str_0_7">0 ₫</string>
-    <string name="auto_str_avg_ticket_price">Total cost of imported goods</string>
+    <string name="auto_str_avg_ticket_price">Total Import Cost</string>
     <string name="auto_str_revenue_trend">Revenue Trend</string>
     <string name="auto_str_visualized_analysis_of_ticket">Visualized analysis of ticket vs concessions</string>
     <string name="auto_str_top_movies_this_period">Top Movies This Period</string>
@@ -357,7 +357,7 @@
     <string name="auto_str_edit">Edit</string>
     <string name="auto_str_standard_1">Standard</string>
     <string name="auto_str_100_000">100,000 ₫</string>
-    <string name="auto_str_str_auto">₫</string>
+    <string name="auto_str_str_auto">-</string>
     <string name="auto_str_vip_1">VIP</string>
     <string name="auto_str_150_000">150,000 ₫</string>
     <string name="auto_str_str_auto_1">₫</string>

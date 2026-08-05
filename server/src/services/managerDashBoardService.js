@@ -729,7 +729,6 @@ const getImportCostByRange = async (cinemaId, start, end) => {
       },
     },
   ]);
-  console.log("[DEBUG getImportCostByRange]", { cinemaId, start, end, result });
   return result[0]?.totalImportCost ?? 0;
 };
 
