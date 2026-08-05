@@ -413,15 +413,17 @@ const generateShift = async (accountId, dateRange, config = {}, shiftsFromFE = [
     start.setUTCHours(0, 0, 0, 0);
     end.setUTCHours(23, 59, 59, 999);
 
-    // 2. Check if data already exists
+    // 2. Check if data already exists FOR THIS CINEMA
+    const manager = await checkManager(accountId);
     const existingShiftsCount = await StaffShift.countDocuments({
+        cinemaId: manager.cinemaId,
         workDate: { $gte: start, $lte: end }
     });
 
     if (existingShiftsCount > 0) {
         throw new ApiError(
             StatusCodes.BAD_REQUEST, 
-            `Shifts for the selected period (${start.toISOString().split('T')[0]} to ${end.toISOString().split('T')[0]}) have already been generated!`
+            `Shifts for the selected period (${start.toISOString().split('T')[0]} to ${end.toISOString().split('T')[0]}) have already been generated for this cinema!`
         );
     }
 
@@ -708,7 +710,6 @@ const approveLeaveRequest = async (accountId, leaveRequestId) => {
 
         const staffAccount = leaveRequest.staffId?.accountId;
         const targetAccountId = staffAccount?._id || staffAccount;
-        console.log("--> Debug Push Notification Staff Account ID:", targetAccountId);  
 
         // Send normalized notification using `message`
         if (targetAccountId) {

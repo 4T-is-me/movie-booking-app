@@ -63,24 +63,24 @@ const updateStaffShiftStatus = async () => {
     const startTime = new Date(workDate);
     const endTime = new Date(workDate);
 
-    // Thiết lập giờ bắt đầu và kết thúc của ca (dùng UTC để nhất quán với MongoDB)
+    // Thiết lập giờ bắt đầu và kết thúc của ca theo giờ local (ICT UTC+7)
     switch (shiftItem.shift) {
-      case constants.SHIFTS[0]:
-        startTime.setUTCHours(8, 0, 0, 0);
-        endTime.setUTCHours(12, 0, 0, 0);
+      case constants.SHIFTS[0]: // Morning (8:00 - 12:00)
+        startTime.setHours(8, 0, 0, 0);
+        endTime.setHours(12, 0, 0, 0);
         break;
-      case constants.SHIFTS[1]:
-        startTime.setUTCHours(12, 0, 0, 0);
-        endTime.setUTCHours(16, 0, 0, 0);
+      case constants.SHIFTS[1]: // Afternoon (12:00 - 16:00)
+        startTime.setHours(12, 0, 0, 0);
+        endTime.setHours(16, 0, 0, 0);
         break;
-      case constants.SHIFTS[2]:
-        startTime.setUTCHours(16, 0, 0, 0);
-        endTime.setUTCHours(20, 0, 0, 0);
+      case constants.SHIFTS[2]: // Evening (16:00 - 20:00)
+        startTime.setHours(16, 0, 0, 0);
+        endTime.setHours(20, 0, 0, 0);
         break;
-      case constants.SHIFTS[3]:
-        startTime.setUTCHours(20, 0, 0, 0);
-        endTime.setUTCDate(endTime.getUTCDate() + 1);
-        endTime.setUTCHours(0, 0, 0, 0);
+      case constants.SHIFTS[3]: // Night (20:00 - 24:00/00:00 ngày hôm sau)
+        startTime.setHours(20, 0, 0, 0);
+        endTime.setDate(endTime.getDate() + 1);
+        endTime.setHours(0, 0, 0, 0);
         break;
       default:
         continue;

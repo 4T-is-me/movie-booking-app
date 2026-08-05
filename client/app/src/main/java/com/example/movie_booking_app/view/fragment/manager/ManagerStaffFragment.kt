@@ -195,12 +195,14 @@ class ManagerStaffFragment : Fragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.generateShiftData.collectLatest { response ->
                     if (response != null) {
+                        (childFragmentManager.findFragmentByTag("GenerateShiftDialogFragment") as? androidx.fragment.app.DialogFragment)?.dismiss()
                         if (response.success) {
-                            (childFragmentManager.findFragmentByTag("GenerateShiftDialogFragment") as? androidx.fragment.app.DialogFragment)?.dismiss()
                             viewModel.loadStaffShifts()
                             Toast.makeText(requireContext(), getString(R.string.auto_str_success), Toast.LENGTH_SHORT).show()
                         } else {
-                            showErrorDialog(response.message ?: getString(R.string.error_generate_shift_failed))
+                            showErrorDialog(response.message ?: getString(R.string.error_generate_shift_failed)) {
+                                viewModel.loadStaffShifts()
+                            }
                         }
                         viewModel.clearGenerateShiftState()
                     }
@@ -453,7 +455,7 @@ class ManagerStaffFragment : Fragment() {
         dialog.window?.setLayout(width, WindowManager.LayoutParams.WRAP_CONTENT)
     }
 
-    private fun showErrorDialog(backendErrorMessage: String) {
+    private fun showErrorDialog(backendErrorMessage: String, onOkClick: (() -> Unit)? = null) {
         val builder = AlertDialog.Builder(requireContext())
         val dialogBinding = DialogErrorCustomBinding.inflate(layoutInflater)
         builder.setView(dialogBinding.root)
@@ -463,6 +465,7 @@ class ManagerStaffFragment : Fragment() {
         dialogBinding.tvDialogMessage.text = backendErrorMessage
         dialogBinding.btnDialogOk.setOnClickListener {
             dialog.dismiss()
+            onOkClick?.invoke()
         }
         dialog.show()
     }
