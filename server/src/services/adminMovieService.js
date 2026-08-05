@@ -131,7 +131,7 @@ const createMovie = async (movieData) => {
             q.movieName = { $regex: search, $options: 'i' };
         }
 
-        if (status === 'deleted') {
+        if (status === 'deleted' || status === 'inactive') {
             q.isDeleted = true;
         } else if (status === 'active') {
             q.isDeleted = false;

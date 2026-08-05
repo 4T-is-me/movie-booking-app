@@ -1,7 +1,6 @@
 package com.example.movie_booking_app.view.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -16,9 +15,7 @@ import java.util.Locale
 
 class PurchaseHistoryAdapter(
     private var items: List<BookingHistoryItem> = emptyList(),
-    private val onItemClick: ((BookingHistoryItem) -> Unit)? = null,
-    private val onRateStaffClick: ((BookingHistoryItem) -> Unit)? = null,
-    private val onRateMovieClick: ((BookingHistoryItem) -> Unit)? = null
+    private val onItemClick: ((BookingHistoryItem) -> Unit)? = null
 ) : RecyclerView.Adapter<PurchaseHistoryAdapter.ViewHolder>() {
 
     fun updateData(newItems: List<BookingHistoryItem>) {
@@ -37,7 +34,7 @@ class PurchaseHistoryAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(items[position], onItemClick, onRateStaffClick, onRateMovieClick)
+        holder.bind(items[position], onItemClick)
     }
 
     override fun getItemCount(): Int = items.size
@@ -48,9 +45,7 @@ class PurchaseHistoryAdapter(
 
         fun bind(
             item: BookingHistoryItem,
-            onItemClick: ((BookingHistoryItem) -> Unit)?,
-            onRateStaffClick: ((BookingHistoryItem) -> Unit)?,
-            onRateMovieClick: ((BookingHistoryItem) -> Unit)?
+            onItemClick: ((BookingHistoryItem) -> Unit)?
         ) {
             binding.tvMovieTitle.text = item.movie
             binding.tvBookingCode.text = itemView.context.getString(R.string.code_format, item.bookingCode)
@@ -84,26 +79,6 @@ class PurchaseHistoryAdapter(
 
             itemView.setOnClickListener {
                 onItemClick?.invoke(item)
-            }
-
-            // Show Rate Staff button only if checked in and not yet rated
-            if (item.checkedIn == true && item.isStaffRated == false) {
-                binding.btnRateStaff.visibility = View.VISIBLE
-                binding.btnRateStaff.setOnClickListener {
-                    onRateStaffClick?.invoke(item)
-                }
-            } else {
-                binding.btnRateStaff.visibility = View.GONE
-            }
-
-            // Show Rate Movie button only if not yet rated
-            if (item.isMovieRated == false) {
-                binding.btnRateMovie.visibility = View.VISIBLE
-                binding.btnRateMovie.setOnClickListener {
-                    onRateMovieClick?.invoke(item)
-                }
-            } else {
-                binding.btnRateMovie.visibility = View.GONE
             }
         }
     }

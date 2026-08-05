@@ -51,9 +51,17 @@ class MovieRepositoryRemoteImpl @Inject constructor(
     }
 
     override fun getAdminMovies(status: String?): Flow<List<Movie>> = flow {
-        val adminData = runCatching { adminApi.getMovies(status = status) }.getOrNull()?.takeIf { it.isSuccessful }?.body()?.data
-        val publicData = runCatching { api.getMovies() }.getOrNull()?.body()?.data
-        emit(adminData ?: publicData ?: emptyList())
+        val adminResponse = runCatching { adminApi.getMovies(status = status) }.getOrNull()
+        val adminData = adminResponse?.takeIf { it.isSuccessful }?.body()?.data
+
+        if (adminData != null) {
+            emit(adminData)
+        } else if (status.isNullOrBlank()) {
+            val publicData = runCatching { api.getMovies() }.getOrNull()?.body()?.data
+            emit(publicData ?: emptyList())
+        } else {
+            emit(emptyList())
+        }
     }
 
     override fun searchMovies(query: String): Flow<List<Movie>> = flow {

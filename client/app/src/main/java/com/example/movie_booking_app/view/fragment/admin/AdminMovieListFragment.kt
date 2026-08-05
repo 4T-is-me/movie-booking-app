@@ -82,12 +82,11 @@ class AdminMovieListFragment : Fragment() {
 
         binding.tabActiveMovie.setOnClickListener {
             switchTab(TAB_ACTIVE)
-            viewModel.loadAdminMovies(Constants.Status.ACTIVE.lowercase())
+            viewModel.loadAdminMovies(Constants.Movie.STATUS_ACTIVE)
         }
         binding.tabInactiveMovie.setOnClickListener {
             switchTab(TAB_INACTIVE)
-            viewModel.loadAdminMovies(Constants.Status.INACTIVE.lowercase())
-
+            viewModel.loadAdminMovies(Constants.Movie.STATUS_DELETED)
         }
 
         binding.fabAddMovie.setOnClickListener {
@@ -99,7 +98,7 @@ class AdminMovieListFragment : Fragment() {
 
         observeViewModel()
 
-        viewModel.loadAdminMovies(Constants.Status.ACTIVE.lowercase())
+        viewModel.loadAdminMovies(Constants.Movie.STATUS_ACTIVE)
     }
 
     private fun showDeleteConfirmationDialog(movie: Movie) {
