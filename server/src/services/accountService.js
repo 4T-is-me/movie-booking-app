@@ -87,10 +87,13 @@ const login = async (reqBody) => {
         throw new ApiError(StatusCodes.FORBIDDEN, 'Account has been locked!')
     }
 
+    account.tokenVersion = (account.tokenVersion || 0) + 1;
+
     const payload = {
         accountId: account._id.toString(),
         username: account.username,
-        role: account.roleId ? (account.roleId.name || account.roleId.roleName || 'Customer') : 'Customer'
+        role: account.roleId ? (account.roleId.name || account.roleId.roleName || 'Customer') : 'Customer',
+        tokenVersion: account.tokenVersion
     }
 
     const accessToken = jwtProvider.generateAccessToken(payload)
@@ -334,10 +337,13 @@ const googleLogin = async (idToken) => {
             throw new ApiError(StatusCodes.FORBIDDEN, 'Account has been locked!');
         }
 
+        account.tokenVersion = (account.tokenVersion || 0) + 1;
+
         const jwtPayload = {
             accountId: account._id.toString(),
             username: account.username,
-            role: account.roleId ? (account.roleId.name || account.roleId.roleName || 'Customer') : 'Customer'
+            role: account.roleId ? (account.roleId.name || account.roleId.roleName || 'Customer') : 'Customer',
+            tokenVersion: account.tokenVersion
         };
 
         const accessToken = jwtProvider.generateAccessToken(jwtPayload);
@@ -489,6 +495,59 @@ const registerFcmToken = async (accountId, fcmToken) => {
     return { success: true, message: 'FCM token registered successfully' }
 }
 
+const refreshToken = async (reqBody) => {
+    const { refreshToken: token } = reqBody;
+    
+    if (!token) {
+        throw new ApiError(StatusCodes.UNAUTHORIZED, 'Refresh token is missing');
+    }
+    
+    let decoded;
+    try {
+        decoded = jwtProvider.verifyRefreshToken(token);
+    } catch (error) {
+        throw new ApiError(StatusCodes.UNAUTHORIZED, 'Invalid or expired refresh token');
+    }
+    
+    const account = await Account.findById(decoded.accountId).populate('roleId');
+    if (!account) {
+        throw new ApiError(StatusCodes.UNAUTHORIZED, 'Account not found');
+    }
+    
+    if (account.status !== 1) {
+        throw new ApiError(StatusCodes.FORBIDDEN, 'Account has been locked!');
+    }
+    
+    if (account.refreshToken !== token) {
+        throw new ApiError(StatusCodes.UNAUTHORIZED, 'Refresh token does not match');
+    }
+    
+    if (account.tokenVersion !== decoded.tokenVersion) {
+        throw new ApiError(StatusCodes.UNAUTHORIZED, 'Session expired. Account logged in on another device.');
+    }
+    
+    // Increment version to invalidate old access token completely if desired,
+    // or keep it same. Usually we don't increment on refresh, only on login,
+    // but here we just generate new ones.
+    const payload = {
+        accountId: account._id.toString(),
+        username: account.username,
+        role: account.roleId ? (account.roleId.name || account.roleId.roleName || 'Customer') : 'Customer',
+        tokenVersion: account.tokenVersion
+    };
+    
+    const newAccessToken = jwtProvider.generateAccessToken(payload);
+    const newRefreshToken = jwtProvider.generateRefreshToken(payload);
+    
+    account.refreshToken = newRefreshToken;
+    await account.save();
+    
+    return {
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken
+    };
+}
+
 export const accountService = {
     register,
     login,
@@ -499,5 +558,6 @@ export const accountService = {
     resetPassword,
     verifyOtp,
     sendOtp,
-    registerFcmToken
+    registerFcmToken,
+    refreshToken
 }

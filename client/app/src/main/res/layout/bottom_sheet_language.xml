@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet_dark"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <!-- Handle -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/bg_handle" />
+
+    <TextView
+        android:id="@+id/tvLanguageTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:text="@string/auto_str_change_language"
+        android:textColor="@color/text_primary"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <RadioGroup
+        android:id="@+id/rgLanguages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/rbEnglish"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_language_item"
+            android:buttonTint="@color/accent_primary"
+            android:padding="16dp"
+            android:text="@string/lang_english"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/rbVietnamese"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_language_item"
+            android:buttonTint="@color/accent_primary"
+            android:padding="16dp"
+            android:text="@string/lang_vietnamese"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp" />
+
+        <RadioButton
+            android:id="@+id/rbJapanese"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_language_item"
+            android:buttonTint="@color/accent_primary"
+            android:padding="16dp"
+            android:text="@string/lang_japanese"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp" />
+    </RadioGroup>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnApplyLanguage"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/auto_str_confirm"
+        android:textColor="@color/bg_primary"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:backgroundTint="@color/accent_primary"
+        app:cornerRadius="12dp" />
+
+</LinearLayout>

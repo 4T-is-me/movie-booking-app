@@ -16,6 +16,7 @@ open class BaseActivity : AppCompatActivity() {
         val prefs = newBase.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
         val langCode = prefs.getString("language_code", "en") ?: "en"
         val locale = Locale(langCode)
+        Locale.setDefault(locale)
         val config = newBase.resources.configuration
         config.setLocale(locale)
         val context = newBase.createConfigurationContext(config)

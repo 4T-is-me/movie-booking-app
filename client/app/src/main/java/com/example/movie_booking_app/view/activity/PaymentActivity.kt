@@ -36,7 +36,7 @@ import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class PaymentActivity : AppCompatActivity() {
+class PaymentActivity : BaseActivity() {
 
     private lateinit var binding: ActivityPaymentBinding
     private val viewModel: PaymentViewModel by viewModels()

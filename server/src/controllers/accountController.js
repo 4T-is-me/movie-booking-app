@@ -127,6 +127,18 @@ const registerFcmToken = async (req, res, next) => {
     }
 }
 
+const refreshToken = async (req, res, next) => {
+    try {
+        const result = await accountService.refreshToken(req.body);
+        res.status(StatusCodes.OK).json(result);
+    } catch (error) {
+        if (error.statusCode) {
+            return res.status(error.statusCode).json({ success: false, message: error.message });
+        }
+        next(error);
+    }
+}
+
 export const accountController = {
     register,
     login,
@@ -137,5 +149,6 @@ export const accountController = {
     resetPassword,
     sendOtp,
     verifyOtp,
-    registerFcmToken
+    registerFcmToken,
+    refreshToken
 }

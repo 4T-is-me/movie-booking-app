@@ -23,8 +23,13 @@ object RetrofitClient {
         AuthInterceptor(MyApplication.getContext())
     }
 
+    private val tokenAuthenticator by lazy {
+        TokenAuthenticator(MyApplication.getContext()) { authApi }
+    }
+
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(authInterceptor)
+        .authenticator(tokenAuthenticator)
         .addInterceptor(loggingInterceptor)
         .connectTimeout(30, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)
