@@ -103,7 +103,7 @@
             app:iconifiedByDefault="false"
             app:queryBackground="@android:color/transparent"
             app:searchHintIcon="@null"
-            app:queryHint="Search cinemas..." />
+            app:queryHint="@string/hint_search_cinemas" />
     </FrameLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

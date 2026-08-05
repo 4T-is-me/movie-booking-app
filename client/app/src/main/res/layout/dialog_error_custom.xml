@@ -11,7 +11,7 @@
     android:layout_height="64dp"
     android:src="@android:drawable/ic_dialog_alert"
     android:layout_marginBottom="16dp"
-    android:contentDescription="Error Icon" />
+    android:contentDescription="@string/content_desc_error_icon" />
 
     <TextView
         android:id="@+id/tvDialogTitle"

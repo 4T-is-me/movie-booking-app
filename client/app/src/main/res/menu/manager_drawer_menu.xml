@@ -5,51 +5,51 @@
         <item
             android:id="@+id/nav_dashboard"
             android:icon="@drawable/ic_home"
-            android:title="Dashboard" />
+            android:title="@string/menu_dashboard" />
         <item
             android:id="@+id/nav_schedule"
             android:icon="@drawable/ic_event"
-            android:title="Showtime Scheduling" />
+            android:title="@string/menu_showtime_scheduling" />
         <item
             android:id="@+id/nav_rooms"
             android:icon="@drawable/ic_room"
-            android:title="Cinema Rooms" />
+            android:title="@string/menu_cinema_rooms" />
         <item
             android:id="@+id/nav_staff"
             android:icon="@drawable/ic_staff"
-            android:title="Staff Management" />
+            android:title="@string/menu_staff_management" />
         <item
             android:id="@+id/nav_reports"
             android:icon="@drawable/ic_receipt"
-            android:title="Branch Reports" />
+            android:title="@string/menu_branch_reports" />
         <item
             android:id="@+id/nav_import_orders"
             android:icon="@drawable/ic_add"
-            android:title="Goods Intake" />
+            android:title="@string/menu_goods_intake" />
     </group>
 
-    <item android:title="Account">
+    <item android:title="@string/menu_account">
         <menu>
             <item
                 android:id="@+id/nav_notifications"
                 android:checkable="true"
                 android:icon="@drawable/ic_notifications"
-                android:title="Notifications"
+                android:title="@string/menu_notifications"
                 app:actionLayout="@layout/layout_menu_badge" />
             <item
                 android:id="@+id/nav_profile"
                 android:checkable="true"
                 android:icon="@drawable/ic_profile"
-                android:title="My Profile" />
+                android:title="@string/menu_my_profile" />
             <item
                 android:id="@+id/nav_payroll"
                 android:checkable="true"
                 android:icon="@drawable/ic_wallet"
-                android:title="Payroll" />
+                android:title="@string/menu_payroll" />
             <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_logout"
-                android:title="Sign Out" />
+                android:title="@string/menu_sign_out" />
         </menu>
     </item>
 </menu>

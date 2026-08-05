@@ -51,7 +51,7 @@
             android:layout_height="22dp"
             android:layout_marginEnd="8dp"
             android:src="@android:drawable/ic_menu_info_details"
-            android:contentDescription="Staff Detail"
+            android:contentDescription="@string/menu_staff_detail"
             app:tint="@color/yellow"
             android:clickable="true"
             android:focusable="true"/>
@@ -62,7 +62,7 @@
             android:layout_height="22dp"
             android:layout_marginEnd="8dp"
             android:src="@android:drawable/ic_menu_edit"
-            android:contentDescription="Edit Staff"
+            android:contentDescription="@string/menu_edit_staff"
             app:tint="@color/yellow"
             android:clickable="true"
             android:focusable="true"/>

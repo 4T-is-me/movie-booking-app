@@ -203,7 +203,7 @@ class ChatActivity : BaseActivity() {
 
     private fun setListeningUI(listening: Boolean) {
         if (listening) {
-            binding.btnVoice.setColorFilter(Color.parseColor("#E5484D")) // Đỏ nhấp nháy/báo hiệu đang nghe
+            binding.btnVoice.setColorFilter(ContextCompat.getColor(this, R.color.text_error)) // Đỏ nhấp nháy/báo hiệu đang nghe
             binding.etChatMessage.hint = getString(R.string.chat_listening)
         } else {
             binding.btnVoice.clearColorFilter()

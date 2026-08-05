@@ -5,47 +5,47 @@
         <item
             android:id="@+id/nav_staff_schedule"
             android:icon="@android:drawable/ic_menu_today"
-            android:title="Work Schedule" />
+            android:title="@string/menu_work_schedule" />
         <item
             android:id="@+id/nav_staff_checkin"
             android:icon="@android:drawable/ic_menu_camera"
-            android:title="Ticket Validator" />
+            android:title="@string/menu_ticket_validator" />
         <item
             android:id="@+id/nav_staff_sales"
             android:icon="@android:drawable/ic_menu_add"
-            android:title="Ticket Sales" />
+            android:title="@string/menu_ticket_sales" />
         <item
             android:id="@+id/nav_staff_requests"
             android:icon="@android:drawable/ic_menu_edit"
-            android:title="Leave Requests" />
+            android:title="@string/menu_leave_requests" />
         <item
             android:id="@+id/nav_staff_ratings"
             android:icon="@android:drawable/btn_star_big_on"
             android:title="@string/nav_staff_ratings" />
     </group>
 
-    <item android:title="Account">
+    <item android:title="@string/menu_account">
         <menu>
             <item
                 android:id="@+id/nav_staff_notifications"
                 android:checkable="true"
                 android:icon="@drawable/ic_notifications"
-                android:title="Notifications"
+                android:title="@string/menu_notifications"
                 app:actionLayout="@layout/layout_menu_badge" />
             <item
                 android:id="@+id/nav_staff_profile"
                 android:checkable="true"
                 android:icon="@drawable/ic_profile"
-                android:title="My Profile" />
+                android:title="@string/menu_my_profile" />
             <item
                 android:id="@+id/nav_staff_settings"
                 android:checkable="true"
                 android:icon="@drawable/ic_wallet"
-                android:title="My Payroll" />
+                android:title="@string/menu_my_payroll" />
             <item
                 android:id="@+id/nav_staff_logout"
                 android:icon="@drawable/ic_logout"
-                android:title="Sign Out" />
+                android:title="@string/menu_sign_out" />
         </menu>
     </item>
 </menu>

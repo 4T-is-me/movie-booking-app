@@ -89,7 +89,7 @@
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:background="@drawable/bg_circle_outline"
-                android:contentDescription="Decrease quantity"
+                android:contentDescription="@string/content_desc_decrease_qty"
                 android:src="@drawable/ic_minus"
                 app:tint="@color/white" />
 
@@ -108,7 +108,7 @@
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:background="@drawable/bg_btn_primary"
-                android:contentDescription="Increase quantity"
+                android:contentDescription="@string/content_desc_increase_qty"
                 android:src="@drawable/ic_plus"
                 app:tint="@color/auto_color_151A2C" />
 
