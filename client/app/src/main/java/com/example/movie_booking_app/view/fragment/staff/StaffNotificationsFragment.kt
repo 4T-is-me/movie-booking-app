@@ -8,8 +8,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.movie_booking_app.R
 import com.example.movie_booking_app.data.model.response.NotificationItemResponse
 import com.example.movie_booking_app.databinding.FragmentStaffNotificationsBinding
+import com.example.movie_booking_app.utils.Constants
+import com.example.movie_booking_app.view.activity.StaffActivity
 import com.example.movie_booking_app.view.adapter.StaffNotifAdapter
 import com.example.movie_booking_app.viewmodel.NotificationViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -59,6 +62,27 @@ class StaffNotificationsFragment : Fragment() {
         adapter = StaffNotifAdapter { item ->
             if (!item.isRead) {
                 viewModel.markAsRead(item.id)
+            }
+
+            val type = item.type
+            when {
+                type == Constants.NotificationType.SHIFT_ASSIGNED ||
+                type == Constants.NotificationType.SHIFT_UPDATED ||
+                type?.startsWith(Constants.NotificationType.PREFIX_SHIFT) == true -> {
+                    (activity as? com.example.movie_booking_app.view.activity.StaffActivity)?.navigateToFragment(
+                        StaffScheduleFragment(),
+                        getString(R.string.auto_str_work_schedule)
+                    )
+                }
+                type == Constants.NotificationType.LEAVE_APPROVED ||
+                type == Constants.NotificationType.LEAVE_REJECTED ||
+                type == Constants.NotificationType.LEAVE_CANCELLED ||
+                type?.startsWith(Constants.NotificationType.PREFIX_LEAVE) == true -> {
+                    (activity as? StaffActivity)?.navigateToFragment(
+                        StaffRequestsFragment(),
+                        getString(R.string.auto_str_leave_requests)
+                    )
+                }
             }
         }
         binding.rvStaffNotifications.layoutManager = LinearLayoutManager(requireContext())

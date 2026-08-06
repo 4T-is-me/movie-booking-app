@@ -197,7 +197,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/auto_str_0_1"
                             android:textColor="@color/text_primary"
-                            android:textSize="18sp"
+                            android:textSize="16sp"
                             android:textStyle="bold"
                             android:layout_marginTop="16dp"/>
                         <TextView
@@ -255,7 +255,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/auto_str_0_3"
                             android:textColor="@color/text_primary"
-                            android:textSize="18sp"
+                            android:textSize="16sp"
                             android:textStyle="bold"
                             android:layout_marginTop="16dp"/>
                         <TextView
@@ -313,7 +313,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/auto_str_0_5"
                             android:textColor="@color/text_primary"
-                            android:textSize="18sp"
+                            android:textSize="16sp"
                             android:textStyle="bold"
                             android:layout_marginTop="16dp"/>
                         <TextView
@@ -371,7 +371,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/auto_str_0_7"
                             android:textColor="@color/text_primary"
-                            android:textSize="18sp"
+                            android:textSize="16sp"
                             android:textStyle="bold"
                             android:layout_marginTop="16dp"/>
                         <TextView

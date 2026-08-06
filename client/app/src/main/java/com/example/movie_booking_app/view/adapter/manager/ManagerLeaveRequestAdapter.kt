@@ -13,6 +13,7 @@ import com.example.movie_booking_app.utils.Constants
 import com.example.movie_booking_app.utils.NameFormatter
 import com.google.android.material.card.MaterialCardView
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -176,11 +177,21 @@ class ManagerLeaveRequestAdapter(private val listener: LeaveRequestListener) :
 
     private fun isShiftExpired(workDateStr: String): Boolean {
         return try {
-            val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault())
+            val sdf = if (workDateStr.contains("/")) {
+                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            } else {
+                SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault())
+            }
             val workDate = sdf.parse(workDateStr) ?: return false
 
-            val today = Date()
+            val today = Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }.time
 
+            // Lịch làm việc nhỏ hơn ngày hôm nay thì coi như đã hết hạn
             workDate.before(today)
         } catch (e: Exception) {
             false
