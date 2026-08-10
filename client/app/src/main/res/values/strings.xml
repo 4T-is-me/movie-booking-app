@@ -1012,7 +1012,6 @@
     <!-- Spinner Options -->
     <string-array name="shift_duration_options">
         <item>1 Week</item>
-        <item>1 Month</item>
     </string-array>
 
     <!-- Button States -->

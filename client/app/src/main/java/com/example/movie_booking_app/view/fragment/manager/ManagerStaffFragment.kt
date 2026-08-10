@@ -215,6 +215,7 @@ class ManagerStaffFragment : Fragment() {
         val shiftItems = shifts
         if (shiftItems.isEmpty()) {
             binding.rvStaffList.visibility = View.GONE
+            binding.txtNoStaffData.text = getString(R.string.auto_str_no_shifts_have_been_assigned_y)
             binding.txtNoStaffData.visibility = View.VISIBLE
         } else {
             binding.rvStaffList.visibility = View.VISIBLE

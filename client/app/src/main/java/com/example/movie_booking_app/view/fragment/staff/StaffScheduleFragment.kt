@@ -115,6 +115,14 @@ class StaffScheduleFragment : Fragment() {
             viewModel.shifts.collectLatest { shiftList ->
                 Timber.tag("StaffSchedule").d("Received shifts count: ${shiftList.size}")
                 staffShiftAdapter.submitList(shiftList)
+                if (shiftList.isEmpty()) {
+                    binding.rvWeeklyShifts.visibility = View.GONE
+                    binding.txtNoWeeklyShifts.text = getString(R.string.auto_str_no_shifts_have_been_assigned_y)
+                    binding.txtNoWeeklyShifts.visibility = View.VISIBLE
+                } else {
+                    binding.rvWeeklyShifts.visibility = View.VISIBLE
+                    binding.txtNoWeeklyShifts.visibility = View.GONE
+                }
 
                 // Set default display for today's selected date in calendar strip
                 val activeDate = dateAdapter.currentList.find { it.isSelected }?.id
