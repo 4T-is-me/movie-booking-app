@@ -28,8 +28,8 @@ export const getMovies = async ({ status, page = 1, limit = 10, q }) => {
                 { endDate: { $exists: false } }
             ]
         });
-    } else if (status === 'coming_soon') {
-        conditions.push({ status: 'coming_soon' });
+    } else if (status === 'coming-soon') {
+        conditions.push({ status: 'coming-soon' });
     }
 
     // Search by movie name (movieName)
@@ -172,21 +172,21 @@ export const getMovieShowtimes = async (movieId, date) => {
     // 4. Attach availableSeats to each showtime
     return showtimes.map((showtime) => {
         const totalSeats = showtime.roomId?.seatCapacity ?? 0;
-        const occupied   = occupiedMap.get(showtime._id.toString()) ?? 0;
+        const occupied = occupiedMap.get(showtime._id.toString()) ?? 0;
 
         return {
-            showtimeId:     showtime._id,
-            showDate:       showtime.showDate,
-            showTime:       showtime.showTime || getShowtimeTimeRange(showtime),
-            startTime:      showtime.startTime,
-            endTime:        showtime.endTime,
-            cinemaId:       showtime.cinemaId,
+            showtimeId: showtime._id,
+            showDate: showtime.showDate,
+            showTime: showtime.showTime || getShowtimeTimeRange(showtime),
+            startTime: showtime.startTime,
+            endTime: showtime.endTime,
+            cinemaId: showtime.cinemaId,
             cinemaRoomName: showtime.roomId?.roomName ?? null,
             room: showtime.roomId
                 ? {
-                    roomId:       showtime.roomId._id,
-                    roomName:     showtime.roomId.roomName,
-                    roomType:     showtime.roomId.roomType,
+                    roomId: showtime.roomId._id,
+                    roomName: showtime.roomId.roomName,
+                    roomType: showtime.roomId.roomType,
                     seatCapacity: showtime.roomId.seatCapacity
                 }
                 : null,

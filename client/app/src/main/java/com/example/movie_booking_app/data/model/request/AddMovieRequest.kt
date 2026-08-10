@@ -12,7 +12,7 @@ data class AddMovieRequest(
     val director: List<String>,
     val actors: List<String>,
     val country: String,
-    val status: String = "coming_soon",
+    val status: String = "coming-soon",
 
 )
 

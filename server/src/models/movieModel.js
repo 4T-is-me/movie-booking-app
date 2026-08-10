@@ -12,7 +12,7 @@ const movieSchema = new mongoose.Schema({
     director: { type: [String], required: true }, // Array of director names
     actors: { type: [String], required: true }, // Array of actor names
     country: { type: String, required: true },
-    status: { type: String, default: 'coming_soon' }, // Movie status (ended, showing,...)
+    status: { type: String, default: 'coming-soon' }, // Movie status (ended, showing,...)
     poster: { type: String }, // Poster image link
     rating: { type: Number, default: 0 },
     totalReviews: { type: Number, default: 0 },
@@ -30,5 +30,5 @@ const movieSchema = new mongoose.Schema({
 // Optimized index for filtering movies by release date range (now_showing / coming_soon)
 movieSchema.index({ releaseDate: 1, endDate: 1 });
 // Index to filter active movies and sort by release date
-movieSchema.index({isDeleted: 1, releaseDate: 1}); 
+movieSchema.index({ isDeleted: 1, releaseDate: 1 });
 export const Movie = mongoose.model('Movie', movieSchema);
