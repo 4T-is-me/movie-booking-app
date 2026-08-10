@@ -79,11 +79,7 @@ class GenerateShiftDialogFragment(
 
                 val today = LocalDate.now()
                 val startLocal = today.with(TemporalAdjusters.next(DayOfWeek.MONDAY))
-                val endLocal = if (binding.spinnerDuration.selectedItemPosition == 1) {
-                    startLocal.plusMonths(1).minusDays(1)
-                } else {
-                    startLocal.plusDays(6)
-                }
+                val endLocal = startLocal.plusDays(6)
 
                 var hasSpecialDay = false
                 var tempDate = startLocal
