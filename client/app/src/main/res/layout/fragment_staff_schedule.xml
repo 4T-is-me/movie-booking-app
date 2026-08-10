@@ -123,6 +123,18 @@
                 android:layout_height="wrap_content"
                 tools:listitem="@layout/item_staff_schedule_shift" />
 
+            <TextView
+                android:id="@+id/txtNoWeeklyShifts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/auto_str_no_shifts_have_been_assigned_y"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
