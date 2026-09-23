@@ -176,9 +176,13 @@ class ManagerStaffFragment : Fragment() {
                 Toast.makeText(requireContext(), getString(R.string.toast_no_active_staff), Toast.LENGTH_LONG).show()
                 return
             }
+            val existingWorkDates = originalShiftList.mapNotNull { item ->
+                item.workDate?.let { if (it.contains("T")) it.substringBefore("T") else it }
+            }.toSet()
             val dialog = GenerateShiftDialogFragment(
                 staffList = activeStaffList,
                 cinemaId = cinemaId,
+                existingWorkDates = existingWorkDates,
                 onSaveClick = { requestPayload, _, _ ->
                     viewModel.saveGeneratedShifts(requestPayload)
                 }

@@ -25,6 +25,7 @@ import java.time.temporal.TemporalAdjusters
 class GenerateShiftDialogFragment(
     private val staffList: List<ManagerStaffItem>,
     private val cinemaId: String,
+    private val existingWorkDates: Set<String> = emptySet(),
     private val onSaveClick: (request: GenerateShiftRequest, onSuccess: () -> Unit, onError: (String) -> Unit) -> Unit
 ) : DialogFragment() {
 
@@ -78,7 +79,18 @@ class GenerateShiftDialogFragment(
                 }
 
                 val today = LocalDate.now()
-                val startLocal = today.with(TemporalAdjusters.next(DayOfWeek.MONDAY))
+                // has no existing scheduled dates, to avoid overwriting already-generated weeks.
+                var candidateMonday = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.MONDAY))
+                while (true) {
+                    val candidateSunday = candidateMonday.plusDays(6)
+                    val weekHasSchedule = existingWorkDates.any { dateStr ->
+                        val d = LocalDate.parse(dateStr)
+                        !d.isBefore(candidateMonday) && !d.isAfter(candidateSunday)
+                    }
+                    if (!weekHasSchedule) break
+                    candidateMonday = candidateMonday.plusWeeks(1)
+                }
+                val startLocal = candidateMonday
                 val endLocal = startLocal.plusDays(6)
 
                 var hasSpecialDay = false
